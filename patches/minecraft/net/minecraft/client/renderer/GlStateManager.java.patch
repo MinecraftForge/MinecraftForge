@@ -1,0 +1,615 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/GlStateManager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/GlStateManager.java
+@@ -30,32 +30,32 @@
+     private static GlStateManager.Color field_179170_t = new GlStateManager.Color();
+     private static GlStateManager.Viewport field_179169_u = new GlStateManager.Viewport((GlStateManager.SwitchTexGen)null);
+     private static final String __OBFID = "CL_00002558";
+-
++    private static int attribStackDepth = 0;
+     public static void func_179123_a()
+     {
+-        GL11.glPushAttrib(8256);
++        GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT);  ++attribStackDepth;
+     }
+ 
+     public static void func_179099_b()
+     {
+-        GL11.glPopAttrib();
++        GL11.glPopAttrib();  --attribStackDepth;
+     }
+ 
+     public static void func_179118_c()
+     {
+-        field_179160_a.field_179208_a.func_179198_a();
++        field_179160_a.field_179208_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179141_d()
+     {
+-        field_179160_a.field_179208_a.func_179200_b();
++        field_179160_a.field_179208_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179092_a(int p_179092_0_, float p_179092_1_)
+     {
+-        if (p_179092_0_ != field_179160_a.field_179206_b || p_179092_1_ != field_179160_a.field_179207_c)
++        if (p_179092_0_ != field_179160_a.field_179206_b || p_179092_1_ != field_179160_a.field_179207_c || attribStackDepth < field_179160_a.cacheStackDepth)
+         {
+-            field_179160_a.field_179206_b = p_179092_0_;
++            field_179160_a.field_179206_b = p_179092_0_; field_179160_a.cacheStackDepth = attribStackDepth;
+             field_179160_a.field_179207_c = p_179092_1_;
+             GL11.glAlphaFunc(p_179092_0_, p_179092_1_);
+         }
+@@ -63,39 +63,39 @@
+ 
+     public static void func_179145_e()
+     {
+-        field_179158_b.func_179200_b();
++        field_179158_b.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179140_f()
+     {
+-        field_179158_b.func_179198_a();
++        field_179158_b.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179085_a(int p_179085_0_)
+     {
+-        field_179159_c[p_179085_0_].func_179200_b();
++        field_179159_c[p_179085_0_].setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179122_b(int p_179122_0_)
+     {
+-        field_179159_c[p_179122_0_].func_179198_a();
++        field_179159_c[p_179122_0_].setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179142_g()
+     {
+-        field_179156_d.field_179191_a.func_179200_b();
++        field_179156_d.field_179191_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179119_h()
+     {
+-        field_179156_d.field_179191_a.func_179198_a();
++        field_179156_d.field_179191_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179104_a(int p_179104_0_, int p_179104_1_)
+     {
+-        if (p_179104_0_ != field_179156_d.field_179189_b || p_179104_1_ != field_179156_d.field_179190_c)
++        if (p_179104_0_ != field_179156_d.field_179189_b || p_179104_1_ != field_179156_d.field_179190_c || field_179156_d.cacheStackDepth > attribStackDepth)
+         {
+-            field_179156_d.field_179189_b = p_179104_0_;
++            field_179156_d.field_179189_b = p_179104_0_; field_179156_d.cacheStackDepth = attribStackDepth;
+             field_179156_d.field_179190_c = p_179104_1_;
+             GL11.glColorMaterial(p_179104_0_, p_179104_1_);
+         }
+@@ -103,47 +103,47 @@
+ 
+     public static void func_179097_i()
+     {
+-        field_179154_f.field_179052_a.func_179198_a();
++        field_179154_f.field_179052_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179126_j()
+     {
+-        field_179154_f.field_179052_a.func_179200_b();
++        field_179154_f.field_179052_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179143_c(int p_179143_0_)
+     {
+-        if (p_179143_0_ != field_179154_f.field_179051_c)
++        if (p_179143_0_ != field_179154_f.field_179051_c || field_179154_f.cacheStackDepthDF > attribStackDepth)
+         {
+-            field_179154_f.field_179051_c = p_179143_0_;
++            field_179154_f.field_179051_c = p_179143_0_; field_179154_f.cacheStackDepthDF = attribStackDepth;
+             GL11.glDepthFunc(p_179143_0_);
+         }
+     }
+ 
+     public static void func_179132_a(boolean p_179132_0_)
+     {
+-        if (p_179132_0_ != field_179154_f.field_179050_b)
++        if (p_179132_0_ != field_179154_f.field_179050_b || field_179154_f.cacheStackDepthME > attribStackDepth)
+         {
+-            field_179154_f.field_179050_b = p_179132_0_;
++            field_179154_f.field_179050_b = p_179132_0_; field_179154_f.cacheStackDepthME = attribStackDepth;
+             GL11.glDepthMask(p_179132_0_);
+         }
+     }
+ 
+     public static void func_179084_k()
+     {
+-        field_179157_e.field_179213_a.func_179198_a();
++        field_179157_e.field_179213_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179147_l()
+     {
+-        field_179157_e.field_179213_a.func_179200_b();
++        field_179157_e.field_179213_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179112_b(int p_179112_0_, int p_179112_1_)
+     {
+-        if (p_179112_0_ != field_179157_e.field_179211_b || p_179112_1_ != field_179157_e.field_179212_c)
++        if (p_179112_0_ != field_179157_e.field_179211_b || p_179112_1_ != field_179157_e.field_179212_c || field_179157_e.cacheStackDepthBC > attribStackDepth)
+         {
+-            field_179157_e.field_179211_b = p_179112_0_;
++            field_179157_e.field_179211_b = p_179112_0_; field_179157_e.cacheStackDepthBC = attribStackDepth;
+             field_179157_e.field_179212_c = p_179112_1_;
+             GL11.glBlendFunc(p_179112_0_, p_179112_1_);
+         }
+@@ -151,9 +151,9 @@
+ 
+     public static void func_179120_a(int p_179120_0_, int p_179120_1_, int p_179120_2_, int p_179120_3_)
+     {
+-        if (p_179120_0_ != field_179157_e.field_179211_b || p_179120_1_ != field_179157_e.field_179212_c || p_179120_2_ != field_179157_e.field_179209_d || p_179120_3_ != field_179157_e.field_179210_e)
++        if (p_179120_0_ != field_179157_e.field_179211_b || p_179120_1_ != field_179157_e.field_179212_c || p_179120_2_ != field_179157_e.field_179209_d || p_179120_3_ != field_179157_e.field_179210_e|| field_179157_e.cacheStackDepthDE > attribStackDepth)
+         {
+-            field_179157_e.field_179211_b = p_179120_0_;
++            field_179157_e.field_179211_b = p_179120_0_; field_179157_e.cacheStackDepthDE = attribStackDepth;
+             field_179157_e.field_179212_c = p_179120_1_;
+             field_179157_e.field_179209_d = p_179120_2_;
+             field_179157_e.field_179210_e = p_179120_3_;
+@@ -163,84 +163,84 @@
+ 
+     public static void func_179127_m()
+     {
+-        field_179155_g.field_179049_a.func_179200_b();
++        field_179155_g.field_179049_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179106_n()
+     {
+-        field_179155_g.field_179049_a.func_179198_a();
++        field_179155_g.field_179049_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179093_d(int p_179093_0_)
+     {
+-        if (p_179093_0_ != field_179155_g.field_179047_b)
++        if (p_179093_0_ != field_179155_g.field_179047_b || field_179155_g.cacheStackDepthB > attribStackDepth)
+         {
+-            field_179155_g.field_179047_b = p_179093_0_;
++            field_179155_g.field_179047_b = p_179093_0_; field_179155_g.cacheStackDepthB = attribStackDepth;
+             GL11.glFogi(GL11.GL_FOG_MODE, p_179093_0_);
+         }
+     }
+ 
+     public static void func_179095_a(float p_179095_0_)
+     {
+-        if (p_179095_0_ != field_179155_g.field_179048_c)
++        if (p_179095_0_ != field_179155_g.field_179048_c || field_179155_g.cacheStackDepthC > attribStackDepth)
+         {
+-            field_179155_g.field_179048_c = p_179095_0_;
++            field_179155_g.field_179048_c = p_179095_0_; field_179155_g.cacheStackDepthC = attribStackDepth;
+             GL11.glFogf(GL11.GL_FOG_DENSITY, p_179095_0_);
+         }
+     }
+ 
+     public static void func_179102_b(float p_179102_0_)
+     {
+-        if (p_179102_0_ != field_179155_g.field_179045_d)
++        if (p_179102_0_ != field_179155_g.field_179045_d || field_179155_g.cacheStackDepthD > attribStackDepth)
+         {
+-            field_179155_g.field_179045_d = p_179102_0_;
++            field_179155_g.field_179045_d = p_179102_0_; field_179155_g.cacheStackDepthD = attribStackDepth;
+             GL11.glFogf(GL11.GL_FOG_START, p_179102_0_);
+         }
+     }
+ 
+     public static void func_179153_c(float p_179153_0_)
+     {
+-        if (p_179153_0_ != field_179155_g.field_179046_e)
++        if (p_179153_0_ != field_179155_g.field_179046_e || field_179155_g.cacheStackDepthE > attribStackDepth)
+         {
+-            field_179155_g.field_179046_e = p_179153_0_;
++            field_179155_g.field_179046_e = p_179153_0_; field_179155_g.cacheStackDepthE = attribStackDepth;
+             GL11.glFogf(GL11.GL_FOG_END, p_179153_0_);
+         }
+     }
+ 
+     public static void func_179089_o()
+     {
+-        field_179167_h.field_179054_a.func_179200_b();
++        field_179167_h.field_179054_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179129_p()
+     {
+-        field_179167_h.field_179054_a.func_179198_a();
++        field_179167_h.field_179054_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179107_e(int p_179107_0_)
+     {
+-        if (p_179107_0_ != field_179167_h.field_179053_b)
++        if (p_179107_0_ != field_179167_h.field_179053_b || field_179167_h.cacheStackDepth > attribStackDepth)
+         {
+-            field_179167_h.field_179053_b = p_179107_0_;
++            field_179167_h.field_179053_b = p_179107_0_; field_179167_h.cacheStackDepth = attribStackDepth;
+             GL11.glCullFace(p_179107_0_);
+         }
+     }
+ 
+     public static void func_179088_q()
+     {
+-        field_179168_i.field_179044_a.func_179200_b();
++        field_179168_i.field_179044_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179113_r()
+     {
+-        field_179168_i.field_179044_a.func_179198_a();
++        field_179168_i.field_179044_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179136_a(float p_179136_0_, float p_179136_1_)
+     {
+-        if (p_179136_0_ != field_179168_i.field_179043_c || p_179136_1_ != field_179168_i.field_179041_d)
++        if (p_179136_0_ != field_179168_i.field_179043_c || p_179136_1_ != field_179168_i.field_179041_d || field_179168_i.cacheStackDepth > attribStackDepth)
+         {
+-            field_179168_i.field_179043_c = p_179136_0_;
++            field_179168_i.field_179043_c = p_179136_0_; field_179168_i.cacheStackDepth = attribStackDepth;
+             field_179168_i.field_179041_d = p_179136_1_;
+             GL11.glPolygonOffset(p_179136_0_, p_179136_1_);
+         }
+@@ -248,40 +248,40 @@
+ 
+     public static void func_179115_u()
+     {
+-        field_179165_j.field_179197_a.func_179200_b();
++        field_179165_j.field_179197_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179134_v()
+     {
+-        field_179165_j.field_179197_a.func_179198_a();
++        field_179165_j.field_179197_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179116_f(int p_179116_0_)
+     {
+-        if (p_179116_0_ != field_179165_j.field_179196_b)
++        if (p_179116_0_ != field_179165_j.field_179196_b || field_179165_j.cacheStackDepth > attribStackDepth)
+         {
+-            field_179165_j.field_179196_b = p_179116_0_;
++            field_179165_j.field_179196_b = p_179116_0_; field_179165_j.cacheStackDepth = attribStackDepth;
+             GL11.glLogicOp(p_179116_0_);
+         }
+     }
+ 
+     public static void func_179087_a(GlStateManager.TexGen p_179087_0_)
+     {
+-        func_179125_c(p_179087_0_).field_179067_a.func_179200_b();
++        func_179125_c(p_179087_0_).field_179067_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179100_b(GlStateManager.TexGen p_179100_0_)
+     {
+-        func_179125_c(p_179100_0_).field_179067_a.func_179198_a();
++        func_179125_c(p_179100_0_).field_179067_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179149_a(GlStateManager.TexGen p_179149_0_, int p_179149_1_)
+     {
+         GlStateManager.TexGenCoord texgencoord = func_179125_c(p_179149_0_);
+ 
+-        if (p_179149_1_ != texgencoord.field_179066_c)
++        if (p_179149_1_ != texgencoord.field_179066_c || texgencoord.cacheStackDepth > attribStackDepth)
+         {
+-            texgencoord.field_179066_c = p_179149_1_;
++            texgencoord.field_179066_c = p_179149_1_; texgencoord.cacheStackDepth = attribStackDepth;
+             GL11.glTexGeni(texgencoord.field_179065_b, GL11.GL_TEXTURE_GEN_MODE, p_179149_1_);
+         }
+     }
+@@ -319,12 +319,12 @@
+ 
+     public static void func_179098_w()
+     {
+-        field_179174_p[field_179162_o].field_179060_a.func_179200_b();
++        field_179174_p[field_179162_o].field_179060_a.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179090_x()
+     {
+-        field_179174_p[field_179162_o].field_179060_a.func_179198_a();
++        field_179174_p[field_179162_o].field_179060_a.setDisabled(attribStackDepth);
+     }
+ 
+     public static int func_179146_y()
+@@ -360,12 +360,12 @@
+ 
+     public static void func_179108_z()
+     {
+-        field_179161_n.func_179200_b();
++        field_179161_n.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179133_A()
+     {
+-        field_179161_n.func_179198_a();
++        field_179161_n.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179103_j(int p_179103_0_)
+@@ -379,12 +379,12 @@
+ 
+     public static void func_179091_B()
+     {
+-        field_179172_r.func_179200_b();
++        field_179172_r.setEnabled(attribStackDepth);
+     }
+ 
+     public static void func_179101_C()
+     {
+-        field_179172_r.func_179198_a();
++        field_179172_r.setDisabled(attribStackDepth);
+     }
+ 
+     public static void func_179083_b(int p_179083_0_, int p_179083_1_, int p_179083_2_, int p_179083_3_)
+@@ -401,9 +401,9 @@
+ 
+     public static void func_179135_a(boolean p_179135_0_, boolean p_179135_1_, boolean p_179135_2_, boolean p_179135_3_)
+     {
+-        if (p_179135_0_ != field_179171_s.field_179188_a || p_179135_1_ != field_179171_s.field_179186_b || p_179135_2_ != field_179171_s.field_179187_c || p_179135_3_ != field_179171_s.field_179185_d)
++        if (p_179135_0_ != field_179171_s.field_179188_a || p_179135_1_ != field_179171_s.field_179186_b || p_179135_2_ != field_179171_s.field_179187_c || p_179135_3_ != field_179171_s.field_179185_d || field_179171_s.cacheStackDepth > attribStackDepth)
+         {
+-            field_179171_s.field_179188_a = p_179135_0_;
++            field_179171_s.field_179188_a = p_179135_0_; field_179171_s.cacheStackDepth = attribStackDepth;
+             field_179171_s.field_179186_b = p_179135_1_;
+             field_179171_s.field_179187_c = p_179135_2_;
+             field_179171_s.field_179185_d = p_179135_3_;
+@@ -413,18 +413,18 @@
+ 
+     public static void func_179151_a(double p_179151_0_)
+     {
+-        if (p_179151_0_ != field_179163_l.field_179205_a)
++        if (p_179151_0_ != field_179163_l.field_179205_a || field_179163_l.cacheStackDepthA > attribStackDepth)
+         {
+-            field_179163_l.field_179205_a = p_179151_0_;
++            field_179163_l.field_179205_a = p_179151_0_; field_179163_l.cacheStackDepthA = attribStackDepth;
+             GL11.glClearDepth(p_179151_0_);
+         }
+     }
+ 
+     public static void func_179082_a(float p_179082_0_, float p_179082_1_, float p_179082_2_, float p_179082_3_)
+     {
+-        if (p_179082_0_ != field_179163_l.field_179203_b.field_179195_a || p_179082_1_ != field_179163_l.field_179203_b.field_179193_b || p_179082_2_ != field_179163_l.field_179203_b.field_179194_c || p_179082_3_ != field_179163_l.field_179203_b.field_179192_d)
++        if (p_179082_0_ != field_179163_l.field_179203_b.field_179195_a || p_179082_1_ != field_179163_l.field_179203_b.field_179193_b || p_179082_2_ != field_179163_l.field_179203_b.field_179194_c || p_179082_3_ != field_179163_l.field_179203_b.field_179192_d || field_179163_l.cacheStackDepthBC > attribStackDepth)
+         {
+-            field_179163_l.field_179203_b.field_179195_a = p_179082_0_;
++            field_179163_l.field_179203_b.field_179195_a = p_179082_0_;  field_179163_l.cacheStackDepthBC = attribStackDepth;
+             field_179163_l.field_179203_b.field_179193_b = p_179082_1_;
+             field_179163_l.field_179203_b.field_179194_c = p_179082_2_;
+             field_179163_l.field_179203_b.field_179192_d = p_179082_3_;
+@@ -499,9 +499,9 @@
+ 
+     public static void func_179131_c(float p_179131_0_, float p_179131_1_, float p_179131_2_, float p_179131_3_)
+     {
+-        if (p_179131_0_ != field_179170_t.field_179195_a || p_179131_1_ != field_179170_t.field_179193_b || p_179131_2_ != field_179170_t.field_179194_c || p_179131_3_ != field_179170_t.field_179192_d)
++        if (p_179131_0_ != field_179170_t.field_179195_a || p_179131_1_ != field_179170_t.field_179193_b || p_179131_2_ != field_179170_t.field_179194_c || p_179131_3_ != field_179170_t.field_179192_d || field_179170_t.cacheStackDepth > attribStackDepth)
+         {
+-            field_179170_t.field_179195_a = p_179131_0_;
++            field_179170_t.field_179195_a = p_179131_0_; field_179170_t.cacheStackDepth = attribStackDepth;
+             field_179170_t.field_179193_b = p_179131_1_;
+             field_179170_t.field_179194_c = p_179131_2_;
+             field_179170_t.field_179192_d = p_179131_3_;
+@@ -546,7 +546,7 @@
+             public int field_179206_b;
+             public float field_179207_c;
+             private static final String __OBFID = "CL_00002556";
+-
++            public int cacheStackDepth = 2147483647;
+             private AlphaState()
+             {
+                 this.field_179208_a = new GlStateManager.BooleanState(3008);
+@@ -564,9 +564,9 @@
+     static class BlendState
+         {
+             public GlStateManager.BooleanState field_179213_a;
+-            public int field_179211_b;
++            public int field_179211_b; public int cacheStackDepthBC = 2147483647;
+             public int field_179212_c;
+-            public int field_179209_d;
++            public int field_179209_d; public int cacheStackDepthDE = 2147483647;
+             public int field_179210_e;
+             private static final String __OBFID = "CL_00002555";
+ 
+@@ -591,27 +591,27 @@
+             private final int field_179202_a;
+             private boolean field_179201_b = false;
+             private static final String __OBFID = "CL_00002554";
+-
++            private int cacheStackDepth = 2147483647;
+             public BooleanState(int p_i46267_1_)
+             {
+                 this.field_179202_a = p_i46267_1_;
+             }
+ 
+-            public void func_179198_a()
++            public void setDisabled(int currentStackDepth)
+             {
+-                this.func_179199_a(false);
++                this.setState(false, currentStackDepth);
+             }
+ 
+-            public void func_179200_b()
++            public void setEnabled(int currentStackDepth)
+             {
+-                this.func_179199_a(true);
++                this.setState(true, currentStackDepth);
+             }
+ 
+-            public void func_179199_a(boolean p_179199_1_)
++            public void setState(boolean p_179199_1_, int currentStackDepth)
+             {
+-                if (p_179199_1_ != this.field_179201_b)
++                if (p_179199_1_ != this.field_179201_b || currentStackDepth < cacheStackDepth)
+                 {
+-                    this.field_179201_b = p_179199_1_;
++                    this.field_179201_b = p_179199_1_; cacheStackDepth = currentStackDepth;
+ 
+                     if (p_179199_1_)
+                     {
+@@ -628,8 +628,8 @@
+     @SideOnly(Side.CLIENT)
+     static class ClearState
+         {
+-            public double field_179205_a;
+-            public GlStateManager.Color field_179203_b;
++            public double field_179205_a; public int cacheStackDepthA = 2147483647;
++            public GlStateManager.Color field_179203_b; public int cacheStackDepthBC = 2147483647;
+             public int field_179204_c;
+             private static final String __OBFID = "CL_00002553";
+ 
+@@ -654,7 +654,7 @@
+             public float field_179194_c = 1.0F;
+             public float field_179192_d = 1.0F;
+             private static final String __OBFID = "CL_00002552";
+-
++            public int cacheStackDepth = 2147483647;
+             public Color() {}
+ 
+             public Color(float p_i46265_1_, float p_i46265_2_, float p_i46265_3_, float p_i46265_4_)
+@@ -672,7 +672,7 @@
+             public GlStateManager.BooleanState field_179197_a;
+             public int field_179196_b;
+             private static final String __OBFID = "CL_00002551";
+-
++            public int cacheStackDepth = 2147483647;
+             private ColorLogicState()
+             {
+                 this.field_179197_a = new GlStateManager.BooleanState(3058);
+@@ -693,7 +693,7 @@
+             public boolean field_179187_c;
+             public boolean field_179185_d;
+             private static final String __OBFID = "CL_00002550";
+-
++            public int cacheStackDepth = 2147483647;
+             private ColorMask()
+             {
+                 this.field_179188_a = true;
+@@ -715,7 +715,7 @@
+             public int field_179189_b;
+             public int field_179190_c;
+             private static final String __OBFID = "CL_00002549";
+-
++            public int cacheStackDepth = 2147483647;
+             private ColorMaterialState()
+             {
+                 this.field_179191_a = new GlStateManager.BooleanState(2903);
+@@ -735,7 +735,7 @@
+             public GlStateManager.BooleanState field_179054_a;
+             public int field_179053_b;
+             private static final String __OBFID = "CL_00002548";
+-
++            public int cacheStackDepth = 2147483647;
+             private CullState()
+             {
+                 this.field_179054_a = new GlStateManager.BooleanState(2884);
+@@ -752,8 +752,8 @@
+     static class DepthState
+         {
+             public GlStateManager.BooleanState field_179052_a;
+-            public boolean field_179050_b;
+-            public int field_179051_c;
++            public boolean field_179050_b;    public int cacheStackDepthME = 2147483647;
++            public int field_179051_c;          public int cacheStackDepthDF = 2147483647;
+             private static final String __OBFID = "CL_00002547";
+ 
+             private DepthState()
+@@ -773,10 +773,10 @@
+     static class FogState
+         {
+             public GlStateManager.BooleanState field_179049_a;
+-            public int field_179047_b;
+-            public float field_179048_c;
+-            public float field_179045_d;
+-            public float field_179046_e;
++            public int field_179047_b; public int cacheStackDepthB = 2147483647;
++            public float field_179048_c; public int cacheStackDepthC = 2147483647;
++            public float field_179045_d; public int cacheStackDepthD = 2147483647;
++            public float field_179046_e; public int cacheStackDepthE = 2147483647;
+             private static final String __OBFID = "CL_00002546";
+ 
+             private FogState()
+@@ -802,7 +802,7 @@
+             public float field_179043_c;
+             public float field_179041_d;
+             private static final String __OBFID = "CL_00002545";
+-
++            public int cacheStackDepth = 2147483647;
+             private PolygonOffsetState()
+             {
+                 this.field_179044_a = new GlStateManager.BooleanState(32823);
+@@ -824,7 +824,7 @@
+             public int field_179079_b;
+             public int field_179080_c;
+             private static final String __OBFID = "CL_00002544";
+-
++            public int cacheStackDepth = 2147483647;
+             private StencilFunc()
+             {
+                 this.field_179081_a = 519;
+@@ -847,7 +847,7 @@
+             public int field_179074_d;
+             public int field_179075_e;
+             private static final String __OBFID = "CL_00002543";
+-
++            public int cacheStackDepth = 2147483647;
+             private StencilState()
+             {
+                 this.field_179078_a = new GlStateManager.StencilFunc((GlStateManager.SwitchTexGen)null);
+@@ -869,7 +869,7 @@
+         {
+             static final int[] field_179175_a = new int[GlStateManager.TexGen.values().length];
+             private static final String __OBFID = "CL_00002557";
+-
++            public int cacheStackDepth = 2147483647;
+             static
+             {
+                 try
+@@ -928,7 +928,7 @@
+             public int field_179065_b;
+             public int field_179066_c = -1;
+             private static final String __OBFID = "CL_00002541";
+-
++            public int cacheStackDepth = 2147483647;
+             public TexGenCoord(int p_i46254_1_, int p_i46254_2_)
+             {
+                 this.field_179065_b = p_i46254_1_;
+@@ -944,7 +944,7 @@
+             public GlStateManager.TexGenCoord field_179063_c;
+             public GlStateManager.TexGenCoord field_179061_d;
+             private static final String __OBFID = "CL_00002540";
+-
++            public int cacheStackDepth = 2147483647;
+             private TexGenState()
+             {
+                 this.field_179064_a = new GlStateManager.TexGenCoord(8192, 3168);
+@@ -965,7 +965,7 @@
+             public GlStateManager.BooleanState field_179060_a;
+             public int field_179059_b;
+             private static final String __OBFID = "CL_00002539";
+-
++            public int cacheStackDepth = 2147483647;
+             private TextureState()
+             {
+                 this.field_179060_a = new GlStateManager.BooleanState(3553);
+@@ -986,7 +986,7 @@
+             public int field_179057_c;
+             public int field_179055_d;
+             private static final String __OBFID = "CL_00002538";
+-
++            public int cacheStackDepth = 2147483647;
+             private Viewport()
+             {
+                 this.field_179058_a = 0;
