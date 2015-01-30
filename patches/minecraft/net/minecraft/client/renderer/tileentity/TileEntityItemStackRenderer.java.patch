@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
+@@ -28,6 +28,8 @@
+     private TileEntitySkull field_179023_f = new TileEntitySkull();
+     private static final String __OBFID = "CL_00000946";
+ 
++    private final java.util.Map<Block, net.minecraft.tileentity.TileEntity> customTESRCalls = com.google.common.collect.Maps.newHashMap();
++
+     public void func_179022_a(ItemStack p_179022_1_)
+     {
+         if (p_179022_1_.func_77973_b() == Items.field_179564_cE)
+@@ -79,10 +81,25 @@
+             {
+                 TileEntityRendererDispatcher.field_147556_a.func_147549_a(this.field_147718_c, 0.0D, 0.0D, 0.0D, 0.0F);
+             }
++            else if (customTESRCalls.containsKey(block))
++            {
++                TileEntityRendererDispatcher.field_147556_a.func_147549_a(customTESRCalls.get(block), 0.0D, 0.0D, 0.0D, 0.0F);
++            }
+             else
+             {
+                 TileEntityRendererDispatcher.field_147556_a.func_147549_a(this.field_147717_b, 0.0D, 0.0D, 0.0D, 0.0F);
+             }
+         }
+     }
++
++    //FORGE
++    /**
++     * Registers a Block for a TESR call with the given TileEntity when it is rendered through this class. Used for custom chests to render in the inventory.
++     * @param block The block that has a TileEntity with a TESR that will be rendered.
++     * @param te The TileEntity instance to be passed into the TESR call.
++     */
++    public void registerTESRCallForBlock(Block block, net.minecraft.tileentity.TileEntity te)
++    {
++        customTESRCalls.put(block, te);
++    }
+ }
