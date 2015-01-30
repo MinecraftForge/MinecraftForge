@@ -1,17 +1,16 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class OrientCameraEvent extends Event
 {
     public final float partialTicks;
-    public final EntityPlayer player;
+    public final EntityLivingBase entity;
     
-    public OrientCameraEvent(Minecraft mc, float partialTicks)
+    public OrientCameraEvent(EntityLivingBase entity, float partialTicks)
     {
-        this.player = mc.thePlayer;
+        this.entity = entity;
         this.partialTicks = partialTicks;
     }
 }
