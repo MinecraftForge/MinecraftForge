@@ -32,8 +32,8 @@
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IRenderHandler;
 +import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-+import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 +import net.minecraftforge.client.event.OrientCameraEvent;
++import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 +import net.minecraftforge.client.event.RenderWorldLastEvent;
 +import net.minecraftforge.common.MinecraftForge;
 +
