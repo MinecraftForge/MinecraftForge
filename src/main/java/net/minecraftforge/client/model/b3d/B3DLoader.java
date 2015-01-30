@@ -1,7 +1,5 @@
 package net.minecraftforge.client.model.b3d;
 
-import static net.minecraftforge.client.model.b3d.B3DModel.logger;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -248,7 +246,6 @@ public class B3DLoader implements ICustomModelLoader
             if(key == null)
             {
                 FMLLog.severe("invalid key index: " + frame);
-                logger.debug(String.format("getMatrix: %s %s\n%s %s %s\n%s", frame, node, node.getPos(), node.getScale(), node.getRot(), ret));
             }
             else
             {
@@ -256,7 +253,6 @@ public class B3DLoader implements ICustomModelLoader
                 Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
                 rm.invert();
                 ret = ret.compose(new TRSRTransformation(rm));
-                logger.debug(String.format("getMatrix: %s %s\n%s %s %s\n%s %s %s\n%s", frame, node, node.getPos(), node.getScale(), node.getRot(), key.getPos(), key.getScale(), key.getRot(), ret));
             }
             return ret;
         }
@@ -332,7 +328,6 @@ public class B3DLoader implements ICustomModelLoader
                 String path = t.getPath();
                 if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
                 builder.put(t.getPath(), new ResourceLocation(location.getResourceDomain(), path));
-                System.out.println("Texture: " + path);
             }
             return builder.build();
         }
@@ -570,7 +565,6 @@ public class B3DLoader implements ICustomModelLoader
         @Override
         public BakedWrapper handleBlockState(IBlockState state)
         {
-            System.out.println("handleBlockState " + state);
             if(state instanceof IExtendedBlockState)
             {
                 IExtendedBlockState exState = (IExtendedBlockState)state;
