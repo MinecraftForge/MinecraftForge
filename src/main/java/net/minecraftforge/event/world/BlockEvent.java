@@ -177,4 +177,18 @@ public class BlockEvent extends Event
             return blockSnapshots;
         }
     }
+
+	/**
+	 * Fired when a block is about to receive a random tick
+	 *
+	 * Canceling the event stops the block from receiving the tick
+	 */
+	@Cancelable
+	public static class RandomTickEvent extends BlockEvent
+	{
+		public RandomTickEvent(World world, BlockPos pos, IBlockState state)
+		{
+			super(world, pos, state);
+		}
+	}
 }

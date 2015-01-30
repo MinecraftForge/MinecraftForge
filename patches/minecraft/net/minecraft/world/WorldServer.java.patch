@@ -98,6 +98,15 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      i1 = this.field_73005_l >> 2;
+@@ -430,7 +448,7 @@
+                                 IBlockState iblockstate = extendedblockstorage.func_177485_a(i2, k2, j2);
+                                 Block block = iblockstate.func_177230_c();
+ 
+-                                if (block.func_149653_t())
++                                if (net.minecraftforge.event.ForgeEventFactory.onRandomTick(this,blockpos2)&&block.func_149653_t())
+                                 {
+                                     ++i;
+                                     block.func_180645_a(this, blockpos2, iblockstate, this.field_73012_v);
 @@ -483,6 +501,9 @@
              if (p_175654_2_.func_149698_L())
              {
