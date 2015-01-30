@@ -208,16 +208,13 @@ public class B3DModel
             List<Texture> ret = new ArrayList<Texture>();
             while(buf.hasRemaining())
             {
-                logger.debug("TEST");
                 String path = readString();
-                logger.debug("path: '" + path + "'");
                 int flags = buf.getInt();
                 int blend = buf.getInt();
                 Vector2f pos = new Vector2f(buf.getFloat(), buf.getFloat());
                 Vector2f scale = new Vector2f(buf.getFloat(), buf.getFloat());
                 float rot = buf.getFloat();
                 ret.add(new Texture(path, flags, blend, pos, scale, rot));
-                logger.debug("TEX: '" + path + "' " + flags + " " + blend + " " + pos + " " + scale + " " + rot);
             }
             popLimit();
             this.textures.addAll(ret);
@@ -360,7 +357,6 @@ public class B3DModel
                     rot = readQuat();
                 }
                 Key key = new Key(pos, scale, rot);
-                //logger.debug("Key: " + frame + " " + key);
                 Key oldKey = animations.peek().get(frame, null);
                 if(oldKey != null)
                 {
@@ -436,7 +432,6 @@ public class B3DModel
             {
                 for(Table.Cell<Integer, Optional<Node<?>>, Key> key : keyData.cellSet())
                 {
-                    logger.debug("KEY1: " + key + " " + node);
                     animations.peek().put(key.getRowKey(), key.getColumnKey().or(Optional.of(node)), key.getValue());
                 }
             }
@@ -625,15 +620,11 @@ public class B3DModel
                 {
                     totalWeight += bone.getLeft();
                     Matrix4f bm = animator.apply(bone.getRight());
-                    logger.debug("w:" + totalWeight + " bone: " + bone.getRight().getName() + " bm: \n" + bm);
                     bm.mul(bone.getLeft());
                     t.add(bm);
-                    logger.debug("t: \n" + t);
                 }
                 if(totalWeight != 0) t.mul(1f / totalWeight);
             }
-
-            logger.debug("t: \n" + t);
 
             // pos
             Vector4f pos = new Vector4f(this.pos), newPos = new Vector4f();
@@ -861,7 +852,6 @@ public class B3DModel
 
         public void setAnimation(Animation animation)
         {
-            logger.debug("setAnimation " + animation + " " + this);
             this.animation = animation;
             Deque<Node<?>> q = new ArrayDeque<Node<?>>(nodes.values());
 
@@ -879,7 +869,6 @@ public class B3DModel
             ImmutableTable.Builder<Integer, Node<?>, Key> builder = ImmutableTable.builder();
             for(Table.Cell<Integer, Optional<Node<?>>, Key> key : keyData.cellSet())
             {
-                //logger.debug("KEY2: " + key + " " + this);
                 builder.put(key.getRowKey(), key.getColumnKey().or(this), key.getValue());
             }
             setAnimation(new Animation(animData.getLeft(), animData.getMiddle(), animData.getRight(), builder.build()));
@@ -1037,7 +1026,6 @@ public class B3DModel
                 for(Pair<Vertex, Float> b : bone.getKind().getData())
                 {
                     builder.put(b.getLeft(), Pair.of(b.getRight(), bone));
-                    logger.debug("Weight: " + b.getRight() + " " + bone.getName() + " " + b.getLeft().getPos());
                 }
             }
             weightMap = builder.build();
