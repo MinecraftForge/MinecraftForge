@@ -49,6 +49,15 @@
              float f1 = 70.0F;
  
              if (p_78481_2_)
+@@ -489,7 +502,7 @@
+         double d1 = entitylivingbase.field_70167_r + (entitylivingbase.field_70163_u - entitylivingbase.field_70167_r) * (double)p_78467_1_ - (double)f1;
+         double d2 = entitylivingbase.field_70166_s + (entitylivingbase.field_70161_v - entitylivingbase.field_70166_s) * (double)p_78467_1_;
+         GL11.glRotatef(this.field_78505_P + (this.field_78495_O - this.field_78505_P) * p_78467_1_, 0.0F, 0.0F, 1.0F);
+-
++        
+         if (entitylivingbase.func_70608_bn())
+         {
+             f1 = (float)((double)f1 + 1.0D);
 @@ -497,15 +510,7 @@
  
              if (!this.field_78531_r.field_71474_y.field_74325_U)
@@ -66,7 +75,15 @@
                  GL11.glRotatef(entitylivingbase.field_70126_B + (entitylivingbase.field_70177_z - entitylivingbase.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entitylivingbase.field_70127_C + (entitylivingbase.field_70125_A - entitylivingbase.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -1052,7 +1057,9 @@
+@@ -583,6 +588,7 @@
+         }
+ 
+         GL11.glTranslatef(0.0F, f1, 0.0F);
++        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.OrientCameraEvent(entitylivingbase, p_78467_1_));
+         d0 = entitylivingbase.field_70169_q + (entitylivingbase.field_70165_t - entitylivingbase.field_70169_q) * (double)p_78467_1_;
+         d1 = entitylivingbase.field_70167_r + (entitylivingbase.field_70163_u - entitylivingbase.field_70167_r) * (double)p_78467_1_ - (double)f1;
+         d2 = entitylivingbase.field_70166_s + (entitylivingbase.field_70161_v - entitylivingbase.field_70166_s) * (double)p_78467_1_;
+@@ -1052,7 +1058,9 @@
  
                  try
                  {
@@ -77,7 +94,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1213,7 +1220,10 @@
+@@ -1213,7 +1221,10 @@
                  GL11.glPushMatrix();
                  RenderHelper.func_74519_b();
                  this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -88,7 +105,7 @@
                  RenderHelper.func_74518_a();
                  this.func_78483_a((double)p_78471_1_);
                  GL11.glMatrixMode(GL11.GL_MODELVIEW);
-@@ -1225,7 +1235,10 @@
+@@ -1225,7 +1236,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -100,7 +117,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1238,14 +1251,17 @@
+@@ -1238,14 +1252,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -120,7 +137,7 @@
              GL11.glDisable(GL11.GL_BLEND);
  
              if (this.field_78532_q == 0)
-@@ -1313,6 +1329,16 @@
+@@ -1313,6 +1330,16 @@
                  renderglobal.func_72719_a(entitylivingbase, 1, (double)p_78471_1_);
              }
  
@@ -137,7 +154,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1324,9 +1350,12 @@
+@@ -1324,9 +1351,12 @@
                  this.func_82829_a(renderglobal, p_78471_1_);
              }
  
@@ -151,7 +168,7 @@
              {
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                  this.func_78476_b(p_78471_1_, j);
-@@ -1442,6 +1471,13 @@
+@@ -1442,6 +1472,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -165,7 +182,7 @@
          float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
-@@ -1791,6 +1827,13 @@
+@@ -1791,6 +1828,13 @@
              this.field_78533_p = f7;
          }
  
@@ -179,7 +196,7 @@
          GL11.glClearColor(this.field_78518_n, this.field_78519_o, this.field_78533_p, 0.0F);
      }
  
-@@ -1826,6 +1869,13 @@
+@@ -1826,6 +1870,13 @@
              Block block = ActiveRenderInfo.func_151460_a(this.field_78531_r.field_71441_e, entitylivingbase, p_78468_2_);
              float f1;
  
@@ -193,7 +210,7 @@
              if (entitylivingbase.func_70644_a(Potion.field_76440_q))
              {
                  f1 = 5.0F;
-@@ -1930,6 +1980,7 @@
+@@ -1930,6 +1981,7 @@
                      GL11.glFogf(GL11.GL_FOG_START, f1 * 0.05F);
                      GL11.glFogf(GL11.GL_FOG_END, Math.min(f1, 192.0F) * 0.5F);
                  }
