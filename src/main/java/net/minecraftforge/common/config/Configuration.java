@@ -42,7 +42,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 
 /**
- * This class offers advanced configurations capabilities, allowing to provide
+ * This class offers advanced configuration capabilities, allowing
  * various categories for configuration variables.
  */
 public class Configuration
@@ -80,7 +80,7 @@ public class Configuration
     public Configuration(){}
 
     /**
-     * Create a configuration file for the file given in parameter.
+     * Creates a configuration file for the given File parameter.
      */
     public Configuration(File file)
     {
@@ -88,7 +88,7 @@ public class Configuration
     }
     
     /**
-     * Create a configuration file for the file given in parameter with the provided config version number.
+     * Creates a configuration file for the given File parameter with the provided config version number.
      */
     public Configuration(File file, String configVersion)
     {

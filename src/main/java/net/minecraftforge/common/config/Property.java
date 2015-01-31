@@ -441,7 +441,7 @@ public class Property
     }
 
     /**
-     * Sets the localization language key for this Property so that the config GUI screens are nice and pretty <3. The string languageKey +
+     * Sets the localization language key for this Property so that the config GUI screens are nice and pretty. The string languageKey +
      * ".tooltip" is used for tooltips when a user hovers the mouse over a GUI property label.
      *
      * @param langKey a string language key such as myawesomemod.config.myPropName
