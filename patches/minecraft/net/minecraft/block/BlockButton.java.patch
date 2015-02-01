@@ -44,12 +44,3 @@
              {
                  this.func_176226_b(p_176204_1_, p_176204_2_, p_176204_3_, 0);
                  p_176204_1_.func_175698_g(p_176204_2_);
-@@ -338,6 +339,8 @@
-         return new BlockState(this, new IProperty[] {field_176585_a, field_176584_b});
-     }
- 
-+    @Override public net.minecraft.item.Item func_180660_a(IBlockState state, Random rnd, int fortune){ return null; }
-+
-     static final class SwitchEnumFacing
-         {
-             static final int[] field_180420_a = new int[EnumFacing.values().length];
