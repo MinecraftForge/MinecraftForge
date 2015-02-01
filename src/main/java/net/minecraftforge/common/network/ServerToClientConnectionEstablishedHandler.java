@@ -1,6 +1,6 @@
 package net.minecraftforge.common.network;
 
-import cpw.mods.fml.common.network.NetworkHandshakeEstablished;
+import net.minecraftforge.fml.common.network.NetworkHandshakeEstablished;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/MovingObjectPosition.java
 +++ ../src-work/minecraft/net/minecraft/util/MovingObjectPosition.java
-@@ -13,6 +13,12 @@
+@@ -11,6 +11,12 @@
      public Entity field_72308_g;
      private static final String __OBFID = "CL_00000610";
  
@@ -10,6 +10,6 @@
 +    /** Used to add extra hit info */
 +    public Object hitInfo = null;
 +
-     public MovingObjectPosition(int p_i2303_1_, int p_i2303_2_, int p_i2303_3_, int p_i2303_4_, Vec3 p_i2303_5_)
+     public MovingObjectPosition(Vec3 p_i45551_1_, EnumFacing p_i45551_2_, BlockPos p_i45551_3_)
      {
-         this(p_i2303_1_, p_i2303_2_, p_i2303_3_, p_i2303_4_, p_i2303_5_, true);
+         this(MovingObjectPosition.MovingObjectType.BLOCK, p_i45551_1_, p_i45551_2_, p_i45551_3_);

@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import cpw.mods.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class EnumHelperTest
 {

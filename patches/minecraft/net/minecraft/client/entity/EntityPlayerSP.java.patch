@@ -1,85 +1,78 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -50,6 +50,9 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.Session;
+@@ -53,6 +53,9 @@
  import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends AbstractClientPlayer
-@@ -325,7 +328,7 @@
-             f *= 1.0F - f1 * 0.15F;
-         }
- 
--        return f;
-+        return ForgeHooksClient.getOffsetFOV(this, f);
+@@ -342,6 +345,15 @@
+         this.field_71159_c.field_71456_v.func_146158_b().func_146227_a(p_146105_1_);
      }
  
-     public void func_71053_j()
-@@ -479,20 +482,45 @@
-         return this.field_70170_p.func_147439_a(p_71153_1_, p_71153_2_, p_71153_3_).func_149721_r();
-     }
- 
-+    private boolean isHeadspaceFree(int x, int y, int z, int height)
++    private boolean isHeadspaceFree(BlockPos pos, int height)
 +    {
-+        for (int i1 = 0; i1 < height; i1++)
++        for (int y = 0; y < height; y++)
 +        {
-+            if (func_71153_f(x, y + i1, z + 1)) return false;
++            if (func_175162_d(pos.func_177982_a(0, y, 0))) return false;
 +        }
 +        return true;
 +    }
 +
      protected boolean func_145771_j(double p_145771_1_, double p_145771_3_, double p_145771_5_)
      {
-+        if (this.field_70145_X)
-+        {
-+            return false;
-+        }
-         int i = MathHelper.func_76128_c(p_145771_1_);
-         int j = MathHelper.func_76128_c(p_145771_3_);
-         int k = MathHelper.func_76128_c(p_145771_5_);
-         double d3 = p_145771_1_ - (double)i;
-         double d4 = p_145771_5_ - (double)k;
+         if (this.field_70145_X)
+@@ -354,30 +366,34 @@
+             double d3 = p_145771_1_ - (double)blockpos.func_177958_n();
+             double d4 = p_145771_5_ - (double)blockpos.func_177952_p();
  
--        if (this.func_71153_f(i, j, k) || this.func_71153_f(i, j + 1, k))
-+        int entHeight = Math.max(Math.round(this.field_70131_O), 1);
+-            if (!this.func_175162_d(blockpos))
++            int entHeight = Math.max(Math.round(this.field_70131_O), 1);
 +
-+        boolean inTranslucentBlock = true;
++            boolean inTranslucentBlock = this.isHeadspaceFree(blockpos, entHeight);
 +
-+        for (int i1 = 0; i1 < entHeight; i1++)
-         {
--            boolean flag = !this.func_71153_f(i - 1, j, k) && !this.func_71153_f(i - 1, j + 1, k);
--            boolean flag1 = !this.func_71153_f(i + 1, j, k) && !this.func_71153_f(i + 1, j + 1, k);
--            boolean flag2 = !this.func_71153_f(i, j, k - 1) && !this.func_71153_f(i, j + 1, k - 1);
--            boolean flag3 = !this.func_71153_f(i, j, k + 1) && !this.func_71153_f(i, j + 1, k + 1);
-+            if (!this.func_71153_f(i, j + i1, k))
-+            {
-+                inTranslucentBlock = false;
-+            }
-+        }
-+
-+        if (inTranslucentBlock)
-+        {
-+            boolean flag  = !isHeadspaceFree(i - 1, j, k, entHeight);
-+            boolean flag1 = !isHeadspaceFree(i + 1, j, k, entHeight);
-+            boolean flag2 = !isHeadspaceFree(i, j, k - 1, entHeight);
-+            boolean flag3 = !isHeadspaceFree(i, j, k + 1, entHeight);
-             byte b0 = -1;
-             double d5 = 9999.0D;
++            if (inTranslucentBlock)
+             {
+                 byte b0 = -1;
+                 double d5 = 9999.0D;
  
-@@ -576,6 +604,12 @@
+-                if (this.func_175162_d(blockpos.func_177976_e()) && d3 < d5)
++                if (!this.isHeadspaceFree(blockpos.func_177976_e(), entHeight) && d3 < d5)
+                 {
+                     d5 = d3;
+                     b0 = 0;
+                 }
+ 
+-                if (this.func_175162_d(blockpos.func_177974_f()) && 1.0D - d3 < d5)
++                if (!this.isHeadspaceFree(blockpos.func_177974_f(), entHeight) && 1.0D - d3 < d5)
+                 {
+                     d5 = 1.0D - d3;
+                     b0 = 1;
+                 }
+ 
+-                if (this.func_175162_d(blockpos.func_177978_c()) && d4 < d5)
++                if (!this.isHeadspaceFree(blockpos.func_177978_c(), entHeight) && d4 < d5)
+                 {
+                     d5 = d4;
+                     b0 = 4;
+                 }
+ 
+-                if (this.func_175162_d(blockpos.func_177968_d()) && 1.0D - d4 < d5)
++                if (!this.isHeadspaceFree(blockpos.func_177968_d(), entHeight) && 1.0D - d4 < d5)
+                 {
+                     d5 = 1.0D - d4;
+                     b0 = 5;
+@@ -445,6 +461,9 @@
  
      public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)
      {
 +        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(this, p_85030_1_, p_85030_2_, p_85030_3_);
-+        if (MinecraftForge.EVENT_BUS.post(event))
-+        {
-+            return;
-+        }
++        if (MinecraftForge.EVENT_BUS.post(event)) return;
 +        p_85030_1_ = event.name;
-         this.field_70170_p.func_72980_b(this.field_70165_t, this.field_70163_u - (double)this.field_70129_M, this.field_70161_v, p_85030_1_, p_85030_2_, p_85030_3_, false);
+         this.field_70170_p.func_72980_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_85030_1_, p_85030_2_, p_85030_3_, false);
      }
  

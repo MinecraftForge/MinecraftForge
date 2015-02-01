@@ -1,7 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -16,11 +16,11 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
     }
 
     @Override
-    public void decorateChunk(World par1World, Random par2Random, BiomeGenBase biome, int par3, int par4)
+    public void decorate(World par1World, Random par2Random, BiomeGenBase biome, BlockPos pos)
     {
         fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
-        biome.theBiomeDecorator.decorateChunk(par1World, par2Random, biome, par3, par4);
+        biome.theBiomeDecorator.decorate(par1World, par2Random, biome, pos);
     }
     public void fireCreateEventAndReplace(BiomeGenBase biome)
     {
@@ -38,7 +38,7 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
         wrapped.sandPerChunk2 = sandPerChunk2;
         wrapped.treesPerChunk = treesPerChunk;
         wrapped.waterlilyPerChunk = waterlilyPerChunk;
-        
+
         BiomeEvent.CreateDecorator event = new BiomeEvent.CreateDecorator(biome, wrapped);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         biome.theBiomeDecorator = event.newBiomeDecorator;

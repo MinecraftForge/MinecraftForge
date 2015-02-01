@@ -1,63 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
-@@ -2,9 +2,11 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory;
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import net.minecraft.client.renderer.texture.TextureMap;
++import net.minecraft.client.Minecraft;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
- import net.minecraft.util.IIcon;
-+import net.minecraft.util.ResourceLocation;
- 
- public class Slot
- {
-@@ -15,6 +17,13 @@
-     public int field_75221_f;
-     private static final String __OBFID = "CL_00001762";
- 
-+    /** Position within background texture file, normally -1 which causes no background to be drawn. */
-+    protected IIcon backgroundIcon = null;
-+
-+    /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
-+    @SideOnly(Side.CLIENT)
-+    protected ResourceLocation texture;
-+
-     public Slot(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_)
-     {
-         this.field_75224_c = p_i1824_1_;
-@@ -97,7 +106,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+@@ -86,7 +87,7 @@
      @SideOnly(Side.CLIENT)
-     public IIcon func_75212_b()
+     public String func_178171_c()
      {
 -        return null;
-+        return backgroundIcon;
++        return backgroundName;
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -105,4 +114,46 @@
+     public ItemStack func_75209_a(int p_75209_1_)
+@@ -109,4 +110,64 @@
      {
          return true;
      }
 +
 +    /*========================================= FORGE START =====================================*/
++    protected String backgroundName = null;
++    protected net.minecraft.util.ResourceLocation backgroundLocation = null;
++    protected Object backgroundMap;
 +    /**
 +     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
 +     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public ResourceLocation getBackgroundIconTexture()
++    public net.minecraft.util.ResourceLocation getBackgroundLocation()
 +    {
-+        return (texture == null ? TextureMap.field_110576_c : texture);
-+    }
-+
-+    /**
-+     * Sets which icon index to use as the background image of the slot when it's empty.
-+     * @param icon The icon to use, null for none
-+     */
-+    public void setBackgroundIcon(IIcon icon)
-+    {
-+        backgroundIcon = icon;
++        return (backgroundLocation == null ? net.minecraft.client.renderer.texture.TextureMap.field_110575_b : backgroundLocation);
 +    }
 +
 +    /**
@@ -65,9 +40,33 @@
 +     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public void setBackgroundIconTexture(ResourceLocation texture)
++    public void setBackgroundLocation(net.minecraft.util.ResourceLocation texture)
 +    {
-+        this.texture = texture;
++        this.backgroundLocation = texture;
++    }
++
++    /**
++     * Sets which icon index to use as the background image of the slot when it's empty.
++     * Getter is func_178171_c
++     * @param icon The icon to use, null for none
++     */
++    public void setBackgroundName(String name)
++    {
++        this.backgroundName = name;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.client.renderer.texture.TextureAtlasSprite getBackgroundSprite()
++    {
++        String name = func_178171_c();
++        return name == null ? null : getBackgroundMap().func_110572_b(name);
++    }
++
++    @SideOnly(Side.CLIENT)
++    protected net.minecraft.client.renderer.texture.TextureMap getBackgroundMap()
++    {
++        if (backgroundMap == null) backgroundMap = Minecraft.func_71410_x().func_147117_R();
++        return (net.minecraft.client.renderer.texture.TextureMap)backgroundMap;
 +    }
 +
 +    /**

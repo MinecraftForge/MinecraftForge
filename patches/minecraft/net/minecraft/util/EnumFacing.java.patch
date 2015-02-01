@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/util/EnumFacing.java
++++ ../src-work/minecraft/net/minecraft/util/EnumFacing.java
+@@ -376,7 +376,7 @@
+         }
+     }
+ 
+-    public static enum Plane implements Predicate, Iterable {
++    public static enum Plane implements Predicate, Iterable<EnumFacing> { //Forge re-add generic because it just makes life easier.
+         HORIZONTAL,
+         VERTICAL;
+ 

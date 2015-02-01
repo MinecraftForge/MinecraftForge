@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
@@ -13,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 public class ShapelessOreRecipe implements IRecipe
 {
@@ -110,9 +110,9 @@ public class ShapelessOreRecipe implements IRecipe
                     {
                         match = OreDictionary.itemMatches((ItemStack)next, slot, false);
                     }
-                    else if (next instanceof ArrayList)
+                    else if (next instanceof List)
                     {
-                        Iterator<ItemStack> itr = ((ArrayList<ItemStack>)next).iterator();
+                        Iterator<ItemStack> itr = ((List<ItemStack>)next).iterator();
                         while (itr.hasNext() && !match)
                         {
                             match = OreDictionary.itemMatches(itr.next(), slot, false);
@@ -145,5 +145,11 @@ public class ShapelessOreRecipe implements IRecipe
     public ArrayList<Object> getInput()
     {
         return this.input;
+    }
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
+    {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
 }

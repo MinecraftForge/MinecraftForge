@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
-@@ -17,5 +17,8 @@
-         this.field_72986_A = new DerivedWorldInfo(p_i45283_6_.func_72912_H());
+@@ -51,19 +51,22 @@
+         });
      }
  
 -    protected void func_73042_a() throws MinecraftException {}
@@ -9,4 +9,20 @@
 +    {
 +        this.perWorldStorage.func_75744_a();
 +    }
- }
+ 
+     public World func_175643_b()
+     {
+         this.field_72988_C = this.field_175743_a.func_175693_T();
+         this.field_96442_D = this.field_175743_a.func_96441_U();
+         String s = VillageCollection.func_176062_a(this.field_73011_w);
+-        VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, s);
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_75742_a(VillageCollection.class, s);
+ 
+         if (villagecollection == null)
+         {
+             this.field_72982_D = new VillageCollection(this);
+-            this.field_72988_C.func_75745_a(s, this.field_72982_D);
++            this.perWorldStorage.func_75745_a(s, this.field_72982_D);
+         }
+         else
+         {

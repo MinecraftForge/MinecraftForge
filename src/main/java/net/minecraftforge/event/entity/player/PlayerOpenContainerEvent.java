@@ -1,6 +1,6 @@
 package net.minecraftforge.event.entity.player;
 
-import cpw.mods.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 
@@ -13,12 +13,12 @@ public class PlayerOpenContainerEvent extends PlayerEvent
     /**
      * This event is fired when a player attempts to view a container during
      * player tick.
-     * 
+     *
      * setResult ALLOW to allow the container to stay open
      * setResult DENY to force close the container (denying access)
-     * 
-     * DEFAULT is vanilla behaviour
-     * 
+     *
+     * DEFAULT is vanilla behavior
+     *
      */
 
     public PlayerOpenContainerEvent(EntityPlayer player, Container openContainer)

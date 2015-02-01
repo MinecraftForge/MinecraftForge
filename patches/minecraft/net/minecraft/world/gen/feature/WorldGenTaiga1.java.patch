@@ -1,54 +1,50 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
-@@ -2,9 +2,11 @@
- 
- import java.util.Random;
- import net.minecraft.block.Block;
-+import net.minecraft.block.BlockSapling;
- import net.minecraft.block.material.Material;
- import net.minecraft.init.Blocks;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.util.ForgeDirection;
- 
- public class WorldGenTaiga1 extends WorldGenAbstractTree
- {
-@@ -50,7 +52,7 @@
+@@ -50,7 +50,7 @@
+                     {
+                         if (i1 >= 0 && i1 < 256)
                          {
-                             Block block = p_76484_1_.func_147439_a(i2, l1, j2);
- 
--                            if (!this.func_150523_a(block))
-+                            if (!this.isReplaceable(p_76484_1_, i2, l1, j2))
+-                            if (!this.func_150523_a(p_180709_1_.func_180495_p(new BlockPos(j1, i1, k1)).func_177230_c()))
++                            if (!this.isReplaceable(p_180709_1_, new BlockPos(j1, i1, k1)))
                              {
                                  flag = false;
                              }
-@@ -71,9 +73,10 @@
+@@ -69,11 +69,13 @@
+             }
+             else
              {
-                 Block block1 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ - 1, p_76484_5_);
+-                Block block = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
++                BlockPos down = p_180709_3_.func_177977_b();
++                Block block = p_180709_1_.func_180495_p(down).func_177230_c();
++                boolean isSoil = block.canSustainPlant(p_180709_1_, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_150345_g);
  
--                if ((block1 == Blocks.field_150349_c || block1 == Blocks.field_150346_d) && p_76484_4_ < 256 - l - 1)
-+                boolean isSoil = block1.canSustainPlant(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, ForgeDirection.UP, (BlockSapling)Blocks.field_150345_g);
-+                if (isSoil && p_76484_4_ < 256 - l - 1)
+-                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d) && p_180709_3_.func_177956_o() < 256 - i - 1)
++                if (isSoil && p_180709_3_.func_177956_o() < 256 - i - 1)
                  {
--                    this.func_150515_a(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, Blocks.field_150346_d);
-+                    block1.onPlantGrow(p_76484_1_, p_76484_3_, p_76484_4_ - 1, p_76484_5_, p_76484_3_, p_76484_4_, p_76484_5_);
-                     i3 = 0;
+-                    this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
++                    block.onPlantGrow(p_180709_1_, down, p_180709_3_);
+                     k2 = 0;
  
-                     for (i2 = p_76484_4_ + l; i2 >= p_76484_4_ + i1; --i2)
-@@ -86,7 +89,7 @@
-                             {
-                                 int l2 = k2 - p_76484_5_;
- 
--                                if ((Math.abs(j3) != i3 || Math.abs(l2) != i3 || i3 <= 0) && !p_76484_1_.func_147439_a(j2, i2, k2).func_149730_j())
-+                                if ((Math.abs(j3) != i3 || Math.abs(l2) != i3 || i3 <= 0) && p_76484_1_.func_147439_a(j2, i2, k2).canBeReplacedByLeaves(p_76484_1_, j2, i2, k2))
+                     for (j1 = p_180709_3_.func_177956_o() + i; j1 >= p_180709_3_.func_177956_o() + j; --j1)
+@@ -90,7 +92,7 @@
                                  {
-                                     this.func_150516_a(p_76484_1_, j2, i2, k2, Blocks.field_150362_t, 1);
-                                 }
-@@ -107,7 +110,7 @@
-                     {
-                         Block block2 = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_ + i2, p_76484_5_);
+                                     BlockPos blockpos1 = new BlockPos(k1, j1, i2);
  
--                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j)
-+                        if (block2.isAir(p_76484_1_, p_76484_3_, p_76484_4_ + i2, p_76484_5_) || block2.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_ + i2, p_76484_5_))
+-                                    if (!p_180709_1_.func_180495_p(blockpos1).func_177230_c().func_149730_j())
++                                    if (p_180709_1_.func_180495_p(blockpos1).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos1))
+                                     {
+                                         this.func_175905_a(p_180709_1_, blockpos1, Blocks.field_150362_t, BlockPlanks.EnumType.SPRUCE.func_176839_a());
+                                     }
+@@ -110,9 +112,10 @@
+ 
+                     for (j1 = 0; j1 < i - 1; ++j1)
+                     {
+-                        Block block1 = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(j1)).func_177230_c();
++                        BlockPos upN = p_180709_3_.func_177981_b(j1);
++                        Block block1 = p_180709_1_.func_180495_p(upN).func_177230_c();
+ 
+-                        if (block1.func_149688_o() == Material.field_151579_a || block1.func_149688_o() == Material.field_151584_j)
++                        if (block1.isAir(p_180709_1_, upN) || block1.isLeaves(p_180709_1_, upN))
                          {
-                             this.func_150516_a(p_76484_1_, p_76484_3_, p_76484_4_ + i2, p_76484_5_, Blocks.field_150364_r, 1);
+                             this.func_175905_a(p_180709_1_, p_180709_3_.func_177981_b(j1), Blocks.field_150364_r, BlockPlanks.EnumType.SPRUCE.func_176839_a());
                          }

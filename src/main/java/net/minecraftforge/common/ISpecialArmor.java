@@ -64,7 +64,7 @@ public interface ISpecialArmor
      * @param slot The armor slot the item is in.
      */
     public abstract void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot);
-    
+
     public static class ArmorProperties implements Comparable<ArmorProperties>
     {
         public int    Priority    = 0;
@@ -90,7 +90,7 @@ public interface ISpecialArmor
          * @param damage The total damage being done
          * @return The left over damage that has not been absorbed by the armor
          */
-        public static float ApplyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
+        public static float applyArmor(EntityLivingBase entity, ItemStack[] inventory, DamageSource source, double damage)
         {
             if (DEBUG)
             {

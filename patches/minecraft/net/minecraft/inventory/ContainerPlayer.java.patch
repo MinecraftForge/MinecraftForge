@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -48,7 +48,8 @@
+@@ -47,7 +47,8 @@
                  }
                  public boolean func_75214_a(ItemStack p_75214_1_)
                  {
@@ -9,4 +9,4 @@
 +                    return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, k, field_82862_h);
                  }
                  @SideOnly(Side.CLIENT)
-                 public IIcon func_75212_b()
+                 public String func_178171_c()

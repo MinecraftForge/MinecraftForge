@@ -2,10 +2,11 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 /**
  * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes of
@@ -14,11 +15,11 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 public abstract class EntityViewRenderEvent extends Event
 {
     public final EntityRenderer renderer;
-    public final EntityLivingBase entity;
+    public final Entity entity;
     public final Block block;
     public final double renderPartialTicks;
 
-    public EntityViewRenderEvent(EntityRenderer renderer, EntityLivingBase entity, Block block, double renderPartialTicks)
+    public EntityViewRenderEvent(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks)
     {
         this.renderer = renderer;
         this.entity = entity;
@@ -35,13 +36,13 @@ public abstract class EntityViewRenderEvent extends Event
     {
         public float density;
 
-        public FogDensity(EntityRenderer renderer, EntityLivingBase entity, Block block, double renderPartialTicks, float density)
+        public FogDensity(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float density)
         {
             super(renderer, entity, block, renderPartialTicks);
             this.density = density;
         }
     }
-    
+
     /**
      * Event that allows any feature to customize the rendering of fog.
      */
@@ -50,8 +51,8 @@ public abstract class EntityViewRenderEvent extends Event
     {
         public final int fogMode;
         public final float farPlaneDistance;
-        
-        public RenderFogEvent(EntityRenderer renderer, EntityLivingBase entity, Block block, double renderPartialTicks, int fogMode, float farPlaneDistance)
+
+        public RenderFogEvent(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, int fogMode, float farPlaneDistance)
         {
             super(renderer, entity, block, renderPartialTicks);
             this.fogMode = fogMode;
@@ -69,7 +70,7 @@ public abstract class EntityViewRenderEvent extends Event
         public float green;
         public float blue;
 
-        public FogColors(EntityRenderer renderer, EntityLivingBase entity, Block block, double renderPartialTicks, float red, float green, float blue)
+        public FogColors(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float red, float green, float blue)
         {
             super(renderer, entity, block, renderPartialTicks);
             this.red = red;

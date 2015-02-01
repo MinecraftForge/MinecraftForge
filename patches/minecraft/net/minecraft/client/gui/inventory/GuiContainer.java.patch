@@ -1,51 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -6,6 +6,7 @@
+@@ -5,6 +5,7 @@
  import java.util.Iterator;
  import java.util.Set;
  import net.minecraft.client.Minecraft;
 +import net.minecraft.client.gui.FontRenderer;
  import net.minecraft.client.gui.GuiScreen;
+ import net.minecraft.client.renderer.GlStateManager;
  import net.minecraft.client.renderer.OpenGlHelper;
- import net.minecraft.client.renderer.RenderHelper;
-@@ -112,7 +113,11 @@
-             }
-         }
- 
-+        //Forge: Force lighting to be disabled as there are some issue where lighting would
-+        //incorrectly be applied based on items that are in the inventory.
-+        GL11.glDisable(GL11.GL_LIGHTING);
-         this.func_146979_b(p_73863_1_, p_73863_2_);
-+        GL11.glEnable(GL11.GL_LIGHTING);
-         InventoryPlayer inventoryplayer = this.field_146297_k.field_71439_g.field_71071_by;
-         ItemStack itemstack = this.field_147012_x == null ? inventoryplayer.func_70445_o() : this.field_147012_x;
- 
-@@ -176,8 +181,11 @@
-         GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+@@ -178,8 +179,11 @@
+         GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
          this.field_73735_i = 200.0F;
-         field_146296_j.field_77023_b = 200.0F;
--        field_146296_j.func_82406_b(this.field_146289_q, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_);
--        field_146296_j.func_94148_a(this.field_146289_q, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
+         this.field_146296_j.field_77023_b = 200.0F;
 +        FontRenderer font = null;
 +        if (p_146982_1_ != null) font = p_146982_1_.func_77973_b().getFontRenderer(p_146982_1_);
 +        if (font == null) font = field_146289_q;
-+        field_146296_j.func_82406_b(font, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_);
-+        field_146296_j.func_94148_a(font, this.field_146297_k.func_110434_K(), p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
+         this.field_146296_j.func_180450_b(p_146982_1_, p_146982_2_, p_146982_3_);
+-        this.field_146296_j.func_180453_a(this.field_146289_q, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
++        this.field_146296_j.func_180453_a(font, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x == null ? 0 : 8), p_146982_4_);
          this.field_73735_i = 0.0F;
-         field_146296_j.field_77023_b = 0.0F;
+         this.field_146296_j.field_77023_b = 0.0F;
      }
-@@ -243,8 +251,10 @@
-             if (iicon != null)
+@@ -240,13 +244,12 @@
+ 
+         if (itemstack == null)
+         {
+-            String s1 = p_146977_1_.func_178171_c();
++            TextureAtlasSprite textureatlassprite = p_146977_1_.getBackgroundSprite();
+ 
+-            if (s1 != null)
++            if (textureatlassprite != null)
              {
-                 GL11.glDisable(GL11.GL_LIGHTING);
-+                GL11.glEnable(GL11.GL_BLEND); // Forge: Blending needs to be enabled for this.
-                 this.field_146297_k.func_110434_K().func_110577_a(TextureMap.field_110576_c);
-                 this.func_94065_a(i, j, iicon, 16, 16);
-+                GL11.glDisable(GL11.GL_BLEND); // Forge: And clean that up
-                 GL11.glEnable(GL11.GL_LIGHTING);
+-                TextureAtlasSprite textureatlassprite = this.field_146297_k.func_147117_R().func_110572_b(s1);
+                 GlStateManager.func_179140_f();
+-                this.field_146297_k.func_110434_K().func_110577_a(TextureMap.field_110575_b);
++                this.field_146297_k.func_110434_K().func_110577_a(p_146977_1_.getBackgroundLocation());
+                 this.func_175175_a(i, j, textureatlassprite, 16, 16);
+                 GlStateManager.func_179145_e();
                  flag1 = true;
-             }
-@@ -458,6 +468,7 @@
+@@ -465,6 +468,7 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {

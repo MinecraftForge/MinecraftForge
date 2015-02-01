@@ -1,19 +1,17 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-
-import cpw.mods.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 
 /**
- * SaplingGrowTreeEvent is fired when a spling grows into a tree.<br>
+ * SaplingGrowTreeEvent is fired when a sapling grows into a tree.<br>
  * This event is fired during sapling growth in
- * BlockSapling#func_149878_d(World, int, int, int, Random).<br>
+ * BlockSapling#func_149878_d(World, BlockPos, Random).<br>
  * <br>
- * {@link #x} contains the x-coordinate of the growing sapling. <br>
- * {@link #y} contains the y-coordinate of the growing sapling. <br>
- * {@link #z} contains the z-coordinate of the growing sapling. <br>
+ * {@link #pos} contains the coordinates of the growing sapling. <br>
  * {@link #rand} contains an instance of Random for use. <br>
  * <br>
  * This event is not {@link Cancelable}.<br>
@@ -26,17 +24,13 @@ import net.minecraftforge.event.world.WorldEvent;
 @HasResult
 public class SaplingGrowTreeEvent extends WorldEvent
 {
-    public final int x;
-    public final int y;
-    public final int z;
+    public final BlockPos pos;
     public final Random rand;
-    
-    public SaplingGrowTreeEvent(World world, Random rand, int x, int y, int z)
+
+    public SaplingGrowTreeEvent(World world, Random rand, BlockPos pos)
     {
         super(world);
         this.rand = rand;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
     }
 }

@@ -6,12 +6,13 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
-import net.minecraft.util.IIcon;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.LoaderException;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.LoaderException;
 import net.minecraft.item.EnumRarity;
 
 /**
@@ -41,8 +42,8 @@ public class Fluid
     protected String unlocalizedName;
 
     /** The Icons for this fluid. */
-    protected IIcon stillIcon;
-    protected IIcon flowingIcon;
+    protected TextureAtlasSprite stillIcon;
+    protected TextureAtlasSprite flowingIcon;
 
     /**
      * The light level emitted by this fluid.
@@ -62,7 +63,7 @@ public class Fluid
     /**
      * Temperature of the fluid - completely arbitrary; higher temperature indicates that the fluid is
      * hotter than air.
-     * 
+     *
      * Default value is approximately the real-life room temperature of water in degrees Kelvin.
      */
     protected int temperature = 295;
@@ -89,7 +90,7 @@ public class Fluid
      *
      * Used primarily in tool tips.
      */
-    protected EnumRarity rarity = EnumRarity.common;
+    protected EnumRarity rarity = EnumRarity.COMMON;
 
     /**
      * If there is a Block implementation of the Fluid, the Block is linked here.
@@ -194,7 +195,7 @@ public class Fluid
     {
         return getLocalizedName();
     }
-    
+
     /**
      * Use the FluidStack sensitive version above
      */
@@ -254,7 +255,7 @@ public class Fluid
     {
         return this.isGaseous;
     }
-    
+
     public EnumRarity getRarity()
     {
         return rarity;
@@ -265,36 +266,37 @@ public class Fluid
         return 0xFFFFFF;
     }
 
-    public final Fluid setStillIcon(IIcon stillIcon)
+
+    public final Fluid setStillIcon(TextureAtlasSprite stillIcon)
     {
         this.stillIcon = stillIcon;
         return this;
     }
 
-    public final Fluid setFlowingIcon(IIcon flowingIcon)
+    public final Fluid setFlowingIcon(TextureAtlasSprite flowingIcon)
     {
         this.flowingIcon = flowingIcon;
         return this;
     }
 
-    public final Fluid setIcons(IIcon stillIcon, IIcon flowingIcon)
+    public final Fluid setIcons(TextureAtlasSprite stillIcon, TextureAtlasSprite flowingIcon)
     {
         return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
     }
 
-    public final Fluid setIcons(IIcon commonIcon)
+    public final Fluid setIcons(TextureAtlasSprite commonIcon)
     {
         return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
     }
 
-    public IIcon getIcon(){ return getStillIcon(); }
+    public TextureAtlasSprite getIcon(){ return getStillIcon(); }
 
-    public IIcon getStillIcon()
+    public TextureAtlasSprite getStillIcon()
     {
         return this.stillIcon;
     }
 
-    public IIcon getFlowingIcon()
+    public TextureAtlasSprite getFlowingIcon()
     {
         return this.flowingIcon;
     }
@@ -307,16 +309,16 @@ public class Fluid
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    public IIcon getIcon(FluidStack stack){ return getIcon(); }
+    public TextureAtlasSprite getIcon(FluidStack stack){ return getIcon(); }
     /* World-based Accessors */
-    public int getLuminosity(World world, int x, int y, int z){ return getLuminosity(); }
-    public int getDensity(World world, int x, int y, int z){ return getDensity(); }
-    public int getTemperature(World world, int x, int y, int z){ return getTemperature(); }
-    public int getViscosity(World world, int x, int y, int z){ return getViscosity(); }
-    public boolean isGaseous(World world, int x, int y, int z){ return isGaseous(); }
-    public EnumRarity getRarity(World world, int x, int y, int z){ return getRarity(); }
-    public int getColor(World world, int x, int y, int z){ return getColor(); }
-    public IIcon getIcon(World world, int x, int y, int z){ return getIcon(); }
+    public int getLuminosity(World world, BlockPos pos){ return getLuminosity(); }
+    public int getDensity(World world, BlockPos pos){ return getDensity(); }
+    public int getTemperature(World world, BlockPos pos){ return getTemperature(); }
+    public int getViscosity(World world, BlockPos pos){ return getViscosity(); }
+    public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
+    public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
+    public int getColor(World world, BlockPos pos){ return getColor(); }
+    public TextureAtlasSprite getIcon(World world, BlockPos pos){ return getIcon(); }
 
     private static Map<String, String> legacyNames = Maps.newHashMap();
     static String convertLegacyName(String fluidName)

@@ -15,8 +15,8 @@
 +            System.out.println("check your instllation and post a console log from the launcher");
 +            System.out.println("when asking for help!");
 +            System.out.println("=========================================================");
-+            
 +        }
++
          this.field_74286_b = p_i1098_1_;
          this.field_148257_b = p_i1098_2_;
          this.field_148258_c = p_i1098_3_;

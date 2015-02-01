@@ -3,59 +3,56 @@ package net.minecraftforge.event.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class BlockEvent extends Event {
+import com.google.common.collect.ImmutableList;
+
+public class BlockEvent extends Event
+{
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
 
-    public final int x;
-    public final int y;
-    public final int z;
     public final World world;
-    public final Block block;
-    public final int blockMetadata;
-    public BlockEvent(int x, int y, int z, World world, Block block, int blockMetadata)
+    public final BlockPos pos;
+    public final IBlockState state;
+    public BlockEvent(World world, BlockPos pos, IBlockState state)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.world = world;
-        this.block = block;
-        this.blockMetadata = blockMetadata;
+        this.state = state;
     }
-    
+
     /**
      * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
      * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
-     * 
-     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you 
+     *
+     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you
      * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
-     * 
+     *
      * {@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
-     * 
+     *
      * @author cpw
      */
-    public static class HarvestDropsEvent extends BlockEvent {
+    public static class HarvestDropsEvent extends BlockEvent
+    {
         public final int fortuneLevel;
-        public final ArrayList<ItemStack> drops;
+        public final List<ItemStack> drops;
         public final boolean isSilkTouching;
         public float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
         public final EntityPlayer harvester; // May be null for non-player harvesting such as explosions or machines
 
-        public HarvestDropsEvent(int x, int y, int z, World world, Block block, int blockMetadata, int fortuneLevel, float dropChance, ArrayList<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
+        public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
         {
-            super(x, y, z, world, block, blockMetadata);
+            super(world, pos, state);
             this.fortuneLevel = fortuneLevel;
             this.dropChance = dropChance;
             this.drops = drops;
@@ -63,33 +60,32 @@ public class BlockEvent extends Event {
             this.harvester = harvester;
         }
     }
-    
+
     /**
      * Event that is fired when an Block is about to be broken by a player
      * Canceling this event will prevent the Block from being broken.
      */
     @Cancelable
-    public static class BreakEvent extends BlockEvent 
+    public static class BreakEvent extends BlockEvent
     {
         /** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
         private final EntityPlayer player;
         private int exp;
 
-        public BreakEvent(int x, int y, int z, World world, Block block, int blockMetadata, EntityPlayer player)
+        public BreakEvent(World world, BlockPos pos, IBlockState state, EntityPlayer player)
         {
-            super(x, y, z, world, block, blockMetadata);
+            super(world, pos, state);
             this.player = player;
 
-            if (block == null || !ForgeHooks.canHarvestBlock(block, player, blockMetadata) || // Handle empty block or player unable to break block scenario
-                block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player)) // If the block is being silk harvested, the exp dropped is 0
+            if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
+                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getSilkTouchModifier(player))) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
             else
             {
-                int meta = block.getDamageValue(world, x, y, z);
                 int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
-                this.exp = block.getExpDrop(world, meta, bonusLevel);
+                this.exp = state.getBlock().getExpDrop(world, pos, bonusLevel);
             }
         }
 
@@ -97,7 +93,7 @@ public class BlockEvent extends Event {
         {
             return player;
         }
-        
+
         /**
          * Get the experience dropped by the block after the event has processed
          *
@@ -125,16 +121,17 @@ public class BlockEvent extends Event {
      * If a Block Place event is cancelled, the block will not be placed.
      */
     @Cancelable
-    public static class PlaceEvent extends BlockEvent {
-
+    public static class PlaceEvent extends BlockEvent
+    {
         public final EntityPlayer player;
         public final ItemStack itemInHand;
         public final BlockSnapshot blockSnapshot;
-        public final Block placedBlock;
-        public final Block placedAgainst;
+        public final IBlockState placedBlock;
+        public final IBlockState placedAgainst;
 
-        public PlaceEvent(BlockSnapshot blockSnapshot, Block placedAgainst, EntityPlayer player) {
-            super(blockSnapshot.x, blockSnapshot.y, blockSnapshot.z, blockSnapshot.world, blockSnapshot.getCurrentBlock(), blockSnapshot.meta);
+        public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player)
+        {
+            super(blockSnapshot.world, blockSnapshot.pos, blockSnapshot.getCurrentBlock());
             this.player = player;
             this.itemInHand = player.getCurrentEquippedItem();
             this.blockSnapshot = blockSnapshot;
@@ -150,15 +147,17 @@ public class BlockEvent extends Event {
     /**
      * Fired when a single block placement action of a player triggers the
      * creation of multiple blocks(e.g. placing a bed block). The block returned
-     * by {@link #block} and its related methods is the block where
+     * by {@link #state} and its related methods is the block where
      * the placed block would exist if the placement only affected a single
      * block.
      */
     @Cancelable
-    public static class MultiPlaceEvent extends PlaceEvent {
+    public static class MultiPlaceEvent extends PlaceEvent
+    {
         private final List<BlockSnapshot> blockSnapshots;
 
-        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, Block placedAgainst, EntityPlayer player) {
+        public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, IBlockState placedAgainst, EntityPlayer player)
+        {
             super(blockSnapshots.get(0), placedAgainst, player);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
@@ -173,7 +172,8 @@ public class BlockEvent extends Event {
          *
          * @return immutable list of replaced BlockSnapshots
          */
-        public List<BlockSnapshot> getReplacedBlockSnapshots() {
+        public List<BlockSnapshot> getReplacedBlockSnapshots()
+        {
             return blockSnapshots;
         }
     }

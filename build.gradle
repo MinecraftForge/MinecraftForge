@@ -34,11 +34,12 @@ repositories {
 }
 
 minecraft {
-    version = '1.7.10'
-    mcpVersion = '9.05'
+    version = '1.8'
+    mcpVersion = '9.10'
+    mappings = 'snapshot_nodoc_20141130'
     fmlDir = projectDir.getAbsolutePath() + "/fml";
-    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
-    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
+    mainClass = 'net.minecraftforge.fml.relauncher.ServerLaunchWrapper'
+    tweakClass = 'net.minecraftforge.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
 }
 
