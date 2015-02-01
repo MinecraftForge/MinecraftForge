@@ -1,7 +1,7 @@
 diff -r -U 3 minecraft\net\minecraft\world\storage\ThreadedFileIOBase.java minecraft_patched\net\minecraft\world\storage\ThreadedFileIOBase.java
 --- minecraft\net\minecraft\world\storage\ThreadedFileIOBase.java
 +++ minecraft_patched\net\minecraft\world\storage\ThreadedFileIOBase.java
-@@ -21,6 +21,7 @@
+@@ -25,6 +25,7 @@
     }
  
     public void run() {

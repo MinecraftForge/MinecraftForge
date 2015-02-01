@@ -1,13 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -50,20 +50,12 @@
+@@ -52,26 +52,12 @@
  
      protected void func_76572_b()
      {
--        if (this.field_76579_a.func_72912_H().func_76067_t() == WorldType.field_77138_c)
+-        WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
+-
+-        if (worldtype == WorldType.field_77138_c)
 -        {
 -            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
--            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.func_150568_d(flatgeneratorinfo.func_82648_a()), 0.5F);
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.func_180276_a(flatgeneratorinfo.func_82648_a(), BiomeGenBase.field_180279_ad), 0.5F);
+-        }
+-        else if (worldtype == WorldType.field_180272_g)
+-        {
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76772_c, 0.0F);
 -        }
 -        else
 -        {
@@ -18,24 +24,17 @@
  
      public IChunkProvider func_76555_c()
      {
--        return (IChunkProvider)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r()));
+-        return (IChunkProvider)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
 +        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -179,19 +171,19 @@
+@@ -177,13 +163,13 @@
  
      public int func_76557_i()
      {
 -        return this.field_76577_b == WorldType.field_77138_c ? 4 : 64;
 +        return this.field_76577_b.getMinimumSpawnHeight(this.field_76579_a);
-     }
- 
-     @SideOnly(Side.CLIENT)
-     public boolean func_76564_j()
-     {
--        return this.field_76577_b != WorldType.field_77138_c && !this.field_76576_e;
-+        return this.field_76577_b.hasVoidParticles(this.field_76576_e);
      }
  
      @SideOnly(Side.CLIENT)

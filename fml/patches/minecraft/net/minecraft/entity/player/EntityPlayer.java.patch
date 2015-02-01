@@ -1,40 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -2,6 +2,9 @@
- 
- import com.google.common.base.Charsets;
- import com.mojang.authlib.GameProfile;
-+
-+import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import java.util.Collection;
-@@ -193,6 +196,7 @@
+@@ -200,6 +200,7 @@
  
      public void func_70071_h_()
      {
-+        FMLCommonHandler.instance().onPlayerPreTick(this);
-         if (this.field_71074_e != null)
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPreTick(this);
+         this.field_70145_X = this.func_175149_v();
+ 
+         if (this.func_175149_v())
+@@ -344,6 +345,7 @@
          {
-             ItemStack itemstack = this.field_71071_by.func_70448_g();
-@@ -316,6 +320,7 @@
-             this.field_71100_bB.func_75118_a(this);
-             this.func_71064_a(StatList.field_75948_k, 1);
+             this.func_70107_b(d3, this.field_70163_u, d4);
          }
-+        FMLCommonHandler.instance().onPlayerPostTick(this);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPostTick(this);
      }
  
      public int func_82145_z()
-@@ -2031,6 +2036,11 @@
-         }
+@@ -2139,6 +2141,22 @@
+         this.field_175153_bG = p_175150_1_;
      }
  
++    /**
++     * Opens a GUI with this player, uses FML's IGuiHandler system.
++     * Allows for extension by modders.
++     *
++     * @param mod The mod trying to open a GUI
++     * @param modGuiId GUI ID
++     * @param world Current World
++     * @param x Passed directly to IGuiHandler, data meaningless Typically world X position
++     * @param y Passed directly to IGuiHandler, data meaningless Typically world Y position
++     * @param z Passed directly to IGuiHandler, data meaningless Typically world Z position
++     */
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
 +    {
-+        FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
 +    }
 +
-     public static enum EnumStatus
+     public static enum EnumChatVisibility
      {
-         OK,
+         FULL(0, "options.chat.visibility.full"),
