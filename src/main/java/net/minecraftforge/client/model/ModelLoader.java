@@ -90,7 +90,10 @@ public class ModelLoader extends ModelBakery
     private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
-        loadVariants(stateMap.values());
+        Collection<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
+        variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
+        variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
+        loadVariants(variants);
     }
 
     @Override
