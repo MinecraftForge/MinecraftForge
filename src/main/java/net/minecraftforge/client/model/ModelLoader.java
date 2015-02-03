@@ -49,7 +49,6 @@ public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = new HashMap<ModelResourceLocation, IModel>();
     private final Set<ResourceLocation> resolveTextures = new HashSet<ResourceLocation>();
-    private final Set<ResourceLocation> uvLocked = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> textures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
 
@@ -116,6 +115,7 @@ public class ModelLoader extends ModelBakery
             try
             {
                 stateModels.put(location, new WeightedRandomModel(variants));
+
             }
             catch(Throwable e)
             {
@@ -247,12 +247,27 @@ public class ModelLoader extends ModelBakery
             ModelBlock model = this.model;
             if(hasItemModel(model)) model = makeItemModel(model);
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform())), Attributes.DEFAULT_BAKED_FORMAT);
-            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), uvLocked.contains(location)), Attributes.DEFAULT_BAKED_FORMAT);
+            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), state instanceof UVLock), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
         public IModelState getDefaultState()
         {
             return ModelRotation.X0_Y0;
+        }
+    }
+
+    public static class UVLock implements IModelState
+    {
+        private final IModelState state;
+
+        public UVLock(IModelState state)
+        {
+            this.state = state;
+        }
+
+        public TRSRTransformation apply(IModelPart part)
+        {
+            return state.apply(part);
         }
     }
 
@@ -310,7 +325,6 @@ public class ModelLoader extends ModelBakery
                 IModel model = new WeightedPartWrapper(getModel(loc));
                 models.add(model);
                 builder.put(model, new TRSRTransformation(v.getRotation()));
-                if(v.isUvLocked()) uvLocked.add(ModelLoaderRegistry.getActualLocation(loc));
             }
             defaultState = new MapModelState(builder.build());
         }
@@ -331,6 +345,12 @@ public class ModelLoader extends ModelBakery
             return Collections.emptyList();
         }
 
+        private IModelState addUV(boolean uv, IModelState state)
+        {
+            if(uv) return new UVLock(state);
+            return state;
+        }
+
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
@@ -341,13 +361,14 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = models.get(0);
-                return model.bake(state.apply(model), format, bakedTextureGetter);
+                return model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
-                builder.add(model.bake(state.apply(model), format, bakedTextureGetter), variants.get(i).getWeight());
+                Variant v =  variants.get(i);
+                builder.add(model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
             return new IFlexibleBakedModel.Wrapper(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
