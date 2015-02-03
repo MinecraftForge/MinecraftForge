@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -32,6 +33,7 @@ import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 import net.minecraftforge.fml.common.asm.transformers.ModAccessTransformer;
 import net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker;
 import net.minecraftforge.fml.common.launcher.FMLTweaker;
@@ -50,6 +52,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
 public class CoreModManager {
@@ -58,12 +61,22 @@ public class CoreModManager {
     private static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
     private static String[] rootPlugins = { "net.minecraftforge.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
     private static List<String> loadedCoremods = Lists.newArrayList();
+    private static Map<String, List<String>> transformers = Maps.newHashMap();
     private static List<FMLPluginWrapper> loadPlugins;
     private static boolean deobfuscatedEnvironment;
     private static FMLTweaker tweaker;
     private static File mcDir;
     private static List<String> reparsedCoremods = Lists.newArrayList();
     private static List<String> accessTransformers = Lists.newArrayList();
+    private static Set<String> rootNames = Sets.newHashSet();
+
+    static
+    {
+        for(String cls : rootPlugins)
+        {
+            rootNames.add(cls.substring(cls.lastIndexOf('.') + 1));
+        }
+    }
 
     private static class FMLPluginWrapper implements ITweaker {
         public final String name;
@@ -98,10 +111,19 @@ public class CoreModManager {
         public void injectIntoClassLoader(LaunchClassLoader classLoader)
         {
             FMLRelaunchLog.fine("Injecting coremod %s {%s} class transformers", name, coreModInstance.getClass().getName());
+            List<String> ts = Lists.newArrayList();
             if (coreModInstance.getASMTransformerClass() != null) for (String transformer : coreModInstance.getASMTransformerClass())
             {
                 FMLRelaunchLog.finer("Registering transformer %s", transformer);
-                classLoader.registerTransformer(transformer);
+                classLoader.registerTransformer(ASMTransformerWrapper.getTransformerWrapper(classLoader, transformer, name));
+                ts.add(transformer);
+            }
+            if(!rootNames.contains(name))
+            {
+                String loc;
+                if(location == null) loc = "unknown";
+                else loc = location.getName();
+                transformers.put(name + " (" + loc + ")", ts);
             }
             FMLRelaunchLog.fine("Injection complete");
 
@@ -405,6 +427,11 @@ public class CoreModManager {
         return loadedCoremods;
     }
 
+    public static Map<String, List<String>> getTransformers()
+    {
+        return transformers;
+    }
+
     public static List<String> getReparseableCoremods()
     {
         return reparsedCoremods;
@@ -608,5 +635,18 @@ public class CoreModManager {
     public static List<String> getAccessTransformers()
     {
         return accessTransformers;
+    }
+
+    public static void onCrash(StringBuilder builder)
+    {
+        if(!loadedCoremods.isEmpty() || !reparsedCoremods.isEmpty())
+        {
+            builder.append("\nWARNING: coremods are present:\n");
+            for(String coreMod : transformers.keySet())
+            {
+                builder.append("  ").append(coreMod).append('\n');
+            }
+            builder.append("Contact their authors BEFORE contacting forge\n\n");
+        }
     }
 }
