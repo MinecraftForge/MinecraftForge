@@ -812,8 +812,8 @@
 +    public boolean canSustainPlant(IBlockAccess world, BlockPos pos, EnumFacing direction, net.minecraftforge.common.IPlantable plantable)
 +    {
 +        IBlockState state = world.func_180495_p(pos);
-+        IBlockState plant = plantable.getPlant(world, pos.func_177984_a());
-+        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177984_a());
++        IBlockState plant = plantable.getPlant(world, pos.func_177972_a(direction));
++        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177972_a(direction));
 +
 +        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF && this == net.minecraft.init.Blocks.field_150434_aF)
 +        {
