@@ -11,8 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
@@ -20,6 +23,7 @@ import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.MissingVariantException;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variant;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variants;
+import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -35,7 +39,9 @@ import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
@@ -44,6 +50,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class ModelLoader extends ModelBakery
 {
@@ -51,6 +59,13 @@ public class ModelLoader extends ModelBakery
     private final Set<ResourceLocation> resolveTextures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> textures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
+    private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
+
+    private boolean isLoading = false;
+    public boolean isLoading()
+    {
+        return isLoading;
+    }
 
     public ModelLoader(IResourceManager manager, TextureMap map, BlockModelShapes shapes)
     {
@@ -62,6 +77,7 @@ public class ModelLoader extends ModelBakery
     @Override
     public IRegistry setupModelRegistry()
     {
+        isLoading = true;
         loadBlocks();
         loadItems();
         stateModels.put(MODEL_MISSING, getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath())));
@@ -103,19 +119,15 @@ public class ModelLoader extends ModelBakery
         {
             variants = definition.getVariants(location.getVariant());
         }
-        catch(MissingVariantException e) {}
-        if(variants == null)
+        catch(MissingVariantException e)
         {
-            // adding default variant for simple blocks
-            ResourceLocation loc = new ResourceLocation(location.getResourceDomain(), "block/" + location.getResourcePath());
-            variants = new Variants("normal", Lists.newArrayList(new Variant(loc, ModelRotation.X0_Y0, false, 1)));
+            missingVariants.add(location);
         }
-        if(!variants.getVariants().isEmpty())
+        if(variants != null && !variants.getVariants().isEmpty())
         {
             try
             {
                 stateModels.put(location, new WeightedRandomModel(variants));
-
             }
             catch(Throwable e)
             {
@@ -135,7 +147,11 @@ public class ModelLoader extends ModelBakery
                 ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
                 resolveTextures.add(ModelLoaderRegistry.getActualLocation(file));
                 IModel model = getModel(file);
-                if(model != null) stateModels.put(memory, model);
+                if(model == null || model == getMissingModel())
+                {
+                    missingVariants.add(memory);
+                }
+                else stateModels.put(memory, model);
             }
         }
     }
@@ -415,9 +431,65 @@ public class ModelLoader extends ModelBakery
             }
             catch(IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Exception loading model %s with vanilla loader, skipping", modelLocation);
+                if(loader.isLoading)
+                {
+                    // holding error until onPostBakeEvent
+                }
+                else FMLLog.log(Level.ERROR, e, "Exception loading model %s with vanilla loader, skipping", modelLocation);
                 return loader.getMissingModel();
             }
+        }
+    }
+
+    public void onPostBakeEvent(IRegistry modelRegistry)
+    {
+        for(ModelResourceLocation missing : missingVariants)
+        {
+            if(modelRegistry.getObject(missing) == null)
+            {
+                FMLLog.severe("Model definition for location %s not found", missing);
+            }
+        }
+        isLoading = false;
+    }
+
+    private static final Map<RegistryDelegate<Block>, IStateMapper> customStateMappers = Maps.newHashMap();
+
+    public static void setCustomStateMapper(Block block, IStateMapper mapper)
+    {
+        customStateMappers.put(block.delegate, mapper);
+    }
+
+    public static void onRegisterAllBlocks(BlockModelShapes shapes)
+    {
+        for (Entry<RegistryDelegate<Block>, IStateMapper> e : customStateMappers.entrySet())
+        {
+            shapes.registerBlockWithStateMapper(e.getKey().get(), e.getValue());
+        }
+    }
+
+    private static final Map<RegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
+    private static final Map<RegistryDelegate<Item>, Pair<Integer, ModelResourceLocation>> customModels = com.google.common.collect.Maps.newHashMap();
+
+    public static void setCustomModelResourceLocation(Item item, int metadata, ModelResourceLocation model)
+    {
+        customModels.put(item.delegate, Pair.of(metadata, model));
+    }
+
+    public static void setCustomMeshDefinition(Item item, ItemMeshDefinition meshDefinition)
+    {
+        customMeshDefinitions.put(item.delegate, meshDefinition);
+    }
+
+    public static void onRegisterItems(ItemModelMesher mesher)
+    {
+        for (Map.Entry<RegistryDelegate<Item>, ItemMeshDefinition> e : customMeshDefinitions.entrySet())
+        {
+            mesher.register(e.getKey().get(), e.getValue());
+        }
+        for (Entry<RegistryDelegate<Item>, Pair<Integer, ModelResourceLocation>> e : customModels.entrySet())
+        {
+            mesher.register(e.getKey().get(), e.getValue().getLeft(), e.getValue().getRight());
         }
     }
 }
