@@ -81,7 +81,14 @@
                  GlStateManager.func_179141_d();
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
-@@ -1078,6 +1072,19 @@
+@@ -1072,12 +1066,26 @@
+         this.func_175029_a(Blocks.field_150420_aW, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "brown_mushroom_block");
+         this.func_175029_a(Blocks.field_150419_aX, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "red_mushroom_block");
+         this.func_175031_a(Blocks.field_150380_bt, "dragon_egg");
++        net.minecraftforge.client.model.ModelLoader.onRegisterItems(this.field_175059_m);
+     }
+ 
+     public void func_110549_a(IResourceManager p_110549_1_)
      {
          this.field_175059_m.func_178085_b();
      }

@@ -31,6 +31,7 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -58,15 +59,11 @@ public class ModelLoaderRegistryDebug
         B3DLoader.instance.addDomain(MODID.toLowerCase());
         GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
         //ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), "forgedebug:dummymodel");
-        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), MODID.toLowerCase() + ":untitled2.b3d");
-    }
-
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
+        String modelLocation = MODID.toLowerCase() + ":untitled2.b3d";
+        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), modelLocation);
         Item item = Item.getItemFromBlock(CustomModelBlock.instance);
-        //Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("forgedebug:dummymodel", "inventory"));
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(MODID.toLowerCase() + ":untitled2.b3d", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(modelLocation, "inventory"));
+        //ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation("forgedebug:dummymodel", "inventory"));
     }
 
     public static class CustomModelBlock extends Block
