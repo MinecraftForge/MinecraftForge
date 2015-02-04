@@ -12,22 +12,22 @@
  
  public class ChunkProviderGenerate implements IChunkProvider
  {
-@@ -57,6 +62,15 @@
-     double[] field_147426_g;
-     private static final String __OBFID = "CL_00000396";
- 
-+    {
-+        field_73226_t = TerrainGen.getModdedMapGen(field_73226_t, CAVE);
-+        field_73225_u = (MapGenStronghold) TerrainGen.getModdedMapGen(field_73225_u, STRONGHOLD);
-+        field_73224_v = (MapGenVillage) TerrainGen.getModdedMapGen(field_73224_v, VILLAGE);
-+        field_73223_w = (MapGenMineshaft) TerrainGen.getModdedMapGen(field_73223_w, MINESHAFT);
-+        field_73233_x = (MapGenScatteredFeature) TerrainGen.getModdedMapGen(field_73233_x, SCATTERED_FEATURE);
-+        field_73232_y = TerrainGen.getModdedMapGen(field_73232_y, RAVINE);
-+    }
-+
-     public ChunkProviderGenerate(World p_i45636_1_, long p_i45636_2_, boolean p_i45636_4_, String p_i45636_5_)
-     {
-         this.field_177476_s = Blocks.field_150355_j;
+@@ -68,6 +73,15 @@
+         this.field_73233_x = new MapGenScatteredFeature();
+         this.field_73232_y = new MapGenRavine();
+         this.field_177474_A = new StructureOceanMonument();
++        {
++            field_73226_t = TerrainGen.getModdedMapGen(field_73226_t, CAVE);
++            field_73225_u = (MapGenStronghold)TerrainGen.getModdedMapGen(field_73225_u, STRONGHOLD);
++            field_73224_v = (MapGenVillage)TerrainGen.getModdedMapGen(field_73224_v, VILLAGE);
++            field_73223_w = (MapGenMineshaft)TerrainGen.getModdedMapGen(field_73223_w, MINESHAFT);
++            field_73233_x = (MapGenScatteredFeature)TerrainGen.getModdedMapGen(field_73233_x, SCATTERED_FEATURE);
++            field_73232_y = TerrainGen.getModdedMapGen(field_73232_y, RAVINE);
++            field_177474_A = (StructureOceanMonument)TerrainGen.getModdedMapGen(field_177474_A, OCEAN_MONUMENT);
++        }
+         this.field_73230_p = p_i45636_1_;
+         this.field_73229_q = p_i45636_4_;
+         this.field_177475_o = p_i45636_1_.func_72912_H().func_76067_t();
 @@ -96,6 +110,16 @@
              this.field_177477_r = ChunkProviderSettings.Factory.func_177865_a(p_i45636_5_).func_177864_b();
              this.field_177476_s = this.field_177477_r.field_177778_E ? Blocks.field_150353_l : Blocks.field_150355_j;
