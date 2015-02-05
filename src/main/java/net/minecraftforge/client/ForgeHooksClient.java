@@ -52,6 +52,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.LightmapEntryEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -458,6 +459,13 @@ public class ForgeHooksClient
     public static void onFogRender(EntityRenderer renderer, Entity entity, Block block, float partial, int mode, float distance)
     {
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, block, partial, mode, distance));
+    }
+    
+    public static LightmapEntryEvent getLightmapEntry(EntityRenderer renderer, int position, int originalRed, int originalGreen, int originalBlue, float partialTicks)
+    {
+        LightmapEntryEvent event = new LightmapEntryEvent(renderer, position, originalRed, originalGreen, originalBlue, partialTicks);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     /*
