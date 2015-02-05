@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
 +++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
-@@ -18,16 +18,35 @@
+@@ -18,16 +18,38 @@
  {
      private static final Pattern field_111053_a = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
      private static final Splitter field_135065_b = Splitter.on('=').limit(2);
@@ -35,10 +35,13 @@
          try
          {
 -            InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
++            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
++            if (inputstream == null) return table;
++
              Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
  
              while (iterator.hasNext())
-@@ -42,17 +61,17 @@
+@@ -42,17 +64,17 @@
                      {
                          String s1 = astring[0];
                          String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");
