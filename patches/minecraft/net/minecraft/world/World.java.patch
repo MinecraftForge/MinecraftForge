@@ -422,7 +422,7 @@
                      Block block = this.func_180495_p(new BlockPos(k1, l1, i2)).func_177230_c();
  
 -                    if (block.func_149688_o() != Material.field_151579_a)
-+                    if (block.isAir(this, new BlockPos(k1, l1, i2)))
++                    if (!block.isAir(this, new BlockPos(k1, l1, i2)))
                      {
                          return true;
                      }
