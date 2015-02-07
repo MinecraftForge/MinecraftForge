@@ -42,11 +42,13 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.base.Function;
 import com.google.common.primitives.Ints;
 
 @Mod(modid = ModelLoaderRegistryDebug.MODID, version = ModelLoaderRegistryDebug.VERSION)
+
 public class ModelLoaderRegistryDebug
 {
     public static final String MODID = "ForgeDebugModelLoaderRegistry";
@@ -55,9 +57,15 @@ public class ModelLoaderRegistryDebug
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
+        if (event.getSide() == Side.CLIENT)
+            clientPreInit();
+    }
+
+    private void clientPreInit()
+    {
         //ModelLoaderRegistry.registerLoader(DummyModelLoader.instance);
         B3DLoader.instance.addDomain(MODID.toLowerCase());
-        GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
         //ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), "forgedebug:dummymodel");
         String modelLocation = MODID.toLowerCase() + ":untitled2.b3d";
         ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock.instance), modelLocation);
