@@ -257,7 +257,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.player.getGameProfile().getId(), event.player.getGameProfile().getName());
+        UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
     }
 
     @Override
