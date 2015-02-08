@@ -67,6 +67,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.smelting.ItemSmeltEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
@@ -96,7 +97,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
-    
+
     public static NeighborNotifyEvent onNeighborNotify(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
     {
         NeighborNotifyEvent event = new NeighborNotifyEvent(world, pos, state, notifiedSides);
@@ -147,7 +148,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
-    
+
     public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)
     {
        LivingExperienceDropEvent event = new LivingExperienceDropEvent(entity, attackingPlayer, originalExperience);
@@ -328,7 +329,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.name;
     }
-    
+
     public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, String name, float volume, float pitch)
     {
         PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
@@ -367,18 +368,18 @@ public class ForgeEventFactory
     {
         return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
     }
-    
+
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
         boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj, isMounting));
-        
+
         if(isCanceled)
         {
             entityMounting.setPositionAndRotation(entityMounting.posX, entityMounting.posY, entityMounting.posZ, entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
             return false;
         }
-        else         
-            return true;       
+        else
+            return true;
     }
 
     public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
@@ -461,20 +462,35 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
-    
+
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
     {
         return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.fire.getDefaultState(), new BlockPos(player));
     }
-    
+
     public static boolean renderWaterOverlay(EntityPlayer player, float renderPartialTicks)
     {
         return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.water.getDefaultState(), new BlockPos(player));
     }
-    
+
     public static boolean renderBlockOverlay(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos pos)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
     }
 
+    public static int[] onItemAttemptSmelt(World world, BlockPos pos, ItemStack[] smeltingItemStacks, int cookTime, int totalCookTime)
+    {
+        int[] returnTimes = new int[2];
+        ItemSmeltEvent.Pre event = new ItemSmeltEvent.Pre(world, pos, smeltingItemStacks, cookTime, totalCookTime);
+        boolean cancel = MinecraftForge.EVENT_BUS.post(event);
+        returnTimes[0] = event.getCookTime();
+        returnTimes[1] = event.getTotalCookTime();
+        if(!cancel)++returnTimes[0];
+        return returnTimes;
+    }
+
+    public static void onItemSmelted(World world, BlockPos pos, ItemStack[] smeltingItemStacks)
+    {
+        MinecraftForge.EVENT_BUS.post(new ItemSmeltEvent.Post(world, pos, smeltingItemStacks));
+    }
 }

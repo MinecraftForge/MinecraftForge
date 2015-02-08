@@ -10,7 +10,18 @@
                              }
                          }
                      }
-@@ -285,7 +284,11 @@
+@@ -242,7 +241,9 @@
+ 
+                 if (this.func_145950_i() && this.func_145948_k())
+                 {
+-                    ++this.field_174906_k;
++                    int[] returnTimes = net.minecraftforge.event.ForgeEventFactory.onItemAttemptSmelt(this.field_145850_b, this.field_174879_c, this.field_145957_n, this.field_174906_k, this.field_174905_l);
++                    this.field_174906_k = returnTimes[0];
++                    this.field_174905_l = returnTimes[1];
+ 
+                     if (this.field_174906_k == this.field_174905_l)
+                     {
+@@ -285,7 +286,11 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
@@ -23,7 +34,7 @@
          }
      }
  
-@@ -301,7 +304,7 @@
+@@ -301,7 +306,7 @@
              }
              else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())
              {
@@ -32,7 +43,7 @@
              }
  
              if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
-@@ -348,7 +351,15 @@
+@@ -348,7 +353,15 @@
                  }
              }
  
