@@ -56,7 +56,6 @@ import com.google.common.collect.Sets;
 public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = new HashMap<ModelResourceLocation, IModel>();
-    private final Set<ResourceLocation> resolveTextures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> textures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
@@ -145,7 +144,6 @@ public class ModelLoader extends ModelBakery
             {
                 ResourceLocation file = getItemLocation(s);
                 ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
-                resolveTextures.add(ModelLoaderRegistry.getActualLocation(file));
                 IModel model = getModel(file);
                 if(model == null || model == getMissingModel())
                 {
@@ -221,10 +219,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            if(!resolveTextures.contains(location)) return Collections.emptyList();
-
             ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
-            builder.add(new ResourceLocation(model.resolveTextureName("particle")));
 
             if(hasItemModel(model))
             {
@@ -247,9 +242,12 @@ public class ModelLoader extends ModelBakery
                     }
                 }
             }
-            if(location.getResourcePath().startsWith("models/block/") || !ModelLoader.this.isBuiltinModel(model.getRootModel()))
+            for(String s : (Iterable<String>)model.textures.values())
             {
-                builder.addAll(ModelLoader.this.getTextureLocations(model));
+                if(!s.startsWith("#"))
+                {
+                    builder.add(new ResourceLocation(s));
+                }
             }
             return builder.build();
         }
@@ -336,7 +334,6 @@ public class ModelLoader extends ModelBakery
             for(Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
-                resolveTextures.add(ModelLoaderRegistry.getActualLocation(loc));
                 locations.add(loc);
                 IModel model = new WeightedPartWrapper(getModel(loc));
                 models.add(model);
@@ -352,12 +349,6 @@ public class ModelLoader extends ModelBakery
 
         public Collection<ResourceLocation> getTextures()
         {
-            /*ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
-            for(ResourceLocation loc : locations)
-            {
-                builder.addAll(getModel(loc).getTextures());
-            }
-            return builder.build();*/
             return Collections.emptyList();
         }
 
