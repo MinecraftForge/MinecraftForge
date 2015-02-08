@@ -502,7 +502,7 @@ public class B3DLoader implements ICustomModelLoader
                     }
                     else
                     {
-                        put(e, 1, 1, 1, 0);
+                        put(e, 1, 1, 1, 1);
                     }
                     break;
                 case UV:
