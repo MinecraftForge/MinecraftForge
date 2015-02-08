@@ -295,10 +295,17 @@ public class ForgeHooksClient
         renderPass = pass;
     }
 
-    static EnumWorldBlockLayer renderLayer = EnumWorldBlockLayer.SOLID;
+    static final ThreadLocal<EnumWorldBlockLayer> renderLayer = new ThreadLocal<EnumWorldBlockLayer>()
+    {
+        protected EnumWorldBlockLayer initialValue()
+        {
+            return EnumWorldBlockLayer.SOLID;
+        }
+    };
+
     public static void setRenderLayer(EnumWorldBlockLayer layer)
     {
-        renderLayer = layer;
+        renderLayer.set(layer);
     }
 
     public static ModelBase getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBase _default)
