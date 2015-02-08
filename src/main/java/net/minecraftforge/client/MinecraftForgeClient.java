@@ -49,7 +49,7 @@ public class MinecraftForgeClient
 
     public static EnumWorldBlockLayer getRenderLayer()
     {
-        return ForgeHooksClient.renderLayer;
+        return ForgeHooksClient.renderLayer.get();
     }
 
     private static BitSet stencilBits = new BitSet(8);
