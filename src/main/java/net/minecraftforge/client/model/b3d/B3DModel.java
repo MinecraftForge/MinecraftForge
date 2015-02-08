@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -187,8 +188,8 @@ public class B3DModel
                 throw new IOException("Unsupported major model version: " + ((float)version / 100));
             if(version % 100 > this.version % 100)
                 logger.warn(String.format("Minor version differnce in model: ", ((float)version / 100)));
-            List<Texture> textures = null;
-            List<Brush> brushes = null;
+            List<Texture> textures = Collections.EMPTY_LIST;
+            List<Brush> brushes = Collections.EMPTY_LIST;
             Node<?> root = null;
             while(buf.hasRemaining())
             {
