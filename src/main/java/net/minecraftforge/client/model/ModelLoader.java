@@ -468,11 +468,11 @@ public class ModelLoader extends ModelBakery
     }
 
     private static final Map<RegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
-    private static final Map<RegistryDelegate<Item>, Pair<Integer, ModelResourceLocation>> customModels = com.google.common.collect.Maps.newHashMap();
+    private static final Map<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
 
     public static void setCustomModelResourceLocation(Item item, int metadata, ModelResourceLocation model)
     {
-        customModels.put(item.delegate, Pair.of(metadata, model));
+        customModels.put(Pair.of(item.delegate, metadata), model);
     }
 
     public static void setCustomMeshDefinition(Item item, ItemMeshDefinition meshDefinition)
@@ -486,9 +486,9 @@ public class ModelLoader extends ModelBakery
         {
             mesher.register(e.getKey().get(), e.getValue());
         }
-        for (Entry<RegistryDelegate<Item>, Pair<Integer, ModelResourceLocation>> e : customModels.entrySet())
+        for (Entry<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
         {
-            mesher.register(e.getKey().get(), e.getValue().getLeft(), e.getValue().getRight());
+            mesher.register(e.getKey().getLeft().get(), e.getKey().getRight(), e.getValue());
         }
     }
 }
