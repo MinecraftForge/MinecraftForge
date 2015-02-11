@@ -241,7 +241,29 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -1023,12 +1110,15 @@
+@@ -1002,7 +1089,7 @@
+ 
+     public float func_82243_bO()
+     {
+-        int i = 0;
++        float f = 0.0F;
+         ItemStack[] aitemstack = this.field_71071_by.field_70460_b;
+         int j = aitemstack.length;
+ 
+@@ -1012,23 +1099,26 @@
+ 
+             if (itemstack != null)
+             {
+-                ++i;
++                f += itemstack.func_77973_b().getItemVisibility(itemstack);
+             }
+         }
+ 
+-        return (float)i / (float)this.field_71071_by.field_70460_b.length;
++        return f / (float)this.field_71071_by.field_70460_b.length;
+     }
+ 
+     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_)
      {
          if (!this.func_180431_b(p_70665_1_))
          {
