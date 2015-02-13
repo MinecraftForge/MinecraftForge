@@ -377,12 +377,30 @@ public class ModelLoader extends ModelBakery
                 Variant v =  variants.get(i);
                 builder.add(model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
-            return new IFlexibleBakedModel.Wrapper(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
+            return new FlexibleWeightedBakedModel(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
         public IModelState getDefaultState()
         {
             return defaultState;
+        }
+    }
+
+    private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
+    {
+        private final WeightedBakedModel parent;
+        private final VertexFormat format;
+
+        public FlexibleWeightedBakedModel(WeightedBakedModel parent, VertexFormat format)
+        {
+            super(parent.models);
+            this.parent = parent;
+            this.format = format;
+        }
+
+        public VertexFormat getFormat()
+        {
+            return format;
         }
     }
 
