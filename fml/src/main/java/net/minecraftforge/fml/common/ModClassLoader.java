@@ -14,18 +14,20 @@ package net.minecraftforge.fml.common;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.asm.transformers.ModAPITransformer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableList;
 
@@ -59,15 +61,18 @@ public class ModClassLoader extends URLClassLoader
     }
 
     public File[] getParentSources() {
-        List<URL> urls=mainClassLoader.getSources();
-        File[] sources=new File[urls.size()];
         try
         {
-            for (int i = 0; i<urls.size(); i++)
+            List<File> files=new ArrayList<File>();
+            for(URL url : mainClassLoader.getSources())
             {
-                sources[i]=new File(urls.get(i).toURI());
+                URI uri = url.toURI();
+                if(uri.getScheme() == "file")
+                {
+                    files.add(new File(uri));
+                }
             }
-            return sources;
+            return files.toArray(new File[]{});
         }
         catch (URISyntaxException e)
         {

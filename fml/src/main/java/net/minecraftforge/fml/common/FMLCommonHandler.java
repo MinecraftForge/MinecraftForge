@@ -55,6 +55,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
@@ -107,6 +108,28 @@ public class FMLCommonHandler
     private WeakReference<SaveHandler> handlerToCheck;
     private EventBus eventBus = new EventBus();
     private volatile CountDownLatch exitLatch = null;
+
+    private FMLCommonHandler()
+    {
+        registerCrashCallable(new ICrashCallable()
+        {
+            public String call() throws Exception
+            {
+                StringBuilder builder = new StringBuilder();
+                Joiner joiner = Joiner.on("\n  ");
+                for(String coreMod : CoreModManager.getTransformers().keySet())
+                {
+                    builder.append("\n" + coreMod + "\n  ").append(joiner.join(CoreModManager.getTransformers().get(coreMod)));
+                }
+                return builder.toString();
+            }
+
+            public String getLabel()
+            {
+                return "Loaded coremods (and transformers)";
+            }
+        });
+    }
     /**
      * The FML event bus. Subscribe here for FML related events
      *

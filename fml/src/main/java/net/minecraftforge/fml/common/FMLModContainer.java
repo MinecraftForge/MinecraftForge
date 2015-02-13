@@ -27,6 +27,7 @@ import java.util.Set;
 
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
+import net.minecraftforge.fml.common.asm.transformers.BlamingTransformer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
@@ -416,6 +417,7 @@ public class FMLModContainer implements ModContainer
     {
         try
         {
+            BlamingTransformer.addClasses(getModId(), candidate.getClassList());
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
             modClassLoader.clearNegativeCacheFor(candidate.getClassList());

@@ -20,6 +20,7 @@ public class FMLCorePlugin implements IFMLLoadingPlugin
     public String[] getASMTransformerClass()
     {
         return new String[] {
+                             "net.minecraftforge.fml.common.asm.transformers.BlamingTransformer",
                              "net.minecraftforge.fml.common.asm.transformers.MarkerTransformer",
                              "net.minecraftforge.fml.common.asm.transformers.SideTransformer",
                              "net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer",
