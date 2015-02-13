@@ -736,7 +736,7 @@ public class FMLCommonHandler
         boolean isEnhanced = false;
         for (String line : IOUtils.readLines(new ByteArrayInputStream(data), Charsets.UTF_8))
         {
-            if (line.charAt(0) == '#')
+            if (!line.isEmpty() && line.charAt(0) == '#')
             {
                 line = line.substring(1).trim();
                 if (line.equals("PARSE_ESCAPES"))
