@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4f;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -35,6 +37,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -632,5 +635,25 @@ public class ForgeHooksClient
             default:
                 FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
         }
+    }
+
+    public static void transform(Vector3d vec, Matrix4f m)
+    {
+        Vector4f tmp = new Vector4f((float)vec.x, (float)vec.y, (float)vec.z, 1f);
+        m.transform(tmp);
+        if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
+        vec.set(tmp.x, tmp.y, tmp.z);
+    }
+
+    public static Matrix4f getMatrix(ModelRotation modelRotation)
+    {
+        Matrix4f ret = new Matrix4f(modelRotation.getMatrix4d()), tmp = new Matrix4f();
+        tmp.setIdentity();
+        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
+        ret.mul(tmp, ret);
+        tmp.invert();
+        //tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
+        ret.mul(tmp);
+        return ret;
     }
 }

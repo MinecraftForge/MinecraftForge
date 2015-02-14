@@ -9,6 +9,7 @@ import javax.vecmath.Vector4f;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3i;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -57,7 +58,7 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation(ModelRotation rotation)
     {
-        this(new Matrix4f(rotation.getMatrix4d()));
+        this(rotation.getMatrix());
     }
 
     private static final TRSRTransformation identity;
@@ -432,9 +433,28 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public static EnumFacing rotate(Matrix4f matrix, EnumFacing facing)
     {
-        Vector4f vec = new Vector4f(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ(), 1);
+        Vec3i dir = facing.getDirectionVec();
+        Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 0);
         matrix.transform(vec);
-        return EnumFacing.getFacingFromVector(vec.x / vec.w, vec.y / vec.w, vec.z / vec.w);
+        return EnumFacing.getFacingFromVector(vec.x, vec.y, vec.z);
+    }
+
+    public static boolean isInteger(Matrix4f matrix)
+    {
+        Matrix4f m = new Matrix4f();
+        m.setIdentity();
+        m.m30 = m.m31 = m.m32 = 1;
+        m.m33 = 0;
+        m.mul(matrix, m);
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                float v = m.getElement(i, j) / m.getElement(3, j);
+                if(Math.abs(v - Math.round(v)) > 1e-5) return false;
+            }
+        }
+        return true;
     }
 
     public int rotate(EnumFacing facing, int vertexIndex)
