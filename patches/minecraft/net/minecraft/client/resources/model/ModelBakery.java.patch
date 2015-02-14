@@ -29,9 +29,12 @@
          TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c("particle")));
          SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(p_177578_1_)).func_177646_a(textureatlassprite);
          Iterator iterator = p_177578_1_.func_178298_a().iterator();
-@@ -516,11 +522,11 @@
+@@ -514,13 +520,13 @@
+                 BlockPartFace blockpartface = (BlockPartFace)blockpart.field_178240_c.get(enumfacing);
+                 TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c(blockpartface.field_178242_d)));
  
-                 if (blockpartface.field_178244_b == null)
+-                if (blockpartface.field_178244_b == null)
++                if (blockpartface.field_178244_b == null || !net.minecraftforge.client.model.TRSRTransformation.isInteger(p_177578_2_.getMatrix()))
                  {
 -                    builder.func_177648_a(this.func_177589_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_177578_2_, p_177578_3_));
 +                    builder.func_177648_a(this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, p_177578_2_, p_177578_3_));

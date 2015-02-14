@@ -240,6 +240,11 @@ public class B3DLoader implements ICustomModelLoader
         public static TRSRTransformation getNodeMatrix(Animation animation, Node<?> node, int frame)
         {
             TRSRTransformation ret = TRSRTransformation.identity();
+            if(node.getParent() != null)
+            {
+                TRSRTransformation pm = cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node.getParent(), frame));
+                ret = ret.compose(pm);
+            }
             Key key = null;
             if(animation != null) key = animation.getKeys().get(frame, node);
             else if(key == null && node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
@@ -445,14 +450,7 @@ public class B3DLoader implements ICustomModelLoader
                     // gets transformation in global space
                     public Matrix4f apply(Node<?> node)
                     {
-                        TRSRTransformation ret = TRSRTransformation.identity(), pm = null;
-                        if(node.getParent() != null) pm = new TRSRTransformation(apply(node.getParent()));
-                        if(pm != null)
-                        {
-                            ret = ret.compose(pm);
-                        }
-                        ret = ret.compose(state.apply(PartWrapper.create(node)));
-                        return ret.getMatrix();
+                        return state.apply(PartWrapper.create(node)).getMatrix();
                     }
                 });
                 for(Face f : faces)
