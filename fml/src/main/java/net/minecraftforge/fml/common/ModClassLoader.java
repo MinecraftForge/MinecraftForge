@@ -67,7 +67,7 @@ public class ModClassLoader extends URLClassLoader
             for(URL url : mainClassLoader.getSources())
             {
                 URI uri = url.toURI();
-                if(uri.getScheme() == "file")
+                if(uri.getScheme().equals("file"))
                 {
                     files.add(new File(uri));
                 }

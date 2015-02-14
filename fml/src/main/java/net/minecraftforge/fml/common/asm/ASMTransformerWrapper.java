@@ -103,14 +103,7 @@ public class ASMTransformerWrapper
         @Override
         public InputStream getInputStream()
         {
-            try
-            {
-                return new ByteArrayInputStream(wrapperCache.get(file));
-            }
-            catch (ExecutionException e)
-            {
-                throw new RuntimeException(e);
-            }
+            return new ByteArrayInputStream(wrapperCache.getUnchecked(file));
         }
 
         @Override
@@ -182,7 +175,7 @@ public class ASMTransformerWrapper
 
     private static String getWrapperName(String parentClass)
     {
-        return parentClass + "_$Wrapper";
+        return "$wrapper." + parentClass;
     }
 
     private static class WrapperVisitor extends ClassVisitor
