@@ -444,16 +444,19 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1998,7 +2130,7 @@
+@@ -1998,7 +2130,10 @@
  
      public IChatComponent func_145748_c_()
      {
 -        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
-+        ChatComponentText chatcomponenttext = new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString()));
++        ChatComponentText chatcomponenttext = new ChatComponentText("");
++        if (!prefixes.isEmpty()) for (net.minecraft.util.IChatComponent prefix : prefixes) chatcomponenttext.func_150257_a(prefix);
++        chatcomponenttext.func_150257_a(new ChatComponentText(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString())));
++        if (!suffixes.isEmpty()) for (net.minecraft.util.IChatComponent suffix : suffixes) chatcomponenttext.func_150257_a(suffix);
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          chatcomponenttext.func_150256_b().func_150209_a(this.func_174823_aP());
          chatcomponenttext.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2157,6 +2289,101 @@
+@@ -2157,6 +2292,120 @@
          net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  
@@ -550,6 +553,25 @@
 +    {
 +        this.displayname = ForgeEventFactory.getPlayerDisplayName(this, this.func_70005_c_());
 +    }
++    
++    private final java.util.Collection<net.minecraft.util.IChatComponent> prefixes = new java.util.LinkedList<net.minecraft.util.IChatComponent>();
++    private final java.util.Collection<net.minecraft.util.IChatComponent> suffixes = new java.util.LinkedList<net.minecraft.util.IChatComponent>();
++    
++    /**
++     * Add a prefix to the player's username in chat
++     * @param prefix The prefix
++     */
++    public void addPrefix(net.minecraft.util.IChatComponent prefix) { prefixes.add(prefix); }
++    
++    /**
++     * Add a suffix to the player's username in chat
++     * @param suffix The suffix
++     */
++    public void addSuffix(net.minecraft.util.IChatComponent suffix) { suffixes.add(suffix); }
++    
++    public java.util.Collection<net.minecraft.util.IChatComponent> getPrefixes() { return this.prefixes; }
++    public java.util.Collection<net.minecraft.util.IChatComponent> getSuffixes() { return this.suffixes; }
++
 +    /* ======================================== FORGE END  =====================================*/
 +
      public static enum EnumChatVisibility
