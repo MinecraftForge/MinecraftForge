@@ -23,7 +23,7 @@ public class ForgeCommand extends CommandBase {
     }
 
     @Override
-    public String getName()
+    public String getCommandName()
     {
         return "forge";
     }
@@ -40,7 +40,7 @@ public class ForgeCommand extends CommandBase {
         return 2;
     }
     @Override
-    public void execute(ICommandSender sender, String[] args) throws CommandException
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length == 0)
         {
