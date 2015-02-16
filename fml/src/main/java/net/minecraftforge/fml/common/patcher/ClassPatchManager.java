@@ -36,6 +36,7 @@ public class ClassPatchManager {
     public static final ClassPatchManager INSTANCE = new ClassPatchManager();
 
     public static final boolean dumpPatched = Boolean.parseBoolean(System.getProperty("fml.dumpPatchedClasses", "false"));
+    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugClassPatchManager", "false"));
 
     private GDiffPatcher patcher = new GDiffPatcher();
     private ListMultimap<String, ClassPatch> patches;
@@ -50,7 +51,6 @@ public class ClassPatchManager {
             FMLRelaunchLog.info("Dumping patched classes to %s",tempDir.getAbsolutePath());
         }
     }
-
 
     public byte[] getPatchedResource(String name, String mappedName, LaunchClassLoader loader) throws IOException
     {
@@ -73,7 +73,8 @@ public class ClassPatchManager {
             return inputData;
         }
         boolean ignoredError = false;
-        FMLRelaunchLog.fine("Runtime patching class %s (input size %d), found %d patch%s", mappedName, (inputData == null ? 0 : inputData.length), list.size(), list.size()!=1 ? "es" : "");
+        if (DEBUG)
+            FMLRelaunchLog.fine("Runtime patching class %s (input size %d), found %d patch%s", mappedName, (inputData == null ? 0 : inputData.length), list.size(), list.size()!=1 ? "es" : "");
         for (ClassPatch patch: list)
         {
             if (!patch.targetClassName.equals(mappedName) && !patch.sourceClassName.equals(name))
@@ -120,7 +121,7 @@ public class ClassPatchManager {
                 }
             }
         }
-        if (!ignoredError)
+        if (!ignoredError && DEBUG)
         {
             FMLRelaunchLog.fine("Successfully applied runtime patches for %s (new size %d)", mappedName, inputData.length);
         }
@@ -192,13 +193,15 @@ public class ClassPatchManager {
             }
         } while (true);
         FMLRelaunchLog.fine("Read %d binary patches", patches.size());
-        FMLRelaunchLog.fine("Patch list :\n\t%s", Joiner.on("\t\n").join(patches.asMap().entrySet()));
+        if (DEBUG)
+            FMLRelaunchLog.fine("Patch list :\n\t%s", Joiner.on("\t\n").join(patches.asMap().entrySet()));
         patchedClasses.clear();
     }
 
     private ClassPatch readPatch(JarEntry patchEntry, JarInputStream jis)
     {
-        FMLRelaunchLog.finer("Reading patch data from %s", patchEntry.getName());
+        if (DEBUG)
+            FMLRelaunchLog.finer("Reading patch data from %s", patchEntry.getName());
         ByteArrayDataInput input;
         try
         {
