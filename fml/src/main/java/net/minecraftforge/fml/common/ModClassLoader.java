@@ -86,6 +86,55 @@ public class ModClassLoader extends URLClassLoader
         return STANDARD_LIBRARIES;
     }
 
+    public boolean isDefaultLibrary(File file)
+    {
+        // Should really pull this from the json somehow, but we dont have that at runtime.
+        String name = file.getName();
+        if (!name.endsWith(".jar")) return false;
+        String[] prefixes =
+        {
+            "launchwrapper-",
+            "asm-all-",
+            "akka-actor_2.11-",
+            "config-",
+            "scala-",
+            "jopt-simple-",
+            "lzma-",
+            "realms-",
+            "httpclient-",
+            "httpcore-",
+            "vecmath-",
+            "trove4j-",
+            "icu4j-core-mojang-",
+            "codecjorbis-",
+            "codecwav-",
+            "libraryjavawound-",
+            "librarylwjglopenal-",
+            "soundsystem-",
+            "netty-all-",
+            "quava-",
+            "commons-lang3-",
+            "commons-compress-",
+            "commons-logging-",
+            "commons-io-",
+            "commons-codec-",
+            "jinput-",
+            "jutils-",
+            "gson-",
+            "authlib-",
+            "log4j-api-",
+            "log4j-core-",
+            "lwjgl-",
+            "lwjgl_util-",
+            "twitch-"
+        };
+        for (String s : prefixes)
+        {
+            if (name.startsWith(s)) return true;
+        }
+        return false;
+    }
+
     public void clearNegativeCacheFor(Set<String> classList)
     {
         mainClassLoader.clearNegativeEntries(classList);

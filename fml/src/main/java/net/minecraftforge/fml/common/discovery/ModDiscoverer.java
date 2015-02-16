@@ -60,25 +60,27 @@ public class ModDiscoverer
         }
         else
         {
-            for (int i = 0; i < minecraftSources.length; i++)
+            int i = 0;
+            for (File source : minecraftSources)
             {
-                if (minecraftSources[i].isFile())
+                if (source.isFile())
                 {
-                    if (knownLibraries.contains(minecraftSources[i].getName()))
+                    if (knownLibraries.contains(source.getName()) || modClassLoader.isDefaultLibrary(source))
                     {
-                        FMLLog.finer("Skipping known library file %s", minecraftSources[i].getAbsolutePath());
+                        FMLLog.finer("Skipping known library file %s", source.getAbsolutePath());
                     }
                     else
                     {
-                        FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                        addCandidate(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, i==0, true));
+                        FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", source.getAbsolutePath());
+                        addCandidate(new ModCandidate(source, source, ContainerType.JAR, i==0, true));
                     }
                 }
                 else if (minecraftSources[i].isDirectory())
                 {
-                    FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                    addCandidate(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, i==0, true));
+                    FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", source.getAbsolutePath());
+                    addCandidate(new ModCandidate(source, source, ContainerType.DIR, i==0, true));
                 }
+                i++;
             }
         }
 
