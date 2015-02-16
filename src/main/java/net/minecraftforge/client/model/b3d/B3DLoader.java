@@ -470,9 +470,9 @@ public class B3DLoader implements ICustomModelLoader
             return quads;
         }
 
-        private void put(VertexFormatElement e, Number... ns)
+        private void put(VertexFormatElement e, Float... fs)
         {
-            Attributes.put(buf, e, true, 0, ns);
+            Attributes.put(buf, e, true, 0f, fs);
         }
 
         @SuppressWarnings("unchecked")
@@ -487,7 +487,7 @@ public class B3DLoader implements ICustomModelLoader
                 switch(e.getUsage())
                 {
                 case POSITION:
-                    put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1);
+                    put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1f);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
@@ -496,7 +496,7 @@ public class B3DLoader implements ICustomModelLoader
                     }
                     else
                     {
-                        put(e, 1, 1, 1, 1);
+                        put(e, 1f, 1f, 1f, 1f);
                     }
                     break;
                 case UV:
@@ -506,22 +506,22 @@ public class B3DLoader implements ICustomModelLoader
                         put(e,
                             sprite.getInterpolatedU(v.getTexCoords()[0].x * 16),
                             sprite.getInterpolatedV(v.getTexCoords()[0].y * 16),
-                            0,
-                            1
+                            0f,
+                            1f
                         );
                     }
                     else
                     {
-                        put(e, 0, 0, 0, 1);
+                        put(e, 0f, 0f, 0f, 1f);
                     }
                     break;
                 case NORMAL:
                     // TODO
-                    put(e, 0, 1, 0, 1);
+                    put(e, 0f, 1f, 0f, 1f);
                     break;
                 case GENERIC:
                     // TODO
-                    put(e, 0, 0, 0, 1);
+                    put(e, 0f, 0f, 0f, 0f);
                     break;
                 default:
                     break;

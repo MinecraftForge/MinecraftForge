@@ -70,7 +70,7 @@ public class Attributes
         return true;
     }
 
-    public static void put(ByteBuffer buf, VertexFormatElement e, boolean normalize, Number fill, Number... ns)
+    public static void put(ByteBuffer buf, VertexFormatElement e, boolean denormalize, Number fill, Number... ns)
     {
         if(e.getElementCount() > ns.length && fill == null) throw new IllegalArgumentException("not enough elements");
         Number n;
@@ -81,22 +81,22 @@ public class Attributes
             switch(e.getType())
             {
             case BYTE:
-                buf.put(normalize ? (byte)(n.floatValue() / (Byte.MAX_VALUE - 1)) : n.byteValue());
+                buf.put(denormalize ? (byte)(n.floatValue() * (Byte.MAX_VALUE - 1)) : n.byteValue());
                 break;
             case UBYTE:
-                buf.put(normalize ? (byte)(n.floatValue() / ((byte) -1)) : n.byteValue());
+                buf.put(denormalize ? (byte)(n.floatValue() * ((1 << Byte.SIZE) - 1)) : n.byteValue());
                 break;
             case SHORT:
-                buf.putShort(normalize ? (short)(n.floatValue() / (Short.MAX_VALUE - 1)) : n.shortValue());
+                buf.putShort(denormalize ? (short)(n.floatValue() * (Short.MAX_VALUE - 1)) : n.shortValue());
                 break;
             case USHORT:
-                buf.putShort(normalize ? (short)(n.floatValue() / ((short) -1)) : n.shortValue());
+                buf.putShort(denormalize ? (short)(n.floatValue() * ((1 << Short.SIZE) - 1)) : n.shortValue());
                 break;
             case INT:
-                buf.putInt(normalize ? (int)(n.doubleValue() / (Integer.MAX_VALUE - 1)) : n.intValue());
+                buf.putInt(denormalize ? (int)(n.doubleValue() * (Integer.MAX_VALUE - 1)) : n.intValue());
                 break;
             case UINT:
-                buf.putInt(normalize ? (int)(n.doubleValue() / ((int) - 1)) : n.intValue());
+                buf.putInt(denormalize ? (int)(n.doubleValue() * ((1L << Integer.SIZE) - 1)) : n.intValue());
                 break;
             case FLOAT:
                 buf.putFloat(n.floatValue());
