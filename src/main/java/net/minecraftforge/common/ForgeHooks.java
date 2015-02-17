@@ -10,6 +10,7 @@ import static net.minecraft.init.Blocks.lit_redstone_ore;
 import static net.minecraft.init.Blocks.redstone_ore;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -463,10 +464,17 @@ public class ForgeHooks
             String url = string.substring(start, end);
             IChatComponent link = new ChatComponentText(url);
 
-            // Add schema so client doesn't crash.
-            if (URI.create(url).getScheme() == null)
+            try
             {
-                url = "http://" + url;
+                // Add schema so client doesn't crash.
+                if ((new URI(url)).getScheme() == null)
+                    url = "http://" + url;
+            }
+            catch (URISyntaxException e)
+            {
+                // Bad syntax bail out!
+                ichat.appendText(url);
+                continue;
             }
 
             // Set the click event and append the link.
