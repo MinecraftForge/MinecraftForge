@@ -110,7 +110,7 @@ public class B3DModel
                 logger.error(String.format("texture %s is out of range", texture));
                 return null;
             }
-            else if(texture == -1) return null;
+            else if(texture == -1) return Texture.White;
             return textures.get(texture);
         }
 
@@ -486,6 +486,7 @@ public class B3DModel
 
     public static class Texture
     {
+        public static Texture White = new Texture("builtin/white", 0, 0, new Vector2f(0, 0), new Vector2f(1, 1), 0);
         private final String path;
         private final int flags;
         private final int blend;

@@ -33,6 +33,7 @@ import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.b3d.B3DModel.Animation;
@@ -459,6 +460,7 @@ public class B3DLoader implements ICustomModelLoader
                     List<Texture> textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures.isEmpty()) sprite = this.textures.get("missingno");
+                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
                     else sprite = this.textures.get(textures.get(0).getPath());
                     putVertexData(f.getV1(), sprite);
                     putVertexData(f.getV2(), sprite);
