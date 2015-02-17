@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -465,7 +466,7 @@ public class B3DLoader implements ICustomModelLoader
                     buf.flip();
                     int[] data = new int[VERTICES_IN_QUAD * format.getNextOffset() / BYTES_IN_INT];
                     buf.asIntBuffer().get(data);
-                    builder.add(new BakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z)));
+                    builder.add(new ColoredBakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z)));
                 }
                 quads = builder.build();
             }
