@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
-@@ -321,6 +321,7 @@
+@@ -19,7 +19,6 @@
+ import net.minecraft.block.BlockFire;
+ import net.minecraft.block.BlockFlowerPot;
+ import net.minecraft.block.BlockHopper;
+-import net.minecraft.block.BlockJukebox;
+ import net.minecraft.block.BlockLeaves;
+ import net.minecraft.block.BlockNewLeaf;
+ import net.minecraft.block.BlockNewLog;
+@@ -173,7 +172,6 @@
+         this.func_178121_a(Blocks.field_150361_u, (new StateMap.Builder()).func_178440_a(BlockNewLeaf.field_176240_P).func_178439_a("_leaves").func_178442_a(new IProperty[] {BlockLeaves.field_176236_b, BlockLeaves.field_176237_a}).func_178441_a());
+         this.func_178121_a(Blocks.field_150434_aF, (new StateMap.Builder()).func_178442_a(new IProperty[] {BlockCactus.field_176587_a}).func_178441_a());
+         this.func_178121_a(Blocks.field_150436_aH, (new StateMap.Builder()).func_178442_a(new IProperty[] {BlockReed.field_176355_a}).func_178441_a());
+-        this.func_178121_a(Blocks.field_150421_aI, (new StateMap.Builder()).func_178442_a(new IProperty[] {BlockJukebox.field_176432_a}).func_178441_a());
+         this.func_178121_a(Blocks.field_150483_bI, (new StateMap.Builder()).func_178442_a(new IProperty[] {BlockCommandBlock.field_176452_a}).func_178441_a());
+         this.func_178121_a(Blocks.field_150463_bK, (new StateMap.Builder()).func_178440_a(BlockWall.field_176255_P).func_178439_a("_wall").func_178441_a());
+         this.func_178121_a(Blocks.field_150398_cm, (new StateMap.Builder()).func_178440_a(BlockDoublePlant.field_176493_a).func_178441_a());
+@@ -321,6 +319,7 @@
                  return new ModelResourceLocation(s + "_double_slab", s1);
              }
          });

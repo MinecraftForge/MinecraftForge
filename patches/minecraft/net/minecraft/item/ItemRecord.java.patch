@@ -1,6 +1,54 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
-@@ -75,4 +75,15 @@
+@@ -1,9 +1,12 @@
+ package net.minecraft.item;
+ 
+ import com.google.common.collect.Maps;
++
+ import java.util.List;
+ import java.util.Map;
++
+ import net.minecraft.block.BlockJukebox;
++import net.minecraft.block.BlockJukebox.TileEntityJukebox;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -30,27 +33,20 @@
+     }
+ 
+     public boolean func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumFacing p_180614_5_, float p_180614_6_, float p_180614_7_, float p_180614_8_)
+-    {
+-        IBlockState iblockstate = p_180614_3_.func_180495_p(p_180614_4_);
+-
+-        if (iblockstate.func_177230_c() == Blocks.field_150421_aI && !((Boolean)iblockstate.func_177229_b(BlockJukebox.field_176432_a)).booleanValue())
++    {   
++        if (!p_180614_3_.field_72995_K)
+         {
+-            if (p_180614_3_.field_72995_K)
++            BlockJukebox.TileEntityJukebox jukeBox = (BlockJukebox.TileEntityJukebox) p_180614_3_.func_175625_s(p_180614_4_);
++            
++            if (jukeBox != null && jukeBox.func_145856_a() == null)
+             {
+-                return true;
+-            }
+-            else
+-            {
+-                ((BlockJukebox)Blocks.field_150421_aI).func_176431_a(p_180614_3_, p_180614_4_, iblockstate, p_180614_1_);
++                ((BlockJukebox)Blocks.field_150421_aI).insertRecord(p_180614_3_, p_180614_4_, p_180614_1_);
+                 p_180614_3_.func_180498_a((EntityPlayer)null, 1005, p_180614_4_, Item.func_150891_b(this));
+                 --p_180614_1_.field_77994_a;
+                 return true;
+             }
+         }
+-        else
+-        {
+-            return false;
+-        }
++        return false;
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -75,4 +71,15 @@
      {
          return (ItemRecord)field_150928_b.get(p_150926_0_);
      }
