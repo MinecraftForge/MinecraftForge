@@ -77,7 +77,6 @@ public class ModelLoader extends ModelBakery
         super(manager, map, shapes);
         VanillaLoader.instance.setLoader(this);
         ModelLoaderRegistry.clearModelCache();
-        MinecraftForge.EVENT_BUS.register(White.instance);
     }
 
     @Override
@@ -484,10 +483,9 @@ public class ModelLoader extends ModelBakery
             return false;
         }
 
-        @SubscribeEvent
-        public void handleStitchPre(TextureStitchEvent.Pre event)
+        public void register(TextureMap map)
         {
-            event.map.setTextureEntry(White.loc.toString(), White.instance);
+            map.setTextureEntry(White.loc.toString(), White.instance);
         }
     }
 
