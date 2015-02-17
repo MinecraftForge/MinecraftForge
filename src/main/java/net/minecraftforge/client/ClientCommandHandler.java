@@ -57,7 +57,7 @@ public class ClientCommandHandler extends CommandHandler
                 return 0;
             }
 
-            if (icommand.canCommandSenderUse(sender))
+            if (icommand.canCommandSenderUseCommand(sender))
             {
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
@@ -69,7 +69,7 @@ public class ClientCommandHandler extends CommandHandler
                     return 0;
                 }
 
-                icommand.execute(sender, args);
+                icommand.processCommand(sender, args);
                 return 1;
             }
             else
