@@ -1,7 +1,9 @@
 package net.minecraftforge.client.model;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
@@ -37,7 +40,10 @@ import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.item.Item;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
@@ -71,6 +77,7 @@ public class ModelLoader extends ModelBakery
         super(manager, map, shapes);
         VanillaLoader.instance.setLoader(this);
         ModelLoaderRegistry.clearModelCache();
+        MinecraftForge.EVENT_BUS.register(White.instance);
     }
 
     @Override
@@ -447,6 +454,40 @@ public class ModelLoader extends ModelBakery
                 else FMLLog.log(Level.ERROR, e, "Exception loading model %s with vanilla loader, skipping", modelLocation);
                 return loader.getMissingModel();
             }
+        }
+    }
+
+    public static class White extends TextureAtlasSprite
+    {
+        public static ResourceLocation loc = new ResourceLocation("white");
+        public static White instance = new White();
+
+        protected White()
+        {
+            super(loc.toString());
+        }
+
+        @Override
+        public boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
+        {
+            return true;
+        }
+
+        @Override
+        public boolean load(IResourceManager manager, ResourceLocation location)
+        {
+            BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            image.setRGB(0, 0, 0xFFFFFFFF);
+            BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
+            images[0] = image;
+            loadSprite(images, null);
+            return false;
+        }
+
+        @SubscribeEvent
+        public void handleStitchPre(TextureStitchEvent.Pre event)
+        {
+            event.map.setTextureEntry(White.loc.toString(), White.instance);
         }
     }
 
