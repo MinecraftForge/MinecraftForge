@@ -26,6 +26,8 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -655,5 +657,26 @@ public class ForgeHooksClient
         //tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
         ret.mul(tmp);
         return ret;
+    }
+
+    public static void putQuadColor(WorldRenderer renderer, BakedQuad quad, int color)
+    {
+        float cr = color & 0xFF;
+        float cg = (color >>> 8) & 0xFF;
+        float cb = (color >>> 16) & 0xFF;
+        float ca = (color >>> 24) & 0xFF;
+        for(int i = 0; i < 4; i++)
+        {
+            int vc = quad.getVertexData()[3 + 7 * i];
+            float vcr = vc & 0xFF;
+            float vcg = (vc >>> 8) & 0xFF;
+            float vcb = (vc >>> 16) & 0xFF;
+            float vca = (vc >>> 24) & 0xFF;
+            int ncr = Math.min(0xFF, (int)(cr * vcr / 0xFF));
+            int ncg = Math.min(0xFF, (int)(cg * vcg / 0xFF));
+            int ncb = Math.min(0xFF, (int)(cb * vcb / 0xFF));
+            int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
+            renderer.putColorRGBA(renderer.getColorIndex(i + 1), ncr, ncg, ncb, nca);
+        }
     }
 }
