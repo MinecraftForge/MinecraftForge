@@ -1,6 +1,6 @@
 package net.minecraftforge.event.world;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.entity.player.EntityPlayerMP;
 

@@ -2,8 +2,8 @@ package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -33,16 +33,12 @@ public class RenderGameOverlayEvent extends Event
 
     public final float partialTicks;
     public final ScaledResolution resolution;
-    public final int mouseX;
-    public final int mouseY;
     public final ElementType type;
 
-    public RenderGameOverlayEvent(float partialTicks, ScaledResolution resolution, int mouseX, int mouseY)
+    public RenderGameOverlayEvent(float partialTicks, ScaledResolution resolution)
     {
         this.partialTicks = partialTicks;
         this.resolution = resolution;
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
         this.type = null;
     }
 
@@ -50,8 +46,6 @@ public class RenderGameOverlayEvent extends Event
     {
         this.partialTicks = parent.partialTicks;
         this.resolution = parent.resolution;
-        this.mouseX = parent.mouseX;
-        this.mouseY = parent.mouseY;
         this.type = type;
     }
 

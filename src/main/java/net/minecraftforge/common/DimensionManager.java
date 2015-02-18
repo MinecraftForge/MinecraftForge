@@ -17,8 +17,8 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.MinecraftException;
@@ -193,7 +193,7 @@ public class DimensionManager
             worlds.put(id, world);
             weakWorldMap.put(world, world);
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
-            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.func_73046_m());
+            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
@@ -223,7 +223,8 @@ public class DimensionManager
         MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
-    public static void initDimension(int dim) {
+    public static void initDimension(int dim)
+    {
         WorldServer overworld = getWorld(0);
         if (overworld == null)
         {
@@ -238,11 +239,11 @@ public class DimensionManager
             System.err.println("Cannot Hotload Dim: " + e.getMessage());
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
-        MinecraftServer mcServer = overworld.func_73046_m();
+        MinecraftServer mcServer = overworld.getMinecraftServer();
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
+        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler).init()));
         world.addWorldAccess(new WorldManager(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
@@ -250,7 +251,7 @@ public class DimensionManager
             world.getWorldInfo().setGameType(mcServer.getGameType());
         }
 
-        mcServer.func_147139_a(mcServer.func_147135_j());
+        mcServer.setDifficultyForAllWorlds(mcServer.getDifficulty());
     }
 
     public static WorldServer getWorld(int id)

@@ -1,6 +1,6 @@
 package net.minecraftforge.event.entity.item;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.item.EntityItem;
 
 /**

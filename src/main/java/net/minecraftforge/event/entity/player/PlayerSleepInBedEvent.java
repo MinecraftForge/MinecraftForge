@@ -2,12 +2,13 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.util.BlockPos;
 
 /**
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.
  * <br>
  * This event is fired whenever a player sleeps in a bed in
- * EntityPlayer#sleepInBedAt(int, int, int).<br>
+ * EntityPlayer#sleepInBedAt(BlockPos).<br>
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
  * <br>
@@ -20,16 +21,12 @@ import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
     public EnumStatus result = null;
-    public final int x;
-    public final int y;
-    public final int z;
+    public final BlockPos pos;
 
-    public PlayerSleepInBedEvent(EntityPlayer player, int x, int y, int z)
+    public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos)
     {
         super(player);
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
     }
 
 }

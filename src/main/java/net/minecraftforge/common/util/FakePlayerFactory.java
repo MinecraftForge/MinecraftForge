@@ -1,5 +1,6 @@
 package net.minecraftforge.common.util;
 
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,20 +18,22 @@ public class FakePlayerFactory
     private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     // Map of all active fake player usernames to their entities
     private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
-    private static FakePlayer MINECRAFT_PLAYER = null;
-    
+    private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
+
     public static FakePlayer getMinecraft(WorldServer world)
     {
-        if (MINECRAFT_PLAYER == null)
+        FakePlayer ret = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
+        if (ret == null)
         {
-            MINECRAFT_PLAYER = FakePlayerFactory.get(world,  MINECRAFT);
+            ret = FakePlayerFactory.get(world,  MINECRAFT);
+            MINECRAFT_PLAYER = new WeakReference(ret);
         }
-        return MINECRAFT_PLAYER;
+        return ret;
     }
-    
+
     /**
      * Get a fake player with a given username,
-     * Mods should either hold weak references to the return value, or listen for a 
+     * Mods should either hold weak references to the return value, or listen for a
      * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
      */
     public static FakePlayer get(WorldServer world, GameProfile username)

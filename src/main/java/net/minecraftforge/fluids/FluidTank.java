@@ -6,9 +6,9 @@ import net.minecraft.tileentity.TileEntity;
 
 /**
  * Reference implementation of {@link IFluidTank}. Use/extend this or implement your own.
- * 
+ *
  * @author King Lemming, cpw (LiquidTank)
- * 
+ *
  */
 public class FluidTank implements IFluidTank
 {
@@ -37,11 +37,11 @@ public class FluidTank implements IFluidTank
         if (!nbt.hasKey("Empty"))
         {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
-
-            if (fluid != null)
-            {
-                setFluid(fluid);
-            }
+            setFluid(fluid);
+        }
+        else
+        {
+            setFluid(null);
         }
         return this;
     }
@@ -127,7 +127,7 @@ public class FluidTank implements IFluidTank
 
             if (tile != null)
             {
-                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, fluid.amount));
+                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorld(), tile.getPos(), this, fluid.amount));
             }
             return fluid.amount;
         }
@@ -150,7 +150,7 @@ public class FluidTank implements IFluidTank
 
         if (tile != null)
         {
-            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, filled));
+            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorld(), tile.getPos(), this, filled));
         }
         return filled;
     }
@@ -180,7 +180,7 @@ public class FluidTank implements IFluidTank
 
             if (tile != null)
             {
-                FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord, this, drained));
+                FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.getWorld(), tile.getPos(), this, drained));
             }
         }
         return stack;

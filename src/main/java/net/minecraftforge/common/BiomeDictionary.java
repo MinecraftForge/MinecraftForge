@@ -2,7 +2,7 @@ package net.minecraftforge.common;
 
 import java.util.*;
 
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.*;
 import net.minecraftforge.common.util.EnumHelper;
@@ -329,9 +329,9 @@ public class BiomeDictionary
                 }
             }
         }
-        else if(biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F)
+        else if(biome.maxHeight <= 0.3F && biome.maxHeight >= 0.0F)
         {
-            if(!biome.isHighHumidity() || biome.rootHeight >= 0.0F)
+            if(!biome.isHighHumidity() || biome.minHeight >= 0.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, PLAINS);
             }
@@ -366,14 +366,14 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, DENSE);
         }
 
-        if (biome.isHighHumidity() && biome.rootHeight < 0.0F && (biome.heightVariation <= 0.3F && biome.heightVariation >= 0.0F))
+        if (biome.isHighHumidity() && biome.minHeight < 0.0F && (biome.maxHeight <= 0.3F && biome.maxHeight >= 0.0F))
         {
             BiomeDictionary.registerBiomeType(biome, SWAMP);
         }
 
-        if (biome.rootHeight <= -0.5F)
+        if (biome.minHeight <= -0.5F)
         {
-            if (biome.heightVariation == 0.0F)
+            if (biome.maxHeight == 0.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, RIVER);
             }
@@ -383,12 +383,12 @@ public class BiomeDictionary
             }
         }
 
-        if (biome.heightVariation >= 0.4F && biome.heightVariation < 1.5F)
+        if (biome.maxHeight >= 0.4F && biome.maxHeight < 1.5F)
         {
             BiomeDictionary.registerBiomeType(biome, HILLS);
         }
 
-        if (biome.heightVariation >= 1.5F)
+        if (biome.maxHeight >= 1.5F)
         {
             BiomeDictionary.registerBiomeType(biome, MOUNTAIN);
         }

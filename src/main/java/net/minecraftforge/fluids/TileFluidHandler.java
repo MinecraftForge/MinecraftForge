@@ -3,13 +3,13 @@ package net.minecraftforge.fluids;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * Reference Tile Entity implementation of {@link IFluidHandler}. Use/extend this or write your own.
- * 
+ *
  * @author King Lemming
- * 
+ *
  */
 public class TileFluidHandler extends TileEntity implements IFluidHandler
 {
@@ -31,13 +31,13 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
 
     /* IFluidHandler */
     @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
     {
         return tank.fill(resource, doFill);
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain)
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
     {
         if (resource == null || !resource.isFluidEqual(tank.getFluid()))
         {
@@ -47,25 +47,25 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
     {
         return tank.drain(maxDrain, doDrain);
     }
 
     @Override
-    public boolean canFill(ForgeDirection from, Fluid fluid)
+    public boolean canFill(EnumFacing from, Fluid fluid)
     {
         return true;
     }
 
     @Override
-    public boolean canDrain(ForgeDirection from, Fluid fluid)
+    public boolean canDrain(EnumFacing from, Fluid fluid)
     {
         return true;
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(ForgeDirection from)
+    public FluidTankInfo[] getTankInfo(EnumFacing from)
     {
         return new FluidTankInfo[] { tank.getInfo() };
     }

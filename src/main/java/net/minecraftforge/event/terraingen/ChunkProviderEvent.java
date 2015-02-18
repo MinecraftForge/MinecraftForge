@@ -1,9 +1,10 @@
 package net.minecraftforge.event.terraingen;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class ChunkProviderEvent extends Event
@@ -25,33 +26,17 @@ public class ChunkProviderEvent extends Event
     @HasResult
     public static class ReplaceBiomeBlocks extends ChunkProviderEvent
     {
-        public final int chunkX;
-        public final int chunkZ;
-        public final Block[] blockArray;
-        public final byte[] metaArray; // CAN BE NULL
-        public final BiomeGenBase[] biomeArray;
+        public final int x;
+        public final int z;
+        public final ChunkPrimer primer;
         public final World world; // CAN BE NULL
 
-        @Deprecated // TODO: Remove in 1.8
-        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, BiomeGenBase[] biomeArray)
-        {
-            this(chunkProvider, chunkX, chunkZ, blockArray, new byte[256], biomeArray, null);
-        }
-
-        @Deprecated // TODO: Remove in 1.8
-        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray)
-        {
-            this(chunkProvider, chunkZ, chunkZ, blockArray, metaArray, biomeArray, null);
-        }
-
-        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int chunkX, int chunkZ, Block[] blockArray, byte[] metaArray, BiomeGenBase[] biomeArray, World world)
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int x, int z, ChunkPrimer primer, World world)
         {
             super(chunkProvider);
-            this.chunkX = chunkX;
-            this.chunkZ = chunkZ;
-            this.blockArray = blockArray;
-            this.biomeArray = biomeArray;
-            this.metaArray = metaArray;
+            this.x = x;
+            this.z = z;
+            this.primer = primer;
             this.world = world;
         }
 

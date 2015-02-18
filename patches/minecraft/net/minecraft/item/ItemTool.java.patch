@@ -1,21 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemTool.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemTool.java
-@@ -1,5 +1,6 @@
- package net.minecraft.item;
- 
-+import com.google.common.collect.ImmutableSet;
- import com.google.common.collect.Multimap;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-@@ -10,6 +11,7 @@
- import net.minecraft.entity.SharedMonsterAttributes;
- import net.minecraft.entity.ai.attributes.AttributeModifier;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.ForgeHooks;
- 
- public class ItemTool extends Item
- {
-@@ -28,6 +30,18 @@
+@@ -29,6 +29,18 @@
          this.field_77864_a = p_i45333_2_.func_77998_b();
          this.field_77865_bY = p_i45333_1_ + p_i45333_2_.func_78000_c();
          this.func_77637_a(CreativeTabs.field_78040_i);
@@ -34,7 +19,18 @@
      }
  
      public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
-@@ -83,4 +97,37 @@
+@@ -75,7 +87,9 @@
+ 
+     public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
+     {
+-        return this.field_77862_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
++        ItemStack mat = this.field_77862_b.getRepairItemStack();
++        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
++        return super.func_82789_a(p_82789_1_, p_82789_2_);
+     }
+ 
+     public Multimap func_111205_h()
+@@ -84,4 +98,38 @@
          multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.field_77865_bY, 0));
          return multimap;
      }
@@ -58,17 +54,18 @@
 +    @Override
 +    public Set<String> getToolClasses(ItemStack stack)
 +    {
-+        return toolClass != null ? ImmutableSet.of(toolClass) : super.getToolClasses(stack);
++        return toolClass != null ? com.google.common.collect.ImmutableSet.of(toolClass) : super.getToolClasses(stack);
 +    }
 +
 +    @Override
-+    public float getDigSpeed(ItemStack stack, Block block, int meta)
++    public float getDigSpeed(ItemStack stack, net.minecraft.block.state.IBlockState state)
 +    {
-+        if (ForgeHooks.isToolEffective(stack, block, meta))
++        for (String type : getToolClasses(stack))
 +        {
-+            return field_77864_a;
++            if (state.func_177230_c().isToolEffective(type, state))
++                return field_77864_a;
 +        }
-+        return super.getDigSpeed(stack, block, meta);
++        return super.getDigSpeed(stack, state);
 +    }
 +    /*===================================== FORGE END =================================*/
  }

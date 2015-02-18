@@ -5,7 +5,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.network.ForgeMessage.DimensionRegisterMessage;
 import org.apache.logging.log4j.Level;
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 
 public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMessage.DimensionRegisterMessage>{
     @Override

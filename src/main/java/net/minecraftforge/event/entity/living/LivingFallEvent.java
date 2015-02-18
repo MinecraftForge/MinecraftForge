@@ -1,11 +1,11 @@
 package net.minecraftforge.event.entity.living;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingFallEvent is fired when an Entity is set to be falling.<br>
- * This event is fired whenever an Entity is set to fall in 
+ * This event is fired whenever an Entity is set to fall in
  * EntityLivingBase#fall(float).<br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingFall(EntityLivingBase, float)}.<br>
@@ -23,9 +23,11 @@ import net.minecraft.entity.EntityLivingBase;
 public class LivingFallEvent extends LivingEvent
 {
     public float distance;
-    public LivingFallEvent(EntityLivingBase entity, float distance)
+    public float damageMultiplier;
+    public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier)
     {
         super(entity);
         this.distance = distance;
+        this.damageMultiplier = damageMultiplier;
     }
 }

@@ -1,61 +1,42 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -2,9 +2,11 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.util.ArrayList;
- import java.util.Random;
- import net.minecraft.block.material.Material;
- import net.minecraft.creativetab.CreativeTabs;
-+import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
- import net.minecraft.init.Items;
-@@ -16,8 +18,10 @@
- import net.minecraft.world.ColorizerFoliage;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.ForgeHooks;
-+import net.minecraftforge.common.IShearable;
+@@ -26,7 +26,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockVine extends Block
-+public class BlockVine extends Block implements IShearable
++public class BlockVine extends Block implements net.minecraftforge.common.IShearable
  {
-     private static final String __OBFID = "CL_00000330";
+     public static final PropertyBool field_176277_a = PropertyBool.func_177716_a("up");
+     public static final PropertyBool field_176273_b = PropertyBool.func_177716_a("north");
+@@ -416,13 +416,7 @@
  
-@@ -375,14 +379,28 @@
- 
-     public void func_149636_a(World p_149636_1_, EntityPlayer p_149636_2_, int p_149636_3_, int p_149636_4_, int p_149636_5_, int p_149636_6_)
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {
--        if (!p_149636_1_.field_72995_K && p_149636_2_.func_71045_bC() != null && p_149636_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
+-        if (!p_180657_1_.field_72995_K && p_180657_2_.func_71045_bC() != null && p_180657_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
          {
--            p_149636_2_.func_71064_a(StatList.field_75934_C[Block.func_149682_b(this)], 1);
--            this.func_149642_a(p_149636_1_, p_149636_3_, p_149636_4_, p_149636_5_, new ItemStack(Blocks.field_150395_bd, 1, 0));
+-            p_180657_2_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
+-            func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150395_bd, 1, 0));
 -        }
 -        else
 -        {
-             super.func_149636_a(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_);
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
          }
      }
-+
+@@ -508,6 +502,16 @@
+         return i;
+     }
+ 
++    /*************************FORGE START***********************************/
++    @Override public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity){ return true; }
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
 +    @Override
-+    public boolean isShearable(ItemStack item, IBlockAccess world, int x, int y, int z)
++    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        return true;
++        return java.util.Arrays.asList(new ItemStack(this, 1));
 +    }
++    /*************************FORGE END***********************************/
 +
-+    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, IBlockAccess world, int x, int y, int z, int fortune)
-+    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(this, 1));
-+        return ret;
-+    }
-+
-+    @Override
-+    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity)
-+    {
-+        return true;
-+    }
- }
+     static final class SwitchEnumFacing
+         {
+             static final int[] field_177057_a = new int[EnumFacing.values().length];

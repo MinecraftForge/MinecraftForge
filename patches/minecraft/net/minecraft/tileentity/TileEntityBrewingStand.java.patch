@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -12,6 +12,8 @@
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagList;
- import net.minecraft.potion.PotionHelper;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.brewing.PotionBrewedEvent;
- 
- public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
- {
-@@ -104,7 +106,7 @@
+@@ -118,7 +118,7 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
@@ -18,7 +9,14 @@
                      {
                          int j = this.field_145945_j[i].func_77960_j();
                          int k = this.func_145936_c(j, itemstack);
-@@ -143,7 +145,7 @@
+@@ -151,13 +151,14 @@
+ 
+     private void func_145940_l()
+     {
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j)) return;
+         if (this.func_145934_k())
+         {
+             ItemStack itemstack = this.field_145945_j[3];
  
              for (int i = 0; i < 3; ++i)
              {
@@ -27,7 +25,7 @@
                  {
                      int j = this.field_145945_j[i].func_77960_j();
                      int k = this.func_145936_c(j, itemstack);
-@@ -164,9 +166,9 @@
+@@ -178,9 +179,9 @@
                  }
              }
  
@@ -39,15 +37,15 @@
              }
              else
              {
-@@ -177,6 +179,7 @@
+@@ -191,6 +192,7 @@
                      this.field_145945_j[3] = null;
                  }
              }
-+            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(field_145945_j));
++            net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
          }
      }
  
-@@ -292,7 +295,7 @@
+@@ -306,7 +308,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {
@@ -55,4 +53,4 @@
 +        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() instanceof ItemPotion || p_94041_2_.func_77973_b() == Items.field_151069_bo;
      }
  
-     @SideOnly(Side.CLIENT)
+     public boolean[] func_174902_m()

@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
+@@ -8,7 +8,11 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++/*
++ * @deprecated use {@link net.minecraftforge.client.model.IPerspectiveAwareModel} instead
++ */
+ @SideOnly(Side.CLIENT)
++@Deprecated
+ public class ItemCameraTransforms
+ {
+     public static final ItemCameraTransforms field_178357_a = new ItemCameraTransforms(ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a);

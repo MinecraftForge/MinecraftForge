@@ -1,60 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -3,6 +3,7 @@
- import com.google.common.collect.Lists;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+import java.io.File;
- import java.util.ArrayList;
- import java.util.HashSet;
- import java.util.Iterator;
-@@ -50,11 +51,19 @@
- import net.minecraft.world.biome.WorldChunkManager;
- import net.minecraft.world.chunk.Chunk;
- import net.minecraft.world.chunk.IChunkProvider;
-+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
- import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
- import net.minecraft.world.chunk.storage.IChunkLoader;
- import net.minecraft.world.gen.ChunkProviderServer;
- import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
- import net.minecraft.world.storage.ISaveHandler;
-+import net.minecraftforge.common.ChestGenHooks;
-+import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
-+import net.minecraftforge.common.DimensionManager;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.ForgeEventFactory;
-+import net.minecraftforge.event.world.WorldEvent;
-+
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-@@ -79,6 +88,10 @@
-     private IntHashMap field_73066_T;
+@@ -94,30 +94,46 @@
+     private List field_94579_S = Lists.newArrayList();
      private static final String __OBFID = "CL_00001437";
  
 +    /** Stores the recently processed (lighting) chunks */
-+    protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
++    protected Set<ChunkCoordIntPair> doneChunks = new java.util.HashSet<ChunkCoordIntPair>();
 +    public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
++    private static boolean initChest = false;
++    public static void fillChestHook()
++    {
++        if (!initChest)
++            net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.BONUS_CHEST, field_73069_S, 10, 10);
++        initChest = true;
++    }
 +
-     public WorldServer(MinecraftServer p_i45284_1_, ISaveHandler p_i45284_2_, String p_i45284_3_, int p_i45284_4_, WorldSettings p_i45284_5_, Profiler p_i45284_6_)
+     public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
-         super(p_i45284_2_, p_i45284_3_, p_i45284_5_, WorldProvider.func_76570_a(p_i45284_4_), p_i45284_6_);
-@@ -111,8 +124,12 @@
-             this.field_72988_C.func_75745_a("scoreboard", scoreboardsavedata);
-         }
- 
--        scoreboardsavedata.func_96499_a(this.field_96442_D);
-+        if (!(this instanceof WorldServerMulti)) //Forge: We fix the global mapStorage, which causes us to share scoreboards early. So don't associate the save data with the temporary scoreboard
-+        {
-+            scoreboardsavedata.func_96499_a(this.field_96442_D);
-+        }
-         ((ServerScoreboard)this.field_96442_D).func_96547_a(scoreboardsavedata);
-+        DimensionManager.setWorld(p_i45284_4_, this);
+         super(p_i45921_2_, p_i45921_3_, WorldProvider.func_76570_a(p_i45921_4_), p_i45921_5_, false);
+         this.field_73061_a = p_i45921_1_;
+         this.field_73062_L = new EntityTracker(this);
+         this.field_73063_M = new PlayerManager(this);
++        // Guarantee the dimension ID was not reset by the provider
++        int providerDim = this.field_73011_w.field_76574_g;
+         this.field_73011_w.func_76558_a(this);
++        this.field_73011_w.field_76574_g = providerDim;
+         this.field_73020_y = this.func_72970_h();
++        perWorldStorage = new MapStorage(new net.minecraftforge.common.WorldSpecificSaveHandler((WorldServer)this, p_i45921_2_));
+         this.field_85177_Q = new Teleporter(this);
+         this.func_72966_v();
+         this.func_72947_a();
+         this.func_175723_af().func_177725_a(p_i45921_1_.func_175580_aG());
++        net.minecraftforge.common.DimensionManager.setWorld(p_i45921_4_, this);
      }
  
-     public void func_72835_b()
-@@ -171,6 +188,10 @@
-         this.field_72983_E.func_75528_a();
+     public World func_175643_b()
+     {
+         this.field_72988_C = new MapStorage(this.field_73019_z);
+         String s = VillageCollection.func_176062_a(this.field_73011_w);
+-        VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, s);
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_75742_a(VillageCollection.class, s);
+ 
+         if (villagecollection == null)
+         {
+             this.field_72982_D = new VillageCollection(this);
+-            this.field_72988_C.func_75745_a(s, this.field_72982_D);
++            this.perWorldStorage.func_75745_a(s, this.field_72982_D);
+         }
+         else
+         {
+@@ -210,6 +226,10 @@
+         this.field_175740_d.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
 +        for (Teleporter tele : customTeleporters)
@@ -64,15 +60,15 @@
          this.field_72984_F.func_76319_b();
          this.func_147488_Z();
      }
-@@ -178,6 +199,7 @@
-     public BiomeGenBase.SpawnListEntry func_73057_a(EnumCreatureType p_73057_1_, int p_73057_2_, int p_73057_3_, int p_73057_4_)
+@@ -217,6 +237,7 @@
+     public BiomeGenBase.SpawnListEntry func_175734_a(EnumCreatureType p_175734_1_, BlockPos p_175734_2_)
      {
-         List list = this.func_72863_F().func_73155_a(p_73057_1_, p_73057_2_, p_73057_3_, p_73057_4_);
-+        list = ForgeEventFactory.getPotentialSpawns(this, p_73057_1_, p_73057_2_, p_73057_3_, p_73057_4_, list);
+         List list = this.func_72863_F().func_177458_a(p_175734_1_, p_175734_2_);
++        list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(this, p_175734_1_, p_175734_2_, list);
          return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.func_76271_a(this.field_73012_v, list) : null;
      }
  
-@@ -218,10 +240,7 @@
+@@ -274,10 +295,7 @@
  
      private void func_73051_P()
      {
@@ -80,39 +76,39 @@
 -        this.field_72986_A.func_76084_b(false);
 -        this.field_72986_A.func_76090_f(0);
 -        this.field_72986_A.func_76069_a(false);
-+        field_73011_w.resetRainAndThunder();
++        this.field_73011_w.resetRainAndThunder();
      }
  
      public boolean func_73056_e()
-@@ -301,7 +320,7 @@
-             int k1;
-             int l1;
+@@ -367,7 +385,7 @@
+                 int i1;
+                 BlockPos blockpos;
  
--            if (this.field_73012_v.nextInt(100000) == 0 && this.func_72896_J() && this.func_72911_I())
-+            if (field_73011_w.canDoLightning(chunk) && this.field_73012_v.nextInt(100000) == 0 && this.func_72896_J() && this.func_72911_I())
+-                if (this.field_73012_v.nextInt(100000) == 0 && this.func_72896_J() && this.func_72911_I())
++                if (this.field_73011_w.canDoLightning(chunk) && this.field_73012_v.nextInt(100000) == 0 && this.func_72896_J() && this.func_72911_I())
+                 {
+                     this.field_73005_l = this.field_73005_l * 3 + 1013904223;
+                     i1 = this.field_73005_l >> 2;
+@@ -381,7 +399,7 @@
+ 
+                 this.field_72984_F.func_76318_c("iceandsnow");
+ 
+-                if (this.field_73012_v.nextInt(16) == 0)
++                if (this.field_73011_w.canDoRainSnowIce(chunk) && this.field_73012_v.nextInt(16) == 0)
+                 {
+                     this.field_73005_l = this.field_73005_l * 3 + 1013904223;
+                     i1 = this.field_73005_l >> 2;
+@@ -483,6 +501,9 @@
+             if (p_175654_2_.func_149698_L())
              {
-                 this.field_73005_l = this.field_73005_l * 3 + 1013904223;
-                 i1 = this.field_73005_l >> 2;
-@@ -317,7 +336,7 @@
+                 b0 = 8;
++                //Keeping here as a note for future when it may be restored.
++                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.field_180282_a.func_177958_n() >> 4, nextticklistentry.field_180282_a.func_177952_p() >> 4));
++                b0 = (byte)(isForced ? 0 : 8);
  
-             this.field_72984_F.func_76318_c("iceandsnow");
- 
--            if (this.field_73012_v.nextInt(16) == 0)
-+            if (field_73011_w.canDoRainSnowIce(chunk) && this.field_73012_v.nextInt(16) == 0)
-             {
-                 this.field_73005_l = this.field_73005_l * 3 + 1013904223;
-                 i1 = this.field_73005_l >> 2;
-@@ -393,6 +412,9 @@
-     public void func_147454_a(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
-     {
-         NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
-+        //Keeping here as a note for future when it may be restored.
-+        //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
-+        //byte b0 = isForced ? 0 : 8;
-         byte b0 = 0;
- 
-         if (this.field_72999_e && p_147454_4_.func_149688_o() != Material.field_151579_a)
-@@ -452,7 +474,7 @@
+                 if (this.func_175707_a(nextticklistentry.field_180282_a.func_177982_a(-b0, -b0, -b0), nextticklistentry.field_180282_a.func_177982_a(b0, b0, b0)))
+                 {
+@@ -535,7 +556,7 @@
  
      public void func_72939_s()
      {
@@ -121,96 +117,139 @@
          {
              if (this.field_80004_Q++ >= 1200)
              {
-@@ -512,6 +534,9 @@
-             {
-                 nextticklistentry = (NextTickListEntry)iterator.next();
-                 iterator.remove();
-+                //Keeping here as a note for future when it may be restored.
-+                //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
-+                //byte b0 = isForced ? 0 : 8;
-                 byte b0 = 0;
+@@ -601,6 +622,9 @@
+                 {
+                     nextticklistentry = (NextTickListEntry)iterator.next();
+                     iterator.remove();
++                    //Keeping here as a note for future when it may be restored.
++                    //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++                    //byte b0 = isForced ? 0 : 8;
+                     byte b0 = 0;
  
-                 if (this.func_72904_c(nextticklistentry.field_77183_a - b0, nextticklistentry.field_77181_b - b0, nextticklistentry.field_77182_c - b0, nextticklistentry.field_77183_a + b0, nextticklistentry.field_77181_b + b0, nextticklistentry.field_77182_c + b0))
-@@ -634,13 +659,26 @@
+                     if (this.func_175707_a(nextticklistentry.field_180282_a.func_177982_a(-b0, -b0, -b0), nextticklistentry.field_180282_a.func_177982_a(b0, b0, b0)))
+@@ -729,14 +753,29 @@
      {
-         ArrayList arraylist = new ArrayList();
+         ArrayList arraylist = Lists.newArrayList();
  
 -        for (int k1 = 0; k1 < this.field_147482_g.size(); ++k1)
-+        for(int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
++        //Forge: Optomize this loop to only grab from the chunks it needs
++        for (int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
          {
 -            TileEntity tileentity = (TileEntity)this.field_147482_g.get(k1);
+-            BlockPos blockpos = tileentity.func_174877_v();
 -
--            if (tileentity.field_145851_c >= p_147486_1_ && tileentity.field_145848_d >= p_147486_2_ && tileentity.field_145849_e >= p_147486_3_ && tileentity.field_145851_c < p_147486_4_ && tileentity.field_145848_d < p_147486_5_ && tileentity.field_145849_e < p_147486_6_)
-+            for(int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
+-            if (blockpos.func_177958_n() >= p_147486_1_ && blockpos.func_177956_o() >= p_147486_2_ && blockpos.func_177952_p() >= p_147486_3_ && blockpos.func_177958_n() < p_147486_4_ && blockpos.func_177956_o() < p_147486_5_ && blockpos.func_177952_p() < p_147486_6_)
++            for (int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
              {
 -                arraylist.add(tileentity);
-+                Chunk chunk = func_72964_e(x, z);
++                Chunk chunk = this.func_72964_e(x, z);
 +                if (chunk != null)
 +                {
-+                    for(Object obj : chunk.field_150816_i.values())
++                    for (Object obj : chunk.func_177434_r().values())
 +                    {
 +                        TileEntity entity = (TileEntity)obj;
 +                        if (!entity.func_145837_r())
 +                        {
-+                            if (entity.field_145851_c >= p_147486_1_ && entity.field_145848_d >= p_147486_2_ && entity.field_145849_e >= p_147486_3_ &&
-+                                entity.field_145851_c <= p_147486_4_ && entity.field_145848_d <= p_147486_5_ && entity.field_145849_e <= p_147486_6_)
++                            BlockPos pos = entity.func_174877_v();
++                            if (pos.func_177958_n() >= p_147486_1_ && pos.func_177956_o() >= p_147486_2_ && pos.func_177952_p() >= p_147486_3_ &&
++                                pos.func_177958_n() <= p_147486_4_ && pos.func_177956_o() <= p_147486_5_ && pos.func_177952_p() <= p_147486_6_)
 +                            {
 +                                arraylist.add(entity);
 +                            }
++
 +                        }
 +                    }
 +                }
              }
          }
  
-@@ -649,9 +687,14 @@
+@@ -745,6 +784,10 @@
  
-     public boolean func_72962_a(EntityPlayer p_72962_1_, int p_72962_2_, int p_72962_3_, int p_72962_4_)
+     public boolean func_175660_a(EntityPlayer p_175660_1_, BlockPos p_175660_2_)
      {
--        return !this.field_73061_a.func_96290_a(this, p_72962_2_, p_72962_3_, p_72962_4_, p_72962_1_);
-+        return super.func_72962_a(p_72962_1_, p_72962_2_, p_72962_3_, p_72962_4_);
++        return super.func_175660_a(p_175660_1_, p_175660_2_);
++    }
++    public boolean canMineBlockBody(EntityPlayer p_175660_1_, BlockPos p_175660_2_)
++    {
+         return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-+    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
-+    {
-+        return !this.field_73061_a.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
-+    }
-+
-     protected void func_72963_a(WorldSettings p_72963_1_)
-     {
-         if (this.field_73066_T == null)
-@@ -726,7 +769,7 @@
+@@ -810,6 +853,7 @@
+         }
+         else
+         {
++            if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, p_73052_1_)) return;
+             this.field_72987_B = true;
+             WorldChunkManager worldchunkmanager = this.field_73011_w.func_177499_m();
+             List list = worldchunkmanager.func_76932_a();
+@@ -855,7 +899,7 @@
  
      protected void func_73047_i()
      {
 -        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(field_73069_S, 10);
-+        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST, field_73012_v), ChestGenHooks.getCount(BONUS_CHEST, field_73012_v));
++        WorldGeneratorBonusChest worldgeneratorbonuschest = net.minecraftforge.common.ForgeHooks.getBonusChest(field_73012_v);
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -763,6 +806,7 @@
+@@ -892,6 +936,7 @@
              }
  
              this.field_73020_y.func_73151_a(p_73044_1_, p_73044_2_);
-+            MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(this));
-             ArrayList arraylist = Lists.newArrayList(this.field_73059_b.func_152380_a());
-             Iterator iterator = arraylist.iterator();
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
+             List list = this.field_73059_b.func_152380_a();
+             Iterator iterator = list.iterator();
  
-@@ -791,6 +835,7 @@
-         this.func_72906_B();
+@@ -929,6 +974,7 @@
+         this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_71203_ab().func_72378_q());
          this.field_72988_C.func_75744_a();
 +        this.perWorldStorage.func_75744_a();
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -1002,6 +1047,11 @@
+@@ -984,6 +1030,7 @@
+     public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
+     {
+         Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
++        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
+         explosion.func_77278_a();
+         explosion.func_77279_a(false);
+ 
+@@ -1074,19 +1121,23 @@
+             this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.func_177502_q());
+         }
+ 
++        /* The function in use here has been replaced in order to only send the weather info to players in the correct dimension,
++         * rather than to all players on the server. This is what causes the client-side rain, as the
++         * client believes that it has started raining locally, rather than in another dimension.
++         */
+         if (flag != this.func_72896_J())
+         {
+             if (flag)
+             {
+-                this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(2, 0.0F));
++                this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(2, 0.0F), this.field_73011_w.field_76574_g);
+             }
+             else
+             {
+-                this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(1, 0.0F));
++                this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(1, 0.0F), this.field_73011_w.field_76574_g);
+             }
+ 
+-            this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(7, this.field_73004_o));
+-            this.field_73061_a.func_71203_ab().func_148540_a(new S2BPacketChangeGameState(8, this.field_73017_q));
++            this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(7, this.field_73004_o), this.field_73011_w.field_76574_g);
++            this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.field_76574_g);
          }
      }
  
-+    public File getChunkSaveLocation()
+@@ -1152,6 +1203,11 @@
+         return this.field_73061_a.func_152345_ab();
+     }
+ 
++    public java.io.File getChunkSaveLocation()
 +    {
-+        return ((AnvilChunkLoader)field_73059_b.field_73247_e).field_75825_d;
++        return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)field_73059_b.field_73247_e).field_75825_d;
 +    }
 +
      static class ServerBlockEventList extends ArrayList

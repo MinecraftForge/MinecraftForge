@@ -11,18 +11,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.toposort.TopologicalSort;
-import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.toposort.TopologicalSort;
+import net.minecraftforge.fml.common.toposort.TopologicalSort.DirectedGraph;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeBookCloning;
 import net.minecraft.item.crafting.RecipeFireworks;
+import net.minecraft.item.crafting.RecipeRepairItem;
 import net.minecraft.item.crafting.RecipesArmorDyes;
 import net.minecraft.item.crafting.RecipesMapCloning;
 import net.minecraft.item.crafting.RecipesMapExtending;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
+import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
 import static net.minecraftforge.oredict.RecipeSorter.Category.*;
 
 @SuppressWarnings("rawtypes")
@@ -115,15 +118,18 @@ public class RecipeSorter implements Comparator<IRecipe>
         register("minecraft:shaped",       ShapedRecipes.class,       SHAPED,    "before:minecraft:shapeless");
         register("minecraft:mapextending", RecipesMapExtending.class, SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
         register("minecraft:shapeless",    ShapelessRecipes.class,    SHAPELESS, "after:minecraft:shaped");
+        register("minecraft:repair",       RecipeRepairItem.class,    SHAPELESS, "after:minecraft:shapeless"); //Size 4
         register("minecraft:bookcloning",  RecipeBookCloning.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 9
         register("minecraft:fireworks",    RecipeFireworks.class,     SHAPELESS, "after:minecraft:shapeless"); //Size 10
         register("minecraft:armordyes",    RecipesArmorDyes.class,    SHAPELESS, "after:minecraft:shapeless"); //Size 10
         register("minecraft:mapcloning",   RecipesMapCloning.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 10
+        register("minecraft:pattern_dupe", RecipeDuplicatePattern.class, SHAPELESS, "after:minecraft:shapeless"); //Size 2
+        register("minecraft:pattern_add",  RecipeAddPattern.class,       SHAPELESS, "after:minecraft:shapeless"); //Size 10
 
         register("forge:shapedore",     ShapedOreRecipe.class,    SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
         register("forge:shapelessore",  ShapelessOreRecipe.class, SHAPELESS, "after:minecraft:shapeless");
     }
-    
+
     @Override
     public int compare(IRecipe r1, IRecipe r2)
     {
@@ -133,7 +139,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         if (c1 == SHAPED && c2 == SHAPELESS) return -1;
         if (r2.getRecipeSize() < r1.getRecipeSize()) return -1;
         if (r2.getRecipeSize() > r1.getRecipeSize()) return  1;
-        return getPriority(r2) - getPriority(r1); // high priority value first! 
+        return getPriority(r2) - getPriority(r1); // high priority value first!
     }
 
     private static Set<Class> warned = Sets.newHashSet();
@@ -145,7 +151,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         warned.clear();
         Collections.sort(CraftingManager.getInstance().getRecipeList(), INSTANCE);
     }
-    
+
     public static void register(String name, Class<?> recipe, Category category, String dependancies)
     {
         assert(category != UNKNOWN) : "Category must not be unknown!";

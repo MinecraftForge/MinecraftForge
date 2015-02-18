@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
-@@ -19,6 +19,7 @@
+@@ -20,6 +20,7 @@
  
      public boolean func_130002_c(EntityPlayer p_130002_1_)
      {

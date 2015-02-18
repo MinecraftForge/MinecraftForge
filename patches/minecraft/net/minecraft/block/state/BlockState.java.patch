@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/block/state/BlockState.java
++++ ../src-work/minecraft/net/minecraft/block/state/BlockState.java
+@@ -47,6 +47,16 @@
+ 
+     public BlockState(Block p_i45663_1_, IProperty ... p_i45663_2_)
+     {
++        this(p_i45663_1_, p_i45663_2_, null);
++    }
++
++    protected StateImplementation createState(Block block, ImmutableMap properties, ImmutableMap unlistedProperties)
++    {
++        return new StateImplementation(block, properties);
++    }
++
++    protected BlockState(Block p_i45663_1_, IProperty[] p_i45663_2_, ImmutableMap unlistedProperties)
++    {
+         this.field_177627_c = p_i45663_1_;
+         Arrays.sort(p_i45663_2_, new Comparator()
+         {
+@@ -70,7 +80,7 @@
+         {
+             List list = (List)iterator.next();
+             Map map = MapPopulator.func_179400_b(this.field_177624_d, list);
+-            BlockState.StateImplementation stateimplementation = new BlockState.StateImplementation(p_i45663_1_, ImmutableMap.copyOf(map), null);
++            BlockState.StateImplementation stateimplementation = createState(p_i45663_1_, ImmutableMap.copyOf(map), unlistedProperties);
+             linkedhashmap.put(map, stateimplementation);
+             arraylist.add(stateimplementation);
+         }
+@@ -231,5 +241,10 @@
+             {
+                 this(p_i45661_1_, p_i45661_2_);
+             }
++
++            public ImmutableTable<IProperty, Comparable, IBlockState> getPropertyValueTable()
++            {
++                return field_177238_c;
++            }
+         }
+ }

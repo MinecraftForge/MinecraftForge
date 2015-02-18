@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/model/IBakedModel.java
++++ ../src-work/minecraft/net/minecraft/client/resources/model/IBakedModel.java
+@@ -7,7 +7,11 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++/*
++ * @deprecated use {@link net.minecraftforge.client.model.IFlexibleBakedModel}, {@link net.minecraftforge.client.model.IPerspectiveAwareModel}
++ */
+ @SideOnly(Side.CLIENT)
++@Deprecated
+ public interface IBakedModel
+ {
+     List func_177551_a(EnumFacing p_177551_1_);
+@@ -22,5 +26,6 @@
+ 
+     TextureAtlasSprite func_177554_e();
+ 
++    @Deprecated
+     ItemCameraTransforms func_177552_f();
+ }

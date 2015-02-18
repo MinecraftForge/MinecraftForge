@@ -1,7 +1,7 @@
 package net.minecraftforge.client.event;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Author: MachineMuse (Claire Semple)
@@ -9,11 +9,11 @@ import net.minecraft.client.entity.EntityPlayerSP;
  */
 public class FOVUpdateEvent extends Event
 {
-    public final EntityPlayerSP entity;
+    public final EntityPlayer entity;
     public final float fov;
     public float newfov;
 
-    public FOVUpdateEvent(EntityPlayerSP entity, float fov)
+    public FOVUpdateEvent(EntityPlayer entity, float fov)
     {
         this.entity = entity;
         this.fov = fov;

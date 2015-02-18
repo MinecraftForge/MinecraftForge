@@ -1,20 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
-@@ -21,10 +21,15 @@
+@@ -23,10 +23,12 @@
      {
          Block block;
  
--        while (((block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_)).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_76484_4_ > 0)
+-        while (((block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c()).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_180709_3_.func_177956_o() > 0)
 +        do
          {
-+            block = p_76484_1_.func_147439_a(p_76484_3_, p_76484_4_, p_76484_5_);
-+            if (!(block.isLeaves(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_) || block.isAir(p_76484_1_, p_76484_3_, p_76484_4_, p_76484_5_)))
-+            {
-+                break;
-+            }
-             --p_76484_4_;
++            block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c();
++            if (!block.isAir(p_180709_1_, p_180709_3_) && !block.isLeaves(p_180709_1_, p_180709_3_)) break;
+             p_180709_3_ = p_180709_3_.func_177977_b();
 -        }
-+        } while (p_76484_4_ > 0);
++        } while (p_180709_3_.func_177956_o() > 0);
  
-         for (int l = 0; l < 128; ++l)
+         for (int i = 0; i < 128; ++i)
          {

@@ -1,15 +1,15 @@
 package net.minecraftforge.event.entity.living;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
- * This event is fired whenever an Entity dies and drops items in 
+ * This event is fired whenever an Entity dies and drops items in
  * EntityLivingBase#onDeath(DamageSource).<br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingDrops(EntityLivingBase, DamageSource, ArrayList<EntityItem>, int, boolean, int)}.<br>
@@ -18,7 +18,6 @@ import net.minecraft.entity.EntityLivingBase;
  * {@link #drops} contains the ArrayList of EntityItems that will be dropped.<br>
  * {@link #lootingLevel} contains the amount of loot that will be dropped.<br>
  * {@link #recentlyHit} determines whether the Entity doing the drop has recently been damaged.<br>
- * {@link #specialDropValue} contains the special drop value for this even.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the Entity does not drop anything.<br>
@@ -31,18 +30,16 @@ import net.minecraft.entity.EntityLivingBase;
 public class LivingDropsEvent extends LivingEvent
 {
     public final DamageSource source;
-    public final ArrayList<EntityItem> drops;
+    public final List<EntityItem> drops;
     public final int lootingLevel;
     public final boolean recentlyHit;
-    public final int specialDropValue;
-    
-    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue)
+
+    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
         super(entity);
         this.source = source;
         this.drops = drops;
         this.lootingLevel = lootingLevel;
         this.recentlyHit = recentlyHit;
-        this.specialDropValue = specialDropValue;
     }
 }
