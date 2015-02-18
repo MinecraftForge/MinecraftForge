@@ -1,16 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockJukebox.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockJukebox.java
-@@ -1,9 +1,6 @@
- package net.minecraft.block;
- 
- import net.minecraft.block.material.Material;
--import net.minecraft.block.properties.IProperty;
--import net.minecraft.block.properties.PropertyBool;
--import net.minecraft.block.state.BlockState;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.entity.item.EntityItem;
-@@ -19,50 +16,49 @@
+@@ -19,50 +19,49 @@
  
  public class BlockJukebox extends BlockContainer
  {
@@ -80,7 +70,7 @@
  
              if (tileentity instanceof BlockJukebox.TileEntityJukebox)
              {
-@@ -71,17 +67,16 @@
+@@ -71,17 +70,16 @@
  
                  if (itemstack != null)
                  {
@@ -105,7 +95,7 @@
                  }
              }
          }
-@@ -89,7 +84,7 @@
+@@ -89,7 +87,7 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -114,7 +104,7 @@
          super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
-@@ -105,7 +100,7 @@
+@@ -105,7 +103,7 @@
      {
          return new BlockJukebox.TileEntityJukebox();
      }
@@ -123,7 +113,7 @@
      public boolean func_149740_M()
      {
          return true;
-@@ -132,22 +127,7 @@
+@@ -132,22 +130,7 @@
      {
          return 3;
      }

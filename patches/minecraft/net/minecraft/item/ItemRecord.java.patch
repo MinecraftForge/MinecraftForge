@@ -1,19 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
-@@ -1,9 +1,12 @@
- package net.minecraft.item;
- 
- import com.google.common.collect.Maps;
-+
- import java.util.List;
- import java.util.Map;
-+
- import net.minecraft.block.BlockJukebox;
-+import net.minecraft.block.BlockJukebox.TileEntityJukebox;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.entity.player.EntityPlayer;
-@@ -30,27 +33,20 @@
+@@ -30,27 +30,20 @@
      }
  
      public boolean func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumFacing p_180614_5_, float p_180614_6_, float p_180614_7_, float p_180614_8_)
@@ -48,7 +35,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -75,4 +71,15 @@
+@@ -75,4 +68,15 @@
      {
          return (ItemRecord)field_150928_b.get(p_150926_0_);
      }
