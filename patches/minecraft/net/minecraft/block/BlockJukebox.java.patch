@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockJukebox.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockJukebox.java
-@@ -19,50 +19,49 @@
+@@ -19,41 +19,40 @@
  
  public class BlockJukebox extends BlockContainer
  {
@@ -29,7 +29,7 @@
 +            {
 +                if (jukeBox.func_145856_a() != null)
 +                {
-+                    this.dropRecord(p_180639_1_, p_180639_2_);
++                    this.func_180678_e(p_180639_1_, p_180639_2_, p_180639_3_);
 +                }
 +            }
          }
@@ -40,70 +40,32 @@
 +        return false;
      }
  
--    public void func_176431_a(World p_176431_1_, BlockPos p_176431_2_, IBlockState p_176431_3_, ItemStack p_176431_4_)
-+    public void insertRecord(World worldIn, BlockPos pos, ItemStack recordStack)
+     public void func_176431_a(World p_176431_1_, BlockPos p_176431_2_, IBlockState p_176431_3_, ItemStack p_176431_4_)
      {
--        if (!p_176431_1_.field_72995_K)
-+        if (!worldIn.field_72995_K)
+         if (!p_176431_1_.field_72995_K)
          {
 -            TileEntity tileentity = p_176431_1_.func_175625_s(p_176431_2_);
-+            BlockJukebox.TileEntityJukebox jukeBox = (BlockJukebox.TileEntityJukebox) worldIn.func_175625_s(pos);
++            BlockJukebox.TileEntityJukebox jukeBox = (BlockJukebox.TileEntityJukebox) p_176431_1_.func_175625_s(p_176431_2_);
  
 -            if (tileentity instanceof BlockJukebox.TileEntityJukebox)
 +            if (jukeBox != null)
              {
 -                ((BlockJukebox.TileEntityJukebox)tileentity).func_145857_a(new ItemStack(p_176431_4_.func_77973_b(), 1, p_176431_4_.func_77960_j()));
 -                p_176431_1_.func_180501_a(p_176431_2_, p_176431_3_.func_177226_a(field_176432_a, Boolean.valueOf(true)), 2);
-+                jukeBox.func_145857_a(recordStack);
++                jukeBox.func_145857_a(p_176431_4_);
              }
          }
      }
- 
--    private void func_180678_e(World p_180678_1_, BlockPos p_180678_2_, IBlockState p_180678_3_)
-+    private void dropRecord(World worldIn, BlockPos pos)
-     {
--        if (!p_180678_1_.field_72995_K)
-+        if (!worldIn.field_72995_K)
-         {
--            TileEntity tileentity = p_180678_1_.func_175625_s(p_180678_2_);
-+            TileEntity tileentity = worldIn.func_175625_s(pos);
- 
-             if (tileentity instanceof BlockJukebox.TileEntityJukebox)
-             {
-@@ -71,17 +70,16 @@
- 
-                 if (itemstack != null)
-                 {
--                    p_180678_1_.func_175718_b(1005, p_180678_2_, 0);
--                    p_180678_1_.func_175717_a(p_180678_2_, (String)null);
-+                    worldIn.func_175718_b(1005, pos, 0);
-+                    worldIn.func_175717_a(pos, (String)null);
-                     tileentityjukebox.func_145857_a((ItemStack)null);
-                     float f = 0.7F;
--                    double d0 = (double)(p_180678_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
--                    double d1 = (double)(p_180678_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.2D + 0.6D;
--                    double d2 = (double)(p_180678_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+@@ -78,8 +77,7 @@
+                     double d0 = (double)(p_180678_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+                     double d1 = (double)(p_180678_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.2D + 0.6D;
+                     double d2 = (double)(p_180678_1_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 -                    ItemStack itemstack1 = itemstack.func_77946_l();
 -                    EntityItem entityitem = new EntityItem(p_180678_1_, (double)p_180678_2_.func_177958_n() + d0, (double)p_180678_2_.func_177956_o() + d1, (double)p_180678_2_.func_177952_p() + d2, itemstack1);
-+                    double d0 = (double)(worldIn.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    double d1 = (double)(worldIn.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.2D + 0.6D;
-+                    double d2 = (double)(worldIn.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    EntityItem entityitem = new EntityItem(worldIn, (double)pos.func_177958_n() + d0, (double)pos.func_177956_o() + d1, (double)pos.func_177952_p() + d2, new ItemStack(itemstack.func_77973_b(), 1, itemstack.func_77960_j()));
++                    EntityItem entityitem = new EntityItem(p_180678_1_, (double)p_180678_2_.func_177958_n() + d0, (double)p_180678_2_.func_177956_o() + d1, (double)p_180678_2_.func_177952_p() + d2, new ItemStack(itemstack.func_77973_b(), 1, itemstack.func_77960_j()));
                      entityitem.func_174869_p();
--                    p_180678_1_.func_72838_d(entityitem);
-+                    worldIn.func_72838_d(entityitem);
+                     p_180678_1_.func_72838_d(entityitem);
                  }
-             }
-         }
-@@ -89,7 +87,7 @@
- 
-     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
-     {
--        this.func_180678_e(p_180663_1_, p_180663_2_, p_180663_3_);
-+        this.dropRecord(p_180663_1_, p_180663_2_);
-         super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
-     }
- 
 @@ -105,7 +103,7 @@
      {
          return new BlockJukebox.TileEntityJukebox();
