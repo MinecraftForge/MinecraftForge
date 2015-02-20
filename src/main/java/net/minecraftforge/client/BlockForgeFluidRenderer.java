@@ -20,11 +20,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BlockForgeFluidRenderer
 {
+	/**
+	 * Render works only if the Textures where registered in {@link Minecraft.getMinecraft().getTextureMapBlocks()}
+	 */
     public boolean renderFluid(IBlockAccess blockAccess, IBlockState blockStateIn, BlockPos blockPosIn, WorldRenderer worldRendererIn)
     {
         BlockFluidBase blockliquid = (BlockFluidBase)blockStateIn.getBlock();
         blockliquid.setBlockBoundsBasedOnState(blockAccess, blockPosIn);
-        TextureAtlasSprite[] atextureatlassprite = new TextureAtlasSprite[]{blockliquid.getFluid().getStillIcon(), blockliquid.getFluid().getFlowingIcon()};
+        TextureAtlasSprite[] atextureatlassprite = new TextureAtlasSprite[]{getIconSave(blockliquid.getFluid().getStillIcon()), getIconSave(blockliquid.getFluid().getFlowingIcon())};
         int i = blockliquid.colorMultiplier(blockAccess, blockPosIn);
         float f = (float)(i >> 16 & 255) / 255.0F;
         float f1 = (float)(i >> 8 & 255) / 255.0F;
@@ -234,6 +237,14 @@ public class BlockForgeFluidRenderer
         }
     }
 
+    private TextureAtlasSprite getIconSave(TextureAtlasSprite tex)
+    {
+    	if(tex == null)
+    		return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+    	
+    	return tex;
+    }
+    
     private boolean shouldTopBerendered(BlockFluidBase base, IBlockAccess world, BlockPos xyz)
     {
     	if(base instanceof ICustomFluidTop)
