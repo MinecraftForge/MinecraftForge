@@ -99,7 +99,15 @@
              return entityitem;
          }
          else
-@@ -1810,7 +1857,7 @@
+@@ -1672,6 +1719,7 @@
+ 
+     public void func_70078_a(Entity p_70078_1_)
+     {
++        if(!(this instanceof EntityLivingBase) && !net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_70078_1_, true)){ return; }  
+         this.field_70149_e = 0.0D;
+         this.field_70147_f = 0.0D;
+ 
+@@ -1810,7 +1858,7 @@
  
      public boolean func_70115_ae()
      {
@@ -108,7 +116,7 @@
      }
  
      public boolean func_70093_af()
-@@ -2103,7 +2150,7 @@
+@@ -2103,7 +2151,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -117,7 +125,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2357,4 +2404,176 @@
+@@ -2357,4 +2405,176 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
