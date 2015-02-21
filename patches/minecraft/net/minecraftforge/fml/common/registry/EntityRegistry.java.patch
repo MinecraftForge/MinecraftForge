@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/common/registry/EntityRegistry.java
++++ ../src-work/minecraft/net/minecraftforge/fml/common/registry/EntityRegistry.java
+@@ -176,6 +176,7 @@
+             return;
+         }
+         entityRegistrations.put(mc, er);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityRegisterEvent.EntityModRegisteredEvent(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates));
+     }
+ 
+     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
+@@ -197,6 +198,7 @@
+         }
+         id = instance().validateAndClaimId(id);
+         EntityList.func_75618_a(entityClass, entityName, id);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityRegisterEvent.EntityGlobalRegisteredEvent(entityClass, entityName, id));
+     }
+ 
+     private int validateAndClaimId(int id)
+@@ -249,6 +251,7 @@
+         }
+         instance().validateAndClaimId(id);
+         EntityList.func_75614_a(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityRegisterEvent.EntityGlobalRegisteredEvent(entityClass, entityName, id));
+     }
+ 
+     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
