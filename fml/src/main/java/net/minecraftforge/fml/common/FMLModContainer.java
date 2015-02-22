@@ -613,11 +613,17 @@ public class FMLModContainer implements ModContainer
         return candidate.getContainedPackages();
     }
 
+    private boolean isTrue(Boolean value)
+    {
+        if (value == null) return false;
+        return value.booleanValue();
+    }
+
     @Override
     public boolean shouldLoadInEnvironment()
     {
-        boolean clientSideOnly = (Boolean)this.descriptor.get("clientSideOnly");
-        boolean serverSideOnly = (Boolean)this.descriptor.get("serverSideOnly");
+        boolean clientSideOnly = isTrue((Boolean)descriptor.get("clientSideOnly"));
+        boolean serverSideOnly = isTrue((Boolean)descriptor.get("serverSideOnly"));
 
         if (clientSideOnly && serverSideOnly)
             throw new RuntimeException("Mod annotation claims to be both client and server side only!");
