@@ -731,7 +731,7 @@ public class FMLCommonHandler
      */
     public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException
     {
-        byte[] data = IOUtils.toByteArray(new InputStreamReader(inputstream, Charsets.UTF_8));
+        byte[] data = IOUtils.toByteArray(inputstream);
 
         boolean isEnhanced = false;
         for (String line : IOUtils.readLines(new ByteArrayInputStream(data), Charsets.UTF_8))
