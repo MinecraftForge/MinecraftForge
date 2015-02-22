@@ -32,7 +32,7 @@ public class ModContainerFactory
     public static Map<Type, Constructor<? extends ModContainer>> modTypes = Maps.newHashMap();
     private static Pattern modClass = Pattern.compile(".*(\\.|)(mod\\_[^\\s$]+)$");
     private static ModContainerFactory INSTANCE = new ModContainerFactory();
-    
+
     private ModContainerFactory() {
         // We always know about Mod type
         registerContainerType(Type.getType(Mod.class), FMLModContainer.class);
@@ -40,7 +40,7 @@ public class ModContainerFactory
     public static ModContainerFactory instance() {
         return INSTANCE;
     }
-    
+
     public void registerContainerType(Type type, Class<? extends ModContainer> container)
     {
         try {
@@ -76,7 +76,13 @@ public class ModContainerFactory
             {
                 FMLLog.fine("Identified a mod of type %s (%s) - loading", ann.getASMType(), className);
                 try {
-                    return modTypes.get(ann.getASMType()).newInstance(className, container, ann.getValues());
+                    ModContainer ret = modTypes.get(ann.getASMType()).newInstance(className, container, ann.getValues());
+                    if (!ret.shouldLoadInEnvironment())
+                    {
+                        FMLLog.fine("Skipping mod %s, container opted to not load.", className);
+                        return null;
+                    }
+                    return ret;
                 } catch (Exception e) {
                     FMLLog.log(Level.ERROR, e, "Unable to construct %s container", ann.getASMType().getClassName());
                     return null;

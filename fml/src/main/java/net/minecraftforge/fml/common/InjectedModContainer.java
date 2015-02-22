@@ -201,4 +201,10 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.getOwnedPackages();
     }
+
+    @Override
+    public boolean shouldLoadInEnvironment()
+    {
+        return true;
+    }
 }

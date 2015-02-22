@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
+import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
@@ -610,5 +611,31 @@ public class FMLModContainer implements ModContainer
     public List<String> getOwnedPackages()
     {
         return candidate.getContainedPackages();
+    }
+
+    @Override
+    public boolean shouldLoadInEnvironment()
+    {
+        boolean clientSideOnly = (Boolean)this.descriptor.get("clientSideOnly");
+        boolean serverSideOnly = (Boolean)this.descriptor.get("serverSideOnly");
+
+        if (clientSideOnly && serverSideOnly)
+            throw new RuntimeException("Mod annotation claims to be both client and server side only!");
+
+        Side side = FMLCommonHandler.instance().getSide();
+
+        if (clientSideOnly && side != Side.CLIENT)
+        {
+            FMLLog.info("Disabling mod %d it is client side only.", getModId());
+            return false;
+        }
+
+        if (serverSideOnly && side != Side.SERVER)
+        {
+            FMLLog.info("Disabling mod %d it is server side only.", getModId());
+            return false;
+        }
+
+        return true;
     }
 }

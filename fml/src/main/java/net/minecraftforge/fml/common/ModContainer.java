@@ -147,4 +147,6 @@ public interface ModContainer
     String getGuiClassName();
 
     List<String> getOwnedPackages();
+
+    boolean shouldLoadInEnvironment();
 }

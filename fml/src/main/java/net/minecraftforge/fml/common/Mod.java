@@ -90,8 +90,21 @@ public @interface Mod
     boolean useMetadata() default false;
 
     /**
+     * If true, this mod will not be loaded on the Dedicated Server environment.
+     * Will crash if both serverSideOnly and clientSideOnly are set to true.
+     */
+    boolean clientSideOnly() default false;
+
+    /**
+     * If true, this mod will not be loaded on the Client environment.
+     * Will crash if both serverSideOnly and clientSideOnly are set to true.
+     */
+    boolean serverSideOnly() default false;
+
+    /**
      * The acceptable range of minecraft versions that this mod will load and run in
-     * The default ("empty string") indicates that only the current minecraft version is acceptable.
+     * The default ("empty string") indicates that the currently RUNNING minecraft version is acceptable.
+     * This means ANY version that the end user adds the mod to. Modders PLEASS set this.
      * FML will refuse to run with an error if the minecraft version is not in this range across all mods.
      * @return A version range as specified by the maven version range specification or the empty string
      */

@@ -200,4 +200,10 @@ public class DummyModContainer implements ModContainer
     {
         return ImmutableList.of();
     }
+
+    @Override
+    public boolean shouldLoadInEnvironment()
+    {
+        return true;
+    }
 }
