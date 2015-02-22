@@ -1,5 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -20,0 +20,0 @@
+import net.minecraftforge.fml.relauncher.SideOnly;
++import net.minecraftforge.client.BlockForgeFluidRenderer;
+@@ -29,0 +29,5 @@
+     private final BlockFluidRenderer fluidRenderer = new BlockFluidRenderer();
+-    private static final String __OBFID = "CL_00002520";  
++    private final BlockForgeFluidRenderer forgeFluidRenderer = new BlockForgeFluidRenderer();
++    private static final String __OBFID = "CL_00002520";
+
+    public BlockRendererDispatcher(BlockModelShapes p_i46237_1_, GameSettings p_i46237_2_)
+@@ -78,6 +77,24 @@
+                        return this.blockModelRenderer.renderModel(p_175018_3_, ibakedmodel, p_175018_1_, p_175018_2_, p_175018_4_);
+-                    default:
+-                        return false;
++                    case 4:
+                        return this.forgeFluidRenderer.renderFluid(p_175018_3_, p_175018_1_, p_175018_2_, p_175018_4_);
++
 @@ -129,6 +129,12 @@
              ibakedmodel = ((WeightedBakedModel)ibakedmodel).func_177564_a(MathHelper.func_180186_a(p_175022_3_));
          }
