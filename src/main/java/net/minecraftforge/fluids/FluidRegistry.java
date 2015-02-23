@@ -43,7 +43,7 @@ public abstract class FluidRegistry
         }
     }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.getUnlocalizedName());
 
-    public static int renderIdFluid = -1;
+    public static int renderIdFluid = 1;
 
     static
     {

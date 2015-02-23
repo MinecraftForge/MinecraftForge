@@ -529,4 +529,25 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (remaining > 1) remaining = 1.0f;
         return remaining * (density > 0 ? 1 : -1);
     }
+    
+    @SideOnly(Side.CLIENT)
+    public boolean isTranslucent(IBlockAccess world, BlockPos pos)
+    {
+        for (int x = -1; x <= 1; ++x)
+        {
+            for (int z = -1; z <= 1; ++z)
+            {
+                IBlockState iblockstate = world.getBlockState(pos.add(x, 0, z));
+                Block block = iblockstate.getBlock();
+                Material material = block.getMaterial();
+
+                if (material != this.blockMaterial && !block.isFullBlock())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
