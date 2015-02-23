@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -26,7 +26,7 @@
+     private final GameSettings field_175026_b;
+     private final BlockModelRenderer field_175027_c = new BlockModelRenderer();
+     private final ChestRenderer field_175024_d = new ChestRenderer();
+-    private final BlockFluidRenderer field_175025_e = new BlockFluidRenderer();
++    private final BlockFluidRenderer field_175025_e = new net.minecraftforge.fluids.FluidRenderer();
+     private static final String __OBFID = "CL_00002520";
+ 
+     public BlockRendererDispatcher(BlockModelShapes p_i46237_1_, GameSettings p_i46237_2_)
 @@ -129,6 +129,12 @@
              ibakedmodel = ((WeightedBakedModel)ibakedmodel).func_177564_a(MathHelper.func_180186_a(p_175022_3_));
          }
