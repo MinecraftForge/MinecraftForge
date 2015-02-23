@@ -26,7 +26,7 @@
 +    {
 +    }
 +
-+    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.tileentity");
++    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.");
 +    /**
 +     * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
 +     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
