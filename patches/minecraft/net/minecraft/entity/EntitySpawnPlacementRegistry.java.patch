@@ -1,12 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntitySpawnPlacementRegistry.java
-@@ -45,6 +45,10 @@
+@@ -45,6 +45,12 @@
          return (EntityLiving.SpawnPlacementType)field_180110_a.get(p_180109_0_);
      }
  
 +    public static void setPlacementType(Class<? extends Entity> entityClass, EntityLiving.SpawnPlacementType placementType)
 +    {
-+        if(!field_180110_a.contains(entityClass))
++        if(!field_180110_a.containsKey(entityClass))
 +            field_180110_a.put(entityClass, placementType);
 +    }
 +
