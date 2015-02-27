@@ -31,6 +31,7 @@ public class ChestGenHooks
     public static final String VILLAGE_BLACKSMITH       = "villageBlacksmith";
     public static final String BONUS_CHEST              = "bonusChest";
     public static final String DUNGEON_CHEST            = "dungeonChest";
+    public static final String NETHER_FORTRESS          = "netherFortress";
 
     private static final HashMap<String, ChestGenHooks> chestInfo = new HashMap<String, ChestGenHooks>();
     private static boolean hasInit = false;
