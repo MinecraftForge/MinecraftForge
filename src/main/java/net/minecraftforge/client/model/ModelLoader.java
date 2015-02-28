@@ -262,6 +262,7 @@ public class ModelLoader extends ModelBakery
             }
             ModelBlock model = this.model;
             if(hasItemModel(model)) model = makeItemModel(model);
+            if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform())), Attributes.DEFAULT_BAKED_FORMAT);
             return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), state instanceof UVLock), Attributes.DEFAULT_BAKED_FORMAT);
         }
