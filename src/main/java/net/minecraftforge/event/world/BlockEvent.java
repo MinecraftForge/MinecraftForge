@@ -1,6 +1,7 @@
 package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -9,6 +10,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -175,6 +177,33 @@ public class BlockEvent extends Event
         public List<BlockSnapshot> getReplacedBlockSnapshots()
         {
             return blockSnapshots;
+        }
+    }
+    
+    /**
+     * Fired when a physics update occurs on a block. This event acts as
+     * a way for mods to detect physics updates, in the same way a BUD switch
+     * does. This event is only called on the server.
+     */
+    @Cancelable
+    public static class NeighborNotifyEvent extends BlockEvent 
+    {
+        private final EnumSet<EnumFacing> notifiedSides;
+        
+        public NeighborNotifyEvent(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
+        {
+            super(world, pos, state);
+            this.notifiedSides = notifiedSides;
+        }
+        
+        /**
+         * Gets a list of directions from the base block that updates will occur upon.
+         * 
+         * @return list of notified directions
+         */
+        public EnumSet<EnumFacing> getNotifiedSides() 
+        {
+            return notifiedSides;
         }
     }
 }
