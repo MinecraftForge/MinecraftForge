@@ -2,6 +2,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,7 @@ import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -86,6 +88,13 @@ public class ForgeEventFactory
     {
         IBlockState placedAgainst = blockSnapshot.world.getBlockState(blockSnapshot.pos.offset(direction.getOpposite()));
         PlaceEvent event = new PlaceEvent(blockSnapshot, placedAgainst, player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+    
+    public static NeighborNotifyEvent onNeighborNotify(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
+    {
+        NeighborNotifyEvent event = new NeighborNotifyEvent(world, pos, state, notifiedSides);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
