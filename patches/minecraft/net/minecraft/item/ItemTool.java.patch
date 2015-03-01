@@ -19,18 +19,16 @@
      }
  
      public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
-@@ -75,7 +87,9 @@
+@@ -75,7 +87,7 @@
  
      public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {
 -        return this.field_77862_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
-+        ItemStack mat = this.field_77862_b.getRepairItemStack();
-+        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
-+        return super.func_82789_a(p_82789_1_, p_82789_2_);
++        return this.field_77862_b.getRepairMaterial().apply(p_82789_2_) || super.func_82789_a(p_82789_1_, p_82789_2_);
      }
  
      public Multimap func_111205_h()
-@@ -84,4 +98,38 @@
+@@ -84,4 +96,38 @@
          multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.field_77865_bY, 0));
          return multimap;
      }

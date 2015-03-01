@@ -601,52 +601,106 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function()
-@@ -936,6 +1495,10 @@
+@@ -936,6 +1495,12 @@
  
          private static final String __OBFID = "CL_00000042";
  
 +        //Added by forge for custom Tool materials.
-+        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
-+        private ItemStack repairMaterial = null;
++        @Deprecated public Item customCraftingMaterial = null; // Remove in 1.8.1
++        private com.google.common.base.Predicate<ItemStack> repairMaterial = null;
++        private boolean isCached = false;
++        private ItemStack cachedItem = null;
 +
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -970,9 +1533,36 @@
+@@ -970,9 +1535,88 @@
              return this.field_78008_j;
          }
  
-+        @Deprecated // Use getRepairItemStack below
++        @Deprecated // Use getRepairMaterial below
          public Item func_150995_f()
          {
 -            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == EMERALD ? Items.field_151045_i : null))));
-+            switch (this)
-+            {
-+                case WOOD:    return Item.func_150898_a(Blocks.field_150344_f);
-+                case STONE:   return Item.func_150898_a(Blocks.field_150347_e);
-+                case GOLD:    return Items.field_151043_k;
-+                case IRON:    return Items.field_151042_j;
-+                case EMERALD: return Items.field_151045_i;
-+                default:      return customCraftingMaterial;
-+            }
++            ItemStack ret = getRepairItemStack();
++            return ret != null ? ret.func_77973_b() : null;
          }
 +
++        /* ======================================== FORGE START =====================================*/
++        @Deprecated // use setRepairMaterial below
 +        public ToolMaterial setRepairItem(ItemStack stack)
 +        {
-+            if (this.repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
-+            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == EMERALD) throw new RuntimeException("Can not change vanilla tool repair materials");
-+            this.repairMaterial = stack;
-+            this.customCraftingMaterial = stack.func_77973_b();
++            setRepairMaterial(new net.minecraftforge.oredict.ItemPredicate(stack));
++            customCraftingMaterial = stack.func_77973_b(); // maintain behavior
 +            return this;
 +        }
 +
++        /**
++         * Set the repairing material with a {@code Predicate}. One may use {@code OreNamePredicate} for ores
++         * or {@code ItemPredicate} for items.
++         * 
++         * <p><i>Attention: If the object passed in this method is also an {@link Iterable}, its iterator may be called
++         * to give the actual items.</i>
++         *
++         * @param predicate a predicate of {@link ItemStack} represents repairing material
++         * @return this
++         */
++        public ToolMaterial setRepairMaterial(com.google.common.base.Predicate<ItemStack> predicate)
++        {
++            if (repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
++            repairMaterial = predicate;
++            isCached = false;
++            cachedItem = null;
++            return this;
++        }
++
++        /**
++         * Give a {@code Predicate} representation of the repairing material.
++         *
++         * @return a predicate of {@link ItemStack} represents repairing material
++         */
++        public com.google.common.base.Predicate<ItemStack> getRepairMaterial()
++        {
++            com.google.common.base.Predicate<ItemStack> ret = repairMaterial;
++            if (ret != null) return ret;
++            Item i = customCraftingMaterial;
++            if (i != null)
++            {
++                cachedItem = new ItemStack(i, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++                isCached = true;
++                return repairMaterial = new net.minecraftforge.oredict.ItemPredicate(cachedItem);
++            }
++            return com.google.common.base.Predicates.alwaysFalse();
++        }
++
++        /**
++         * An {@link ItemStack} version of {@link ToolMaterial#getRepairItem}.
++         *
++         * @return an item that can be used as repairing material, null if the representation as an {@code ItemStack}
++         * is not available.
++         */
 +        public ItemStack getRepairItemStack()
 +        {
-+            if (repairMaterial != null) return repairMaterial;
-+            Item ret = this.func_150995_f();
-+            if (ret == null) return null;
-+            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
-+            return repairMaterial;
++            if (isCached) return cachedItem;
++            Object p = getRepairMaterial();
++            if (p instanceof Iterable) // use Iterable so we don't check twice
++            {
++                Object obj = com.google.common.collect.Iterables.getFirst((Iterable<?>) p, null);
++                if (obj instanceof ItemStack) {
++                    isCached = true;
++                    return cachedItem = (ItemStack) obj;
++                }
++            }
++            isCached = true;
++            return null;
++        }
++
++        static {
++            WOOD.repairMaterial = new net.minecraftforge.oredict.OreNamePredicate("plankWood");
++            STONE.repairMaterial = new net.minecraftforge.oredict.OreNamePredicate("cobblestone");
++            IRON.repairMaterial = new net.minecraftforge.oredict.OreNamePredicate("ingotIron");
++            EMERALD.repairMaterial = new net.minecraftforge.oredict.OreNamePredicate("gemDiamond");
++            GOLD.repairMaterial = new net.minecraftforge.oredict.OreNamePredicate("ingotGold");
 +        }
      }
  }

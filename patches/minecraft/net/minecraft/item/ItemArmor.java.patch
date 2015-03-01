@@ -9,6 +9,15 @@
                  int i1 = EntityLiving.func_82159_b(p_82487_2_);
                  ItemStack itemstack1 = p_82487_2_.func_77946_l();
                  itemstack1.field_77994_a = 1;
+@@ -182,7 +182,7 @@
+ 
+     public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
+     {
+-        return this.field_77878_bZ.func_151685_b() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
++        return this.field_77878_bZ.getRepairMaterial().apply(p_82789_2_) || super.func_82789_a(p_82789_1_, p_82789_2_);
+     }
+ 
+     public ItemStack func_77659_a(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer p_77659_3_)
 @@ -192,7 +192,7 @@
  
          if (itemstack1 == null)
@@ -18,30 +27,104 @@
              p_77659_1_.field_77994_a = 0;
          }
  
-@@ -213,6 +213,9 @@
+@@ -213,6 +213,12 @@
  
          private static final String __OBFID = "CL_00001768";
  
 +        //Added by forge for custom Armor materials.
-+        public Item customCraftingMaterial = null;
++        @Deprecated public Item customCraftingMaterial = null; // Remove in 1.8.1
++        private com.google.common.base.Predicate<ItemStack> repairMaterial = null;
++        private boolean isCached = false;
++        private ItemStack cachedItem = null;
 +
          private ArmorMaterial(String p_i45789_3_, int p_i45789_4_, int[] p_i45789_5_, int p_i45789_6_)
          {
              this.field_179243_f = p_i45789_3_;
-@@ -238,7 +241,15 @@
+@@ -236,9 +242,11 @@
+             return this.field_78055_h;
+         }
  
++        @Deprecated // Use getRepairMaterial below
          public Item func_151685_b()
          {
 -            return this == LEATHER ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-+            switch (this)
-+            {
-+                case LEATHER: return Items.field_151116_aA;
-+                case CHAIN:   return Items.field_151042_j;
-+                case GOLD:    return Items.field_151043_k;
-+                case IRON:    return Items.field_151042_j;
-+                case DIAMOND: return Items.field_151045_i;
-+                default:      return customCraftingMaterial;
-+            }
++            ItemStack ret = getRepairItemStack();
++            return ret != null ? ret.func_77973_b() : null;
          }
  
          @SideOnly(Side.CLIENT)
+@@ -246,5 +254,74 @@
+         {
+             return this.field_179243_f;
+         }
++
++        /* ======================================== FORGE START =====================================*/
++        /**
++         * Set the repairing material with a {@code Predicate}. One may use {@code OreNamePredicate} for ores
++         * or {@code ItemPredicate} for items.
++         * 
++         * <p><i>Attention: If the object passed in this method is also an {@link Iterable}, its iterator may be called
++         * to give the actual items.</i>
++         *
++         * @param predicate a predicate of {@link ItemStack} represents repairing material
++         * @return this
++         */
++        public ArmorMaterial setRepairMaterial(com.google.common.base.Predicate<ItemStack> predicate)
++        {
++            if (repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
++            repairMaterial = predicate;
++            isCached = false;
++            cachedItem = null;
++            return this;
++        }
++
++        /**
++         * Give a {@code Predicate} representation of the repairing material.
++         *
++         * @return a predicate of {@link ItemStack} represents repairing material
++         */
++        public com.google.common.base.Predicate<ItemStack> getRepairMaterial()
++        {
++            com.google.common.base.Predicate<ItemStack> ret = repairMaterial;
++            if (ret != null) return ret;
++            Item i = customCraftingMaterial;
++            if (i != null)
++            {
++                cachedItem = new ItemStack(i, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++                isCached = true;
++                return repairMaterial = new net.minecraftforge.oredict.ItemPredicate(cachedItem);
++            }
++            return com.google.common.base.Predicates.alwaysFalse();
++        }
++
++        /**
++         * An {@link ItemStack} version of {@link ArmorMaterial#getRepairItem}.
++         *
++         * @return an item that can be used as repairing material, null if the representation as an {@code ItemStack}
++         * is not available.
++         */
++        public ItemStack getRepairItemStack()
++        {
++            if (isCached) return cachedItem;
++            Object p = getRepairMaterial();
++            if (p instanceof Iterable) // use Iterable so we don't check twice
++            {
++                Object obj = com.google.common.collect.Iterables.getFirst((Iterable<?>) p, null);
++                if (obj instanceof ItemStack) {
++                    isCached = true;
++                    return cachedItem = (ItemStack) obj;
++                }
++            }
++            isCached = true;
++            return null;
++        }
++
++        static {
++            LEATHER.repairMaterial = new net.minecraftforge.oredict.OreNamePredicate("leather");
++            CHAIN.repairMaterial = ToolMaterial.IRON.getRepairMaterial();
++            IRON.repairMaterial = CHAIN.repairMaterial;
++            GOLD.repairMaterial = ToolMaterial.GOLD.getRepairMaterial();
++            DIAMOND.repairMaterial = ToolMaterial.EMERALD.getRepairMaterial();
++        }
+     }
+ }
