@@ -12,9 +12,10 @@
              {
                  nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
+-                return new WorldInfo(nbttagcompound1);
 +                worldInfo = new WorldInfo(nbttagcompound1);
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
-                 return new WorldInfo(nbttagcompound1);
++                return worldInfo;
              }
 +            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
 +            {
