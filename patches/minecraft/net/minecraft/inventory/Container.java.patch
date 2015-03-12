@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -624,7 +624,7 @@
+@@ -351,6 +351,7 @@
+                                     }
+ 
+                                     itemstack3.field_77994_a += l1;
++                                    slot2.func_75215_d(itemstack3);
+                                 }
+                                 else if (itemstack4.field_77994_a <= slot2.func_178170_b(itemstack4))
+                                 {
+@@ -624,7 +625,7 @@
                  slot = (Slot)this.field_75151_b.get(k);
                  itemstack1 = slot.func_75211_c();
  
