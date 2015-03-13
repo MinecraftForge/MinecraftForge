@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.common.ModContainer;
 
 /**
  * @author cpw
@@ -30,7 +30,7 @@ public class GuiSlotModList extends GuiScrollingList
 
     public GuiSlotModList(GuiModList parent, ArrayList<ModContainer> mods, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 66 + 4, 10, 35);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 88 + 4, 10, 35);
         this.parent=parent;
         this.mods=mods;
     }
@@ -63,6 +63,11 @@ public class GuiSlotModList extends GuiScrollingList
     protected int getContentHeight()
     {
         return (this.getSize()) * 35 + 1;
+    }
+    
+    ArrayList<ModContainer> getMods()
+    {
+        return mods;
     }
 
     @Override
