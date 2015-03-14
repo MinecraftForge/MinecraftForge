@@ -128,7 +128,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
     public void putObject(Object objName, Object obj)
     {
         String name = (String) objName;
-        I thing = superType.cast(obj);
+        I thing = cast(obj);
 
         if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
         if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
@@ -224,9 +224,19 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public I getRaw(int id)
     {
-        return superType.cast(super.getObjectById(id));
+        return cast(super.getObjectById(id));
     }
 
+    /**
+     * superType.cast appears to be expensive. Skip it for speed?
+     * @param obj
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	private I cast(Object obj)
+    {
+    	return (I)(obj);
+    }
     /**
      * Get the object identified by the specified name.
      *
@@ -235,7 +245,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
      */
     public I getRaw(String name)
     {
-        I ret = superType.cast(super.getObject(name));
+        I ret = cast(super.getObject(name));
 
         if (ret == null) // no match, try aliases recursively
         {
@@ -461,7 +471,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             FMLLog.severe("The substitution of %s has already occured. You cannot duplicate substitutions", nameToReplace);
             throw new ExistingSubstitutionException(nameToReplace, toReplace);
         }
-        I replacement = superType.cast(toReplace);
+        I replacement = cast(toReplace);
         I original = getRaw(nameToReplace);
         if (original == null)
         {
