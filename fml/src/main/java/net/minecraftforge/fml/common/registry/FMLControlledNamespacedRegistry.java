@@ -93,6 +93,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         }
 
     }
+
+    @SuppressWarnings("unchecked")
+    void setFrom(FMLControlledNamespacedRegistry<?> registry) {
+        set((FMLControlledNamespacedRegistry<I>) registry);
+    }
     void set(FMLControlledNamespacedRegistry<I> registry)
     {
         if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
@@ -519,5 +524,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     {
         if (this.optionalDefaultKey != null)
             Validate.notNull(this.optionalDefaultObject);
+    }
+
+
+    FMLControlledNamespacedRegistry<I> makeShallowCopy() {
+        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, maxId, minId, superType);
     }
 }

@@ -20,9 +20,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.*;
 import net.minecraft.init.Blocks;
@@ -31,6 +33,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ObjectIntIdentityMap;
+import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.village.MerchantRecipeList;
@@ -112,6 +116,7 @@ public class VillagerRegistry
      * Register your villager id
      * @param id
      */
+    @Deprecated // Doesn't work at all.
     public void registerVillagerId(int id)
     {
         if (newVillagerIds.contains(id))
@@ -128,6 +133,7 @@ public class VillagerRegistry
      * @param villagerSkin
      */
     @SideOnly(Side.CLIENT)
+    @Deprecated // Doesn't work at all.
     public void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin)
     {
         if (newVillagers == null)
@@ -154,6 +160,7 @@ public class VillagerRegistry
      * @param defaultSkin
      */
     @SideOnly(Side.CLIENT)
+    @Deprecated // Doesn't work at all.
     public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin)
     {
         if (instance().newVillagers != null && instance().newVillagers.containsKey(villagerType))
@@ -168,6 +175,7 @@ public class VillagerRegistry
      *
      * @return newVillagerIds
      */
+    @Deprecated // Doesn't work at all.
     public static Collection<Integer> getRegisteredVillagers()
     {
         return Collections.unmodifiableCollection(instance().newVillagerIds);
@@ -191,12 +199,15 @@ public class VillagerRegistry
 
     public void register(VillagerProfession prof)
     {
-        //blah
+        register(prof, -1);
+    }
+    private void register(VillagerProfession prof, int id)
+    {
+        professions.register(id, prof.name, prof);
     }
 
     private boolean hasInit = false;
-    private List<VillagerProfession> professions = Lists.newArrayList();
-
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = GameData.createRegistry("villagerprofessions", VillagerProfession.class, 0, 1024);
 
 
     private void init()
@@ -206,7 +217,7 @@ public class VillagerRegistry
 
         VillagerProfession prof = new VillagerProfession("minecraft:farmer", "minecraft:textures/entity/villager/farmer.png");
         {
-            register(prof);
+            register(prof, 0);
             (new VillagerCareer(prof, "farmer"    )).init(VanillaTrades.trades[0][0]);
             (new VillagerCareer(prof, "fisherman" )).init(VanillaTrades.trades[0][1]);
             (new VillagerCareer(prof, "shepherd"  )).init(VanillaTrades.trades[0][2]);
@@ -214,24 +225,24 @@ public class VillagerRegistry
         }
         prof = new VillagerProfession("minecraft:librarian", "minecraft:textures/entity/villager/librarian.png");
         {
-            register(prof);
+            register(prof, 1);
             (new VillagerCareer(prof, "librarian")).init(VanillaTrades.trades[1][0]);
         }
         prof = new VillagerProfession("minecraft:priest", "minecraft:textures/entity/villager/priest.png");
         {
-            register(prof);
+            register(prof, 2);
             (new VillagerCareer(prof, "cleric")).init(VanillaTrades.trades[2][0]);
         }
         prof = new VillagerProfession("minecraft:smith", "minecraft:textures/entity/villager/smith.png");
         {
-            register(prof);
+            register(prof, 3);
             (new VillagerCareer(prof, "armor" )).init(VanillaTrades.trades[3][0]);
             (new VillagerCareer(prof, "weapon")).init(VanillaTrades.trades[3][1]);
             (new VillagerCareer(prof, "tool"  )).init(VanillaTrades.trades[3][2]);
         }
         prof = new VillagerProfession("minecraft:butcher", "minecraft:textures/entity/villager/butcher.png");
         {
-            register(prof);
+            register(prof, 4);
             (new VillagerCareer(prof, "butcher")).init(VanillaTrades.trades[4][0]);
             (new VillagerCareer(prof, "leather")).init(VanillaTrades.trades[4][1]);
         }
@@ -242,11 +253,13 @@ public class VillagerRegistry
         private ResourceLocation name;
         private ResourceLocation texture;
         private List<VillagerCareer> careers = Lists.newArrayList();
+        private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
 
         public VillagerProfession(String name, String texture)
         {
             this.name = new ResourceLocation(name);
             this.texture = new ResourceLocation(texture);
+            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
         }
 
         private void register(VillagerCareer career)
@@ -293,6 +306,8 @@ public class VillagerRegistry
      */
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
+        Set<String> entries = INSTANCE.professions.getKeys();
+        int prof = rand.nextInt(entries.size());
         //TODO: Grab id range from internal registry
         entity.setProfession(rand.nextInt(5));
     }

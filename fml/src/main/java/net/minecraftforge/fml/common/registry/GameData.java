@@ -142,6 +142,9 @@ public class GameData {
         GameDataSnapshot snap = new GameDataSnapshot();
         snap.entries.put("fml:blocks", new GameDataSnapshot.Entry(getMain().getBlockRegistry()));
         snap.entries.put("fml:items", new GameDataSnapshot.Entry(getMain().getItemRegistry()));
+        for (Map.Entry<String, FMLControlledNamespacedRegistry<?>> e : getMain().genericRegistries.entrySet()) {
+            snap.entries.put("fmlgr:"+e.getKey(), new GameDataSnapshot.Entry(e.getValue()));
+        }
         return snap;
     }
 
@@ -445,6 +448,11 @@ public class GameData {
         List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingBlocks, missingItems, isLocalWorld, newData, remapBlocks, remapItems);
         if (!missedMappings.isEmpty()) return missedMappings;
 
+        // If we got here - the load was accepted. We'll load generic repositories here.
+        // Generic registries can fail by returning a missing mapping.
+        missedMappings = newData.loadGenericRegistries(snapshot, getMain());
+        if (!missedMappings.isEmpty()) return missedMappings;
+
         if (injectFrozenData) // add blocks + items missing from the map
         {
             Map<String, Integer> newBlocks = frozen.iBlockRegistry.getEntriesNotIn(newData.iBlockRegistry);
@@ -665,6 +673,7 @@ public class GameData {
         iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class);
         availabilityMap = new BitSet(MAX_ITEM_ID + 1);
         blockedIds = new HashSet<Integer>();
+        genericRegistries = new HashMap<String,FMLControlledNamespacedRegistry<?>>();
     }
 
     private GameData(GameData data)
@@ -681,6 +690,17 @@ public class GameData {
         availabilityMap.or(data.availabilityMap);
         blockedIds.clear();
         blockedIds.addAll(data.blockedIds);
+        copyGenericRegistries(data);
+    }
+
+    private void copyGenericRegistries(GameData data) {
+        for (Map.Entry<String, FMLControlledNamespacedRegistry<?>> e : data.genericRegistries.entrySet()) {
+            FMLControlledNamespacedRegistry<?> orig = e.getValue();
+            FMLControlledNamespacedRegistry<?> copy = orig.makeShallowCopy();
+            // UGLY AS FUCK
+            copy.setFrom(orig);
+            genericRegistries.put(e.getKey(), copy);
+        }
     }
 
     int register(Object obj, String name, int idHint) // from FMLControlledNamespacedRegistry.addObject
@@ -966,4 +986,65 @@ public class GameData {
             this.objectList.clear();
         }
     }
+
+    private Map<String,FMLControlledNamespacedRegistry<?>> genericRegistries;
+
+    @SuppressWarnings("unchecked")
+    private <T> FMLControlledNamespacedRegistry<T> getGenericRegistry(String registryName, Class<T> type) {
+        FMLControlledNamespacedRegistry<?> fmlControlledNamespacedRegistry = genericRegistries.get(registryName);
+        return (FMLControlledNamespacedRegistry<T>) fmlControlledNamespacedRegistry;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> FMLControlledNamespacedRegistry<T> createGenericRegistry(String registryName, Class<T> type, int minId, int maxId) {
+        FMLControlledNamespacedRegistry<?> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(null, maxId, minId, type);
+        return (FMLControlledNamespacedRegistry<T>) fmlControlledNamespacedRegistry;
+    }
+
+    public static <T> FMLControlledNamespacedRegistry<T> createRegistry(String registryName, Class<T> type, int minId, int maxId) {
+        return getMain().createGenericRegistry(registryName, type, minId, maxId);
+    }
+    private List<String> loadGenericRegistries(GameDataSnapshot snapshot, GameData existing) {
+        List<String> result = Lists.newArrayList();
+        for (Map.Entry<String, FMLControlledNamespacedRegistry<?>> e : existing.genericRegistries.entrySet())
+        {
+            String regName = e.getKey();
+            FMLControlledNamespacedRegistry<?> registry = e.getValue();
+            FMLControlledNamespacedRegistry<?> newRegistry = genericRegistries.get(regName);
+            GameDataSnapshot.Entry regSnap = snapshot.entries.get("fmlgr:"+regName);
+            if (regSnap == null) {
+                FMLLog.info("Weird, there was no registry data for registry %s found in the snapshot", regName);
+                continue;
+            }
+
+            for (Entry<String, Integer> entry : regSnap.ids.entrySet())
+            {
+                String entryName = entry.getKey();
+                int entryId = entry.getValue();
+                int currId = registry.getId(entryName);
+
+                if (currId == -1)
+                {
+                    FMLLog.info("Found a missing id in registry %s from the world %s", regName, entryName);
+                    result.add(regName+"{"+entryName+"}="+entryId);
+                    continue; // no block/item -> nothing to add
+                }
+                else if (currId != entryId)
+                {
+                    FMLLog.fine("Fixed registry %s id mismatch %s: %d (init) -> %d (map).", regName, entryName, currId, entryId);
+                }
+
+                newRegistry.register(entryId, entryName, registry.getRaw(entryName));
+
+            }
+        }
+        return result;
+    }
+
+    public static <T> FMLControlledNamespacedRegistry<T> getRegistry(String registryName, Class<T> type) {
+        return getMain().getGenericRegistry(registryName, type);
+    }
+
+
+
 }
