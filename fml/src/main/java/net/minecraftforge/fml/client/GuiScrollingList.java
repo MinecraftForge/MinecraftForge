@@ -31,7 +31,7 @@ public abstract class GuiScrollingList
     protected final int listHeight;
     protected final int top;
     protected final int bottom;
-    private final int right;
+    protected final int right;
     protected final int left;
     protected final int slotHeight;
     private int scrollUpActionId;
@@ -41,7 +41,7 @@ public abstract class GuiScrollingList
     private float initialMouseClickY = -2.0F;
     private float scrollFactor;
     private float scrollDistance;
-    private int selectedIndex = -1;
+    protected int selectedIndex = -1;
     private long lastClickTime = 0L;
     private boolean field_25123_p = true;
     private boolean field_27262_q;

@@ -82,4 +82,6 @@ fml.configgui.tooltip.default=[default: %s]
 fml.configgui.tooltip.defaultNumeric=[range: %s ~ %s, default: %s]
 
 fml.menu.mods=Mods
+fml.menu.mods.normal=Normal
+fml.menu.mods.search=Search:
 fml.menu.modoptions=Mod Options...
