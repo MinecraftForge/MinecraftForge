@@ -39,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
@@ -340,6 +341,19 @@ public class ForgeEventFactory
     public static boolean canInteractWith(EntityPlayer player, Entity entity)
     {
         return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
+    }
+    
+    public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
+    {
+        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj, isMounting));
+        
+        if(isCanceled)
+        {
+            entityMounting.setPositionAndRotation(entityMounting.posX, entityMounting.posY, entityMounting.posZ, entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            return false;
+        }
+        else         
+            return true;       
     }
 
     public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
