@@ -39,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
@@ -303,11 +304,22 @@ public class ForgeEventFactory
         return event.canUpdate;
     }
 
+    /**
+     * Use {@link #onPlaySoundAtEntity(Entity,String,float,float)}
+     */
+    @Deprecated
     public static String onPlaySoundAt(Entity entity, String name, float volume, float pitch)
     {
         PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
         MinecraftForge.EVENT_BUS.post(event);
         return event.name;
+    }
+    
+    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, String name, float volume, float pitch)
+    {
+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static int onItemExpire(EntityItem entity, ItemStack item)
@@ -340,6 +352,19 @@ public class ForgeEventFactory
     public static boolean canInteractWith(EntityPlayer player, Entity entity)
     {
         return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
+    }
+    
+    public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
+    {
+        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj, isMounting));
+        
+        if(isCanceled)
+        {
+            entityMounting.setPositionAndRotation(entityMounting.posX, entityMounting.posY, entityMounting.posZ, entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            return false;
+        }
+        else         
+            return true;       
     }
 
     public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
