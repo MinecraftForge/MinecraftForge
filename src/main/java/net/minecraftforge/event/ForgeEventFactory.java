@@ -301,11 +301,22 @@ public class ForgeEventFactory
         return event.canUpdate;
     }
 
+    /**
+     * Use {@link #onPlaySoundAtEntity(Entity,String,float,float)}
+     */
+    @Deprecated
     public static String onPlaySoundAt(Entity entity, String name, float volume, float pitch)
     {
         PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
         MinecraftForge.EVENT_BUS.post(event);
         return event.name;
+    }
+    
+    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, String name, float volume, float pitch)
+    {
+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static int onItemExpire(EntityItem entity, ItemStack item)
