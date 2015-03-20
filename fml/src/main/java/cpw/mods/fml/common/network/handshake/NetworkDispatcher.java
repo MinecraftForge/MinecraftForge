@@ -10,14 +10,18 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
+
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.Level;
+
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -149,7 +153,16 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.manager.setConnectionState(EnumConnectionState.PLAY);
 
         // Return the dimension the player is in, so it can be pre-sent to the client in the ServerHello v2 packet
-        return player.dimension;
+        // Requires some hackery to the serverconfigmanager and stuff for this to work
+        NBTTagCompound playerNBT = scm.getPlayerNBT(player);
+        if (playerNBT!=null)
+        {
+            return playerNBT.getInteger("Dimension");
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     void clientListenForServerHandshake()
