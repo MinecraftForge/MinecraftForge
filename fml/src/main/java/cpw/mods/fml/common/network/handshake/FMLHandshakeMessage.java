@@ -32,7 +32,12 @@ public abstract class FMLHandshakeMessage {
     public static class ServerHello extends FMLHandshakeMessage {
         private byte serverProtocolVersion;
         private int overrideDimension;
-        public ServerHello(int overrideDim) {
+        public ServerHello()
+        {
+            // noargs for the proto
+        }
+        public ServerHello(int overrideDim)
+        {
             this.overrideDimension = overrideDim;
         }
 
