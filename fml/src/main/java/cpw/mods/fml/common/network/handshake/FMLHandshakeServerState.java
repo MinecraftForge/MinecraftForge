@@ -18,9 +18,9 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         public FMLHandshakeServerState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-            dispatcher.serverInitiateHandshake();
+            int overrideDim = dispatcher.serverInitiateHandshake();
             ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.SERVER))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello(overrideDim)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             return HELLO;
         }
     },

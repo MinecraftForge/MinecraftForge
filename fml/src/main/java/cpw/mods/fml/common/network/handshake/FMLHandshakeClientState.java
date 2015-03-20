@@ -1,11 +1,13 @@
 package cpw.mods.fml.common.network.handshake;
 
 import java.util.List;
+
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.handshake.FMLHandshakeMessage.ServerHello;
 import cpw.mods.fml.common.network.internal.FMLMessage;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameData;
@@ -49,7 +51,14 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
                 return DONE;
             }
 
-            FMLLog.info("Server protocol version %x", ((FMLHandshakeMessage.ServerHello)msg).protocolVersion());
+            ServerHello serverHelloPacket = (FMLHandshakeMessage.ServerHello)msg;
+            FMLLog.info("Server protocol version %x", serverHelloPacket.protocolVersion());
+            if (serverHelloPacket.protocolVersion() > 1)
+            {
+                // Server sent us an extra dimension for the logging in player - stash it for retrieval later
+                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                dispatcher.setOverrideDimension(serverHelloPacket.overrideDim());
+            }
             ctx.writeAndFlush(new FMLHandshakeMessage.ClientHello()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             ctx.writeAndFlush(new FMLHandshakeMessage.ModList(Loader.instance().getActiveModList())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             return WAITINGSERVERDATA;

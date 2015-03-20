@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
++++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
+@@ -2,11 +2,14 @@
+ 
+ import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
++
++import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.Unpooled;
+ import io.netty.util.concurrent.GenericFutureListener;
++
+ import java.io.ByteArrayInputStream;
+ import java.io.DataInputStream;
+ import java.io.IOException;
+@@ -17,6 +20,7 @@
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.Map.Entry;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.client.ClientBrandRetriever;
+ import net.minecraft.client.Minecraft;
+@@ -195,6 +199,7 @@
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.MapData;
+ import net.minecraft.world.storage.MapStorage;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -232,7 +237,7 @@
+     public void func_147282_a(S01PacketJoinGame p_147282_1_)
+     {
+         this.field_147299_f.field_71442_b = new PlayerControllerMP(this.field_147299_f, this);
+-        this.field_147300_g = new WorldClient(this, new WorldSettings(0L, p_147282_1_.func_149198_e(), false, p_147282_1_.func_149195_d(), p_147282_1_.func_149196_i()), p_147282_1_.func_149194_f(), p_147282_1_.func_149192_g(), this.field_147299_f.field_71424_I);
++        this.field_147300_g = new WorldClient(this, new WorldSettings(0L, p_147282_1_.func_149198_e(), false, p_147282_1_.func_149195_d(), p_147282_1_.func_149196_i()), NetworkDispatcher.get(func_147298_b()).getOverrideDimension(p_147282_1_), p_147282_1_.func_149192_g(), this.field_147299_f.field_71424_I);
+         this.field_147300_g.field_72995_K = true;
+         this.field_147299_f.func_71403_a(this.field_147300_g);
+         this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
