@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -195,6 +195,8 @@
+@@ -196,6 +196,8 @@
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.MapData;
  import net.minecraft.world.storage.MapStorage;
@@ -9,7 +9,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -389,7 +391,8 @@
+@@ -390,7 +392,8 @@
  
      public void func_147286_a(S11PacketSpawnExperienceOrb p_147286_1_)
      {
@@ -19,7 +19,7 @@
          entityxporb.field_70118_ct = p_147286_1_.func_148984_d();
          entityxporb.field_70117_cu = p_147286_1_.func_148983_e();
          entityxporb.field_70116_cv = p_147286_1_.func_148982_f();
-@@ -686,7 +689,11 @@
+@@ -687,7 +690,11 @@
  
      public void func_147251_a(S02PacketChat p_147251_1_)
      {
@@ -32,7 +32,7 @@
      }
  
      public void func_147279_a(S0BPacketAnimation p_147279_1_)
-@@ -1126,6 +1133,10 @@
+@@ -1127,6 +1134,10 @@
                  {
                      tileentity.func_145839_a(p_147273_1_.func_148857_g());
                  }

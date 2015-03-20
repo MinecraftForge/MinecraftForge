@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -55,11 +55,15 @@
+@@ -55,12 +55,15 @@
  import net.minecraft.util.EnumChatFormatting;
  import net.minecraft.util.IChatComponent;
  import net.minecraft.util.MathHelper;
@@ -11,12 +11,12 @@
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.demo.DemoWorldManager;
  import net.minecraft.world.storage.IPlayerFileData;
+ import net.minecraft.world.storage.SaveHandler;
 +import net.minecraftforge.common.chunkio.ChunkIOExecutor;
-+
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -108,7 +112,17 @@
+@@ -109,7 +112,17 @@
          String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
          playerprofilecache.func_152649_a(gameprofile);
          NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
@@ -35,7 +35,7 @@
          p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
          String s1 = "local";
  
-@@ -242,6 +256,7 @@
+@@ -243,6 +256,7 @@
              p_72380_1_.func_70020_e(nbttagcompound);
              nbttagcompound1 = nbttagcompound;
              field_148546_d.debug("loading single player");
@@ -43,7 +43,7 @@
          }
          else
          {
-@@ -269,6 +284,7 @@
+@@ -283,6 +297,7 @@
          this.func_148540_a(new S38PacketPlayerListItem(p_72377_1_.func_70005_c_(), true, 1000));
          this.field_72404_b.add(p_72377_1_);
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72377_1_.field_71093_bK);
@@ -51,7 +51,7 @@
          worldserver.func_72838_d(p_72377_1_);
          this.func_72375_a(p_72377_1_, (WorldServer)null);
  
-@@ -301,6 +317,7 @@
+@@ -315,6 +330,7 @@
          worldserver.func_73040_p().func_72695_c(p_72367_1_);
          this.field_72404_b.remove(p_72367_1_);
          this.field_148547_k.remove(p_72367_1_.func_110124_au());
@@ -59,7 +59,7 @@
          this.func_148540_a(new S38PacketPlayerListItem(p_72367_1_.func_70005_c_(), false, 9999));
      }
  
-@@ -382,13 +399,23 @@
+@@ -396,13 +412,23 @@
  
      public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, int p_72368_2_, boolean p_72368_3_)
      {
@@ -85,7 +85,7 @@
          p_72368_1_.field_71093_bK = p_72368_2_;
          Object object;
  
-@@ -404,6 +431,7 @@
+@@ -418,6 +444,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), (ItemInWorldManager)object);
          entityplayermp1.field_71135_a = p_72368_1_.field_71135_a;
          entityplayermp1.func_71049_a(p_72368_1_, p_72368_3_);
@@ -93,7 +93,7 @@
          entityplayermp1.func_145769_d(p_72368_1_.func_145782_y());
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK);
          this.func_72381_a(entityplayermp1, p_72368_1_, worldserver);
-@@ -448,14 +476,19 @@
+@@ -462,14 +489,19 @@
  
      public void func_72356_a(EntityPlayerMP p_72356_1_, int p_72356_2_)
      {
@@ -115,7 +115,7 @@
          this.func_72375_a(p_72356_1_, worldserver);
          p_72356_1_.field_71135_a.func_147364_a(p_72356_1_.field_70165_t, p_72356_1_.field_70163_u, p_72356_1_.field_70161_v, p_72356_1_.field_70177_z, p_72356_1_.field_70125_A);
          p_72356_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -473,38 +506,47 @@
+@@ -487,38 +519,47 @@
  
      public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
      {
@@ -175,7 +175,7 @@
          {
              ChunkCoordinates chunkcoordinates;
  
-@@ -539,7 +581,7 @@
+@@ -553,7 +594,7 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
