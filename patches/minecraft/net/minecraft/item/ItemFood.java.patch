@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFood.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFood.java
+@@ -6,7 +6,7 @@
+ import net.minecraft.stats.StatList;
+ import net.minecraft.world.World;
+ 
+-public class ItemFood extends Item
++public class ItemFood extends Item implements net.minecraftforge.common.food.IEdible
+ {
+     public final int field_77855_a;
+     private final int field_77853_b;
+@@ -100,4 +100,16 @@
+         this.field_77852_bZ = true;
+         return this;
+     }
++
++    @Override
++    public boolean isEdible(ItemStack stack)
++    {
++        return true;
++    }
++
++    @Override
++    public net.minecraftforge.common.food.FoodValues getFoodValues(ItemStack stack)
++    {
++        return new net.minecraftforge.common.food.FoodValues(func_150905_g(stack), func_150906_h(stack));
++    }
+ }
