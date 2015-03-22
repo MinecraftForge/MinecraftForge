@@ -95,6 +95,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.minId = registry.minId;
         this.aliases.clear();
         this.aliases.putAll(registry.aliases);
+        this.activeSubstitutions.clear();
+
         underlyingIntegerMap = new ObjectIntIdentityMap();
         registryObjects.clear();
 
@@ -102,6 +104,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         {
             addObjectRaw(registry.getId(thing), registry.getNameForObject(thing), thing);
         }
+        this.activeSubstitutions.putAll(registry.activeSubstitutions);
     }
 
     // public api
