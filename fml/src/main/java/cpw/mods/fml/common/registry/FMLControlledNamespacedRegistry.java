@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import net.minecraft.util.RegistryNamespaced;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterators;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.functions.GenericIterableFactory;
@@ -311,10 +313,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         return containsKey(itemName);
     }
 
+    /*
+     * This iterator is used by FML to visit the actual block sets, it should use the super.iterator method instead
+     * Compare #iterator()
+     */
     public Iterable<I> typeSafeIterable()
     {
-        Iterable<?> self = this;
-        return GenericIterableFactory.newCastingIterable(self, superType);
+        return GenericIterableFactory.newCastingIterable(super.iterator(), superType);
     }
 
     // internal
@@ -506,5 +511,16 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             persistentSubstitutions = GameData.getMain().getPersistentSubstitutionMap(superType);
         }
         return persistentSubstitutions;
+    }
+
+    /*
+     * This iterator is used by some regular MC methods to visit all blocks, we need to include substitutions
+     * Compare #typeSafeIterable()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Iterator<I> iterator()
+    {
+        return Iterators.concat(super.iterator(),getPersistentSubstitutions().values().iterator());
     }
 }
