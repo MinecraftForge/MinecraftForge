@@ -28,6 +28,15 @@
                          label115:
  
                          while (iterator1.hasNext())
+@@ -137,7 +144,7 @@
+                                                         }
+                                                     }
+ 
+-                                                    if (p_77192_1_.func_175732_a(enumcreaturetype, spawnlistentry, blockpos1) && func_180267_a(EntitySpawnPlacementRegistry.func_180109_a(spawnlistentry.field_76300_b), p_77192_1_, blockpos1))
++                                                    if (p_77192_1_.func_175732_a(enumcreaturetype, spawnlistentry, blockpos1) && net.minecraftforge.common.EntitySpawnPlacementHelper.canCreatureSpawnAtLocation(spawnlistentry.field_76300_b, p_77192_1_, blockpos1))
+                                                     {
+                                                         EntityLiving entityliving;
+ 
 @@ -153,8 +160,10 @@
  
                                                          entityliving.func_70012_b((double)f, (double)l2, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
