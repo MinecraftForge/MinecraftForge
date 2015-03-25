@@ -34,15 +34,15 @@ public abstract class FluidContainerRegistry
     private static class ContainerKey
     {
         ItemStack container;
-        FluidStack fluid;
+        FluidStack stack;
         private ContainerKey(ItemStack container)
         {
             this.container = container;
         }
-        private ContainerKey(ItemStack container, FluidStack fluid)
+        private ContainerKey(ItemStack container, FluidStack stack)
         {
             this(container);
-            this.fluid = fluid;
+            this.stack = stack;
         }
         @Override
         public int hashCode()
@@ -50,8 +50,8 @@ public abstract class FluidContainerRegistry
             int code = 1;
             code = 31*code + container.getItem().hashCode();
             code = 31*code + container.getItemDamage();
-            if (fluid != null)
-                code = 31*code + fluid.fluidID;
+            if (stack != null)
+                code = 31*code + stack.hashCode();
             return code;
         }
         @Override
@@ -61,10 +61,10 @@ public abstract class FluidContainerRegistry
             ContainerKey ck = (ContainerKey)o;
             if (container.getItem() != ck.container.getItem()) return false;
             if (container.getItemDamage() != ck.container.getItemDamage()) return false;
-            if (fluid == null && ck.fluid != null) return false;
-            if (fluid != null && ck.fluid == null) return false;
-            if (fluid == null && ck.fluid == null) return true;
-            if (fluid.fluidID != ck.fluid.fluidID) return false;
+            if (stack == null && ck.stack != null) return false;
+            if (stack != null && ck.stack == null) return false;
+            if (stack == null && ck.stack == null) return true;
+            if (stack.fluid != ck.stack.fluid) return false;
             return true;
         }
     }
@@ -361,7 +361,6 @@ public abstract class FluidContainerRegistry
         public final ItemStack filledContainer;
         public final ItemStack emptyContainer;
 
-        
         public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
         {
             this(stack, filledContainer, emptyContainer, false);

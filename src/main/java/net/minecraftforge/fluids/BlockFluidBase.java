@@ -42,7 +42,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected float quantaPerBlockFloat = 8F;
     protected int density = 1;
     protected int densityDir = -1;
-	protected int temperature = 295;
+	protected int temperature = 300;
 
     protected int tickRate = 20;
     protected int renderPass = 1;
@@ -226,6 +226,12 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return false;
     }
 
+    @Override
+    public boolean canPlaceBlockAt(World world, int x, int y, int z)
+    {
+        return canDisplace(world, x, y, z);
+    }
+    
     @Override
     public boolean getBlocksMovement(IBlockAccess world, int x, int y, int z)
     {

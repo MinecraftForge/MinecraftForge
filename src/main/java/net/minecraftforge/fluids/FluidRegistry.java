@@ -25,8 +25,8 @@ public abstract class FluidRegistry
 {
     static int maxID = 0;
 
-    static HashMap<String, Fluid> fluids = Maps.newHashMap();
-    static BiMap<String, Integer> fluidIDs = HashBiMap.create();
+    static BiMap<String, Fluid> fluids = HashBiMap.create();
+    static BiMap<Fluid, Integer> fluidIDs = HashBiMap.create();
     static BiMap<Block, Fluid> fluidBlocks;
     
     public static final Fluid WATER = new Fluid("water") {
@@ -57,7 +57,7 @@ public abstract class FluidRegistry
      * Called by Forge to prepare the ID map for server -> client sync.
      * Modders, DO NOT call this.
      */
-    public static void initFluidIDs(BiMap<String, Integer> newfluidIDs)
+    public static void initFluidIDs(BiMap<Fluid, Integer> newfluidIDs)
     {
         maxID = newfluidIDs.size();
         fluidIDs.clear();
@@ -78,7 +78,7 @@ public abstract class FluidRegistry
             return false;
         }
         fluids.put(fluid.getName(), fluid);
-        fluidIDs.put(fluid.getName(), ++maxID);
+        fluidIDs.put(fluid, ++maxID);
 
         MinecraftForge.EVENT_BUS.post(new FluidRegisterEvent(fluid.getName(), maxID));
         return true;
@@ -86,12 +86,12 @@ public abstract class FluidRegistry
 
     public static boolean isFluidRegistered(Fluid fluid)
     {
-        return fluidIDs.containsKey(fluid.getName());
+        return fluids.containsKey(fluid.getName());
     }
 
     public static boolean isFluidRegistered(String fluidName)
     {
-        return fluidIDs.containsKey(fluidName);
+        return fluids.containsKey(fluidName);
     }
 
     public static Fluid getFluid(String fluidName)
@@ -101,31 +101,36 @@ public abstract class FluidRegistry
 
     public static Fluid getFluid(int fluidID)
     {
-        return fluids.get(getFluidName(fluidID));
+    	return fluidIDs.inverse().get(fluidID);
     }
 
-    public static String getFluidName(int fluidID)
+    public static int getFluidID(Fluid fluid)
     {
-        return fluidIDs.inverse().get(fluidID);
-    }
-
-    public static String getFluidName(FluidStack stack)
-    {
-        return getFluidName(stack.fluidID);
+    	return fluidIDs.get(fluid);
     }
 
     public static int getFluidID(String fluidName)
     {
-        return fluidIDs.get(fluidName);
+    	return fluidIDs.get(getFluid(fluidName));
+    }
+
+    public static String getFluidName(Fluid fluid)
+    {
+        return fluids.inverse().get(fluid);
+    }
+
+    public static String getFluidName(FluidStack stack)
+    {
+        return getFluidName(stack.fluid);
     }
 
     public static FluidStack getFluidStack(String fluidName, int amount)
     {
-        if (!fluidIDs.containsKey(fluidName))
+        if (!fluids.containsKey(fluidName))
         {
             return null;
         }
-        return new FluidStack(getFluidID(fluidName), amount);
+        return new FluidStack(getFluid(fluidName), amount);
     }
 
     /**
@@ -137,9 +142,9 @@ public abstract class FluidRegistry
     }
 
     /**
-     * Returns a read-only map containing Fluid Names and their associated IDs.
+     * Returns a read-only map containing Fluid IDs and their associated Fluids.
      */
-    public static Map<String, Integer> getRegisteredFluidIDs()
+    public static Map<Fluid, Integer> getRegisteredFluidIDs()
     {
         return ImmutableMap.copyOf(fluidIDs);
     }
