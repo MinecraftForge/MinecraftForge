@@ -96,7 +96,7 @@ public interface ILanguageAdapter {
 
             // If we come here we could not find a setter for this proxy.
             FMLLog.severe("Failed loading proxy into %s.%s, could not find setter function. Did you declare the field with 'val' instead of 'var'?", proxyTarget.getSimpleName(), target.getName());
-            throw new LoaderException();
+            throw new LoaderException(String.format("Failed loading proxy into %s.%s, could not find setter function. Did you declare the field with 'val' instead of 'var'?", proxyTarget.getSimpleName(), target.getName()));
         }
 
         @Override
@@ -141,7 +141,7 @@ public interface ILanguageAdapter {
                             if (!target.getType().isAssignableFrom(proxy.getClass()))
                             {
                                 FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, proxyTarget.getSimpleName(), target.getName());
-                                throw new LoaderException();
+                                throw new LoaderException(String.format("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, proxyTarget.getSimpleName(), target.getName()));
                             }
 
                             setProxy(target, proxyTarget, proxy);

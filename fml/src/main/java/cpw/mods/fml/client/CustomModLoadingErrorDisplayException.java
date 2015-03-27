@@ -14,6 +14,7 @@ package cpw.mods.fml.client;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
+import cpw.mods.fml.common.EnhancedRuntimeException;
 import cpw.mods.fml.common.IFMLHandledException;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,16 +30,16 @@ import cpw.mods.fml.relauncher.SideOnly;
  *
  */
 @SideOnly(Side.CLIENT)
-public abstract class CustomModLoadingErrorDisplayException extends RuntimeException implements IFMLHandledException
+public abstract class CustomModLoadingErrorDisplayException extends EnhancedRuntimeException implements IFMLHandledException
 {
     public CustomModLoadingErrorDisplayException() {
     }
-    
+
     public CustomModLoadingErrorDisplayException(String message, Throwable cause)
     {
         super(message, cause);
     }
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -62,4 +63,6 @@ public abstract class CustomModLoadingErrorDisplayException extends RuntimeExcep
      * @param tickTime tick time
      */
     public abstract void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime);
+
+    @Override public void printStackTrace(EnhancedRuntimeException.WrappedPrintStream s){}; // Do Nothing unless the modder wants to.
 }

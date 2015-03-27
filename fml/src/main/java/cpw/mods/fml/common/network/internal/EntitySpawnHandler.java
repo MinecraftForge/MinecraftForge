@@ -59,6 +59,11 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
     {
         ModContainer mc = Loader.instance().getIndexedModList().get(spawnMsg.modId);
         EntityRegistration er = EntityRegistry.instance().lookupModSpawn(mc, spawnMsg.modEntityTypeId);
+        if (er == null)
+        {
+            throw new RuntimeException( "Could not spawn mod entity ModID: " + spawnMsg.modId + " EntityID: " + spawnMsg.modEntityTypeId +
+                    " at ( " + spawnMsg.scaledX + "," + spawnMsg.scaledY + ", " + spawnMsg.scaledZ + ") Please contact mod author or server admin.");
+        }
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
         Class<? extends Entity> cls = er.getEntityClass();
         try
@@ -117,7 +122,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             wc.addEntityToWorld(spawnMsg.entityId, entity);
         } catch (Exception e)
         {
-            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity");
+            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity at ( " + spawnMsg.scaledX + "," + spawnMsg.scaledY + ", " + spawnMsg.scaledZ +")");
             throw Throwables.propagate(e);
         }
     }

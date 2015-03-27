@@ -16,7 +16,7 @@ import java.util.Set;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 
-public class MissingModsException extends RuntimeException
+public class MissingModsException extends EnhancedRuntimeException
 {
     private static final long serialVersionUID = 1L;
     public final Set<ArtifactVersion> missingMods;
@@ -24,5 +24,16 @@ public class MissingModsException extends RuntimeException
     public MissingModsException(Set<ArtifactVersion> missingMods)
     {
         this.missingMods = missingMods;
+    }
+
+    @Override
+    protected void printStackTrace(WrappedPrintStream stream)
+    {
+        stream.println("Missing Mods:");
+        for (ArtifactVersion v : missingMods)
+        {
+            stream.println(String.format("\t%s : %s", v.getLabel(), v.getRangeString()));
+        }
+        stream.println("");
     }
 }

@@ -182,7 +182,7 @@ public class Loader
         if (!mccversion.equals(MC_VERSION))
         {
             FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION);
-            throw new LoaderException();
+            throw new LoaderException(String.format("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION));
         }
 
         minecraft = new MinecraftDummyContainer(MC_VERSION);
@@ -418,7 +418,7 @@ public class Loader
             if (!dirMade)
             {
                 FMLLog.severe("Unable to create the mod directory %s", canonicalModsPath);
-                throw new LoaderException();
+                throw new LoaderException(String.format("Unable to create the mod directory %s", canonicalModsPath));
             }
             FMLLog.info("Mod directory created successfully");
         }
@@ -676,7 +676,7 @@ public class Loader
         if (parseFailure)
         {
             FMLLog.log(Level.WARN, "Unable to parse dependency string %s", dependencyString);
-            throw new LoaderException();
+            throw new LoaderException(String.format("Unable to parse dependency string %s", dependencyString));
         }
     }
 

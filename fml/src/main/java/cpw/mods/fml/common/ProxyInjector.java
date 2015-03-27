@@ -45,7 +45,7 @@ public class ProxyInjector
                 {
                     // Impossible?
                     FMLLog.severe("Attempted to load a proxy type into %s.%s but the field was not found", targ.getClassName(), targ.getObjectName());
-                    throw new LoaderException();
+                    throw new LoaderException(String.format("Attempted to load a proxy type into %s.%s but the field was not found", targ.getClassName(), targ.getObjectName()));
                 }
                 target.setAccessible(true);
 
@@ -61,12 +61,12 @@ public class ProxyInjector
                 if (languageAdapter.supportsStatics() && (target.getModifiers() & Modifier.STATIC) == 0 )
                 {
                     FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the field is not static", targetType, targ.getClassName(), targ.getObjectName());
-                    throw new LoaderException();
+                    throw new LoaderException(String.format("Attempted to load a proxy type %s into %s.%s, but the field is not static", targetType, targ.getClassName(), targ.getObjectName()));
                 }
                 if (!target.getType().isAssignableFrom(proxy.getClass()))
                 {
                     FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, targ.getClassName(), targ.getObjectName());
-                    throw new LoaderException();
+                    throw new LoaderException(String.format("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, targ.getClassName(), targ.getObjectName()));
                 }
                 languageAdapter.setProxy(target, proxyTarget, proxy);
             }
