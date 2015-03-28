@@ -98,7 +98,7 @@
                  return;
              }
  
-+            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, worldserver, new BlockPos(0, 0, 0), null);
++            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(field_147369_b, field_147369_b.func_70093_af() ? PlayerInteractEvent.Action.SHIFT_RIGHT_CLICK_AIR : PlayerInteractEvent.Action.RIGHT_CLICK_AIR, worldserver, new BlockPos(0, 0, 0), null);
 +            if (event.useItem != Event.Result.DENY)
 +            {
              this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);

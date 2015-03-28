@@ -37,8 +37,11 @@ public class PlayerInteractEvent extends PlayerEvent
     public static enum Action
     {
         RIGHT_CLICK_AIR,
+        SHIFT_RIGHT_CLICK_AIR,
         RIGHT_CLICK_BLOCK,
-        LEFT_CLICK_BLOCK
+        SHIFT_RIGHT_CLICK_BLOCK,
+        LEFT_CLICK_BLOCK,
+        SHIFT_LEFT_CLICK_BLOCK
     }
 
     public final Action action;
