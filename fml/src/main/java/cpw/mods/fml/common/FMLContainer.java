@@ -275,7 +275,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             try
             {
                 failedElements = GameData.injectWorldIDMap(dataList, blockedIds, blockAliases, itemAliases, blockSubstitutions, itemSubstitutions, true, true);
-            } catch (IllegalArgumentException ex)
+            } catch (IllegalStateException ex)
             {
                 // In the case of IllegalArgumentException the state map is utterly toast. We should immediately abort
                 String msg = "The world state is utterly corrupted and this save is NOT loadable\n\n"
