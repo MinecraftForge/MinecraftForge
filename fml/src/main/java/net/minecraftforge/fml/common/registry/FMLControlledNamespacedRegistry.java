@@ -348,6 +348,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         set.addAll(activeSubstitutions.keySet());
     }
 
+    private BitSet internalAvailabilityMap = new BitSet();
+
+    int add(int id, String name, Object thing) {
+        return add(id, name, superType.cast(thing), internalAvailabilityMap);
+    }
+
     /**
      * Add the specified object to the registry.
      *

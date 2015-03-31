@@ -54,9 +54,13 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
@@ -718,7 +722,7 @@ public class GameData {
         }
         else
         {
-            throw new IllegalArgumentException("An invalid registry object is to be added, only instances of Block or Item are allowed.");
+            return findRegistry(obj.getClass()).add(idHint,name,obj);
         }
     }
 
@@ -988,6 +992,22 @@ public class GameData {
     }
 
     private Map<String,FMLControlledNamespacedRegistry<?>> genericRegistries;
+    // Seed registry types with the blocks and items types so you can't make a new registry of them
+    private BiMap<String,Class<?>> registryTypes = HashBiMap.create(
+            ImmutableMap.<String,Class<?>>builder()
+            .put("minecraft:blocks", Block.class)
+            .put("minecraft:items", Item.class).build());
+
+    private void findSuperTypes(Class<?> type, Set<Class<?>> types) {
+        if (type == Object.class) {
+            return;
+        }
+        types.add(type);
+        for (Class<?> intf : type.getInterfaces()) {
+            findSuperTypes(intf, types);
+        }
+        findSuperTypes(type.getSuperclass(),types);
+    }
 
     @SuppressWarnings("unchecked")
     private <T> FMLControlledNamespacedRegistry<T> getGenericRegistry(String registryName, Class<T> type) {
@@ -997,12 +1017,39 @@ public class GameData {
 
     @SuppressWarnings("unchecked")
     private <T> FMLControlledNamespacedRegistry<T> createGenericRegistry(String registryName, Class<T> type, int minId, int maxId) {
+        Set<Class<?>> parents = Sets.newHashSet();
+        findSuperTypes(type, parents);
+        SetView<Class<?>> overlappedTypes = Sets.intersection(parents, registryTypes.values());
+        if (!overlappedTypes.isEmpty()) {
+            Class<?> foundType = overlappedTypes.iterator().next();
+            FMLLog.severe("Found existing registry of type %1s named %2s, you cannot create a new registry (%3s) with type %4s, as %4s has a parent of that type", foundType, registryTypes.inverse().get(foundType), registryName, type);
+            throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
+        }
         FMLControlledNamespacedRegistry<?> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(null, maxId, minId, type);
+        genericRegistries.put(registryName, fmlControlledNamespacedRegistry);
+        registryTypes.put(registryName, type);
         return (FMLControlledNamespacedRegistry<T>) fmlControlledNamespacedRegistry;
     }
 
     public static <T> FMLControlledNamespacedRegistry<T> createRegistry(String registryName, Class<T> type, int minId, int maxId) {
         return getMain().createGenericRegistry(registryName, type, minId, maxId);
+    }
+
+    private FMLControlledNamespacedRegistry<?> findRegistry(Class<?> type) {
+        BiMap<Class<?>, String> typeReg = registryTypes.inverse();
+        String name = typeReg.get(type);
+        if (name == null) {
+            Set<Class<?>> parents = Sets.newHashSet();
+            findSuperTypes(type, parents);
+            SetView<Class<?>> foundType = Sets.intersection(parents, registryTypes.values());
+            if (foundType.isEmpty()) {
+                FMLLog.severe("Unable to find registry for type %s", type.getName());
+                throw new IllegalArgumentException("Attempt to register an object without an associated registry");
+            }
+            Class<?> regtype = Iterables.getOnlyElement(foundType);
+            name = typeReg.get(regtype);
+        }
+        return genericRegistries.get(name);
     }
     private List<String> loadGenericRegistries(GameDataSnapshot snapshot, GameData existing) {
         List<String> result = Lists.newArrayList();
