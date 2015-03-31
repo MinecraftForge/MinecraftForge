@@ -66,13 +66,15 @@
                  {
                      d5 = 1.0D - d4;
                      b0 = 5;
-@@ -445,6 +461,9 @@
+@@ -445,6 +461,11 @@
  
      public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)
      {
-+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(this, p_85030_1_, p_85030_2_, p_85030_3_);
-+        if (MinecraftForge.EVENT_BUS.post(event)) return;
++        PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_85030_1_, p_85030_2_, p_85030_3_);
++        if (event.isCanceled() || event.name == null) return;
 +        p_85030_1_ = event.name;
++        p_85030_2_ = event.newVolume;
++        p_85030_3_ = event.newPitch;
          this.field_70170_p.func_72980_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_85030_1_, p_85030_2_, p_85030_3_, false);
      }
  
