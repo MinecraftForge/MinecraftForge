@@ -77,7 +77,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
         @Deprecated
         public void setAction(Action target)
         {
-            if (target == Action.DEFAULT || target == Action.REMAP) throw new IllegalArgumentException();
+            if (target == Action.DEFAULT || target == Action.REMAP || target == Action.BLOCKONLY) throw new IllegalArgumentException();
 
             this.action = target;
         }
