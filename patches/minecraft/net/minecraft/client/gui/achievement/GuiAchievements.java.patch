@@ -61,16 +61,18 @@
          }
      }
  
-@@ -260,7 +286,7 @@
+@@ -260,7 +286,9 @@
          GL11.glDepthFunc(GL11.GL_GEQUAL);
          GL11.glPushMatrix();
          GL11.glTranslatef((float)k1, (float)l1, -200.0F);
 -        GL11.glScalef(1.0F / this.field_146570_r, 1.0F / this.field_146570_r, 0.0F);
++        // FIXES models rendering weirdly in the acheivements pane
++        // see https://github.com/MinecraftForge/MinecraftForge/commit/1b7ce7592caafb760ec93066184182ae0711e793#commitcomment-10512284
 +        GL11.glScalef(1.0F / this.field_146570_r, 1.0F / this.field_146570_r, 1.0F);
          GL11.glEnable(GL11.GL_TEXTURE_2D);
          GL11.glDisable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-@@ -339,11 +365,12 @@
+@@ -339,11 +367,12 @@
          int j4;
          int l4;
  
@@ -86,7 +88,7 @@
              {
                  j3 = achievement1.field_75993_a * 24 - k + 11;
                  k3 = achievement1.field_75991_b * 24 - l + 11;
-@@ -400,9 +427,9 @@
+@@ -400,9 +429,9 @@
          int i5;
          int j5;
  
@@ -98,7 +100,7 @@
              i5 = achievement2.field_75993_a * 24 - k;
              j5 = achievement2.field_75991_b * 24 - l;
  
-@@ -444,6 +471,7 @@
+@@ -444,6 +473,7 @@
  
                  this.field_146297_k.func_110434_K().func_110577_a(field_146561_C);
  
@@ -106,7 +108,7 @@
                  if (achievement2.func_75984_f())
                  {
                      this.func_73729_b(i5 - 2, j5 - 2, 26, 202, 26, 26);
-@@ -452,6 +480,7 @@
+@@ -452,6 +482,7 @@
                  {
                      this.func_73729_b(i5 - 2, j5 - 2, 0, 202, 26, 26);
                  }
@@ -114,7 +116,7 @@
  
                  if (!this.field_146556_E.func_77442_b(achievement2))
                  {
-@@ -460,7 +489,7 @@
+@@ -460,7 +491,7 @@
                      renderitem.field_77024_a = false;
                  }
  
