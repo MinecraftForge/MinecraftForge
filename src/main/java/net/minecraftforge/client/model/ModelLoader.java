@@ -1,5 +1,7 @@
 package net.minecraftforge.client.model;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -476,8 +478,10 @@ public class ModelLoader extends ModelBakery
         @Override
         public boolean load(IResourceManager manager, ResourceLocation location)
         {
-            BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-            image.setRGB(0, 0, 0xFFFFFFFF);
+            BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = image.createGraphics();
+            graphics.setBackground(Color.WHITE);
+            graphics.clearRect(0, 0, 16, 16);
             BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
             images[0] = image;
             loadSprite(images, null);
