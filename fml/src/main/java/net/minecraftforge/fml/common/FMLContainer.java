@@ -32,10 +32,12 @@ import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.common.asm.FMLSanityChecker;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
@@ -82,6 +84,13 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     {
         NetworkRegistry.INSTANCE.register(this, this.getClass(), null, evt.getASMHarvestedData());
         FMLNetworkHandler.registerChannel(this, evt.getSide());
+    }
+
+    @Subscribe
+    public void modPreinitialization(FMLPreInitializationEvent evt)
+    {
+        // Initialize the villager registry
+        VillagerRegistry.instance();
     }
 
     @NetworkCheckHandler

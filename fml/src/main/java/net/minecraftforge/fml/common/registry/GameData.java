@@ -52,6 +52,7 @@ import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -709,15 +710,18 @@ public class GameData {
 
     int register(Object obj, String name, int idHint) // from FMLControlledNamespacedRegistry.addObject
     {
-        // tolerate extra name prefixes here since mc does it as well
-        name = addPrefix(name);
-
         if (obj instanceof Block)
         {
+            // tolerate extra name prefixes here since mc does it as well
+            name = addPrefix(name);
+
             return registerBlock((Block) obj, name, idHint);
         }
         else if (obj instanceof Item)
         {
+            // tolerate extra name prefixes here since mc does it as well
+            name = addPrefix(name);
+
             return registerItem((Item) obj, name, idHint);
         }
         else
@@ -963,7 +967,7 @@ public class GameData {
         }
         else
         {
-            throw new RuntimeException("WHAT?");
+            return ImmutableBiMap.of();
         }
     }
 
@@ -1058,6 +1062,12 @@ public class GameData {
             String regName = e.getKey();
             FMLControlledNamespacedRegistry<?> registry = e.getValue();
             FMLControlledNamespacedRegistry<?> newRegistry = genericRegistries.get(regName);
+            if (newRegistry == null)
+            {
+                newRegistry = registry.makeShallowCopy();
+                genericRegistries.put(regName, newRegistry);
+            }
+
             GameDataSnapshot.Entry regSnap = snapshot.entries.get("fmlgr:"+regName);
             if (regSnap == null) {
                 FMLLog.info("Weird, there was no registry data for registry %s found in the snapshot", regName);
@@ -1081,7 +1091,8 @@ public class GameData {
                     FMLLog.fine("Fixed registry %s id mismatch %s: %d (init) -> %d (map).", regName, entryName, currId, entryId);
                 }
 
-                newRegistry.register(entryId, entryName, registry.getRaw(entryName));
+
+                newRegistry.add(entryId, entryName, registry.getRaw(entryName));
 
             }
         }
