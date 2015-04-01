@@ -61,6 +61,15 @@
          }
      }
  
+@@ -260,7 +286,7 @@
+         GL11.glDepthFunc(GL11.GL_GEQUAL);
+         GL11.glPushMatrix();
+         GL11.glTranslatef((float)k1, (float)l1, -200.0F);
+-        GL11.glScalef(1.0F / this.field_146570_r, 1.0F / this.field_146570_r, 0.0F);
++        GL11.glScalef(1.0F / this.field_146570_r, 1.0F / this.field_146570_r, 1.0F);
+         GL11.glEnable(GL11.GL_TEXTURE_2D);
+         GL11.glDisable(GL11.GL_LIGHTING);
+         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 @@ -339,11 +365,12 @@
          int j4;
          int l4;
