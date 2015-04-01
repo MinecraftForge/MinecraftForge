@@ -554,6 +554,12 @@ public class GameData {
                     (remap.type == Type.BLOCK ? remapBlocks : remapItems).put(newName, new Integer[] { currId, newId });
                 }
             }
+            else if (action == FMLMissingMappingsEvent.Action.BLOCKONLY)
+            {
+                // Pulled out specifically so the block doesn't get reassigned a new ID just because it's
+                // Item block has gone away
+                FMLLog.fine("The ItemBlock %s is no longer present in the game. The residual block will remain", remap.name);
+            }
             else
             {
                 // block item missing, warn as requested and block the id
