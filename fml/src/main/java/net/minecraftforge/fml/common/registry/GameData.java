@@ -946,6 +946,7 @@ public class GameData {
     void registerSubstitutionAlias(String nameToSubstitute, Type type, Object toReplace) throws ExistingSubstitutionException
     {
         type.getRegistry().addSubstitutionAlias(Loader.instance().activeModContainer().getModId(),nameToSubstitute, toReplace);
+        type.getRegistry().activateSubstitution(nameToSubstitute);
     }
     static <T> RegistryDelegate<T> buildDelegate(T referant, Class<T> type)
     {

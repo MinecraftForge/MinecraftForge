@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage.ServerHello;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -51,7 +52,14 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
                 return DONE;
             }
 
-            FMLLog.info("Server protocol version %x", ((FMLHandshakeMessage.ServerHello)msg).protocolVersion());
+            ServerHello serverHelloPacket = (FMLHandshakeMessage.ServerHello)msg;
+            FMLLog.info("Server protocol version %x", serverHelloPacket.protocolVersion());
+            if (serverHelloPacket.protocolVersion() > 1)
+            {
+                // Server sent us an extra dimension for the logging in player - stash it for retrieval later
+                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                dispatcher.setOverrideDimension(serverHelloPacket.overrideDim());
+            }
             ctx.writeAndFlush(new FMLHandshakeMessage.ClientHello()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             ctx.writeAndFlush(new FMLHandshakeMessage.ModList(Loader.instance().getActiveModList())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             return WAITINGSERVERDATA;

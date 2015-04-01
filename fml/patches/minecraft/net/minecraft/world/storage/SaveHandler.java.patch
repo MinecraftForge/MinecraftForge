@@ -64,3 +64,26 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
+@@ -301,4 +320,22 @@
+     {
+         return this.field_75767_f;
+     }
++
++    public NBTTagCompound getPlayerNBT(net.minecraft.entity.player.EntityPlayerMP player)
++    {
++        try
++        {
++            File file1 = new File(this.field_75771_c, player.func_110124_au().toString() + ".dat");
++
++            if (file1.exists() && file1.isFile())
++            {
++                return CompressedStreamTools.func_74796_a(new FileInputStream(file1));
++            }
++        }
++        catch (Exception exception)
++        {
++            field_151478_a.warn("Failed to load player data for " + player.func_70005_c_());
++        }
++        return null;
++    }
+ }

@@ -26,8 +26,23 @@
          if (nbttagcompound != null && nbttagcompound.func_150297_b("Riding", 10))
          {
              Entity entity = EntityList.func_75615_a(nbttagcompound.func_74775_l("Riding"), worldserver);
-@@ -283,6 +284,8 @@
+@@ -281,8 +282,23 @@
+         return nbttagcompound1;
+     }
  
++    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    {
++        // Hacky method to allow loading the NBT for a player prior to login
++        NBTTagCompound nbttagcompound = this.field_72400_f.field_71305_c[0].func_72912_H().func_76072_h();
++        if (player.func_70005_c_().equals(this.field_72400_f.func_71214_G()) && nbttagcompound != null)
++        {
++            return nbttagcompound;
++        }
++        else
++        {
++            return ((net.minecraft.world.storage.SaveHandler)this.field_72412_k).getPlayerNBT(player);
++        }
++    }
      protected void func_72391_b(EntityPlayerMP p_72391_1_)
      {
 +        if (p_72391_1_.field_71135_a == null) return;
@@ -35,7 +50,7 @@
          this.field_72412_k.func_75753_a(p_72391_1_);
          StatisticsFile statisticsfile = (StatisticsFile)this.field_148547_k.get(p_72391_1_.func_110124_au());
  
-@@ -315,6 +318,7 @@
+@@ -315,6 +331,7 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
@@ -43,7 +58,7 @@
          p_72367_1_.func_71029_a(StatList.field_75947_j);
          this.func_72391_b(p_72367_1_);
          WorldServer worldserver = p_72367_1_.func_71121_q();
-@@ -473,6 +477,7 @@
+@@ -473,6 +490,7 @@
          this.field_177454_f.put(entityplayermp1.func_110124_au(), entityplayermp1);
          entityplayermp1.func_71116_b();
          entityplayermp1.func_70606_j(entityplayermp1.func_110143_aJ());
@@ -51,7 +66,7 @@
          return entityplayermp1;
      }
  
-@@ -498,6 +503,7 @@
+@@ -498,6 +516,7 @@
              PotionEffect potioneffect = (PotionEffect)iterator.next();
              p_72356_1_.field_71135_a.func_147359_a(new S1DPacketEntityEffect(p_72356_1_.func_145782_y(), potioneffect));
          }

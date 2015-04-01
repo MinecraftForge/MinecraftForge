@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -88,6 +89,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private NetHandlerPlayServer serverHandler;
     private INetHandler netHandler;
     private Map<String,String> modList;
+    private int overrideLoginDim;
 
     public NetworkDispatcher(NetworkManager manager)
     {
@@ -136,7 +138,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             this.completeServerSideConnection(ConnectionType.VANILLA);
         }
     }
-    
+
     protected void setModList(Map<String,String> modList)
     {
         this.modList = modList;
@@ -163,7 +165,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.manager.channel().config().setAutoRead(true);
     }
 
-    void serverInitiateHandshake()
+    int serverInitiateHandshake()
     {
         // Send mod salutation to the client
         // This will be ignored by vanilla clients
@@ -186,6 +188,18 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         player.playerNetServerHandler = null;
         // manually for the manager into the PLAY state, so we can send packets later
         this.manager.setConnectionState(EnumConnectionState.PLAY);
+
+        // Return the dimension the player is in, so it can be pre-sent to the client in the ServerHello v2 packet
+        // Requires some hackery to the serverconfigmanager and stuff for this to work
+        NBTTagCompound playerNBT = scm.getPlayerNBT(player);
+        if (playerNBT!=null)
+        {
+            return playerNBT.getInteger("Dimension");
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     void clientListenForServerHandshake()
@@ -253,10 +267,10 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     {
         return netHandler;
     }
-    
+
     /**
      * The mod list returned by this method is in no way reliable because it is provided by the client
-     * 
+     *
      * @return a map that will contain String keys and values listing all mods and their versions
      */
     public Map<String,String> getModList()
@@ -543,6 +557,16 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).remove();
         this.handshakeChannel.attr(FML_DISPATCHER).remove();
         this.manager.channel().attr(FML_DISPATCHER).remove();
+    }
+
+    public void setOverrideDimension(int overrideDim) {
+        this.overrideLoginDim = overrideDim;
+        FMLLog.fine("Received override dimension %d", overrideDim);
+    }
+
+    public int getOverrideDimension(S01PacketJoinGame p_147282_1_) {
+        FMLLog.fine("Overriding dimension: using %d", this.overrideLoginDim);
+        return this.overrideLoginDim != 0 ? this.overrideLoginDim : p_147282_1_.getDimension();
     }
 
     private class MultiPartCustomPayload extends S3FPacketCustomPayload

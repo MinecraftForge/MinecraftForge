@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -31,21 +32,46 @@ public abstract class FMLHandshakeMessage {
     }
     public static class ServerHello extends FMLHandshakeMessage {
         private byte serverProtocolVersion;
+        private int overrideDimension;
+        public ServerHello()
+        {
+            // noargs for the proto
+        }
+        public ServerHello(int overrideDim)
+        {
+            this.overrideDimension = overrideDim;
+        }
+
         @Override
         public void toBytes(ByteBuf buffer)
         {
             buffer.writeByte(NetworkRegistry.FML_PROTOCOL);
+            buffer.writeInt(overrideDimension);
         }
 
         @Override
         public void fromBytes(ByteBuf buffer)
         {
             serverProtocolVersion = buffer.readByte();
+            // Extended dimension support during login
+            if (serverProtocolVersion > 1)
+            {
+                overrideDimension = buffer.readInt();
+                FMLLog.fine("Server FML protocol version %d, 4 byte dimension received %d", serverProtocolVersion, overrideDimension);
+            }
+            else
+            {
+                FMLLog.info("Server FML protocol version %d, no additional data received", serverProtocolVersion);
+            }
         }
 
         public byte protocolVersion()
         {
             return serverProtocolVersion;
+        }
+
+        public int overrideDim() {
+            return overrideDimension;
         }
     }
     public static class ClientHello extends FMLHandshakeMessage {
