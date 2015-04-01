@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -331,7 +331,7 @@
+                 {
+                     ItemFood itemfood = (ItemFood)itemstack.func_77973_b();
+ 
+-                    if (itemfood.func_77845_h() && this.field_70180_af.func_111145_d(18) < 20.0F)
++                    if (itemfood.isWolfFood(itemstack) && this.field_70180_af.func_111145_d(18) < 20.0F)
+                     {
+                         if (!p_70085_1_.field_71075_bZ.field_75098_d)
+                         {
+@@ -436,7 +436,7 @@
+ 
+     public boolean func_70877_b(ItemStack p_70877_1_)
+     {
+-        return p_70877_1_ == null ? false : (!(p_70877_1_.func_77973_b() instanceof ItemFood) ? false : ((ItemFood)p_70877_1_.func_77973_b()).func_77845_h());
++        return super.func_70877_b(p_70877_1_) || (p_70877_1_.func_77973_b() instanceof ItemFood && ((ItemFood) p_70877_1_.func_77973_b()).isWolfFood(p_70877_1_));
+     }
+ 
+     public int func_70641_bl()
