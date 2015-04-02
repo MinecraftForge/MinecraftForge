@@ -632,13 +632,13 @@ public class FMLModContainer implements ModContainer
 
         if (clientSideOnly && side != Side.CLIENT)
         {
-            FMLLog.info("Disabling mod %d it is client side only.", getModId());
+            FMLLog.info("Disabling mod %s it is client side only.", getModId());
             return false;
         }
 
         if (serverSideOnly && side != Side.SERVER)
         {
-            FMLLog.info("Disabling mod %d it is server side only.", getModId());
+            FMLLog.info("Disabling mod %s it is server side only.", getModId());
             return false;
         }
 
