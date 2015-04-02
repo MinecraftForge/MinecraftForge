@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerProfileCache.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerProfileCache.java
+@@ -224,26 +224,12 @@
+     {
+         List list = null;
+         BufferedReader bufferedreader = null;
+-        label81:
+         {
+             try
+             {
+                 bufferedreader = Files.newReader(this.field_152665_g, Charsets.UTF_8);
+                 list = (List)this.field_152660_b.fromJson(bufferedreader, field_152666_h);
+-                break label81;
+-            }
+-            catch (FileNotFoundException filenotfoundexception)
+-            {
+-                ;
+-            }
+-            finally
+-            {
+-                IOUtils.closeQuietly(bufferedreader);
+-            }
+ 
+-            return;
+-        }
+-
+         if (list != null)
+         {
+             this.field_152661_c.clear();
+@@ -268,6 +254,20 @@
+                 }
+             }
+         }
++            }
++            catch (FileNotFoundException filenotfoundexception)
++            {
++                ;
++            }
++            catch (com.google.gson.JsonParseException parsefail)
++            {
++                // No op - the cache can quietly rebuild if it's junk
++            }
++            finally
++            {
++                IOUtils.closeQuietly(bufferedreader);
++            }
++        }
+     }
+ 
+     public void func_152658_c()
