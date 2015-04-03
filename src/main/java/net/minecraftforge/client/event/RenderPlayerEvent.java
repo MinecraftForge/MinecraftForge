@@ -10,61 +10,28 @@ public abstract class RenderPlayerEvent extends PlayerEvent
 {
     public final RenderPlayer renderer;
     public final float partialRenderTick;
+    public final double x;
+    public final double y;
+    public final double z;
 
-    public RenderPlayerEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick)
+    public RenderPlayerEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick, double x, double y, double z)
     {
         super(player);
         this.renderer = renderer;
         this.partialRenderTick = partialRenderTick;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent
     {
-        public Pre(EntityPlayer player, RenderPlayer renderer, float tick){ super(player, renderer, tick); }
+        public Pre(EntityPlayer player, RenderPlayer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
     }
 
     public static class Post extends RenderPlayerEvent
     {
-        public Post(EntityPlayer player, RenderPlayer renderer, float tick){ super(player, renderer, tick); }
-    }
-    
-    public abstract static class Specials extends RenderPlayerEvent
-    {
-        public Specials(EntityPlayer player, RenderPlayer renderer, float partialTicks)
-        {
-            super(player, renderer, partialTicks);
-        }
-
-        @Cancelable
-        public static class Pre extends Specials
-        {
-            public boolean renderHelmet = true;
-            public boolean renderCape = true;
-            public boolean renderItem = true;
-            public Pre(EntityPlayer player, RenderPlayer renderer, float partialTicks){ super(player, renderer, partialTicks); }
-        }
-
-        public static class Post extends Specials
-        {
-            public Post(EntityPlayer player, RenderPlayer renderer, float partialTicks){ super(player, renderer, partialTicks); }
-        }
-    }
-
-    public static class SetArmorModel extends RenderPlayerEvent
-    {
-        /**
-         * Setting this to any value besides -1 will result in the function being 
-         * Immediately exited with the return value specified.
-         */
-        public int result = -1;
-        public final int slot;
-        public final ItemStack stack;
-        public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, ItemStack stack)
-        {
-            super(player, renderer, partialTick);
-            this.slot = slot;
-            this.stack = stack;
-        }
+        public Post(EntityPlayer player, RenderPlayer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
     }
 }
