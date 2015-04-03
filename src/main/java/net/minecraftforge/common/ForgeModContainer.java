@@ -68,6 +68,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static int defaultSpawnFuzz = 20;
+    public static boolean defaultHasSpawnFuzz = true;
 
     private static Configuration config;
 
@@ -225,6 +226,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         defaultSpawnFuzz = prop.getInt(20);
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "spawnHasFuzz", Boolean.TRUE,
+                "If the overworld has ANY spawn fuzz at all. If not, the spawn will always be the exact same location.");
+        prop.setLanguageKey("forge.configgui.hasspawnfuzz").setRequiresWorldRestart(false);
+        defaultHasSpawnFuzz = prop.getBoolean(Boolean.TRUE);
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
         if (config.hasChanged())
@@ -253,7 +260,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             }
         }
     }
-    
+
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
@@ -280,7 +287,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         FMLCommonHandler.instance().bus().register(this);
-        
+
         if (!ForgeModContainer.disableVersionCheck)
         {
             ForgeVersion.startVersionCheck();
