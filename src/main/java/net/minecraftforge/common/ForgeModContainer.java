@@ -60,7 +60,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
     public static boolean disableStitchedFileSaving = false;
-    public static boolean forceDuplicateFluidBlockCrash = true;
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
@@ -157,17 +156,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.sortRecipies").setRequiresMcRestart(true);
         shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
         propOrder.add(prop.getName());
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
-        prop.comment = "Set this to true to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
-        prop.setLanguageKey("forge.configgui.forceDuplicateFluidBlockCrash").setRequiresMcRestart(true);
-        forceDuplicateFluidBlockCrash = prop.getBoolean(true);
-        propOrder.add(prop.getName());
-
-        if (!forceDuplicateFluidBlockCrash)
-        {
-            FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
-        }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
         prop.comment = "Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";

@@ -120,17 +120,10 @@ public class Fluid
         {
             this.block = block;
         }
-        else if (!ForgeModContainer.forceDuplicateFluidBlockCrash)
-        {
-            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
-                    + this.block + ". Configure your mods to prevent this from happening.");
-        }
         else
         {
-            FMLLog.severe("A mod has attempted to assign BlockID " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
-                    + this.block + ". Configure your mods to prevent this from happening.");
-            throw new LoaderException(new RuntimeException("A mod has attempted to assign BlockID " + block + " to the Fluid '" + fluidName
-                    + "' but this Fluid has already been linked to BlockID " + this.block + ". Configure your mods to prevent this from happening."));
+            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to the Block "
+                    + this.block + ". You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.");
         }
         return this;
     }
