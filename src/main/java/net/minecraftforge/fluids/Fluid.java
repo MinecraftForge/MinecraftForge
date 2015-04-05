@@ -33,7 +33,7 @@ import net.minecraft.item.EnumRarity;
  *
  */
 public class Fluid
-{	
+{
     /** The unique identification name for this fluid. */
     protected final String fluidName;
 
@@ -62,7 +62,7 @@ public class Fluid
     /**
      * Temperature of the fluid - completely arbitrary; higher temperature indicates that the fluid is
      * hotter than air.
-     * 
+     *
      * Default value is approximately the real-life room temperature of water in degrees Kelvin.
      */
     protected int temperature = 300;
@@ -72,10 +72,10 @@ public class Fluid
      * permissible.
      *
      * Default value is approximately the real-life density of water in m/s^2 (x10^-3).
-     * 
+     *
      * Higher viscosity means that a fluid flows more slowly, like molasses.
      * Lower viscosity means that a fluid flows more quickly, like helium.
-     * 
+     *
      */
     protected int viscosity = 1000;
 
@@ -198,7 +198,7 @@ public class Fluid
     {
         return getLocalizedName();
     }
-    
+
     /**
      * Use the FluidStack sensitive version above
      */
@@ -258,7 +258,7 @@ public class Fluid
     {
         return this.isGaseous;
     }
-    
+
     public EnumRarity getRarity()
     {
         return rarity;

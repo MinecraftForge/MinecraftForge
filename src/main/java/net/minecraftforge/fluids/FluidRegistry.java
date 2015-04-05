@@ -28,14 +28,14 @@ public abstract class FluidRegistry
     static BiMap<String, Fluid> fluids = HashBiMap.create();
     static BiMap<Fluid, Integer> fluidIDs = HashBiMap.create();
     static BiMap<Block, Fluid> fluidBlocks;
-    
+
     public static final Fluid WATER = new Fluid("water") {
         @Override
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.water.name");
         }
     }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
-    
+
     public static final Fluid LAVA = new Fluid("lava") {
         @Override
         public String getLocalizedName() {
@@ -165,7 +165,7 @@ public abstract class FluidRegistry
         }
         return fluidBlocks.get(block);
     }
-    
+
     public static class FluidRegisterEvent extends Event
     {
         public final String fluidName;

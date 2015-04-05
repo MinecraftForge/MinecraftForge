@@ -56,7 +56,7 @@ public class FluidStack
     {
     	this(FluidRegistry.getFluid(fluidID), amount, nbt);
     }
-    
+
     /**
      * This provides a safe method for retrieving a FluidStack - if the Fluid is invalid, the stack
      * will return as null.
@@ -103,7 +103,7 @@ public class FluidStack
     {
     	return FluidRegistry.getFluidID(fluid);
     }
-    
+
     public String getLocalizedName()
     {
         return this.getFluid().getLocalizedName(this);
