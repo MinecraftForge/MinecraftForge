@@ -70,7 +70,11 @@
 -            this.func_178406_a(p_178415_1_, new Vector3d(0.5D, 0.5D, 0.5D), p_178415_4_.func_177525_a(), new Vector3d(1.0D, 1.0D, 1.0D));
 -            return p_178415_4_.func_177520_a(p_178415_2_, p_178415_3_);
 <<<<<<< HEAD
+<<<<<<< HEAD
 +            this.func_178406_a(p_178415_1_, new Vector3d(0.5D, 0.5D, 0.5D), new Matrix4d(p_178415_4_.getMatrix()), new Vector3d(1.0D, 1.0D, 1.0D));
+=======
++            net.minecraftforge.client.ForgeHooksClient.transform(p_178415_1_, p_178415_4_.getMatrix());
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 =======
 +            net.minecraftforge.client.ForgeHooksClient.transform(p_178415_1_, p_178415_4_.getMatrix());
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672

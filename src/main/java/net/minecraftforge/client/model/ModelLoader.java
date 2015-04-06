@@ -189,7 +189,11 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
         loadingModels.remove(location);
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
     private class VanillaModelWrapper implements IModel
     {
         private final ResourceLocation location;
@@ -246,7 +250,10 @@ public class ModelLoader extends ModelBakery
                     }
                 }
             }
+<<<<<<< HEAD
             
+=======
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
             for(String s : (Iterable<String>)model.textures.values())
             {
                 if(!s.startsWith("#"))
@@ -276,7 +283,10 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
     public static class UVLock implements IModelState
     {
         private final IModelState state;

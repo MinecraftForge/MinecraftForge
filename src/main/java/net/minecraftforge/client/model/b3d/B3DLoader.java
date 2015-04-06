@@ -472,7 +472,7 @@ public class B3DLoader implements ICustomModelLoader
             }
             return quads;
         }
-        
+
         private void put(VertexFormatElement e, Float... fs)
         {
             Attributes.put(buf, e, true, 0f, fs);

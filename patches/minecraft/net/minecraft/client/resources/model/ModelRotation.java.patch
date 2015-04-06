@@ -16,7 +16,11 @@
 +
 +    public net.minecraftforge.client.model.TRSRTransformation apply(net.minecraftforge.client.model.IModelPart part) { return new net.minecraftforge.client.model.TRSRTransformation(getMatrix()); }
 <<<<<<< HEAD
+<<<<<<< HEAD
 +    public javax.vecmath.Matrix4f getMatrix() { return new javax.vecmath.Matrix4f(func_177525_a()); }
+=======
++    public javax.vecmath.Matrix4f getMatrix() { return net.minecraftforge.client.ForgeHooksClient.getMatrix(this); }
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 =======
 +    public javax.vecmath.Matrix4f getMatrix() { return net.minecraftforge.client.ForgeHooksClient.getMatrix(this); }
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672

@@ -31,7 +31,11 @@
              if (modelresourcelocation != null)
              {
 <<<<<<< HEAD
+<<<<<<< HEAD
 @@ -314,6 +318,11 @@
+=======
+@@ -314,6 +321,11 @@
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 =======
 @@ -314,6 +321,11 @@
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
@@ -47,7 +51,11 @@
          {
              GlStateManager.func_179109_b(p_175034_1_.field_178365_c.x + field_175055_b, p_175034_1_.field_178365_c.y + field_175056_c, p_175034_1_.field_178365_c.z + field_175053_d);
 <<<<<<< HEAD
+<<<<<<< HEAD
 @@ -335,23 +344,7 @@
+=======
+@@ -335,23 +347,7 @@
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 =======
 @@ -335,23 +347,7 @@
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
@@ -76,7 +84,11 @@
          this.func_180454_a(p_175040_1_, p_175040_2_);
          GlStateManager.func_179121_F();
 <<<<<<< HEAD
+<<<<<<< HEAD
 @@ -485,10 +478,11 @@
+=======
+@@ -485,10 +481,11 @@
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 =======
 @@ -485,10 +481,11 @@
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
@@ -95,7 +107,11 @@
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
 <<<<<<< HEAD
+<<<<<<< HEAD
 @@ -501,7 +495,7 @@
+=======
+@@ -501,7 +498,7 @@
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 =======
 @@ -501,7 +498,7 @@
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
@@ -108,8 +124,11 @@
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
 <<<<<<< HEAD
+<<<<<<< HEAD
 @@ -1078,6 +1072,19 @@
 =======
+=======
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 @@ -1072,12 +1069,26 @@
          this.func_175029_a(Blocks.field_150420_aW, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "brown_mushroom_block");
          this.func_175029_a(Blocks.field_150419_aX, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "red_mushroom_block");
@@ -118,6 +137,9 @@
      }
  
      public void func_110549_a(IResourceManager p_110549_1_)
+<<<<<<< HEAD
+>>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
+=======
 >>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
      {
          this.field_175059_m.func_178085_b();
