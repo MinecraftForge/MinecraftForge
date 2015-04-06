@@ -8,12 +8,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 
-<<<<<<< HEAD
-public class Attributes {
-=======
 public class Attributes
 {
->>>>>>> Added model loader registry
     /*
      * Default format of the data in IBakedModel
      */

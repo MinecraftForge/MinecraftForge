@@ -39,12 +39,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
-<<<<<<< HEAD
-public class B3DModel {
-=======
 public class B3DModel
 {
->>>>>>> Added model loader registry
     static final Logger logger = LogManager.getLogger(B3DModel.class);
     private final List<Texture> textures;
     private final List<Brush> brushes;
@@ -192,6 +188,7 @@ public class B3DModel
                 throw new IOException("Unsupported major model version: " + ((float)version / 100));
             if(version % 100 > this.version % 100)
                 logger.warn(String.format("Minor version differnce in model: ", ((float)version / 100)));
+            
             List<Texture> textures = Collections.EMPTY_LIST;
             List<Brush> brushes = Collections.EMPTY_LIST;
             Node<?> root = null;

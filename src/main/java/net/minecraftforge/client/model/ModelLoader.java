@@ -189,13 +189,9 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
         loadingModels.remove(location);
     }
-
-<<<<<<< HEAD
-    private class VanillaModelWrapper implements IModel {
-=======
+    
     private class VanillaModelWrapper implements IModel
     {
->>>>>>> Added model loader registry
         private final ResourceLocation location;
         private final ModelBlock model;
 
@@ -250,6 +246,7 @@ public class ModelLoader extends ModelBakery
                     }
                 }
             }
+
             for(String s : (Iterable<String>)model.textures.values())
             {
                 if(!s.startsWith("#"))
@@ -325,12 +322,8 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-<<<<<<< HEAD
-    private class WeightedRandomModel implements IModel {
-=======
     private class WeightedRandomModel implements IModel
     {
->>>>>>> Added model loader registry
         private final List<Variant> variants;
         private final List<ResourceLocation> locations = new ArrayList<ResourceLocation>();
         private final List<IModel> models = new ArrayList<IModel>();

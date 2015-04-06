@@ -12,13 +12,8 @@ import net.minecraft.util.EnumFacing;
 /*
  * Version of IBakedModel with less restriction on camera transformations and with explicit format of the baked array.
  */
-<<<<<<< HEAD
-public interface IFlexibleBakedModel extends IBakedModel {
-
-=======
 public interface IFlexibleBakedModel extends IBakedModel
 {
->>>>>>> Added model loader registry
     // non-erased versions of the IBakedModel methods
     List<BakedQuad> getFaceQuads(EnumFacing side);
     List<BakedQuad> getGeneralQuads();

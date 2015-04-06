@@ -103,7 +103,6 @@ public class ForgeHooksClient
         {
             return false;
         }
-
         if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))
         {
             GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F);
@@ -113,7 +112,6 @@ public class ForgeHooksClient
             GL11.glTranslatef(0.0F, -bobing, 0.0F);
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
-
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
         Block block = item.getItem() instanceof ItemBlock ? Block.getBlockFromItem(item.getItem()) : null;
         if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
@@ -121,23 +119,19 @@ public class ForgeHooksClient
             int renderType = (block != null ? block.getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
             boolean blend = block != null && block.getRenderBlockPass() > 0;
-
             if (RenderItem.renderInFrame)
             {
                 GL11.glScalef(1.25F, 1.25F, 1.25F);
                 GL11.glTranslatef(0.0F, 0.05F, 0.0F);
                 GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
             }
-
             if (blend)
             {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
                 GL11.glEnable(GL11.GL_BLEND);
                 OpenGlHelper.glBlendFunc(770, 771, 1, 0);
             }
-
             GL11.glScalef(scale, scale, scale);
-
             for(int j = 0; j < count; j++)
             {
                 GL11.glPushMatrix();
@@ -151,7 +145,6 @@ public class ForgeHooksClient
                 customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
                 GL11.glPopMatrix();
             }
-
             if (blend)
             {
                 GL11.glDisable(GL11.GL_BLEND);
@@ -162,7 +155,6 @@ public class ForgeHooksClient
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
-
         return true;
     }
     */
@@ -175,7 +167,6 @@ public class ForgeHooksClient
         {
             return false;
         }
-
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
@@ -186,7 +177,6 @@ public class ForgeHooksClient
             GL11.glScalef(1.0F, 1.0F, -1F);
             GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-
             if(inColor)
             {
                 int color = item.getItem().getColorFromItemStack(item, 0);
@@ -195,7 +185,6 @@ public class ForgeHooksClient
                 float b = (float)(color & 0xff) / 255F;
                 GL11.glColor4f(r, g, b, 1.0F);
             }
-
             GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
             renderBlocks.useInventoryTint = inColor;
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
@@ -207,7 +196,6 @@ public class ForgeHooksClient
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, -3.0F + zLevel);
-
             if (inColor)
             {
                 int color = item.getItem().getColorFromItemStack(item, 0);
@@ -216,19 +204,15 @@ public class ForgeHooksClient
                 float b = (float)(color & 255) / 255.0F;
                 GL11.glColor4f(r, g, b, 1.0F);
             }
-
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
             GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
-
         return true;
     }
-
     public static void renderEffectOverlay(TextureManager manager, RenderItem render)
     {
     }
-
     public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLivingBase entity, ItemStack item)
     {
         if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
@@ -479,7 +463,6 @@ public class ForgeHooksClient
     {
         worldRendererRB = renderBlocks;
     }
-
     public static void onPreRenderWorld(WorldRenderer worldRenderer, int pass)
     {
         if(worldRendererRB != null)
@@ -488,7 +471,6 @@ public class ForgeHooksClient
             MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
         }
     }
-
     public static void onPostRenderWorld(WorldRenderer worldRenderer, int pass)
     {
         if(worldRendererRB != null)

@@ -279,6 +279,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                         tessellator.addVertexWithUV(tx2, y + ty2, tz2, u2Flow, v2Flow);
                         tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
                         tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
+<<<<<<< HEAD
+=======
+
+>>>>>>> commiting to merge... hope i did this right...
                         tessellator.addVertexWithUV(tx1, y + ty1, tz1, u1Flow, v1Flow);
                         tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
                         tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
@@ -290,6 +294,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                         tessellator.addVertexWithUV(tx2, y + 1 - 0, tz2, u2Flow, v3Flow);
                         tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
                         tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
+<<<<<<< HEAD
+=======
+
+>>>>>>> commiting to merge... hope i did this right...
                         tessellator.addVertexWithUV(tx1, y + 1 - 0, tz1, u1Flow, v3Flow);
                         tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
                         tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
