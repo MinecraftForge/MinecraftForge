@@ -127,6 +127,12 @@ public class OreDictionary
             registerOre("record",      Items.record_ward);
             registerOre("record",      Items.record_11);
             registerOre("record",      Items.record_wait);
+            registerOre("chest",       Blocks.chest);
+            registerOre("chest",       Blocks.ender_chest);
+            registerOre("chest",       Blocks.trapped_chest);
+            registerOre("chestWood",   Blocks.chest);
+            registerOre("chestEnder",  Blocks.ender_chest);
+            registerOre("chestTrapped", Blocks.trapped_chest);
         }
 
         // Build our list of items to replace with ore tags
@@ -136,7 +142,7 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE), "slabWood");
         replacements.put(new ItemStack(Blocks.stone), "stone");
-        replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
+        //replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
         replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
@@ -148,6 +154,9 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
         replacements.put(new ItemStack(Items.slime_ball), "slimeball");
         replacements.put(new ItemStack(Blocks.glass), "blockGlassColorless");
+        replacements.put(new ItemStack(Blocks.chest), "chestWood");
+        replacements.put(new ItemStack(Blocks.ender_chest), "chestEnder");
+        replacements.put(new ItemStack(Blocks.trapped_chest), "chestTrapped");
 
         // Register dyes
         String[] dyes =
@@ -198,15 +207,27 @@ public class OreDictionary
             new ItemStack(Blocks.stone_slab, 1, WILDCARD_VALUE),
             new ItemStack(Blocks.stone_stairs),
             new ItemStack(Blocks.cobblestone_wall),
+            new ItemStack(Blocks.oak_fence),
+            new ItemStack(Blocks.oak_fence_gate),
             new ItemStack(Blocks.oak_stairs),
+            new ItemStack(Blocks.spruce_fence),
+            new ItemStack(Blocks.spruce_fence_gate),
             new ItemStack(Blocks.spruce_stairs),
+            new ItemStack(Blocks.birch_fence),
+            new ItemStack(Blocks.birch_fence_gate),
             new ItemStack(Blocks.birch_stairs),
+            new ItemStack(Blocks.jungle_fence),
+            new ItemStack(Blocks.jungle_fence_gate),
             new ItemStack(Blocks.jungle_stairs),
+            new ItemStack(Blocks.acacia_fence),
+            new ItemStack(Blocks.acacia_fence_gate),
             new ItemStack(Blocks.acacia_stairs),
+            new ItemStack(Blocks.dark_oak_fence),
+            new ItemStack(Blocks.dark_oak_fence_gate),
             new ItemStack(Blocks.dark_oak_stairs),
             new ItemStack(Blocks.wooden_slab),
             new ItemStack(Blocks.glass_pane),
-            new ItemStack(Blocks.stained_glass)
+            null //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
         List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
@@ -402,7 +423,6 @@ public class OreDictionary
      * Raises the registerOre function in all registered handlers.
      *
      * @param name The name of the ore
-     * @param id The ID of the ore
      * @param ore The ore's ItemStack
      */
     private static void registerOreImpl(String name, ItemStack ore)

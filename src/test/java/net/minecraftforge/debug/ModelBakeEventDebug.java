@@ -11,10 +11,9 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -31,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -39,8 +39,7 @@ import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -69,47 +68,35 @@ public class ModelBakeEventDebug
     public static CommonProxy proxy;
 
     @EventHandler
-    public void init(FMLInitializationEvent event) { proxy.init(event); }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) { proxy.postInit(event); }
+    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
 
     public static class CommonProxy
     {
-        public void init(FMLInitializationEvent event)
+        public void preInit(FMLPreInitializationEvent event)
         {
             GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
-
-        public void postInit(FMLPostInitializationEvent event) {}
     }
 
     public static class ClientProxy extends CommonProxy
     {
-        private static ModelResourceLocation modelLocation = new ModelResourceLocation(blockName, null);
+        private static ModelResourceLocation blockLocation = new ModelResourceLocation(blockName, "normal");
+        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
 
         @Override
-        public void init(FMLInitializationEvent event)
+        public void preInit(FMLPreInitializationEvent event)
         {
-            super.init(event);
-            MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
-        }
-
-        @Override
-        public void postInit(FMLPostInitializationEvent event) {
-            super.postInit(event);
+            super.preInit(event);
             Item item = Item.getItemFromBlock(CustomModelBlock.instance);
-            RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-            if(renderItem != null)
-            {
-                renderItem.getItemModelMesher().register(item, new ItemMeshDefinition() {
-                    public ModelResourceLocation getModelLocation(ItemStack stack)
-                    {
-                        return modelLocation;
-                    }
-                });
-            }
+            ModelLoader.setCustomModelResourceLocation(item, 0, itemLocation);
+            ModelLoader.setCustomStateMapper(CustomModelBlock.instance, new StateMapperBase(){
+                protected ModelResourceLocation getModelResourceLocation(IBlockState p_178132_1_)
+                {
+                    return blockLocation;
+                }
+            });
+            MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
         }
     }
 
@@ -124,7 +111,9 @@ public class ModelBakeEventDebug
         {
             TextureAtlasSprite base = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/slime");
             TextureAtlasSprite overlay = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/redstone_block");
-            event.modelRegistry.putObject(ClientProxy.modelLocation, new CustomModel(base, overlay));
+            IBakedModel customModel = new CustomModel(base, overlay);
+            event.modelRegistry.putObject(ClientProxy.blockLocation, customModel);
+            event.modelRegistry.putObject(ClientProxy.itemLocation, customModel);
         }
     }
 

@@ -7,8 +7,8 @@ import com.google.common.collect.ImmutableMap;
 /*
  * Simple implementation of IModelState via a map and a default value.
  */
-public class MapModelState implements IModelState {
-
+public class MapModelState implements IModelState
+{
     private final ImmutableMap<IModelPart, TRSRTransformation> map;
     private final TRSRTransformation def;
 

@@ -65,15 +65,6 @@
                      {
                          this.func_147364_a(this.field_147373_o, this.field_147382_p, this.field_147381_q, f1, f2);
                          return;
-@@ -381,7 +396,7 @@
- 
-                 AxisAlignedBB axisalignedbb = this.field_147369_b.func_174813_aQ().func_72314_b((double)f3, (double)f3, (double)f3).func_72321_a(0.0D, -0.55D, 0.0D);
- 
--                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb))
-+                if (!this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !worldserver.func_72829_c(axisalignedbb) && !this.field_147369_b.field_71075_bZ.field_75101_c)
-                 {
-                     if (d18 >= -0.03125D)
-                     {
 @@ -400,6 +415,8 @@
                      this.field_147365_f = 0;
                  }
@@ -139,10 +130,12 @@
              {
                  this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
-@@ -765,6 +793,8 @@
+@@ -764,7 +792,9 @@
+             }
              else
              {
-                 ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
+-                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
++                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), ForgeHooks.newChatWithLinks(s));
 +                chatcomponenttranslation1 = ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
 +                if (chatcomponenttranslation1 == null) return;
                  this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);

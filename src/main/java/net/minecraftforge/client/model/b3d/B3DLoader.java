@@ -1,7 +1,5 @@
 package net.minecraftforge.client.model.b3d;
 
-import static net.minecraftforge.client.model.b3d.B3DModel.logger;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -28,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -35,6 +34,7 @@ import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.b3d.B3DModel.Animation;
@@ -68,7 +68,8 @@ import com.google.common.collect.Multimap;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-public class B3DLoader implements ICustomModelLoader {
+public class B3DLoader implements ICustomModelLoader
+{
     public static final B3DLoader instance = new B3DLoader();
 
     private IResourceManager manager;
@@ -237,13 +238,17 @@ public class B3DLoader implements ICustomModelLoader {
         public static TRSRTransformation getNodeMatrix(Animation animation, Node<?> node, int frame)
         {
             TRSRTransformation ret = TRSRTransformation.identity();
+            if(node.getParent() != null)
+            {
+                TRSRTransformation pm = cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node.getParent(), frame));
+                ret = ret.compose(pm);
+            }
             Key key = null;
             if(animation != null) key = animation.getKeys().get(frame, node);
             else if(key == null && node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
             if(key == null)
             {
                 FMLLog.severe("invalid key index: " + frame);
-                logger.debug(String.format("getMatrix: %s %s\n%s %s %s\n%s", frame, node, node.getPos(), node.getScale(), node.getRot(), ret));
             }
             else
             {
@@ -251,7 +256,6 @@ public class B3DLoader implements ICustomModelLoader {
                 Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
                 rm.invert();
                 ret = ret.compose(new TRSRTransformation(rm));
-                logger.debug(String.format("getMatrix: %s %s\n%s %s %s\n%s %s %s\n%s", frame, node, node.getPos(), node.getScale(), node.getRot(), key.getPos(), key.getScale(), key.getRot(), ret));
             }
             return ret;
         }
@@ -327,7 +331,6 @@ public class B3DLoader implements ICustomModelLoader {
                 String path = t.getPath();
                 if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
                 builder.put(t.getPath(), new ResourceLocation(location.getResourceDomain(), path));
-                System.out.println("Texture: " + path);
             }
             return builder.build();
         }
@@ -445,14 +448,7 @@ public class B3DLoader implements ICustomModelLoader {
                     // gets transformation in global space
                     public Matrix4f apply(Node<?> node)
                     {
-                        TRSRTransformation ret = TRSRTransformation.identity(), pm = null;
-                        if(node.getParent() != null) pm = new TRSRTransformation(apply(node.getParent()));
-                        if(pm != null)
-                        {
-                            ret = ret.compose(pm);
-                        }
-                        ret = ret.compose(state.apply(PartWrapper.create(node)));
-                        return ret.getMatrix();
+                        return state.apply(PartWrapper.create(node)).getMatrix();
                     }
                 });
                 for(Face f : faces)
@@ -461,6 +457,7 @@ public class B3DLoader implements ICustomModelLoader {
                     List<Texture> textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures.isEmpty()) sprite = this.textures.get("missingno");
+                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
                     else sprite = this.textures.get(textures.get(0).getPath());
                     putVertexData(f.getV1(), sprite);
                     putVertexData(f.getV2(), sprite);
@@ -469,16 +466,16 @@ public class B3DLoader implements ICustomModelLoader {
                     buf.flip();
                     int[] data = new int[VERTICES_IN_QUAD * format.getNextOffset() / BYTES_IN_INT];
                     buf.asIntBuffer().get(data);
-                    builder.add(new BakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z)));
+                    builder.add(new ColoredBakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z)));
                 }
                 quads = builder.build();
             }
             return quads;
         }
-
-        private void put(VertexFormatElement e, Number... ns)
+        
+        private void put(VertexFormatElement e, Float... fs)
         {
-            Attributes.put(buf, e, true, 0, ns);
+            Attributes.put(buf, e, true, 0f, fs);
         }
 
         @SuppressWarnings("unchecked")
@@ -493,7 +490,7 @@ public class B3DLoader implements ICustomModelLoader {
                 switch(e.getUsage())
                 {
                 case POSITION:
-                    put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1);
+                    put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1f);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
@@ -502,7 +499,7 @@ public class B3DLoader implements ICustomModelLoader {
                     }
                     else
                     {
-                        put(e, 1, 1, 1, 0);
+                        put(e, 1f, 1f, 1f, 1f);
                     }
                     break;
                 case UV:
@@ -512,22 +509,22 @@ public class B3DLoader implements ICustomModelLoader {
                         put(e,
                             sprite.getInterpolatedU(v.getTexCoords()[0].x * 16),
                             sprite.getInterpolatedV(v.getTexCoords()[0].y * 16),
-                            0,
-                            1
+                            0f,
+                            1f
                         );
                     }
                     else
                     {
-                        put(e, 0, 0, 0, 1);
+                        put(e, 0f, 0f, 0f, 1f);
                     }
                     break;
                 case NORMAL:
                     // TODO
-                    put(e, 0, 1, 0, 1);
+                    put(e, 0f, 1f, 0f, 1f);
                     break;
                 case GENERIC:
                     // TODO
-                    put(e, 0, 0, 0, 1);
+                    put(e, 0f, 0f, 0f, 0f);
                     break;
                 default:
                     break;
@@ -565,7 +562,6 @@ public class B3DLoader implements ICustomModelLoader {
         @Override
         public BakedWrapper handleBlockState(IBlockState state)
         {
-            System.out.println("handleBlockState " + state);
             if(state instanceof IExtendedBlockState)
             {
                 IExtendedBlockState exState = (IExtendedBlockState)state;

@@ -25,15 +25,6 @@
      }
  
      protected MovingObjectPosition func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -319,7 +321,7 @@
-         float f = p_77621_2_.field_70127_C + (p_77621_2_.field_70125_A - p_77621_2_.field_70127_C);
-         float f1 = p_77621_2_.field_70126_B + (p_77621_2_.field_70177_z - p_77621_2_.field_70126_B);
-         double d0 = p_77621_2_.field_70169_q + (p_77621_2_.field_70165_t - p_77621_2_.field_70169_q);
--        double d1 = p_77621_2_.field_70167_r + (p_77621_2_.field_70163_u - p_77621_2_.field_70167_r) + (double)p_77621_2_.func_70047_e();
-+        double d1 = p_77621_2_.field_70167_r + (p_77621_2_.field_70163_u - p_77621_2_.field_70167_r) + (double)(p_77621_1_.field_72995_K ? p_77621_2_.func_70047_e() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.func_70047_e()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
-         double d2 = p_77621_2_.field_70166_s + (p_77621_2_.field_70161_v - p_77621_2_.field_70166_s);
-         Vec3 vec3 = new Vec3(d0, d1, d2);
-         float f2 = MathHelper.func_76134_b(-f1 * 0.017453292F - (float)Math.PI);
 @@ -329,6 +331,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;

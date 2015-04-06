@@ -66,3 +66,11 @@
          {
              this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M);
          }
+@@ -233,6 +211,7 @@
+ 
+     public EnumDifficulty func_147135_j()
+     {
++        if (this.field_71349_l.field_71441_e == null) return this.field_71349_l.field_71474_y.field_74318_M; // Fix NPE just in case.
+         return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
+     }
+ 

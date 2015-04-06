@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4f;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -24,6 +26,8 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -35,6 +39,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,6 +47,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
@@ -58,10 +64,12 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -95,7 +103,6 @@ public class ForgeHooksClient
         {
             return false;
         }
-
         if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))
         {
             GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F);
@@ -105,7 +112,6 @@ public class ForgeHooksClient
             GL11.glTranslatef(0.0F, -bobing, 0.0F);
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
-
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
         Block block = item.getItem() instanceof ItemBlock ? Block.getBlockFromItem(item.getItem()) : null;
         if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
@@ -113,23 +119,19 @@ public class ForgeHooksClient
             int renderType = (block != null ? block.getRenderType() : 1);
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
             boolean blend = block != null && block.getRenderBlockPass() > 0;
-
             if (RenderItem.renderInFrame)
             {
                 GL11.glScalef(1.25F, 1.25F, 1.25F);
                 GL11.glTranslatef(0.0F, 0.05F, 0.0F);
                 GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
             }
-
             if (blend)
             {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
                 GL11.glEnable(GL11.GL_BLEND);
                 OpenGlHelper.glBlendFunc(770, 771, 1, 0);
             }
-
             GL11.glScalef(scale, scale, scale);
-
             for(int j = 0; j < count; j++)
             {
                 GL11.glPushMatrix();
@@ -143,7 +145,6 @@ public class ForgeHooksClient
                 customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
                 GL11.glPopMatrix();
             }
-
             if (blend)
             {
                 GL11.glDisable(GL11.GL_BLEND);
@@ -154,7 +155,6 @@ public class ForgeHooksClient
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
-
         return true;
     }
     */
@@ -167,7 +167,6 @@ public class ForgeHooksClient
         {
             return false;
         }
-
         engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
@@ -178,7 +177,6 @@ public class ForgeHooksClient
             GL11.glScalef(1.0F, 1.0F, -1F);
             GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-
             if(inColor)
             {
                 int color = item.getItem().getColorFromItemStack(item, 0);
@@ -187,7 +185,6 @@ public class ForgeHooksClient
                 float b = (float)(color & 0xff) / 255F;
                 GL11.glColor4f(r, g, b, 1.0F);
             }
-
             GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
             renderBlocks.useInventoryTint = inColor;
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
@@ -199,7 +196,6 @@ public class ForgeHooksClient
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, -3.0F + zLevel);
-
             if (inColor)
             {
                 int color = item.getItem().getColorFromItemStack(item, 0);
@@ -208,19 +204,15 @@ public class ForgeHooksClient
                 float b = (float)(color & 255) / 255.0F;
                 GL11.glColor4f(r, g, b, 1.0F);
             }
-
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
             GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
-
         return true;
     }
-
     public static void renderEffectOverlay(TextureManager manager, RenderItem render)
     {
     }
-
     public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLivingBase entity, ItemStack item)
     {
         if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
@@ -276,20 +268,34 @@ public class ForgeHooksClient
     public static void onTextureStitchedPre(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
+        ModelLoader.White.instance.register(map);
     }
 
     public static void onTextureStitchedPost(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        //FluidRegistry.WATER.setIcons(BlockLiquid.getLiquidIcon("water_still"), BlockLiquid.getLiquidIcon("water_flow"));
-        //FluidRegistry.LAVA.setIcons(BlockLiquid.getLiquidIcon("lava_still"), BlockLiquid.getLiquidIcon("lava_flow"));
+        FluidRegistry.WATER.setIcons(map.getAtlasSprite("minecraft:blocks/water_still"), map.getAtlasSprite("minecraft:blocks/water_flow"));
+        FluidRegistry.LAVA.setIcons(map.getAtlasSprite("minecraft:blocks/lava_still"), map.getAtlasSprite("minecraft:blocks/lava_flow"));
     }
 
     static int renderPass = -1;
     public static void setRenderPass(int pass)
     {
         renderPass = pass;
+    }
+
+    static final ThreadLocal<EnumWorldBlockLayer> renderLayer = new ThreadLocal<EnumWorldBlockLayer>()
+    {
+        protected EnumWorldBlockLayer initialValue()
+        {
+            return EnumWorldBlockLayer.SOLID;
+        }
+    };
+
+    public static void setRenderLayer(EnumWorldBlockLayer layer)
+    {
+        renderLayer.set(layer);
     }
 
     public static ModelBase getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBase _default)
@@ -457,7 +463,6 @@ public class ForgeHooksClient
     {
         worldRendererRB = renderBlocks;
     }
-
     public static void onPreRenderWorld(WorldRenderer worldRenderer, int pass)
     {
         if(worldRendererRB != null)
@@ -466,7 +471,6 @@ public class ForgeHooksClient
             MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
         }
     }
-
     public static void onPostRenderWorld(WorldRenderer worldRenderer, int pass)
     {
         if(worldRendererRB != null)
@@ -479,7 +483,9 @@ public class ForgeHooksClient
 
     public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
     {
-        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelBakery));
+        ModelLoader loader = (ModelLoader)modelBakery;
+        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, loader));
+        loader.onPostBakeEvent(modelRegistry);
     }
 
     public static Matrix4f getMatrix(ItemTransformVec3f transform)
@@ -515,20 +521,20 @@ public class ForgeHooksClient
         }
         switch(cameraTransformType)
         {
-        case FIRST_PERSON:
-            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
-            break;
-        case GUI:
-            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
-            break;
-        case HEAD:
-            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
-            break;
-        case THIRD_PERSON:
-            RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
-            break;
-        default:
-            break;
+            case FIRST_PERSON:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
+                break;
+            case GUI:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
+                break;
+            case HEAD:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
+                break;
+            case THIRD_PERSON:
+                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
+                break;
+            default:
+                break;
         }
         return model;
     }
@@ -555,35 +561,35 @@ public class ForgeHooksClient
         buffer.position(attr.getOffset());
         switch(attrType)
         {
-        case POSITION:
-            glVertexPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
-            glEnableClientState(GL_VERTEX_ARRAY);
-            break;
-        case NORMAL:
-            if(attr.getElementCount() != 3)
-            {
-                throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
-            }
-            glNormalPointer(attr.getType().getGlConstant(), stride, buffer);
-            glEnableClientState(GL_NORMAL_ARRAY);
-            break;
-        case COLOR:
-            glColorPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
-            glEnableClientState(GL_COLOR_ARRAY);
-            break;
-        case UV:
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-            glTexCoordPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-            break;
-        case PADDING:
-            break;
-        case GENERIC:
-            glEnableVertexAttribArray(attr.getIndex());
-            glVertexAttribPointer(attr.getIndex(), attr.getElementCount(), attr.getType().getGlConstant(), false, stride, buffer);
-        default:
-            FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+            case POSITION:
+                glVertexPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_VERTEX_ARRAY);
+                break;
+            case NORMAL:
+                if(attr.getElementCount() != 3)
+                {
+                    throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
+                }
+                glNormalPointer(attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_NORMAL_ARRAY);
+                break;
+            case COLOR:
+                glColorPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_COLOR_ARRAY);
+                break;
+            case UV:
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
+                glTexCoordPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                break;
+            case PADDING:
+                break;
+            case GENERIC:
+                glEnableVertexAttribArray(attr.getIndex());
+                glVertexAttribPointer(attr.getIndex(), attr.getElementCount(), attr.getType().getGlConstant(), false, stride, buffer);
+            default:
+                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
         }
     }
 
@@ -591,28 +597,69 @@ public class ForgeHooksClient
     {
         switch(attrType)
         {
-        case POSITION:
-            glDisableClientState(GL_VERTEX_ARRAY);
-            break;
-        case NORMAL:
-            glDisableClientState(GL_NORMAL_ARRAY);
-            break;
-        case COLOR:
-            glDisableClientState(GL_COLOR_ARRAY);
-            // is this really needed?
-            GlStateManager.resetColor();
-            break;
-        case UV:
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-            break;
-        case PADDING:
-            break;
-        case GENERIC:
-            glDisableVertexAttribArray(attr.getIndex());
-        default:
-            FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+            case POSITION:
+                glDisableClientState(GL_VERTEX_ARRAY);
+                break;
+            case NORMAL:
+                glDisableClientState(GL_NORMAL_ARRAY);
+                break;
+            case COLOR:
+                glDisableClientState(GL_COLOR_ARRAY);
+                // is this really needed?
+                GlStateManager.resetColor();
+                break;
+            case UV:
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
+                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                break;
+            case PADDING:
+                break;
+            case GENERIC:
+                glDisableVertexAttribArray(attr.getIndex());
+            default:
+                FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
+        }
+    }
+
+    public static void transform(Vector3d vec, Matrix4f m)
+    {
+        Vector4f tmp = new Vector4f((float)vec.x, (float)vec.y, (float)vec.z, 1f);
+        m.transform(tmp);
+        if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
+        vec.set(tmp.x, tmp.y, tmp.z);
+    }
+
+    public static Matrix4f getMatrix(ModelRotation modelRotation)
+    {
+        Matrix4f ret = new Matrix4f(modelRotation.getMatrix4d()), tmp = new Matrix4f();
+        tmp.setIdentity();
+        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
+        ret.mul(tmp, ret);
+        tmp.invert();
+        //tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
+        ret.mul(tmp);
+        return ret;
+    }
+
+    public static void putQuadColor(WorldRenderer renderer, BakedQuad quad, int color)
+    {
+        float cr = color & 0xFF;
+        float cg = (color >>> 8) & 0xFF;
+        float cb = (color >>> 16) & 0xFF;
+        float ca = (color >>> 24) & 0xFF;
+        for(int i = 0; i < 4; i++)
+        {
+            int vc = quad.getVertexData()[3 + 7 * i];
+            float vcr = vc & 0xFF;
+            float vcg = (vc >>> 8) & 0xFF;
+            float vcb = (vc >>> 16) & 0xFF;
+            float vca = (vc >>> 24) & 0xFF;
+            int ncr = Math.min(0xFF, (int)(cr * vcr / 0xFF));
+            int ncg = Math.min(0xFF, (int)(cg * vcg / 0xFF));
+            int ncb = Math.min(0xFF, (int)(cb * vcb / 0xFF));
+            int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
+            renderer.putColorRGBA(renderer.getColorIndex(i + 1), ncr, ncg, ncb, nca);
         }
     }
 }

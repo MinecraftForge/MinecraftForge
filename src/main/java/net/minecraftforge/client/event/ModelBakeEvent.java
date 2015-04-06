@@ -1,9 +1,10 @@
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.IRegistry;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Fired when the ModelManager is notified of the resource manager reloading.
@@ -13,12 +14,21 @@ public class ModelBakeEvent extends Event
 {
     public final ModelManager modelManager;
     public final IRegistry modelRegistry;
+    @Deprecated
     public final ModelBakery modelBakery;
+    public final ModelLoader modelLoader;
 
+    @Deprecated
     public ModelBakeEvent(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
+    {
+        this(modelManager, modelRegistry, (ModelLoader)modelBakery);
+    }
+
+    public ModelBakeEvent(ModelManager modelManager, IRegistry modelRegistry, ModelLoader modelLoader)
     {
         this.modelManager = modelManager;
         this.modelRegistry = modelRegistry;
-        this.modelBakery = modelBakery;
+        this.modelBakery = modelLoader;
+        this.modelLoader = modelLoader;
     }
 }

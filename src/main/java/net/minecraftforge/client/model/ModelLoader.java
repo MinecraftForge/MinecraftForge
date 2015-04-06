@@ -1,7 +1,11 @@
 package net.minecraftforge.client.model;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,8 +15,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
@@ -20,6 +28,7 @@ import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.MissingVariantException;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variant;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variants;
+import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -33,9 +42,14 @@ import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.item.Item;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
@@ -44,14 +58,21 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = new HashMap<ModelResourceLocation, IModel>();
-    private final Set<ResourceLocation> resolveTextures = new HashSet<ResourceLocation>();
-    private final Set<ResourceLocation> uvLocked = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> textures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
+    private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
+
+    private boolean isLoading = false;
+    public boolean isLoading()
+    {
+        return isLoading;
+    }
 
     public ModelLoader(IResourceManager manager, TextureMap map, BlockModelShapes shapes)
     {
@@ -63,6 +84,7 @@ public class ModelLoader extends ModelBakery
     @Override
     public IRegistry setupModelRegistry()
     {
+        isLoading = true;
         loadBlocks();
         loadItems();
         stateModels.put(MODEL_MISSING, getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath())));
@@ -90,7 +112,10 @@ public class ModelLoader extends ModelBakery
     private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
-        loadVariants(stateMap.values());
+        Collection<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
+        variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
+        variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
+        loadVariants(variants);
     }
 
     @Override
@@ -101,14 +126,11 @@ public class ModelLoader extends ModelBakery
         {
             variants = definition.getVariants(location.getVariant());
         }
-        catch(MissingVariantException e) {}
-        if(variants == null)
+        catch(MissingVariantException e)
         {
-            // adding default variant for simple blocks
-            ResourceLocation loc = new ResourceLocation(location.getResourceDomain(), "block/" + location.getResourcePath());
-            variants = new Variants("normal", Lists.newArrayList(new Variant(loc, ModelRotation.X0_Y0, false, 1)));
+            missingVariants.add(location);
         }
-        if(!variants.getVariants().isEmpty())
+        if(variants != null && !variants.getVariants().isEmpty())
         {
             try
             {
@@ -130,9 +152,12 @@ public class ModelLoader extends ModelBakery
             {
                 ResourceLocation file = getItemLocation(s);
                 ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
-                resolveTextures.add(ModelLoaderRegistry.getActualLocation(file));
                 IModel model = getModel(file);
-                if(model != null) stateModels.put(memory, model);
+                if(model == null || model == getMissingModel())
+                {
+                    missingVariants.add(memory);
+                }
+                else stateModels.put(memory, model);
             }
         }
     }
@@ -164,8 +189,9 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
         loadingModels.remove(location);
     }
-
-    private class VanillaModelWrapper implements IModel {
+    
+    private class VanillaModelWrapper implements IModel
+    {
         private final ResourceLocation location;
         private final ModelBlock model;
 
@@ -197,10 +223,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            if(!resolveTextures.contains(location)) return Collections.emptyList();
-
             ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
-            builder.add(new ResourceLocation(model.resolveTextureName("particle")));
 
             if(hasItemModel(model))
             {
@@ -223,9 +246,13 @@ public class ModelLoader extends ModelBakery
                     }
                 }
             }
-            if(location.getResourcePath().startsWith("models/block/") || !ModelLoader.this.isBuiltinModel(model.getRootModel()))
+            
+            for(String s : (Iterable<String>)model.textures.values())
             {
-                builder.addAll(ModelLoader.this.getTextureLocations(model));
+                if(!s.startsWith("#"))
+                {
+                    builder.add(new ResourceLocation(s));
+                }
             }
             return builder.build();
         }
@@ -238,13 +265,30 @@ public class ModelLoader extends ModelBakery
             }
             ModelBlock model = this.model;
             if(hasItemModel(model)) model = makeItemModel(model);
+            if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform())), Attributes.DEFAULT_BAKED_FORMAT);
-            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), uvLocked.contains(location)), Attributes.DEFAULT_BAKED_FORMAT);
+            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), state instanceof UVLock), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
         public IModelState getDefaultState()
         {
             return ModelRotation.X0_Y0;
+        }
+    }
+
+
+    public static class UVLock implements IModelState
+    {
+        private final IModelState state;
+
+        public UVLock(IModelState state)
+        {
+            this.state = state;
+        }
+
+        public TRSRTransformation apply(IModelPart part)
+        {
+            return state.apply(part);
         }
     }
 
@@ -279,7 +323,8 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    private class WeightedRandomModel implements IModel {
+    private class WeightedRandomModel implements IModel
+    {
         private final List<Variant> variants;
         private final List<ResourceLocation> locations = new ArrayList<ResourceLocation>();
         private final List<IModel> models = new ArrayList<IModel>();
@@ -292,12 +337,10 @@ public class ModelLoader extends ModelBakery
             for(Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
-                resolveTextures.add(ModelLoaderRegistry.getActualLocation(loc));
                 locations.add(loc);
                 IModel model = new WeightedPartWrapper(getModel(loc));
                 models.add(model);
                 builder.put(model, new TRSRTransformation(v.getRotation()));
-                if(v.isUvLocked()) uvLocked.add(ModelLoaderRegistry.getActualLocation(loc));
             }
             defaultState = new MapModelState(builder.build());
         }
@@ -309,13 +352,13 @@ public class ModelLoader extends ModelBakery
 
         public Collection<ResourceLocation> getTextures()
         {
-            /*ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
-            for(ResourceLocation loc : locations)
-            {
-                builder.addAll(getModel(loc).getTextures());
-            }
-            return builder.build();*/
             return Collections.emptyList();
+        }
+
+        private IModelState addUV(boolean uv, IModelState state)
+        {
+            if(uv) return new UVLock(state);
+            return state;
         }
 
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -328,20 +371,39 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = models.get(0);
-                return model.bake(state.apply(model), format, bakedTextureGetter);
+                return model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
-                builder.add(model.bake(state.apply(model), format, bakedTextureGetter), variants.get(i).getWeight());
+                Variant v =  variants.get(i);
+                builder.add(model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
-            return new IFlexibleBakedModel.Wrapper(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
+            return new FlexibleWeightedBakedModel(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
 
         public IModelState getDefaultState()
         {
             return defaultState;
+        }
+    }
+
+    private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
+    {
+        private final WeightedBakedModel parent;
+        private final VertexFormat format;
+
+        public FlexibleWeightedBakedModel(WeightedBakedModel parent, VertexFormat format)
+        {
+            super(parent.models);
+            this.parent = parent;
+            this.format = format;
+        }
+
+        public VertexFormat getFormat()
+        {
+            return format;
         }
     }
 
@@ -389,9 +451,100 @@ public class ModelLoader extends ModelBakery
             }
             catch(IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Exception loading model %s with vanilla loader, skipping", modelLocation);
+                if(loader.isLoading)
+                {
+                    // holding error until onPostBakeEvent
+                }
+                else FMLLog.log(Level.ERROR, e, "Exception loading model %s with vanilla loader, skipping", modelLocation);
                 return loader.getMissingModel();
             }
+        }
+    }
+
+    public static class White extends TextureAtlasSprite
+    {
+        public static ResourceLocation loc = new ResourceLocation("white");
+        public static White instance = new White();
+
+        protected White()
+        {
+            super(loc.toString());
+        }
+
+        @Override
+        public boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
+        {
+            return true;
+        }
+
+        @Override
+        public boolean load(IResourceManager manager, ResourceLocation location)
+        {
+            BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = image.createGraphics();
+            graphics.setBackground(Color.WHITE);
+            graphics.clearRect(0, 0, 16, 16);
+            BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
+            images[0] = image;
+            loadSprite(images, null);
+            return false;
+        }
+
+        public void register(TextureMap map)
+        {
+            map.setTextureEntry(White.loc.toString(), White.instance);
+        }
+    }
+
+    public void onPostBakeEvent(IRegistry modelRegistry)
+    {
+        for(ModelResourceLocation missing : missingVariants)
+        {
+            if(modelRegistry.getObject(missing) == null)
+            {
+                FMLLog.severe("Model definition for location %s not found", missing);
+            }
+        }
+        isLoading = false;
+    }
+
+    private static final Map<RegistryDelegate<Block>, IStateMapper> customStateMappers = Maps.newHashMap();
+
+    public static void setCustomStateMapper(Block block, IStateMapper mapper)
+    {
+        customStateMappers.put(block.delegate, mapper);
+    }
+
+    public static void onRegisterAllBlocks(BlockModelShapes shapes)
+    {
+        for (Entry<RegistryDelegate<Block>, IStateMapper> e : customStateMappers.entrySet())
+        {
+            shapes.registerBlockWithStateMapper(e.getKey().get(), e.getValue());
+        }
+    }
+
+    private static final Map<RegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
+    private static final Map<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
+
+    public static void setCustomModelResourceLocation(Item item, int metadata, ModelResourceLocation model)
+    {
+        customModels.put(Pair.of(item.delegate, metadata), model);
+    }
+
+    public static void setCustomMeshDefinition(Item item, ItemMeshDefinition meshDefinition)
+    {
+        customMeshDefinitions.put(item.delegate, meshDefinition);
+    }
+
+    public static void onRegisterItems(ItemModelMesher mesher)
+    {
+        for (Map.Entry<RegistryDelegate<Item>, ItemMeshDefinition> e : customMeshDefinitions.entrySet())
+        {
+            mesher.register(e.getKey().get(), e.getValue());
+        }
+        for (Entry<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
+        {
+            mesher.register(e.getKey().getLeft().get(), e.getKey().getRight(), e.getValue());
         }
     }
 }

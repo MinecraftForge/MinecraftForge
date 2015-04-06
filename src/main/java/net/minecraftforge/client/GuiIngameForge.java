@@ -170,9 +170,9 @@ public class GuiIngameForge extends GuiIngame
             if (slot >= 0) objective = scoreboard.getObjectiveInDisplaySlot(3 + slot);
         }
         ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getObjectiveInDisplaySlot(1);
-        if (renderObjective && objective != null)
+        if (renderObjective && scoreobjective1 != null)
         {
-            this.func_180475_a(objective, res);
+            this.func_180475_a(scoreobjective1, res);
         }
 
         GlStateManager.enableBlend();
@@ -675,21 +675,21 @@ public class GuiIngameForge extends GuiIngame
             int top = 2;
             for (String msg : listL)
             {
-                top += fontrenderer.FONT_HEIGHT;
                 if (msg == null) continue;
                 drawRect(1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
                 fontrenderer.drawString(msg, 2, top, 14737632);
+                top += fontrenderer.FONT_HEIGHT;
             }
 
             top = 2;
             for (String msg : listR)
             {
-                top += fontrenderer.FONT_HEIGHT;
                 if (msg == null) continue;
                 int w = fontrenderer.getStringWidth(msg);
                 int left = width - 2 - w;
                 drawRect(left - 1, top - 1, left + w + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
                 fontrenderer.drawString(msg, left, top, 14737632);
+                top += fontrenderer.FONT_HEIGHT;
             }
         }
 
@@ -709,7 +709,7 @@ public class GuiIngameForge extends GuiIngame
             if (opacity > 0)
             {
                 GlStateManager.pushMatrix();
-                GlStateManager.translate((float)(width / 2), (float)(height - 48), 0.0F);
+                GlStateManager.translate((float)(width / 2), (float)(height - 68), 0.0F);
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                 int color = (recordIsPlaying ? Color.HSBtoRGB(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);

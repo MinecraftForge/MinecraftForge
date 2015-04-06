@@ -257,7 +257,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.player.getGameProfile().getId(), event.player.getGameProfile().getName());
+        UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
     }
 
     @Override
@@ -280,6 +280,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         FMLCommonHandler.instance().bus().register(this);
+        
+        if (!ForgeModContainer.disableVersionCheck)
+        {
+            ForgeVersion.startVersionCheck();
+        }
     }
 
     @Subscribe

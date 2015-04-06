@@ -57,7 +57,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s1 = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -158,6 +161,35 @@
+@@ -158,6 +161,42 @@
  
      protected abstract void func_177179_a(ModelBase p_177179_1_, int p_177179_2_);
  
@@ -74,8 +74,15 @@
 +    public ResourceLocation getArmorResource(net.minecraft.entity.Entity entity, ItemStack stack, int slot, String type)
 +    {
 +        ItemArmor item = (ItemArmor)stack.func_77973_b();
-+        String s1 = String.format("textures/models/armor/%s_layer_%d%s.png",
-+                ((ItemArmor)stack.func_77973_b()).func_82812_d().func_179242_c(), (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
++        String texture = ((ItemArmor)stack.func_77973_b()).func_82812_d().func_179242_c();
++        String domain = "minecraft";
++        int idx = texture.indexOf(':');
++        if (idx != -1)
++        {
++            domain = texture.substring(0, idx);
++            texture = texture.substring(idx + 1);
++        }
++        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
 +
 +        s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
 +        ResourceLocation resourcelocation = (ResourceLocation)field_177191_j.get(s1);

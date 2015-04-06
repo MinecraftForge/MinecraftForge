@@ -5,5 +5,4 @@ package net.minecraftforge.client.model;
  * skeleton, bone or some separately animated submodel.
  * Primary function of this interface is the argument type of IModelState.apply.
  */
-public interface IModelPart {
-}
+public interface IModelPart {}

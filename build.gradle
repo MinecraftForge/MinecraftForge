@@ -1,5 +1,9 @@
 buildscript {
     repositories {
+        maven {
+            name = "central_mirrior"
+            url = "http://uk.maven.org/maven2"
+        }
         mavenCentral()
         mavenLocal()
         maven {
@@ -26,6 +30,10 @@ apply plugin: 'maven'
 apply plugin: 'forgedev'
 
 repositories {
+    maven {
+        name = "central_mirrior"
+        url = "http://uk.maven.org/maven2"
+    }
     mavenLocal()
     flatDir {
         name "fileRepo"

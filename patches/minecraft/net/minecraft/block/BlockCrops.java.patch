@@ -14,6 +14,15 @@
                      {
                          f1 = 3.0F;
                      }
+@@ -127,7 +127,7 @@
+ 
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
+     {
+-        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
++        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c().canSustainPlant(p_180671_1_, p_180671_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     protected Item func_149866_i()
 @@ -143,24 +143,6 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {

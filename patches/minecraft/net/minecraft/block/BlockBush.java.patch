@@ -18,7 +18,19 @@
      }
  
      protected boolean func_149854_a(Block p_149854_1_)
-@@ -85,4 +85,33 @@
+@@ -62,7 +62,10 @@
+ 
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
+     {
+-        return this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
++        BlockPos down = p_180671_2_.func_177977_b();
++        Block soil = p_180671_1_.func_180495_p(down).func_177230_c();
++        if (p_180671_3_.func_177230_c() != this) return this.func_149854_a(soil); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++        return soil.canSustainPlant(p_180671_1_, down, net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     public AxisAlignedBB func_180640_a(World p_180640_1_, BlockPos p_180640_2_, IBlockState p_180640_3_)
+@@ -85,4 +88,33 @@
      {
          return EnumWorldBlockLayer.CUTOUT;
      }

@@ -10,30 +10,41 @@ public abstract class RenderPlayerEvent extends PlayerEvent
 {
     public final RenderPlayer renderer;
     public final float partialRenderTick;
+    public final double x;
+    public final double y;
+    public final double z;
 
-    public RenderPlayerEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick)
+    public RenderPlayerEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick, double x, double y, double z)
     {
         super(player);
         this.renderer = renderer;
         this.partialRenderTick = partialRenderTick;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent
     {
-        public Pre(EntityPlayer player, RenderPlayer renderer, float tick){ super(player, renderer, tick); }
+        public Pre(EntityPlayer player, RenderPlayer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
+        @Deprecated
+        public Pre(EntityPlayer player, RenderPlayer renderer, float tick){ this(player, renderer, tick, 0D, 0D, 0D); }
     }
 
     public static class Post extends RenderPlayerEvent
     {
-        public Post(EntityPlayer player, RenderPlayer renderer, float tick){ super(player, renderer, tick); }
+        public Post(EntityPlayer player, RenderPlayer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
+        @Deprecated
+        public Post(EntityPlayer player, RenderPlayer renderer, float tick){ this(player, renderer, tick, 0D, 0D, 0D); }
     }
     
+    @Deprecated
     public abstract static class Specials extends RenderPlayerEvent
     {
         public Specials(EntityPlayer player, RenderPlayer renderer, float partialTicks)
         {
-            super(player, renderer, partialTicks);
+            super(player, renderer, partialTicks, 0D, 0D, 0D);
         }
 
         @Cancelable
@@ -51,6 +62,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         }
     }
 
+    @Deprecated
     public static class SetArmorModel extends RenderPlayerEvent
     {
         /**
@@ -62,7 +74,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         public final ItemStack stack;
         public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, ItemStack stack)
         {
-            super(player, renderer, partialTick);
+            super(player, renderer, partialTick, 0D, 0D, 0D);
             this.slot = slot;
             this.stack = stack;
         }

@@ -231,7 +231,7 @@ public class OBJModel implements IModel {
                             norms[v] = norms[v] < 0 ? Math.abs(norms[v]) : norms[v];
                         }
                         
-                        Face face = new Face(this.vertices.get(verts[0]), this.vertices.get(verts[1]), this.vertices.get(verts[2]), this.vertices.get(verts[3]), );
+                        Face face = new Face(this.vertices.get(verts[0]), this.vertices.get(verts[1]), this.vertices.get(verts[2]), this.vertices.get(verts[3]), null);
                     }
                 }
             }
