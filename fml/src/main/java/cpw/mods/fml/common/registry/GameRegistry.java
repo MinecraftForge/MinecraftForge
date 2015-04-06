@@ -196,7 +196,7 @@ public class GameRegistry
      * @param block The block to register
      * @param itemclass The item type to register with it : null registers a block without associated item.
      * @param name The mod-unique name to register it as, will get prefixed by your modid.
-     * @param itemCtorArgs Arguments to pass to the ItemBlock constructor (optional).
+     * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
     {
