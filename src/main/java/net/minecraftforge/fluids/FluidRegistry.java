@@ -13,6 +13,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.Event;
 
 /**
@@ -75,6 +76,7 @@ public abstract class FluidRegistry
     {
         if (fluidIDs.containsKey(fluid.getName()))
         {
+            FMLLog.bigWarning("Duplicate registration attempt for fluid %s (type %s) has occurred. This is not a problem itself, but subsequent failed FluidStacks might be a result if not handled properly", fluid.getName(), fluid.getClass().getName());
             return false;
         }
         fluids.put(fluid.getName(), fluid);

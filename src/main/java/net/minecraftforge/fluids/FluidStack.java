@@ -2,7 +2,10 @@
 package net.minecraftforge.fluids;
 
 import java.util.Locale;
+
 import com.google.common.base.Strings;
+
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -24,6 +27,11 @@ public class FluidStack
 
     public FluidStack(Fluid fluid, int amount)
     {
+        if (!FluidRegistry.isFluidRegistered(fluid))
+        {
+            FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid %s (type %s)", fluid.getName(), fluid.getClass().getName());
+            throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
+        }
     	this.fluid = fluid;
         this.amount = amount;
     }
