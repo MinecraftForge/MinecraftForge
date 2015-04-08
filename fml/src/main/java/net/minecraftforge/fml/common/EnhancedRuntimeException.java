@@ -24,9 +24,6 @@ public abstract class EnhancedRuntimeException extends RuntimeException
     public EnhancedRuntimeException(String message) { super(message); }
     public EnhancedRuntimeException(String message, Throwable cause) { super(message, cause); }
     public EnhancedRuntimeException(Throwable cause) { super(cause); }
-    protected EnhancedRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 
     @Override
     public String getMessage()
