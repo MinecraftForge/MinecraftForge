@@ -14,14 +14,14 @@ public abstract class ForgeMessage {
         int dimensionId;
         /** The provider ID to register with dimension on client */
         int providerId;
-        
+
         public DimensionRegisterMessage(){}
         public DimensionRegisterMessage(int dimensionId, int providerId)
         {
             this.dimensionId = dimensionId;
             this.providerId = providerId;
         }
-        
+
         @Override
         void toBytes(ByteBuf bytes)
         {
@@ -42,7 +42,7 @@ public abstract class ForgeMessage {
         @Override
         void toBytes(ByteBuf bytes)
         {
-            Map<Fluid, Integer> ids = FluidRegistry.getRegisteredFluidIDs();
+            Map<Fluid, Integer> ids = FluidRegistry.getRegisteredFluidIDsByFluid();
             bytes.writeInt(ids.size());
             for (Map.Entry<Fluid, Integer> entry : ids.entrySet())
             {

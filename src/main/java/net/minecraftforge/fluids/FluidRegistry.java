@@ -2,6 +2,7 @@ package net.minecraftforge.fluids;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -28,6 +29,7 @@ public abstract class FluidRegistry
 
     static BiMap<String, Fluid> fluids = HashBiMap.create();
     static BiMap<Fluid, Integer> fluidIDs = HashBiMap.create();
+    static BiMap<Integer, String> fluidNames = HashBiMap.create(); //Caching this just makes some other calls faster
     static BiMap<Block, Fluid> fluidBlocks;
 
     public static final Fluid WATER = new Fluid("water") {
@@ -63,6 +65,9 @@ public abstract class FluidRegistry
         maxID = newfluidIDs.size();
         fluidIDs.clear();
         fluidIDs.putAll(newfluidIDs);
+        fluidNames.clear();
+        for (Entry<Fluid, Integer> e : fluidIDs.entrySet())
+            fluidNames.put(e.getValue(), e.getKey().getName());
     }
 
     /**
@@ -81,6 +86,7 @@ public abstract class FluidRegistry
         }
         fluids.put(fluid.getName(), fluid);
         fluidIDs.put(fluid, ++maxID);
+        fluidNames.put(maxID, fluid.getName());
 
         MinecraftForge.EVENT_BUS.post(new FluidRegisterEvent(fluid.getName(), maxID));
         return true;
@@ -116,6 +122,12 @@ public abstract class FluidRegistry
     	return fluidIDs.get(getFluid(fluidName));
     }
 
+    @Deprecated //Remove in 1.8.3
+    public static String getFluidName(int fluidID)
+    {
+        return fluidNames.get(fluidID);
+    }
+
     public static String getFluidName(Fluid fluid)
     {
         return fluids.inverse().get(fluid);
@@ -144,9 +156,19 @@ public abstract class FluidRegistry
     }
 
     /**
-     * Returns a read-only map containing Fluid IDs and their associated Fluids.
+     * Returns a read-only map containing Fluid Names and their associated IDs.
      */
-    public static Map<Fluid, Integer> getRegisteredFluidIDs()
+    @Deprecated //Change return type to <Fluid, Integer> in 1.8.3
+    public static Map<String, Integer> getRegisteredFluidIDs()
+    {
+        return ImmutableMap.copyOf(fluidNames.inverse());
+    }
+
+    /**
+     * Returns a read-only map containing Fluid IDs and their associated Fluids.
+     * In 1.8.3, this will change to just 'getRegisteredFluidIDs'
+     */
+    public static Map<Fluid, Integer> getRegisteredFluidIDsByFluid()
     {
         return ImmutableMap.copyOf(fluidIDs);
     }
