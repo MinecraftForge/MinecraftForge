@@ -42,7 +42,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected float quantaPerBlockFloat = 8F;
     protected int density = 1;
     protected int densityDir = -1;
-	protected int temperature = 295;
+    protected int temperature = 300;
 
     protected int tickRate = 20;
     protected int renderPass = 1;
@@ -135,18 +135,18 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
 
         int density = getDensity(world, x, y, z);
-        if (density == Integer.MAX_VALUE) 
+        if (density == Integer.MAX_VALUE)
         {
-        	 return true;
+            return true;
         }
-        
+
         if (this.density > density)
         {
-        	return true;
+            return true;
         }
         else
         {
-        	return false;
+            return false;
         }
     }
 
@@ -183,19 +183,19 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
 
         int density = getDensity(world, x, y, z);
-        if (density == Integer.MAX_VALUE) 
+        if (density == Integer.MAX_VALUE)
         {
-        	 block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-        	 return true;
+            block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+            return true;
         }
-        
+
         if (this.density > density)
         {
-        	return true;
+            return true;
         }
         else
         {
-        	return false;
+            return false;
         }
     }
 
@@ -224,6 +224,12 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public boolean func_149698_L()
     {
         return false;
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World world, int x, int y, int z)
+    {
+        return canDisplace(world, x, y, z);
     }
 
     @Override
@@ -303,7 +309,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         float lightUp = world.getLightBrightness(x, y + 1, z);
         return lightThis > lightUp ? lightThis : lightUp;
     }
-    */
+     */
 
     @Override
     public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z)
@@ -315,7 +321,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         int lightThisExt  = lightThis >> 16 & 255;
         int lightUpExt    = lightUp >> 16 & 255;
         return (lightThisBase > lightUpBase ? lightThisBase : lightUpBase) |
-               ((lightThisExt > lightUpExt ? lightThisExt : lightUpExt) << 16);
+                ((lightThisExt > lightUpExt ? lightThisExt : lightUpExt) << 16);
     }
 
     @Override
@@ -345,7 +351,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
         return ((BlockFluidBase)block).density;
     }
-	
+
     public static final int getTemperature(IBlockAccess world, int x, int y, int z)
     {
         Block block = world.getBlock(x, y, z);
@@ -405,10 +411,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
             switch (side)
             {
-                case 0: --x2; break;
-                case 1: --z2; break;
-                case 2: ++x2; break;
-                case 3: ++z2; break;
+            case 0: --x2; break;
+            case 1: --z2; break;
+            case 2: ++x2; break;
+            case 3: ++z2; break;
             }
 
             int otherDecay = quantaPerBlock - getQuantaValue(world, x2, y, z2);
@@ -434,14 +440,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         if (world.getBlock(x, y + 1, z) == this)
         {
             boolean flag =
-                isBlockSolid(world, x,     y,     z - 1, 2) ||
-                isBlockSolid(world, x,     y,     z + 1, 3) ||
-                isBlockSolid(world, x - 1, y,     z,     4) ||
-                isBlockSolid(world, x + 1, y,     z,     5) ||
-                isBlockSolid(world, x,     y + 1, z - 1, 2) ||
-                isBlockSolid(world, x,     y + 1, z + 1, 3) ||
-                isBlockSolid(world, x - 1, y + 1, z,     4) ||
-                isBlockSolid(world, x + 1, y + 1, z,     5);
+                    isBlockSolid(world, x,     y,     z - 1, 2) ||
+                    isBlockSolid(world, x,     y,     z + 1, 3) ||
+                    isBlockSolid(world, x - 1, y,     z,     4) ||
+                    isBlockSolid(world, x + 1, y,     z,     5) ||
+                    isBlockSolid(world, x,     y + 1, z - 1, 2) ||
+                    isBlockSolid(world, x,     y + 1, z + 1, 3) ||
+                    isBlockSolid(world, x - 1, y + 1, z,     4) ||
+                    isBlockSolid(world, x + 1, y + 1, z,     5);
 
             if (flag)
             {

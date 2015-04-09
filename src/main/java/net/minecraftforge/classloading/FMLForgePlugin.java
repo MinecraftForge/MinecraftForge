@@ -13,7 +13,7 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     @Override
     public String[] getASMTransformerClass()
     {
-        return new String[0];
+        return new String[] { "net.minecraftforge.classloading.FluidIdTransformer" };
     }
 
     @Override
