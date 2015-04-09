@@ -111,6 +111,20 @@
          if (p_176536_4_.nextInt(p_176536_3_) < k)
          {
              IBlockState iblockstate = p_176536_1_.func_180495_p(p_176536_2_);
+@@ -291,11 +301,11 @@
+                     l = 15;
+                 }
+ 
+-                p_176536_1_.func_180501_a(p_176536_2_, this.func_176223_P().func_177226_a(field_176543_a, Integer.valueOf(l)), 3);
++                if (net.minecraftforge.common.ForgeHooks.onBlockDestroyedByFire(p_176536_1_, p_176536_2_, iblockstate)) p_176536_1_.func_180501_a(p_176536_2_, this.func_176223_P().func_177226_a(field_176543_a, Integer.valueOf(l)), 3);
+             }
+             else
+             {
+-                p_176536_1_.func_175698_g(p_176536_2_);
++                if (net.minecraftforge.common.ForgeHooks.onBlockDestroyedByFire(p_176536_1_, p_176536_2_, iblockstate)) p_176536_1_.func_175698_g(p_176536_2_);
+             }
+ 
+             if (iblockstate.func_177230_c() == Blocks.field_150335_W)
 @@ -314,7 +324,7 @@
          {
              EnumFacing enumfacing = aenumfacing[j];

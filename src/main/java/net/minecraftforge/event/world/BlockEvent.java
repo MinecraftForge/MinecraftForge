@@ -206,4 +206,18 @@ public class BlockEvent extends Event
             return notifiedSides;
         }
     }
+
+    /**
+     * DestroyedByFireEvent is fired when BlockFire replaces a block with fire or air.
+     * 
+     * If this event is cancelled, the block is not replaced.
+     **/
+    @Cancelable
+    public static class DestroyedByFireEvent extends BlockEvent
+    {
+        public DestroyedByFireEvent(World world, BlockPos pos, IBlockState state)
+        {
+            super(world, pos, state);
+        }
+    }
 }

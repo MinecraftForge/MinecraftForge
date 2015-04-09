@@ -161,7 +161,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -971,6 +989,1028 @@
+@@ -971,6 +989,1042 @@
          return Block.EnumOffsetType.NONE;
      }
  
@@ -326,6 +326,20 @@
 +    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
 +        return world.func_175698_g(pos);
++    }
++
++    /**
++     * Called when the block is destroyed by a fire.
++     * Useful for allowing the block to drop items, cause an explosion, in-world crafting with fire, etc.
++     * 
++     * @param world The current world
++     * @param pos Block position in world
++     * @param state The current blockstate
++     * @return True if the block is actually destroyed.
++     */
++    public boolean onBlockDestroyedByFire(World world, BlockPos pos, IBlockState state)
++    {
++        return true;
 +    }
 +
 +    /**
