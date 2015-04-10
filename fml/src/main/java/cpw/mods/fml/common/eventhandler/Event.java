@@ -32,9 +32,7 @@ public class Event
     }
 
     private boolean isCanceled = false;
-    private final boolean isCancelable;
     private Result result = Result.DEFAULT;
-    private final boolean hasResult;
     private static ListenerList listeners = new ListenerList();
     private EventPriority phase = null;
 
@@ -43,48 +41,18 @@ public class Event
     public Event()
     {
         setup();
-        isCancelable = hasAnnotation(Cancelable.class);
-        hasResult = hasAnnotation(HasResult.class);
-    }
-
-    private boolean hasAnnotation(Class<? extends Annotation> annotation)
-    {
-        Class<?> me = this.getClass();
-        Map<Class<?>, Boolean> list = annotationMap.get(me);
-        if (list == null)
-        {
-            list = new ConcurrentHashMap<Class<?>, Boolean>();
-            annotationMap.put(me, list);
-        }
-
-        Boolean cached = list.get(annotation);
-        if (cached != null)
-        {
-            return cached;
-        }
-
-        Class<?> cls = me;
-        while (cls != Event.class)
-        {
-            if (cls.isAnnotationPresent(annotation))
-            {
-                list.put(annotation, true);
-                return true;
-            }
-            cls = cls.getSuperclass();
-        }
-
-        list.put(annotation, false);
-        return false;
     }
 
     /**
      * Determine if this function is cancelable at all.
      * @return If access to setCanceled should be allowed
+     *
+     * Note:
+     * Events with the Cancelable annotation will have this method automatically added to return true.
      */
     public boolean isCancelable()
     {
-        return isCancelable;
+        return false;
     }
 
     /**
@@ -115,10 +83,13 @@ public class Event
 
     /**
      * Determines if this event expects a significant result value.
+     *
+     * Note:
+     * Events with the HasResult annotation will have this method automatically added to return true.
      */
     public boolean hasResult()
     {
-        return hasResult;
+        return false;
     }
 
     /**
