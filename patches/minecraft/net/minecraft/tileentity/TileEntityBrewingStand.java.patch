@@ -1,15 +1,54 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -118,7 +118,7 @@
+@@ -104,84 +104,21 @@
  
-                 for (int i = 0; i < 3; ++i)
-                 {
+     private boolean func_145934_k()
+     {
+-        if (this.field_145945_j[3] != null && this.field_145945_j[3].field_77994_a > 0)
+-        {
+-            ItemStack itemstack = this.field_145945_j[3];
+-
+-            if (!itemstack.func_77973_b().func_150892_m(itemstack))
+-            {
+-                return false;
+-            }
+-            else
+-            {
+-                boolean flag = false;
+-
+-                for (int i = 0; i < 3; ++i)
+-                {
 -                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
-+                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
-                     {
-                         int j = this.field_145945_j[i].func_77960_j();
-                         int k = this.func_145936_c(j, itemstack);
-@@ -151,13 +151,14 @@
+-                    {
+-                        int j = this.field_145945_j[i].func_77960_j();
+-                        int k = this.func_145936_c(j, itemstack);
+-
+-                        if (!ItemPotion.func_77831_g(j) && ItemPotion.func_77831_g(k))
+-                        {
+-                            flag = true;
+-                            break;
+-                        }
+-
+-                        List list = Items.field_151068_bn.func_77834_f(j);
+-                        List list1 = Items.field_151068_bn.func_77834_f(k);
+-
+-                        if ((j <= 0 || list != list1) && (list == null || !list.equals(list1) && list1 != null) && j != k)
+-                        {
+-                            flag = true;
+-                            break;
+-                        }
+-                    }
+-                }
+-
+-                return flag;
+-            }
+-        }
+-        else
+-        {
+-            return false;
+-        }
++        return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, field_145947_i, 3);
+     }
  
      private void func_145940_l()
      {
@@ -17,27 +56,41 @@
          if (this.func_145934_k())
          {
              ItemStack itemstack = this.field_145945_j[3];
++            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145947_i, 3);
  
-             for (int i = 0; i < 3; ++i)
-             {
--                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
-+                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
-                 {
-                     int j = this.field_145945_j[i].func_77960_j();
-                     int k = this.func_145936_c(j, itemstack);
-@@ -178,9 +179,9 @@
-                 }
-             }
- 
--            if (itemstack.func_77973_b().func_77634_r())
+-            for (int i = 0; i < 3; ++i)
 +            if (itemstack.func_77973_b().hasContainerItem(itemstack))
              {
--                this.field_145945_j[3] = new ItemStack(itemstack.func_77973_b().func_77668_q());
+-                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
+-                {
+-                    int j = this.field_145945_j[i].func_77960_j();
+-                    int k = this.func_145936_c(j, itemstack);
+-                    List list = Items.field_151068_bn.func_77834_f(j);
+-                    List list1 = Items.field_151068_bn.func_77834_f(k);
+-
+-                    if ((j <= 0 || list != list1) && (list == null || !list.equals(list1) && list1 != null))
+-                    {
+-                        if (j != k)
+-                        {
+-                            this.field_145945_j[i].func_77964_b(k);
+-                        }
+-                    }
+-                    else if (!ItemPotion.func_77831_g(j) && ItemPotion.func_77831_g(k))
+-                    {
+-                        this.field_145945_j[i].func_77964_b(k);
+-                    }
+-                }
 +                this.field_145945_j[3] = itemstack.func_77973_b().getContainerItem(itemstack);
              }
+-
+-            if (itemstack.func_77973_b().func_77634_r())
+-            {
+-                this.field_145945_j[3] = new ItemStack(itemstack.func_77973_b().func_77668_q());
+-            }
              else
              {
-@@ -191,6 +192,7 @@
+                 --this.field_145945_j[3].field_77994_a;
+@@ -191,6 +128,7 @@
                      this.field_145945_j[3] = null;
                  }
              }
@@ -45,12 +98,14 @@
          }
      }
  
-@@ -306,7 +308,7 @@
+@@ -306,7 +244,9 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {
 -        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() == Items.field_151068_bn || p_94041_2_.func_77973_b() == Items.field_151069_bo;
-+        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() instanceof ItemPotion || p_94041_2_.func_77973_b() == Items.field_151069_bo;
++        if (p_94041_1_ == 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_94041_2_)) return true;
++        else if (p_94041_1_ != 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_)) return true;
++        return false;
      }
  
      public boolean[] func_174902_m()
