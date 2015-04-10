@@ -81,11 +81,12 @@ public abstract class FluidRegistry
     {
         if (fluids.containsKey(fluid.getName()))
         {
-            FMLLog.bigWarning("Duplicate registration attempt for fluid %s (type %s) has occurred. This is not a problem itself, but subsequent failed FluidStacks might be a result if not handled properly", fluid.getName(), fluid.getClass().getName());
+            FMLLog.bigWarning("Duplicate registration attempt for fluid %s (type %s) has occurred. This is not a problem itself, but subsequent failed FluidStacks result if this is not handled properly", fluid.getName(), fluid.getClass().getName());
             return false;
         }
         fluids.put(fluid.getName(), fluid);
-        fluidIDs.put(fluid, ++maxID);
+        maxID++;
+        fluidIDs.put(fluid, maxID);
         fluidNames.put(maxID, fluid.getName());
 
         MinecraftForge.EVENT_BUS.post(new FluidRegisterEvent(fluid.getName(), maxID));
