@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class TracingPrintStream extends PrintStream {
     
     private Logger logger;
+    private int BASE_DEPTH = 3;
     
     public TracingPrintStream(Logger logger, PrintStream original) {
         super(original);
@@ -39,7 +40,10 @@ public class TracingPrintStream extends PrintStream {
     
     private String getPrefix() {
         StackTraceElement[] elems = Thread.currentThread().getStackTrace();
-        StackTraceElement elem = elems[3]; // The caller is always at depth 2, plus this call.
+        StackTraceElement elem = elems[BASE_DEPTH]; // The caller is always at BASE_DEPTH, including this call.
+        if (elem.getClassName().startsWith("kotlin.io.")) {
+            elem = elems[BASE_DEPTH + 2]; // Kotlins IoPackage masks origins 2 deeper in the stack.
+        }
         return "[" + elem.getClassName() + ":" + elem.getMethodName() + ":" + elem.getLineNumber() + "]: ";
     }
 
