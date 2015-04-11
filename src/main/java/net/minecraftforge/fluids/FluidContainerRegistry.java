@@ -7,10 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -113,7 +112,7 @@ public abstract class FluidContainerRegistry
      *            ItemStack representing the container when it is full.
      * @param emptyContainer
      *            ItemStack representing the container when it is empty.
-     * @return True if container was successfully registered; false if it already is.
+     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer, ItemStack emptyContainer)
     {
@@ -131,7 +130,7 @@ public abstract class FluidContainerRegistry
      *            FluidStack containing the type and amount of the fluid stored in the item.
      * @param filledContainer
      *            ItemStack representing the container when it is full.
-     * @return True if container was successfully registered; false if it already is.
+     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer)
     {
@@ -146,7 +145,7 @@ public abstract class FluidContainerRegistry
      *            Fluid type that is stored in the item.
      * @param filledContainer
      *            ItemStack representing the container when it is full.
-     * @return True if container was successfully registered; false if it already is.
+     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer)
     {
@@ -162,13 +161,18 @@ public abstract class FluidContainerRegistry
      *
      * @param data
      *            See {@link FluidContainerData}.
-     * @return True if container was successfully registered; false if it already is.
+     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(FluidContainerData data)
     {
-        if (isFilledContainer(data.filledContainer))
+        if (isFilledContainer(data.filledContainer) || data.filledContainer == null)
         {
             return false;
+        }
+        if (data.fluid == null || data.fluid.getFluid() == null)
+        {
+        	FMLLog.bigWarning("Invalid registration attempt for a fluid container item %s (type %s) has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", data.filledContainer.getItem().getUnlocalizedName(data.filledContainer));
+        	return false;
         }
         containerFluidMap.put(new ContainerKey(data.filledContainer), data);
 
