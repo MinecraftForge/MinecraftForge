@@ -40,7 +40,7 @@
              try
              {
                  IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
-@@ -274,6 +288,7 @@
+@@ -275,6 +289,7 @@
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
              textureatlassprite.func_94217_a(this.field_94249_f);
          }
@@ -48,7 +48,7 @@
      }
  
      private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
-@@ -347,7 +362,7 @@
+@@ -348,7 +363,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
          }
@@ -57,7 +57,7 @@
          {
              Object object = (TextureAtlasSprite)this.field_110574_e.get(p_94245_1_);
  
-@@ -403,4 +418,37 @@
+@@ -404,4 +419,37 @@
      {
          this.field_147637_k = p_147632_1_;
      }
