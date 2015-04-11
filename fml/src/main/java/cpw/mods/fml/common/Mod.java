@@ -144,6 +144,18 @@ public @interface Mod
      * @return The language the mod is authored in
      */
     String modLanguage() default "java";
+    
+    /**
+     * The language adapter to be used to load this mod. This overrides the value of modLanguage. The class must have a
+     * public zero variable constructor and implement {@link ILanguageAdapter} just like the Java and Scala adapters.
+     * 
+     * A class with an invalid constructor or that doesn't implement {@link ILanguageAdapter} will throw an exception and
+     * halt loading.
+     * 
+     * @return The full class name of the language adapter
+     */
+    String modLanguageAdapter() default "";
+    
     /**
      * NOT YET IMPLEMENTED. </br>
      * An optional ASM hook class, that can be used to apply ASM to classes loaded from this mod. It is also given
