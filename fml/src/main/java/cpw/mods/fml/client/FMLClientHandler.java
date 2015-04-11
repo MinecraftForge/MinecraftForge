@@ -69,13 +69,16 @@ import org.lwjgl.input.Mouse;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -886,28 +889,44 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
 
-    private static SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
+    private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
+    private Set<String> badTextureDomains = Sets.newHashSet();
+    private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
+
     public void trackMissingTexture(ResourceLocation resourceLocation)
     {
+        badTextureDomains.add(resourceLocation.getResourceDomain());
         missingTextures.put(resourceLocation.getResourceDomain(),resourceLocation);
+    }
+    public void trackBrokenTexture(ResourceLocation resourceLocation, String error)
+    {
+        badTextureDomains.add(resourceLocation.getResourceDomain());
+        Set<ResourceLocation> badType = brokenTextures.get(resourceLocation.getResourceDomain(), error);
+        if (badType == null)
+        {
+            badType = Sets.newHashSet();
+            brokenTextures.put(resourceLocation.getResourceDomain(), error, badType);
+        }
+        badType.add(resourceLocation);
     }
 
     public void logMissingTextureErrors()
     {
         Logger logger = LogManager.getLogger("TEXTURE ERRORS");
         logger.error(Strings.repeat("+=", 25));
-        logger.error("The following missing textures were found.");
+        logger.error("The following texture errors were found.");
         Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");
         for (String resourceDomain : missingTextures.keySet())
         {
             Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
-            logger.error("  DOMAIN {}", resourceDomain);
-            logger.error("  domain {} is missing {} texture{}",resourceDomain, missing.size(),missing.size()!=1 ? "s" : "");
             logger.error(Strings.repeat("=", 50));
+            logger.error("  DOMAIN {}", resourceDomain);
+            logger.error(Strings.repeat("-", 50));
+            logger.error("  domain {} is missing {} texture{}",resourceDomain, missing.size(),missing.size()!=1 ? "s" : "");
             FallbackResourceManager fallbackResourceManager = resManagers.get(resourceDomain);
             if (fallbackResourceManager == null)
             {
-                logger.error("    domain {} is missing a resource manager, how very odd");
+                logger.error("    domain {} is missing a resource manager - it is probably a side-effect of automatic texture processing", resourceDomain);
             }
             else
             {
@@ -938,7 +957,26 @@ public class FMLClientHandler implements IFMLSidedHandler
             {
                 logger.error("      {}",rl.getResourcePath());
             }
-            logger.error(Strings.repeat("-", 50));
+            logger.error(Strings.repeat("-", 25));
+            if (!brokenTextures.containsRow(resourceDomain))
+            {
+                logger.error("    No other errors exist for domain {}", resourceDomain);
+            }
+            else
+            {
+                logger.error("    The following other errors were reported for domain {}:",resourceDomain);
+                Map<String, Set<ResourceLocation>> resourceErrs = brokenTextures.row(resourceDomain);
+                for (String error: resourceErrs.keySet())
+                {
+                    logger.error(Strings.repeat("-", 25));
+                    logger.error("    Problem: {}", error);
+                    for (ResourceLocation rl : resourceErrs.get(error))
+                    {
+                        logger.error("      {}",rl.getResourcePath());
+                    }
+                }
+            }
+            logger.error(Strings.repeat("=", 50));
         }
         logger.error(Strings.repeat("+=", 25));
     }
