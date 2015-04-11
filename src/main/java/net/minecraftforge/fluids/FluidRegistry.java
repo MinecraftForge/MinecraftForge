@@ -165,7 +165,7 @@ public abstract class FluidRegistry
      */
     public static boolean isFluidRegistered(Fluid fluid)
     {
-        return fluids.containsKey(fluid.getName());
+        return fluid != null && fluids.containsKey(fluid.getName());
     }
 
     public static boolean isFluidRegistered(String fluidName)
