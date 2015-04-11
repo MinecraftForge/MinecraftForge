@@ -41,8 +41,11 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,14 +62,18 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveFormatOld;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
@@ -77,6 +84,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLContainerHolder;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -378,6 +386,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         else
         {
         }
+        logMissingTextureErrors();
     }
     /**
      * Get the server instance
@@ -875,4 +884,63 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void allowLogins() {
         // NOOP for integrated server
     }
+
+
+    private static SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
+    public void trackMissingTexture(ResourceLocation resourceLocation)
+    {
+        missingTextures.put(resourceLocation.getResourceDomain(),resourceLocation);
+    }
+
+    public void logMissingTextureErrors()
+    {
+        Logger logger = LogManager.getLogger("TEXTURE ERRORS");
+        logger.error(Strings.repeat("+=", 25));
+        logger.error("The following missing textures were found.");
+        Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");
+        for (String resourceDomain : missingTextures.keySet())
+        {
+            Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
+            logger.error("  DOMAIN {}", resourceDomain);
+            logger.error("  domain {} is missing {} texture{}",resourceDomain, missing.size(),missing.size()!=1 ? "s" : "");
+            logger.error(Strings.repeat("=", 50));
+            FallbackResourceManager fallbackResourceManager = resManagers.get(resourceDomain);
+            if (fallbackResourceManager == null)
+            {
+                logger.error("    domain {} is missing a resource manager, how very odd");
+            }
+            else
+            {
+                List<IResourcePack> resPacks = ObfuscationReflectionHelper.getPrivateValue(FallbackResourceManager.class, fallbackResourceManager, "resourcePacks","field_110540"+"_a");
+                logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
+                for (IResourcePack resPack : resPacks)
+                {
+                    if (resPack instanceof FMLContainerHolder) {
+                        FMLContainerHolder containerHolder = (FMLContainerHolder) resPack;
+                        ModContainer fmlContainer = containerHolder.getFMLContainer();
+                        logger.error("      mod {} resources at {}", fmlContainer.getModId(), fmlContainer.getSource().getPath());
+                    }
+                    else if (resPack instanceof AbstractResourcePack)
+                    {
+                        AbstractResourcePack resourcePack = (AbstractResourcePack) resPack;
+                        File resPath = ObfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, resourcePack, "resourcePackFile","field_110597"+"_b");
+                        logger.error("      resource pack at path {}",resPath.getPath());
+                    }
+                    else
+                    {
+                        logger.error("      unknown resourcepack type {} : {}", resPack.getClass().getName(), resPack.getPackName());
+                    }
+                }
+            }
+            logger.error(Strings.repeat("-", 25));
+            logger.error("    The missing resources for domain {} are:",resourceDomain);
+            for (ResourceLocation rl : missing)
+            {
+                logger.error("      {}",rl.getResourcePath());
+            }
+            logger.error(Strings.repeat("-", 50));
+        }
+        logger.error(Strings.repeat("+=", 25));
+    }
+
 }

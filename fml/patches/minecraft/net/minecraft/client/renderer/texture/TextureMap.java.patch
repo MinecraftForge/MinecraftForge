@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
+@@ -161,7 +161,8 @@
+             }
+             catch (IOException ioexception1)
+             {
+-                field_147635_d.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++//                logger.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                cpw.mods.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation1);
+                 continue;
+             }
+ 
