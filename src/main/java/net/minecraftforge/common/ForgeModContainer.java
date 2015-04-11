@@ -26,6 +26,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -309,6 +310,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
         forgeData.setTag("DimensionData", dimData);
+        FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
@@ -316,6 +318,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
+        FluidRegistry.loadFluidDefaults(tag);
     }
 
     @Subscribe

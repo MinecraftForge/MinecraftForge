@@ -12,7 +12,7 @@ public class FluidIdRegistryMessageHandler extends SimpleChannelInboundHandler<F
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ForgeMessage.FluidIdMapMessage msg) throws Exception
     {
-        FluidRegistry.initFluidIDs(msg.fluidIds);
+        FluidRegistry.initFluidIDs(msg.fluidIds, msg.defaultFluids);
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception

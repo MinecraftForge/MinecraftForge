@@ -1,10 +1,6 @@
 
 package net.minecraftforge.fluids;
 
-import java.util.Locale;
-
-import com.google.common.base.Strings;
-
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,10 +1,18 @@
 package net.minecraftforge.common.network;
 
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.logging.log4j.Level;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Sets;
+
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
@@ -39,6 +47,7 @@ public abstract class ForgeMessage {
 
     public static class FluidIdMapMessage extends ForgeMessage {
         BiMap<Fluid, Integer> fluidIds = HashBiMap.create();
+        Set<String> defaultFluids = Sets.newHashSet();
         @Override
         void toBytes(ByteBuf bytes)
         {
@@ -48,6 +57,11 @@ public abstract class ForgeMessage {
             {
                 ByteBufUtils.writeUTF8String(bytes,entry.getKey().getName());
                 bytes.writeInt(entry.getValue());
+            }
+            for (Map.Entry<Fluid, Integer> entry : ids.entrySet())
+            {
+                String defaultName = FluidRegistry.getDefaultFluidName(entry.getKey());
+                ByteBufUtils.writeUTF8String(bytes, defaultName);
             }
         }
 
@@ -59,6 +73,20 @@ public abstract class ForgeMessage {
                 String fluidName = ByteBufUtils.readUTF8String(bytes);
                 int fluidId = bytes.readInt();
                 fluidIds.put(FluidRegistry.getFluid(fluidName), fluidId);
+            }
+            // do we have a defaults list?
+
+            if (bytes.isReadable())
+            {
+                for (int i = 0; i < listSize; i++)
+                {
+                    defaultFluids.add(ByteBufUtils.readUTF8String(bytes));
+                }
+            }
+            else
+            {
+                FMLLog.getLogger().log(Level.INFO, "Legacy server message contains no default fluid list - there may be problems with fluids");
+                defaultFluids.clear();
             }
         }
     }
