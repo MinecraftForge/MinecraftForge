@@ -3,11 +3,8 @@ package cpw.mods.fml.common.eventhandler;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,8 +32,6 @@ public class Event
     private Result result = Result.DEFAULT;
     private static ListenerList listeners = new ListenerList();
     private EventPriority phase = null;
-
-    private static final Map<Class<?>, Map<Class<?>, Boolean>> annotationMap = new ConcurrentHashMap<Class<?>, Map<Class<?>, Boolean>>();
 
     public Event()
     {
