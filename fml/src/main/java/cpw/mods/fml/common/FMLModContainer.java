@@ -91,9 +91,10 @@ public class FMLModContainer implements ModContainer
         this.candidate = container;
         this.descriptor = modDescriptor;
         this.eventMethods = ArrayListMultimap.create();
-        
+
         this.modLanguage = (String) modDescriptor.get("modLanguage");
-        if (modDescriptor.get("modLanguageAdapter").equals(""))
+        String languageAdapterType = (String)modDescriptor.get("modLanguageAdapter");
+        if (Strings.isNullOrEmpty(languageAdapterType))
         {
             this.languageAdapter = "scala".equals(modLanguage) ? new ILanguageAdapter.ScalaAdapter() : new ILanguageAdapter.JavaAdapter();
         }
@@ -101,13 +102,13 @@ public class FMLModContainer implements ModContainer
         {
             try
             {
-                this.languageAdapter = (ILanguageAdapter)Class.forName((String)modDescriptor.get("modLanguageAdapter"), true, Loader.instance().getModClassLoader()).newInstance();
-                FMLLog.finer("Using custom language adapter %s (for %s)", this.languageAdapter, this.className);
+                this.languageAdapter = (ILanguageAdapter)Class.forName(languageAdapterType, true, Loader.instance().getModClassLoader()).newInstance();
+                FMLLog.finer("Using custom language adapter %s (type %s) for %s (modid %s)", this.languageAdapter, languageAdapterType, this.className, getModId());
             }
             catch (Exception ex)
             {
-                FMLLog.severe("Error constructing custom mod language adapter %s (referenced by %s): %s", modDescriptor.get("modLanguageAdapter"), this.className, ex);
-                FMLCommonHandler.instance().exitJava(1, true);
+                FMLLog.log(Level.ERROR, ex, "Error constructing custom mod language adapter %s (referenced by %s) (modid: %s)", languageAdapterType, this.className, getModId());
+                throw new LoaderException(ex);
             }
         }
     }
