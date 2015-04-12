@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -62,7 +63,10 @@ public class GuiModList extends GuiScreen
         private SortType(int buttonID)
         {
             this.buttonID = buttonID;
+            this.comparator = new ModComparator(this);
         }
+        
+        private final ModComparator comparator;
 
         public static SortType getTypeForButton(GuiButton button)
         {
@@ -72,6 +76,31 @@ public class GuiModList extends GuiScreen
                 }
             }
             return null;
+        }
+    }
+    
+    private static class ModComparator implements Comparator<ModContainer>
+    {
+        private SortType type;
+        private ModComparator(SortType type)
+        {
+            this.type = type;
+        }
+        
+        @Override
+        public int compare(ModContainer o1, ModContainer o2)
+        {
+            String name1 = StringUtils.stripControlCodes(o1.getName()).toLowerCase();
+            String name2 = StringUtils.stripControlCodes(o2.getName()).toLowerCase();
+            switch(type)
+            {
+            case A_TO_Z:
+                return name1.compareTo(name2);
+            case Z_TO_A:
+                return name2.compareTo(name1);
+            default:
+                return 0;
+            }
         }
     }
     
@@ -161,7 +190,7 @@ public class GuiModList extends GuiScreen
     {
         super.mouseClicked(x, y, button);
         search.mouseClicked(x, y, button);
-        if (button == 1 && x >= search.xPosition && x < search.xPosition + this.width && y >= search.yPosition && y < search.yPosition + this.height) {
+        if (button == 1 && x >= search.xPosition && x < search.xPosition + search.width && y >= search.yPosition && y < search.yPosition + search.height) {
             search.setText("");
         }
     }
@@ -187,33 +216,8 @@ public class GuiModList extends GuiScreen
 
         if (!sorted)
         {
-            switch (sortType)
-            {
-            case A_TO_Z:
-                Collections.sort(modList.getMods(), new Comparator<ModContainer>()
-                {
-                    @Override
-                    public int compare(ModContainer o1, ModContainer o2)
-                    {
-                        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-                    }
-                });
-                break;
-            case Z_TO_A:
-                Collections.sort(modList.getMods(), new Comparator<ModContainer>()
-                {
-                    @Override
-                    public int compare(ModContainer o1, ModContainer o2)
-                    {
-                        return o2.getName().toLowerCase().compareTo(o1.getName().toLowerCase());
-                    }
-                });
-                break;
-            default:
-                reloadMods();
-                break;
-            }
-            mods = modList.getMods();
+            reloadMods();
+            Collections.sort(mods, sortType.comparator);
             selected = modList.selectedIndex = mods.indexOf(selectedMod);
             sorted = true;
         }
