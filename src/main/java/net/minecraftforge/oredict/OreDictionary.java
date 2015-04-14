@@ -344,7 +344,7 @@ public class OreDictionary
      */
     public static ArrayList<ItemStack> getOres(String name) //TODO: 1.8 ArrayList -> List
     {
-        return getOres(getOreID(name));
+        return nameToId.get(name) != null ? getOres(getOreID(name)) : EMPTY_LIST;
     }
 
     /**
@@ -447,7 +447,12 @@ public class OreDictionary
      */
     private static void registerOreImpl(String name, ItemStack ore)
     {
-        if ("Unknown".equals(name)) return; //prevent bad IDs.
+        if (name == null || name.isEmpty() || "Unknown".equals(name)) return; //prevent bad IDs.
+        if (ore == null || ore.getItem() == null)
+        {
+        	FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
+        	return; //prevent bad ItemStacks.
+        }
 
         int oreID = getOreID(name);
         int hash = Item.getIdFromItem(ore.getItem());
