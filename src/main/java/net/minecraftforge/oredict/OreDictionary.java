@@ -344,7 +344,7 @@ public class OreDictionary
      */
     public static ArrayList<ItemStack> getOres(String name) //TODO: 1.8 ArrayList -> List
     {
-        return nameToId.get(name) != null ? getOres(getOreID(name)) : EMPTY_LIST;
+        return getOres(getOreID(name));
     }
 
     /**
