@@ -54,56 +54,42 @@ import com.google.common.base.Strings;
  */
 public class GuiModList extends GuiScreen
 {
-    private enum SortType
+    private enum SortType implements Comparator<ModContainer>
     {
-        NORMAL(24), A_TO_Z(25), Z_TO_A(26);
+        NORMAL(24),
+        A_TO_Z(25){ @Override protected int compare(String name1, String name2){ return name1.compareTo(name2); }},
+        Z_TO_A(26){ @Override protected int compare(String name1, String name2){ return name2.compareTo(name1); }};
 
         private int buttonID;
 
         private SortType(int buttonID)
         {
             this.buttonID = buttonID;
-            this.comparator = new ModComparator(this);
         }
-        
-        private final ModComparator comparator;
 
         public static SortType getTypeForButton(GuiButton button)
         {
-            for (SortType t : values()) {
-                if (t.buttonID == button.id) {
+            for (SortType t : values())
+            {
+                if (t.buttonID == button.id)
+                {
                     return t;
                 }
             }
             return null;
         }
-    }
-    
-    private static class ModComparator implements Comparator<ModContainer>
-    {
-        private SortType type;
-        private ModComparator(SortType type)
-        {
-            this.type = type;
-        }
-        
+
+        protected int compare(String name1, String name2){ return 0; }
+
         @Override
         public int compare(ModContainer o1, ModContainer o2)
         {
             String name1 = StringUtils.stripControlCodes(o1.getName()).toLowerCase();
             String name2 = StringUtils.stripControlCodes(o2.getName()).toLowerCase();
-            switch(type)
-            {
-            case A_TO_Z:
-                return name1.compareTo(name2);
-            case Z_TO_A:
-                return name2.compareTo(name1);
-            default:
-                return 0;
-            }
+            return compare(name1, name2);
         }
     }
-    
+
     private GuiScreen mainMenu;
     private GuiSlotModList modList;
     private int selected = -1;
@@ -114,7 +100,7 @@ public class GuiModList extends GuiScreen
     private GuiButton disableModButton;
     private ResourceLocation cachedLogo;
     private Dimension cachedLogoDimensions;
-    
+
     private int buttonMargin = 1;
     private int numButtons = SortType.values().length;
 
@@ -129,12 +115,14 @@ public class GuiModList extends GuiScreen
      */
     public GuiModList(GuiScreen mainMenu)
     {
-        this.mainMenu=mainMenu;
-        this.mods=new ArrayList<ModContainer>();
+        this.mainMenu = mainMenu;
+        this.mods = new ArrayList<ModContainer>();
         FMLClientHandler.instance().addSpecialModEntries(mods);
         // Add child mods to their parent's list
-        for (ModContainer mod : Loader.instance().getModList()) {
-            if (mod.getMetadata()!=null && mod.getMetadata().parentMod==null && !Strings.isNullOrEmpty(mod.getMetadata().parent)) {
+        for (ModContainer mod : Loader.instance().getModList())
+        {
+            if (mod.getMetadata() != null && mod.getMetadata().parentMod == null && !Strings.isNullOrEmpty(mod.getMetadata().parent))
+            {
                 String parentMod = mod.getMetadata().parent;
                 ModContainer parentContainer = Loader.instance().getIndexedModList().get(parentMod);
                 if (parentContainer != null)
@@ -144,7 +132,7 @@ public class GuiModList extends GuiScreen
                     continue;
                 }
             }
-            else if (mod.getMetadata()!=null && mod.getMetadata().parentMod!=null)
+            else if (mod.getMetadata() != null && mod.getMetadata().parentMod != null)
             {
                 continue;
             }
@@ -156,20 +144,21 @@ public class GuiModList extends GuiScreen
     @Override
     public void initGui()
     {
-        for (ModContainer mod : mods) {
-            listWidth=Math.max(listWidth,getFontRenderer().getStringWidth(mod.getName()) + 10);
-            listWidth=Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion()) + 10);
+        for (ModContainer mod : mods)
+        {
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getName()) + 10);
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion()) + 10);
         }
-        listWidth=Math.min(listWidth, 150);
-        this.modList=new GuiSlotModList(this, mods, listWidth);
+        listWidth = Math.min(listWidth, 150);
+        this.modList = new GuiSlotModList(this, mods, listWidth);
         this.modList.registerScrollButtons(this.buttonList, 7, 8);
-        
+
         this.buttonList.add(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")));
         configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, "Config");
         disableModButton = new GuiButton(21, 10, this.height - 27, this.listWidth, 20, "Disable");
         this.buttonList.add(configModButton);
         this.buttonList.add(disableModButton);
-        
+
         search = new GuiTextField(0, getFontRenderer(), 12, modList.bottom + 17, modList.listWidth - 4, 14);
         search.setFocused(true);
         search.setCanLoseFocus(true);
@@ -184,7 +173,7 @@ public class GuiModList extends GuiScreen
         x += width + buttonMargin;
         buttonList.add(new GuiButton(SortType.Z_TO_A.buttonID, x, y, width - buttonMargin, 20, "Z-A"));
     }
-    
+
     @Override
     protected void mouseClicked(int x, int y, int button) throws IOException
     {
@@ -201,7 +190,7 @@ public class GuiModList extends GuiScreen
         super.keyTyped(c, keyCode);
         search.textboxKeyTyped(c, keyCode);
     }
-    
+
     @Override
     public void updateScreen()
     {
@@ -217,7 +206,7 @@ public class GuiModList extends GuiScreen
         if (!sorted)
         {
             reloadMods();
-            Collections.sort(mods, sortType.comparator);
+            Collections.sort(mods, sortType);
             selected = modList.selectedIndex = mods.indexOf(selectedMod);
             sorted = true;
         }
@@ -263,22 +252,22 @@ public class GuiModList extends GuiScreen
             {
                 switch (button.id)
                 {
-                case 6:
-                    this.mc.displayGuiScreen(this.mainMenu);
-                    return;
-                case 20:
-                    try
-                    {
-                        IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
-                        GuiScreen newScreen = guiFactory.mainConfigGuiClass().getConstructor(GuiScreen.class).newInstance(this);
-                        this.mc.displayGuiScreen(newScreen);
+                    case 6:
+                        this.mc.displayGuiScreen(this.mainMenu);
+                        return;
+                    case 20:
+                        try
+                        {
+                            IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
+                            GuiScreen newScreen = guiFactory.mainConfigGuiClass().getConstructor(GuiScreen.class).newInstance(this);
+                            this.mc.displayGuiScreen(newScreen);
+                        }
+                        catch (Exception e)
+                        {
+                            FMLLog.log(Level.ERROR, e, "There was a critical issue trying to build the config GUI for %s", selectedMod.getModId());
+                        }
+                        return;
                     }
-                    catch (Exception e)
-                    {
-                        FMLLog.log(Level.ERROR, e, "There was a critical issue trying to build the config GUI for %s", selectedMod.getModId());
-                    }
-                    return;
-                }
             }
         }
         super.actionPerformed(button);
@@ -296,9 +285,11 @@ public class GuiModList extends GuiScreen
         this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         this.drawCenteredString(this.fontRendererObj, "Mod List", this.width / 2, 16, 0xFFFFFF);
         int offset = this.listWidth  + 20;
-        if (selectedMod != null) {
+        if (selectedMod != null)
+        {
             GL11.glEnable(GL11.GL_BLEND);
-            if (!selectedMod.getMetadata().autogenerated) {
+            if (!selectedMod.getMetadata().autogenerated)
+            {
                 configModButton.visible = true;
                 disableModButton.visible = true;
                 disableModButton.packedFGColour = 0xFF3377;
@@ -368,7 +359,8 @@ public class GuiModList extends GuiScreen
 
                 shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);
                 shifty = drawLine(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)), offset, shifty);
-                if (!selectedMod.getMetadata().credits.isEmpty()) {
+                if (!selectedMod.getMetadata().credits.isEmpty())
+                {
                    shifty = drawLine(String.format("Credits: %s", selectedMod.getMetadata().credits), offset, shifty);
                 }
                 shifty = drawLine(String.format("Authors: %s", selectedMod.getMetadata().getAuthorList()), offset, shifty);
@@ -409,7 +401,9 @@ public class GuiModList extends GuiScreen
                     configModButton.visible = true;
                     configModButton.enabled = true;
                 }
-            } else {
+            }
+            else
+            {
                 offset = ( this.listWidth + this.width ) / 2;
                 this.drawCenteredString(this.fontRendererObj, selectedMod.getName(), offset, 35, 0xFFFFFF);
                 this.drawCenteredString(this.fontRendererObj, String.format("Version: %s",selectedMod.getVersion()), offset, 45, 0xFFFFFF);
@@ -434,30 +428,25 @@ public class GuiModList extends GuiScreen
         search.drawTextBox();
     }
 
-    Minecraft getMinecraftInstance() {
+    Minecraft getMinecraftInstance()
+    {
         return mc;
     }
 
-    FontRenderer getFontRenderer() {
+    FontRenderer getFontRenderer()
+    {
         return fontRendererObj;
     }
 
-    /**
-     * @param var1
-     */
-    public void selectModIndex(int var1)
+    public void selectModIndex(int index)
     {
-        this.selected=var1;
-        if (var1>=0 && var1<=mods.size()) {
-            this.selectedMod=mods.get(selected);
-        } else {
-            this.selectedMod=null;
-        }
+        this.selected = index;
+        this.selectedMod = (index >= 0 && index <= mods.size()) ? mods.get(selected) : null;
         cachedLogo = null;
     }
 
-    public boolean modIndexSelected(int var1)
+    public boolean modIndexSelected(int index)
     {
-        return var1==selected;
+        return index == selected;
     }
 }

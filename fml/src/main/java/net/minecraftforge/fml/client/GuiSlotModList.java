@@ -15,6 +15,7 @@ package net.minecraftforge.fml.client;
 import java.util.ArrayList;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer;
@@ -64,7 +65,7 @@ public class GuiSlotModList extends GuiScrollingList
     {
         return (this.getSize()) * 35 + 1;
     }
-    
+
     ArrayList<ModContainer> getMods()
     {
         return mods;
@@ -74,16 +75,18 @@ public class GuiSlotModList extends GuiScrollingList
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
         ModContainer mc=mods.get(listIndex);
+        String name = StringUtils.stripControlCodes(mc.getName());
+        String version = StringUtils.stripControlCodes(mc.getDisplayVersion());
         if (Loader.instance().getModState(mc)==ModState.DISABLED)
         {
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(mc.getName(), listWidth - 10), this.left + 3 , var3 + 2, 0xFF2222);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(mc.getDisplayVersion(), listWidth - 10), this.left + 3 , var3 + 12, 0xFF2222);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(name, listWidth - 10), this.left + 3 , var3 + 2, 0xFF2222);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(version, listWidth - 10), this.left + 3 , var3 + 12, 0xFF2222);
             this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth("DISABLED", listWidth - 10), this.left + 3 , var3 + 22, 0xFF2222);
         }
         else
         {
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(mc.getName(), listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(mc.getDisplayVersion(), listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(name, listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(version, listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
             this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 10), this.left + 3 , var3 + 22, 0xCCCCCC);
         }
     }
