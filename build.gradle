@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven {
-            name = "central_mirrior"
+            name = "central_mirror"
             url = "http://uk.maven.org/maven2"
         }
         mavenCentral()
@@ -31,7 +31,7 @@ apply plugin: 'forgedev'
 
 repositories {
     maven {
-        name = "central_mirrior"
+        name = "central_mirror"
         url = "http://uk.maven.org/maven2"
     }
     mavenLocal()
