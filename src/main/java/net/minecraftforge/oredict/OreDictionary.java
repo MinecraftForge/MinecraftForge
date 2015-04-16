@@ -34,10 +34,10 @@ public class OreDictionary
 {
     private static boolean hasInit = false;
     private static List<String>          idToName = new ArrayList<String>();
-    private static Map<String, Integer>  nameToId = new HashMap<String, Integer>();
+    private static Map<String, Integer>  nameToId = new HashMap<String, Integer>(128);
     private static List<ArrayList<ItemStack>> idToStack = Lists.newArrayList(); //ToDo: Unqualify to List when possible {1.8}
     private static List<ArrayList<ItemStack>> idToStackUn = Lists.newArrayList(); //ToDo: Unqualify to List when possible {1.8}
-    private static Map<Integer, List<Integer>> stackToId = Maps.newHashMap();
+    private static Map<Integer, List<Integer>> stackToId = Maps.newHashMapWithExpectedSize(96); // Calculated from 128 * 0.75
     public static final ArrayList<ItemStack> EMPTY_LIST = new UnmodifiableArrayList(Lists.newArrayList()); //ToDo: Unqualify to List when possible {1.8}
 
     /**
@@ -345,6 +345,44 @@ public class OreDictionary
     public static ArrayList<ItemStack> getOres(String name) //TODO: 1.8 ArrayList -> List
     {
         return getOres(getOreID(name));
+    }
+
+    /**
+     * Retrieves the List of items that are registered to this ore type at this instant.
+     * If the flag is TRUE, then it will create the list as empty if it did not exist.
+     * 
+     * This option should be used by modders who are doing blanket scans in postInit.
+     * It greatly reduces clutter in the OreDictionary is the responsible and proper
+     * way to use the dictionary in a large number of cases.
+     * 
+     * The other function above is utilized in OreRecipe and is required for the
+     * operation of that code.
+     * 
+     * @param name The ore name, directly calls getOreID if the flag is TRUE
+     * @param alwaysCreateEntry Flag - should a new entry be created if empty
+     * @return An arraylist containing ItemStacks registered for this ore
+     */
+    public static List<ItemStack> getOres(String name, boolean alwaysCreateEntry)
+    {
+    	if (alwaysCreateEntry) {
+    		return getOres(getOreID(name));
+    	}
+    	return nameToId.get(name) != null ? getOres(getOreID(name)) : EMPTY_LIST;
+    }
+
+    /**
+     * Returns whether or not an oreName exists in the dictionary.
+     * This function can be used to safely query the Ore Dictionary without
+     * adding needless clutter to the underlying map structure.
+     * 
+     * Please use this when possible and appropriate.
+     * 
+     * @param name The ore name
+     * @return Whether or not that name is in the Ore Dictionary.
+     */
+    public static boolean doesOreNameExist(String name)
+    {
+    	return nameToId.get(name) != null;
     }
 
     /**
