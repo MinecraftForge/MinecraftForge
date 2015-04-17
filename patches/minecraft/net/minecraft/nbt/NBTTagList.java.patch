@@ -8,7 +8,21 @@
  import java.io.DataInput;
  import java.io.DataOutput;
  import java.io.IOException;
-@@ -91,7 +89,6 @@
+@@ -45,11 +43,13 @@
+         {
+             p_152446_3_.func_152450_a(8L);
+             this.field_74746_b = p_152446_1_.readByte();
++            p_152446_3_.func_152450_a(32); //Forge: Count the length as well
+             int j = p_152446_1_.readInt();
+             this.field_74747_a = new ArrayList();
+ 
+             for (int k = 0; k < j; ++k)
+             {
++                p_152446_3_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
+                 NBTBase nbtbase = NBTBase.func_150284_a(this.field_74746_b);
+                 nbtbase.func_152446_a(p_152446_1_, p_152446_2_ + 1, p_152446_3_);
+                 this.field_74747_a.add(nbtbase);
+@@ -91,7 +91,6 @@
          this.field_74747_a.add(p_74742_1_);
      }
  
@@ -16,7 +30,7 @@
      public void func_150304_a(int p_150304_1_, NBTBase p_150304_2_)
      {
          if (p_150304_1_ >= 0 && p_150304_1_ < this.field_74747_a.size())
-@@ -114,7 +111,6 @@
+@@ -114,7 +113,6 @@
          }
      }
  
