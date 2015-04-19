@@ -297,6 +297,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             RecipeSorter.sortCraftManager();
         }
+        FluidRegistry.validateFluidRegistry();
     }
 
     @Subscribe

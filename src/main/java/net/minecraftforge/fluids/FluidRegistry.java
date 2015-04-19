@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
@@ -280,7 +281,12 @@ public abstract class FluidRegistry
 
     public static String getDefaultFluidName(Fluid key)
     {
-        return masterFluidReference.inverse().get(key);
+        String name = masterFluidReference.inverse().get(key);
+        if (Strings.isNullOrEmpty(name)) {
+            FMLLog.getLogger().log(Level.ERROR, "The fluid registry is corrupted. A fluid {} {} is not properly registered. The mod that registered this is broken", key.getClass().getName(), key.getName());
+            throw new IllegalStateException("The fluid registry is corrupted");
+        }
+        return name;
     }
 
     public static void loadFluidDefaults(NBTTagCompound tag)
@@ -312,5 +318,29 @@ public abstract class FluidRegistry
         }
 
         forgeData.setTag("DefaultFluidList", tagList);
+    }
+
+    public static void validateFluidRegistry()
+    {
+        Set<Fluid> illegalFluids = Sets.newHashSet();
+        for (Fluid f : fluids.values())
+        {
+            if (!masterFluidReference.containsValue(f))
+            {
+                illegalFluids.add(f);
+            }
+        }
+
+        if (!illegalFluids.isEmpty())
+        {
+            FMLLog.getLogger().log(Level.FATAL, "The fluid registry is corrupted. Something has inserted a fluid without registering it");
+            FMLLog.getLogger().log(Level.FATAL, "There is {} unregistered fluids", illegalFluids.size());
+            for (Fluid f: illegalFluids)
+            {
+                FMLLog.getLogger().log(Level.FATAL, "  Fluid name : {}, type: {}", f.getName(), f.getClass().getName());
+            }
+            FMLLog.getLogger().log(Level.FATAL, "The mods that own these fluids need to register them properly");
+            throw new IllegalStateException("The fluid map contains fluids unknown to the master fluid registry");
+        }
     }
 }
