@@ -513,7 +513,6 @@ public class FMLModContainer implements ModContainer
         catch (Throwable e)
         {
             controller.errorOccurred(this, e);
-            Throwables.propagateIfPossible(e);
         }
     }
 
