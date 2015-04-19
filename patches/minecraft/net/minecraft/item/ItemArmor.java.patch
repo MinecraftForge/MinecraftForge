@@ -19,20 +19,17 @@
          private ArmorMaterial(int p_i1827_3_, int[] p_i1827_4_, int p_i1827_5_)
          {
              this.field_78048_f = p_i1827_3_;
-@@ -283,7 +286,15 @@
+@@ -283,7 +286,12 @@
  
          public Item func_151685_b()
          {
 -            return this == CLOTH ? Items.field_151116_aA : (this == CHAIN ? Items.field_151042_j : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == DIAMOND ? Items.field_151045_i : null))));
-+            switch (this)
-+            {
-+                case CLOTH:   return Items.field_151116_aA;
-+                case CHAIN:   return Items.field_151042_j;
-+                case GOLD:    return Items.field_151043_k;
-+                case IRON:    return Items.field_151042_j;
-+                case DIAMOND: return Items.field_151045_i;
-+                default:      return customCraftingMaterial;
-+            }
++            return this == CLOTH ? Items.field_151116_aA :
++                (this == CHAIN ? Items.field_151042_j :
++                (this == GOLD ? Items.field_151043_k :
++                (this == IRON ? Items.field_151042_j :
++                (this == DIAMOND ? Items.field_151045_i :
++                 customCraftingMaterial))));
          }
      }
  }
