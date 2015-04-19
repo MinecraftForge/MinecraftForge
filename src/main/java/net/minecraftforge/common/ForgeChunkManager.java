@@ -664,7 +664,7 @@ public class ForgeChunkManager
             throw new RuntimeException("Invalid ticket request");
         }
 
-        int allowedCount = ticketConstraints.containsKey(modId) ? ticketConstraints.get(modId) : defaultMaxCount;
+        int allowedCount = getMaxTicketLengthFor(modId);
 
         if (tickets.get(world).get(modId).size() >= allowedCount)
         {
