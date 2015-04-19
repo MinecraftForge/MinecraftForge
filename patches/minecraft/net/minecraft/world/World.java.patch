@@ -418,7 +418,7 @@
 -                throw new ReportedException(crashreport);
 +                if (ForgeModContainer.removeErroringEntities)
 +                {
-+                    FMLLog.severe(crashreport.func_71502_e());
++                    FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.func_71502_e());
 +                    func_72900_e(entity);
 +                }
 +                else
@@ -436,7 +436,7 @@
 +
 +                    if (ForgeModContainer.removeErroringEntities)
 +                    {
-+                        FMLLog.severe(crashreport.func_71502_e());
++                        FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.func_71502_e());
 +                        func_72900_e(entity);
 +                    }
 +                    else
@@ -453,7 +453,7 @@
 -                    throw new ReportedException(crashreport);
 +                    if (ForgeModContainer.removeErroringTileEntities)
 +                    {
-+                        FMLLog.severe(crashreport.func_71502_e());
++                        FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.func_71502_e());
 +                        tileentity.func_145843_s();
 +                        func_147468_f(tileentity.field_145851_c, tileentity.field_145848_d, tileentity.field_145849_e);
 +                    }
