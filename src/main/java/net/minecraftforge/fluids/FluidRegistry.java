@@ -112,8 +112,8 @@ public abstract class FluidRegistry
                 FMLLog.getLogger().log(Level.ERROR, "The fluid {} specified as default is not present - it will be reverted to default {}", defaultName, localDefault);
             }
             FMLLog.getLogger().log(Level.DEBUG, "The fluid {} has been selected as the default fluid for {}", defaultName, fluid.getName());
-            fluids.put(fluid.getName(), fluid);
-            Integer id = fluidIDs.remove(fluid);
+            Fluid oldFluid = fluids.put(fluid.getName(), fluid);
+            Integer id = fluidIDs.remove(oldFluid);
             fluidIDs.put(fluid, id);
         }
         fluidBlocks = null;
