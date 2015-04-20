@@ -46,6 +46,7 @@ public abstract class FluidRegistry
     // the globally unique fluid map - only used to associate non-defaults during world/server loading
     static BiMap<String,Fluid> masterFluidReference = HashBiMap.create();
     static BiMap<String,String> defaultFluidName = HashBiMap.create();
+    static Map<Fluid,FluidDelegate> delegates = Maps.newHashMap();
 
     public static final Fluid WATER = new Fluid("water") {
         @Override
@@ -350,7 +351,6 @@ public abstract class FluidRegistry
         }
     }
 
-    private static Map<Fluid,FluidDelegate> delegates = Maps.newHashMap();
     static RegistryDelegate<Fluid> makeDelegate(Fluid fl)
     {
         return delegates.get(fl);
