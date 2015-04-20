@@ -18,6 +18,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
@@ -25,6 +26,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.registry.RegistryDelegate;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
@@ -114,6 +116,10 @@ public abstract class FluidRegistry
             fluidIDs.put(fluid, id);
         }
         fluidBlocks = null;
+        for (FluidDelegate fd : delegates.values())
+        {
+            fd.rebind();
+        }
     }
 
     /**
@@ -127,7 +133,7 @@ public abstract class FluidRegistry
     public static boolean registerFluid(Fluid fluid)
     {
         masterFluidReference.put(uniqueName(fluid), fluid);
-
+        delegates.put(fluid, new FluidDelegate(fluid, fluid.getName()));
         if (fluids.containsKey(fluid.getName()))
         {
             return false;
@@ -207,7 +213,7 @@ public abstract class FluidRegistry
 
     public static String getFluidName(FluidStack stack)
     {
-        return getFluidName(stack.fluid);
+        return getFluidName(stack.getFluid());
     }
 
     public static FluidStack getFluidStack(String fluidName, int amount)
@@ -341,6 +347,48 @@ public abstract class FluidRegistry
             }
             FMLLog.getLogger().log(Level.FATAL, "The mods that own these fluids need to register them properly");
             throw new IllegalStateException("The fluid map contains fluids unknown to the master fluid registry");
+        }
+    }
+
+    private static Map<Fluid,FluidDelegate> delegates = Maps.newHashMap();
+    static RegistryDelegate<Fluid> makeDelegate(Fluid fl)
+    {
+        return delegates.get(fl);
+    }
+
+
+    private static class FluidDelegate implements RegistryDelegate<Fluid>
+    {
+        private String name;
+        private Fluid fluid;
+
+        FluidDelegate(Fluid fluid, String name)
+        {
+            this.fluid = fluid;
+            this.name = name;
+        }
+
+        @Override
+        public Fluid get()
+        {
+            return fluid;
+        }
+
+        @Override
+        public String name()
+        {
+            return name;
+        }
+
+        @Override
+        public Class<Fluid> type()
+        {
+            return Fluid.class;
+        }
+
+        void rebind()
+        {
+            fluid = fluids.get(name);
         }
     }
 }

@@ -2,6 +2,7 @@
 package net.minecraftforge.fluids;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.registry.RegistryDelegate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -17,9 +18,15 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class FluidStack
 {
-	public final Fluid fluid;
+    /**
+     * This field will be removed in 1.8. It may be incorrect after a world is loaded. Code should always
+     * use {@link #getFluid()} instead. That will always reflect the correct value.
+     */
+    @Deprecated
+    public final Fluid fluid;
     public int amount;
     public NBTTagCompound tag;
+    private RegistryDelegate<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount)
     {
@@ -33,8 +40,9 @@ public class FluidStack
             FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid %s (type %s)", fluid.getName(), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
-    	this.fluid = fluid;
+    	this.fluidDelegate = FluidRegistry.makeDelegate(fluid);
         this.amount = amount;
+        this.fluid = fluid;
     }
 
     public FluidStack(Fluid fluid, int amount, NBTTagCompound nbt)
@@ -49,7 +57,7 @@ public class FluidStack
 
     public FluidStack(FluidStack stack, int amount)
     {
-        this(stack.fluid, amount, stack.tag);
+        this(stack.getFluid(), amount, stack.tag);
     }
 
     // To be removed in 1.8
@@ -93,7 +101,7 @@ public class FluidStack
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        nbt.setString("FluidName", FluidRegistry.getFluidName(fluid));
+        nbt.setString("FluidName", FluidRegistry.getFluidName(getFluid()));
         nbt.setInteger("Amount", amount);
 
         if (tag != null)
@@ -105,12 +113,12 @@ public class FluidStack
 
     public final Fluid getFluid()
     {
-        return fluid;
+        return fluidDelegate.get();
     }
 
     public final int getFluidID()
     {
-    	return FluidRegistry.getFluidID(fluid);
+    	return FluidRegistry.getFluidID(getFluid());
     }
 
     public String getLocalizedName()
@@ -128,7 +136,7 @@ public class FluidStack
      */
     public FluidStack copy()
     {
-        return new FluidStack(fluid, amount, tag);
+        return new FluidStack(getFluid(), amount, tag);
     }
 
     /**
@@ -140,7 +148,7 @@ public class FluidStack
      */
     public boolean isFluidEqual(FluidStack other)
     {
-        return other != null && fluid == other.fluid && isFluidStackTagEqual(other);
+        return other != null && getFluid() == other.getFluid() && isFluidStackTagEqual(other);
     }
 
     private boolean isFluidStackTagEqual(FluidStack other)
@@ -206,7 +214,7 @@ public class FluidStack
     public final int hashCode()
     {
     	int code = 1;
-    	code = 31*code + fluid.hashCode();
+    	code = 31*code + getFluid().hashCode();
     	code = 31*code + amount;
     	if (tag != null)
     		code = 31*code + tag.hashCode();

@@ -50,7 +50,7 @@ public abstract class FluidContainerRegistry
             code = 31*code + container.getItem().hashCode();
             code = 31*code + container.getItemDamage();
             if (stack != null)
-                code = 31*code + stack.fluid.hashCode(); 
+                code = 31*code + stack.getFluid().hashCode();
             return code;
         }
         @Override
@@ -63,7 +63,7 @@ public abstract class FluidContainerRegistry
             if (stack == null && ck.stack != null) return false;
             if (stack != null && ck.stack == null) return false;
             if (stack == null && ck.stack == null) return true;
-            if (stack.fluid != ck.stack.fluid) return false;
+            if (stack.getFluid() != ck.stack.getFluid()) return false;
             return true;
         }
     }
