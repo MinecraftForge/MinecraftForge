@@ -64,7 +64,9 @@ import net.minecraft.world.storage.SaveFormatOld;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -185,6 +187,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @SuppressWarnings("unchecked")
     public void beginMinecraftLoading(Minecraft minecraft, @SuppressWarnings("rawtypes") List resourcePackList, IReloadableResourceManager resourceManager)
     {
+        SplashProgress.start();
         client = minecraft;
         this.resourcePackList = resourcePackList;
         this.resourceManager = resourceManager;
@@ -335,6 +338,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         loading = false;
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
+        SplashProgress.finish();
     }
 
     @SuppressWarnings("unused")
@@ -898,6 +902,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         badTextureDomains.add(resourceLocation.getResourceDomain());
         missingTextures.put(resourceLocation.getResourceDomain(),resourceLocation);
     }
+
     public void trackBrokenTexture(ResourceLocation resourceLocation, String error)
     {
         badTextureDomains.add(resourceLocation.getResourceDomain());
@@ -981,4 +986,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         logger.error(Strings.repeat("+=", 25));
     }
 
+    @Override
+    public void processWindowMessages()
+    {
+        // workaround for windows requiring messages being processed on the main thread
+        if(LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS)
+        {
+            Display.processMessages();
+        }
+    }
 }

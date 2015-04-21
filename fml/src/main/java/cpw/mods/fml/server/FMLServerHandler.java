@@ -264,4 +264,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void allowLogins() {
         DedicatedServer.allowPlayerLogins = true;
     }
+
+    @Override
+    public void processWindowMessages()
+    {
+        // NOOP
+    }
 }

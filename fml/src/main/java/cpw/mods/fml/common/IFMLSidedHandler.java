@@ -61,4 +61,6 @@ public interface IFMLSidedHandler
     boolean shouldAllowPlayerLogins();
 
     void allowLogins();
+
+    void processWindowMessages();
 }
