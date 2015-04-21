@@ -53,6 +53,7 @@ import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModContainer.Disableable;
+import cpw.mods.fml.common.ProgressManager.ProgressBar;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
@@ -152,6 +153,7 @@ public class Loader
     private ImmutableMap<String, String> fmlBrandingProperties;
     private File forcedModFile;
     private ModDiscoverer discoverer;
+    private ProgressBar progressBar;
 
     public static Loader instance()
     {
@@ -460,6 +462,8 @@ public class Loader
      */
     public void loadMods()
     {
+        progressBar = ProgressManager.push("FML", 5);
+        progressBar.step("Constructing");
         initializeLoader();
         mods = Lists.newArrayList();
         namedMods = Maps.newHashMap();
@@ -499,6 +503,7 @@ public class Loader
         {
             FMLLog.fine("No user mod signature data found");
         }
+        progressBar.step("Preinitialization");
         modController.transition(LoaderState.PREINITIALIZATION, false);
     }
 
@@ -512,6 +517,7 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        progressBar.step("Initialization");
         modController.transition(LoaderState.INITIALIZATION, false);
     }
 
@@ -689,15 +695,19 @@ public class Loader
     {
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
+        progressBar.step("Postinitialization");
         modController.transition(LoaderState.POSTINITIALIZATION, false);
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
+        progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
         GameData.freezeData();
         // Dump the custom registry data map, if necessary
         GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
+        ProgressManager.pop(progressBar);
+        progressBar = null;
     }
 
     public ICrashCallable getCallableCrashInformation()
