@@ -46,7 +46,7 @@
      }
  
      public void func_71367_a(String p_71367_1_, int p_71367_2_)
-@@ -471,7 +478,7 @@
+@@ -471,11 +478,11 @@
          this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
          this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
          this.field_110451_am.func_110542_a(this.field_135017_as);
@@ -55,7 +55,12 @@
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
          this.field_152350_aA = new SkinManager(this.field_71446_o, new File(this.field_110446_Y, "skins"), this.field_152355_az);
-@@ -532,12 +539,13 @@
+-        this.func_71357_I();
++        cpw.mods.fml.client.SplashProgress.drawVanillaScreen();
+         this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
+         this.field_110451_am.func_110542_a(this.field_147127_av);
+         this.field_147126_aw = new MusicTicker(this);
+@@ -532,19 +539,20 @@
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -70,6 +75,14 @@
          }
          else
          {
+             this.func_147108_a(new GuiMainMenu());
+         }
+ 
+-        this.field_71446_o.func_147645_c(this.field_152354_ay);
++        cpw.mods.fml.client.SplashProgress.clearVanillaResources(field_71446_o, field_152354_ay);
+         this.field_152354_ay = null;
+         this.field_71461_s = new LoadingScreenRenderer(this);
+ 
 @@ -553,6 +561,7 @@
              this.func_71352_k();
          }

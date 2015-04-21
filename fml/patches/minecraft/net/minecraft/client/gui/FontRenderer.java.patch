@@ -1,0 +1,124 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/FontRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/FontRenderer.java
+@@ -54,7 +54,7 @@
+         this.field_111273_g = p_i1035_2_;
+         this.field_78298_i = p_i1035_3_;
+         this.field_78293_l = p_i1035_4_;
+-        p_i1035_3_.func_110577_a(this.field_111273_g);
++        bindTexture(this.field_111273_g);
+ 
+         for (int i = 0; i < 32; ++i)
+         {
+@@ -102,7 +102,7 @@
+ 
+         try
+         {
+-            bufferedimage = ImageIO.read(Minecraft.func_71410_x().func_110442_L().func_110536_a(this.field_111273_g).func_110527_b());
++            bufferedimage = ImageIO.read(getResourceInputStream(this.field_111273_g));
+         }
+         catch (IOException ioexception)
+         {
+@@ -167,7 +167,7 @@
+     {
+         try
+         {
+-            InputStream inputstream = Minecraft.func_71410_x().func_110442_L().func_110536_a(new ResourceLocation("font/glyph_sizes.bin")).func_110527_b();
++            InputStream inputstream = getResourceInputStream(new ResourceLocation("font/glyph_sizes.bin"));
+             inputstream.read(this.field_78287_e);
+         }
+         catch (IOException ioexception)
+@@ -186,7 +186,7 @@
+         float f = (float)(p_78266_1_ % 16 * 8);
+         float f1 = (float)(p_78266_1_ / 16 * 8);
+         float f2 = p_78266_2_ ? 1.0F : 0.0F;
+-        this.field_78298_i.func_110577_a(this.field_111273_g);
++        bindTexture(this.field_111273_g);
+         float f3 = (float)this.field_78286_d[p_78266_1_] - 0.01F;
+         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+         GL11.glTexCoord2f(f / 128.0F, f1 / 128.0F);
+@@ -213,7 +213,7 @@
+ 
+     private void func_78257_a(int p_78257_1_)
+     {
+-        this.field_78298_i.func_110577_a(this.func_111271_a(p_78257_1_));
++        bindTexture(this.func_111271_a(p_78257_1_));
+     }
+ 
+     protected float func_78277_a(char p_78277_1_, boolean p_78277_2_)
+@@ -260,7 +260,7 @@
+ 
+     public int func_85187_a(String p_85187_1_, int p_85187_2_, int p_85187_3_, int p_85187_4_, boolean p_85187_5_)
+     {
+-        GL11.glEnable(GL11.GL_ALPHA_TEST);
++        enableAlpha();
+         this.func_78265_b();
+         int l;
+ 
+@@ -332,7 +332,7 @@
+ 
+                     k = this.field_78285_g[j];
+                     this.field_78304_r = k;
+-                    GL11.glColor4f((float)(k >> 16) / 255.0F, (float)(k >> 8 & 255) / 255.0F, (float)(k & 255) / 255.0F, this.field_78305_q);
++                    setColor((float)(k >> 16) / 255.0F, (float)(k >> 8 & 255) / 255.0F, (float)(k & 255) / 255.0F, this.field_78305_q);
+                 }
+                 else if (j == 16)
+                 {
+@@ -361,7 +361,7 @@
+                     this.field_78299_w = false;
+                     this.field_78300_v = false;
+                     this.field_78301_u = false;
+-                    GL11.glColor4f(this.field_78291_n, this.field_78292_o, this.field_78306_p, this.field_78305_q);
++                    setColor(this.field_78291_n, this.field_78292_o, this.field_78306_p, this.field_78305_q);
+                 }
+ 
+                 ++i;
+@@ -420,6 +420,15 @@
+                     ++f;
+                 }
+ 
++                doDraw(f);
++            }
++        }
++    }
++
++    protected void doDraw(float f)
++    {
++        {
++            {
+                 Tessellator tessellator;
+ 
+                 if (this.field_78299_w)
+@@ -492,7 +501,7 @@
+             this.field_78292_o = (float)(p_78258_4_ >> 8 & 255) / 255.0F;
+             this.field_78306_p = (float)(p_78258_4_ & 255) / 255.0F;
+             this.field_78305_q = (float)(p_78258_4_ >> 24 & 255) / 255.0F;
+-            GL11.glColor4f(this.field_78291_n, this.field_78292_o, this.field_78306_p, this.field_78305_q);
++            setColor(this.field_78291_n, this.field_78292_o, this.field_78306_p, this.field_78305_q);
+             this.field_78295_j = (float)p_78258_2_;
+             this.field_78296_k = (float)p_78258_3_;
+             this.func_78255_a(p_78258_1_, p_78258_5_);
+@@ -829,4 +838,24 @@
+     {
+         return this.field_78294_m;
+     }
++
++    protected void setColor(float r, float g, float b, float a)
++    {
++        GL11.glColor4f(r, g, b, a);
++    }
++
++    protected void enableAlpha()
++    {
++        GL11.glEnable(GL11.GL_ALPHA_TEST);
++    }
++
++    protected void bindTexture(ResourceLocation location)
++    {
++        field_78298_i.func_110577_a(location);
++    }
++
++    protected InputStream getResourceInputStream(ResourceLocation location) throws IOException
++    {
++        return Minecraft.func_71410_x().func_110442_L().func_110536_a(location).func_110527_b();
++    }
+ }
