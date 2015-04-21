@@ -8,7 +8,7 @@ Version 1.0
 
 Minecraft: Denotes a copy of the Minecraft game licensed by Mojang AB
 
-User: Anybody that interract with the software in one of the following ways:
+User: Anybody that intearct with the software in one of the following ways:
    - play
    - decompile
    - recompile or compile
