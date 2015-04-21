@@ -282,6 +282,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void haltGame(String message, Throwable t)
     {
+        SplashProgress.finish();
         client.displayCrashReport(new CrashReport(message, t));
         throw Throwables.propagate(t);
     }
@@ -295,6 +296,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)
         {
+            SplashProgress.finish();
             return;
         }
         try
@@ -305,6 +307,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
+            SplashProgress.finish();
             return;
         }
         catch (LoaderException le)
