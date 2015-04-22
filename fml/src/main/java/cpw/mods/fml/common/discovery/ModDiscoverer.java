@@ -84,9 +84,13 @@ public class ModDiscoverer
 
     public void findModDirMods(File modsDir)
     {
-        File[] modList = FileListHelper.sortFileList(modsDir, null);
-        modList = FileListHelper.sortFileList(ObjectArrays.concat(modList, ModListHelper.additionalMods.values().toArray(new File[0]), File.class));
+        findModDirMods(modsDir, new File[0]);
+    }
 
+    public void findModDirMods(File modsDir, File[] supplementalModFileCandidates)
+    {
+        File[] modList = FileListHelper.sortFileList(modsDir, null);
+        modList = FileListHelper.sortFileList(ObjectArrays.concat(modList, supplementalModFileCandidates, File.class));
         for (File modFile : modList)
         {
             // skip loaded coremods

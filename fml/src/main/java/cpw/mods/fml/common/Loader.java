@@ -71,6 +71,7 @@ import cpw.mods.fml.common.toposort.ModSortingException.SortingExceptionData;
 import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
+import cpw.mods.fml.relauncher.ModListHelper;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -337,8 +338,9 @@ public class Loader
         discoverer.findClasspathMods(modClassLoader);
         FMLLog.fine("Minecraft jar mods loaded successfully");
 
+        FMLLog.getLogger().log(Level.INFO, "Found {} mods from the command line. Injecting into mod discoverer",ModListHelper.additionalMods.size());
         FMLLog.info("Searching %s for mods", canonicalModsDir.getAbsolutePath());
-        discoverer.findModDirMods(canonicalModsDir);
+        discoverer.findModDirMods(canonicalModsDir, ModListHelper.additionalMods.values().toArray(new File[0]));
         File versionSpecificModsDir = new File(canonicalModsDir,mccversion);
         if (versionSpecificModsDir.isDirectory())
         {
