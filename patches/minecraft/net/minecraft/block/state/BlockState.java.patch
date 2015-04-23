@@ -26,6 +26,15 @@
              linkedhashmap.put(map, stateimplementation);
              arraylist.add(stateimplementation);
          }
+@@ -165,7 +175,7 @@
+                 }
+                 else
+                 {
+-                    return (IBlockState)(this.field_177237_b.get(p_177226_1_) == p_177226_2_ ? this : (IBlockState)this.field_177238_c.get(p_177226_1_, p_177226_2_));
++                    return (IBlockState)(this.field_177237_b.get(p_177226_1_).equals(p_177226_2_) ? this : (IBlockState)this.field_177238_c.get(p_177226_1_, p_177226_2_));
+                 }
+             }
+ 
 @@ -231,5 +241,10 @@
              {
                  this(p_i45661_1_, p_i45661_2_);
