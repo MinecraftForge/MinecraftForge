@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -156,12 +156,14 @@
+@@ -96,6 +96,7 @@
+         this.field_94252_e.clear();
+         this.field_94258_i.clear();
+         int j = Integer.MAX_VALUE;
++        cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture stitching", this.field_110574_e.size());
+         Iterator iterator = this.field_110574_e.entrySet().iterator();
+         TextureAtlasSprite textureatlassprite;
+ 
+@@ -108,6 +109,7 @@
+ 
+             try
+             {
++                bar.step(resourcelocation1.func_110623_a());
+                 IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
+                 BufferedImage[] abufferedimage = new BufferedImage[1 + this.field_147636_j];
+                 abufferedimage[0] = ImageIO.read(iresource.func_110527_b());
+@@ -156,12 +158,14 @@
              }
              catch (RuntimeException runtimeexception)
              {
@@ -17,3 +33,11 @@
                  continue;
              }
  
+@@ -169,6 +173,7 @@
+             stitcher.func_110934_a(textureatlassprite);
+         }
+ 
++        cpw.mods.fml.common.ProgressManager.pop(bar);
+         int i1 = MathHelper.func_151239_c(j);
+ 
+         if (i1 < this.field_147636_j)

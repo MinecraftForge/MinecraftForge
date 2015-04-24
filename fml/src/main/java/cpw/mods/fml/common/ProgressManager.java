@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.google.common.base.Joiner;
+
 /**
  * @deprecated not a stable API, will break, don't use this yet
  */
@@ -58,6 +60,11 @@ public class ProgressManager
         {
             this.title = title;
             this.steps = steps;
+        }
+
+        public void step(Class<?> classToName, String... extra)
+        {
+            step(ClassNameUtils.shortName(classToName)+Joiner.on(' ').join(extra));
         }
 
         public void step(String message)

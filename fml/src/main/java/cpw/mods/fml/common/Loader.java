@@ -709,7 +709,7 @@ public class Loader
         // Dump the custom registry data map, if necessary
         GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
-        progressBar.step("Minecraft setup completion");
+        progressBar.step("Completing Minecraft initialization");
     }
 
     public ICrashCallable getCallableCrashInformation()
