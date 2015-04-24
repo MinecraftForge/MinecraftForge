@@ -54,7 +54,7 @@
       "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.scala-lang:scala-parser-combinators_2.11:1.0.1",
+      "name": "org.scala-lang.modules:scala-parser-combinators_2.11:1.0.1",
       "children" : ["sources"],
       "url" : "http://repo.maven.apache.org/maven2"
     },
@@ -64,12 +64,12 @@
       "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.scala-lang:scala-swing_2.11:1.0.1",
+      "name": "org.scala-lang.modules:scala-swing_2.11:1.0.1",
       "children" : ["sources"],
       "url" : "http://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.scala-lang:scala-xml_2.11:1.0.2",
+      "name": "org.scala-lang.modules:scala-xml_2.11:1.0.2",
       "children" : ["sources"],
       "url" : "http://repo.maven.apache.org/maven2"
     },
