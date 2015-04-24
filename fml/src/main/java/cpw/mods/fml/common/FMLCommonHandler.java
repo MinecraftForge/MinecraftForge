@@ -597,6 +597,7 @@ public class FMLCommonHandler
 
     public void processWindowMessages()
     {
+        if (sidedDelegate == null) return;
         sidedDelegate.processWindowMessages();
     }
 

@@ -60,10 +60,44 @@
          this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
          this.field_110451_am.func_110542_a(this.field_147127_av);
          this.field_147126_aw = new MusicTicker(this);
-@@ -532,19 +539,20 @@
+@@ -492,7 +499,10 @@
+         this.field_110451_am.func_110542_a(this.field_71464_q);
+         this.field_110451_am.func_110542_a(new GrassColorReloadListener());
+         this.field_110451_am.func_110542_a(new FoliageColorReloadListener());
++        cpw.mods.fml.common.ProgressManager.ProgressBar bar= cpw.mods.fml.common.ProgressManager.push("Rendering Setup", 9);
++        bar.step("Loading Render Manager");
+         RenderManager.field_78727_a.field_78721_f = new ItemRenderer(this);
++        bar.step("Loading Entity Renderer");
+         this.field_71460_t = new EntityRenderer(this, this.field_110451_am);
+         this.field_110451_am.func_110542_a(this.field_71460_t);
+         AchievementList.field_76004_f.func_75988_a(new IStatStringFormat()
+@@ -510,6 +520,7 @@
+                 }
+             }
+         });
++        bar.step("Loading GL properties");
+         this.field_71417_B = new MouseHelper();
+         this.func_71361_d("Pre startup");
+         GL11.glEnable(GL11.GL_TEXTURE_2D);
+@@ -524,27 +535,35 @@
+         GL11.glLoadIdentity();
+         GL11.glMatrixMode(GL11.GL_MODELVIEW);
+         this.func_71361_d("Startup");
++        bar.step("Render Global instance");
+         this.field_71438_f = new RenderGlobal(this);
++        bar.step("Building Blocks Texture");
+         this.field_147128_au = new TextureMap(0, "textures/blocks");
++        bar.step("Anisotropy and Mipmaps");
+         this.field_147128_au.func_147632_b(this.field_71474_y.field_151443_J);
+         this.field_147128_au.func_147633_a(this.field_71474_y.field_151442_I);
++        bar.step("Loading Blocks Texture");
+         this.field_71446_o.func_130088_a(TextureMap.field_110575_b, this.field_147128_au);
++        bar.step("Loading Items Texture");
          this.field_71446_o.func_130088_a(TextureMap.field_110576_c, new TextureMap(1, "textures/items"));
++        bar.step("Viewport");
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
++        cpw.mods.fml.common.ProgressManager.pop(bar);
 +        FMLClientHandler.instance().finishMinecraftLoading();
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
@@ -83,7 +117,7 @@
          this.field_152354_ay = null;
          this.field_71461_s = new LoadingScreenRenderer(this);
  
-@@ -553,6 +561,7 @@
+@@ -553,6 +572,7 @@
              this.func_71352_k();
          }
  
@@ -91,7 +125,7 @@
          try
          {
              Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
-@@ -971,9 +980,11 @@
+@@ -970,9 +990,11 @@
  
          if (!this.field_71454_w)
          {
@@ -103,7 +137,7 @@
          }
  
          GL11.glFlush();
-@@ -1555,6 +1566,8 @@
+@@ -1554,6 +1576,8 @@
              --this.field_71467_ac;
          }
  
@@ -112,7 +146,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1699,6 +1712,7 @@
+@@ -1698,6 +1722,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -120,7 +154,7 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1836,6 +1850,7 @@
+@@ -1835,6 +1860,7 @@
                          }
                      }
                  }
@@ -128,7 +162,7 @@
              }
  
              for (j = 0; j < 9; ++j)
-@@ -2026,12 +2041,15 @@
+@@ -2025,12 +2051,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -144,7 +178,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2067,6 +2085,12 @@
+@@ -2066,6 +2095,12 @@
  
          while (!this.field_71437_Z.func_71200_ad())
          {
@@ -157,7 +191,7 @@
              String s2 = this.field_71437_Z.func_71195_b_();
  
              if (s2 != null)
-@@ -2142,6 +2166,7 @@
+@@ -2141,6 +2176,7 @@
              this.field_110448_aq.func_148529_f();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;

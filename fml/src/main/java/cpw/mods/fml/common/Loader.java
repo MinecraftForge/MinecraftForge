@@ -464,7 +464,7 @@ public class Loader
      */
     public void loadMods()
     {
-        progressBar = ProgressManager.push("Mod Loading", 5);
+        progressBar = ProgressManager.push("Loading", 7);
         progressBar.step("Constructing Mods");
         initializeLoader();
         mods = Lists.newArrayList();
@@ -521,6 +521,7 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         progressBar.step("Initializing mods Phase 2");
         modController.transition(LoaderState.INITIALIZATION, false);
+        progressBar.step("Initializing Minecraft Engine");
     }
 
     private void disableRequestedMods()
@@ -708,8 +709,7 @@ public class Loader
         // Dump the custom registry data map, if necessary
         GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
-        ProgressManager.pop(progressBar);
-        progressBar = null;
+        progressBar.step("Minecraft setup completion");
     }
 
     public ICrashCallable getCallableCrashInformation()
@@ -987,5 +987,11 @@ public class Loader
         {
             FMLLog.log(Level.INFO, e, "An error occurred writing the fml mod states file, your disabled change won't persist");
         }
+    }
+
+    public void loadingComplete()
+    {
+        ProgressManager.pop(progressBar);
+        progressBar = null;
     }
 }

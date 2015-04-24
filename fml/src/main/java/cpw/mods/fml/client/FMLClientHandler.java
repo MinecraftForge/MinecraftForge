@@ -341,7 +341,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         loading = false;
         client.gameSettings.loadOptions(); //Reload options to load any mod added keybindings.
-        SplashProgress.finish();
     }
 
     @SuppressWarnings("unused")
@@ -397,6 +396,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
         }
         logMissingTextureErrors();
+        Loader.instance().loadingComplete();
+        SplashProgress.finish();
     }
     /**
      * Get the server instance
