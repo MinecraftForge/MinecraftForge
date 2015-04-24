@@ -2,6 +2,7 @@ package cpw.mods.fml.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.concurrent.locks.Lock;
@@ -20,6 +21,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Level;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.Drawable;
@@ -27,6 +29,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.SharedDrawable;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICrashCallable;
 import cpw.mods.fml.common.ProgressManager;
 import cpw.mods.fml.common.ProgressManager.ProgressBar;
@@ -105,6 +108,7 @@ public class SplashProgress
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        Thread mainThread = Thread.currentThread();
         thread = new Thread(new Runnable()
         {
             private final int barWidth = 400;
@@ -311,6 +315,14 @@ public class SplashProgress
                 {
                     lock.unlock();
                 }
+            }
+        });
+        thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler()
+        {
+            public void uncaughtException(Thread t, Throwable e)
+            {
+                FMLLog.log(Level.ERROR, e, "Splash thread Exception");
+                Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(e, "Splash thread"));
             }
         });
         thread.start();
