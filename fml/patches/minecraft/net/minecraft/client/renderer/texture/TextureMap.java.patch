@@ -8,14 +8,14 @@
          Iterator iterator = this.field_110574_e.entrySet().iterator();
          TextureAtlasSprite textureatlassprite;
  
-@@ -108,6 +109,7 @@
+@@ -105,6 +106,7 @@
+             ResourceLocation resourcelocation = new ResourceLocation((String)entry.getKey());
+             textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
++            bar.step(resourcelocation1.func_110623_a());
  
              try
              {
-+                bar.step(resourcelocation1.func_110623_a());
-                 IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
-                 BufferedImage[] abufferedimage = new BufferedImage[1 + this.field_147636_j];
-                 abufferedimage[0] = ImageIO.read(iresource.func_110527_b());
 @@ -156,12 +158,14 @@
              }
              catch (RuntimeException runtimeexception)
@@ -41,3 +41,50 @@
          int i1 = MathHelper.func_151239_c(j);
  
          if (i1 < this.field_147636_j)
+@@ -178,10 +183,12 @@
+         }
+ 
+         Iterator iterator1 = this.field_110574_e.values().iterator();
++        bar = cpw.mods.fml.common.ProgressManager.push("Mipmap generation", this.field_110574_e.size());
+ 
+         while (iterator1.hasNext())
+         {
+             final TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
++            bar.step(textureatlassprite1.func_94215_i());
+ 
+             try
+             {
+@@ -222,9 +229,12 @@
+ 
+         this.field_94249_f.func_147963_d(this.field_147636_j);
+         stitcher.func_110934_a(this.field_94249_f);
++        cpw.mods.fml.common.ProgressManager.pop(bar);
++        bar = cpw.mods.fml.common.ProgressManager.push("Texture creation", 3);
+ 
+         try
+         {
++            bar.step("Stitching");
+             stitcher.func_94305_f();
+         }
+         catch (StitcherException stitcherexception)
+@@ -233,10 +243,12 @@
+         }
+ 
+         field_147635_d.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c});
++        bar.step("Allocating GL texture");
+         TextureUtil.func_147946_a(this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b(), (float)this.field_147637_k);
+         HashMap hashmap = Maps.newHashMap(this.field_110574_e);
+         Iterator iterator2 = stitcher.func_94309_g().iterator();
+ 
++        bar.step("Uploading GL texture");
+         while (iterator2.hasNext())
+         {
+             textureatlassprite = (TextureAtlasSprite)iterator2.next();
+@@ -274,6 +286,7 @@
+             textureatlassprite = (TextureAtlasSprite)iterator2.next();
+             textureatlassprite.func_94217_a(this.field_94249_f);
+         }
++        cpw.mods.fml.common.ProgressManager.pop(bar);
+     }
+ 
+     private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)
