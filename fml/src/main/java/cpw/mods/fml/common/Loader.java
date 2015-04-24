@@ -464,8 +464,8 @@ public class Loader
      */
     public void loadMods()
     {
-        progressBar = ProgressManager.push("FML", 5);
-        progressBar.step("Constructing");
+        progressBar = ProgressManager.push("Mod Loading", 5);
+        progressBar.step("Constructing Mods");
         initializeLoader();
         mods = Lists.newArrayList();
         namedMods = Maps.newHashMap();
@@ -505,7 +505,7 @@ public class Loader
         {
             FMLLog.fine("No user mod signature data found");
         }
-        progressBar.step("Preinitialization");
+        progressBar.step("Initializing mods Phase 1");
         modController.transition(LoaderState.PREINITIALIZATION, false);
     }
 
@@ -519,7 +519,7 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-        progressBar.step("Initialization");
+        progressBar.step("Initializing mods Phase 2");
         modController.transition(LoaderState.INITIALIZATION, false);
     }
 
@@ -697,7 +697,7 @@ public class Loader
     {
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
-        progressBar.step("Postinitialization");
+        progressBar.step("Initializing mods Phase 3");
         modController.transition(LoaderState.POSTINITIALIZATION, false);
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);

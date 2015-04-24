@@ -183,13 +183,10 @@ public class LoadController
         {
             modObjectList = buildModObjectList();
         }
-        String event = stateEvent.toString();
-        event = event.substring(event.lastIndexOf('.') + 1);
-        event = event.substring(0, event.indexOf('@'));
-        ProgressBar bar = ProgressManager.push(event + " propagation", activeModList.size());
+        ProgressBar bar = ProgressManager.push(stateEvent.description(), activeModList.size());
         for (ModContainer mc : activeModList)
         {
-            bar.step("mod: "+mc.getName());
+            bar.step(mc.getName());
             sendEventToModContainer(stateEvent, mc);
         }
         ProgressManager.pop(bar);
