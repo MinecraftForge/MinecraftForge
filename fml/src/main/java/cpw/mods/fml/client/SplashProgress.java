@@ -45,6 +45,7 @@ public class SplashProgress
     private static volatile boolean pause = false;
     private static volatile boolean done = false;
     private static Thread thread;
+    private static volatile Throwable threadError;
     private static int angle = 0;
     private static final Lock lock = new ReentrantLock(true);
     private static SplashFontRenderer fontRenderer;
@@ -322,12 +323,20 @@ public class SplashProgress
             public void uncaughtException(Thread t, Throwable e)
             {
                 FMLLog.log(Level.ERROR, e, "Splash thread Exception");
-                Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(e, "Splash thread"));
+                threadError = e;
             }
         });
         thread.start();
+        checkThreadState();
     }
 
+    private static void checkThreadState()
+    {
+        if(thread.getState() == Thread.State.TERMINATED || threadError != null)
+        {
+            throw new IllegalStateException("Splash thread", threadError);
+        }
+    }
     /**
      * Call before you need to explicitly modify GL context state during loading.
      * Resource loading doesn't usually require this call.
@@ -338,6 +347,7 @@ public class SplashProgress
     public static void pause()
     {
         if(!enabled) return;
+        checkThreadState();
         pause = true;
         lock.lock();
         try
@@ -359,6 +369,7 @@ public class SplashProgress
     public static void resume()
     {
         if(!enabled) return;
+        checkThreadState();
         pause = false;
         try
         {
@@ -376,6 +387,7 @@ public class SplashProgress
     public static void finish()
     {
         if(!enabled) return;
+        checkThreadState();
         try
         {
             done = true;
