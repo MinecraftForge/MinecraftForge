@@ -259,7 +259,7 @@ public class SplashProgress
                 drawBox((barWidth - 2) * b.getStep() / b.getSteps(), barHeight - 2);
                 // progress text
                 String progress = "" + b.getStep() + "/" + b.getSteps();
-                GL11.glTranslatef(((float)barWidth - 2 - fontRenderer.getStringWidth(progress))/ 2, 2, 0);
+                GL11.glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
                 setColor(fontColor);
                 GL11.glScalef(2, 2, 1);
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
