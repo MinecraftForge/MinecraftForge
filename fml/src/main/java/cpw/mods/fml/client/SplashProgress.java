@@ -4,6 +4,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -39,6 +42,7 @@ import org.lwjgl.util.glu.GLU;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICrashCallable;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ProgressManager;
 import cpw.mods.fml.common.ProgressManager.ProgressBar;
 import cpw.mods.fml.common.asm.FMLSanityChecker;
@@ -59,26 +63,97 @@ public class SplashProgress
     private static SplashFontRenderer fontRenderer;
 
     private static final IResourcePack mcPack = Minecraft.getMinecraft().mcDefaultResourcePack;
-    private static final IResourcePack fmlPack = createFmlResourcePack();
+    private static final IResourcePack fmlPack = createResourcePack(FMLSanityChecker.fmlLocation);
+    private static IResourcePack miscPack;
 
     private static Texture fontTexture;
     private static Texture logoTexture;
     private static Texture forgeTexture;
 
-    private static ResourceLocation configLocation = new ResourceLocation("fml", "splash.properties");
-    private static final Properties config = loadConfig();
+    private static Properties config;
 
-    private static final boolean enabled = Boolean.parseBoolean(config.getProperty("enabled")) && ! FMLClientHandler.instance().hasOptifine();
-    private static final boolean rotate = Boolean.parseBoolean(config.getProperty("rotate"));
-    private static final int logoOffset = getInt("logoOffset");
-    private static final int backgroundColor = getInt("background");
-    private static final int fontColor = getInt("font");
-    private static final int barBorderColor = getInt("barBorder");
-    private static final int barColor = getInt("bar");
-    private static final int barBackgroundColor = getInt("barBackground");
+    private static boolean enabled;
+    private static boolean rotate;
+    private static int logoOffset;
+    private static int backgroundColor;
+    private static int fontColor;
+    private static int barBorderColor;
+    private static int barColor;
+    private static int barBackgroundColor;
+
+    private static String getString(String name, String def)
+    {
+        String value = config.getProperty(name, def);
+        config.setProperty(name, value);
+        return value;
+    }
+
+    private static boolean getBool(String name, boolean def)
+    {
+        return Boolean.parseBoolean(getString(name, Boolean.toString(def)));
+    }
+
+    private static int getInt(String name, int def)
+    {
+        return Integer.decode(getString(name, Integer.toString(def)));
+    }
+
+    private static int getHex(String name, int def)
+    {
+        return Integer.decode(getString(name, "0x" + Integer.toString(def, 16).toUpperCase()));
+    }
 
     public static void start()
     {
+        File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        FileReader r = null;
+        config = new Properties();
+        try
+        {
+            r = new FileReader(configFile);
+            config.load(r);
+        }
+        catch(IOException e)
+        {
+            FMLLog.info("Could not load splash.properties, will create a default one");
+        }
+        finally
+        {
+            IOUtils.closeQuietly(r);
+        }
+
+        enabled =            getBool("enabled",      true) && !FMLClientHandler.instance().hasOptifine();
+        rotate =             getBool("rotate",       true);
+        logoOffset =         getInt("logoOffset",    10);
+        backgroundColor =    getHex("background",    0xFFFFFF);
+        fontColor =          getHex("font",          0x000000);
+        barBorderColor =     getHex("barBorder",     0xC0C0C0);
+        barColor =           getHex("bar",           0xCB3D35);
+        barBackgroundColor = getHex("barBackground", 0xFFFFFF);
+
+        final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
+        final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
+        final ResourceLocation forgeLoc = new ResourceLocation(getString("forgeTexture", "fml:textures/gui/forge.png"));
+
+        File miscPackFile = new File(Minecraft.getMinecraft().mcDataDir, getString("resourcePackPath", "resources"));
+
+        FileWriter w = null;
+        try
+        {
+            w = new FileWriter(configFile);
+            config.store(w, "Splash screen properties");
+        }
+        catch(IOException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+        }
+        finally
+        {
+            IOUtils.closeQuietly(w);
+        }
+
+        miscPack = createResourcePack(miscPackFile);
+
         if(!enabled) return;
         // getting debug info out of the way, while we still can
         FMLCommonHandler.instance().registerCrashCallable(new ICrashCallable()
@@ -121,9 +196,9 @@ public class SplashProgress
             public void run()
             {
                 setGL();
-                fontTexture = new Texture(mcPack, new ResourceLocation("textures/font/ascii.png"));
-                logoTexture = new Texture(mcPack, new ResourceLocation("textures/gui/title/mojang.png"));
-                forgeTexture = new Texture(fmlPack, new ResourceLocation(config.getProperty("forgeTexture")));
+                fontTexture = new Texture(fontLoc);
+                logoTexture = new Texture(logoLoc);
+                forgeTexture = new Texture(forgeLoc);
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer = new SplashFontRenderer();
                 glDisable(GL_TEXTURE_2D);
@@ -409,42 +484,16 @@ public class SplashProgress
         }
     }
 
-    private static IResourcePack createFmlResourcePack()
+    private static IResourcePack createResourcePack(File file)
     {
-        if(FMLSanityChecker.fmlLocation.isDirectory())
+        if(file.isDirectory())
         {
-            return new FolderResourcePack(FMLSanityChecker.fmlLocation);
+            return new FolderResourcePack(file);
         }
         else
         {
-            return new FileResourcePack(FMLSanityChecker.fmlLocation);
+            return new FileResourcePack(file);
         }
-    }
-
-    private static Properties loadConfig()
-    {
-        InputStream s = null;
-        try
-        {
-            s = fmlPack.getInputStream(configLocation);
-            Properties config = new Properties();
-            config.load(s);
-            return config;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(s);
-        }
-    }
-
-    private static int getInt(String name)
-    {
-        return Integer.decode(config.getProperty(name));
     }
 
     private static final IntBuffer buf = BufferUtils.createIntBuffer(4 * 1024 * 1024);
@@ -458,13 +507,13 @@ public class SplashProgress
         private final int frames;
         private final int size;
 
-        public Texture(IResourcePack pack, ResourceLocation location)
+        public Texture(ResourceLocation location)
         {
             InputStream s = null;
             try
             {
                 this.location = location;
-                s = pack.getInputStream(location);
+                s = open(location);
                 ImageInputStream stream = ImageIO.createImageInputStream(s);
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
                 if(!readers.hasNext()) throw new IOException("No suitable reader found for image" + location);
@@ -493,7 +542,6 @@ public class SplashProgress
                 {
                     for(int j = 0; i * (size / width) + j < frames && j < size / width; j++)
                     {
-                        FMLLog.info("loc: %s, i: %s, j: %s, size: %s, width: %s, height: %s", location, i, j, size, width, height);
                         buf.clear();
                         BufferedImage image = images[i * (size / width) + j];
                         for(int k = 0; k < height; k++)
@@ -623,5 +671,18 @@ public class SplashProgress
         {
             throw new IllegalStateException(where + ": " + GLU.gluErrorString(err));
         }
+    }
+
+    private static InputStream open(ResourceLocation loc) throws IOException
+    {
+        if(miscPack.resourceExists(loc))
+        {
+            return miscPack.getInputStream(loc);
+        }
+        else if(fmlPack.resourceExists(loc))
+        {
+            return fmlPack.getInputStream(loc);
+        }
+        return mcPack.getInputStream(loc);
     }
 }
