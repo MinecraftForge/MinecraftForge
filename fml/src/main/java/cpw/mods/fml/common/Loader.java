@@ -13,6 +13,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
@@ -50,8 +52,17 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.MetadataCollection.ArtifactVersionAdapter;
 import cpw.mods.fml.common.ModContainer.Disableable;
 import cpw.mods.fml.common.ProgressManager.ProgressBar;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
@@ -450,6 +461,8 @@ public class Loader
             FMLLog.severe("Attempting to load configuration from %s, which is not a directory", canonicalConfigPath);
             throw new LoaderException();
         }
+
+        readInjectedDependencies();
     }
 
     public List<ModContainer> getModList()
@@ -993,5 +1006,58 @@ public class Loader
     {
         ProgressManager.pop(progressBar);
         progressBar = null;
+    }
+
+    private ListMultimap<String,ArtifactVersion> injectedBefore = ArrayListMultimap.create();
+    private ListMultimap<String,ArtifactVersion> injectedAfter = ArrayListMultimap.create();
+
+    private void readInjectedDependencies()
+    {
+        File injectedDepFile = new File(getConfigDir(),"injectedDependencies.json");
+        if (!injectedDepFile.exists())
+        {
+            FMLLog.getLogger().log(Level.DEBUG, "File {} not found. No dependencies injected", injectedDepFile.getAbsolutePath());
+            return;
+        }
+        JsonParser parser = new JsonParser();
+        JsonElement injectedDeps;
+        try
+        {
+            injectedDeps = parser.parse(new FileReader(injectedDepFile));
+            for (JsonElement el : injectedDeps.getAsJsonArray())
+            {
+                JsonObject jo = el.getAsJsonObject();
+                String modId = jo.get("modId").getAsString();
+                JsonArray deps = jo.get("deps").getAsJsonArray();
+                for (JsonElement dep : deps)
+                {
+                    JsonObject depObj = dep.getAsJsonObject();
+                    String type = depObj.get("type").getAsString();
+                    if (type.equals("before")) {
+                        injectedBefore.put(modId, VersionParser.parseVersionReference(depObj.get("target").getAsString()));
+                    } else if (type.equals("after")) {
+                        injectedAfter.put(modId, VersionParser.parseVersionReference(depObj.get("target").getAsString()));
+                    } else {
+                        FMLLog.getLogger().log(Level.ERROR, "Invalid dependency type {}", type);
+                        throw new RuntimeException("Unable to parse type");
+                    }
+                }
+            }
+        } catch (Exception e)
+        {
+            FMLLog.getLogger().log(Level.ERROR, "Unable to parse {} - skipping", injectedDepFile);
+            FMLLog.getLogger().throwing(Level.ERROR, e);
+            return;
+        }
+        FMLLog.getLogger().log(Level.DEBUG, "Loaded {} injected dependencies on modIds: {}", injectedBefore.size(), injectedBefore.keySet());
+    }
+
+    List<ArtifactVersion> getInjectedBefore(String modId)
+    {
+        return injectedBefore.get(modId);
+    }
+    List<ArtifactVersion> getInjectedAfter(String modId)
+    {
+        return injectedAfter.get(modId);
     }
 }
