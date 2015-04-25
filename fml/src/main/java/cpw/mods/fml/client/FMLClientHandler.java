@@ -394,10 +394,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
+            Loader.instance().loadingComplete();
+            SplashProgress.finish();
         }
         logMissingTextureErrors();
-        Loader.instance().loadingComplete();
-        SplashProgress.finish();
     }
     /**
      * Get the server instance
@@ -921,6 +921,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void logMissingTextureErrors()
     {
+        if (missingTextures.isEmpty() && brokenTextures.isEmpty())
+        {
+            return;
+        }
         Logger logger = LogManager.getLogger("TEXTURE ERRORS");
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
