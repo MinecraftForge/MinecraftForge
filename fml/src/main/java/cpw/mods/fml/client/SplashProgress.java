@@ -68,7 +68,7 @@ public class SplashProgress
     private static ResourceLocation configLocation = new ResourceLocation("fml", "splash.properties");
     private static final Properties config = loadConfig();
 
-    private static final boolean enabled = Boolean.parseBoolean(config.getProperty("enabled"));
+    private static final boolean enabled = Boolean.parseBoolean(config.getProperty("enabled")) && ! FMLClientHandler.instance().hasOptifine();
     private static final boolean rotate = Boolean.parseBoolean(config.getProperty("rotate"));
     private static final int logoOffset = getInt("logoOffset");
     private static final int backgroundColor = getInt("background");
