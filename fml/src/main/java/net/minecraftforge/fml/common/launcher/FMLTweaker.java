@@ -118,6 +118,7 @@ public class FMLTweaker implements ITweaker {
     {
         classLoader.addClassLoaderExclusion("org.apache.");
         classLoader.addClassLoaderExclusion("com.google.common.");
+        classLoader.addClassLoaderExclusion("org.objectweb.asm.");
         classLoader.addTransformerExclusion("net.minecraftforge.fml.repackage.");
         classLoader.addTransformerExclusion("net.minecraftforge.fml.relauncher.");
         classLoader.addTransformerExclusion("net.minecraftforge.fml.common.asm.transformers.");
