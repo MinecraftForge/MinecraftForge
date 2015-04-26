@@ -122,6 +122,10 @@
     {
       "name": "com.google.guava:guava:17.0",
       "serverreq":true
+    },
+    {
+      "name": "org.apache.commons:commons-lang3:3.3.2",
+      "serverreq":true
     }
   ]
 }
