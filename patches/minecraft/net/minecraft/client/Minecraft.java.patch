@@ -86,7 +86,22 @@
                  i = Mouse.getEventButton();
                  KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
  
-@@ -2217,6 +2228,8 @@
+@@ -2206,7 +2217,13 @@
+         NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
+         networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
+         networkmanager.func_179290_a(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
+-        networkmanager.func_179290_a(new C00PacketLoginStart(this.func_110432_I().func_148256_e()));
++        com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
++        if (!this.func_110432_I().hasCachedProperties())
++        {
++            gameProfile = field_152355_az.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
++            this.func_110432_I().setProperties(gameProfile.getProperties());
++        }
++        networkmanager.func_179290_a(new C00PacketLoginStart(gameProfile));
+         this.field_71453_ak = networkmanager;
+     }
+ 
+@@ -2217,6 +2234,8 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -95,7 +110,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2230,6 +2243,18 @@
+@@ -2230,6 +2249,18 @@
              {
                  this.field_71437_Z.func_71263_m();
                  this.field_71437_Z.func_175592_a();
@@ -114,7 +129,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2361,134 +2386,11 @@
+@@ -2361,134 +2392,11 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -251,7 +266,7 @@
              if (flag)
              {
                  int j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + inventoryplayer.field_70461_c;
-@@ -2744,8 +2646,11 @@
+@@ -2744,8 +2652,11 @@
          p_70001_1_.func_152767_b("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -263,7 +278,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2753,6 +2658,7 @@
+@@ -2753,6 +2664,7 @@
  
              if (j != 0)
              {
