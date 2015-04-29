@@ -27,6 +27,7 @@ import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.io.IOUtils;
@@ -105,7 +106,7 @@ public class SplashProgress
 
     public static void start()
     {
-        File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        File configFile = new File(Loader.instance().getConfigDir(),"splash.properties");
         FileReader r = null;
         config = new Properties();
         try
@@ -122,7 +123,9 @@ public class SplashProgress
             IOUtils.closeQuietly(r);
         }
 
-        enabled =            getBool("enabled",      true) && !FMLClientHandler.instance().hasOptifine();
+        // Enable if we have the flag, and there's either no optifine, or optifine has added a key to the blackboard ("optifine.ForgeSplashCompatible")
+        // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
+        enabled =            getBool("enabled",      true) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
         rotate =             getBool("rotate",       true);
         logoOffset =         getInt("logoOffset",    10);
         backgroundColor =    getHex("background",    0xFFFFFF);
