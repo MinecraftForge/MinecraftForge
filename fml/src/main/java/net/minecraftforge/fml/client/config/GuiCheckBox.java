@@ -61,9 +61,9 @@ public class GuiCheckBox extends GuiButton
     }
 
     @Override
-    public boolean mousePressed(Minecraft p_146116_1_, int p_146116_2_, int p_146116_3_)
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
     {
-        if (this.enabled && this.visible && p_146116_2_ >= this.xPosition && p_146116_3_ >= this.yPosition && p_146116_2_ < this.xPosition + this.width && p_146116_3_ < this.yPosition + this.height)
+        if (this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height)
         {
             this.isChecked = !this.isChecked;
             return true;

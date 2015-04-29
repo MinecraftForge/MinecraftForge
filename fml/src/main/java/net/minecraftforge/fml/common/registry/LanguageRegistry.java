@@ -154,15 +154,15 @@ public class LanguageRegistry
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public void mergeLanguageTable(@SuppressWarnings("rawtypes") Map field_135032_a, String lang)
+    public void mergeLanguageTable(@SuppressWarnings("rawtypes") Map properties, String lang)
     {
         Properties langPack=modLanguageData.get(lang);
         if (langPack!=null) {
-            mergeWithoutOverwrite(langPack, field_135032_a);
+            mergeWithoutOverwrite(langPack, properties);
         }
         Properties usPack=modLanguageData.get("en_US");
         if (usPack!=null) {
-            mergeWithoutOverwrite(usPack, field_135032_a);
+            mergeWithoutOverwrite(usPack, properties);
         }
     }
 

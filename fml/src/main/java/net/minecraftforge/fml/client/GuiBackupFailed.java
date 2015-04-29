@@ -43,13 +43,13 @@ public class GuiBackupFailed extends GuiScreen
         }
     }
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - 2 * 10, 10);
         this.drawCenteredString(this.fontRendererObj, String.format("There was an error saving the archive %s", zipName.getName()), this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRendererObj, String.format("Please fix the problem and try again"), this.width / 2, offset, 0xFFFFFF);
-        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

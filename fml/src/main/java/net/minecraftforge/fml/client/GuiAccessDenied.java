@@ -43,13 +43,13 @@ public class GuiAccessDenied extends GuiScreen
         }
     }
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - 2 * 10, 10);
         this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRendererObj, String.format("The server %s has forbidden modded access", data.serverName), this.width / 2, offset, 0xFFFFFF);
-        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

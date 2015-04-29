@@ -64,9 +64,9 @@ public class FMLNetworkHandler
         dispatcher.serverToClientHandshake(player);
     }
 
-    public static void fmlClientHandshake(NetworkManager field_147393_d)
+    public static void fmlClientHandshake(NetworkManager networkManager)
     {
-        NetworkDispatcher dispatcher = NetworkDispatcher.allocAndSet(field_147393_d);
+        NetworkDispatcher dispatcher = NetworkDispatcher.allocAndSet(networkManager);
         dispatcher.clientToServerHandshake();
     }
 

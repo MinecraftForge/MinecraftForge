@@ -26,11 +26,11 @@ public class GuiIngameModOptions extends GuiScreen
     }
 
     @Override
-    protected void actionPerformed(GuiButton p_146284_1_)
+    protected void actionPerformed(GuiButton button)
     {
-        if (p_146284_1_.enabled)
+        if (button.enabled)
         {
-            if (p_146284_1_.id == 200)
+            if (button.id == 200)
             {
                 this.mc.gameSettings.saveOptions();
                 this.mc.displayGuiScreen(this.parentScreen);
@@ -39,13 +39,13 @@ public class GuiIngameModOptions extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         // force a non-transparent background
         this.drawDefaultBackground();
-        this.optionList.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        this.optionList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 15, 0xFFFFFF);
-        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     FontRenderer getFontRenderer() {

@@ -43,7 +43,7 @@ public class GuiModsMissingForServer extends GuiScreen
         }
     }
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
@@ -58,6 +58,6 @@ public class GuiModsMissingForServer extends GuiScreen
             offset += 10;
             this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
-        super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
