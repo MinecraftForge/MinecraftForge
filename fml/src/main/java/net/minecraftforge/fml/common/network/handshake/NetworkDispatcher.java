@@ -564,9 +564,9 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         FMLLog.fine("Received override dimension %d", overrideDim);
     }
 
-    public int getOverrideDimension(S01PacketJoinGame p_147282_1_) {
+    public int getOverrideDimension(S01PacketJoinGame packetIn) {
         FMLLog.fine("Overriding dimension: using %d", this.overrideLoginDim);
-        return this.overrideLoginDim != 0 ? this.overrideLoginDim : p_147282_1_.getDimension();
+        return this.overrideLoginDim != 0 ? this.overrideLoginDim : packetIn.getDimension();
     }
 
     private class MultiPartCustomPayload extends S3FPacketCustomPayload

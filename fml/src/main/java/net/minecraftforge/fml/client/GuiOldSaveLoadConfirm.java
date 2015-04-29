@@ -33,7 +33,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
     }
 
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRendererObj, String.format("The world %s contains pre-update modding data", saveName), this.width / 2, 50, 16777215);
@@ -44,18 +44,18 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
 
         for (k = 0; k < this.buttonList.size(); ++k)
         {
-            ((GuiButton)this.buttonList.get(k)).drawButton(this.mc, p_73863_1_, p_73863_2_);
+            ((GuiButton)this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
         }
 
         for (k = 0; k < this.labelList.size(); ++k)
         {
-            ((GuiLabel)this.labelList.get(k)).drawLabel(this.mc, p_73863_1_, p_73863_2_);
+            ((GuiLabel)this.labelList.get(k)).drawLabel(this.mc, mouseX, mouseY);
         }
     }
     @Override
-    protected void actionPerformed(GuiButton p_146284_1_)
+    protected void actionPerformed(GuiButton button)
     {
-        if (p_146284_1_.id == 1)
+        if (button.id == 1)
         {
             ObfuscationReflectionHelper.setPrivateValue(GuiSelectWorld.class, (GuiSelectWorld)parentScreen, false, "field_"+"146634_i");
             FMLClientHandler.instance().showGuiScreen(parent);

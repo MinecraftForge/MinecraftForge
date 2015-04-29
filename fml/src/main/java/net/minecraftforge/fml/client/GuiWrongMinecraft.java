@@ -31,7 +31,7 @@ public class GuiWrongMinecraft extends GuiErrorScreen
         this.buttonList.clear();
     }
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = 75;
