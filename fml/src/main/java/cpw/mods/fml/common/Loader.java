@@ -532,7 +532,6 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
-        progressBar.step("Initializing mods Phase 2");
         modController.transition(LoaderState.INITIALIZATION, false);
         progressBar.step("Initializing Minecraft Engine");
     }
@@ -709,6 +708,7 @@ public class Loader
 
     public void initializeMods()
     {
+        progressBar.step("Initializing mods Phase 2");
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
         progressBar.step("Initializing mods Phase 3");
