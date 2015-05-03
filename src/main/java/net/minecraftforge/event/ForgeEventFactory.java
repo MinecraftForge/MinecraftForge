@@ -37,6 +37,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.FuelBurnTimeEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -152,6 +153,13 @@ public class ForgeEventFactory
             return null;
         }
         return event.list;
+    }
+
+    public static int getFuelBurnTime(ItemStack fuel)
+    {
+        FuelBurnTimeEvent event = new FuelBurnTimeEvent(fuel);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Result.DEFAULT ? -1 : event.burnTime;
     }
 
     public static int getMaxSpawnPackSize(EntityLiving entity)
