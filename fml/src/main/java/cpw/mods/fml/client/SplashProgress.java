@@ -534,9 +534,12 @@ public class SplashProgress
                 height = images[0].getHeight();
                 while((size / width) * (size / height) < frames) size *= 2;
                 this.size = size;
-                name = glGenTextures();
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, name);
+                synchronized(SplashProgress.class)
+                {
+                    name = glGenTextures();
+                    glBindTexture(GL_TEXTURE_2D, name);
+                }
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size, size, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer)null);
