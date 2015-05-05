@@ -67,6 +67,15 @@
  
          this.func_180454_a(p_175040_1_, p_175040_2_);
          GlStateManager.func_179121_F();
+@@ -374,7 +370,7 @@
+         GlStateManager.func_179112_b(770, 771);
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+         this.func_180452_a(p_175042_2_, p_175042_3_, ibakedmodel.func_177556_c());
+-        this.func_175034_a(ibakedmodel.func_177552_f().field_178354_e);
++        ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GUI);
+         this.func_180454_a(p_175042_1_, ibakedmodel);
+         GlStateManager.func_179118_c();
+         GlStateManager.func_179101_C();
 @@ -485,10 +481,11 @@
                  GlStateManager.func_179126_j();
              }
