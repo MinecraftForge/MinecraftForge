@@ -681,7 +681,7 @@ public class Loader
             // before elements are things we are loaded before (so they are our dependants)
             if ("required-before".equals(instruction) || "before".equals(instruction))
             {
-            	dependants.add(VersionParser.parseVersionReference(target));
+                dependants.add(VersionParser.parseVersionReference(target));
             }
             // after elements are things that load before we do (so they are out dependencies)
             else if ("required-after".equals(instruction) || "after".equals(instruction))
@@ -1059,5 +1059,10 @@ public class Loader
     List<ArtifactVersion> getInjectedAfter(String modId)
     {
         return injectedAfter.get(modId);
+    }
+
+    public final LoaderState getLoaderState()
+    {
+        return modController != null ? modController.getState() : LoaderState.NOINIT;
     }
 }
