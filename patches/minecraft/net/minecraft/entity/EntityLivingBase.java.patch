@@ -145,7 +145,19 @@
      }
  
      protected void func_70629_bd()
-@@ -1545,6 +1574,7 @@
+@@ -1534,6 +1563,11 @@
+ 
+     public boolean func_70652_k(Entity p_70652_1_)
+     {
++        if(func_110148_a(SharedMonsterAttributes.field_111264_e) != null)
++            if(func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e() > 0) {
++                p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), (float)((int)func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e()));
++                return true;
++            }
+         this.func_130011_c(p_70652_1_);
+         return false;
+     }
+@@ -1545,6 +1579,7 @@
  
      public void func_70071_h_()
      {
@@ -153,7 +165,7 @@
          super.func_70071_h_();
  
          if (!this.field_70170_p.field_72995_K)
-@@ -1828,6 +1858,7 @@
+@@ -1828,6 +1863,7 @@
  
      public void func_70078_a(Entity p_70078_1_)
      {
@@ -161,7 +173,7 @@
          if (this.field_70154_o != null && p_70078_1_ == null)
          {
              if (!this.field_70170_p.field_72995_K)
-@@ -2000,4 +2031,39 @@
+@@ -2000,4 +2036,39 @@
      {
          this.field_70752_e = true;
      }
