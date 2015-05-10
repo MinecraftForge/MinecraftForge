@@ -16,6 +16,7 @@ import net.minecraft.world.gen.structure.StructureStrongholdPieces.ChestCorridor
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Library;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.RoomCrossing;
 import net.minecraft.world.gen.structure.StructureVillagePieces.House2;
+import net.minecraft.world.gen.structure.StructureNetherBridgePieces.Corridor;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ChestGenHooks
@@ -58,6 +59,7 @@ public class ChestGenHooks
         new StructureStrongholdPieces.Library();
         new StructureStrongholdPieces.RoomCrossing();
         new StructureVillagePieces.House2();
+        new StructureNetherBridgePieces.Corridor();
         WorldServer.fillChestHook();
     }
 
