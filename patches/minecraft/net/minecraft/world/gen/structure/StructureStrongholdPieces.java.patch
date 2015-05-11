@@ -37,8 +37,8 @@
  
 +            static
 +            {
-+                ChestGenHooks.init(STRONGHOLD_CORRIDOR, field_75007_b, 1, 5);
-+                ChestGenHooks.addItem(STRONGHOLD_CORRIDOR, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.field_151134_bR, 1, 0), 1, 5, 2));
++                ChestGenHooks.init(STRONGHOLD_LIBRARY, field_75007_b, 1, 5);
++                ChestGenHooks.addItem(STRONGHOLD_LIBRARY, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.field_151134_bR, 1, 0), 1, 5, 2));
 +            }
 +
              public Library() {}
