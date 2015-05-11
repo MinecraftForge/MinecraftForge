@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
+@@ -200,6 +200,7 @@
+ 
+     public void func_70071_h_()
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPreTick(this);
+         this.field_70145_X = this.func_175149_v();
+ 
+         if (this.func_175149_v())
+@@ -344,6 +345,7 @@
+         {
+             this.func_70107_b(d3, this.field_70163_u, d4);
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPostTick(this);
+     }
+ 
+     public int func_82145_z()
+@@ -2139,6 +2141,22 @@
+         this.field_175153_bG = p_175150_1_;
+     }
+ 
++    /**
++     * Opens a GUI with this player, uses FML's IGuiHandler system.
++     * Allows for extension by modders.
++     *
++     * @param mod The mod trying to open a GUI
++     * @param modGuiId GUI ID
++     * @param world Current World
++     * @param x Passed directly to IGuiHandler, data meaningless Typically world X position
++     * @param y Passed directly to IGuiHandler, data meaningless Typically world Y position
++     * @param z Passed directly to IGuiHandler, data meaningless Typically world Z position
++     */
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
++    {
++        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++    }
++
+     public static enum EnumChatVisibility
+     {
+         FULL(0, "options.chat.visibility.full"),

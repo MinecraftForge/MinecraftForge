@@ -1,0 +1,76 @@
+--- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
+@@ -103,7 +103,7 @@
+         this.field_72405_c = 8;
+     }
+ 
+-    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_)
++    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_, NetHandlerPlayServer nethandlerplayserver)
+     {
+         GameProfile gameprofile = p_72355_2_.func_146103_bH();
+         PlayerProfileCache playerprofilecache = this.field_72400_f.func_152358_ax();
+@@ -125,7 +125,7 @@
+         WorldInfo worldinfo = worldserver.func_72912_H();
+         BlockPos blockpos = worldserver.func_175694_M();
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
++        p_72355_2_.field_71135_a = nethandlerplayserver;
+         nethandlerplayserver.func_147359_a(new S01PacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_177502_q(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
+         nethandlerplayserver.func_147359_a(new S3FPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
+         nethandlerplayserver.func_147359_a(new S41PacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+@@ -168,6 +168,7 @@
+ 
+         p_72355_2_.func_71116_b();
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(p_72355_2_);
+         if (nbttagcompound != null && nbttagcompound.func_150297_b("Riding", 10))
+         {
+             Entity entity = EntityList.func_75615_a(nbttagcompound.func_74775_l("Riding"), worldserver);
+@@ -281,8 +282,23 @@
+         return nbttagcompound1;
+     }
+ 
++    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    {
++        // Hacky method to allow loading the NBT for a player prior to login
++        NBTTagCompound nbttagcompound = this.field_72400_f.field_71305_c[0].func_72912_H().func_76072_h();
++        if (player.func_70005_c_().equals(this.field_72400_f.func_71214_G()) && nbttagcompound != null)
++        {
++            return nbttagcompound;
++        }
++        else
++        {
++            return ((net.minecraft.world.storage.SaveHandler)this.field_72412_k).getPlayerNBT(player);
++        }
++    }
+     protected void func_72391_b(EntityPlayerMP p_72391_1_)
+     {
++        if (p_72391_1_.field_71135_a == null) return;
++
+         this.field_72412_k.func_75753_a(p_72391_1_);
+         StatisticsFile statisticsfile = (StatisticsFile)this.field_148547_k.get(p_72391_1_.func_110124_au());
+ 
+@@ -315,6 +331,7 @@
+ 
+     public void func_72367_e(EntityPlayerMP p_72367_1_)
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(p_72367_1_);
+         p_72367_1_.func_71029_a(StatList.field_75947_j);
+         this.func_72391_b(p_72367_1_);
+         WorldServer worldserver = p_72367_1_.func_71121_q();
+@@ -473,6 +490,7 @@
+         this.field_177454_f.put(entityplayermp1.func_110124_au(), entityplayermp1);
+         entityplayermp1.func_71116_b();
+         entityplayermp1.func_70606_j(entityplayermp1.func_110143_aJ());
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp1);
+         return entityplayermp1;
+     }
+ 
+@@ -498,6 +516,7 @@
+             PotionEffect potioneffect = (PotionEffect)iterator.next();
+             p_72356_1_.field_71135_a.func_147359_a(new S1DPacketEntityEffect(p_72356_1_.func_145782_y(), potioneffect));
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(p_72356_1_, j, p_72356_2_);
+     }
+ 
+     public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)

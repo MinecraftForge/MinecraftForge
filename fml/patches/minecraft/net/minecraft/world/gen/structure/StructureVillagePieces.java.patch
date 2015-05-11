@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
+@@ -59,6 +59,8 @@
+         arraylist.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Field2.class, 3, MathHelper.func_76136_a(p_75084_0_, 2 + p_75084_1_, 4 + p_75084_1_ * 2)));
+         arraylist.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House2.class, 15, MathHelper.func_76136_a(p_75084_0_, 0, 1 + p_75084_1_)));
+         arraylist.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House3.class, 8, MathHelper.func_76136_a(p_75084_0_, 0 + p_75084_1_, 3 + p_75084_1_ * 2)));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.addExtraVillageComponents(arraylist, p_75084_0_, p_75084_1_);
++
+         Iterator iterator = arraylist.iterator();
+ 
+         while (iterator.hasNext())
+@@ -132,6 +134,10 @@
+         {
+             object = StructureVillagePieces.House3.func_175849_a(p_176065_0_, p_176065_2_, p_176065_3_, p_176065_4_, p_176065_5_, p_176065_6_, p_176065_7_, p_176065_8_);
+         }
++        else
++        {
++            object = net.minecraftforge.fml.common.registry.VillagerRegistry.getVillageComponent(p_176065_1_, p_176065_0_ , p_176065_2_, p_176065_3_, p_176065_4_, p_176065_5_, p_176065_6_, p_176065_7_, p_176065_8_);
++        }
+ 
+         return (StructureVillagePieces.Village)object;
+     }

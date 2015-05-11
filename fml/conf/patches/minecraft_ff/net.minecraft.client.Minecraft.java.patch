@@ -1,0 +1,22 @@
+diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net\minecraft\client\Minecraft.java
+--- minecraft\net\minecraft\client\Minecraft.java
++++ minecraft_patched\net\minecraft\client\Minecraft.java
+@@ -695,9 +695,7 @@
+ 
+       while(true) {
+          try {
+-            if(!this.field_71425_J) {
+-               break;
+-            }
++            while(this.field_71425_J) {
+ 
+             if(!this.field_71434_R || this.field_71433_S == null) {
+                try {
+@@ -711,6 +709,7 @@
+             }
+ 
+             this.func_71377_b(this.field_71433_S);
++          }
+          } catch (MinecraftError var12) {
+             break;
+          } catch (ReportedException var13) {

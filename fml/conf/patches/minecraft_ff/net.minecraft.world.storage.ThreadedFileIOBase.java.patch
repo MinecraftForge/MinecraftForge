@@ -1,0 +1,11 @@
+diff -r -U 3 minecraft\net\minecraft\world\storage\ThreadedFileIOBase.java minecraft_patched\net\minecraft\world\storage\ThreadedFileIOBase.java
+--- minecraft\net\minecraft\world\storage\ThreadedFileIOBase.java
++++ minecraft_patched\net\minecraft\world\storage\ThreadedFileIOBase.java
+@@ -25,6 +25,7 @@
+    }
+ 
+    public void run() {
++     while(true)
+       this.func_75736_b();
+    }
+ 

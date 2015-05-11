@@ -1,0 +1,17 @@
+[
+{
+  "modid": "mcp",
+  "name": "Minecraft Coder Pack",
+  "description": "Modding toolkit to decompile and deobfuscate the Minecraft client and server files.",
+  "version": "9.05",
+  "mcversion": "1.7.10",
+  "logoFile": "/mcplogo.png",
+  "url": "http://mcp.ocean-labs.de/",
+  "updateUrl": "",
+  "authors": ["Searge", "ProfMobius", "IngisKahn", "Fesh0r", "ZeuX", "R4wk", "Others"],
+  "credits": "Made by the MCP team",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -49,6 +49,7 @@
+     private boolean field_71338_p;
+     private WorldSettings.GameType field_71337_q;
+     private boolean field_71335_s;
++    public static boolean allowPlayerLogins = false;
+     private static final String __OBFID = "CL_00001784";
+ 
+     public DedicatedServer(File p_i1508_1_)
+@@ -113,6 +114,8 @@
+             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
++
+         field_155771_h.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
+         this.field_154332_n = new ServerEula(new File("eula.txt"));
+@@ -204,6 +207,7 @@
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 this.func_152361_a(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+@@ -250,6 +254,7 @@
+                 this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
+                 this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
+                 this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+                 field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
+                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+@@ -278,7 +283,7 @@
+                     thread1.start();
+                 }
+ 
+-                return true;
++                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+             }
+         }
+     }

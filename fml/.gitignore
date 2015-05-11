@@ -1,0 +1,21 @@
+#eclipse
+/bin
+/.settings
+/.classpath
+
+#idea
+/.idea
+*.iml
+
+#gradle
+/build
+/buildSrc
+/.gradle
+
+#occupational hazards
+/eclipse/
+/repo/
+
+
+#Patch reject
+*.rej

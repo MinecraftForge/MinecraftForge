@@ -1,0 +1,14 @@
+diff -r -U 3 minecraft\net\minecraft\server\network\NetHandlerLoginServer.java minecraft_patched\net\minecraft\server\network\NetHandlerLoginServer.java
+--- minecraft\net\minecraft\server\network\NetHandlerLoginServer.java
++++ minecraft_patched\net\minecraft\server\network\NetHandlerLoginServer.java
+@@ -95,10 +95,6 @@
+                public void operationComplete(ChannelFuture p_operationComplete_1_) {
+                   NetHandlerLoginServer.this.field_147333_a.func_179289_a(NetHandlerLoginServer.this.field_147327_f.func_175577_aI());
+                }
+-               // $FF: synthetic method
+-               public void operationComplete(Future p_operationComplete_1_) {
+-                  this.operationComplete((ChannelFuture)p_operationComplete_1_);
+-               }
+             }, new GenericFutureListener[0]);
+          }
+ 

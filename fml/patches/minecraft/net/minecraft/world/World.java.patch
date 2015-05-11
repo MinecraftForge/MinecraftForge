@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/world/World.java
++++ ../src-work/minecraft/net/minecraft/world/World.java
+@@ -1626,8 +1626,6 @@
+             }
+         }
+ 
+-        this.field_147481_N = false;
+-
+         if (!this.field_147483_b.isEmpty())
+         {
+             this.field_175730_i.removeAll(this.field_147483_b);
+@@ -1635,6 +1633,8 @@
+             this.field_147483_b.clear();
+         }
+ 
++        this.field_147481_N = false;  //FML Move below remove to prevent CMEs
++
+         this.field_72984_F.func_76318_c("pendingBlockEntities");
+ 
+         if (!this.field_147484_a.isEmpty())
+@@ -3429,7 +3429,7 @@
+     @SideOnly(Side.CLIENT)
+     public double func_72919_O()
+     {
+-        return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;
++        return this.field_72986_A.func_76067_t().getHorizon(this);
+     }
+ 
+     public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_)

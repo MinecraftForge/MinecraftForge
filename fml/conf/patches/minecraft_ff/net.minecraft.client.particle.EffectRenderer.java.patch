@@ -1,0 +1,13 @@
+diff -r -U 3 minecraft\net\minecraft\client\particle\EffectRenderer.java minecraft_patched\net\minecraft\client\particle\EffectRenderer.java
+--- minecraft\net\minecraft\client\particle\EffectRenderer.java
++++ minecraft_patched\net\minecraft\client\particle\EffectRenderer.java
+@@ -242,7 +242,8 @@
+       GlStateManager.func_179112_b(770, 771);
+       GlStateManager.func_179092_a(516, 0.003921569F);
+ 
+-      for(final int var8 = 0; var8 < 3; ++var8) {
++      for(int var8_nf = 0; var8_nf < 3; ++var8_nf) {
++         final int var8 = var8_nf;
+          for(int var9 = 0; var9 < 2; ++var9) {
+             if(!this.field_78876_b[var8][var9].isEmpty()) {
+                switch(var9) {

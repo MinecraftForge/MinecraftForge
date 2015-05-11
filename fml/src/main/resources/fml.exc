@@ -1,0 +1,1 @@
+net/minecraft/server/management/ServerConfigurationManager.initializeConnectionToPlayer(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/network/NetHandlerPlayServer;)V=|p_72355_1_,p_72355_2_,nethandlerplayserver

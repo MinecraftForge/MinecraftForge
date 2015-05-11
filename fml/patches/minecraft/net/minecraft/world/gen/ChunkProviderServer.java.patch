@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -209,6 +209,7 @@
+             if (this.field_73246_d != null)
+             {
+                 this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);
++                net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(p_73153_2_, p_73153_3_, field_73251_h, field_73246_d, p_73153_1_);
+                 chunk.func_76630_e();
+             }
+         }

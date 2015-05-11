@@ -1,0 +1,100 @@
+diff -r -U 3 minecraft\net\minecraft\command\PlayerSelector.java minecraft_patched\net\minecraft\command\PlayerSelector.java
+--- minecraft\net\minecraft\command\PlayerSelector.java
++++ minecraft_patched\net\minecraft\command\PlayerSelector.java
+@@ -135,7 +135,7 @@
+ 
+    private static List func_179663_a(Map p_179663_0_, String p_179663_1_) {
+       ArrayList var2 = Lists.newArrayList();
+-      final String var3 = func_179651_b(p_179663_0_, "type");
++      String var3 = func_179651_b(p_179663_0_, "type");
+       final boolean var4 = var3 != null && var3.startsWith("!");
+       if(var4) {
+          var3 = var3.substring(1);
+@@ -159,12 +159,13 @@
+             });
+          }
+       } else {
++         final String var3_f = var3;
+          var2.add(new Predicate() {
+ 
+             private static final String __OBFID = "CL_00002362";
+ 
+             public boolean func_179613_a(Entity p_179613_1_) {
+-               return EntityList.func_180123_a(p_179613_1_, var3) != var4;
++               return EntityList.func_180123_a(p_179613_1_, var3_f) != var4;
+             }
+             // $FF: synthetic method
+             public boolean apply(Object p_apply_1_) {
+@@ -231,13 +232,14 @@
+ 
+    private static List func_179659_d(Map p_179659_0_) {
+       ArrayList var1 = Lists.newArrayList();
+-      final String var2 = func_179651_b(p_179659_0_, "team");
++      String var2 = func_179651_b(p_179659_0_, "team");
+       final boolean var3 = var2 != null && var2.startsWith("!");
+       if(var3) {
+          var2 = var2.substring(1);
+       }
+ 
+       if(var2 != null) {
++         final String var2_f = var2;
+          var1.add(new Predicate() {
+ 
+             private static final String __OBFID = "CL_00002355";
+@@ -249,7 +251,7 @@
+                   EntityLivingBase var2x = (EntityLivingBase)p_179621_1_;
+                   Team var3x = var2x.func_96124_cp();
+                   String var4 = var3x == null?"":var3x.func_96661_b();
+-                  return var4.equals(var2) != var3;
++                  return var4.equals(var2_f) != var3;
+                }
+             }
+             // $FF: synthetic method
+@@ -321,19 +323,20 @@
+ 
+    private static List func_179647_f(Map p_179647_0_) {
+       ArrayList var1 = Lists.newArrayList();
+-      final String var2 = func_179651_b(p_179647_0_, "name");
++      String var2 = func_179651_b(p_179647_0_, "name");
+       final boolean var3 = var2 != null && var2.startsWith("!");
+       if(var3) {
+          var2 = var2.substring(1);
+       }
+ 
+       if(var2 != null) {
++         final String var2_f = var2;
+          var1.add(new Predicate() {
+ 
+             private static final String __OBFID = "CL_00002353";
+ 
+             public boolean func_179600_a(Entity p_179600_1_) {
+-               return p_179600_1_.func_70005_c_().equals(var2) != var3;
++               return p_179600_1_.func_70005_c_().equals(var2_f) != var3;
+             }
+             // $FF: synthetic method
+             public boolean apply(Object p_apply_1_) {
+@@ -372,11 +375,9 @@
+ 
+    private static List func_179662_g(Map p_179662_0_) {
+       ArrayList var1 = Lists.newArrayList();
+-      final int var2;
+-      final int var3;
+       if(p_179662_0_.containsKey("rym") || p_179662_0_.containsKey("ry")) {
+-         var2 = func_179650_a(func_179653_a(p_179662_0_, "rym", 0));
+-         var3 = func_179650_a(func_179653_a(p_179662_0_, "ry", 359));
++         final int var2 = func_179650_a(func_179653_a(p_179662_0_, "rym", 0));
++         final int var3 = func_179650_a(func_179653_a(p_179662_0_, "ry", 359));
+          var1.add(new Predicate() {
+ 
+             private static final String __OBFID = "CL_00002351";
+@@ -393,8 +394,8 @@
+       }
+ 
+       if(p_179662_0_.containsKey("rxm") || p_179662_0_.containsKey("rx")) {
+-         var2 = func_179650_a(func_179653_a(p_179662_0_, "rxm", 0));
+-         var3 = func_179650_a(func_179653_a(p_179662_0_, "rx", 359));
++         final int var2 = func_179650_a(func_179653_a(p_179662_0_, "rxm", 0));
++         final int var3 = func_179650_a(func_179653_a(p_179662_0_, "rx", 359));
+          var1.add(new Predicate() {
+ 
+             private static final String __OBFID = "CL_00002361";

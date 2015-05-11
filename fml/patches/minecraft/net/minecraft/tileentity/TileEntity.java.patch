@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -89,9 +89,10 @@
+     {
+         TileEntity tileentity = null;
+ 
++        Class oclass = null;
+         try
+         {
+-            Class oclass = (Class)field_145855_i.get(p_145827_0_.func_74779_i("id"));
++            oclass = (Class)field_145855_i.get(p_145827_0_.func_74779_i("id"));
+ 
+             if (oclass != null)
+             {
+@@ -109,7 +110,17 @@
+         }
+         else
+         {
++            try
++            {
+             field_145852_a.warn("Skipping BlockEntity with id " + p_145827_0_.func_74779_i("id"));
++            }
++            catch (Exception ex)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, ex,
++                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_145827_0_.func_74779_i("id"), oclass.getName());
++                tileentity = null;
++            }
+         }
+ 
+         return tileentity;
+@@ -141,7 +152,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
+     {
+         double d3 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;

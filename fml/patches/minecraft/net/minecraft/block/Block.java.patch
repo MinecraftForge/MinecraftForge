@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/block/Block.java
++++ ../src-work/minecraft/net/minecraft/block/Block.java
+@@ -39,8 +39,9 @@
+ public class Block
+ {
+     private static final ResourceLocation field_176230_a = new ResourceLocation("air");
+-    public static final RegistryNamespacedDefaultedByKey field_149771_c = new RegistryNamespacedDefaultedByKey(field_176230_a);
+-    public static final ObjectIntIdentityMap field_176229_d = new ObjectIntIdentityMap();
++    public static final RegistryNamespacedDefaultedByKey field_149771_c = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
++    @Deprecated //Modders: DO NOT use this! Use GameRegistry
++    public static final ObjectIntIdentityMap field_176229_d = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
+     private CreativeTabs field_149772_a;
+     public static final Block.SoundType field_149769_e = new Block.SoundType("stone", 1.0F, 1.0F);
+     public static final Block.SoundType field_149766_f = new Block.SoundType("wood", 1.0F, 1.0F);
+@@ -124,6 +125,9 @@
+     private String field_149770_b;
+     private static final String __OBFID = "CL_00000199";
+ 
++    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Block> delegate =
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
++
+     public static int func_149682_b(Block p_149682_0_)
+     {
+         return field_149771_c.func_148757_b(p_149682_0_);

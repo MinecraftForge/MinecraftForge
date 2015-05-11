@@ -1,0 +1,21 @@
+diff -r -U 3 minecraft\net\minecraft\client\gui\FontRenderer.java minecraft_patched\net\minecraft\client\gui\FontRenderer.java
+--- minecraft\net\minecraft\client\gui\FontRenderer.java
++++ minecraft_patched\net\minecraft\client\gui\FontRenderer.java
+@@ -592,8 +592,6 @@
+          case 10:
+             --var5;
+             break;
+-         case 32:
+-            var6 = var5;
+          case 167:
+             if(var5 < var3 - 1) {
+                ++var5;
+@@ -607,6 +605,8 @@
+                }
+             }
+             break;
++         case 32:
++             var6 = var5;
+          default:
+             var4 += this.func_78263_a(var8);
+             if(var7) {
