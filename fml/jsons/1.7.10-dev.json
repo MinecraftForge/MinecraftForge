@@ -126,10 +126,10 @@
       "name": "io.netty:netty-all:4.0.10.Final"
     },
     {
-      "name": "com.google.guava:guava:16.0"
+      "name": "com.google.guava:guava:17.0"
     },
     {
-      "name": "org.apache.commons:commons-lang3:3.2.1"
+      "name": "org.apache.commons:commons-lang3:3.3.2"
     },
     {
       "name": "commons-io:commons-io:2.4"

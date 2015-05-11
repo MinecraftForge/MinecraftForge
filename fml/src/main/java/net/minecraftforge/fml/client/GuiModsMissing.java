@@ -58,6 +58,6 @@ public class GuiModsMissing extends GuiErrorScreen
             this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
-        this.drawCenteredString(this.fontRendererObj, "The file 'ForgeModLoader-client-0.log' contains more information", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "The file 'logs/fml-client-latest.log' contains more information", this.width / 2, offset, 0xFFFFFF);
     }
 }

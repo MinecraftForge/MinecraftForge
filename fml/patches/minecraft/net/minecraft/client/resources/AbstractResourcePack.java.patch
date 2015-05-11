@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/AbstractResourcePack.java
++++ ../src-work/minecraft/net/minecraft/client/resources/AbstractResourcePack.java
+@@ -58,7 +58,7 @@
+ 
+     protected void func_110594_c(String p_110594_1_)
+     {
+-        field_110598_a.warn("ResourcePack: ignored non-lowercase namespace: %s in %s", new Object[] {p_110594_1_, this.field_110597_b});
++        field_110598_a.warn("ResourcePack: ignored non-lowercase namespace: {} in {}", new Object[] {p_110594_1_, this.field_110597_b});
+     }
+ 
+     public IMetadataSection func_135058_a(IMetadataSerializer p_135058_1_, String p_135058_2_) throws IOException

@@ -664,6 +664,11 @@ public class FMLCommonHandler
         return true;
     }
 
+    public void processWindowMessages()
+    {
+        if (sidedDelegate == null) return;
+        sidedDelegate.processWindowMessages();
+    }
 
     /**
      * Used to exit from java, with system exit preventions in place. Will be tidy about it and just log a message,

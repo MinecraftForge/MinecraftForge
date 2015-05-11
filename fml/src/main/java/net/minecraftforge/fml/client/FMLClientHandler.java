@@ -41,8 +41,11 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,6 +72,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLContainerHolder;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -89,16 +93,25 @@ import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -178,6 +191,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     @SuppressWarnings("unchecked")
     public void beginMinecraftLoading(Minecraft minecraft, @SuppressWarnings("rawtypes") List resourcePackList, IReloadableResourceManager resourceManager)
     {
+        detectOptifine();
+        SplashProgress.start();
         client = minecraft;
         this.resourcePackList = resourcePackList;
         this.resourceManager = resourceManager;
@@ -190,19 +205,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
 
         FMLCommonHandler.instance().beginLoading(this);
-        try
-        {
-            Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
-            String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
-            Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
-            ModMetadata optifineMetadata = MetadataCollection.from(getClass().getResourceAsStream("optifinemod.info"),"optifine").getMetadataForId("optifine", dummyOptifineMeta);
-            optifineContainer = new DummyModContainer(optifineMetadata);
-            FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion());
-        }
-        catch (Exception e)
-        {
-            optifineContainer = null;
-        }
         try
         {
             Loader.instance().loadMods();
@@ -269,9 +271,27 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
+    private void detectOptifine()
+    {
+        try
+        {
+            Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
+            String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
+            Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
+            ModMetadata optifineMetadata = MetadataCollection.from(getClass().getResourceAsStream("optifinemod.info"),"optifine").getMetadataForId("optifine", dummyOptifineMeta);
+            optifineContainer = new DummyModContainer(optifineMetadata);
+            FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion());
+        }
+        catch (Exception e)
+        {
+            optifineContainer = null;
+        }
+    }
+
     @Override
     public void haltGame(String message, Throwable t)
     {
+        SplashProgress.finish();
         client.displayCrashReport(new CrashReport(message, t));
         throw Throwables.propagate(t);
     }
@@ -284,6 +304,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null || modSorting!=null)
         {
+            SplashProgress.finish();
             return;
         }
         try
@@ -294,6 +315,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             FMLLog.log(Level.ERROR, custom, "A custom exception was thrown by a mod, the game will now halt");
             customError = custom;
+            SplashProgress.finish();
             return;
         }
         catch (LoaderException le)
@@ -379,7 +401,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
+            Loader.instance().loadingComplete();
+            SplashProgress.finish();
         }
+        logMissingTextureErrors();
     }
     /**
      * Get the server instance
@@ -862,5 +887,112 @@ public class FMLClientHandler implements IFMLSidedHandler
             net instanceof INetHandlerPlayServer ||
             net instanceof INetHandlerStatusServer) return getServer();
         throw new RuntimeException("Unknown INetHandler: " + net);
+    }
+
+    private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
+    private Set<String> badTextureDomains = Sets.newHashSet();
+    private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
+
+    public void trackMissingTexture(ResourceLocation resourceLocation)
+    {
+        badTextureDomains.add(resourceLocation.getResourceDomain());
+        missingTextures.put(resourceLocation.getResourceDomain(),resourceLocation);
+    }
+
+    public void trackBrokenTexture(ResourceLocation resourceLocation, String error)
+    {
+        badTextureDomains.add(resourceLocation.getResourceDomain());
+        Set<ResourceLocation> badType = brokenTextures.get(resourceLocation.getResourceDomain(), error);
+        if (badType == null)
+        {
+            badType = Sets.newHashSet();
+            brokenTextures.put(resourceLocation.getResourceDomain(), error, badType);
+        }
+        badType.add(resourceLocation);
+    }
+
+    public void logMissingTextureErrors()
+    {
+        if (missingTextures.isEmpty() && brokenTextures.isEmpty())
+        {
+            return;
+        }
+        Logger logger = LogManager.getLogger("TEXTURE ERRORS");
+        logger.error(Strings.repeat("+=", 25));
+        logger.error("The following texture errors were found.");
+        Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");
+        for (String resourceDomain : missingTextures.keySet())
+        {
+            Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
+            logger.error(Strings.repeat("=", 50));
+            logger.error("  DOMAIN {}", resourceDomain);
+            logger.error(Strings.repeat("-", 50));
+            logger.error("  domain {} is missing {} texture{}",resourceDomain, missing.size(),missing.size()!=1 ? "s" : "");
+            FallbackResourceManager fallbackResourceManager = resManagers.get(resourceDomain);
+            if (fallbackResourceManager == null)
+            {
+                logger.error("    domain {} is missing a resource manager - it is probably a side-effect of automatic texture processing", resourceDomain);
+            }
+            else
+            {
+                List<IResourcePack> resPacks = ObfuscationReflectionHelper.getPrivateValue(FallbackResourceManager.class, fallbackResourceManager, "resourcePacks","field_110540"+"_a");
+                logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
+                for (IResourcePack resPack : resPacks)
+                {
+                    if (resPack instanceof FMLContainerHolder) {
+                        FMLContainerHolder containerHolder = (FMLContainerHolder) resPack;
+                        ModContainer fmlContainer = containerHolder.getFMLContainer();
+                        logger.error("      mod {} resources at {}", fmlContainer.getModId(), fmlContainer.getSource().getPath());
+                    }
+                    else if (resPack instanceof AbstractResourcePack)
+                    {
+                        AbstractResourcePack resourcePack = (AbstractResourcePack) resPack;
+                        File resPath = ObfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, resourcePack, "resourcePackFile","field_110597"+"_b");
+                        logger.error("      resource pack at path {}",resPath.getPath());
+                    }
+                    else
+                    {
+                        logger.error("      unknown resourcepack type {} : {}", resPack.getClass().getName(), resPack.getPackName());
+                    }
+                }
+            }
+            logger.error(Strings.repeat("-", 25));
+            logger.error("    The missing resources for domain {} are:",resourceDomain);
+            for (ResourceLocation rl : missing)
+            {
+                logger.error("      {}",rl.getResourcePath());
+            }
+            logger.error(Strings.repeat("-", 25));
+            if (!brokenTextures.containsRow(resourceDomain))
+            {
+                logger.error("    No other errors exist for domain {}", resourceDomain);
+            }
+            else
+            {
+                logger.error("    The following other errors were reported for domain {}:",resourceDomain);
+                Map<String, Set<ResourceLocation>> resourceErrs = brokenTextures.row(resourceDomain);
+                for (String error: resourceErrs.keySet())
+                {
+                    logger.error(Strings.repeat("-", 25));
+                    logger.error("    Problem: {}", error);
+                    for (ResourceLocation rl : resourceErrs.get(error))
+                    {
+                        logger.error("      {}",rl.getResourcePath());
+                    }
+                }
+            }
+            logger.error(Strings.repeat("=", 50));
+        }
+        logger.error(Strings.repeat("+=", 25));
+    }
+
+    @Override
+    public void processWindowMessages()
+    {
+        // workaround for windows requiring messages being processed on the main thread
+        if(LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS)
+        {
+            Display.processMessages();
+        }
     }
 }

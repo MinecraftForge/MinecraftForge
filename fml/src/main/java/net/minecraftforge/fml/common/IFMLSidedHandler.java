@@ -62,4 +62,6 @@ public interface IFMLSidedHandler
     void allowLogins();
 
     IThreadListener getWorldThread(INetHandler net);
+
+    void processWindowMessages();
 }

@@ -74,7 +74,7 @@
       "name": "com.google.code.gson:gson:2.2.4"
     },
     {
-      "name": "com.mojang:authlib:1.5.16"
+      "name": "com.mojang:authlib:1.5.21"
     },
     {
       "name": "org.apache.logging.log4j:log4j-api:2.0-beta9"

@@ -266,4 +266,10 @@ public class FMLServerHandler implements IFMLSidedHandler
         // Always the server on the dedicated server, eventually add Per-World if Mojang adds world stuff.
         return getServer();
     }
+
+    @Override
+    public void processWindowMessages()
+    {
+        // NOOP
+    }
 }

@@ -10,12 +10,13 @@ import org.apache.logging.log4j.Level;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.resources.FolderResourcePack;
+import net.minecraftforge.fml.common.FMLContainerHolder;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.base.Charsets;
 
-public class FMLFolderResourcePack extends FolderResourcePack {
+public class FMLFolderResourcePack extends FolderResourcePack implements FMLContainerHolder {
 
     private ModContainer container;
 
@@ -62,6 +63,12 @@ public class FMLFolderResourcePack extends FolderResourcePack {
     public BufferedImage getPackImage() throws IOException
     {
         return ImageIO.read(getInputStreamByName(container.getMetadata().logoFile));
+    }
+
+    @Override
+    public ModContainer getFMLContainer()
+    {
+        return container;
     }
 
 }

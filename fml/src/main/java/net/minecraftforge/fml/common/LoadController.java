@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
@@ -182,10 +183,13 @@ public class LoadController
         {
             modObjectList = buildModObjectList();
         }
+        ProgressBar bar = ProgressManager.push(stateEvent.description(), activeModList.size());
         for (ModContainer mc : activeModList)
         {
+            bar.step(mc.getName());
             sendEventToModContainer(stateEvent, mc);
         }
+        ProgressManager.pop(bar);
     }
 
     private void sendEventToModContainer(FMLEvent stateEvent, ModContainer mc)
@@ -347,5 +351,10 @@ public class LoadController
     Class<?>[] getCallingStack()
     {
         return accessibleManager.getStackClasses();
+    }
+
+    LoaderState getState()
+    {
+        return state;
     }
 }

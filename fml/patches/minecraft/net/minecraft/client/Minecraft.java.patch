@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -411,7 +411,7 @@
+@@ -410,10 +410,10 @@
          this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
          this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
          this.field_110451_am.func_110542_a(this.field_135017_as);
@@ -8,11 +8,47 @@
 +        net.minecraftforge.fml.client.FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
          this.field_71446_o = new TextureManager(this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71446_o);
-         this.func_180510_a(this.field_71446_o);
-@@ -483,12 +483,13 @@
+-        this.func_180510_a(this.field_71446_o);
++        net.minecraftforge.fml.client.SplashProgress.drawVanillaScreen(this.field_71446_o);
+         this.func_175595_al();
+         this.field_152350_aA = new SkinManager(this.field_71446_o, new File(this.field_110446_Y, "skins"), this.field_152355_az);
+         this.field_71469_aa = new AnvilSaveConverter(new File(this.field_71412_D, "saves"));
+@@ -449,6 +449,8 @@
+             }
+         });
+         this.field_71417_B = new MouseHelper();
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 9);
++        bar.step("GL Setup");
+         this.func_71361_d("Pre startup");
+         GlStateManager.func_179098_w();
+         GlStateManager.func_179103_j(7425);
+@@ -462,17 +464,21 @@
+         GlStateManager.func_179096_D();
+         GlStateManager.func_179128_n(5888);
+         this.func_71361_d("Startup");
++        bar.step("Loading Texture Map");
+         this.field_147128_au = new TextureMap("textures");
+         this.field_147128_au.func_147633_a(this.field_71474_y.field_151442_I);
+         this.field_71446_o.func_110580_a(TextureMap.field_110575_b, this.field_147128_au);
+         this.field_71446_o.func_110577_a(TextureMap.field_110575_b);
+         this.field_147128_au.func_174937_a(false, this.field_71474_y.field_151442_I > 0);
++        bar.step("Loading Model Manager");
+         this.field_175617_aL = new ModelManager(this.field_147128_au);
+         this.field_110451_am.func_110542_a(this.field_175617_aL);
++        bar.step("Loading Item Renderer");
+         this.field_175621_X = new RenderItem(this.field_71446_o, this.field_175617_aL);
+         this.field_175616_W = new RenderManager(this.field_71446_o, this.field_175621_X);
+         this.field_175620_Y = new ItemRenderer(this);
+         this.field_110451_am.func_110542_a(this.field_175621_X);
++        bar.step("Loading Entity Renderer");
+         this.field_71460_t = new EntityRenderer(this, this.field_110451_am);
+         this.field_110451_am.func_110542_a(this.field_71460_t);
+         this.field_175618_aM = new BlockRendererDispatcher(this.field_175617_aL.func_174954_c(), this.field_71474_y);
+@@ -482,19 +488,21 @@
          this.field_71458_u = new GuiAchievement(this);
          GlStateManager.func_179083_b(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
 +        net.minecraftforge.fml.client.FMLClientHandler.instance().finishMinecraftLoading();
          this.func_71361_d("Post startup");
          this.field_71456_v = new GuiIngame(this);
@@ -24,7 +60,15 @@
          }
          else
          {
-@@ -504,6 +505,7 @@
+             this.func_147108_a(new GuiMainMenu());
+         }
+ 
+-        this.field_71446_o.func_147645_c(this.field_152354_ay);
++        net.minecraftforge.fml.client.SplashProgress.clearVanillaResources(field_71446_o, field_152354_ay);
+         this.field_152354_ay = null;
+         this.field_71461_s = new LoadingScreenRenderer(this);
+ 
+@@ -503,6 +511,7 @@
              this.func_71352_k();
          }
  
@@ -32,7 +76,7 @@
          try
          {
              Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
-@@ -682,21 +684,23 @@
+@@ -681,21 +690,23 @@
          File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
          Bootstrap.func_179870_a(p_71377_1_.func_71502_e());
  
@@ -59,7 +103,7 @@
      }
  
      public boolean func_152349_b()
-@@ -1000,7 +1004,7 @@
+@@ -999,7 +1010,7 @@
          {
              while (!this.field_152351_aB.isEmpty())
              {
@@ -68,7 +112,7 @@
              }
          }
  
-@@ -1035,9 +1039,11 @@
+@@ -1034,9 +1045,11 @@
  
          if (!this.field_71454_w)
          {
@@ -80,7 +124,7 @@
          }
  
          this.field_71424_I.func_76319_b();
-@@ -1592,6 +1598,8 @@
+@@ -1591,6 +1604,8 @@
              --this.field_71467_ac;
          }
  
@@ -89,7 +133,7 @@
          this.field_71424_I.func_76320_a("gui");
  
          if (!this.field_71445_n)
-@@ -1745,6 +1753,7 @@
+@@ -1744,6 +1759,7 @@
                          this.field_71462_r.func_146274_d();
                      }
                  }
@@ -97,7 +141,7 @@
              }
  
              if (this.field_71429_W > 0)
-@@ -1921,6 +1930,7 @@
+@@ -1920,6 +1936,7 @@
                          }
                      }
                  }
@@ -105,7 +149,7 @@
              }
  
              for (i = 0; i < 9; ++i)
-@@ -2121,12 +2131,15 @@
+@@ -2120,12 +2137,15 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -121,7 +165,7 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2162,6 +2175,12 @@
+@@ -2161,6 +2181,12 @@
  
          while (!this.field_71437_Z.func_71200_ad())
          {
@@ -134,7 +178,7 @@
              String s2 = this.field_71437_Z.func_71195_b_();
  
              if (s2 != null)
-@@ -2187,7 +2206,7 @@
+@@ -2186,7 +2212,7 @@
          SocketAddress socketaddress = this.field_71437_Z.func_147137_ag().func_151270_a();
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
@@ -143,7 +187,7 @@
          networkmanager.func_179290_a(new C00PacketLoginStart(this.func_110432_I().func_148256_e()));
          this.field_71453_ak = networkmanager;
      }
-@@ -2238,6 +2257,7 @@
+@@ -2237,6 +2263,7 @@
  
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;

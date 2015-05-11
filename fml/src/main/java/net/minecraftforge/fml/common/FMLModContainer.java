@@ -168,6 +168,8 @@ public class FMLModContainer implements ModContainer
             List<ArtifactVersion> dependants = Lists.newArrayList();
             annotationDependencies = (String) descriptor.get("dependencies");
             Loader.instance().computeDependencies(annotationDependencies, requirements, dependencies, dependants);
+            dependants.addAll(Loader.instance().getInjectedBefore(getModId()));
+            dependencies.addAll(Loader.instance().getInjectedAfter(getModId()));
             modMetadata.requiredMods = requirements;
             modMetadata.dependencies = dependencies;
             modMetadata.dependants = dependants;
@@ -518,7 +520,6 @@ public class FMLModContainer implements ModContainer
         catch (Throwable e)
         {
             controller.errorOccurred(this, e);
-            Throwables.propagateIfPossible(e);
         }
     }
 

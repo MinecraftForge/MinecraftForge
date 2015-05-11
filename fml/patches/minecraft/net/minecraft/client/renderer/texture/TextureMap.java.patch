@@ -1,0 +1,91 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
+@@ -91,6 +91,7 @@
+         this.field_94258_i.clear();
+         int j = Integer.MAX_VALUE;
+         int k = 1 << this.field_147636_j;
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", this.field_110574_e.size());
+         Iterator iterator = this.field_110574_e.entrySet().iterator();
+ 
+         while (iterator.hasNext())
+@@ -99,6 +100,7 @@
+             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             ResourceLocation resourcelocation = new ResourceLocation(textureatlassprite.func_94215_i());
+             ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
++            bar.step(resourcelocation1.func_110623_a());
+ 
+             try
+             {
+@@ -150,12 +152,14 @@
+             }
+             catch (RuntimeException runtimeexception)
+             {
+-                field_147635_d.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
++                //logger.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation1, runtimeexception.getMessage());
+                 continue;
+             }
+             catch (IOException ioexception1)
+             {
+-                field_147635_d.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                //logger.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation1);
+                 continue;
+             }
+ 
+@@ -171,6 +175,7 @@
+             stitcher.func_110934_a(textureatlassprite);
+         }
+ 
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
+         int j1 = Math.min(j, k);
+         int k1 = MathHelper.func_151239_c(j1);
+ 
+@@ -181,10 +186,12 @@
+         }
+ 
+         Iterator iterator1 = this.field_110574_e.values().iterator();
++        bar = net.minecraftforge.fml.common.ProgressManager.push("Mipmap generation", this.field_110574_e.size());
+ 
+         while (iterator1.hasNext())
+         {
+             final TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
++            bar.step(textureatlassprite1.func_94215_i());
+ 
+             try
+             {
+@@ -225,9 +232,12 @@
+ 
+         this.field_94249_f.func_147963_d(this.field_147636_j);
+         stitcher.func_110934_a(this.field_94249_f);
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
++        bar = net.minecraftforge.fml.common.ProgressManager.push("Texture creation", 3);
+ 
+         try
+         {
++            bar.step("Stitching");
+             stitcher.func_94305_f();
+         }
+         catch (StitcherException stitcherexception)
+@@ -236,11 +246,13 @@
+         }
+ 
+         field_147635_d.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c});
++        bar.step("Allocating GL texture");
+         TextureUtil.func_180600_a(this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
+         HashMap hashmap = Maps.newHashMap(this.field_110574_e);
+         Iterator iterator2 = stitcher.func_94309_g().iterator();
+         TextureAtlasSprite textureatlassprite2;
+ 
++        bar.step("Uploading GL texture");
+         while (iterator2.hasNext())
+         {
+             textureatlassprite2 = (TextureAtlasSprite)iterator2.next();
+@@ -276,6 +288,7 @@
+         }
+ 
+         TextureUtil.func_177055_a(this.field_94254_c.replaceAll("/", "_"), this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
+     }
+ 
+     private ResourceLocation func_147634_a(ResourceLocation p_147634_1_, int p_147634_2_)

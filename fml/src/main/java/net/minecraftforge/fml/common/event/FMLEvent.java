@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -20,8 +20,12 @@ public class FMLEvent
     {
         return getClass().getSimpleName();
     }
-
-	public void applyModContainer(ModContainer activeContainer) {
-	    // NO OP
-	}
+    public final String description()
+    {
+       String cn = getClass().getName();
+       return cn.substring(cn.lastIndexOf('.')+4,cn.length()-5);
+    }
+    public void applyModContainer(ModContainer activeContainer) {
+        // NO OP
+    }
 }
