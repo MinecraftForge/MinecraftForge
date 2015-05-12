@@ -161,7 +161,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -971,6 +989,1028 @@
+@@ -971,6 +989,1042 @@
          return Block.EnumOffsetType.NONE;
      }
  
@@ -788,6 +788,20 @@
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public boolean addDestroyEffects(World world, BlockPos pos, net.minecraft.client.particle.EffectRenderer effectRenderer)
++    {
++        return false;
++    }
++
++    /**
++     * Allows overriding of dust effect when a living entity lands on a block, 
++     *
++     * @param the server world of were the entity resides.
++     * @param pos the block the entity "landed on"
++     * @param fallingEntity the entity that is landing on the block.
++     * @param stateAtPos the value of worldObj.getBlockState(pos)
++     * @return True to prevent vanilla dust particles form spawning.
++     */
++    public boolean addDustEffects(net.minecraft.world.WorldServer worldObj, BlockPos pos, EntityLivingBase fallingEntity, IBlockState stateAtPos )
 +    {
 +        return false;
 +    }
