@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityTracker.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityTracker.java
+@@ -39,6 +39,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import cpw.mods.fml.common.registry.EntityRegistry;
++
+ public class EntityTracker
+ {
+     private static final Logger field_151249_a = LogManager.getLogger();
+@@ -56,6 +58,11 @@
+ 
+     public void func_72786_a(Entity p_72786_1_)
+     {
++        if (EntityRegistry.instance().tryTrackingEntity(this, p_72786_1_))
++        {
++            return;
++        }
++
+         if (p_72786_1_ instanceof EntityPlayerMP)
+         {
+             this.func_72791_a(p_72786_1_, 512, 2);

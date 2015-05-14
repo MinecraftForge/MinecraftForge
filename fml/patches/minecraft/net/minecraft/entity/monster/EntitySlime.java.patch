@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
+@@ -247,7 +247,7 @@
+     {
+         Chunk chunk = this.field_70170_p.func_72938_d(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.field_70161_v));
+ 
+-        if (this.field_70170_p.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1)
++        if (this.field_70170_p.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p))
+         {
+             return false;
+         }

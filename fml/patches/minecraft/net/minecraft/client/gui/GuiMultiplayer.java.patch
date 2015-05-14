@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
+@@ -2,6 +2,7 @@
+ 
+ import com.google.common.base.Splitter;
+ import com.google.common.collect.Lists;
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
+@@ -40,6 +41,7 @@
+     public GuiMultiplayer(GuiScreen p_i1040_1_)
+     {
+         this.field_146798_g = p_i1040_1_;
++        FMLClientHandler.instance().setupServerList();
+     }
+ 
+     public void func_73866_w_()
+@@ -366,7 +368,7 @@
+ 
+     private void func_146791_a(ServerData p_146791_1_)
+     {
+-        this.field_146297_k.func_147108_a(new GuiConnecting(this, this.field_146297_k, p_146791_1_));
++        FMLClientHandler.instance().connectToServer(this, p_146791_1_);
+     }
+ 
+     public void func_146790_a(int p_146790_1_)

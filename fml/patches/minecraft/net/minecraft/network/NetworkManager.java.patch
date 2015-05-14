@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -2,6 +2,8 @@
+ 
+ import com.google.common.collect.Queues;
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++
++import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.bootstrap.Bootstrap;
+@@ -142,7 +144,7 @@
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
+ 
+-        if (enumconnectionstate1 != enumconnectionstate)
++        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof FMLProxyPacket))
+         {
+             field_150735_g.debug("Disabled auto read");
+             this.field_150746_k.config().setAutoRead(false);
+@@ -150,7 +152,7 @@
+ 
+         if (this.field_150746_k.eventLoop().inEventLoop())
+         {
+-            if (enumconnectionstate != enumconnectionstate1)
++            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof FMLProxyPacket))
+             {
+                 this.func_150723_a(enumconnectionstate);
+             }
+@@ -164,7 +166,7 @@
+                 private static final String __OBFID = "CL_00001241";
+                 public void run()
+                 {
+-                    if (enumconnectionstate != enumconnectionstate1)
++                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof FMLProxyPacket))
+                     {
+                         NetworkManager.this.func_150723_a(enumconnectionstate);
+                     }
+@@ -315,6 +317,11 @@
+         this.channelRead0(p_channelRead0_1_, (Packet)p_channelRead0_2_);
+     }
+ 
++    public Channel channel()
++    {
++        return field_150746_k;
++    }
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet field_150774_a;

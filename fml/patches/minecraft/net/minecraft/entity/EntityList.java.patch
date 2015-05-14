@@ -1,0 +1,55 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityList.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
+@@ -5,6 +5,7 @@
+ import java.util.LinkedHashMap;
+ import java.util.Map;
+ import java.util.Set;
++
+ import net.minecraft.entity.ai.EntityMinecartMobSpawner;
+ import net.minecraft.entity.boss.EntityDragon;
+ import net.minecraft.entity.boss.EntityWither;
+@@ -63,9 +64,13 @@
+ import net.minecraft.stats.StatBase;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.world.World;
++
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import cpw.mods.fml.common.FMLLog;
++
+ public class EntityList
+ {
+     private static final Logger field_151516_b = LogManager.getLogger();
+@@ -145,9 +150,10 @@
+             p_75615_0_.func_82580_o("Type");
+         }
+ 
++        Class oclass = null;
+         try
+         {
+-            Class oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+ 
+             if (oclass != null)
+             {
+@@ -161,7 +167,17 @@
+ 
+         if (entity != null)
+         {
+-            entity.func_70020_e(p_75615_0_);
++            try
++            {
++                entity.func_70020_e(p_75615_0_);
++            }
++            catch (Exception e)
++            {
++                FMLLog.log(Level.ERROR, e,
++                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_75615_0_.func_74779_i("id"), oclass.getName());
++                entity = null;
++            }
+         }
+         else
+         {

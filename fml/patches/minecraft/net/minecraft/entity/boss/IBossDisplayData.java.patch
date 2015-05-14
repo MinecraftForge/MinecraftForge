@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/boss/IBossDisplayData.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/IBossDisplayData.java
+@@ -4,7 +4,6 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.util.IChatComponent;
+ 
+-@SideOnly(Side.CLIENT)
+ public interface IBossDisplayData
+ {
+     float func_110138_aP();

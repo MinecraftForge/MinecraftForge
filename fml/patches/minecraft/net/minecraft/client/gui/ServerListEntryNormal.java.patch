@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
++++ ../src-work/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
+@@ -2,6 +2,7 @@
+ 
+ import com.google.common.base.Charsets;
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.buffer.ByteBuf;
+@@ -83,7 +84,7 @@
+         boolean flag2 = this.field_148301_e.field_82821_f < 5;
+         boolean flag3 = flag1 || flag2;
+         this.field_148300_d.field_71466_p.func_78276_b(this.field_148301_e.field_78847_a, p_148279_2_ + 32 + 3, p_148279_3_ + 1, 16777215);
+-        List list = this.field_148300_d.field_71466_p.func_78271_c(this.field_148301_e.field_78843_d, p_148279_4_ - 32 - 2);
++        List list = this.field_148300_d.field_71466_p.func_78271_c(FMLClientHandler.instance().fixDescription(this.field_148301_e.field_78843_d), p_148279_4_ - 48 - 2);
+ 
+         for (int l1 = 0; l1 < Math.min(list.size(), 2); ++l1)
+         {
+@@ -174,6 +175,11 @@
+         int k2 = p_148279_7_ - p_148279_2_;
+         int l2 = p_148279_8_ - p_148279_3_;
+ 
++        String tooltip = FMLClientHandler.instance().enhanceServerListEntry(this, this.field_148301_e, p_148279_2_, p_148279_4_, p_148279_3_, k2, l2);
++        if (tooltip != null)
++        {
++            this.field_148303_c.func_146793_a(tooltip);
++        } else
+         if (k2 >= p_148279_4_ - 15 && k2 <= p_148279_4_ - 5 && l2 >= 0 && l2 <= 8)
+         {
+             this.field_148303_c.func_146793_a(s1);

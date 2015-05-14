@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -45,6 +45,7 @@
+     private EntityItemFrame field_82843_f;
+     private static final String __OBFID = "CL_00000043";
+ 
++    private cpw.mods.fml.common.registry.RegistryDelegate<Item> delegate;
+     public ItemStack(Block p_i1876_1_)
+     {
+         this(p_i1876_1_, 1);
+@@ -72,7 +73,7 @@
+ 
+     public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
+     {
+-        this.field_151002_e = p_i1881_1_;
++        func_150996_a(p_i1881_1_);
+         this.field_77994_a = p_i1881_2_;
+         this.field_77991_e = p_i1881_3_;
+ 
+@@ -106,7 +107,7 @@
+ 
+     public Item func_77973_b()
+     {
+-        return this.field_151002_e;
++        return this.delegate != null ? this.delegate.get() : null;
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -164,7 +165,7 @@
+ 
+     public void func_77963_c(NBTTagCompound p_77963_1_)
+     {
+-        this.field_151002_e = Item.func_150899_d(p_77963_1_.func_74765_d("id"));
++        func_150996_a(Item.func_150899_d(p_77963_1_.func_74765_d("id")));
+         this.field_77994_a = p_77963_1_.func_74771_c("Count");
+         this.field_77991_e = p_77963_1_.func_74765_d("Damage");
+ 
+@@ -744,6 +745,7 @@
+ 
+     public void func_150996_a(Item p_150996_1_)
+     {
++        this.delegate = p_150996_1_ != null ? p_150996_1_.delegate : null;
+         this.field_151002_e = p_150996_1_;
+     }
+ 

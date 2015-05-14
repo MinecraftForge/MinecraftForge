@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
+@@ -57,6 +57,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
++
+ public class EntityTrackerEntry
+ {
+     private static final Logger field_151262_p = LogManager.getLogger();
+@@ -377,6 +379,14 @@
+                     this.field_73138_k = this.field_73132_a.field_70181_x;
+                     this.field_73135_l = this.field_73132_a.field_70179_y;
+ 
++                    int posX = MathHelper.func_76128_c(this.field_73132_a.field_70165_t * 32.0D);
++                    int posY = MathHelper.func_76128_c(this.field_73132_a.field_70163_u * 32.0D);
++                    int posZ = MathHelper.func_76128_c(this.field_73132_a.field_70161_v * 32.0D);
++                    if (posX != this.field_73128_d || posY != this.field_73129_e || posZ != this.field_73126_f)
++                    {
++                        FMLNetworkHandler.makeEntitySpawnAdjustment(this.field_73132_a, p_73117_1_, this.field_73128_d, this.field_73129_e, this.field_73126_f);
++                    }
++
+                     if (this.field_73143_t && !(packet instanceof S0FPacketSpawnMob))
+                     {
+                         p_73117_1_.field_71135_a.func_147359_a(new S12PacketEntityVelocity(this.field_73132_a.func_145782_y(), this.field_73132_a.field_70159_w, this.field_73132_a.field_70181_x, this.field_73132_a.field_70179_y));
+@@ -456,6 +466,12 @@
+             field_151262_p.warn("Fetching addPacket for removed entity");
+         }
+ 
++        Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.field_73132_a);
++
++        if (pkt != null)
++        {
++            return pkt;
++        }
+         if (this.field_73132_a instanceof EntityItem)
+         {
+             return new S0EPacketSpawnObject(this.field_73132_a, 2, 1);

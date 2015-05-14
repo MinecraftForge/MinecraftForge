@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
+@@ -201,8 +201,11 @@
+ 
+     public static void func_147946_a(int p_147946_0_, int p_147946_1_, int p_147946_2_, int p_147946_3_, float p_147946_4_)
+     {
++        synchronized(cpw.mods.fml.client.SplashProgress.class)
++        {
+         func_147942_a(p_147946_0_);
+         func_94277_a(p_147946_0_);
++        }
+ 
+         if (OpenGlHelper.field_148825_d)
+         {

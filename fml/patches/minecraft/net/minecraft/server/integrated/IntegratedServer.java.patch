@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
++++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.integrated;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.File;
+@@ -105,9 +106,10 @@
+         this.func_71245_h(true);
+         field_147148_h.info("Generating keypair");
+         this.func_71253_a(CryptManager.func_75891_b());
++        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
+         this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());
+         this.func_71205_p(this.func_71214_G() + " - " + this.field_71305_c[0].func_72912_H().func_76065_j());
+-        return true;
++        return FMLCommonHandler.instance().handleServerStarting(this);
+     }
+ 
+     public void func_71217_p()

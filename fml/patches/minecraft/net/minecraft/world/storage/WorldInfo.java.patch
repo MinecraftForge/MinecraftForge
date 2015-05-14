@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -2,8 +2,11 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.util.Map;
+ import java.util.concurrent.Callable;
+ import net.minecraft.crash.CrashReportCategory;
++import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.GameRules;
+@@ -36,6 +39,7 @@
+     private boolean field_76110_t;
+     private boolean field_76109_u;
+     private GameRules field_82577_x;
++    private Map<String, NBTBase> additionalProperties;
+     private static final String __OBFID = "CL_00000587";
+ 
+     protected WorldInfo()
+@@ -532,4 +536,24 @@
+             }
+         });
+     }
++
++    /**
++     * Allow access to additional mod specific world based properties
++     * Used by FML to store mod list associated with a world, and maybe an id map
++     * Used by Forge to store the dimensions available to a world
++     * @param additionalProperties
++     */
++    public void setAdditionalProperties(Map<String,NBTBase> additionalProperties)
++    {
++        // one time set for this
++        if (this.additionalProperties == null)
++        {
++            this.additionalProperties = additionalProperties;
++        }
++    }
++
++    public NBTBase getAdditionalProperty(String additionalProperty)
++    {
++        return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
++    }
+ }

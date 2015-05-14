@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
+@@ -17,6 +17,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
++
+ public class EntityItem extends Entity
+ {
+     private static final Logger field_145803_d = LogManager.getLogger();
+@@ -325,6 +327,8 @@
+                     }
+                 }
+ 
++                FMLCommonHandler.instance().firePlayerItemPickupEvent(p_70100_1_, this);
++
+                 this.field_70170_p.func_72956_a(p_70100_1_, "random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                 p_70100_1_.func_71001_a(this, i);
+ 

@@ -1,0 +1,111 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+import static net.minecraftforge.gradle.dev.FmlDevPlugin.*
+
+apply plugin: 'maven'
+apply plugin: 'fmldev'
+
+repositories {
+    flatDir {
+        name "fileRepo"
+        dirs "repo"
+    }
+}
+
+minecraft {
+    version = '1.7.10'
+    mcpVersion = '9.05'
+    fmlDir = projectDir.getAbsolutePath();
+    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
+    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
+    installerVersion = "1.4"
+}
+
+group = 'net.minecraftforge'
+version = getVersionFromGit(getProject())
+
+jenkins {
+    job = 'fml'
+}
+
+uploadArchives {
+    repositories {
+        if (project.hasProperty("filesmaven")) {
+            logger.info('Publishing to files server')
+            
+            mavenDeployer {
+                configuration = configurations.deployJars
+
+                repository(url: project.filesmaven.url) {
+                    authentication(userName: project.filesmaven.username, privateKey: project.filesmaven.key)
+                }
+
+                pom {
+                    groupId = project.group
+                    version = project.version
+                    artifactId = project.archivesBaseName
+                    project {
+                        name project.archivesBaseName
+                        packaging 'jar'
+                        description 'ForgeModLoader'
+                        url 'https://github.com/MinecraftForge/FML'
+
+                        scm {
+                            url 'https://github.com/MinecraftForge/FML'
+                            connection 'scm:git:git://github.com/MinecraftForge/FML.git'
+                            developerConnection 'scm:git:git@github.com:MinecraftForge/FML.git'
+                        }
+
+                        issueManagement {
+                            system 'github'
+                            url 'https://github.com/MinecraftForge/FML/issues'
+                        }
+
+                        licenses {
+                            license {
+                                name 'GNU Lesser Public License (LGPL), Version 2.1'
+                                url 'http://www.gnu.org/licenses/lgpl-2.1.txt'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'cpw'
+                                name 'cpw'
+                                roles { role 'developer' }
+                            }
+                            developer {
+                                id 'LexManos'
+                                name 'Lex Manos'
+                                roles { role 'developer' }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            logger.info('Publishing to repo folder')
+            
+            mavenDeployer {
+                repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
+            }
+        }
+    }
+}

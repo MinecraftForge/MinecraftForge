@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
+@@ -9,6 +9,7 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityList;
+@@ -24,9 +25,13 @@
+ import net.minecraft.world.chunk.NibbleArray;
+ import net.minecraft.world.storage.IThreadedFileIO;
+ import net.minecraft.world.storage.ThreadedFileIOBase;
++
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import cpw.mods.fml.common.FMLLog;
++
+ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
+ {
+     private static final Logger field_151505_a = LogManager.getLogger();
+@@ -260,11 +265,20 @@
+                 Entity entity = (Entity)iterator1.next();
+                 nbttagcompound1 = new NBTTagCompound();
+ 
+-                if (entity.func_70039_c(nbttagcompound1))
++                try
+                 {
+-                    p_75820_1_.field_76644_m = true;
+-                    nbttaglist2.func_74742_a(nbttagcompound1);
++                    if (entity.func_70039_c(nbttagcompound1))
++                    {
++                        p_75820_1_.field_76644_m = true;
++                        nbttaglist2.func_74742_a(nbttagcompound1);
++                    }
+                 }
++                catch (Exception e)
++                {
++                    FMLLog.log(Level.ERROR, e,
++                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                            entity.getClass().getName());
++                }
+             }
+         }
+ 
+@@ -276,8 +290,16 @@
+         {
+             TileEntity tileentity = (TileEntity)iterator1.next();
+             nbttagcompound1 = new NBTTagCompound();
++            try {
+             tileentity.func_145841_b(nbttagcompound1);
+             nbttaglist3.func_74742_a(nbttagcompound1);
++            }
++            catch (Exception e)
++            {
++                FMLLog.log(Level.ERROR, e,
++                        "A TileEntity type %s has throw an exception trying to write state. It will not persist. Report this to the mod author",
++                        tileentity.getClass().getName());
++            }
+         }
+ 
+         p_75820_3_.func_74782_a("TileEntities", nbttaglist3);

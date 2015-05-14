@@ -1,0 +1,33 @@
+diff -r -U 3 minecraft\net\minecraft\client\renderer\RenderBlocks.java minecraft_patched\net\minecraft\client\renderer\RenderBlocks.java
+--- minecraft\net\minecraft\client\renderer\RenderBlocks.java
++++ minecraft_patched\net\minecraft\client\renderer\RenderBlocks.java
+@@ -1929,16 +1929,16 @@
+       float var24 = (float)(p_147788_2_ + 1);
+       float var25 = (float)(p_147788_4_ + 0);
+       float var26 = (float)(p_147788_4_ + 1);
+-      boolean var27 = false;
++      int var27 = 0;
+       if((var19 || var20) && !var21 && !var22) {
+-         var27 = true;
++         var27 = 1;
+       }
+ 
+       if((var21 || var22) && !var20 && !var19) {
+-         var27 = true;
++         var27 = 2;
+       }
+ 
+-      if(!var27) {
++      if(var27 == 0) {
+          int var28 = 0;
+          int var29 = 0;
+          int var30 = 16;
+@@ -1985,7 +1985,7 @@
+          var5.func_78374_a((double)var24, (double)p_147788_3_ + 0.015625D, (double)var25, (double)var9.func_94214_a((double)var30), (double)var9.func_94207_b((double)var29));
+          var5.func_78374_a((double)var23, (double)p_147788_3_ + 0.015625D, (double)var25, (double)var9.func_94214_a((double)var28), (double)var9.func_94207_b((double)var29));
+          var5.func_78374_a((double)var23, (double)p_147788_3_ + 0.015625D, (double)var26, (double)var9.func_94214_a((double)var28), (double)var9.func_94207_b((double)var31));
+-      } else if(var27) {
++      } else if(var27 == 1) {
+          var5.func_78374_a((double)var24, (double)p_147788_3_ + 0.015625D, (double)var26, (double)var8.func_94212_f(), (double)var8.func_94210_h());
+          var5.func_78374_a((double)var24, (double)p_147788_3_ + 0.015625D, (double)var25, (double)var8.func_94212_f(), (double)var8.func_94206_g());
+          var5.func_78374_a((double)var23, (double)p_147788_3_ + 0.015625D, (double)var25, (double)var8.func_94209_e(), (double)var8.func_94206_g());

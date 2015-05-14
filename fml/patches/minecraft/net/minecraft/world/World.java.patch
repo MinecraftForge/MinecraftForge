@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/world/World.java
++++ ../src-work/minecraft/net/minecraft/world/World.java
+@@ -1800,14 +1800,14 @@
+             }
+         }
+ 
+-        this.field_147481_N = false;
+-
+         if (!this.field_147483_b.isEmpty())
+         {
+             this.field_147482_g.removeAll(this.field_147483_b);
+             this.field_147483_b.clear();
+         }
+ 
++        this.field_147481_N = false;
++
+         this.field_72984_F.func_76318_c("pendingBlockEntities");
+ 
+         if (!this.field_147484_a.isEmpty())
+@@ -3598,7 +3598,7 @@
+     @SideOnly(Side.CLIENT)
+     public double func_72919_O()
+     {
+-        return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;
++        return this.field_72986_A.func_76067_t().getHorizon(this);
+     }
+ 
+     public CrashReportCategory func_72914_a(CrashReport p_72914_1_)

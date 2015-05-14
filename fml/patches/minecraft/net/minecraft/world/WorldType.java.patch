@@ -1,0 +1,88 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldType.java
++++ ../src-work/minecraft/net/minecraft/world/WorldType.java
+@@ -1,5 +1,14 @@
+ package net.minecraft.world;
+ 
++import java.util.Random;
++
++import net.minecraft.world.biome.BiomeGenBase;
++import net.minecraft.world.biome.WorldChunkManager;
++import net.minecraft.world.biome.WorldChunkManagerHell;
++import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraft.world.gen.ChunkProviderFlat;
++import net.minecraft.world.gen.ChunkProviderGenerate;
++import net.minecraft.world.gen.FlatGeneratorInfo;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ 
+@@ -112,4 +121,70 @@
+         this.field_151361_l = true;
+         return this;
+     }
++
++    public WorldChunkManager getChunkManager(World world)
++    {
++        if (this == field_77138_c)
++        {
++            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(world.func_72912_H().func_82571_y());
++            return new WorldChunkManagerHell(BiomeGenBase.func_150568_d(flatgeneratorinfo.func_82648_a()), 0.5F);
++        }
++        else
++        {
++            return new WorldChunkManager(world);
++        }
++    }
++
++    public IChunkProvider getChunkGenerator(World world, String generatorOptions)
++    {
++        return (this == field_77138_c ? new ChunkProviderFlat(world, world.func_72905_C(), world.func_72912_H().func_76089_r(), generatorOptions) : new ChunkProviderGenerate(world, world.func_72905_C(), world.func_72912_H().func_76089_r()));
++    }
++
++    public int getMinimumSpawnHeight(World world)
++    {
++        return this == field_77138_c ? 4 : 64;
++    }
++
++    public double getHorizon(World world)
++    {
++        return this == field_77138_c ? 0.0D : 63.0D;
++    }
++
++    public boolean hasVoidParticles(boolean flag)
++    {
++        return this != field_77138_c && !flag;
++    }
++
++    public double voidFadeMagnitude()
++    {
++        return this == field_77138_c ? 1.0D : 0.03125D;
++    }
++
++/*    public BiomeGenBase[] getBiomesForWorldType() {
++        return biomesForWorldType;
++    }
++
++    public void addNewBiome(BiomeGenBase biome)
++    {
++        Set<BiomeGenBase> newBiomesForWorld = Sets.newLinkedHashSet(Arrays.asList(biomesForWorldType));
++        newBiomesForWorld.add(biome);
++       biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
++    }
++
++    public void removeBiome(BiomeGenBase biome)
++    {
++        Set<BiomeGenBase> newBiomesForWorld = Sets.newLinkedHashSet(Arrays.asList(biomesForWorldType));
++        newBiomesForWorld.remove(biome);
++        biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
++    }
++*/
++    public boolean handleSlimeSpawnReduction(Random random, World world)
++    {
++        return this == field_77138_c ? random.nextInt(4) != 1 : false;
++    }
++
++    /**
++     * Called when 'Create New World' button is pressed before starting game
++     */
++    public void onGUICreateWorldPress() { }
+ }

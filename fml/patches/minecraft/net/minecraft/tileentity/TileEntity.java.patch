@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -1,10 +1,12 @@
+ package net.minecraft.tileentity;
+ 
++import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.concurrent.Callable;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockJukebox;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -12,6 +14,8 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.network.Packet;
+ import net.minecraft.world.World;
++
++import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -87,9 +91,10 @@
+     {
+         TileEntity tileentity = null;
+ 
++        Class oclass = null;
+         try
+         {
+-            Class oclass = (Class)field_145855_i.get(p_145827_0_.func_74779_i("id"));
++            oclass = (Class)field_145855_i.get(p_145827_0_.func_74779_i("id"));
+ 
+             if (oclass != null)
+             {
+@@ -103,7 +108,17 @@
+ 
+         if (tileentity != null)
+         {
++            try
++            {
+             tileentity.func_145839_a(p_145827_0_);
++            }
++            catch (Exception ex)
++            {
++                FMLLog.log(Level.ERROR, ex,
++                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_145827_0_.func_74779_i("id"), oclass.getName());
++                tileentity = null;
++            }
+         }
+         else
+         {
+@@ -137,7 +152,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
+     {
+         double d3 = (double)this.field_145851_c + 0.5D - p_145835_1_;

@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.gui;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.client.gui.achievement.GuiAchievements;
+@@ -29,8 +30,9 @@
+ 
+         this.field_146292_n.add(new GuiButton(4, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 24 + b0, I18n.func_135052_a("menu.returnToGame", new Object[0])));
+         this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 96 + b0, 98, 20, I18n.func_135052_a("menu.options", new Object[0])));
++        this.field_146292_n.add(new GuiButton(12, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + b0, 98, 20, "Mod Options..."));
+         GuiButton guibutton;
+-        this.field_146292_n.add(guibutton = new GuiButton(7, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + b0, 98, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
++        this.field_146292_n.add(guibutton = new GuiButton(7, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 72 + b0, 200, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
+         this.field_146292_n.add(new GuiButton(5, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 48 + b0, 98, 20, I18n.func_135052_a("gui.achievements", new Object[0])));
+         this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 48 + b0, 98, 20, I18n.func_135052_a("gui.stats", new Object[0])));
+         guibutton.field_146124_l = this.field_146297_k.func_71356_B() && !this.field_146297_k.func_71401_C().func_71344_c();
+@@ -64,6 +66,10 @@
+                 break;
+             case 7:
+                 this.field_146297_k.func_147108_a(new GuiShareToLan(this));
++                break;
++            case 12:
++                FMLClientHandler.instance().showInGameModOptions(this);
++                break;
+         }
+     }
+ 

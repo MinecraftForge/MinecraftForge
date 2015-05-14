@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
++++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
+@@ -5,6 +5,9 @@
+ import com.mojang.authlib.exceptions.InvalidCredentialsException;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
++
++import cpw.mods.fml.client.FMLClientHandler;
++import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.util.concurrent.Future;
+@@ -23,6 +26,7 @@
+ import net.minecraft.network.login.server.S00PacketDisconnect;
+ import net.minecraft.network.login.server.S01PacketEncryptionRequest;
+ import net.minecraft.network.login.server.S02PacketLoginSuccess;
++import net.minecraft.network.play.client.C17PacketCustomPayload;
+ import net.minecraft.util.ChatComponentTranslation;
+ import net.minecraft.util.CryptManager;
+ import net.minecraft.util.IChatComponent;
+@@ -100,7 +104,7 @@
+ 
+     public void func_147390_a(S02PacketLoginSuccess p_147390_1_)
+     {
+-        this.field_147393_d.func_150723_a(EnumConnectionState.PLAY);
++        FMLNetworkHandler.fmlClientHandshake(this.field_147393_d);
+     }
+ 
+     public void func_147231_a(IChatComponent p_147231_1_)
+@@ -114,7 +118,10 @@
+ 
+         if (p_147232_2_ == EnumConnectionState.PLAY)
+         {
+-            this.field_147393_d.func_150719_a(new NetHandlerPlayClient(this.field_147394_b, this.field_147395_c, this.field_147393_d));
++            NetHandlerPlayClient nhpc = new NetHandlerPlayClient(this.field_147394_b, this.field_147395_c, this.field_147393_d);
++            this.field_147393_d.func_150719_a(nhpc);
++            FMLClientHandler.instance().setPlayClient(nhpc);
++
+         }
+     }
+ 

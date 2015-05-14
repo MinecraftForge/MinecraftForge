@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiIngame.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngame.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.gui;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.awt.Color;
+@@ -314,6 +315,11 @@
+             this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 2, 14737632);
+             s = "Allocated memory: " + j5 * 100L / i5 + "% (" + j5 / 1024L / 1024L + "MB)";
+             this.func_73731_b(fontrenderer, s, k - fontrenderer.func_78256_a(s) - 2, 12, 14737632);
++            int offset = 22;
++            for (String brd : FMLCommonHandler.instance().getBrandings(false))
++            {
++                this.func_73731_b(fontrenderer, brd, k - fontrenderer.func_78256_a(brd) - 2, offset+=10, 14737632);
++            }
+             j3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70165_t);
+             k3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70163_u);
+             int l3 = MathHelper.func_76128_c(this.field_73839_d.field_71439_g.field_70161_v);

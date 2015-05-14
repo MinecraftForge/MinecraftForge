@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/block/Block.java
++++ ../src-work/minecraft/net/minecraft/block/Block.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.block;
+ 
++import cpw.mods.fml.common.registry.GameData;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Iterator;
+@@ -32,7 +33,7 @@
+ 
+ public class Block
+ {
+-    public static final RegistryNamespaced field_149771_c = new RegistryNamespacedDefaultedByKey("air");
++    public static final RegistryNamespaced field_149771_c = GameData.getBlockRegistry();
+     private CreativeTabs field_149772_a;
+     protected String field_149768_d;
+     public static final Block.SoundType field_149769_e = new Block.SoundType("stone", 1.0F, 1.0F);
+@@ -102,6 +103,8 @@
+     protected IIcon field_149761_L;
+     private static final String __OBFID = "CL_00000199";
+ 
++    public final cpw.mods.fml.common.registry.RegistryDelegate<Block> delegate = 
++            ((cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
+     public static int func_149682_b(Block p_149682_0_)
+     {
+         return field_149771_c.func_148757_b(p_149682_0_);

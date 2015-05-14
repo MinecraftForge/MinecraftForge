@@ -1,0 +1,118 @@
+--- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
+@@ -5,6 +5,11 @@
+ import com.mojang.authlib.GameProfileRepository;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
++
++import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.Loader;
++import cpw.mods.fml.common.LoaderState;
++import cpw.mods.fml.common.StartupQuery;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.buffer.ByteBuf;
+@@ -343,7 +348,7 @@
+ 
+     public void func_71260_j()
+     {
+-        if (!this.field_71290_O)
++        if (!this.field_71290_O && Loader.instance().hasReachedState(LoaderState.SERVER_STARTED) && !field_71316_v) // make sure the save is valid and we don't save twice
+         {
+             field_147145_h.info("Stopping server");
+ 
+@@ -394,6 +399,7 @@
+         {
+             if (this.func_71197_b())
+             {
++                FMLCommonHandler.instance().handleServerStarted();
+                 long i = func_130071_aq();
+                 long l = 0L;
+                 this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
+@@ -438,12 +444,20 @@
+                     Thread.sleep(Math.max(1L, 50L - l));
+                     this.field_71296_Q = true;
+                 }
++                FMLCommonHandler.instance().handleServerStopping();
++                FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             }
+             else
+             {
++                FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+                 this.func_71228_a((CrashReport)null);
+             }
+         }
++        catch (StartupQuery.AbortedException e)
++        {
++            // ignore silently
++            FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++        }
+         catch (Throwable throwable1)
+         {
+             field_147145_h.error("Encountered an unexpected exception", throwable1);
+@@ -469,6 +483,7 @@
+                 field_147145_h.error("We were unable to save this crash report to disk.");
+             }
+ 
++            FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.func_71228_a(crashreport);
+         }
+         finally
+@@ -484,6 +499,8 @@
+             }
+             finally
+             {
++                FMLCommonHandler.instance().handleServerStopped();
++                this.field_71316_v = true;
+                 this.func_71240_o();
+             }
+         }
+@@ -529,6 +546,7 @@
+     public void func_71217_p()
+     {
+         long i = System.nanoTime();
++        FMLCommonHandler.instance().onPreServerTick();
+         ++this.field_71315_w;
+ 
+         if (this.field_71295_T)
+@@ -582,6 +600,7 @@
+ 
+         this.field_71304_b.func_76319_b();
+         this.field_71304_b.func_76319_b();
++        FMLCommonHandler.instance().onPostServerTick();
+     }
+ 
+     public void func_71190_q()
+@@ -608,6 +627,7 @@
+                 }
+ 
+                 this.field_71304_b.func_76320_a("tick");
++                FMLCommonHandler.instance().onPreWorldTick(worldserver);
+                 CrashReport crashreport;
+ 
+                 try
+@@ -632,6 +652,7 @@
+                     throw new ReportedException(crashreport);
+                 }
+ 
++                FMLCommonHandler.instance().onPostWorldTick(worldserver);
+                 this.field_71304_b.func_76319_b();
+                 this.field_71304_b.func_76320_a("tracker");
+                 worldserver.func_73039_n().func_72788_a();
+@@ -663,6 +684,7 @@
+ 
+     public void func_71256_s()
+     {
++        StartupQuery.reset();
+         (new Thread("Server thread")
+         {
+             private static final String __OBFID = "CL_00001418";
+@@ -715,7 +737,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return FMLCommonHandler.instance().getModName();
+     }
+ 
+     public CrashReport func_71230_b(CrashReport p_71230_1_)

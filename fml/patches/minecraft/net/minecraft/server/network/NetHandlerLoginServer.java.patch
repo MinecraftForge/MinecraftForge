@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
+@@ -3,6 +3,8 @@
+ import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
++
++import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import java.math.BigInteger;
+ import java.security.PrivateKey;
+@@ -58,7 +60,7 @@
+             this.func_147326_c();
+         }
+ 
+-        if (this.field_147336_h++ == 600)
++        if (this.field_147336_h++ == FMLNetworkHandler.LOGIN_TIMEOUT)
+         {
+             this.func_147322_a("Took too long to log in");
+         }
+@@ -96,7 +98,7 @@
+         {
+             this.field_147328_g = NetHandlerLoginServer.LoginState.ACCEPTED;
+             this.field_147333_a.func_150725_a(new S02PacketLoginSuccess(this.field_147337_i), new GenericFutureListener[0]);
+-            this.field_147327_f.func_71203_ab().func_72355_a(this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
++            FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_71203_ab(), this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
+         }
+     }
+ 

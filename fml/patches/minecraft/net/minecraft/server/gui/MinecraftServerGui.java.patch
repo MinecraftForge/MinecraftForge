@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/server/gui/MinecraftServerGui.java
++++ ../src-work/minecraft/net/minecraft/server/gui/MinecraftServerGui.java
+@@ -13,6 +13,7 @@
+ import java.awt.event.FocusEvent;
+ import java.awt.event.WindowAdapter;
+ import java.awt.event.WindowEvent;
++import java.util.concurrent.CountDownLatch;
+ import javax.swing.JComponent;
+ import javax.swing.JFrame;
+ import javax.swing.JPanel;
+@@ -79,6 +80,7 @@
+                 System.exit(0);
+             }
+         });
++        minecraftservergui.latch.countDown();
+     }
+ 
+     public MinecraftServerGui(DedicatedServer p_i2362_1_)
+@@ -164,8 +166,15 @@
+         return jpanel;
+     }
+ 
++    private CountDownLatch latch = new CountDownLatch(1);
+     public void func_164247_a(final JTextArea p_164247_1_, final JScrollPane p_164247_2_, final String p_164247_3_)
+     {
++        try
++        {
++            latch.await();
++        } catch (InterruptedException e)
++        {
++        }
+         if (!SwingUtilities.isEventDispatchThread())
+         {
+             SwingUtilities.invokeLater(new Runnable()

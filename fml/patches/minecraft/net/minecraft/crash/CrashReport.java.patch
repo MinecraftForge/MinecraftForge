@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.crash;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.File;
+@@ -140,6 +141,7 @@
+                 return IntCache.func_85144_b();
+             }
+         });
++        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
+     }
+ 
+     public String func_71501_a()

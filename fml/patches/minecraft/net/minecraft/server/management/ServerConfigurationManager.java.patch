@@ -1,0 +1,93 @@
+--- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
+@@ -4,6 +4,8 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.mojang.authlib.GameProfile;
++
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.File;
+@@ -58,6 +60,7 @@
+ import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.demo.DemoWorldManager;
+ import net.minecraft.world.storage.IPlayerFileData;
++import net.minecraft.world.storage.SaveHandler;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -98,7 +101,7 @@
+         this.field_72405_c = 8;
+     }
+ 
+-    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_)
++    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_, NetHandlerPlayServer nethandlerplayserver)
+     {
+         GameProfile gameprofile = p_72355_2_.func_146103_bH();
+         PlayerProfileCache playerprofilecache = this.field_72400_f.func_152358_ax();
+@@ -119,7 +122,7 @@
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
+         ChunkCoordinates chunkcoordinates = worldserver.func_72861_E();
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
++        p_72355_2_.field_71135_a = nethandlerplayserver;
+         nethandlerplayserver.func_147359_a(new S01PacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldserver.func_72912_H().func_76093_s(), worldserver.field_73011_w.field_76574_g, worldserver.field_73013_u, this.func_72352_l(), worldserver.func_72912_H().func_76067_t()));
+         nethandlerplayserver.func_147359_a(new S3FPacketCustomPayload("MC|Brand", this.func_72365_p().getServerModName().getBytes(Charsets.UTF_8)));
+         nethandlerplayserver.func_147359_a(new S05PacketSpawnPosition(chunkcoordinates.field_71574_a, chunkcoordinates.field_71572_b, chunkcoordinates.field_71573_c));
+@@ -161,6 +164,7 @@
+ 
+         p_72355_2_.func_71116_b();
+ 
++        FMLCommonHandler.instance().firePlayerLoggedIn(p_72355_2_);
+         if (nbttagcompound != null && nbttagcompound.func_150297_b("Riding", 10))
+         {
+             Entity entity = EntityList.func_75615_a(nbttagcompound.func_74775_l("Riding"), worldserver);
+@@ -248,8 +252,23 @@
+         return nbttagcompound1;
+     }
+ 
++    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    {
++        // Hacky method to allow loading the NBT for a player prior to login
++        NBTTagCompound nbttagcompound = this.field_72400_f.field_71305_c[0].func_72912_H().func_76072_h();
++        if (player.func_70005_c_().equals(this.field_72400_f.func_71214_G()) && nbttagcompound != null)
++        {
++            return nbttagcompound;
++        }
++        else
++        {
++            return ((SaveHandler)this.field_72412_k).getPlayerNBT(player);
++        }
++    }
+     protected void func_72391_b(EntityPlayerMP p_72391_1_)
+     {
++        if (p_72391_1_.field_71135_a == null) return;
++
+         this.field_72412_k.func_75753_a(p_72391_1_);
+         StatisticsFile statisticsfile = (StatisticsFile)this.field_148547_k.get(p_72391_1_.func_110124_au());
+ 
+@@ -281,6 +300,7 @@
+ 
+     public void func_72367_e(EntityPlayerMP p_72367_1_)
+     {
++        FMLCommonHandler.instance().firePlayerLoggedOut(p_72367_1_);
+         p_72367_1_.func_71029_a(StatList.field_75947_j);
+         this.func_72391_b(p_72367_1_);
+         WorldServer worldserver = p_72367_1_.func_71121_q();
+@@ -436,6 +456,7 @@
+         this.field_72404_b.add(entityplayermp1);
+         entityplayermp1.func_71116_b();
+         entityplayermp1.func_70606_j(entityplayermp1.func_110143_aJ());
++        FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp1);
+         return entityplayermp1;
+     }
+ 
+@@ -461,6 +482,7 @@
+             PotionEffect potioneffect = (PotionEffect)iterator.next();
+             p_72356_1_.field_71135_a.func_147359_a(new S1DPacketEntityEffect(p_72356_1_.func_145782_y(), potioneffect));
+         }
++        FMLCommonHandler.instance().firePlayerChangedDimensionEvent(p_72356_1_, j, p_72356_2_);
+     }
+ 
+     public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)

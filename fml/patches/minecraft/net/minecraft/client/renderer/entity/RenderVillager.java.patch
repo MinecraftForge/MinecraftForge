@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.renderer.entity;
+ 
++import cpw.mods.fml.common.registry.VillagerRegistry;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.client.model.ModelVillager;
+@@ -53,7 +54,7 @@
+             case 4:
+                 return field_110906_m;
+             default:
+-                return field_110903_f;
++                return VillagerRegistry.getVillagerSkin(p_110775_1_.func_70946_n(), field_110903_f);
+         }
+     }
+ 

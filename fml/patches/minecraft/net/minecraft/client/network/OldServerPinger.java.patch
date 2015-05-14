@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/network/OldServerPinger.java
++++ ../src-work/minecraft/net/minecraft/client/network/OldServerPinger.java
+@@ -4,6 +4,7 @@
+ import com.google.common.base.Splitter;
+ import com.google.common.collect.Iterables;
+ import com.mojang.authlib.GameProfile;
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.bootstrap.Bootstrap;
+@@ -147,6 +148,7 @@
+                     p_147224_1_.func_147407_a((String)null);
+                 }
+ 
++                FMLClientHandler.instance().bindServerListData(p_147224_1_, serverstatusresponse);
+                 networkmanager.func_150725_a(new C01PacketPing(Minecraft.func_71386_F()), new GenericFutureListener[0]);
+                 this.field_147403_d = true;
+             }

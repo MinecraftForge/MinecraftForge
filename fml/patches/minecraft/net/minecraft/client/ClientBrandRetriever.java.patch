@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/client/ClientBrandRetriever.java
++++ ../src-work/minecraft/net/minecraft/client/ClientBrandRetriever.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ 
+@@ -10,6 +11,6 @@
+ 
+     public static String getClientModName()
+     {
+-        return "vanilla";
++        return FMLCommonHandler.instance().getModName();
+     }
+ }

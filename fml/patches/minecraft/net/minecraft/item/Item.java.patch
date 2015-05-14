@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/item/Item.java
++++ ../src-work/minecraft/net/minecraft/item/Item.java
+@@ -3,6 +3,8 @@
+ import com.google.common.collect.HashMultimap;
+ import com.google.common.collect.Multimap;
+ import com.google.common.collect.Sets;
++
++import cpw.mods.fml.common.registry.GameData;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.HashSet;
+@@ -46,7 +48,7 @@
+ 
+ public class Item
+ {
+-    public static final RegistryNamespaced field_150901_e = new RegistryNamespaced();
++    public static final RegistryNamespaced field_150901_e = GameData.getItemRegistry();
+     protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+     private CreativeTabs field_77701_a;
+     protected static Random field_77697_d = new Random();
+@@ -62,6 +64,8 @@
+     protected String field_111218_cA;
+     private static final String __OBFID = "CL_00000041";
+ 
++    public final cpw.mods.fml.common.registry.RegistryDelegate<Item> delegate = 
++            ((cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry)field_150901_e).getDelegate(this, Item.class);
+     public static int func_150891_b(Item p_150891_0_)
+     {
+         return p_150891_0_ == null ? 0 : field_150901_e.func_148757_b(p_150891_0_);

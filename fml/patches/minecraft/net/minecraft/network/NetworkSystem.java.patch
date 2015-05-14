@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.network;
+ 
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++
++import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import io.netty.bootstrap.ServerBootstrap;
+@@ -84,7 +86,7 @@
+                         ;
+                     }
+ 
+-                    p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new PingResponseHandler(NetworkSystem.this)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(NetworkManager.field_152462_h)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(NetworkManager.field_152462_h));
++                    p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new PingResponseHandler(NetworkSystem.this)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(NetworkManager.field_152462_h)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(NetworkManager.field_152462_h));
+                     NetworkManager networkmanager = new NetworkManager(false);
+                     NetworkSystem.this.field_151272_f.add(networkmanager);
+                     p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);

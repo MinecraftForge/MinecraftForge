@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityVillager.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityVillager.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.passive;
+ 
++import cpw.mods.fml.common.registry.VillagerRegistry;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Collections;
+@@ -422,6 +423,7 @@
+ 
+         MerchantRecipeList merchantrecipelist;
+         merchantrecipelist = new MerchantRecipeList();
++        VillagerRegistry.manageVillagerTrades(merchantrecipelist, this, this.func_70946_n(), this.field_70146_Z);
+         int k;
+         label50:
+ 
+@@ -626,7 +628,7 @@
+     public IEntityLivingData func_110161_a(IEntityLivingData p_110161_1_)
+     {
+         p_110161_1_ = super.func_110161_a(p_110161_1_);
+-        this.func_70938_b(this.field_70170_p.field_73012_v.nextInt(5));
++        VillagerRegistry.applyRandomTrade(this, field_70170_p.field_73012_v);
+         return p_110161_1_;
+     }
+ 

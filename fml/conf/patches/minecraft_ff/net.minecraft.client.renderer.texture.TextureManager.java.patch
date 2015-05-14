@@ -1,0 +1,30 @@
+diff -r -U 3 minecraft\net\minecraft\client\renderer\texture\TextureManager.java minecraft_patched\net\minecraft\client\renderer\texture\TextureManager.java
+--- minecraft\net\minecraft\client\renderer\texture\TextureManager.java
++++ minecraft_patched\net\minecraft\client\renderer\texture\TextureManager.java
+@@ -72,13 +72,14 @@
+ 
+    public boolean func_110579_a(ResourceLocation p_110579_1_, final ITextureObject p_110579_2_) {
+       boolean var3 = true;
+-
++      ITextureObject p_110579_2_2 = p_110579_2_;
++      
+       try {
+          ((ITextureObject)p_110579_2_).func_110551_a(this.field_110582_d);
+       } catch (IOException var8) {
+          field_147646_a.warn("Failed to load texture: " + p_110579_1_, var8);
+-         p_110579_2_ = TextureUtil.field_111001_a;
+-         this.field_110585_a.put(p_110579_1_, p_110579_2_);
++         p_110579_2_2 = TextureUtil.field_111001_a;
++         this.field_110585_a.put(p_110579_1_, p_110579_2_2);
+          var3 = false;
+       } catch (Throwable var9) {
+          CrashReport var5 = CrashReport.func_85055_a(var9, "Registering texture");
+@@ -95,7 +96,7 @@
+          throw new ReportedException(var5);
+       }
+ 
+-      this.field_110585_a.put(p_110579_1_, p_110579_2_);
++      this.field_110585_a.put(p_110579_1_, p_110579_2_2);
+       return var3;
+    }
+ 

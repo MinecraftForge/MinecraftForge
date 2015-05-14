@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.world.gen;
+ 
+ import com.google.common.collect.Lists;
++import cpw.mods.fml.common.registry.GameRegistry;
+ import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.Collections;
+@@ -216,6 +217,7 @@
+             if (this.field_73246_d != null)
+             {
+                 this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);
++                GameRegistry.generateWorld(p_73153_2_, p_73153_3_, field_73251_h, field_73246_d, p_73153_1_);
+                 chunk.func_76630_e();
+             }
+         }

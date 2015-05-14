@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
+@@ -211,6 +211,8 @@
+                     }
+                 }
+ 
++                WorldType.field_77139_a[this.field_146331_K].onGUICreateWorldPress();
++
+                 WorldSettings.GameType gametype = WorldSettings.GameType.func_77142_a(this.field_146342_r);
+                 WorldSettings worldsettings = new WorldSettings(i, gametype, this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
+                 worldsettings.func_82750_a(this.field_146334_a);

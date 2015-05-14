@@ -1,0 +1,14 @@
+diff -r -U 3 minecraft\net\minecraft\network\PacketBuffer.java minecraft_patched\net\minecraft\network\PacketBuffer.java
+--- minecraft\net\minecraft\network\PacketBuffer.java
++++ minecraft_patched\net\minecraft\network\PacketBuffer.java
+@@ -713,10 +713,4 @@
+    public boolean release(int p_release_1_) {
+       return this.field_150794_a.release(p_release_1_);
+    }
+-
+-   // $FF: synthetic method
+-   // $FF: bridge method
+-   public int compareTo(Object p_compareTo_1_) {
+-      return this.compareTo((ByteBuf)p_compareTo_1_);
+-   }
+ }

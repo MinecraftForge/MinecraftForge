@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/S3FPacketCustomPayload.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/S3FPacketCustomPayload.java
+@@ -27,23 +27,24 @@
+         this.field_149172_a = p_i45190_1_;
+         this.field_149171_b = p_i45190_2_;
+ 
+-        if (p_i45190_2_.length >= 1048576)
++        //TODO: Remove this when FML protocol is re-written. To restore vanilla compatibility.
++        if (p_i45190_2_.length > 0x1FFF9A) // Max size of ANY MC packet is 0x1FFFFF minus max size of this packet (101)
+         {
+-            throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
++            throw new IllegalArgumentException("Payload may not be larger than 2097050 bytes");
+         }
+     }
+ 
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_149172_a = p_148837_1_.func_150789_c(20);
+-        this.field_149171_b = new byte[p_148837_1_.readUnsignedShort()];
++        this.field_149171_b = new byte[cpw.mods.fml.common.network.ByteBufUtils.readVarShort(p_148837_1_)];
+         p_148837_1_.readBytes(this.field_149171_b);
+     }
+ 
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
+     {
+         p_148840_1_.func_150785_a(this.field_149172_a);
+-        p_148840_1_.writeShort(this.field_149171_b.length);
++        cpw.mods.fml.common.network.ByteBufUtils.writeVarShort(p_148840_1_, this.field_149171_b.length);
+         p_148840_1_.writeBytes(this.field_149171_b);
+     }
+ 

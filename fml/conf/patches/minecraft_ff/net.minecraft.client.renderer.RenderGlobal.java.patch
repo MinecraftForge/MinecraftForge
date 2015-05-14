@@ -1,0 +1,12 @@
+diff -r -U 3 minecraft\net\minecraft\client\renderer\RenderGlobal.java minecraft_patched\net\minecraft\client\renderer\RenderGlobal.java
+--- minecraft\net\minecraft\client\renderer\RenderGlobal.java
++++ minecraft_patched\net\minecraft\client\renderer\RenderGlobal.java
+@@ -1566,7 +1566,7 @@
+          double var15 = this.field_72777_q.field_71451_h.field_70165_t - p_72726_2_;
+          double var17 = this.field_72777_q.field_71451_h.field_70163_u - p_72726_4_;
+          double var19 = this.field_72777_q.field_71451_h.field_70161_v - p_72726_6_;
+-         Object var21 = null;
++         EntityFX var21 = null;
+          if(p_72726_1_.equals("hugeexplosion")) {
+             this.field_72777_q.field_71452_i.func_78873_a(var21 = new EntityHugeExplodeFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_));
+          } else if(p_72726_1_.equals("largeexplode")) {

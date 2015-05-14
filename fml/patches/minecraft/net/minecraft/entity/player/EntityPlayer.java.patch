@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
+@@ -2,6 +2,9 @@
+ 
+ import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
++
++import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Collection;
+@@ -193,6 +196,7 @@
+ 
+     public void func_70071_h_()
+     {
++        FMLCommonHandler.instance().onPlayerPreTick(this);
+         if (this.field_71074_e != null)
+         {
+             ItemStack itemstack = this.field_71071_by.func_70448_g();
+@@ -316,6 +320,7 @@
+             this.field_71100_bB.func_75118_a(this);
+             this.func_71064_a(StatList.field_75948_k, 1);
+         }
++        FMLCommonHandler.instance().onPlayerPostTick(this);
+     }
+ 
+     public int func_82145_z()
+@@ -2031,6 +2036,11 @@
+         }
+     }
+ 
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
++    {
++        FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++    }
++
+     public static enum EnumStatus
+     {
+         OK,

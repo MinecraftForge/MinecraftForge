@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.dedicated;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.BufferedReader;
+@@ -48,6 +49,7 @@
+     private boolean field_71338_p;
+     private WorldSettings.GameType field_71337_q;
+     private boolean field_71335_s;
++    public static boolean allowPlayerLogins = false;
+     private static final String __OBFID = "CL_00001784";
+ 
+     public DedicatedServer(File p_i1508_1_)
+@@ -112,6 +114,8 @@
+             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
++        FMLCommonHandler.instance().onServerStart(this);
++
+         field_155771_h.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
+         this.field_154332_n = new ServerEula(new File("eula.txt"));
+@@ -203,6 +207,7 @@
+             }
+             else
+             {
++                FMLCommonHandler.instance().onServerStarted();
+                 this.func_152361_a(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+@@ -248,6 +253,7 @@
+                 this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
+                 this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
+                 this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
++                if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
+                 field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
+                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+@@ -268,7 +274,7 @@
+                     this.field_71339_n.func_72602_a();
+                 }
+ 
+-                return true;
++                return FMLCommonHandler.instance().handleServerStarting(this);
+             }
+         }
+     }

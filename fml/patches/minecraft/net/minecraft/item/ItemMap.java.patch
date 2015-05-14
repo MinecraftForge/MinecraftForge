@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMap.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMap.java
+@@ -57,7 +57,7 @@
+             int i = 128 * (1 << mapdata.field_76197_d);
+             mapdata.field_76201_a = Math.round((float)p_77873_2_.func_72912_H().func_76079_c() / (float)i) * i;
+             mapdata.field_76199_b = Math.round((float)(p_77873_2_.func_72912_H().func_76074_e() / i)) * i;
+-            mapdata.field_76200_c = (byte)p_77873_2_.field_73011_w.field_76574_g;
++            mapdata.field_76200_c = p_77873_2_.field_73011_w.field_76574_g;
+             mapdata.func_76185_a();
+             p_77873_2_.func_72823_a(s, mapdata);
+         }
