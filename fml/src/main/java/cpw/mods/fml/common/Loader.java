@@ -620,7 +620,7 @@ public class Loader
 
     public String getFMLVersionString()
     {
-        return String.format("%s.%s.%s.%s", major, minor, rev, build);
+        return "7.10.99.99";
     }
 
     public ClassLoader getModClassLoader()
