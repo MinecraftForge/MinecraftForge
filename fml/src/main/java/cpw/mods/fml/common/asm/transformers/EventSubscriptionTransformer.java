@@ -65,7 +65,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
         {
             if (buildEvents(classNode))
             {
-                ClassWriter cw = new ClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES);
+                ClassWriter cw = new ClassWriter(COMPUTE_FRAMES);
                 classNode.accept(cw);
                 return cw.toByteArray();
             }

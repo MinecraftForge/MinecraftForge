@@ -35,7 +35,7 @@ public class SideTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
-    	if (bytes == null) { return null; }
+        if (bytes == null) { return null; }
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
