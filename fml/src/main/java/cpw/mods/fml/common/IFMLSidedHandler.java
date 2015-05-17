@@ -63,4 +63,6 @@ public interface IFMLSidedHandler
     void allowLogins();
 
     void processWindowMessages();
+
+    String stripSpecialChars(String message);
 }

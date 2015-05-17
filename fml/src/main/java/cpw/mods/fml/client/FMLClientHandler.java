@@ -58,6 +58,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveFormatOld;
 
@@ -1009,5 +1010,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         if (!SplashProgress.mutex.tryAcquire()) return;
         Display.processMessages();
         SplashProgress.mutex.release();
+    }
+
+    @Override
+    public String stripSpecialChars(String message)
+    {
+        return StringUtils.stripControlCodes(message);
     }
 }

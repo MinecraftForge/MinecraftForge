@@ -71,7 +71,7 @@ public class ProgressManager
         {
             if(step >= steps) throw new IllegalStateException("too much steps for ProgressBar " + title);
             step++;
-            this.message = message;
+            this.message = FMLCommonHandler.instance().stripSpecialChars(message);
             FMLCommonHandler.instance().processWindowMessages();
         }
 

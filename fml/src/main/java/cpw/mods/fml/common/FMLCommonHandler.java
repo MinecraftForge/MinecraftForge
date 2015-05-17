@@ -632,4 +632,9 @@ public class FMLCommonHandler
             Runtime.getRuntime().exit(exitCode);
         }
     }
+
+    public String stripSpecialChars(String message)
+    {
+        return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;
+    }
 }

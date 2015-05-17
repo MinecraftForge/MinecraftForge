@@ -259,7 +259,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return DedicatedServer.allowPlayerLogins;
     }
-    
+
     @Override
     public void allowLogins() {
         DedicatedServer.allowPlayerLogins = true;
@@ -269,5 +269,11 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void processWindowMessages()
     {
         // NOOP
+    }
+
+    @Override
+    public String stripSpecialChars(String message)
+    {
+        return message;
     }
 }
