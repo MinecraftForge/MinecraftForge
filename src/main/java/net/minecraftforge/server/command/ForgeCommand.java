@@ -2,12 +2,16 @@ package net.minecraftforge.server.command;
 
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.server.ForgeTimeTracker;
@@ -68,6 +72,31 @@ public class ForgeCommand extends CommandBase {
         }
     }
 
+    @Override
+    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    {
+        if (args.length == 1)
+        {
+            return Arrays.asList("tps", "track");
+        }
+        else if (args.length == 2)
+        {
+            if ("tps".equals(args[0])) {
+                ArrayList list = new ArrayList();
+                for (Integer l : getServer().worldTickTimes.keySet())
+                {
+                    list.add(l.toString());
+                }
+                return list;
+            }
+            else if ("track".equals(args[0]))
+            {
+                return Arrays.asList("te");
+            }
+        }
+        return null;
+    }
+    
     private void handleTracking(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length != 3)
