@@ -2,8 +2,6 @@ package net.minecraftforge.server.command;
 
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -77,21 +75,16 @@ public class ForgeCommand extends CommandBase {
     {
         if (args.length == 1)
         {
-            return Arrays.asList("tps", "track");
+            return getListOfStringsMatchingLastWord(args, "tps", "track");
         }
         else if (args.length == 2)
         {
             if ("tps".equals(args[0])) {
-                ArrayList list = new ArrayList();
-                for (Integer l : getServer().worldTickTimes.keySet())
-                {
-                    list.add(l.toString());
-                }
-                return list;
+                return func_175762_a(args, getServer().worldTickTimes.keySet());
             }
             else if ("track".equals(args[0]))
             {
-                return Arrays.asList("te");
+                return getListOfStringsMatchingLastWord(args, "te");
             }
         }
         return null;
