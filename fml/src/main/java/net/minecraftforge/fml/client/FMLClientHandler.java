@@ -99,6 +99,7 @@ import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -906,7 +907,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         if (badType == null)
         {
             badType = Sets.newHashSet();
-            brokenTextures.put(resourceLocation.getResourceDomain(), error, badType);
+            brokenTextures.put(resourceLocation.getResourceDomain(), Objects.firstNonNull(error, "Unknown error"), badType);
         }
         badType.add(resourceLocation);
     }
