@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +22,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.block.model.BlockPart;
+import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
@@ -40,6 +43,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -190,7 +194,7 @@ public class ModelLoader extends ModelBakery
         loadingModels.remove(location);
     }
 
-    private class VanillaModelWrapper implements IModel
+    private class VanillaModelWrapper implements IRetexturableModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;
@@ -273,6 +277,67 @@ public class ModelLoader extends ModelBakery
         {
             return ModelRotation.X0_Y0;
         }
+
+        @Override
+        public IModel retexture(ImmutableMap<String, String> textures)
+        {
+            if (textures.isEmpty())
+                return this;
+            
+            List<BlockPart> elements = Lists.newArrayList(); //We have to duplicate this so we can edit it below.
+            for (BlockPart part : (List<BlockPart>)this.model.getElements())
+            {
+                elements.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade));
+            }
+
+            ModelBlock neweModel = new ModelBlock(this.model.getParentLocation(), elements,
+                Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
+                new ItemCameraTransforms(this.model.getThirdPersonTransform(), this.model.getFirstPersonTransform(), this.model.getHeadTransform(), this.model.getInGuiTransform()));
+            neweModel.name = this.model.name;
+            neweModel.parent = this.model.parent;
+
+            Set<String> removed = Sets.newHashSet();
+            
+            for (Entry<String, String> e : textures.entrySet())
+            {
+                if (e.getValue() == null)
+                {
+                    removed.add(e.getKey());
+                    neweModel.textures.remove(e.getKey());
+                }
+                else
+                    neweModel.textures.put(e.getKey(), e.getValue());
+            }
+
+            // Map the model's texture references as if it was the parent of a model with the retexture map as its textures.
+            Map<String, String> remapped = Maps.newHashMap();
+            
+            for (Entry<String, String> e : (Set<Entry<String, String>>)neweModel.textures.entrySet())
+            {
+                if (e.getValue().startsWith("#"))
+                {
+                    String key = e.getValue().substring(1);
+                    if (neweModel.textures.containsKey(key))
+                        remapped.put(e.getKey(), (String)neweModel.textures.get(key));
+                }
+            }
+            
+            neweModel.textures.putAll(remapped);
+            
+            //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
+            for (BlockPart part : (List<BlockPart>)neweModel.getElements())
+            {
+                Iterator<Entry<EnumFacing, BlockPartFace>> itr = part.mapFaces.entrySet().iterator();
+                while (itr.hasNext())
+                {
+                    Entry<EnumFacing, BlockPartFace> entry = itr.next();
+                    if (removed.contains(entry.getValue().texture))
+                        itr.remove();
+                }
+            }
+
+            return new VanillaModelWrapper(location, neweModel);
+        }
     }
 
     public static class UVLock implements IModelState
@@ -336,7 +401,15 @@ public class ModelLoader extends ModelBakery
             {
                 ResourceLocation loc = v.getModelLocation();
                 locations.add(loc);
-                IModel model = new WeightedPartWrapper(getModel(loc));
+
+                IModel model = getModel(loc);
+                if (v instanceof ISmartVariant)
+                {
+                    model = ((ISmartVariant)v).process(model, ModelLoader.this);
+                    textures.addAll(model.getTextures()); // Kick this, just in case.
+                }
+
+                model = new WeightedPartWrapper(model);
                 models.add(model);
                 builder.put(model, new TRSRTransformation(v.getRotation()));
             }
@@ -449,7 +522,7 @@ public class ModelLoader extends ModelBakery
             }
             catch(IOException e)
             {
-                if(loader.isLoading)
+                if(loader.isLoading) //ToDo: Make this less gaging, hides missing models..
                 {
                     // holding error until onPostBakeEvent
                 }
