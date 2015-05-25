@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
 import java.util.Iterator;
@@ -41,6 +43,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.SharedDrawable;
 import org.lwjgl.util.glu.GLU;
 
+import cpw.mods.fml.common.EnhancedRuntimeException;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICrashCallable;
@@ -176,7 +179,12 @@ public class SplashProgress
                 return "GL info";
             }
         });
-        CrashReport report = CrashReport.makeCrashReport(new Throwable(), "Loading screen debug info");
+        CrashReport report = CrashReport.makeCrashReport(new Throwable()
+        {
+            @Override public String getMessage(){ return "This is just a prompt for computer specs to be printed. THIS IS NOT A ERROR"; }
+            @Override public void printStackTrace(final PrintWriter s){ s.println(getMessage()); }
+            @Override public void printStackTrace(final PrintStream s) { s.println(getMessage()); }
+        }, "Loading screen debug info");
         System.out.println(report.getCompleteReport());
 
         try
@@ -272,8 +280,8 @@ public class SplashProgress
 
                     // forge logo
                     setColor(backgroundColor);
-                    float fw = (float)forgeTexture.getWidth() / 2;
-                    float fh = (float)forgeTexture.getHeight() / 2;
+                    float fw = (float)forgeTexture.getWidth() / 2 / 2;
+                    float fh = (float)forgeTexture.getHeight() / 2 / 2;
                     if(rotate)
                     {
                         float sh = Math.max(fw, fh);
@@ -494,8 +502,60 @@ public class SplashProgress
         catch (Exception e)
         {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            if (disableSplash())
+            {
+                throw new EnhancedRuntimeException(e)
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("SplashProgress has detected a error loading Minecraft.");
+                        stream.println("This can sometimes be caused by bad video drivers.");
+                        stream.println("We have automatically disabeled the new Splash Screen in config/splash.properties.");
+                        stream.println("Try reloading minecraft before reporting any errors.");
+                    }
+                };
+            }
+            else
+            {
+                throw new EnhancedRuntimeException(e)
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("SplashProgress has detected a error loading Minecraft.");
+                        stream.println("This can sometimes be caused by bad video drivers.");
+                        stream.println("Please try disabeling the new Splash Screen in config/splash.properties.");
+                        stream.println("After doing so, try reloading minecraft before reporting any errors.");
+                    }
+                };
+            }
         }
+    }
+
+    private static boolean disableSplash()
+    {
+        File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        FileReader r = null;
+        enabled = false;
+        config.setProperty("enabled", "false");
+
+        FileWriter w = null;
+        try
+        {
+            w = new FileWriter(configFile);
+            config.store(w, "Splash screen properties");
+        }
+        catch(IOException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            return false;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(w);
+        }
+        return true;
     }
 
     private static IResourcePack createResourcePack(File file)
