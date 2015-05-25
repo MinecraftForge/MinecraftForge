@@ -79,6 +79,8 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
@@ -536,8 +538,60 @@ public class SplashProgress
         catch (Exception e)
         {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            if (disableSplash())
+            {
+                throw new EnhancedRuntimeException(e)
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("SplashProgress has detected a error loading Minecraft.");
+                        stream.println("This can sometimes be caused by bad video drivers.");
+                        stream.println("We have automatically disabeled the new Splash Screen in config/splash.properties.");
+                        stream.println("Try reloading minecraft before reporting any errors.");
+                    }
+                };
+            }
+            else
+            {
+                throw new EnhancedRuntimeException(e)
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("SplashProgress has detected a error loading Minecraft.");
+                        stream.println("This can sometimes be caused by bad video drivers.");
+                        stream.println("Please try disabeling the new Splash Screen in config/splash.properties.");
+                        stream.println("After doing so, try reloading minecraft before reporting any errors.");
+                    }
+                };
+            }
         }
+    }
+
+    private static boolean disableSplash()
+    {
+        File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        FileReader r = null;
+        enabled = false;
+        config.setProperty("enabled", "false");
+
+        FileWriter w = null;
+        try
+        {
+            w = new FileWriter(configFile);
+            config.store(w, "Splash screen properties");
+        }
+        catch(IOException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            return false;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(w);
+        }
+        return true;
     }
 
     private static IResourcePack createResourcePack(File file)
