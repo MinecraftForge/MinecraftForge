@@ -18,7 +18,32 @@
                  p_180614_3_.func_72908_a((double)((float)p_180614_4_.func_177958_n() + 0.5F), (double)((float)p_180614_4_.func_177956_o() + 0.5F), (double)((float)p_180614_4_.func_177952_p() + 0.5F), this.field_150939_a.field_149762_H.func_150496_b(), (this.field_150939_a.field_149762_H.func_150497_c() + 1.0F) / 2.0F, this.field_150939_a.field_149762_H.func_150494_d() * 0.8F);
                  --p_180614_1_.field_77994_a;
              }
-@@ -157,4 +149,26 @@
+@@ -85,14 +77,24 @@
+         }
+     }
+ 
++    @Deprecated //Use player sensitive version
+     public static boolean func_179224_a(World p_179224_0_, BlockPos p_179224_1_, ItemStack p_179224_2_)
+     {
++        return setTileEntityNBT(p_179224_0_, p_179224_1_, p_179224_2_, null);
++    }
++    public static boolean setTileEntityNBT(World p_179224_0_, BlockPos p_179224_1_, ItemStack p_179224_2_, EntityPlayer player)
++    {
+         if (p_179224_2_.func_77942_o() && p_179224_2_.func_77978_p().func_150297_b("BlockEntityTag", 10))
+         {
+             TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_1_);
+ 
+             if (tileentity != null)
+             {
++                //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
++                final net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.func_71276_C();
++                if (!p_179224_0_.field_72995_K && tileentity.restrictNBTCopy() &&
++                   (server == null || server.func_71203_ab().func_152596_g(player.func_146103_bH())))
++                       return false;
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttagcompound.func_74737_b();
+                 tileentity.func_145841_b(nbttagcompound);
+@@ -157,4 +159,26 @@
      {
          return this.field_150939_a;
      }
@@ -38,7 +63,7 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        if (state.func_177230_c() == this.field_150939_a)
 +        {
-+            func_179224_a(world, pos, stack);
++            setTileEntityNBT(world, pos, stack, player);
 +            this.field_150939_a.func_180633_a(world, pos, state, player, stack);
 +        }
 +
