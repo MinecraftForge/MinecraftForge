@@ -1,18 +1,18 @@
 package net.minecraftforge.oredict;
 
-import java.util.List;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import net.minecraft.block.Block;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ItemPredicate;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ShapedOreRecipe implements IRecipe
 {
@@ -21,7 +21,7 @@ public class ShapedOreRecipe implements IRecipe
     private static final int MAX_CRAFT_GRID_HEIGHT = 3;
 
     private ItemStack output = null;
-    private Object[] input = null;
+    private ItemPredicate[] input = null;
     private int width = 0;
     private int height = 0;
     private boolean mirrored = true;
@@ -82,7 +82,7 @@ public class ShapedOreRecipe implements IRecipe
             throw new RuntimeException(ret);
         }
 
-        HashMap<Character, Object> itemMap = new HashMap<Character, Object>();
+        HashMap<Character, ItemPredicate> itemMap = new HashMap<Character, ItemPredicate>();
 
         for (; idx < recipe.length; idx += 2)
         {
@@ -91,19 +91,23 @@ public class ShapedOreRecipe implements IRecipe
 
             if (in instanceof ItemStack)
             {
-                itemMap.put(chr, ((ItemStack)in).copy());
+                itemMap.put(chr, ItemPredicate.ofItemStack((ItemStack)in));
             }
             else if (in instanceof Item)
             {
-                itemMap.put(chr, new ItemStack((Item)in));
+                itemMap.put(chr, ItemPredicate.ofItem((Item) in));
             }
             else if (in instanceof Block)
             {
-                itemMap.put(chr, new ItemStack((Block)in, 1, OreDictionary.WILDCARD_VALUE));
+                itemMap.put(chr, ItemPredicate.ofBlock((Block) in));
             }
             else if (in instanceof String)
             {
-                itemMap.put(chr, OreDictionary.getOres((String)in));
+                itemMap.put(chr, new ItemPredicate.Ore((String) in));
+            }
+            else if (in instanceof ItemPredicate)
+            {
+                itemMap.put(chr, (ItemPredicate)in);
             }
             else
             {
@@ -117,7 +121,7 @@ public class ShapedOreRecipe implements IRecipe
             }
         }
 
-        input = new Object[width * height];
+        input = new ItemPredicate[width * height];
         int x = 0;
         for (char chr : shape.toCharArray())
         {
@@ -131,7 +135,7 @@ public class ShapedOreRecipe implements IRecipe
         width = recipe.recipeWidth;
         height = recipe.recipeHeight;
 
-        input = new Object[recipe.recipeItems.length];
+        input = new ItemPredicate[recipe.recipeItems.length];
 
         for(int i = 0; i < input.length; i++)
         {
@@ -139,13 +143,13 @@ public class ShapedOreRecipe implements IRecipe
 
             if(ingred == null) continue;
 
-            input[i] = recipe.recipeItems[i];
+            input[i] = ItemPredicate.ofItemStack(recipe.recipeItems[i]);
 
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
                 if(OreDictionary.itemMatches(replace.getKey(), ingred, true))
                 {
-                    input[i] = OreDictionary.getOres(replace.getValue());
+                    input[i] = new ItemPredicate.Ore(replace.getValue());
                     break;
                 }
             }
@@ -192,7 +196,7 @@ public class ShapedOreRecipe implements IRecipe
             {
                 int subX = x - startX;
                 int subY = y - startY;
-                Object target = null;
+                ItemPredicate target = ItemPredicate.EMPTY_STACK;
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
@@ -208,29 +212,8 @@ public class ShapedOreRecipe implements IRecipe
 
                 ItemStack slot = inv.getStackInRowAndColumn(x, y);
 
-                if (target instanceof ItemStack)
-                {
-                    if (!OreDictionary.itemMatches((ItemStack)target, slot, false))
-                    {
-                        return false;
-                    }
-                }
-                else if (target instanceof List)
-                {
-                    boolean matched = false;
 
-                    Iterator<ItemStack> itr = ((List<ItemStack>)target).iterator();
-                    while (itr.hasNext() && !matched)
-                    {
-                        matched = OreDictionary.itemMatches(itr.next(), slot, false);
-                    }
-
-                    if (!matched)
-                    {
-                        return false;
-                    }
-                }
-                else if (target == null && slot != null)
+                if (target != null && !(target.apply(slot, false)))
                 {
                     return false;
                 }
