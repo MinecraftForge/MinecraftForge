@@ -43,6 +43,12 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         return this;
     }
 
+    // has this message type been registered already?
+    public boolean messageTypeIsRegistered(Class<? extends A> type)
+    {
+        return types.containsKey(type);
+    }
+    
     public abstract void encodeInto(ChannelHandlerContext ctx, A msg, ByteBuf target) throws Exception;
     @Override
     protected final void encode(ChannelHandlerContext ctx, A msg, List<Object> out) throws Exception
