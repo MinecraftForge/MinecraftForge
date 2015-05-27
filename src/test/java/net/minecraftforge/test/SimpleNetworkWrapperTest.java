@@ -11,17 +11,30 @@ import net.minecraftforge.debug.ModelBakeEventDebug.BakeEventHandler;
 import net.minecraftforge.debug.ModelBakeEventDebug.CommonProxy;
 import net.minecraftforge.debug.ModelBakeEventDebug.CustomModelBlock;
 import net.minecraftforge.debug.ModelBakeEventDebug.CustomTileEntity;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+
+/*
+ * Test for tweaks to SimpleNetworkWrapper:
+ * registerMessageType and registerMessageHandler instead of registerMessage
+ * 
+ * Test is:
+ * Every 5 seconds, server sends a TestMessage to all clients.
+ * Client receives message and prints to console.
+ */
 
 @Mod(modid="SimpleNetworkWrapperTest", name="SimpleNetworkWrapperTest", version="0.0.0")
 public class SimpleNetworkWrapperTest  {
@@ -30,7 +43,10 @@ public class SimpleNetworkWrapperTest  {
     @EventHandler
     public void init(FMLInitializationEvent event) 
     {
-        if (ENABLE) proxy.init(event);
+        if (ENABLE) {
+            proxy.init(event);
+            FMLCommonHandler.instance().bus().register(new ServerTickMessageSender());
+        }
     }
     
     @SidedProxy(serverSide = "net.minecraftforge.test.SimpleNetworkWrapperTest$CommonProxy", clientSide = "net.minecraftforge.test.SimpleNetworkWrapperTest$ClientProxy")
@@ -42,6 +58,7 @@ public class SimpleNetworkWrapperTest  {
     {
         public void init(FMLInitializationEvent event)
         {
+            simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("TestChannel");
           simpleNetworkWrapper.registerMessageType(TestMessage.class, MESSAGE_BYTE); 
         }
     }
@@ -56,12 +73,26 @@ public class SimpleNetworkWrapperTest  {
         }
     }
 
-    STILL TO DO:
-        - add tick handler for server to send messages
-        - add threadsafe handlers
-    
+    public static class ServerTickMessageSender
+    {
+        static int serverTickCount = 0;
+      @SubscribeEvent
+      public void onServerTick(ServerTickEvent event)
+      {
+        ++serverTickCount;
+        if (serverTickCount % 100 == 0) {
+          TestMessage message = new TestMessage(serverTickCount);
+          simpleNetworkWrapper.sendToAll(message);  
+        }
+      }
+        
+    }
+       
     public static class TestMessage implements IMessage
     {
+        public TestMessage()
+        {
+        }
         public TestMessage(int i_count) 
         {
             count = i_count;
