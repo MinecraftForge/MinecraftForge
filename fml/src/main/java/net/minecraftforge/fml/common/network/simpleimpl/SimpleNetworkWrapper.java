@@ -4,12 +4,15 @@ import io.netty.channel.ChannelFutureListener;
 
 import java.util.EnumMap;
 
+import org.apache.logging.log4j.Level;
+
 import com.google.common.base.Throwables;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
@@ -26,11 +29,24 @@ import net.minecraftforge.fml.relauncher.Side;
  * Usage is simple:<ul>
  * <li>construct, and store, an instance of this class. It will automatically register and configure your underlying netty channel.
  *
- * <li>Then, call {@link #registerMessage(Class, Class, byte, Side)} for each message type you want to exchange
+ * <li>Then, register the message types and their handlers in one of the following ways:
+ * 
+ * (A)
+ * call {@link #registerMessage(Class, Class, byte, Side)} for each message type you want to exchange
  * providing an {@link IMessageHandler} implementation class as well as an {@link IMessage} implementation class. The side parameter
  * to that method indicates which side (server or client) the <em>message processing</em> will occur on. The discriminator byte
  * should be unique for this channelName - it is used to discriminate between different types of message that might
  * occur on this channel (a simple form of message channel multiplexing, if you will).
+ * or
+ * (B)
+ * In your common proxy, call {@link #registerMessageType(Class, byte)} for each message type you want to exchange.  The discriminator byte
+ * should be unique for this channelName - it is used by the sender to encode the message type, and by the receiver to decode the message type.
+ * Then:
+ *  a) for any handlers which process messages arriving at the server, call 
+ *        {@link #registerMessageHandler(Class, Class, Side.SERVER)} in your common proxy
+ *  b) for any handlers which process messages arriving at the client, call
+ *        {@link #registerMessageHandler(Class, Class, Side.CLIENT)} in your client-side-only proxy 
+ * 
  * <li>To get a packet suitable for presenting to the rest of minecraft, you can call {@link #getPacketFrom(IMessage)}. The return result
  * is suitable for returning from things like {@link TileEntity#getDescriptionPacket()} for example.
  * <li>Finally, use the sendXXX to send unsolicited messages to various classes of recipients.
@@ -75,6 +91,18 @@ import net.minecraftforge.fml.relauncher.Side;
  *  wrapper.registerMessage(Message1Handler.class, Message1.class, 1, Side.CLIENT);
  *  // Message2 is handled by the Message2Handler class, it has discriminator id 2 and it's on the server
  *  wrapper.registerMessage(Message2Handler.class, Message2.class, 2, Side.SERVER);
+ *  
+ *  or alternatively:
+ *  
+ *  // Code in a {@link FMLPreInitializationEvent} or {@link FMLInitializationEvent} handler in the common proxy
+ *  SimpleNetworkWrapper wrapper = NetworkRegistry.newSimpleChannel("MYCHANNEL");
+ *  // Message1 has discriminator id 1
+ *  wrapper.registerMessageType(Message1.class, 1);
+ *  // Code in a {@link FMLPreInitializationEvent} or {@link FMLInitializationEvent} handler in the client proxy,
+ *  //   to register the client-side handler for the Message1 class
+ *  wrapper.registerMessageHandler(Message1Handler.class, Message1.class, Side.CLIENT);
+ *  
+ *  
  *  </pre>
  * </code>
  *
@@ -141,6 +169,57 @@ public class SimpleNetworkWrapper {
         }
     }
 
+    /**
+     * Register a message. The message will have the supplied discriminator byte. 
+     *
+     * @param requestMessageType the message type
+     * @param discriminator a discriminator byte
+     */
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessageType(Class<REQ> requestMessageType, int discriminator)
+    {
+        packetCodec.addDiscriminator(discriminator, requestMessageType);
+    }
+    
+    /**
+     * Register the handler for a message type. The message handler will
+     * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
+     *
+     * @param messageHandler the message handler instance
+     * @param requestMessageType the message type
+     * @param side the side for the handler
+     */
+
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessageHandler(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, Side side)
+    {
+        if (!packetCodec.messageTypeIsRegistered(requestMessageType)) {
+            FMLLog.log(Level.ERROR, "registerMessageHandler() failed for message type " + requestMessageType + " because registerMessageType() wasn't called first.");
+            return;
+        }
+        FMLEmbeddedChannel channel = channels.get(side);
+        String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
+        if (side == Side.SERVER)
+        {
+            addServerHandlerAfter(channel, type, messageHandler, requestMessageType);
+        }
+        else
+        {
+            addClientHandlerAfter(channel, type, messageHandler, requestMessageType);
+        }
+    }
+
+    /**
+     * Register a message handler. The message handler will
+     * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
+     *
+     * @param messageHandler the message handler type
+     * @param requestMessageType the message type
+     * @param side the side for the handler
+     */
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessageHandler(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side)
+    {
+        registerMessageHandler(instantiate(messageHandler), requestMessageType, side);
+    }
+    
     private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
@@ -160,7 +239,7 @@ public class SimpleNetworkWrapper {
 
     /**
      * Construct a minecraft packet from the supplied message. Can be used where minecraft packets are required, such as
-     * {@link TileEntity#func_145844_m}.
+     * {@link TileEntity#getDescriptionPacket}.
      *
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs
@@ -209,6 +288,7 @@ public class SimpleNetworkWrapper {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
+
 
     /**
      * Send this message to everyone within the supplied dimension.
