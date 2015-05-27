@@ -114,7 +114,7 @@ public interface ISpecialArmor
                 else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
-                    prop = new ArmorProperties(0, armor.damageReduceAmount / 25D, armor.getMaxDamage() + 1 - stack.getItemDamage());
+                    prop = new ArmorProperties(0, armor.damageReduceAmount / 25D, Integer.MAX_VALUE);
                 }
                 if (prop != null)
                 {
