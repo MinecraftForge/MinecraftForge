@@ -75,6 +75,7 @@ import cpw.mods.fml.common.functions.ArtifactVersionNameFunction;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry.Type;
+import cpw.mods.fml.common.registry.ItemStackHolderInjector;
 import cpw.mods.fml.common.registry.ObjectHolderRegistry;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
@@ -530,8 +531,10 @@ public class Loader
             return;
         }
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
+        ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        ItemStackHolderInjector.INSTANCE.inject();
         modController.transition(LoaderState.INITIALIZATION, false);
         progressBar.step("Initializing Minecraft Engine");
     }
@@ -714,6 +717,7 @@ public class Loader
         progressBar.step("Initializing mods Phase 3");
         modController.transition(LoaderState.POSTINITIALIZATION, false);
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
+        ItemStackHolderInjector.INSTANCE.inject();
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
