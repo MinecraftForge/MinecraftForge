@@ -17,7 +17,7 @@
                  boolean flag1 = (c0 == 0 || j == -1 || this.field_78293_l) && p_78255_2_;
  
                  if (flag1)
-@@ -583,11 +584,6 @@
+@@ -592,11 +593,6 @@
                  int j = this.field_78287_e[p_78263_1_] >>> 4;
                  int k = this.field_78287_e[p_78263_1_] & 15;
  

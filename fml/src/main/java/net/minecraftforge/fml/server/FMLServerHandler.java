@@ -272,4 +272,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         // NOOP
     }
+
+    @Override
+    public String stripSpecialChars(String message)
+    {
+        return message;
+    }
 }

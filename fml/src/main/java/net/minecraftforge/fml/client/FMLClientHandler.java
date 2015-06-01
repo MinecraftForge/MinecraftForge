@@ -66,6 +66,7 @@ import net.minecraft.network.status.INetHandlerStatusServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -991,9 +992,17 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void processWindowMessages()
     {
         // workaround for windows requiring messages being processed on the main thread
-        if(LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS)
-        {
-            Display.processMessages();
-        }
+        if (LWJGLUtil.getPlatform() != LWJGLUtil.PLATFORM_WINDOWS) return;
+        // If we can't grab the mutex, the update call is blocked, probably in native code, just skip it and carry on
+        // We'll get another go next time
+        if (!SplashProgress.mutex.tryAcquire()) return;
+        Display.processMessages();
+        SplashProgress.mutex.release();
+    }
+
+    @Override
+    public String stripSpecialChars(String message)
+    {
+        return StringUtils.stripControlCodes(message);
     }
 }

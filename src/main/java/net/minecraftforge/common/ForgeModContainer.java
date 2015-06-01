@@ -26,6 +26,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -60,7 +61,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
     public static boolean disableStitchedFileSaving = false;
-    public static boolean forceDuplicateFluidBlockCrash = true;
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
@@ -68,6 +68,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static int defaultSpawnFuzz = 20;
+    public static boolean defaultHasSpawnFuzz = true;
 
     private static Configuration config;
 
@@ -157,17 +158,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forceDuplicateFluidBlockCrash", true);
-        prop.comment = "Set this to true to force a crash if more than one block attempts to link back to the same Fluid. Enabled by default.";
-        prop.setLanguageKey("forge.configgui.forceDuplicateFluidBlockCrash").setRequiresMcRestart(true);
-        forceDuplicateFluidBlockCrash = prop.getBoolean(true);
-        propOrder.add(prop.getName());
-
-        if (!forceDuplicateFluidBlockCrash)
-        {
-            FMLLog.warning("Disabling forced crashes on duplicate Fluid Blocks - USE AT YOUR OWN RISK");
-        }
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
         prop.comment = "Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
         prop.setLanguageKey("forge.configgui.removeErroringEntities").setRequiresWorldRestart(true);
@@ -225,6 +215,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         defaultSpawnFuzz = prop.getInt(20);
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "spawnHasFuzz", Boolean.TRUE,
+                "If the overworld has ANY spawn fuzz at all. If not, the spawn will always be the exact same location.");
+        prop.setLanguageKey("forge.configgui.hasspawnfuzz").setRequiresWorldRestart(false);
+        defaultHasSpawnFuzz = prop.getBoolean(Boolean.TRUE);
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
         if (config.hasChanged())
@@ -280,7 +276,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         FMLCommonHandler.instance().bus().register(this);
-        
+
         if (!ForgeModContainer.disableVersionCheck)
         {
             ForgeVersion.startVersionCheck();
@@ -301,6 +297,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         {
             RecipeSorter.sortCraftManager();
         }
+        FluidRegistry.validateFluidRegistry();
     }
 
     @Subscribe
@@ -314,6 +311,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
         forgeData.setTag("DimensionData", dimData);
+        FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
@@ -321,6 +319,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
+        FluidRegistry.loadFluidDefaults(tag);
     }
 
     @Subscribe

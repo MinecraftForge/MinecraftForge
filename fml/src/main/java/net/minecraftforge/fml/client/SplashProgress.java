@@ -63,6 +63,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -131,6 +132,7 @@ public class SplashProgress
     private static int barBorderColor;
     private static int barColor;
     private static int barBackgroundColor;
+    static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
     {
@@ -352,7 +354,16 @@ public class SplashProgress
                     glEnd();
                     glDisable(GL_TEXTURE_2D);
 
+                    // We use mutex to indicate safely to the main thread that we're taking the display global lock
+                    // So the main thread can skip processing messages while we're updating.
+                    // There are system setups where this call can pause for a while, because the GL implementation
+                    // is trying to impose a framerate or other thing is occurring. Without the mutex, the main
+                    // thread would delay waiting for the same global display lock
+                    mutex.acquireUninterruptibly();
                     Display.update();
+                    // As soon as we're done, we release the mutex. The other thread can now ping the processmessages
+                    // call as often as it wants until we get get back here again
+                    mutex.release();
                     if(pause)
                     {
                         clearGL();
