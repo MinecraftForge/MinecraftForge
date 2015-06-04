@@ -1,0 +1,76 @@
+--- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
++++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
+@@ -29,6 +29,7 @@
+     public void func_151315_a(IChatComponent p_151315_1_)
+     {
+         this.field_151326_a = p_151315_1_;
++        invalidateJson();
+     }
+ 
+     public ServerStatusResponse.PlayerCountData func_151318_b()
+@@ -39,6 +40,7 @@
+     public void func_151319_a(ServerStatusResponse.PlayerCountData p_151319_1_)
+     {
+         this.field_151324_b = p_151319_1_;
++        invalidateJson();
+     }
+ 
+     public ServerStatusResponse.MinecraftProtocolVersionIdentifier func_151322_c()
+@@ -49,11 +51,13 @@
+     public void func_151321_a(ServerStatusResponse.MinecraftProtocolVersionIdentifier p_151321_1_)
+     {
+         this.field_151325_c = p_151321_1_;
++        invalidateJson();
+     }
+ 
+     public void func_151320_a(String p_151320_1_)
+     {
+         this.field_151323_d = p_151320_1_;
++        invalidateJson();
+     }
+ 
+     public String func_151316_d()
+@@ -270,4 +274,43 @@
+                 return this.serialize((ServerStatusResponse)p_serialize_1_, p_serialize_2_, p_serialize_3_);
+             }
+         }
++
++    private java.util.concurrent.Semaphore mutex = new java.util.concurrent.Semaphore(1);
++    private String json = null;
++    /**
++     * Returns this object as a Json string.
++     * Converting to JSON if a cached version is not available.
++     *
++     * Also to prevent potentially large memory allocations on the server
++     * this is moved from the S00PacketServerInfo writePacket function
++     *
++     * As this method is called from the network threads thread safety is important!
++     *
++     * @return
++     */
++    public String getJson()
++    {
++        String ret = this.json;
++        if (ret == null)
++        {
++            mutex.acquireUninterruptibly();
++            ret = this.json;
++            if (ret == null)
++            {
++                ret = net.minecraft.network.status.server.S00PacketServerInfo.field_149297_a.toJson(this);
++                this.json = ret;
++            }
++            mutex.release();
++        }
++        return ret;
++    }
++
++    /**
++     * Invalidates the cached json, causing the next call to getJson to rebuild it.
++     * This is needed externally because PlayerCountData.setPlayer's is public.
++     */
++    public void invalidateJson()
++    {
++        this.json = null;
++    }
+ }
