@@ -91,7 +91,8 @@ public class ModelLoader extends ModelBakery
         isLoading = true;
         loadBlocks();
         loadItems();
-        stateModels.put(MODEL_MISSING, getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath())));
+        IModel missing = getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+        stateModels.put(MODEL_MISSING, missing);
         textures.remove(TextureMap.LOCATION_MISSING_TEXTURE);
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
         textureMap.loadSprites(resourceManager, new IIconCreator()
@@ -106,9 +107,17 @@ public class ModelLoader extends ModelBakery
         });
         sprites.put(new ResourceLocation("missingno"), textureMap.getMissingSprite());
         Function<ResourceLocation, TextureAtlasSprite> textureGetter = Functions.forMap(sprites, textureMap.getMissingSprite());
+        IFlexibleBakedModel missingBaked = missing.bake(missing.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
         for(Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
-            bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
+            if(e.getValue() == getMissingModel())
+            {
+                bakedRegistry.putObject(e.getKey(), missingBaked);
+            }
+            else
+            {
+                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
+            }
         }
         return bakedRegistry;
     }
@@ -159,7 +168,8 @@ public class ModelLoader extends ModelBakery
                 IModel model = getModel(file);
                 if(model == null || model == getMissingModel())
                 {
-                    missingVariants.add(memory);
+                    FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
+                    registerVariant(getModelBlockDefinition(memory), memory);
                 }
                 else stateModels.put(memory, model);
             }
@@ -569,9 +579,11 @@ public class ModelLoader extends ModelBakery
 
     public void onPostBakeEvent(IRegistry modelRegistry)
     {
+        Object missingModel = modelRegistry.getObject(MODEL_MISSING);
         for(ModelResourceLocation missing : missingVariants)
         {
-            if(modelRegistry.getObject(missing) == null)
+            Object model = modelRegistry.getObject(missing);
+            if(model == null || model == missingModel)
             {
                 FMLLog.severe("Model definition for location %s not found", missing);
             }
