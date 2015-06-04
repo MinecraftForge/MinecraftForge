@@ -53,9 +53,9 @@
 +     * @param newID The new ID of the block (May be the same)
 +     * @return True to remove the old tile entity, false to keep it in tact {and create a new one if the new values specify to}
 +     */
-+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
++    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
 +    {
-+        return !isVanilla || (oldState.func_177230_c() != newSate.func_177230_c());
++        return !isVanilla || (oldState.func_177230_c() != newState.func_177230_c());
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
