@@ -1,5 +1,18 @@
 {
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "#texture": "forgedebugmodelloaderregistry:texture",
+            "#chest": "entity/chest/normal"
+        },
+        "model": "forgedebugmodelloaderregistry:chest.b3d"
+     },
     "variants": {
-        "normal" : { "model" : "forgedebugmodelloaderregistry:untitled2.b3d" }
+        "normal": {
+            "dummy": ""
+        },
+        "inventory": {
+            "dummy": ""
+        }
     }
 }
