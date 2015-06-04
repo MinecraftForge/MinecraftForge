@@ -56,30 +56,34 @@ public class ForgeBlockStateV1 extends Marker
 
             for (Entry<String, JsonElement> e : JsonUtils.getJsonObject(json, "variants").entrySet())
             {
-                if (e.getKey().contains("=")) //Normal fully defined variant
+                if (e.getValue().isJsonArray())
                 {
-                    if (e.getValue().isJsonArray())
-                    {
-                        for (JsonElement a : e.getValue().getAsJsonArray())
-                        {
-                            Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey();
-                            specified.put(e.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(a, ForgeBlockStateV1.Variant.class));
-                        }
-                    }
-                    else
+                    // array of fully-defined variants
+                    for (JsonElement a : e.getValue().getAsJsonArray())
                     {
                         Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey();
-                        specified.put(e.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(e.getValue(), ForgeBlockStateV1.Variant.class));
+                        specified.put(e.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(a, ForgeBlockStateV1.Variant.class));
                     }
                 }
                 else
                 {
-                    Map<String, ForgeBlockStateV1.Variant> subs = Maps.newHashMap();
-                    condensed.put(e.getKey(), subs);
-                    for (Entry<String, JsonElement> se : e.getValue().getAsJsonObject().entrySet())
+                    JsonObject obj = e.getValue().getAsJsonObject();
+                    if(obj.entrySet().iterator().next().getValue().isJsonObject())
                     {
-                        Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey() + "=" + se.getKey();
-                        subs.put(se.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(se.getValue(), ForgeBlockStateV1.Variant.class));
+                        // first value is a json object, so we know it's not a fully-defined variant
+                        Map<String, ForgeBlockStateV1.Variant> subs = Maps.newHashMap();
+                        condensed.put(e.getKey(), subs);
+                        for (Entry<String, JsonElement> se : e.getValue().getAsJsonObject().entrySet())
+                        {
+                            Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey() + "=" + se.getKey();
+                            subs.put(se.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(se.getValue(), ForgeBlockStateV1.Variant.class));
+                        }
+                    }
+                    else
+                    {
+                        // fully-defined variant
+                        Variant.Deserializer.INSTANCE.simpleSubmodelKey = e.getKey();
+                        specified.put(e.getKey(), (ForgeBlockStateV1.Variant)context.deserialize(e.getValue(), ForgeBlockStateV1.Variant.class));
                     }
                 }
             }
@@ -178,7 +182,8 @@ public class ForgeBlockStateV1 extends Marker
         {
             if (depth == sorted.size())
             {
-                ret.put(prefix, parent);
+                if(parent != null)
+                    ret.put(prefix, parent);
                 return ret;
             }
 
