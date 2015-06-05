@@ -1,18 +1,49 @@
 package net.minecraftforge.oredict;
 
+import akka.util.Collections;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ItemCondition;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class SensitiveOreDict
 {
-    private static final List<IOreRecognizer> recognizers = new ArrayList<IOreRecognizer>();
+    private static final HashMap<String, List<ItemCondition>> nameToConditions = new HashMap<String, List<ItemCondition>>(1000);
+    private static final HashMap<ItemCondition, List<String>> conditionToNames = new HashMap<ItemCondition, List<String>>(5000);
 
-    public static void registerOreRecognizer(IOreRecognizer oreRecognizer)
+    public static void registerSensitiveOre(String name, ItemCondition condition) {
+        if ("Unknown".equals(name))
+        {
+            return;
+        }
+
+        putNewOrAdd(nameToConditions, name, condition);
+        putNewOrAdd(conditionToNames, condition, name);
+        MinecraftForge.EVENT_BUS.post(new SensitiveOreRegisterEvent(name, condition));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <K, V> void putNewOrAdd(Map<K, List<V>> map, K key, V value)
     {
-        recognizers.add(oreRecognizer);
+        if (map.containsKey(key))
+        {
+            map.get(key).add(value);
+        }
+        else
+        {
+            map.put(key, Lists.newArrayList(value));
+        }
     }
 
     /**
@@ -24,17 +55,20 @@ public class SensitiveOreDict
      */
     public static boolean hasName(ItemStack itemStack, String oreName)
     {
-        for (IOreRecognizer r: recognizers)
+        if (itemStack == null)
         {
-            for (String name: r.getOreNames(itemStack))
-            {
-                if (oreName.equals(name)) return true;
-            }
+            return false;
         }
 
-        for (int id: OreDictionary.getOreIDs(itemStack))
+        for (String key: nameToConditions.keySet())
         {
-            if (oreName.equals(OreDictionary.getOreName(id))) return true;
+            for (ItemCondition cond: nameToConditions.get(key))
+            {
+                if (cond.check(itemStack))
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -47,22 +81,36 @@ public class SensitiveOreDict
      */
     public static List<String> getNames(ItemStack itemStack)
     {
-        List<String> names = new ArrayList<String>();
-        for (IOreRecognizer r: recognizers)
+        if (itemStack == null)
         {
-            for (String name: r.getOreNames(itemStack)) {
-                if (!names.contains(name)) {
-                    names.add(name);
-                }
-            }
+            return new ArrayList<String>(0);
         }
-        for (int id: OreDictionary.getOreIDs(itemStack))
+
+        List<String> names = new ArrayList<String>();
+        for (ItemCondition cond: conditionToNames.keySet())
         {
-            String name = OreDictionary.getOreName(id);
-            if (!names.contains(name)) {
-                names.add(name);
+            if (cond.check(itemStack))
+            {
+                names.addAll(conditionToNames.get(cond));
             }
         }
         return names;
+    }
+
+    public static ImmutableList<ItemCondition> getOres (String name)
+    {
+        return !nameToConditions.containsKey(name) ? ImmutableList.<ItemCondition>of() : ImmutableList.copyOf(nameToConditions.get(name));
+    }
+
+    public static class SensitiveOreRegisterEvent extends Event
+    {
+        public final String name;
+        public final ItemCondition condition;
+
+        public SensitiveOreRegisterEvent(String name, ItemCondition condition)
+        {
+            this.name = name;
+            this.condition = condition;
+        }
     }
 }

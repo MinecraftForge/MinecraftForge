@@ -23,6 +23,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ItemCondition;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -429,6 +430,8 @@ public class OreDictionary
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
 
+        SensitiveOreDict.registerSensitiveOre(name, ore.getItemDamage() != WILDCARD_VALUE ? ItemCondition.ofItem(ore.getItem()) : ItemCondition.ofItemStack(ore));
+        
         int oreID = getOreID(name);
         int hash = Item.getIdFromItem(ore.getItem());
         if (ore.getItemDamage() != WILDCARD_VALUE)

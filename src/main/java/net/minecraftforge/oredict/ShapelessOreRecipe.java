@@ -8,18 +8,23 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ItemPredicate;
+import net.minecraftforge.common.util.ItemCondition;
+import net.minecraftforge.common.util.ItemPredicate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import scala.reflect.internal.Trees.This;
+
 public class ShapelessOreRecipe implements IRecipe
 {
     private ItemStack output = null;
     private ArrayList<ItemPredicate> input = new ArrayList<ItemPredicate>();
+    private String stringToDisp;
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -31,7 +36,7 @@ public class ShapelessOreRecipe implements IRecipe
         {
             if (in instanceof ItemStack)
             {
-                input.add(ItemPredicate.ofItemStackAndSize((ItemStack) in));
+                input.add(ItemPredicate.of(ItemCondition.ofItemStack((ItemStack)in)));
             }
             else if (in instanceof Item)
             {
@@ -43,11 +48,15 @@ public class ShapelessOreRecipe implements IRecipe
             }
             else if (in instanceof String)
             {
-                input.add(new ItemPredicate.Ore((String) in));
+                input.add(ItemPredicate.ofOre((String) in));
             }
             else if (in instanceof ItemPredicate)
             {
                 input.add((ItemPredicate) in);
+            }
+            else if (in instanceof ItemCondition)
+            {
+                input.add(ItemPredicate.of((ItemCondition) in));
             }
             else
             {
@@ -60,8 +69,10 @@ public class ShapelessOreRecipe implements IRecipe
                 throw new RuntimeException(ret);
             }
         }
+        
+        this.setupStringToDisplay();
     }
-
+    
     @SuppressWarnings("unchecked")
     ShapelessOreRecipe(ShapelessRecipes recipe, Map<ItemStack, String> replacements)
     {
@@ -69,17 +80,33 @@ public class ShapelessOreRecipe implements IRecipe
 
         for(ItemStack ingred : ((List<ItemStack>)recipe.recipeItems))
         {
-            ItemPredicate finalObj = ItemPredicate.ofItemStack(ingred);
+            ItemPredicate finalObj = ItemPredicate.of(ItemCondition.ofItemStack(ingred));
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
                 if(OreDictionary.itemMatches(replace.getKey(), ingred, false))
                 {
-                    finalObj = new ItemPredicate.Ore(replace.getValue());
+                    finalObj = ItemPredicate.ofOre(replace.getValue());
                     break;
                 }
             }
             input.add(finalObj);
         }
+        this.setupStringToDisplay();
+    }
+    
+    private void setupStringToDisplay()
+    {
+        StringBuilder builder = new StringBuilder("ShapedOreRecipe(result =");
+        builder.append(this.output);
+        builder.append(", [\n");
+        for (int i = 0; i < this.input.size(); i++)
+        {
+            builder.append("  ");
+            builder.append(this.input.get(i));
+            builder.append("\n");
+        }
+        builder.append("]");
+        this.stringToDisp = builder.toString();
     }
 
     @Override
@@ -109,7 +136,7 @@ public class ShapelessOreRecipe implements IRecipe
                 {
                     ItemPredicate next = req.next();
 
-                    if (next.apply(slot, false))
+                    if (next.apply(slot))
                     {
                         inRecipe = true;
                         required.remove(next);
@@ -130,21 +157,35 @@ public class ShapelessOreRecipe implements IRecipe
     /**
      * Returns the input for this recipe, any mod accessing this value should never
      * manipulate the values in this array as it will effect the recipe itself.
+     * @deprecated
      * @return The recipes input vales.
      */
+    @Deprecated
     public ArrayList<Object> getInput()
     {
-        ArrayList<Object> objList = new ArrayList<Object>();
-        for (ItemPredicate p: this.input)
-        {
-            objList.add(p);
-        }
+        ArrayList objList = this.input;
         return objList;
+    }
+
+    /**
+     * Returns the input for this recipe, any mod accessing this value should never
+     * manipulate the values in this list as it will effect the recipe itself.
+     * @return The recipes input vales.
+     */
+    public ArrayList<ItemPredicate> getInputPredicates()
+    {
+        return this.input;
     }
 
     @Override
     public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+    }
+    
+    @Override
+    public String toString()
+    {
+       return this.stringToDisp;
     }
 }

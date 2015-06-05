@@ -8,7 +8,8 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ItemPredicate;
+import net.minecraftforge.common.util.ItemCondition;
+import net.minecraftforge.common.util.ItemPredicate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class ShapedOreRecipe implements IRecipe
     private int width = 0;
     private int height = 0;
     private boolean mirrored = true;
+    private String stringToDisp;
 
     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -91,7 +93,7 @@ public class ShapedOreRecipe implements IRecipe
 
             if (in instanceof ItemStack)
             {
-                itemMap.put(chr, ItemPredicate.ofItemStack((ItemStack)in));
+                itemMap.put(chr, ItemPredicate.of(ItemCondition.ofItemStack((ItemStack) in)));
             }
             else if (in instanceof Item)
             {
@@ -103,11 +105,15 @@ public class ShapedOreRecipe implements IRecipe
             }
             else if (in instanceof String)
             {
-                itemMap.put(chr, new ItemPredicate.Ore((String) in));
+                itemMap.put(chr, ItemPredicate.ofOre((String) in));
             }
             else if (in instanceof ItemPredicate)
             {
                 itemMap.put(chr, (ItemPredicate)in);
+            }
+            else if (in instanceof ItemCondition)
+            {
+                itemMap.put(chr, ItemPredicate.of((ItemCondition) in));
             }
             else
             {
@@ -127,6 +133,7 @@ public class ShapedOreRecipe implements IRecipe
         {
             input[x++] = itemMap.get(chr);
         }
+        this.setupStringToDisplay();
     }
 
     ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
@@ -143,19 +150,51 @@ public class ShapedOreRecipe implements IRecipe
 
             if(ingred == null) continue;
 
-            input[i] = ItemPredicate.ofItemStack(recipe.recipeItems[i]);
+            if (ingred.getItemDamage() == OreDictionary.WILDCARD_VALUE)
+            {
+                input[i] = ItemPredicate.ofItem(ingred.getItem());
+            }
+            else 
+            {
+                input[i] = ItemPredicate.of(ItemCondition.ofItemStack(ingred));
+            }
 
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
-                if(OreDictionary.itemMatches(replace.getKey(), ingred, true))
+                if(OreDictionary.itemMatches(replace.getKey(), ingred, false))
                 {
-                    input[i] = new ItemPredicate.Ore(replace.getValue());
+                    input[i] = ItemPredicate.ofOre(replace.getValue());
                     break;
                 }
             }
         }
+        this.setupStringToDisplay();
     }
 
+    private void setupStringToDisplay()
+    {
+        StringBuilder builder = new StringBuilder("ShapedOreRecipe(result =");
+        builder.append(this.output);
+        builder.append(", [\n");
+        for (int i = 0; i < this.input.length; i++)
+        {
+            if (i % 3 == 0) {
+                builder.append("  ");
+            }
+            builder.append(this.input[i]);
+            if (i % 3 == 2)
+            {
+                builder.append("\n");
+            }
+            else
+            {
+                builder.append(',');
+            }
+        }
+        builder.append("]");
+        this.stringToDisp = builder.toString();
+    }
+    
     @Override
     public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
 
@@ -196,7 +235,7 @@ public class ShapedOreRecipe implements IRecipe
             {
                 int subX = x - startX;
                 int subY = y - startY;
-                ItemPredicate target = ItemPredicate.EMPTY_STACK;
+                ItemPredicate target = null;
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
@@ -213,7 +252,7 @@ public class ShapedOreRecipe implements IRecipe
                 ItemStack slot = inv.getStackInRowAndColumn(x, y);
 
 
-                if (target != null && !(target.apply(slot, false)))
+                if (target != null && !(target.apply(slot)))
                 {
                     return false;
                 }
@@ -232,9 +271,21 @@ public class ShapedOreRecipe implements IRecipe
     /**
      * Returns the input for this recipe, any mod accessing this value should never
      * manipulate the values in this array as it will effect the recipe itself.
+     * @deprecated
      * @return The recipes input vales.
      */
+    @Deprecated
     public Object[] getInput()
+    {
+        return this.input;
+    }
+
+    /**
+     * Returns the input for this recipe, any mod accessing this value should never
+     * manipulate the values in this array as it will effect the recipe itself.
+     * @return The recipes input vales.
+     */
+    public ItemPredicate[] getInputPredicates()
     {
         return this.input;
     }
@@ -243,5 +294,11 @@ public class ShapedOreRecipe implements IRecipe
     public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return this.stringToDisp;
     }
 }
