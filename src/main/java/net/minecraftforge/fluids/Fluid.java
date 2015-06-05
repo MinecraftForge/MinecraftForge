@@ -45,13 +45,6 @@ public class Fluid
     protected TextureAtlasSprite stillIcon;
     protected TextureAtlasSprite flowingIcon;
 
-    /** The Iconpaths for this fluid. */
-    protected String stillIconPath;
-    protected String flowingIconPath;
-
-    /** The color for this fluid */
-    protected int color = 0xFFFFFF;
-
     /**
      * The light level emitted by this fluid.
      *
@@ -267,12 +260,7 @@ public class Fluid
 
     public int getColor()
     {
-        return color;
-    }
-    
-    public void setColor(int colorRGB)
-    {
-        this.color = colorRGB;
+        return 0xFFFFFF;
     }
 
 
@@ -288,18 +276,6 @@ public class Fluid
         return this;
     }
 
-    public final Fluid setStillIcon(String stillIcon)
-    {
-        this.stillIconPath = stillIcon;
-        return this;
-    }
-
-    public final Fluid setFlowingIcon(String flowingIcon)
-    {
-        this.flowingIconPath = flowingIcon;
-        return this;
-    }
-
     public final Fluid setIcons(TextureAtlasSprite stillIcon, TextureAtlasSprite flowingIcon)
     {
         return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
@@ -310,19 +286,7 @@ public class Fluid
         return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
     }
 
-    public final Fluid setIcons(String stillIcon, String flowingIcon)
-    {
-        return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
-    }
-
-    public final Fluid setIcons(String commonIcon)
-    {
-        return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
-    }
-
     public TextureAtlasSprite getIcon(){ return getStillIcon(); }
-
-    public String getIconPath(){ return getStillIconPath(); }
 
     public TextureAtlasSprite getStillIcon()
     {
@@ -332,16 +296,6 @@ public class Fluid
     public TextureAtlasSprite getFlowingIcon()
     {
         return this.flowingIcon;
-    }
-
-    public String getStillIconPath()
-    {
-        return this.stillIconPath;
-    }
-
-    public String getFlowingIconPath()
-    {
-        return this.flowingIconPath;
     }
 
     /* Stack-based Accessors */

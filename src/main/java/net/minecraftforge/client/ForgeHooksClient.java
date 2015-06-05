@@ -291,14 +291,8 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
 
-        for(net.minecraftforge.fluids.Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            if(fluid.getStillIconPath() != null && fluid.getStillIconPath() != "") {
-                fluid.setStillIcon(map.getAtlasSprite(fluid.getStillIconPath()));
-            }
-            if(fluid.getFlowingIconPath() != null && fluid.getFlowingIconPath() != "") {
-                fluid.setFlowingIcon(map.getAtlasSprite(fluid.getFlowingIconPath()));
-            }
-        }
+        FluidRegistry.WATER.setIcons(map.getAtlasSprite("minecraft:blocks/water_still"), map.getAtlasSprite("minecraft:blocks/water_flow"));
+        FluidRegistry.LAVA.setIcons(map.getAtlasSprite("minecraft:blocks/lava_still"), map.getAtlasSprite("minecraft:blocks/lava_flow"));
     }
 
     static int renderPass = -1;
