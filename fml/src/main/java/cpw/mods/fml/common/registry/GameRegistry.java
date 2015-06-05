@@ -32,6 +32,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -39,6 +43,8 @@ import net.minecraft.world.chunk.IChunkProvider;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -476,4 +482,70 @@ public class GameRegistry
          */
         String value();
     }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface ItemStackHolder
+    {
+        /**
+         * The registry name of the item being looked up.
+         * @return The registry name
+         */
+        public String value();
+
+        /**
+         * The metadata or damage value for the itemstack, defaults to 0.
+         * @return the metadata value
+         */
+        public int meta() default 0;
+
+        /**
+         * The string serialized nbt value for the itemstack. Defaults to empty for no nbt.
+         *
+         * @return a nbt string
+         */
+        public String nbt() default "";
+    }
+
+    /**
+     * Makes an {@link ItemStack} based on the itemName reference, with supplied meta, stackSize and nbt, if possible
+     *
+     * Will return null if the item doesn't exist (because it's not from a loaded mod for example)
+     * Will throw a {@link RuntimeException} if the nbtString is invalid for use in an {@link ItemStack}
+     *
+     * @param itemName a registry name reference
+     * @param meta the meta
+     * @param stackSize the stack size
+     * @param nbtString an nbt stack as a string, will be processed by {@link JsonToNBT}
+     * @return a new itemstack
+     */
+    public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString)
+    {
+        if (itemName == null) throw new IllegalArgumentException("The itemName cannot be null");
+        Item item = GameData.getItemRegistry().getObject(itemName);
+        if (item == null) {
+            FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
+            return null;
+        }
+        ItemStack is = new ItemStack(item,1,meta);
+        if (!Strings.isNullOrEmpty(nbtString)) {
+            NBTBase nbttag = null;
+            try
+            {
+                nbttag = JsonToNBT.func_150315_a(nbtString);
+            } catch (NBTException e)
+            {
+                FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
+                throw Throwables.propagate(e);
+            }
+            if (!(nbttag instanceof NBTTagCompound)) {
+                FMLLog.getLogger().log(Level.WARN, "Unexpected NBT string - multiple values {}", nbtString);
+                throw new RuntimeException("Invalid NBT JSON");
+            } else {
+                is.setTagCompound((NBTTagCompound) nbttag);
+            }
+        }
+        return is;
+    }
+
 }

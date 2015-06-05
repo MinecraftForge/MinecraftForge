@@ -44,7 +44,7 @@ public abstract class EnhancedRuntimeException extends RuntimeException
             this.printStackTrace(new WrappedPrintStream()
             {
                 @Override
-                void println(String line)
+                public void println(String line)
                 {
                     buf.append(line).append('\n');
                 }
@@ -60,7 +60,7 @@ public abstract class EnhancedRuntimeException extends RuntimeException
         printStackTrace(new WrappedPrintStream()
         {
             @Override
-            void println(String line)
+            public void println(String line)
             {
                 s.println(line);
             }
@@ -72,7 +72,7 @@ public abstract class EnhancedRuntimeException extends RuntimeException
         printStackTrace(new WrappedPrintStream()
         {
             @Override
-            void println(String line)
+            public void println(String line)
             {
                 s.println(line);
             }
@@ -84,6 +84,6 @@ public abstract class EnhancedRuntimeException extends RuntimeException
 
     public static abstract class WrappedPrintStream
     {
-        abstract void println(String line);
+        public abstract void println(String line);
     }
 }
