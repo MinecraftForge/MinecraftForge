@@ -18,15 +18,30 @@
                  {
                      int k = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++k;
-@@ -177,6 +179,7 @@
+@@ -164,6 +166,9 @@
+         {
+             this.field_82852_f.func_70299_a(0, (ItemStack)null);
+             this.field_82854_e = 0;
++
++            if(this.field_82853_g.func_70301_a(1) != null)
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, this.field_82853_g.func_70301_a(1), field_82852_f, field_82857_m, 0)) return;
+         }
+         else
+         {
+@@ -175,8 +180,12 @@
+             this.field_82856_l = 0;
+             int j;
  
++            if(itemstack2 == null && field_82857_m != "")
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, i2)) return;
++
              if (itemstack2 != null)
              {
 +                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, i2)) return;
                  flag7 = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
                  int k;
                  int l;
-@@ -271,7 +274,8 @@
+@@ -271,7 +280,8 @@
                              {
                                  int l1 = ((Integer)iterator.next()).intValue();
  
@@ -36,7 +51,7 @@
                                  {
                                      flag8 = false;
                                      ++i;
-@@ -322,6 +326,8 @@
+@@ -322,6 +332,8 @@
                  }
              }
  
