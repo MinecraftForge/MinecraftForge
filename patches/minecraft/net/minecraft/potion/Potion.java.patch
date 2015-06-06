@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -307,4 +307,27 @@
+@@ -220,8 +220,7 @@
+     {
+         return this.field_76417_J;
+     }
+
+-    @SideOnly(Side.CLIENT)    
+     public boolean func_76398_f()
+     {
+         return this.field_76418_K;
+@@ -307,4 +306,27 @@
      {
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
