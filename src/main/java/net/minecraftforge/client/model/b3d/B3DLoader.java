@@ -30,8 +30,10 @@ import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelCustomData;
 import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -56,11 +58,14 @@ import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /*
@@ -238,24 +243,28 @@ public class B3DLoader implements ICustomModelLoader
         public static TRSRTransformation getNodeMatrix(Animation animation, Node<?> node, int frame)
         {
             TRSRTransformation ret = TRSRTransformation.identity();
-            if(node.getParent() != null)
-            {
-                TRSRTransformation pm = cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node.getParent(), frame));
-                ret = ret.compose(pm);
-            }
             Key key = null;
             if(animation != null) key = animation.getKeys().get(frame, node);
             else if(key == null && node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
-            if(key == null)
+            if(key != null)
             {
-                FMLLog.severe("invalid key index: " + frame);
-            }
-            else
-            {
+                Node<?> parent = node.getParent();
+                if(parent != null)
+                {
+                    TRSRTransformation pm = cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node.getParent(), frame));
+                    ret = ret.compose(pm);
+                    ret = ret.compose(new TRSRTransformation(parent.getPos(), parent.getRot(), parent.getScale(), null));
+                }
                 ret = ret.compose(new TRSRTransformation(key.getPos(), key.getRot(), key.getScale(), null));
                 Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
                 rm.invert();
                 ret = ret.compose(new TRSRTransformation(rm));
+                if(parent != null)
+                {
+                    rm = new TRSRTransformation(parent.getPos(), parent.getRot(), parent.getScale(), null).getMatrix();
+                    rm.invert();
+                    ret = ret.compose(new TRSRTransformation(rm));
+                }
             }
             return ret;
         }
@@ -305,14 +314,14 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    public static class Wrapper extends PartWrapper<Mesh> implements IModel
+    public static class Wrapper extends PartWrapper<Mesh> implements IRetexturableModel, IModelCustomData
     {
         private final ResourceLocation location;
         private final ImmutableMap<String, ResourceLocation> textures;
 
         public Wrapper(ResourceLocation location, List<Texture> textures, B3DModel.Node<Mesh> mesh)
         {
-            this(location, buildTextures(location, textures), mesh);
+            this(location, buildTextures(textures), mesh);
         }
 
         public Wrapper(ResourceLocation location, ImmutableMap<String, ResourceLocation> textures, B3DModel.Node<Mesh> mesh)
@@ -322,17 +331,22 @@ public class B3DLoader implements ICustomModelLoader
             this.textures = textures;
         }
 
-        private static ImmutableMap<String, ResourceLocation> buildTextures(ResourceLocation location, List<Texture> textures)
+        private static ImmutableMap<String, ResourceLocation> buildTextures(List<Texture> textures)
         {
             ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
 
             for(Texture t : textures)
             {
                 String path = t.getPath();
-                if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
-                builder.put(t.getPath(), new ResourceLocation(location.getResourceDomain(), path));
+                builder.put(path, new ResourceLocation(getLocation(path)));
             }
             return builder.build();
+        }
+
+        private static String getLocation(String path)
+        {
+            if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
+            return path;
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -344,17 +358,32 @@ public class B3DLoader implements ICustomModelLoader
 
         public Collection<ResourceLocation> getTextures()
         {
-            return textures.values();
+            return Collections2.filter(textures.values(), new Predicate<ResourceLocation>()
+            {
+                public boolean apply(ResourceLocation loc)
+                {
+                    return !loc.getResourcePath().startsWith("#");
+                }
+            });
         }
 
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-            for(String path : textures.keySet())
+            TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
+            for(Map.Entry<String, ResourceLocation> e : textures.entrySet())
             {
-                builder.put(path, bakedTextureGetter.apply(textures.get(path)));
+                if(e.getValue().getResourcePath().startsWith("#"))
+                {
+                    FMLLog.severe("unresolved texture '%s' for b3d model '%s'", e.getValue().getResourcePath(), location);
+                    builder.put(e.getKey(), missing);
+                }
+                else
+                {
+                    builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue()));
+                }
             }
-            builder.put("missingno", bakedTextureGetter.apply(new ResourceLocation("missingno")));
+            builder.put("missingno", missing);
             return new BakedWrapper(this, state, format, builder.build());
         }
 
@@ -395,6 +424,35 @@ public class B3DLoader implements ICustomModelLoader
             }
             else if (!location.equals(other.location)) return false;
             return true;
+        }
+
+        @Override
+        public IModel retexture(ImmutableMap<String, String> textures)
+        {
+            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+            for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
+            {
+                String path = e.getKey();
+                String loc = getLocation(path);
+                if(textures.containsKey(loc))
+                {
+                    String newLoc = textures.get(loc);
+                    if(newLoc == null) newLoc = getLocation(path);
+                    builder.put(e.getKey(), new ResourceLocation(newLoc));
+                }
+                else
+                {
+                    builder.put(e);
+                }
+            }
+            return new Wrapper(location, builder.build(), getNode());
+        }
+
+        @Override
+        public IModel process(ImmutableMap<String, String> customData)
+        {
+            // TODO keyframe
+            return null;
         }
     }
 
@@ -454,9 +512,10 @@ public class B3DLoader implements ICustomModelLoader
                 for(Face f : faces)
                 {
                     buf.clear();
-                    List<Texture> textures = f.getBrush().getTextures();
+                    List<Texture> textures = null;
+                    if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
-                    if(textures.isEmpty()) sprite = this.textures.get("missingno");
+                    if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
                     else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
                     else sprite = this.textures.get(textures.get(0).getPath());
                     putVertexData(f.getV1(), sprite);

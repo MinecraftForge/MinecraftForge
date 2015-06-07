@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.functions.ArtifactVersionNameFunction;
 import net.minecraftforge.fml.common.functions.ModIdFunction;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ItemStackHolderInjector;
 import net.minecraftforge.fml.common.registry.ObjectHolderRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.common.toposort.ModSorter;
@@ -524,8 +525,10 @@ public class Loader
             return;
         }
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
+        ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        ItemStackHolderInjector.INSTANCE.inject();
         modController.transition(LoaderState.INITIALIZATION, false);
         progressBar.step("Initializing Minecraft Engine");
     }
@@ -614,7 +617,7 @@ public class Loader
 
     public String getFMLVersionString()
     {
-        return String.format("%s.%s.%s.%s", major, minor, rev, build);
+        return "8.0.99.99";
     }
 
     public ClassLoader getModClassLoader()
@@ -708,6 +711,7 @@ public class Loader
         progressBar.step("Initializing mods Phase 3");
         modController.transition(LoaderState.POSTINITIALIZATION, false);
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
+        ItemStackHolderInjector.INSTANCE.inject();
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);

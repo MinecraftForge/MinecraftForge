@@ -764,4 +764,8 @@ public class FMLCommonHandler
         props.clear();
         return null;
     }
+    public String stripSpecialChars(String message)
+    {
+        return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;
+    }
 }

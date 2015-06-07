@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
 
 public class ModAPITransformer implements IClassTransformer {
 
-    private static final boolean logDebugInfo = Boolean.valueOf(System.getProperty("fml.debugAPITransformer", "true"));
+    private static final boolean logDebugInfo = Boolean.valueOf(System.getProperty("fml.debugAPITransformer", "false"));
     private ListMultimap<String, ASMData> optionals;
 
     @Override

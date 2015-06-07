@@ -96,6 +96,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     protected final String fluidName;
 
+    /**
+     * This is the fluid used in the constructor. Use this reference to configure things
+     * like icons for your block. It might not be active in the registry, so do
+     * NOT expose it.
+     */
+    protected final Fluid definedFluid;
+
     public BlockFluidBase(Fluid fluid, Material material)
     {
         super(material);
@@ -111,6 +118,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.densityDir = fluid.density > 0 ? -1 : 1;
         fluid.setBlock(this);
 
+        this.definedFluid = fluid;
         displacements.putAll(defaultDisplacements);
         this.setDefaultState(blockState.getBaseState().withProperty(LEVEL, 0));
     }

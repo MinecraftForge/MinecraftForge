@@ -44,7 +44,7 @@
          this.field_71460_t = new EntityRenderer(this, this.field_110451_am);
          this.field_110451_am.func_110542_a(this.field_71460_t);
          this.field_175618_aM = new BlockRendererDispatcher(this.field_175617_aL.func_174954_c(), this.field_71474_y);
-@@ -482,19 +488,21 @@
+@@ -482,22 +488,25 @@
          this.field_71458_u = new GuiAchievement(this);
          GlStateManager.func_179083_b(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
@@ -68,14 +68,10 @@
          this.field_152354_ay = null;
          this.field_71461_s = new LoadingScreenRenderer(this);
  
-@@ -503,6 +511,7 @@
-             this.func_71352_k();
-         }
- 
 +        net.minecraftforge.fml.client.FMLClientHandler.instance().onInitializationComplete();
-         try
+         if (this.field_71474_y.field_74353_u && !this.field_71431_Q)
          {
-             Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
+             this.func_71352_k();
 @@ -681,21 +690,23 @@
          File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
          Bootstrap.func_179870_a(p_71377_1_.func_71502_e());

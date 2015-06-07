@@ -66,13 +66,17 @@ public class Fluid
      *
      * Default value is approximately the real-life room temperature of water in degrees Kelvin.
      */
-    protected int temperature = 295;
+    protected int temperature = 300;
 
     /**
      * Viscosity ("thickness") of the fluid - completely arbitrary; negative values are not
      * permissible.
      *
      * Default value is approximately the real-life density of water in m/s^2 (x10^-3).
+     *
+     * Higher viscosity means that a fluid flows more slowly, like molasses.
+     * Lower viscosity means that a fluid flows more quickly, like helium.
+     *
      */
     protected int viscosity = 1000;
 
@@ -117,17 +121,10 @@ public class Fluid
         {
             this.block = block;
         }
-        else if (!ForgeModContainer.forceDuplicateFluidBlockCrash)
-        {
-            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
-                    + this.block + ". Configure your mods to prevent this from happening.");
-        }
         else
         {
-            FMLLog.severe("A mod has attempted to assign BlockID " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to BlockID "
-                    + this.block + ". Configure your mods to prevent this from happening.");
-            throw new LoaderException(new RuntimeException("A mod has attempted to assign BlockID " + block + " to the Fluid '" + fluidName
-                    + "' but this Fluid has already been linked to BlockID " + this.block + ". Configure your mods to prevent this from happening."));
+            FMLLog.warning("A mod has attempted to assign Block " + block + " to the Fluid '" + fluidName + "' but this Fluid has already been linked to the Block "
+                    + this.block + ". You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.");
         }
         return this;
     }
@@ -320,19 +317,4 @@ public class Fluid
     public int getColor(World world, BlockPos pos){ return getColor(); }
     public TextureAtlasSprite getIcon(World world, BlockPos pos){ return getIcon(); }
 
-    private static Map<String, String> legacyNames = Maps.newHashMap();
-    static String convertLegacyName(String fluidName)
-    {
-        return fluidName != null && legacyNames.containsKey(fluidName) ? legacyNames.get(fluidName) : fluidName;
-    }
-
-    /**
-     * Register a legacy liquid name with the Fluids system
-     * @param legacyName The legacy name to recognize
-     * @param canonicalName The canonical fluid name it will become
-     */
-    public static void registerLegacyName(String legacyName, String canonicalName)
-    {
-        legacyNames.put(legacyName.toLowerCase(Locale.ENGLISH), canonicalName);
-    }
 }

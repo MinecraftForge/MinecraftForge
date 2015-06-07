@@ -117,7 +117,15 @@
              }
  
              if (this.field_71307_n.func_76468_d())
-@@ -681,15 +662,18 @@
+@@ -630,6 +611,7 @@
+ 
+             Collections.shuffle(Arrays.asList(agameprofile));
+             this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
++            this.field_147147_p.invalidateJson();
+         }
+ 
+         if (this.field_71315_w % 900 == 0)
+@@ -681,15 +663,18 @@
          }
  
          this.field_71304_b.func_76318_c("levels");
@@ -139,7 +147,7 @@
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
  
                  if (this.field_71315_w % 20 == 0)
-@@ -733,9 +717,11 @@
+@@ -733,9 +718,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -152,7 +160,7 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -774,7 +760,13 @@
+@@ -774,7 +761,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -167,7 +175,7 @@
      }
  
      public String func_71249_w()
-@@ -1025,6 +1017,7 @@
+@@ -1025,6 +1018,7 @@
  
              if (worldserver != null)
              {
@@ -175,7 +183,7 @@
                  worldserver.func_73041_k();
              }
          }
-@@ -1607,7 +1600,6 @@
+@@ -1607,7 +1601,6 @@
          this.field_71319_s = p_71208_1_;
      }
  

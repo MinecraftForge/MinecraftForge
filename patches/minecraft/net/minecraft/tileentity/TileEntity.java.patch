@@ -16,7 +16,7 @@
          }
      }
  
-@@ -294,4 +296,123 @@
+@@ -294,4 +296,135 @@
          func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
          func_145826_a(TileEntityBanner.class, "Banner");
      }
@@ -138,5 +138,17 @@
 +            this.customTileData = new NBTTagCompound();
 +        }
 +        return this.customTileData;
++    }
++
++    /**
++     * Determines if the player can overwrite the NBT data of this tile entity while they place it using a ItemStack.
++     * Added as a fix for MC-75630 - Exploit with signs and command blocks
++     * @return True to prevent NBT copy, false to allow.
++     */
++    public boolean restrictNBTCopy()
++    {
++        return this instanceof TileEntityCommandBlock ||
++               this instanceof TileEntityMobSpawner ||
++               this instanceof TileEntitySign;
 +    }
  }

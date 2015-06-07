@@ -57,10 +57,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -77,6 +80,8 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
@@ -127,6 +132,7 @@ public class SplashProgress
     private static int barBorderColor;
     private static int barColor;
     private static int barBackgroundColor;
+    static final Semaphore mutex = new Semaphore(1);
 
     private static String getString(String name, String def)
     {
@@ -220,7 +226,12 @@ public class SplashProgress
                 return "GL info";
             }
         });
-        CrashReport report = CrashReport.makeCrashReport(new Throwable(), "Loading screen debug info");
+        CrashReport report = CrashReport.makeCrashReport(new Throwable()
+        {
+            @Override public String getMessage(){ return "This is just a prompt for computer specs to be printed. THIS IS NOT A ERROR"; }
+            @Override public void printStackTrace(final PrintWriter s){ s.println(getMessage()); }
+            @Override public void printStackTrace(final PrintStream s) { s.println(getMessage()); }
+        }, "Loading screen debug info");
         System.out.println(report.getCompleteReport());
 
         try
@@ -316,8 +327,8 @@ public class SplashProgress
 
                     // forge logo
                     setColor(backgroundColor);
-                    float fw = (float)forgeTexture.getWidth() / 2;
-                    float fh = (float)forgeTexture.getHeight() / 2;
+                    float fw = (float)forgeTexture.getWidth() / 2 / 2;
+                    float fh = (float)forgeTexture.getHeight() / 2 / 2;
                     if(rotate)
                     {
                         float sh = Math.max(fw, fh);
@@ -343,7 +354,16 @@ public class SplashProgress
                     glEnd();
                     glDisable(GL_TEXTURE_2D);
 
+                    // We use mutex to indicate safely to the main thread that we're taking the display global lock
+                    // So the main thread can skip processing messages while we're updating.
+                    // There are system setups where this call can pause for a while, because the GL implementation
+                    // is trying to impose a framerate or other thing is occurring. Without the mutex, the main
+                    // thread would delay waiting for the same global display lock
+                    mutex.acquireUninterruptibly();
                     Display.update();
+                    // As soon as we're done, we release the mutex. The other thread can now ping the processmessages
+                    // call as often as it wants until we get get back here again
+                    mutex.release();
                     if(pause)
                     {
                         clearGL();
@@ -529,8 +549,60 @@ public class SplashProgress
         catch (Exception e)
         {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            if (disableSplash())
+            {
+                throw new EnhancedRuntimeException(e)
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("SplashProgress has detected a error loading Minecraft.");
+                        stream.println("This can sometimes be caused by bad video drivers.");
+                        stream.println("We have automatically disabeled the new Splash Screen in config/splash.properties.");
+                        stream.println("Try reloading minecraft before reporting any errors.");
+                    }
+                };
+            }
+            else
+            {
+                throw new EnhancedRuntimeException(e)
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("SplashProgress has detected a error loading Minecraft.");
+                        stream.println("This can sometimes be caused by bad video drivers.");
+                        stream.println("Please try disabeling the new Splash Screen in config/splash.properties.");
+                        stream.println("After doing so, try reloading minecraft before reporting any errors.");
+                    }
+                };
+            }
         }
+    }
+
+    private static boolean disableSplash()
+    {
+        File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        FileReader r = null;
+        enabled = false;
+        config.setProperty("enabled", "false");
+
+        FileWriter w = null;
+        try
+        {
+            w = new FileWriter(configFile);
+            config.store(w, "Splash screen properties");
+        }
+        catch(IOException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Could not save the splash.properties file");
+            return false;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(w);
+        }
+        return true;
     }
 
     private static IResourcePack createResourcePack(File file)

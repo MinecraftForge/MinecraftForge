@@ -130,17 +130,19 @@
              {
                  this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
-@@ -764,7 +792,9 @@
+@@ -764,8 +792,10 @@
              }
              else
              {
 -                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
+-                this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
 +                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), ForgeHooks.newChatWithLinks(s));
-+                chatcomponenttranslation1 = ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
-+                if (chatcomponenttranslation1 == null) return;
-                 this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
++                IChatComponent chat = ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
++                if (chat == null) return;
++                this.field_147367_d.func_71203_ab().func_148544_a(chat, false);
              }
  
+             this.field_147374_l += 20;
 @@ -907,7 +937,7 @@
                          return;
                      }
@@ -150,3 +152,15 @@
                  }
  
                  break;
+@@ -1080,7 +1110,10 @@
+                 return;
+             }
+ 
+-            System.arraycopy(p_147343_1_.func_180768_b(), 0, tileentitysign.field_145915_a, 0, 4);
++            IChatComponent[] lines = p_147343_1_.func_180768_b(); //Forge: Prevent client from directly sending commands
++            for (int x = 0; x < tileentitysign.field_145915_a.length && x < lines.length; x++)
++                tileentitysign.field_145915_a[x] = new ChatComponentText(lines[x].func_150260_c());
++
+             tileentitysign.func_70296_d();
+             worldserver.func_175689_h(blockpos);
+         }

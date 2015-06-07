@@ -64,4 +64,6 @@ public interface IFMLSidedHandler
     IThreadListener getWorldThread(INetHandler net);
 
     void processWindowMessages();
+
+    String stripSpecialChars(String message);
 }
