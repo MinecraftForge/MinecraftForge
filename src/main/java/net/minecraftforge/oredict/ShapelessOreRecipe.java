@@ -12,13 +12,10 @@ import net.minecraftforge.common.util.ItemCondition;
 import net.minecraftforge.common.util.ItemPredicate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import scala.reflect.internal.Trees.This;
 
 public class ShapelessOreRecipe implements IRecipe
 {
@@ -96,7 +93,7 @@ public class ShapelessOreRecipe implements IRecipe
     
     private void setupStringToDisplay()
     {
-        StringBuilder builder = new StringBuilder("ShapedOreRecipe(result =");
+        StringBuilder builder = new StringBuilder("ShapelessOreRecipe(result =");
         builder.append(this.output);
         builder.append(", [\n");
         for (int i = 0; i < this.input.size(); i++)

@@ -430,6 +430,7 @@ public class OreDictionary
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
 
+        //Add to SensitiveOreDict
         SensitiveOreDict.registerSensitiveOre(name, ore.getItemDamage() != WILDCARD_VALUE ? ItemCondition.ofItem(ore.getItem()) : ItemCondition.ofItemStack(ore));
         
         int oreID = getOreID(name);

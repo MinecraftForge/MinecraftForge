@@ -61,7 +61,7 @@ public abstract class ItemCondition
         @Override
         public boolean check(ItemStack itemStack)
         {
-            if (this.item != itemStack.getItem() || (!this.checkDamage || this.damage == itemStack.getItemDamage()))
+            if (this.item != itemStack.getItem() || (this.checkDamage && this.damage != itemStack.getItemDamage()))
             {
                 return false;
             }

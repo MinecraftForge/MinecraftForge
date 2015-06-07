@@ -150,18 +150,11 @@ public class ShapedOreRecipe implements IRecipe
 
             if(ingred == null) continue;
 
-            if (ingred.getItemDamage() == OreDictionary.WILDCARD_VALUE)
-            {
-                input[i] = ItemPredicate.ofItem(ingred.getItem());
-            }
-            else 
-            {
-                input[i] = ItemPredicate.of(ItemCondition.ofItemStack(ingred));
-            }
+            input[i] = ItemPredicate.of(ItemCondition.ofItemStack(ingred));
 
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
-                if(OreDictionary.itemMatches(replace.getKey(), ingred, false))
+                if(OreDictionary.itemMatches(replace.getKey(), ingred, true))
                 {
                     input[i] = ItemPredicate.ofOre(replace.getValue());
                     break;
@@ -251,8 +244,11 @@ public class ShapedOreRecipe implements IRecipe
 
                 ItemStack slot = inv.getStackInRowAndColumn(x, y);
 
-
                 if (target != null && !(target.apply(slot)))
+                {
+                    return false;
+                }
+                if (target == null && slot != null)
                 {
                     return false;
                 }
@@ -280,10 +276,11 @@ public class ShapedOreRecipe implements IRecipe
         return this.input;
     }
 
+
     /**
      * Returns the input for this recipe, any mod accessing this value should never
      * manipulate the values in this array as it will effect the recipe itself.
-     * @return The recipes input vales.
+     * @return The recipes input items.
      */
     public ItemPredicate[] getInputPredicates()
     {

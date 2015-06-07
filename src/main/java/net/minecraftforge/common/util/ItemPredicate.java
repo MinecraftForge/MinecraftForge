@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.SensitiveOreDict;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -231,13 +232,12 @@ public abstract class ItemPredicate {
         }
     }
     
-    public static class OrePredicate extends ListPredicate
+    public static class OrePredicate extends ItemPredicate
     {
         private final String oreName;
 
         private OrePredicate (String oreName)
         {
-            super(SensitiveOreDict.getOres(oreName));
             this.oreName = oreName;
         }
         
@@ -245,6 +245,24 @@ public abstract class ItemPredicate {
         public String toString()
         {
             return "ItemPredicate(ore = \"" +  this.oreName + "\")";
+        }
+
+        @Override
+        protected boolean check(ItemStack itemStack)
+        {
+            return SensitiveOreDict.hasName(itemStack, this.oreName);
+        }
+
+        @Override
+        public List<ItemStack> createAll()
+        {
+            List<ItemCondition> condList = SensitiveOreDict.getOres(oreName);
+            List<ItemStack> stackList = new ArrayList<ItemStack>(condList.size());
+            for (ItemCondition cond : condList)
+            {
+                stackList.add(cond.createStack());
+            }
+            return stackList;
         }
     }
 }

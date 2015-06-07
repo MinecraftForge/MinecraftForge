@@ -55,19 +55,11 @@ public class SensitiveOreDict
      */
     public static boolean hasName(ItemStack itemStack, String oreName)
     {
-        if (itemStack == null)
+        for (ItemCondition cond : getOres(oreName))
         {
-            return false;
-        }
-
-        for (String key: nameToConditions.keySet())
-        {
-            for (ItemCondition cond: nameToConditions.get(key))
+            if (cond.check(itemStack))
             {
-                if (cond.check(itemStack))
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
