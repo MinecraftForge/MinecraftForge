@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/EnumChatFormatting.java
++++ ../src-work/minecraft/net/minecraft/util/EnumChatFormatting.java
+@@ -92,7 +92,6 @@
+         return this.field_96304_B;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static String func_110646_a(String p_110646_0_)
+     {
+         return p_110646_0_ == null ? null : field_96330_y.matcher(p_110646_0_).replaceAll("");
