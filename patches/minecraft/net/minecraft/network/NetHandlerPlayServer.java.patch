@@ -159,7 +159,7 @@
 -            System.arraycopy(p_147343_1_.func_180768_b(), 0, tileentitysign.field_145915_a, 0, 4);
 +            IChatComponent[] lines = p_147343_1_.func_180768_b(); //Forge: Prevent client from directly sending commands
 +            for (int x = 0; x < tileentitysign.field_145915_a.length && x < lines.length; x++)
-+                tileentitysign.field_145915_a[x] = new ChatComponentText(lines[x].func_150260_c());
++                tileentitysign.field_145915_a[x] = new ChatComponentText(net.minecraft.util.EnumChatFormatting.func_110646_a(lines[x].func_150260_c()));
 +
              tileentitysign.func_70296_d();
              worldserver.func_175689_h(blockpos);
