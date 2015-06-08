@@ -159,6 +159,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception
     {
+        if (this.state != null) {
+            FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
+            return;
+        }
+        FMLLog.getLogger().log(Level.TRACE, "Handshake channel activating");
         this.state = ConnectionState.OPENING;
         // send ourselves as a user event, to kick the pipeline active
         this.handshakeChannel.pipeline().fireUserEventTriggered(this);
@@ -218,7 +223,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         FMLCommonHandler.instance().bus().post(new FMLNetworkEvent.ClientConnectedToServerEvent(manager, this.connectionType.name()));
     }
 
-    private void completeServerSideConnection(ConnectionType type)
+    private synchronized void completeServerSideConnection(ConnectionType type)
     {
         this.connectionType = type;
         FMLLog.info("[%s] Server side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
@@ -381,7 +386,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     {
         if (state == ConnectionState.AWAITING_HANDSHAKE)
         {
-            state = ConnectionState.HANDSHAKING;
+            synchronized (this) { // guard from other threads changing the state on us
+                if (state == ConnectionState.AWAITING_HANDSHAKE) {
+                    state = ConnectionState.HANDSHAKING;
+                }
+            }
         }
         String channelName = msg.getChannelName();
         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
