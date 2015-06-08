@@ -19,9 +19,9 @@ public abstract class ItemCondition
 {
     private ItemCondition(){}
     
-    public abstract boolean check (ItemStack itemStack);
+    public abstract boolean check(ItemStack itemStack);
 
-    public abstract ItemStack createStack ();
+    public abstract ItemStack createStack();
 
     public static ItemCondition ofItem(Item item)
     {
@@ -50,7 +50,7 @@ public abstract class ItemCondition
         public final int damage;
         public final Set<EvidenceAndValue> condNBT;
 
-        private ConditionSensitive (Item item, boolean checkDamage, int damage, Set<EvidenceAndValue> set)
+        private ConditionSensitive(Item item, boolean checkDamage, int damage, Set<EvidenceAndValue> set)
         {
             this.item = item;
             this.checkDamage = checkDamage;
@@ -100,7 +100,8 @@ public abstract class ItemCondition
         }
 
         @Override
-        public boolean equals (Object obj) {
+        public boolean equals(Object obj)
+        {
             if (!(obj instanceof ConditionSensitive))
             {
                 return false;
@@ -113,7 +114,7 @@ public abstract class ItemCondition
         }
 
         @Override
-        public int hashCode ()
+        public int hashCode()
         {
             return Objects.hashCode(this.item, this.checkDamage, this.damage, this.condNBT);
         }
@@ -129,25 +130,25 @@ public abstract class ItemCondition
     {
         public final Item item;
 
-        private ConditionSimple (Item item)
+        private ConditionSimple(Item item)
         {
             this.item = item;
         }
 
         @Override
-        public boolean check (ItemStack itemStack)
+        public boolean check(ItemStack itemStack)
         {
             return this.item == itemStack.getItem();
         }
 
         @Override
-        public ItemStack createStack ()
+        public ItemStack createStack()
         {
             return new ItemStack(this.item);
         }
 
         @Override
-        public boolean equals (Object obj)
+        public boolean equals(Object obj)
         {
             return (obj instanceof ConditionSimple) && this.item == ((ConditionSimple) obj).item;
         }
@@ -173,17 +174,17 @@ public abstract class ItemCondition
 
         private final Item item;
 
-        public Builder (Item item)
+        public Builder(Item item)
         {
             this.item = item;
         }
 
-        public Builder (Block block)
+        public Builder(Block block)
         {
             this.item = Item.getItemFromBlock(block);
         }
 
-        public Builder (ItemStack itemStack)
+        public Builder(ItemStack itemStack)
         {
             this(itemStack.getItem());
             checkDamage(itemStack.getItemDamage());
@@ -219,25 +220,26 @@ public abstract class ItemCondition
         private final NBTEvidence ev;
         private final Object value;
 
-        private EvidenceAndValue (String key, NBTEvidence ev, Object value) {
+        private EvidenceAndValue(String key, NBTEvidence ev, Object value)
+        {
             this.key = key;
             this.ev = ev;
             this.value = value;
         }
 
-        private boolean check (NBTTagCompound tagCompound)
+        private boolean check(NBTTagCompound tagCompound)
         {
             return tagCompound.hasKey(this.key) && this.value == this.ev.get(tagCompound, key);
         }
 
         @SuppressWarnings("unchecked")
-        public void write (NBTTagCompound tagCompound)
+        public void write(NBTTagCompound tagCompound)
         {
             this.ev.write(tagCompound, this.key, this.value);
         }
 
         @Override
-        public boolean equals (Object obj)
+        public boolean equals(Object obj)
         {
             return (obj instanceof EvidenceAndValue) && this.key.equals(((EvidenceAndValue) obj).key);
         }

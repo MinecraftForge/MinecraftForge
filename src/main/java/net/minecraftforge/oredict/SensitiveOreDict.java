@@ -1,11 +1,8 @@
 package net.minecraftforge.oredict;
 
-import akka.util.Collections;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ItemCondition;
@@ -22,7 +19,8 @@ public class SensitiveOreDict
     private static final HashMap<String, List<ItemCondition>> nameToConditions = new HashMap<String, List<ItemCondition>>(1000);
     private static final HashMap<ItemCondition, List<String>> conditionToNames = new HashMap<ItemCondition, List<String>>(5000);
 
-    public static void registerSensitiveOre(String name, ItemCondition condition) {
+    public static void registerSensitiveOre(String name, ItemCondition condition)
+    {
         if ("Unknown".equals(name))
         {
             return;
@@ -89,7 +87,7 @@ public class SensitiveOreDict
         return names;
     }
 
-    public static ImmutableList<ItemCondition> getOres (String name)
+    public static ImmutableList<ItemCondition> getOres(String name)
     {
         return !nameToConditions.containsKey(name) ? ImmutableList.<ItemCondition>of() : ImmutableList.copyOf(nameToConditions.get(name));
     }

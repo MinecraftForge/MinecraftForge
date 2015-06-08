@@ -10,6 +10,7 @@ import net.minecraftforge.oredict.SensitiveOreDict;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,12 +20,12 @@ public abstract class ItemPredicate {
 
     private ItemPredicate(){}
     
-    public boolean apply (ItemStack itemStack)
+    public boolean apply(ItemStack itemStack)
     {
         return itemStack != null && check(itemStack);
     }
 
-    protected abstract boolean check (ItemStack itemStack);
+    protected abstract boolean check(ItemStack itemStack);
 
     public List<ItemStack> createAll()
     {
@@ -34,19 +35,19 @@ public abstract class ItemPredicate {
     public static final ItemPredicate NULL_STACK = new ItemPredicate()
     {
         @Override
-        public boolean apply (ItemStack itemStack)
+        public boolean apply(ItemStack itemStack)
         {
             return itemStack == null;
         }
 
         @Override
-        protected boolean check (ItemStack itemStack)
+        protected boolean check(ItemStack itemStack)
         {
             return false;
         }
     };
 
-    public static ItemPredicate of (ItemCondition condition)
+    public static ItemPredicate of(ItemCondition condition)
     {
         return new SinglePredicate(condition);
     }
@@ -57,7 +58,7 @@ public abstract class ItemPredicate {
      * @param c2
      * @return
      */
-    public static ItemPredicate of (ItemCondition c1, ItemCondition c2)
+    public static ItemPredicate of(ItemCondition c1, ItemCondition c2)
     {
         return new Predicate2(c1, c2);
     }
@@ -69,15 +70,12 @@ public abstract class ItemPredicate {
      * @param others
      * @return
      */
-    public static ItemPredicate of (ItemCondition c1, ItemCondition c2, ItemCondition... others)
+    public static ItemPredicate of(ItemCondition c1, ItemCondition c2, ItemCondition... others)
     {
         List<ItemCondition> list = Lists.newArrayListWithCapacity(2 + others.length);
         list.add(c1);
         list.add(c2);
-        for (ItemCondition c : others)
-        {
-            list.add(c);
-        }
+        Collections.addAll(list, others);
         return new ItemPredicate.ListPredicate(list);
     }
 
@@ -86,17 +84,17 @@ public abstract class ItemPredicate {
      * @param collection
      * @return
      */
-    public static ItemPredicate of (Collection<ItemCondition> collection)
+    public static ItemPredicate of(Collection<ItemCondition> collection)
     {
         return new ListPredicate(collection);
     }
 
-    public static ItemPredicate ofItem (Item item)
+    public static ItemPredicate ofItem(Item item)
     {
         return new SimpleItemPredicate(item);
     }
 
-    public static ItemPredicate ofBlock (Block block)
+    public static ItemPredicate ofBlock(Block block)
     {
         return new SimpleItemPredicate(Item.getItemFromBlock(block));
     }
@@ -138,19 +136,19 @@ public abstract class ItemPredicate {
     {
         public final ItemCondition condition;
 
-        private SinglePredicate (ItemCondition condition)
+        private SinglePredicate(ItemCondition condition)
         {
             this.condition = condition;
         }
 
         @Override
-        protected boolean check (ItemStack itemStack)
+        protected boolean check(ItemStack itemStack)
         {
             return condition.check(itemStack);
         }
 
         @Override
-        public List<ItemStack> createAll ()
+        public List<ItemStack> createAll()
         {
             return Lists.newArrayList(this.condition.createStack());
         }
@@ -167,20 +165,20 @@ public abstract class ItemPredicate {
         public final ItemCondition cond1;
         public final ItemCondition cond2;
 
-        private Predicate2 (ItemCondition cond1, ItemCondition cond2)
+        private Predicate2(ItemCondition cond1, ItemCondition cond2)
         {
             this.cond1 = cond1;
             this.cond2 = cond2;
         }
 
         @Override
-        protected boolean check (ItemStack itemStack)
+        protected boolean check(ItemStack itemStack)
         {
             return this.cond1.check(itemStack) || this.cond2.check(itemStack);
         }
 
         @Override
-        public List<ItemStack> createAll ()
+        public List<ItemStack> createAll()
         {
             return Lists.newArrayList(this.cond1.createStack(), this.cond2.createStack());
         }
@@ -196,13 +194,13 @@ public abstract class ItemPredicate {
     {
         public final ImmutableList<ItemCondition> conditionList;
 
-        private ListPredicate (Collection<ItemCondition> conditions)
+        private ListPredicate(Collection<ItemCondition> conditions)
         {
             this.conditionList = ImmutableList.copyOf(conditions);
         }
 
         @Override
-        protected boolean check (ItemStack itemStack) {
+        protected boolean check(ItemStack itemStack) {
             for (ItemCondition cond: this.conditionList)
             {
                 if (cond.check(itemStack))
@@ -215,7 +213,7 @@ public abstract class ItemPredicate {
         }
 
         @Override
-        public List<ItemStack> createAll ()
+        public List<ItemStack> createAll()
         {
             List<ItemStack> list = Lists.newArrayList();
             for (ItemCondition cond: this.conditionList)
@@ -236,7 +234,7 @@ public abstract class ItemPredicate {
     {
         private final String oreName;
 
-        private OrePredicate (String oreName)
+        private OrePredicate(String oreName)
         {
             this.oreName = oreName;
         }
