@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -308,7 +308,7 @@
+ 
+         if (this.field_78453_b != null)
+         {
+-            if (this.field_78453_b.func_77973_b() == Items.field_151098_aY)
++            if (this.field_78453_b.func_77973_b() instanceof net.minecraft.item.ItemMap)
+             {
+                 this.func_178097_a(entityplayersp, f3, f1, f2);
+             }
