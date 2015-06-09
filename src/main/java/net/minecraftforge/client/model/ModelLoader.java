@@ -293,7 +293,7 @@ public class ModelLoader extends ModelBakery
         {
             if (textures.isEmpty())
                 return this;
-            
+
             List<BlockPart> elements = Lists.newArrayList(); //We have to duplicate this so we can edit it below.
             for (BlockPart part : (List<BlockPart>)this.model.getElements())
             {
@@ -307,10 +307,10 @@ public class ModelLoader extends ModelBakery
             neweModel.parent = this.model.parent;
 
             Set<String> removed = Sets.newHashSet();
-            
+
             for (Entry<String, String> e : textures.entrySet())
             {
-                if (e.getValue() == null)
+                if ("".equals(e.getValue()))
                 {
                     removed.add(e.getKey());
                     neweModel.textures.remove(e.getKey());
@@ -321,7 +321,7 @@ public class ModelLoader extends ModelBakery
 
             // Map the model's texture references as if it was the parent of a model with the retexture map as its textures.
             Map<String, String> remapped = Maps.newHashMap();
-            
+
             for (Entry<String, String> e : (Set<Entry<String, String>>)neweModel.textures.entrySet())
             {
                 if (e.getValue().startsWith("#"))
@@ -331,9 +331,9 @@ public class ModelLoader extends ModelBakery
                         remapped.put(e.getKey(), (String)neweModel.textures.get(key));
                 }
             }
-            
+
             neweModel.textures.putAll(remapped);
-            
+
             //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
             for (BlockPart part : (List<BlockPart>)neweModel.getElements())
             {

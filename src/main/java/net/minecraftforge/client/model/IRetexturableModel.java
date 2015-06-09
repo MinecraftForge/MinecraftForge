@@ -10,9 +10,10 @@ public interface IRetexturableModel extends IModel
      * as a model should be able to be retextured multiple times producing
      * a separate model each time.
      *
-     * The input map MAY map to NULL which should be used to indicate the
-     * texture was removed. Handling of that is up to the model itself.
-     * Such as using default, missing texture, or removing vertices.
+     * The input map MAY map to an empty string "" which should be used
+     * to indicate the texture was removed. Handling of that is up to
+     * the model itself. Such as using default, missing texture, or
+     * removing vertices.
      *
      * The input should be considered a DIFF of the old textures, not a
      * replacement as it may not contain everything.
