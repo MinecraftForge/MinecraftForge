@@ -71,7 +71,7 @@ public abstract class NBTEvidence<T>
         }
     };
 
-    public static final NBTEvidence<Long> CHAR = new NBTEvidence<Long>()
+    public static final NBTEvidence<Long> LONG = new NBTEvidence<Long>()
     {
         @Override
         public void write(NBTTagCompound tagCompound, String key, Long value)
