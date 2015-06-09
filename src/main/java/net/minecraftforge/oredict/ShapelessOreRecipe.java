@@ -1,23 +1,26 @@
 package net.minecraftforge.oredict;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.List;
 import net.minecraft.block.Block;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.ItemCondition;
+import net.minecraftforge.common.util.ItemPredicate;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ShapelessOreRecipe implements IRecipe
 {
     private ItemStack output = null;
-    private ArrayList<Object> input = new ArrayList<Object>();
+    private ArrayList<ItemPredicate> input = new ArrayList<ItemPredicate>();
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -29,19 +32,27 @@ public class ShapelessOreRecipe implements IRecipe
         {
             if (in instanceof ItemStack)
             {
-                input.add(((ItemStack)in).copy());
+                input.add(ItemPredicate.of(ItemCondition.ofItemStack((ItemStack)in)));
             }
             else if (in instanceof Item)
             {
-                input.add(new ItemStack((Item)in));
+                input.add(ItemPredicate.ofItem((Item) in));
             }
             else if (in instanceof Block)
             {
-                input.add(new ItemStack((Block)in));
+                input.add(ItemPredicate.ofBlock((Block) in));
             }
             else if (in instanceof String)
             {
-                input.add(OreDictionary.getOres((String)in));
+                input.add(ItemPredicate.ofOre((String) in));
+            }
+            else if (in instanceof ItemPredicate)
+            {
+                input.add((ItemPredicate) in);
+            }
+            else if (in instanceof ItemCondition)
+            {
+                input.add(ItemPredicate.of((ItemCondition) in));
             }
             else
             {
@@ -55,7 +66,7 @@ public class ShapelessOreRecipe implements IRecipe
             }
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     ShapelessOreRecipe(ShapelessRecipes recipe, Map<ItemStack, String> replacements)
     {
@@ -63,12 +74,12 @@ public class ShapelessOreRecipe implements IRecipe
 
         for(ItemStack ingred : ((List<ItemStack>)recipe.recipeItems))
         {
-            Object finalObj = ingred;
+            ItemPredicate finalObj = ItemPredicate.of(ItemCondition.ofItemStack(ingred));
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
                 if(OreDictionary.itemMatches(replace.getKey(), ingred, false))
                 {
-                    finalObj = OreDictionary.getOres(replace.getValue());
+                    finalObj = ItemPredicate.ofOre(replace.getValue());
                     break;
                 }
             }
@@ -85,11 +96,10 @@ public class ShapelessOreRecipe implements IRecipe
     @Override
     public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean matches(InventoryCrafting var1, World world)
     {
-        ArrayList<Object> required = new ArrayList<Object>(input);
+        ArrayList<ItemPredicate> required = new ArrayList<ItemPredicate>(input);
 
         for (int x = 0; x < var1.getSizeInventory(); x++)
         {
@@ -98,28 +108,13 @@ public class ShapelessOreRecipe implements IRecipe
             if (slot != null)
             {
                 boolean inRecipe = false;
-                Iterator<Object> req = required.iterator();
+                Iterator<ItemPredicate> req = required.iterator();
 
                 while (req.hasNext())
                 {
-                    boolean match = false;
+                    ItemPredicate next = req.next();
 
-                    Object next = req.next();
-
-                    if (next instanceof ItemStack)
-                    {
-                        match = OreDictionary.itemMatches((ItemStack)next, slot, false);
-                    }
-                    else if (next instanceof List)
-                    {
-                        Iterator<ItemStack> itr = ((List<ItemStack>)next).iterator();
-                        while (itr.hasNext() && !match)
-                        {
-                            match = OreDictionary.itemMatches(itr.next(), slot, false);
-                        }
-                    }
-
-                    if (match)
+                    if (next.apply(slot))
                     {
                         inRecipe = true;
                         required.remove(next);
@@ -140,9 +135,22 @@ public class ShapelessOreRecipe implements IRecipe
     /**
      * Returns the input for this recipe, any mod accessing this value should never
      * manipulate the values in this array as it will effect the recipe itself.
+     * @deprecated
      * @return The recipes input vales.
      */
+    @Deprecated
     public ArrayList<Object> getInput()
+    {
+        ArrayList objList = this.input;
+        return objList;
+    }
+
+    /**
+     * Returns the input for this recipe, any mod accessing this value should never
+     * manipulate the values in this list as it will effect the recipe itself.
+     * @return The recipes input vales.
+     */
+    public ArrayList<ItemPredicate> getInputPredicates()
     {
         return this.input;
     }
@@ -152,4 +160,5 @@ public class ShapelessOreRecipe implements IRecipe
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
+    
 }
