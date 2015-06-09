@@ -21,7 +21,6 @@ public class ShapelessOreRecipe implements IRecipe
 {
     private ItemStack output = null;
     private ArrayList<ItemPredicate> input = new ArrayList<ItemPredicate>();
-    private String stringToDisp;
 
     public ShapelessOreRecipe(Block result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapelessOreRecipe(Item  result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -66,8 +65,6 @@ public class ShapelessOreRecipe implements IRecipe
                 throw new RuntimeException(ret);
             }
         }
-        
-        this.setupStringToDisplay();
     }
     
     @SuppressWarnings("unchecked")
@@ -88,22 +85,6 @@ public class ShapelessOreRecipe implements IRecipe
             }
             input.add(finalObj);
         }
-        this.setupStringToDisplay();
-    }
-    
-    private void setupStringToDisplay()
-    {
-        StringBuilder builder = new StringBuilder("ShapelessOreRecipe(result =");
-        builder.append(this.output);
-        builder.append(", [\n");
-        for (int i = 0; i < this.input.size(); i++)
-        {
-            builder.append("  ");
-            builder.append(this.input.get(i));
-            builder.append("\n");
-        }
-        builder.append("]");
-        this.stringToDisp = builder.toString();
     }
 
     @Override
@@ -180,9 +161,4 @@ public class ShapelessOreRecipe implements IRecipe
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
     }
     
-    @Override
-    public String toString()
-    {
-       return this.stringToDisp;
-    }
 }

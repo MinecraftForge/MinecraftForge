@@ -26,7 +26,6 @@ public class ShapedOreRecipe implements IRecipe
     private int width = 0;
     private int height = 0;
     private boolean mirrored = true;
-    private String stringToDisp;
 
     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -133,7 +132,6 @@ public class ShapedOreRecipe implements IRecipe
         {
             input[x++] = itemMap.get(chr);
         }
-        this.setupStringToDisplay();
     }
 
     ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
@@ -161,31 +159,6 @@ public class ShapedOreRecipe implements IRecipe
                 }
             }
         }
-        this.setupStringToDisplay();
-    }
-
-    private void setupStringToDisplay()
-    {
-        StringBuilder builder = new StringBuilder("ShapedOreRecipe(result =");
-        builder.append(this.output);
-        builder.append(", [\n");
-        for (int i = 0; i < this.input.length; i++)
-        {
-            if (i % 3 == 0) {
-                builder.append("  ");
-            }
-            builder.append(this.input[i]);
-            if (i % 3 == 2)
-            {
-                builder.append("\n");
-            }
-            else
-            {
-                builder.append(',');
-            }
-        }
-        builder.append("]");
-        this.stringToDisp = builder.toString();
     }
     
     @Override
@@ -291,11 +264,5 @@ public class ShapedOreRecipe implements IRecipe
     public ItemStack[] getRemainingItems(InventoryCrafting inv) //getRecipeLeftovers
     {
         return ForgeHooks.defaultRecipeGetRemainingItems(inv);
-    }
-    
-    @Override
-    public String toString()
-    {
-        return this.stringToDisp;
     }
 }
