@@ -8,6 +8,15 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.AchievementList;
  import net.minecraft.tileentity.TileEntityBrewingStand;
+@@ -162,7 +163,7 @@
+ 
+         public boolean func_75214_a(ItemStack p_75214_1_)
+         {
+-            return p_75214_1_ != null ? p_75214_1_.func_77973_b().func_150892_m(p_75214_1_) : false;
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_75214_1_);
+         }
+ 
+         public int func_75219_a()
 @@ -194,7 +195,7 @@
  
              public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
@@ -22,7 +31,7 @@
              public static boolean func_75243_a_(ItemStack p_75243_0_)
              {
 -                return p_75243_0_ != null && (p_75243_0_.func_77973_b() == Items.field_151068_bn || p_75243_0_.func_77973_b() == Items.field_151069_bo);
-+                return p_75243_0_ != null && (p_75243_0_.func_77973_b() instanceof ItemPotion || p_75243_0_.func_77973_b() == Items.field_151069_bo);
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_75243_0_);
              }
          }
  }
