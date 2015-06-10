@@ -284,7 +284,11 @@ public class ForgeBlockStateV1 extends Marker
          */
         ForgeBlockStateV1.Variant sync(ForgeBlockStateV1.Variant parent)
         {
-            if (!this.modelSet)             this.model    = parent.model;
+            if (!this.modelSet)
+            {
+                this.model    = parent.model;
+                this.modelSet = parent.modelSet;
+            }
             if (!this.rotation.isPresent()) this.rotation = parent.rotation;
             if (!this.uvLock.isPresent())   this.uvLock   = parent.uvLock;
             if (!this.weight.isPresent())   this.weight   = parent.weight;
