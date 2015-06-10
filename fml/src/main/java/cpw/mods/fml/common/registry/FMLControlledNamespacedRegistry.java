@@ -23,6 +23,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.functions.GenericIterableFactory;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
+    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
     private final Class<I> superType;
     private String optionalDefaultName;
     private I optionalDefaultObject;
@@ -396,14 +397,16 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         }
         addObjectRaw(idToUse, name, thing);
 
-        FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
+        if (DEBUG)
+            FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
         return idToUse;
     }
 
     void addAlias(String from, String to)
     {
         aliases.put(from, to);
-        FMLLog.finer("Registry alias: %s -> %s", from, to);
+        if (DEBUG)
+            FMLLog.finer("Registry alias: %s -> %s", from, to);
     }
 
     Map<String,Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
@@ -426,6 +429,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
 
     void dump()
     {
+        if (!DEBUG)
+            return;
+
         List<Integer> ids = new ArrayList<Integer>();
 
         for (I thing : this.typeSafeIterable())
@@ -439,7 +445,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         for (int id : ids)
         {
             I thing = getRaw(id);
-            FMLLog.finer("Registry: %s %d %s", getNameForObject(thing), id, thing);
+            FMLLog.finer("Registry: %d %s %s", id, getNameForObject(thing), thing);
         }
     }
 
