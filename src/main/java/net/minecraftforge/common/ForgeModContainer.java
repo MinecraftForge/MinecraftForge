@@ -12,6 +12,7 @@ import static net.minecraftforge.common.ForgeVersion.revisionVersion;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -380,5 +381,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "net.minecraftforge.server.command",
                 "net.minecraftforge.transformers"
                 );
+    }
+
+
+
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();
+        return certificates != null ? certificates[0] : null;
     }
 }
