@@ -266,10 +266,17 @@ public class LoadController
 
     public void printModStates(StringBuilder ret)
     {
+        ret.append("\n\tStates:");
+        for (ModState state : ModState.values())
+            ret.append(" '").append(state.getMarker()).append("' = ").append(state.toString());
+
         for (ModContainer mc : loader.getModList())
         {
-            ret.append("\n\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
-            Joiner.on("->"). appendTo(ret, modStates.get(mc.getModId()));
+            ret.append("\n\t");
+            for (ModState state : modStates.get(mc.getModId()))
+                ret.append(state.getMarker());
+
+            ret.append("\t").append(mc.getModId()).append("{").append(mc.getVersion()).append("} [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
         }
     }
 
