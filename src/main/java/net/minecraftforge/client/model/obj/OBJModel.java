@@ -3,35 +3,54 @@ package net.minecraftforge.client.model.obj;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.ISmartBlockModel;
+import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import scala.actors.threadpool.Arrays;
+import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -39,19 +58,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public class OBJModel implements IModel {
-    public static final boolean shouldLog = true;
-    private static final Logger logger = LogManager.getLogger(OBJModel.class);
     static final Set<String> unknownObjectCommands = new HashSet<String>();
-    static IResourceManager manager;
-    boolean loadingBlockModel = false;
-    ImmutableMap<String, ResourceLocation> textures;
+    private MaterialLibrary matLib;
+    private IModelState state;
     
-    public OBJModel() {}
+    public OBJModel(MaterialLibrary matLib) {
+        this.matLib = matLib;
+    }
     
-    public static void setManager(IResourceManager mgr)
-    {
-        if (shouldLog) logger.info("OBJ: manager set");
-        manager = mgr;
+    private void setModelState(IModelState state) {
+        this.state = state;
     }
     
     @Override
@@ -63,88 +79,77 @@ public class OBJModel implements IModel {
     @Override
     public Collection<ResourceLocation> getTextures()
     {
-        if (shouldLog) logger.printf(Level.INFO, "OBJ: getTextures: are textures null: %b", this.textures == null);
-        return this.textures.values();
+        Iterator<Material> materialIterator = this.matLib.materials.values().iterator();
+        List<ResourceLocation> textures = new ArrayList<ResourceLocation>();
+        while (materialIterator.hasNext()) {
+            Material mat = materialIterator.next();
+            ResourceLocation textureLoc = new ResourceLocation(mat.getTexture().getPath());
+            if (!textures.contains(textureLoc)) textures.add(textureLoc);
+        }
+        return textures;
     }
 
     @Override
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        if (shouldLog) logger.info("OBJ: baking IFlexibleBakedModel");
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-        for (String path : textures.keySet())
-        {
-            if (shouldLog) logger.printf(Level.INFO, "OBJ: put texture at path %s in builder", path);
-            builder.put(path, bakedTextureGetter.apply(textures.get(path)));
+        Iterator<Material> materialIterator = this.matLib.library.values().iterator();
+        while (materialIterator.hasNext()) {
+            Material mat = materialIterator.next();
+            builder.put(mat.texture.path, bakedTextureGetter.apply(new ResourceLocation(mat.getTexture().getPath())));
+            builder.put("missingno", bakedTextureGetter.apply(new ResourceLocation("missingno")));
         }
-        if (shouldLog) logger.info("OBJ: put missingno in builder");
-        builder.put("missingno", bakedTextureGetter.apply(new ResourceLocation("missingno")));
-        if (shouldLog) logger.info("OBJ: returning flexible model");
-//        return new OBJFlexibleModel(this, state, format, bakedTextureGetter);
-        return null;
+        
+        return new OBJBakedModel(this, state, format, bakedTextureGetter);
     }
 
-    @Override
-    public IModelState getDefaultState()
+    public OBJState getDefaultState()
     {
-        if (shouldLog) logger.info("OBJ: getDefaultState");
-//        return new OBJModelState();
-        return null;
+        return new OBJState(null, ItemCameraTransforms.DEFAULT);
     }
     
-//    public OBJMaterialLibrary getOBJMaterialLibrary()
-//    {
-//        if (shouldLogDebugData) logger.info("OBJ: getOBJMaterialLibrary");
-//        return this.matLib;
-//    }
-    
-//    public void setOBJMaterialLibrary(OBJMaterialLibrary matLib)
-//    {
-//        if (shouldLog) logger.printf(Level.INFO, "OBJ: material library was null: %b", this.matLib == null);
-//        this.matLib = matLib != null ? matLib : this.matLib;
-//        if (shouldLog) logger.info("OBJ: material library set");
-//    }
+    public MaterialLibrary getMatLib() {
+        return this.matLib;
+    }
     
     public static class Parser
     {
-        private InputStreamReader lineStream;
-        private BufferedReader lineReader;
-        private OBJModel model;
-        private List<Texture> textures = new ArrayList<Texture>();
-        private List<Material> materials = new ArrayList<Material>();
+        public MaterialLibrary materialLibrary = new MaterialLibrary();
+        private IResourceManager manager;
+        private InputStreamReader objStream;
+        private BufferedReader objReader;
+        private ResourceLocation objFrom;
+        
+        private List<String> elementList = new ArrayList<String>();
         private List<Vertex> vertices = new ArrayList<Vertex>();
-        private List<Vector3f> texCoords = new ArrayList<Vector3f>();
-        private List<Vector3f> normals = new ArrayList<Vector3f>();
-        private List<ModelElement> elements = new ArrayList<ModelElement>();
-        private ImmutableMap.Builder<String, Mesh> meshes = ImmutableMap.builder();
+        private List<Normal> normals = new ArrayList<Normal>();
+        private List<TextureCoordinate> texCoords = new ArrayList<TextureCoordinate>();
         
-        List<String> vertexData = new ArrayList<String>();
-        List<String> texCoordData = new ArrayList<String>();
-        List<String> normalData = new ArrayList<String>();
-        List<String> faceData = new ArrayList<String>();
-        List<String> mtllibData = new ArrayList<String>();
-        Map<String, Integer> usemtlData = new HashMap<String, Integer>();
-        
-        public Parser(IResource from) throws IOException
+        public Parser(IResource from, IResourceManager manager) throws IOException
         {
-            this.lineStream = new InputStreamReader(from.getInputStream(), Charsets.UTF_8);
-            this.lineReader = new BufferedReader(lineStream);
+            this.manager = manager;
+            this.objFrom = from.getResourceLocation();
+            this.objStream = new InputStreamReader(from.getInputStream(), Charsets.UTF_8);
+            this.objReader = new BufferedReader(objStream);
+        }
+        
+        public List<String> getElements() {
+            return this.elementList;
         }
         
         public OBJModel parse() throws IOException
         {
-            Mesh mesh = new Mesh();
-            ModelElement element = new ModelElement();
-            
             String currentLine = "";
             String nextLine = "";
             String nextKey = "";
             String nextData = "";
+            Material material = new Material();
             
             for (;;)
             {
                 currentLine = nextLine;
-                nextLine = lineReader.readLine();
+                nextLine = objReader.readLine();
+                
                 if (currentLine == null) break;
                 if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
                 if (nextLine != null && !nextLine.isEmpty() && !nextLine.startsWith("#"))
@@ -153,386 +158,485 @@ public class OBJModel implements IModel {
                     nextKey = nextFields[0];
                     nextData = nextFields[1];
                 }
-                
+                                
                 String[] fields = currentLine.split(" ", 2);
                 String key = fields[0];
                 String data = fields[1];
                 
-                if (key.equalsIgnoreCase("v")) vertexData.add(data);
-                else if (key.equalsIgnoreCase("vt")) texCoordData.add(data);
-                else if (key.equalsIgnoreCase("vn")) normalData.add(data);
-                else if (key.equalsIgnoreCase("f")) faceData.add(data);
-                else if (key.equalsIgnoreCase("mtllib")) mtllibData.add(data);
-                else if (key.equalsIgnoreCase("usemtl")) usemtlData.put(data, faceData.size());
-            }
-            
-            Set<String> usemtlKeys = usemtlData.keySet();
-            Collection<Integer> usemtlElements = usemtlData.values();
-            List<String> usemtlKeyList = Arrays.asList(usemtlKeys.toArray());
-            List<Integer> usemtlElementList = Arrays.asList(usemtlElements.toArray());
-            
-            ListIterator<String> vertexIterator = vertexData.listIterator();
-            ListIterator<String> texCoordIterator = texCoordData.listIterator();
-            ListIterator<String> normalIterator = normalData.listIterator();
-            ListIterator<String> faceIterator = faceData.listIterator();
-            ListIterator<String> mtllibIterator = mtllibData.listIterator();
-            ListIterator<String> usemtlKeyIterator = usemtlKeyList.listIterator();
-            ListIterator<Integer> usemtlElementIterator = usemtlElementList.listIterator();
-            
-            while (texCoordIterator.hasNext())
-            {
-                String data = texCoordIterator.next();
-                String[] splitData = data.split(" ");
-                float[] floatSplitData = new float[splitData.length];
-                for (int i = 0; i < splitData.length; i++) floatSplitData[i] = Float.parseFloat(splitData[i]);
-                Vector3f texCoord = new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData.length == 3 ? floatSplitData[2] : 1);
-                this.texCoords.add(texCoord);
-            }
-            
-            while (normalIterator.hasNext())
-            {
-                String data = normalIterator.next();
-                String[] splitData = data.split(" ", 3);
-                float[] floatSplitData = new float[splitData.length];
-                for (int i = 0; i < splitData.length; i++) floatSplitData[i] = Float.parseFloat(splitData[i]);
-                Vector3f normal = new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData[2]);
-                this.normals.add(normal);
-            }
-            
-            while (vertexIterator.hasNext())
-            {
-                String data = vertexIterator.next();
-                String[] splitData = data.split(" ");
-                float[] floatSplitData = new float[splitData.length];
-                for (int i = 0; i < splitData.length; i++) floatSplitData[i] = Float.parseFloat(splitData[i]);
-                Vector4f pos = new Vector4f(floatSplitData[0], floatSplitData[1], floatSplitData[2], floatSplitData.length == 4 ? floatSplitData[3] : 1);
-                Vertex vertex = new Vertex(pos, new Vector4f(0.5f, 0.5f, 0.5f, 1.0f));
-                vertices.add(vertex);
-            }
-            
-            //TODO: add support for negative index references!
-            while (faceIterator.hasNext())
-            {
-                String data = faceIterator.next();  //(#/#/# #/#/# #/#/# #/#/#) or (#/# #/# #/# #/#) or (# # # #) or (#//# #//# #//# #//#)
-                String[] splitSpace = data.split(" ");  //([#/#/#], [#/#/#], [#/#/#], [#/#/#]) ...
-                String[][] splitSlash = new String[splitSpace.length][];
-                for (int i = 0; i < splitSpace.length; i++)
-                {
-                    if (splitSpace[i].contains("////"))     //([#//#], [#//#], [#//#], [#//#])
-                    {
-                        splitSlash[i] = splitSpace[i].split("////");    //([(#), (#)], [(#), (#)], [(#), (#)], [(#), (#)])
-                        int[] verts = new int[splitSlash[i].length];
-                        int[] norms = new int[splitSlash[i].length];
-                        for (int v = 0; v < splitSlash[i].length; v++)
-                        {
-                            verts[v] = Integer.parseInt(splitSlash[i][v]);
-                            verts[v] = verts[v] < 0 ? Math.abs(verts[v]) : verts[v];
-                            norms[v] = Integer.parseInt(splitSlash[i][v]);
-                            norms[v] = norms[v] < 0 ? Math.abs(norms[v]) : norms[v];
+                if (key.equalsIgnoreCase("mtllib")) materialLibrary.parseMaterials(manager, data, objFrom);
+                else if (key.equalsIgnoreCase("usemtl")) material = materialLibrary.materials.get(data);
+                else if (key.equalsIgnoreCase("v")) {
+                    String[] splitData = data.split(" ");
+                    float[] floatSplitData = new float[splitData.length];
+                    for (int i = 0; i < splitData.length; i++) floatSplitData[i] = Float.parseFloat(splitData[i]);
+                    Vector4f pos = new Vector4f(floatSplitData[0], floatSplitData[1], floatSplitData[2], floatSplitData.length == 4 ? floatSplitData[3] : 1);
+                    Vertex vertex = new Vertex(pos, new Vector4f(0.5f, 0.5f, 0.5f, 1.0f));
+                    this.vertices.add(vertex);
+                }
+                else if (key.equalsIgnoreCase("vn")) {
+                    String[] splitData = data.split(" ");
+                    float[] floatSplitData = new float[splitData.length];
+                    for (int i = 0; i < splitData.length; i++) floatSplitData[i] = Float.parseFloat(splitData[i]);
+                    Normal normal = new Normal(new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData[2]));
+                    this.normals.add(normal);
+                }
+                else if (key.equalsIgnoreCase("vt")) {
+                    String[] splitData = data.split(" ");
+                    float[] floatSplitData = new float[splitData.length];
+                    for (int i = 0; i < splitData.length; i++) floatSplitData[i] = Float.parseFloat(splitData[i]);
+                    TextureCoordinate texCoord = new TextureCoordinate(new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData.length == 3 ? floatSplitData[2] : 1));
+                    this.texCoords.add(texCoord);
+                }
+                else if (key.equalsIgnoreCase("f")) {
+                    String[] splitSpace = data.split(" ");
+                    String[][] splitSlash = new String[splitSpace.length][];
+                    
+                    int[] verts = new int[splitSpace.length];
+                    int[] texCoords = new int[splitSpace.length];
+                    int[] norms = new int[splitSpace.length];
+                    
+                    List<Vertex> v = new ArrayList<Vertex>(verts.length);
+                    List<TextureCoordinate> t = new ArrayList<TextureCoordinate>(texCoords.length);
+                    List<Normal> n = new ArrayList<Normal>(norms.length);
+                    
+                    for (int i = 0; i < splitSpace.length; i++) {
+                        if (splitSpace[i].contains("//")) {
+                            splitSlash[i] = splitSpace[i].split("//");
+                            
+                            verts[i] = Integer.parseInt(splitSlash[i][0]);
+                            verts[i] = verts[i] < 0 ? verts[i] = this.vertices.size() - 1 : verts[i] - 1;
+                            norms[i] = Integer.parseInt(splitSlash[i][1]);
+                            norms[i] = norms[i] < 0 ? norms[i] = this.normals.size() - 1 : norms[i] - 1;
+                            
+                            v.add(this.vertices.get(verts[i]));
+                            n.add(this.normals.get(norms[i]));
+                        } else if (splitSpace[i].contains("/")) {
+                            splitSlash[i] = splitSpace[i].split("/");
+                            
+                            verts[i] = Integer.parseInt(splitSlash[i][0]);
+                            verts[i] = verts[i] < 0 ? this.vertices.size() - 1 : verts[i] - 1;
+                            texCoords[i] = Integer.parseInt(splitSlash[i][1]);
+                            texCoords[i] = texCoords[i] < 0 ? this.texCoords.size() - 1 : texCoords[i] - 1;
+                            if (splitSlash[i].length > 2) {
+                                norms[i] = Integer.parseInt(splitSlash[i][2]);
+                                norms[i] = norms[i] < 0 ? this.normals.size() - 1 : norms[i] - 1;
+                            }
+                            
+                            v.add(this.vertices.get(verts[i]));
+                            t.add(this.texCoords.get(texCoords[i]));
+                            if (splitSlash[i].length > 2) n.add(this.normals.get(norms[i]));
+                        } else {
+                            splitSlash[i] = splitSpace[i].split("");
+                            
+                            verts[i] = Integer.parseInt(splitSlash[i][0]);
+                            verts[i] = verts[i] < 0 ? this.vertices.size() - 1 : verts[i] - 1;
+                            
+                            v.add(this.vertices.get(verts[i]));
                         }
-                        
-                        Face face = new Face(this.vertices.get(verts[0]), this.vertices.get(verts[1]), this.vertices.get(verts[2]), this.vertices.get(verts[3]), null);
+                    }
+                    
+                    Vertex[] va = new Vertex[v.size()];
+                    v.toArray(va);
+                    TextureCoordinate[] ta = new TextureCoordinate[t.size()];
+                    t.toArray(ta);
+                    Normal[] na = new Normal[n.size()];
+                    n.toArray(na);
+                    Face face = new Face(va, ta, na);
+                    this.materialLibrary.library.put(face, material);
+                    if (elementList.isEmpty()) {
+                        this.materialLibrary.elements.put("default", face);
+                    } else {
+                        for (String s : elementList) {
+                            this.materialLibrary.elements.put(s, face);
+                        }
+                    }
+                } else if (key.equalsIgnoreCase("g") || key.equalsIgnoreCase("o")) {
+                    elementList.clear();
+                    if (key.equalsIgnoreCase("g")) {
+                        String[] splitSpace = data.split(" ");
+                        for (String s : splitSpace) elementList.add(s);
+                    } else {
+                        elementList.add(data);
                     }
                 }
             }
-            
-            System.out.println("vertices: " + vertexData.size());
-            System.out.println("texCoords: " + texCoordData.size());
-            System.out.println("normals: " + normalData.size());
-            System.out.println("faces: " + faceData.size());
-            System.out.println("mtllibs: " + mtllibData.size());
-            System.out.println("usemtls: " + usemtlData.size());
-            
-            return model;
+            return new OBJModel(this.materialLibrary);
         }
+    }
+    
+    public static class MaterialLibrary
+    {
+        private Map<String, Material> materials = new HashMap<String, Material>();
+        private Map<Face, Material> library = new HashMap<Face, Material>();
+        private Map<String, Face> elements = new HashMap<String, Face>();
+        private InputStreamReader mtlStream;
+        private BufferedReader mtlReader;
+        private List<String> materialCommands = new ArrayList<String>();
         
-        private Texture getTexture(int texture)
-        {
-            if (texture > textures.size())
-            {
-                if (shouldLog) logger.error(String.format("texture %s is out of range", texture));
-                return null;
-            }
-            else if (texture == -1) return null;
-            return textures.get(texture);
-        }
+        public MaterialLibrary() {}
         
-        private Material getMaterial(int material)
+        public void parseMaterials(IResourceManager manager, String path, ResourceLocation from) throws IOException
         {
-            if (material > materials.size())
-            {
-                if (shouldLog) logger.error(String.format("material %s is out of range", material));
-                return null;
-            }
-            else if (material == -1) return null;
-            return materials.get(material);
-        }
-        
-        private Vertex getVertex(int vertex)
-        {
-            if (vertex > vertices.size())
-            {
-                if (shouldLog) logger.error(String.format("vertex %s is out of range", vertex));
-                return null;
-            }
-            else if (vertex == -1) return null;
-            return vertices.get(vertex);
-        }
-        
-        private OBJModel bakeOBJ() throws IOException
-        {
-            List<Texture> textures = null;
-            List<Material> materials = null;
+            String domain = from.getResourceDomain();
+            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), Charsets.UTF_8);
+            mtlReader = new BufferedReader(mtlStream);
             
             for (;;)
             {
-                String currentLine = lineReader.readLine();
+                String currentLine = mtlReader.readLine();
                 if (currentLine == null) break;
-                if (currentLine.length() == 0 || currentLine.startsWith("#")) continue;
+                if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
+                materialCommands.add(currentLine);
+            }
+                        
+            for (String command : materialCommands) {
+                String[] fields = command.split(" ", 2);
+                String key = fields[0];
+                String data = fields[1];
+                
+                if (key.equalsIgnoreCase("newmtl")) {
+                    this.materials.put(data, Material.parseMaterial(materialCommands));
+                }
+            }
+        }
+        
+        public Map<String, Face> getElements() {
+            return this.elements;
+        }
+    }
+    
+    public static class Material
+    {
+        private Vector4f color;
+        private Texture texture = Texture.White;
+        
+        public Material() 
+        {
+            this(Texture.White);
+        }
+        
+        public Material(Vector4f color)
+        {
+            this(color, Texture.White);
+        }
+        
+        public Material(Texture texture)
+        {
+            this(new Vector4f(1, 1, 1, 1), texture);
+        }
+        
+        public Material(Vector4f color, Texture texture)
+        {
+            this.color = color;
+            this.texture = texture;
+        }
+        
+        public void setColor(Vector4f color)
+        {
+            this.color = color;
+        }
+        
+        public Vector4f getColor()
+        {
+            return this.color;
+        }
+        
+        public void setTexture(Texture texture)
+        {
+            this.texture = texture;
+        }
+        
+        public Texture getTexture()
+        {
+            return this.texture;
+        }
+        
+        public static Material parseMaterial(List<String> commands)
+        {
+            Material material = new Material(null, null);
+            ListIterator<String> commandIterator = commands.listIterator();
+            
+            while (commandIterator.hasNext())
+            {
+                String currentLine = commandIterator.next();
                 String[] fields = currentLine.split(" ", 2);
                 String key = fields[0];
                 String data = fields[1];
                 
-                if (key.equalsIgnoreCase("mtllib")) ;
-                else if (key.equalsIgnoreCase("usemtl")) ;
-                else if (key.equalsIgnoreCase("o") || key.equalsIgnoreCase("g")) ;
-                else if (key.equalsIgnoreCase("v")) ;
-                else if (key.equalsIgnoreCase("vn")) ;
-                else if (key.equalsIgnoreCase("vt")) ;
-                else if (key.equalsIgnoreCase("f")) ;
-                else
+                if (key.equalsIgnoreCase("newmtl")) continue;
+                else if (key.equalsIgnoreCase("Ka") || key.equalsIgnoreCase("Kd") || key.equalsIgnoreCase("Ks"))
                 {
-                    if (!unknownObjectCommands.contains(key))
-                    {
-                        logger.printf(Level.WARN, "OBJ: Unrecognized command: %s, skipping", currentLine);
-                        unknownObjectCommands.add(key);
-                    }
-                    continue;
+                    String[] rgbStrings = data.split(" ", 3);
+                    Vector4f color = new Vector4f(Float.parseFloat(rgbStrings[0]), Float.parseFloat(rgbStrings[1]), Float.parseFloat(rgbStrings[2]), 1.0f);
+                    material.setColor(color);
                 }
+                else if (key.equalsIgnoreCase("illum")) ;   //TODO: implement illumination models?
+                else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
+                {
+                    if (data.contains(" "))
+                    {
+                        String[] mapStrings = data.split(" ");
+                        String texturePath = mapStrings[mapStrings.length - 1];
+                        Texture texture = new Texture(texturePath);
+                        material.setTexture(texture);
+                    }
+                    else
+                    {
+                        Texture texture = new Texture(data);
+                        material.setTexture(texture);
+                    }
+                }
+                else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr")) ;     //TODO: transparency?
+                else if (key.equalsIgnoreCase("map_d")) ;   //TODO: alpha map?
             }
-            return null;
+            if (material.getTexture() == null) material.setTexture(Texture.White);
+            return material;
         }
     }
     
-    public static class Mesh
+    public static class Texture
     {
-        private final List<ModelElement> elements = new ArrayList<ModelElement>();
+        public static Texture White = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
+        private String path;
+        private Vector2f position;
+        private Vector2f scale;
+        private float rotation;
         
-        public Mesh() {}
-        
-        public void addElement(ModelElement element)
+        public Texture(String path)
         {
-            if (element != null) elements.add(element);
+            this(path, new Vector2f(0, 0), new Vector2f(1, 1), 0);
         }
         
-        public void addElements(List<ModelElement> elements)
+        public Texture(String path, Vector2f position, Vector2f scale, float rotation)
         {
-            if (elements != null && !elements.isEmpty()) this.elements.addAll(elements);
+            this.path = path;
+            this.position = position;
+            this.scale = scale;
+            this.rotation = rotation;
         }
         
-        public ModelElement getElement(int index)
+        public ResourceLocation getTextureLocation()
         {
-            if (index >= 0 && index < this.elements.size()) return this.elements.get(index);
-            else return null;
-        }
-        public List<ModelElement> getElements()
-        {
-            return elements;
+            ResourceLocation loc = new ResourceLocation(this.path);
+            return loc;
         }
         
-        public List<ModelElement> bakeMesh()
+        public void setPath(String path)
         {
-            ImmutableList.Builder<ModelElement> builder = ImmutableList.builder();
-            for (ModelElement e : getElements()) builder.add(e);
-            return builder.build();
+            this.path = path;
         }
         
-        @Override
-        public String toString()
+        public String getPath()
         {
-            StringBuilder builder = new StringBuilder();
-            builder.append(String.format("mesh:%n"));
-            builder.append(String.format("    elements:%n"));
-            for (ModelElement e : getElements()) builder.append(String.format("        %s", e.toString()));
-            return builder.toString();
-        }
-    }
-    
-    public static class ModelElement
-    {
-        List<Face> faces = new ArrayList<Face>();
-        
-        public ModelElement() {}
-        
-        public void addFace(Face face)
-        {
-            if (face != null && !faces.contains(face)) faces.add(face);
+            return this.path;
         }
         
-        public void addFaces(List<Face> faces)
+        public void setPosition(Vector2f position)
         {
-            if (!this.faces.isEmpty())
-            {
-                if (faces != null)
-                {
-                    for (Face f : faces)
-                    {
-                        if (!this.faces.contains(f)) this.faces.add(f);
-                    }
-                }
-            }
-            else this.faces = faces;
+            this.position = position;
         }
         
-        public Face getFace(int index)
+        public Vector2f getPosition()
         {
-            if (index >= 0 && index < this.faces.size()) return this.faces.get(index);
-            else return null;
+            return this.position;
         }
         
-        public List<Face> getFaces()
+        public void setScale(Vector2f scale)
         {
-            return faces;
+            this.scale = scale;
         }
         
-        @Override
-        public String toString()
+        public Vector2f getScale()
         {
-            StringBuilder builder = new StringBuilder();
-            for (Face f : faces) builder.append(f.toString());
-            return builder.toString();
+            return this.scale;
+        }
+        
+        public void setRotation(float rotation)
+        {
+            this.rotation = rotation;
+        }
+        
+        public float getRotation()
+        {
+            return this.rotation;
         }
     }
     
     public static class Face
     {
-        private final Vertex[] vertices = new Vertex[4];
-        private final Material material;
-        private final Normal normal;
-        private final TexCoord[] texCoords = new TexCoord[4];
+        private Vertex[] verts = new Vertex[4];
+        private Normal[] norms = new Normal[4];
+        private TextureCoordinate[] texCoords = new TextureCoordinate[4];
         
-        public Face(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Material material)
+        public Face(Vertex[] verts)
         {
-            this(v1, v2, v3, v4, material, getFaceNormal(v1, v2, v3, v4));
+            this(verts, null, null);
         }
         
-        public Face(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Material material, Normal normal)
+        public Face(Vertex[] verts, Normal[] norms)
         {
-            this(v1, v2, v3, v4, material, normal, new TexCoord(v1.pos), new TexCoord(v2.pos), new TexCoord(v3.pos), new TexCoord(v4.pos));
+            this(verts, null, norms);
         }
         
-        public Face(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Material material, Normal normal, TexCoord t1, TexCoord t2, TexCoord t3, TexCoord t4)
+        public Face(Vertex[] verts, TextureCoordinate[] texCoords)
         {
-            this.vertices[0] = v1;
-            this.vertices[1] = v2;
-            this.vertices[2] = v3;
-            this.vertices[3] = v4;
-            this.material = material;
-            this.normal = normal;
-            this.texCoords[0] = t1;
-            this.texCoords[1] = t2;
-            this.texCoords[2] = t3;
-            this.texCoords[3] = t4;
+            this(verts, texCoords, null);
+        }
+        
+        public Face(Vertex[] verts, TextureCoordinate[] texCoords, Normal[] norms)
+        {
+            this.verts = verts;
+            this.verts = this.verts.length > 0 ? this.verts : null;
+            this.norms = norms;
+            this.norms = this.norms.length > 0 ? this.norms : null;
+            this.texCoords = texCoords;
+            this.texCoords = this.texCoords.length > 0 ? this.texCoords : null;
+        }
+        
+        public void setVertices(Vertex[] verts)
+        {
+            this.verts = verts;
         }
         
         public Vertex[] getVertices()
         {
-            return this.vertices;
+            return this.verts;
         }
         
-        public Material getMaterial()
+        public void setNormals(Normal[] norms)
         {
-            return material;
+            this.norms = norms;
         }
         
-        public Normal getNormal(int index)
+        public Normal[] getNormals()
         {
-            return normal;
+            return this.norms;
         }
         
-        public TexCoord[] getTexCoords()
+        public void setTextureCoordinates(TextureCoordinate[] texCoords)
+        {
+            this.texCoords = texCoords;
+        }
+        
+        public TextureCoordinate[] getTextureCoordinates()
         {
             return this.texCoords;
         }
         
-//        @Override
-//        public String toString()
-//        {
-//            StringBuilder builder = new StringBuilder();
-//            builder.append(String.format("f:%n"));
-//            for (int i = 0; i < verts.length; i++) builder.append(String.format("    %d: %s", i + 1, verts[i].toString()));
-//            builder.append(String.format("    material: %s", material.toString()));
-//            builder.append(String.format("    normal: %s %s %s%n", normal.x, normal.y, normal.z));
-//            return builder.toString();
-//        }
-        
-        public static Normal getFaceNormal(Vertex v1, Vertex v2, Vertex v3, Vertex v4)
-        {
-            Vector4f v1Pos = v1.getPos();
-            Vector4f v2Pos = v2.getPos();
-            Vector4f v3Pos = v3.getPos();
-            Vector4f v4Pos = v4 != null ? v4.getPos() : null;
-            
-            if (v4Pos == null)
-            {
-                Vector3f s1 = new Vector3f(v1Pos.x, v1Pos.y, v1Pos.z);
-                Vector3f a = new Vector3f(v2Pos.x, v2Pos.y, v2Pos.z);
-                a.sub(s1);
-                Vector3f b = new Vector3f(v3Pos.x, v3Pos.y, v3Pos.z);
-                b.sub(s1);
-                Vector3f c = new Vector3f();
-                c.cross(a, b);
-                c.normalize();
-                Normal normal = new Normal(c);
-                return normal;
-            }
-            else
-            {
-                Vector3f s1 = new Vector3f(v1Pos.x, v1Pos.y, v1Pos.z);
-                Vector3f a = new Vector3f(v2Pos.x, v2Pos.y, v2Pos.z);
-                a.sub(s1);
-                Vector3f b = new Vector3f(v3Pos.x, v3Pos.y, v3Pos.z);
-                b.sub(s1);
-                Vector3f c = new Vector3f();
-                c.cross(a, b);
-                c.normalize();
+        public Normal getNormal() {
+            if (norms == null) { //use vertices to calculate normal
+                Vector3f v1 = new Vector3f(this.verts[0].getPosition().x, this.verts[0].getPosition().y, this.verts[0].getPosition().z);
+                Vector3f v2 = new Vector3f(this.verts[1].getPosition().x, this.verts[1].getPosition().y, this.verts[1].getPosition().z);
+                Vector3f v3 = new Vector3f(this.verts[2].getPosition().x, this.verts[2].getPosition().y, this.verts[2].getPosition().z);
+                Vector3f v4 = this.verts.length > 3 ? new Vector3f(this.verts[3].getPosition().x, this.verts[3].getPosition().y, this.verts[3].getPosition().z) : null;
                 
-                Vector3f d = new Vector3f(v4Pos.x, v4Pos.y, v4Pos.z);
-                d.sub(s1);
-                Vector3f e = new Vector3f();
-                e.cross(d, b);
-                e.normalize();
+                if (v4 == null) {
+                    Vector3f v2c = new Vector3f(v2.x, v2.y, v2.z);
+                    Vector3f v1c = new Vector3f(v1.x, v1.y, v1.z);
+                    v1c.sub(v2c);
+                    Vector3f v3c = new Vector3f(v3.x, v3.y, v3.z);
+                    v3c.sub(v2c);
+                    Vector3f c = new Vector3f();
+                    c.cross(v1c, v3c);
+                    c.normalize();
+                    Normal normal = new Normal(c);
+                    return normal;
+                } else {
+                    Vector3f v2c = new Vector3f(v2.x, v2.y, v2.z);
+                    Vector3f v1c = new Vector3f(v1.x, v1.y, v1.z);
+                    v1c.sub(v2c);
+                    Vector3f v3c = new Vector3f(v3.x, v3.y, v3.z);
+                    v3c.sub(v2c);
+                    Vector3f c = new Vector3f();
+                    c.cross(v1c, v3c);
+                    c.normalize();
+                    
+                    v1c = new Vector3f(v1.x, v1.y, v1.z);
+                    v3c = new Vector3f(v3.x, v3.y, v3.z);
+                    
+                    Vector3f v4c = new Vector3f(v4.x, v4.y, v4.z);
+                    v1c.sub(v4c);
+                    v3c.sub(v4c);
+                    Vector3f d = new Vector3f();
+                    d.cross(v1c, v3c);
+                    d.normalize();
+                    
+                    Vector3f avg = new Vector3f();
+                    avg.x = (c.x + d.x) * 0.5f;
+                    avg.y = (c.y + d.y) * 0.5f;
+                    avg.z = (c.z + d.z) * 0.5f;
+                    avg.normalize();
+                    Normal normal = new Normal(avg);
+                    return normal;
+                }
+            } else { //use normals to calculate normal
+                Vector3f n1 = this.norms[0].getNormal();
+                Vector3f n2 = this.norms[1].getNormal();
+                Vector3f n3 = this.norms[2].getNormal();
+                Vector3f n4 = this.norms.length > 3 ? this.norms[3].getNormal() : null;
                 
-                Vector3f avg = new Vector3f();
-                avg.x = (c.x + e.x) / 2.0f;
-                avg.y = (c.y + e.y) / 2.0f;
-                avg.z = (c.z + e.z) / 2.0f;
-                avg.normalize();
-                Normal normal = new Normal(avg);
-                return normal;
+                if (n4 == null) {
+                    Vector3f n2c = new Vector3f(n2.x, n2.y, n2.z);
+                    Vector3f n1c = new Vector3f(n1.x, n1.y, n1.z);
+                    n1c.sub(n2c);
+                    Vector3f n3c = new Vector3f(n3.x, n3.y, n3.z);
+                    n3c.sub(n2c);
+                    Vector3f c = new Vector3f();
+                    c.cross(n1c, n3c);
+                    c.normalize();
+                    Normal normal = new Normal(c);
+                    return normal;
+                } else {
+                    Vector3f n2c = new Vector3f(n2.x, n2.y, n2.z);
+                    Vector3f n1c = new Vector3f(n1.x, n1.y, n1.z);
+                    n1c.sub(n2c);
+                    Vector3f n3c = new Vector3f(n3.x, n3.y, n3.z);
+                    n3c.sub(n2c);
+                    Vector3f c = new Vector3f();
+                    c.cross(n1c, n3c);
+                    c.normalize();
+                    
+                    n1c = new Vector3f(n1.x, n1.y, n1.z);
+                    n3c = new Vector3f(n3.x, n3.y, n3.z);
+                    
+                    Vector3f n4c = new Vector3f(n4.x, n4.y, n4.z);
+                    n1c.sub(n4c);
+                    n3c.sub(n4c);
+                    Vector3f d = new Vector3f();
+                    d.cross(n1c, n3c);
+                    d.normalize();
+                    
+                    Vector3f avg = new Vector3f();
+                    avg.x = (c.x + d.x) * 0.5f;
+                    avg.y = (c.y + d.y) * 0.5f;
+                    avg.z = (c.z + d.z) * 0.5f;
+                    avg.normalize();
+                    Normal normal = new Normal(avg);
+                    return normal;
+                }
             }
         }
     }
     
     public static class Vertex
     {
-        private Vector4f pos;
+        private Vector4f position;
         private Vector4f color;
         
-        public Vertex(Vector4f pos, Vector4f color)
+        public Vertex(Vector4f position, Vector4f color)
         {
-            this.pos = pos;
+            this.position = position;
             this.color = color;
         }
         
-        public void setPos(Vector4f pos)
+        public void setPos(Vector4f position)
         {
-            this.pos = pos;
+            this.position = position;
         }
         
-        public Vector4f getPos()
+        public Vector4f getPosition()
         {
-            return this.pos;
+            return this.position;
         }
         
         public void setColor(Vector4f color)
@@ -550,7 +654,7 @@ public class OBJModel implements IModel {
         {
             StringBuilder builder = new StringBuilder();
             builder.append(String.format("v:%n"));
-            builder.append(String.format("    position: %s %s %s%n", pos.x, pos.y, pos.z));
+            builder.append(String.format("    position: %s %s %s%n", position.x, position.y, position.z));
             builder.append(String.format("    color: %s %s %s %s%n", color.x, color.y, color.z, color.w));
             return builder.toString();
         }
@@ -576,159 +680,331 @@ public class OBJModel implements IModel {
         }
     }
     
-    public static class TexCoord
+    public static class TextureCoordinate
     {
-        private Vector4f texCoord;
+        private Vector3f position;
         
-        public TexCoord(Vector4f texCoord)
+        public TextureCoordinate(Vector3f position)
         {
-            this.texCoord = texCoord;
+            this.position = position;
         }
         
-        public void setTexCoord(Vector4f texCoord)
+        public void setPosition(Vector3f position)
         {
-            this.texCoord = texCoord;
+            this.position = position;
         }
         
-        public Vector4f getTexCoord()
+        public Vector3f getPosition()
         {
-            return this.texCoord;
+            return this.position;
         }
     }
     
-    public static class MaterialLibrary
-    {
-        static final Set<String> unknownMaterialCommands = new HashSet<String>();
-        private final Map<String, Material> materialLibrary = new HashMap<String, Material>();
+    public class OBJState implements IModelState {
+        private List<String> visibleElements = new ArrayList<String>();
+        private ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
         
-        public MaterialLibrary() {}
-        
-        public void loadFromStream(ResourceLocation loc) throws IOException
-        {
-            IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
-            InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
-            BufferedReader lineReader = new BufferedReader(lineStream);
-            
-            for (;;)
-            {
-                String currentLine = lineReader.readLine();
-                if (currentLine == null) break;
-                if (currentLine.length() == 0 || currentLine.startsWith("#")) continue;
-                String[] fields = currentLine.split(" ", 2);
-                String key = fields[0];
-                String data = fields[1];
-                
-                if (key.equalsIgnoreCase("newmtl")) ;
-                else if (key.equalsIgnoreCase("Ka")) ;
-                else if (key.equalsIgnoreCase("Kd")) ;
-                else if (key.equalsIgnoreCase("Ks")) ;
-                else if (key.equalsIgnoreCase("Ns")) ;
-                else if (key.equalsIgnoreCase("Tr")) ;
-                else if (key.equalsIgnoreCase("Tf")) ;
-                else if (key.equalsIgnoreCase("illum")) ;
-                else if (key.equalsIgnoreCase("map_Ka")) ;
-                else if (key.equalsIgnoreCase("map_Kd")) ;
-                else if (key.equalsIgnoreCase("map_Ks")) ;
-                
-            }
-        }
-    }
-    
-    public static class Material
-    {
-        private final String name;
-        private final Vector4f color;
-//        private final float shininess;
-        private final List<Texture> textures;
-        
-        public Material(String name, Vector4f color, List<Texture> textures)
-        {
-            this.name = name;
-            this.color = color;
-            this.textures = textures;
+        public OBJState(List<String> visibleElements, ItemCameraTransforms transforms) {
+            this.visibleElements = visibleElements;
+            this.transforms = transforms;
         }
         
-//        public Material(String name, Vector4f color, float shininess, List<Texture> textures)
-//        {
-//            this.name = name;
-//            this.color = color;
-//            this.shininess = shininess;
-//            this.textures = textures;
-//        }
-        
-        public String getName()
-        {
-            return name;
+        public void setVisibleElements(List<String> visibleElements) {
+            this.visibleElements = visibleElements;
         }
         
-        public Vector4f getColor()
-        {
-            return color;
+        public List<String> getVisibleElements() {
+            return this.visibleElements;
         }
         
-        public List<Texture> getTextures()
-        {
-            return textures;
+        public void setTransforms(ItemCameraTransforms transforms) {
+            this.transforms = transforms;
         }
         
+        public ItemCameraTransforms getTransforms() {
+            return this.transforms;
+        }
+
         @Override
-        public String toString()
+        public TRSRTransformation apply(IModelPart part)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.append(String.format("material:%n"));
-            builder.append(String.format("    name: %s%n", name));
-            builder.append(String.format("    color: %s %s %s %s%n", color.x, color.y, color.z, color.w));
-            builder.append(String.format("    textures:%n"));
-            for (Texture t : textures) builder.append(String.format("        %s%n", t.toString()));
-            return String.format("OBJMaterial [name=%s, color=%s, textures=%s]", name, color, textures);
+            TRSRTransformation ret = TRSRTransformation.identity();
+            if (part instanceof Element) {
+                Element element = (Element) part;
+                ret = ret.compose(new TRSRTransformation(element.getPos(), element.getRot(), element.getScale(), null));
+                Matrix4f matrix = ret.getMatrix();
+                matrix.invert();
+                ret = ret.compose(new TRSRTransformation(matrix));
+            }
+            return ret;
         }
     }
     
-    public static class Texture
-    {
-        private final String path;
-        private final Vector2f pos;
-        private final Vector2f scale;
-        private final float rot;
-        
-        public Texture(String path, Vector2f pos, Vector2f scale, float rot)
+    public static enum OBJModelProperty implements IUnlistedProperty<OBJState> {
+        instance;
+        public String getName() {
+            return "OBJModel";
+        }
+
+        @Override
+        public boolean isValid(OBJState value)
         {
-            this.path = path;
+            return value instanceof OBJState;
+        }
+
+        @Override
+        public Class<OBJState> getType()
+        {
+            return OBJState.class;
+        }
+
+        @Override
+        public String valueToString(OBJState value)
+        {
+            return value.toString();
+        }
+    }
+    
+    public class Element implements IModelPart {
+        private final String name;
+        private final Vector3f pos;
+        private final Vector3f scale;
+        private final Quat4f rot;
+        private final ImmutableList<Face> faces;
+        
+        public Element(String name, Vector3f pos, Vector3f scale, Quat4f rot, List<Face> faces) {
+            this.name = name;
             this.pos = pos;
             this.scale = scale;
             this.rot = rot;
+            this.faces = ImmutableList.copyOf(faces);
         }
         
-        public String getPath()
-        {
-            return path;
+        public ImmutableList<Face> bake() {
+            ImmutableList.Builder<Face> builder = ImmutableList.builder();
+            for (Face f : faces) {
+                builder.add(f);
+            }
+            return builder.build();
         }
         
-        public Vector2f getPos()
-        {
-            return pos;
+        public String getName() {
+            return this.name;
         }
         
-        public Vector2f getScale()
-        {
-            return scale;
+        public Vector3f getPos() {
+            return this.pos;
         }
         
-        public float getRot()
+        public Vector3f getScale() {
+            return this.scale;
+        }
+        
+        public Quat4f getRot() {
+            return this.rot;
+        }
+        
+        public List<Face> getFaces() {
+            return this.faces;
+        }
+    }
+    
+    private class OBJBakedModel implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
+    {
+        private final OBJModel model;
+        private final IModelState state;
+        private final VertexFormat format;
+        private final ByteBuffer buffer;
+        private ImmutableList<BakedQuad> quads;
+        private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
+        private static final int VERTICES_IN_QUAD = 4;
+        private Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
+        private ImmutableMap<String, TextureAtlasSprite> textures;
+        
+        public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
-            return rot;
+            this.model = model;
+            this.state = state;
+            this.format = format;
+            this.bakedTextureGetter = bakedTextureGetter;
+            buffer = BufferUtils.createByteBuffer(VERTICES_IN_QUAD * format.getNextOffset());
+            model.setModelState(state);
         }
         
         @Override
-        public String toString()
+        public List<BakedQuad> getFaceQuads(EnumFacing side)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.append(String.format("texture:%n"));
-            builder.append(String.format("    path: %s%n", path));
-            builder.append(String.format("    position: %s %s%n", pos.x, pos.y));
-            builder.append(String.format("    scale: %s %s%n", scale.x, scale.y));
-            builder.append(String.format("    rotation: %s%n", rot));
-            return builder.toString();
+            return Collections.emptyList();
+        }
+        
+        @Override
+        public List<BakedQuad> getGeneralQuads()
+        {
+            if (quads == null) {
+                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+                ImmutableMap.Builder<String, TextureAtlasSprite> texBuilder = ImmutableMap.builder();
+                List<Face> faces = new ArrayList<Face>();
+                List<ResourceLocation> texturesAdded = new ArrayList<ResourceLocation>();
+                Iterator<Map.Entry<Face, Material>> faceIterator = model.matLib.library.entrySet().iterator();
+                while (faceIterator.hasNext()) {
+                    Map.Entry<Face, Material> entry = faceIterator.next();
+                    faces.add(entry.getKey());
+                    if (!texturesAdded.contains(entry.getValue().getTexture().getTextureLocation())) texturesAdded.add(entry.getValue().getTexture().getTextureLocation());
+//                    texBuilder.put(entry.getValue().texture.path, bakedTextureGetter.apply(new ResourceLocation(entry.getValue().texture.path)));
+                }
+                for (ResourceLocation r : texturesAdded) texBuilder.put(r.getResourceDomain() + ":" + r.getResourcePath(), bakedTextureGetter.apply(r));
+                this.textures = texBuilder.build();
+                for (Face f : faces) {
+                    buffer.clear();
+                    List<Texture> textures = new ArrayList<Texture>();
+                    textures.add(model.matLib.library.get(f).texture);
+                    TextureAtlasSprite sprite;
+                    if (textures.isEmpty()) sprite = this.textures.get("missingno");
+                    else if (textures.get(0) == OBJModel.Texture.White) sprite = ModelLoader.White.instance;
+                    else sprite = this.textures.get(textures.get(0).getPath());
+                    putVertexData(f.verts[0], sprite, f.norms != null ? f.norms[0] : f.getNormal());
+                    putVertexData(f.verts[1], sprite, f.norms != null ? f.norms[1] : f.getNormal());
+                    putVertexData(f.verts[2], sprite, f.norms != null ? f.norms[2] : f.getNormal());
+                    putVertexData(f.verts[3], sprite, f.norms != null ? f.norms[3] : f.getNormal());
+                    buffer.flip();
+                    int[] data = new int[VERTICES_IN_QUAD * format.getNextOffset() / BYTES_IN_INT];
+                    buffer.asIntBuffer().get(data);
+                    builder.add(new ColoredBakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().normal.x, f.getNormal().normal.y, f.getNormal().normal.z)));
+                }
+                quads = builder.build();
+            }
+            return quads;
+        }
+        
+        private void put(VertexFormatElement e, Float... fs) {
+            Attributes.put(buffer, e, true, 0f, fs);
+        }
+        
+        @SuppressWarnings("unchecked")
+        private final void putVertexData(Vertex v, TextureAtlasSprite sprite, Normal n) {
+            int oldPos = buffer.position();
+            Number[] ns = new Number[16];
+            for (int i = 0; i < ns.length; i++) ns[i] = 0f;
+            for (VertexFormatElement e : (List<VertexFormatElement>) format.getElements()) {
+                switch (e.getUsage()) {
+                case POSITION:
+                    put(e, v.position.x, v.position.y, v.position.z, 1f);
+                    break;
+                case COLOR:
+                    if (v.color != null) put(e, v.color.x, v.color.y, v.color.z, v.color.w); 
+                    else put(e, 1f, 1f, 1f, 1f);
+                    break;
+                case NORMAL:
+                    put(e, n.normal.x, n.normal.y, n.normal.z, 1f);
+                    break;
+                case GENERIC:
+                    put(e, 0f, 0f, 0f, 0f);
+                    break;
+                default:
+                    break;
+                }
+            }
+            buffer.position(oldPos + format.getNextOffset());
+        }
+        
+        @Override
+        public boolean isAmbientOcclusion()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean isGui3d()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltInRenderer()
+        {
+            return false;
+        }
+
+        @Override
+        public TextureAtlasSprite getTexture()
+        {
+            return this.textures.get(0);
+//            return bakedTextureGetter.apply(new ResourceLocation("forgedebugmodelloaderregistry", "texture.png"));
+        }
+
+        @Override
+        public ItemCameraTransforms getItemCameraTransforms()
+        {
+            if (this.state instanceof IExtendedBlockState) {
+                IExtendedBlockState exState = (IExtendedBlockState) this.state;
+                if (exState.getUnlistedNames().contains(OBJModelProperty.instance)) {
+                    OBJState s = exState.getValue(OBJModelProperty.instance);
+                    return s.getTransforms();
+                }
+            }
+            return ItemCameraTransforms.DEFAULT;
+        }
+
+        @Override
+        public VertexFormat getFormat()
+        {
+            return format;
+        }
+
+        @Override
+        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        {
+            //FIXME figure out where to get matrices for the different camera transform types  
+            if (this.state instanceof IExtendedBlockState) {
+                IExtendedBlockState exState = (IExtendedBlockState) this.state;
+                if (exState.getUnlistedNames().contains(OBJModelProperty.instance)) {
+                    OBJState s = (OBJState) exState.getValue(OBJModelProperty.instance);
+                    Matrix4f matrix = new Matrix4f();
+                    switch (cameraTransformType) {
+                    case THIRD_PERSON:
+                        TRSRTransformation thirdPerson = new TRSRTransformation();
+                        break;
+                    case FIRST_PERSON:
+                        break;
+                    case HEAD:
+                        break;
+                    case GUI:
+                        break;
+                    case NONE:
+                    default:
+                        matrix.setIdentity();
+                        return Pair.of((IBakedModel) this, matrix);
+                    }
+                }
+            }
+            Matrix4f matrix = new Matrix4f();
+            matrix.setIdentity();
+            return Pair.of((IBakedModel) this, matrix);
+        }
+
+        @Override
+        public IBakedModel handleItemState(ItemStack stack)
+        {
+            return this;
+        }
+
+        @Override
+        public IBakedModel handleBlockState(IBlockState state)
+        {
+            if (state instanceof IExtendedBlockState) {
+                IExtendedBlockState exState = (IExtendedBlockState) state;
+                if (exState.getUnlistedNames().contains(OBJModelProperty.instance)) {
+                    OBJState s = (OBJState) exState.getValue(OBJModelProperty.instance);
+                    if (s != null) {
+                        return getModel(s.getVisibleElements(), s.getTransforms());
+                    }
+                }
+            }
+            return this;
+        }
+        
+        public OBJBakedModel getModel(List<String> visibleElements, ItemCameraTransforms transforms) {
+            return new OBJBakedModel(model, new OBJState(visibleElements, transforms), format, bakedTextureGetter);
         }
     }
 }

@@ -8,10 +8,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 public class Attributes
 {
     /*

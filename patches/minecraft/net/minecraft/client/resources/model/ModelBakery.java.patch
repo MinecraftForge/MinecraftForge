@@ -9,12 +9,6 @@
                  }
              }
              catch (Exception exception1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-@@ -499,6 +499,11 @@
-=======
-=======
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 @@ -172,6 +172,7 @@
                      }
                  }
@@ -24,10 +18,6 @@
              {
                  throw new RuntimeException("Encountered an exception when loading model definition of model " + resourcelocation1.toString(), ioexception);
 @@ -499,6 +500,11 @@
-<<<<<<< HEAD
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
-=======
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
  
      private IBakedModel func_177578_a(ModelBlock p_177578_1_, ModelRotation p_177578_2_, boolean p_177578_3_)
      {
@@ -39,24 +29,12 @@
          TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c("particle")));
          SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(p_177578_1_)).func_177646_a(textureatlassprite);
          Iterator iterator = p_177578_1_.func_178298_a().iterator();
-<<<<<<< HEAD
-<<<<<<< HEAD
-@@ -516,11 +521,11 @@
- 
-                 if (blockpartface.field_178244_b == null)
-=======
-=======
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
 @@ -514,13 +520,13 @@
                  BlockPartFace blockpartface = (BlockPartFace)blockpart.field_178240_c.get(enumfacing);
                  TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c(blockpartface.field_178242_d)));
  
 -                if (blockpartface.field_178244_b == null)
 +                if (blockpartface.field_178244_b == null || !net.minecraftforge.client.model.TRSRTransformation.isInteger(p_177578_2_.getMatrix()))
-<<<<<<< HEAD
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
-=======
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
                  {
 -                    builder.func_177648_a(this.func_177589_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_177578_2_, p_177578_3_));
 +                    builder.func_177648_a(this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, p_177578_2_, p_177578_3_));
@@ -68,15 +46,7 @@
                  }
              }
          }
-<<<<<<< HEAD
-<<<<<<< HEAD
-@@ -530,9 +535,14 @@
-=======
 @@ -530,9 +536,14 @@
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
-=======
-@@ -530,9 +536,14 @@
->>>>>>> cf7122ed59503b72b78b5c8a8a7b56c744375672
  
      private BakedQuad func_177589_a(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, ModelRotation p_177589_5_, boolean p_177589_6_)
      {

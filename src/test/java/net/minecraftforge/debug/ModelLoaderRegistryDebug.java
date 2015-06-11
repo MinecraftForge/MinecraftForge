@@ -1,9 +1,12 @@
 package net.minecraftforge.debug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import javax.vecmath.Vector3f;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -12,6 +15,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
@@ -34,6 +38,8 @@ import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -58,6 +64,7 @@ public class ModelLoaderRegistryDebug
     public void preInit(FMLPreInitializationEvent event)
     {
         GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
+        GameRegistry.registerBlock(CustomModelBlock2.instance, CustomModelBlock2.name);
         if (event.getSide() == Side.CLIENT)
             clientPreInit();
     }
@@ -72,6 +79,13 @@ public class ModelLoaderRegistryDebug
         Item item = Item.getItemFromBlock(CustomModelBlock.instance);
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(modelLocation, "inventory"));
         //ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation("forgedebug:dummymodel", "inventory"));
+        
+        OBJLoader.instance.addDomain(MODID.toLowerCase());
+//        String modelLocation2 = MODID.toLowerCase() + ":cmb2_tesseract.obj";
+        String modelLocation2 = MODID.toLowerCase() + ":corkscrew.obj";
+        ModelBakery.addVariantName(Item.getItemFromBlock(CustomModelBlock2.instance), modelLocation2);
+        Item item2 = Item.getItemFromBlock(CustomModelBlock2.instance);
+        ModelLoader.setCustomModelResourceLocation(item2, 0, new ModelResourceLocation(modelLocation2, "inventory"));
     }
 
     public static class CustomModelBlock extends Block
@@ -118,6 +132,43 @@ public class ModelLoaderRegistryDebug
                 world.markBlockRangeForRenderUpdate(pos, pos);
             }
             return false;
+        }
+    }
+    
+    public static class CustomModelBlock2 extends Block
+    {
+        public static final CustomModelBlock2 instance = new CustomModelBlock2();
+        public static final String name = "CustomModelBlock2";
+        private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{OBJModel.OBJModelProperty.instance});
+        
+        private CustomModelBlock2()
+        {
+            super(Material.iron);
+            setCreativeTab(CreativeTabs.tabBlock);
+            setUnlocalizedName(MODID + ":" + name);
+        }
+        
+        @Override
+        public boolean isOpaqueCube() { return false; }
+
+        @Override
+        public boolean isFullCube() { return false; }
+
+        @Override
+        public boolean isVisuallyOpaque() { return false; }
+        
+        @Override
+        public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+            //FIXME make these camera transforms work!!!
+            ItemTransformVec3f thirdPerson = new ItemTransformVec3f(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.1f, 0.1f, 0.1f));
+            ItemTransformVec3f firstPerson = new ItemTransformVec3f(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.1f, 0.1f, 0.1f));
+            ItemTransformVec3f head = new ItemTransformVec3f(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.1f, 0.1f, 0.1f));
+            ItemTransformVec3f gui = new ItemTransformVec3f(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.1f, 0.1f, 0.1f));
+            IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(MODID.toLowerCase(), "block/cmb2_tesseract.obj"));
+            List<String> elements = Arrays.asList(((OBJModel) model).getMatLib().getElements().keySet().toArray(new String[0]));
+            OBJModel.OBJState defaultState = ((OBJModel) model).getDefaultState();
+            OBJModel.OBJState newState = ((OBJModel) model).new OBJState(elements, new ItemCameraTransforms(thirdPerson, firstPerson, head, gui));
+            return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJModelProperty.instance, newState);
         }
     }
 

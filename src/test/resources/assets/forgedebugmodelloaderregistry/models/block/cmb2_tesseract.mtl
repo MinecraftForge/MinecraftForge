@@ -4,4 +4,5 @@ Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd minecraft:blocks/iron_block
+#map_Kd forgedebugmodelloaderregistry:texture1
 Ni 1.00
