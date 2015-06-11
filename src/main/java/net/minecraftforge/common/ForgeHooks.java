@@ -435,6 +435,10 @@ public class ForgeHooks
         return event.component;
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
     static final Pattern URL_PATTERN = Pattern.compile(
             //         schema                          ipv4            OR           namespace                 port     path         ends
             //   |-----------------|        |-------------------------|  |----------------------------|    |---------| |--|   |---------------|

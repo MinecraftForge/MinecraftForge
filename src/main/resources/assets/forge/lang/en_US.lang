@@ -5,11 +5,17 @@ commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 forge.texture.preload.warning=Warning: Texture %s not preloaded, will cause render glitches!
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 forge.client.shutdown.internal=Shutting down internal server...
 forge.update.newversion=New Forge version available: %s
 forge.update.beta.1=%sWARNING: %sForge Beta
 forge.update.beta.2=Major issues may arise, verify before reporting.
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 
 forge.configgui.forgeConfigTitle=Minecraft Forge Configuration
 forge.configgui.ctgy.forgeGeneralConfig.tooltip=This is where you can edit the settings contained in forge.cfg.
@@ -57,4 +63,7 @@ forge.configgui.maximumTicketCount.tooltip=This is the number of chunk loading r
 forge.configgui.maximumTicketCount=Mod Ticket Limit
 forge.configgui.playerTicketCount.tooltip=The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.
 forge.configgui.playerTicketCount=Player Ticket Limit
+<<<<<<< HEAD
 >>>>>>> Added support for new FML config GUI classes
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

@@ -120,7 +120,10 @@ public class WorldEvent extends Event
     public static class CreateSpawnPosition extends WorldEvent
     {
         public final WorldSettings settings;
+<<<<<<< HEAD
         
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
         public CreateSpawnPosition(World world, WorldSettings settings)
         {
             super(world);

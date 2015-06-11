@@ -49,4 +49,8 @@
      }
 +
 +    public Vec3 getPosition(){ return this.position; }
+<<<<<<< HEAD
  }
+=======
+ }
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

@@ -20,4 +20,8 @@
 +            if (tmp != null) this.field_75075_a.add(tmp); //Forge: Prevent NPEs further down the line when a componenet can't be loaded.
          }
  
+<<<<<<< HEAD
          this.func_143017_b(p_143020_2_);
+=======
+         this.func_143017_b(p_143020_2_);
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

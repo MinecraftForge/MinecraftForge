@@ -1,5 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+<<<<<<< HEAD
 @@ -104,7 +104,7 @@
  
      private boolean func_145934_k()
@@ -9,6 +10,8 @@
          {
              ItemStack itemstack = this.field_145945_j[3];
  
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 @@ -118,7 +118,7 @@
  
                  for (int i = 0; i < 3; ++i)
@@ -18,6 +21,7 @@
                      {
                          int j = this.field_145945_j[i].func_77960_j();
                          int k = this.func_145936_c(j, itemstack);
+<<<<<<< HEAD
 @@ -145,19 +145,22 @@
          }
          else
@@ -26,13 +30,19 @@
 +            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, field_145945_j[3], field_145947_i);
          }
      }
+=======
+@@ -151,13 +151,14 @@
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
  
      private void func_145940_l()
      {
 +        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j)) return;
          if (this.func_145934_k())
          {
+<<<<<<< HEAD
 +            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j[3], field_145947_i);
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
              ItemStack itemstack = this.field_145945_j[3];
  
 +            if (false) { // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
@@ -43,8 +53,12 @@
                  {
                      int j = this.field_145945_j[i].func_77960_j();
                      int k = this.func_145936_c(j, itemstack);
+<<<<<<< HEAD
 @@ -177,10 +180,11 @@
                      }
+=======
+@@ -178,9 +179,9 @@
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
                  }
              }
 +            }
@@ -57,7 +71,11 @@
              }
              else
              {
+<<<<<<< HEAD
 @@ -191,6 +195,7 @@
+=======
+@@ -191,6 +192,7 @@
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
                      this.field_145945_j[3] = null;
                  }
              }
@@ -65,7 +83,11 @@
          }
      }
  
+<<<<<<< HEAD
 @@ -306,7 +311,9 @@
+=======
+@@ -306,7 +308,7 @@
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {
@@ -75,4 +97,8 @@
 +        return false;
      }
  
+<<<<<<< HEAD
      public boolean[] func_174902_m()
+=======
+     public boolean[] func_174902_m()
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

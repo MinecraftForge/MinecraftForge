@@ -8,4 +8,8 @@
 +                                    if (!enchantment2.func_77326_a(enchantment1) || !enchantment1.func_77326_a(enchantment2)) //Forge BugFix: Let Both enchantments veto being together
                                      {
                                          throw new CommandException("commands.enchant.cantCombine", new Object[] {enchantment1.func_77316_c(j), enchantment2.func_77316_c(nbttaglist.func_150305_b(k).func_74765_d("lvl"))});
+<<<<<<< HEAD
                                      }
+=======
+                                     }
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

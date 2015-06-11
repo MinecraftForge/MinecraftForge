@@ -8,4 +8,8 @@
 +                this.func_175275_f(s); // Forge: fix vanilla not adding messages to the sent list while sleeping
              }
  
+<<<<<<< HEAD
              this.field_146415_a.func_146180_a("");
+=======
+             this.field_146415_a.func_146180_a("");
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

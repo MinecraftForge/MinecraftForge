@@ -130,11 +130,16 @@
              {
                  this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
+<<<<<<< HEAD
 @@ -764,8 +792,10 @@
+=======
+@@ -764,7 +792,9 @@
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
              }
              else
              {
 -                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
+<<<<<<< HEAD
 -                this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
 +                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), ForgeHooks.newChatWithLinks(s));
 +                IChatComponent chat = ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
@@ -143,6 +148,14 @@
              }
  
              this.field_147374_l += 20;
+=======
++                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), ForgeHooks.newChatWithLinks(s));
++                chatcomponenttranslation1 = ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
++                if (chatcomponenttranslation1 == null) return;
+                 this.field_147367_d.func_71203_ab().func_148544_a(chatcomponenttranslation1, false);
+             }
+ 
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 @@ -907,7 +937,7 @@
                          return;
                      }

@@ -16,7 +16,11 @@ import net.minecraft.item.ItemStack;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
+<<<<<<< HEAD
 @Deprecated //Remove in 1.8.1
+=======
+@Deprecated
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 public class PotionBrewedEvent extends PotionBrewEvent
 {
     /**

@@ -24,6 +24,10 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+<<<<<<< HEAD
+=======
+import net.minecraft.util.Vec3;
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -32,6 +36,11 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+<<<<<<< HEAD
+=======
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.IExtendedEntityProperties;
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
@@ -385,7 +394,11 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(player, oldPlayer, wasDeath));
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
     public static boolean onExplosionStart(World world, Explosion explosion)
     {
         return MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Start(world, explosion));
@@ -397,19 +410,25 @@ public class ForgeEventFactory
         /* Enable this if we get issues with modders looping to much.
         Iterator<Entity> itr = list.iterator();
 <<<<<<< HEAD
+<<<<<<< HEAD
         while (itr.hasNext())
         {
             Entity e = itr.next();
             double dist = e.getDistance(explosion.explosionX, explosion.explosionY, explosion.explosionZ) / diameter;
             if (dist > 1.0F) itr.remove();
 =======
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
         Vec3 p = explosion.getPosition();
         while (itr.hasNext())
         {
             Entity e = itr.next();
             double dist = e.getDistance(p.xCoord, p.yCoord, p.zCoord) / diameter;
             if (e.func_180427_aV() || dist > 1.0F) itr.remove();
+<<<<<<< HEAD
 >>>>>>> Added Explosion Start and Detonate events to control explosion.
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
         }
         */
         MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));

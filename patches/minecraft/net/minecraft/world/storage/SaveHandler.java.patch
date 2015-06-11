@@ -15,4 +15,8 @@
 +        net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_75752_1_, field_75771_c, p_75752_1_.func_110124_au().toString());
          return nbttagcompound;
      }
+<<<<<<< HEAD
  
+=======
+ 
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

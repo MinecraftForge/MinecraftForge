@@ -44,4 +44,8 @@
 +
              if (StringUtils.isBlank(this.field_82857_m))
              {
+<<<<<<< HEAD
                  if (itemstack.func_82837_s())
+=======
+                 if (itemstack.func_82837_s())
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36

@@ -2,7 +2,10 @@ package net.minecraftforge.event.world;
 
 import java.util.List;
 
+<<<<<<< HEAD
 import net.minecraft.entity.Entity;
+=======
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.Entity;

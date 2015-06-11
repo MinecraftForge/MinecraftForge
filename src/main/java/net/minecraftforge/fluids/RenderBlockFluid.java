@@ -11,6 +11,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
+<<<<<<< HEAD
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
 /**
  * Default renderer for Forge fluid blocks.
  *
@@ -29,6 +33,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
     {
         float total = 0;
         int count = 0;
+<<<<<<< HEAD
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
         float end = 0;
         for (int i = 0; i < flow.length; i++)
         {
@@ -42,8 +50,15 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                 count++;
             }
         }
+<<<<<<< HEAD
         if (end == 0)
             end = total / count;
+=======
+
+        if (end == 0)
+        	end = total / count;
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
         return end;
     }
     public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
@@ -62,6 +77,10 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
         }
         return !world.getBlock(x, y, z).getMaterial().isSolid() && world.getBlock(x, y - block.densityDir, z) == block ? 1 : block.getQuantaPercentage(world, x, y, z) * 0.875F;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
     /* ISimpleBlockRenderingHandler * /
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer){}
@@ -280,9 +299,13 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                         tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
                         tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> commiting to merge... hope i did this right...
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
                         tessellator.addVertexWithUV(tx1, y + ty1, tz1, u1Flow, v1Flow);
                         tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
                         tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
@@ -295,9 +318,13 @@ public class RenderBlockFluid implements ISimpleBlockRenderingHandler
                         tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
                         tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> commiting to merge... hope i did this right...
+=======
+
+>>>>>>> a1f93696cc176126a2598534775ca7137da4ca36
                         tessellator.addVertexWithUV(tx1, y + 1 - 0, tz1, u1Flow, v3Flow);
                         tessellator.addVertexWithUV(tx1, y + 1 - ty1, tz1, u1Flow, v1Flow);
                         tessellator.addVertexWithUV(tx2, y + 1 - ty2, tz2, u2Flow, v2Flow);
