@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib cmb2.mtl
+mtllib models/block/cmb2_tesseract.mtl
 v 0.950000 0.000000 1.050000
 v 1.050000 0.000000 1.050000
 v 0.950000 1.000000 1.050000

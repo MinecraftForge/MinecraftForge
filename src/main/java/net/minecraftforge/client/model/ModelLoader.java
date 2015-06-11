@@ -189,7 +189,7 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
         loadingModels.remove(location);
     }
-    
+
     private class VanillaModelWrapper implements IModel
     {
         private final ResourceLocation location;
@@ -246,7 +246,6 @@ public class ModelLoader extends ModelBakery
                     }
                 }
             }
-
             for(String s : (Iterable<String>)model.textures.values())
             {
                 if(!s.startsWith("#"))
