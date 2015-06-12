@@ -278,7 +278,8 @@ public class GameRegistry
 +     * @param ingredient The ItemStack that goes in the same slot as nether wart would.
 +     * @param output The ItemStack that will replace the input once the brewing is done.
 +     */
-+    public static void addBrewing(ItemStack input, ItemStack ingredient, ItemStack output){
++    public static void addBrewing(ItemStack input, ItemStack ingredient, ItemStack output)
+     {
 +       BrewingRecipeRegistry.addRecipe(input, ingredient, output);
 +    }
 
