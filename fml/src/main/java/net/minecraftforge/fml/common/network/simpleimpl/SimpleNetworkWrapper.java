@@ -1,8 +1,15 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelPipeline;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.EnumMap;
+import java.util.Map.Entry;
 
 import com.google.common.base.Throwables;
 
@@ -77,6 +84,11 @@ import net.minecraftforge.fml.relauncher.Side;
  *  wrapper.registerMessage(Message2Handler.class, Message2.class, 2, Side.SERVER);
  *  </pre>
  * </code>
+ * 
+ * By default the handler code is executed on the main thread for the receiving side. If your handler does not need access to
+ * the main game (e.g. the World) then you can mark the handler class with {@link Async}. It will then be executed on the receiving
+ * netty thread. Note that in that case the only way to interact with this SimpleNetworkWrapper is through the return value of
+ * {@link IMessageHandler#onMessage(IMessage, MessageContext)}, since the sendTo*** methods are <i>not</i> threadsafe.
  *
  *
  * @author cpw
@@ -131,31 +143,33 @@ public class SimpleNetworkWrapper {
         packetCodec.addDiscriminator(discriminator, requestMessageType);
         FMLEmbeddedChannel channel = channels.get(side);
         String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
-        if (side == Side.SERVER)
-        {
-            addServerHandlerAfter(channel, type, messageHandler, requestMessageType);
-        }
-        else
-        {
-            addClientHandlerAfter(channel, type, messageHandler, requestMessageType);
-        }
+        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, side, requestMessageType);
+        channel.pipeline().addAfter(type, nameFor(handler, channel.pipeline()), handler);
     }
-
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
+    
+    private static String nameFor(SimpleChannelHandlerWrapper<?, ?> handler, ChannelPipeline pipeline)
     {
-        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
-        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
-    }
-
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
-    {
-        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
-        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
+        String baseName = handler.getClass().getSimpleName();
+        int idx = 0;
+        String name;
+        do
+        {
+            name = baseName + (idx == 0 ? "" : idx);
+            idx++;
+        } while (pipeline.get(name) != null);
+        return name;
     }
 
     private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Side side, Class<REQ> requestType)
     {
-        return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side, requestType);
+        if (messageHandler.getClass().isAnnotationPresent(Async.class))
+        {
+            return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side, requestType);
+        }
+        else
+        {
+            return new SimpleChannelHandlerWrapper.NonAsyncWrapper<REQ, REPLY>(messageHandler, side, requestType);
+        }
     }
 
     /**
@@ -235,4 +249,8 @@ public class SimpleNetworkWrapper {
         channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
         channels.get(Side.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
+    
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Async { }
 }

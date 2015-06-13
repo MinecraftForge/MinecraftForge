@@ -1,8 +1,13 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
+import java.util.concurrent.Callable;
+
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.network.INetHandler;
+import net.minecraft.util.IThreadListener;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -15,9 +20,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMessage> extends SimpleChannelInboundHandler<REQ> {
-    private final IMessageHandler<? super REQ, ? extends REPLY> messageHandler;
-    private final Side side;
+    final IMessageHandler<? super REQ, ? extends REPLY> messageHandler;
+    final Side side;
     
+    @Deprecated
     public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler, Side side, Class<REQ> requestType)
     {
         this(SimpleNetworkWrapper.instantiate(handler), side, requestType);
@@ -30,15 +36,23 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
         this.side = side;
     }
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, REQ msg) throws Exception
+    protected void channelRead0(final ChannelHandlerContext ctx, REQ msg) throws Exception
     {
         INetHandler iNetHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
         MessageContext context = new MessageContext(iNetHandler, side);
-        REPLY result = messageHandler.onMessage(msg, context);
+        final REPLY result = messageHandler.onMessage(msg, context);
         if (result != null)
         {
-            ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);
-            ctx.writeAndFlush(result).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            // need to do this on the main thread, otherwise someone might change FML_MESSAGETARGET in between...
+            FMLCommonHandler.instance().getWorldThread(iNetHandler).addScheduledTask(new Runnable() {
+                
+                @Override
+                public void run()
+                {
+                    sendReply(ctx, result);
+                }
+            });
+            
         }
     }
 
@@ -47,5 +61,41 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
     {
         FMLLog.log(Level.ERROR, cause, "SimpleChannelHandlerWrapper exception");
         super.exceptionCaught(ctx, cause);
+    }
+    
+    static void sendReply(final ChannelHandlerContext ctx, final IMessage reply)
+    {
+        ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);
+        ctx.writeAndFlush(reply).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    final static class NonAsyncWrapper<REQ extends IMessage, REPLY extends IMessage> extends SimpleChannelHandlerWrapper<REQ, REPLY> {
+        
+        NonAsyncWrapper(IMessageHandler<? super REQ, ? extends REPLY> handler, Side side, Class<REQ> requestType)
+        {
+            super(handler, side, requestType);
+        }
+        
+        @Override
+        protected void channelRead0(final ChannelHandlerContext ctx, final REQ msg) throws Exception
+        {
+            INetHandler iNetHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+            final MessageContext context = new MessageContext(iNetHandler, side);
+            IThreadListener scheduler = FMLCommonHandler.instance().getWorldThread(iNetHandler);
+            
+            scheduler.addScheduledTask(new Runnable() {
+                
+                @Override
+                public void run()
+                {
+                    REPLY result = messageHandler.onMessage(msg, context);
+                    if (result != null)
+                    {
+                        sendReply(ctx, result);
+                    }
+                }
+            });
+        }
+        
     }
 }
