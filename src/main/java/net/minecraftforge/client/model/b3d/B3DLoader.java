@@ -126,12 +126,12 @@ public class B3DLoader implements ICustomModelLoader
                 }
                 B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
                 B3DModel model = parser.parse();
-                cache.put(modelLocation, model);
+                cache.put(file, model);
             }
             catch(IOException e)
             {
                 //FMLLog.log(Level.ERROR, e, "Exception loading model %s with B3D loader, skipping", modelLocation);
-                cache.put(modelLocation, null);
+                cache.put(file, null);
                 throw e;
             }
         }
