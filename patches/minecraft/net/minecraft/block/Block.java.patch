@@ -161,7 +161,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -971,6 +989,1028 @@
+@@ -971,6 +989,1019 @@
          return Block.EnumOffsetType.NONE;
      }
  
@@ -954,16 +954,7 @@
 +     */
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
-+        {
-+            if (prop.func_177701_a().equals("facing"))
-+            {
-+                world.func_175656_a(pos, state.func_177231_a(prop));
-+                return true;
-+            }
-+        }
-+        return false;
++        return net.minecraftforge.common.util.RotationHelper.rotateVanillaBlock( world, pos, axis );
 +    }
 +
 +    /**
