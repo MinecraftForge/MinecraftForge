@@ -67,7 +67,7 @@ public class BrewingRecipeRegistry {
      */
     public static ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
-        if (input == null || input.getMaxStackSize() != 1 || input.stackSize != 1) return null;
+        if (input == null || input.stackSize != 1) return null;
         if (ingredient == null || ingredient.stackSize <= 0) return null;
 
         for (IBrewingRecipe recipe : recipes)
@@ -149,7 +149,7 @@ public class BrewingRecipeRegistry {
      */
     public static boolean isValidInput(ItemStack stack)
     {
-        if (stack == null || stack.getMaxStackSize() != 1 || stack.stackSize != 1) return false;
+        if (stack == null || stack.stackSize != 1) return false;
 
         for (IBrewingRecipe recipe : recipes)
         {
