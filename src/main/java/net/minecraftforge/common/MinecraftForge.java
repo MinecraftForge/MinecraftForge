@@ -146,7 +146,7 @@ public class MinecraftForge
        else
            handlers = ObjectArrays.concat(handlers, server, String.class);
 
-       FMLLog.info("Preloading CrashReport classes", ForgeVersion.getVersion());
+       //FMLLog.info("Preloading CrashReport classes", ForgeVersion.getVersion());
        for (String s : handlers)
        {
            //FMLLog.info("\t" + s);
@@ -155,7 +155,7 @@ public class MinecraftForge
                Class cls = Class.forName(s, false, MinecraftForge.class.getClassLoader());
                if (cls != null && !Callable.class.isAssignableFrom(cls))
                {
-                   FMLLog.info("\t% s is not a instance of callable!", s);
+                   //FMLLog.info("\t% s is not a instance of callable!", s);
                }
            }
            catch (Exception e){}

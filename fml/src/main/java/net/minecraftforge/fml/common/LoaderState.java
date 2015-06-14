@@ -94,27 +94,34 @@ public enum LoaderState
     }
     public enum ModState
     {
-        UNLOADED("Unloaded"),
-        LOADED("Loaded"),
-        CONSTRUCTED("Constructed"),
-        PREINITIALIZED("Pre-initialized"),
-        INITIALIZED("Initialized"),
-        POSTINITIALIZED("Post-initialized"),
-        AVAILABLE("Available"),
-        DISABLED("Disabled"),
-        ERRORED("Errored");
+        UNLOADED       ("Unloaded",         "U"),
+        LOADED         ("Loaded",           "L"),
+        CONSTRUCTED    ("Constructed",      "C"),
+        PREINITIALIZED ("Pre-initialized",  "H"),
+        INITIALIZED    ("Initialized",      "I"),
+        POSTINITIALIZED("Post-initialized", "J"),
+        AVAILABLE      ("Available",        "A"),
+        DISABLED       ("Disabled",         "D"),
+        ERRORED        ("Errored",          "E");
 
         private String label;
+        private String marker;
 
-        private ModState(String label)
+        private ModState(String label, String marker)
         {
             this.label = label;
+            this.marker = marker;
         }
 
         @Override
         public String toString()
         {
             return this.label;
+        }
+
+        public String getMarker()
+        {
+            return this.marker;
         }
     }
 }

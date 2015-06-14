@@ -771,7 +771,8 @@ public class GameData {
             }
             else // ItemBlock after its Block
             {
-                FMLLog.fine("Found matching Block %s for ItemBlock %s at id %d, original id requested: %d", block, item, id, idHint);
+                if (FMLControlledNamespacedRegistry.DEBUG)
+                    FMLLog.fine("Found matching Block %s for ItemBlock %s at id %d, original id requested: %d", block, item, id, idHint);
                 freeSlot(id, item); // temporarily free the slot occupied by the Block for the item registration
             }
 

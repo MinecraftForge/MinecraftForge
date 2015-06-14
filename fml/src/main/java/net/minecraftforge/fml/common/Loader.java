@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -504,10 +505,30 @@ public class Loader
         }
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
+
+        List<ModContainer> mods = Lists.newArrayList();
+        mods.addAll(getActiveModList());
+        Collections.sort(mods, new Comparator<ModContainer>()
+        {
+            @Override
+            public int compare(ModContainer o1, ModContainer o2)
+            {
+                return o1.getModId().compareTo(o2.getModId());
+            }
+        });
+
         FMLLog.fine("Mod signature data");
+        FMLLog.fine(" \tValid Signatures:");
         for (ModContainer mod : getActiveModList())
         {
-            FMLLog.fine("\t%s(%s:%s): %s (%s)", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), CertificateHelper.getFingerprint(mod.getSigningCertificate()));
+            if (mod.getSigningCertificate() != null)
+                FMLLog.fine("\t\t(%s) %s\t(%s\t%s)\t%s", CertificateHelper.getFingerprint(mod.getSigningCertificate()), mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName());
+        }
+        FMLLog.fine(" \tMissing Signatures:");
+        for (ModContainer mod : getActiveModList())
+        {
+            if (mod.getSigningCertificate() == null)
+                FMLLog.fine("\t\t%s\t(%s\t%s)\t%s", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName());
         }
         if (getActiveModList().isEmpty())
         {
