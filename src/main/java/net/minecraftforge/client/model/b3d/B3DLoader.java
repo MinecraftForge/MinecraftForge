@@ -104,7 +104,7 @@ public class B3DLoader implements ICustomModelLoader
     }
 
     @SuppressWarnings("unchecked")
-    public IModel loadModel(ResourceLocation modelLocation)
+    public IModel loadModel(ResourceLocation modelLocation) throws IOException
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if(!cache.containsKey(file))
@@ -130,8 +130,9 @@ public class B3DLoader implements ICustomModelLoader
             }
             catch(IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Exception loading model %s with B3D loader, skipping", modelLocation);
+                //FMLLog.log(Level.ERROR, e, "Exception loading model %s with B3D loader, skipping", modelLocation);
                 cache.put(modelLocation, null);
+                throw e;
             }
         }
         B3DModel model = cache.get(file);

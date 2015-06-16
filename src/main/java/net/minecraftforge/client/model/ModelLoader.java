@@ -58,6 +58,7 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -71,6 +72,7 @@ public class ModelLoader extends ModelBakery
     private final Set<ResourceLocation> textures = new HashSet<ResourceLocation>();
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
+    private IModel missingModel = null;
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -91,8 +93,16 @@ public class ModelLoader extends ModelBakery
         isLoading = true;
         loadBlocks();
         loadItems();
-        IModel missing = getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
-        stateModels.put(MODEL_MISSING, missing);
+        try
+        {
+            missingModel = getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+        }
+        catch (IOException e)
+        {
+            // If this ever happens things are bad. Should never NOT be able to load the missing model.
+            Throwables.propagate(e);
+        }
+        stateModels.put(MODEL_MISSING, missingModel);
         textures.remove(TextureMap.LOCATION_MISSING_TEXTURE);
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
         textureMap.loadSprites(resourceManager, new IIconCreator()
@@ -107,8 +117,8 @@ public class ModelLoader extends ModelBakery
         });
         sprites.put(new ResourceLocation("missingno"), textureMap.getMissingSprite());
         Function<ResourceLocation, TextureAtlasSprite> textureGetter = Functions.forMap(sprites, textureMap.getMissingSprite());
-        IFlexibleBakedModel missingBaked = missing.bake(missing.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
-        for(Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
+        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
+        for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
             if(e.getValue() == getMissingModel())
             {
@@ -143,11 +153,11 @@ public class ModelLoader extends ModelBakery
         {
             missingVariants.add(location);
         }
-        if(variants != null && !variants.getVariants().isEmpty())
+        if (variants != null && !variants.getVariants().isEmpty())
         {
             try
             {
-                stateModels.put(location, new WeightedRandomModel(variants));
+                stateModels.put(location, new WeightedRandomModel(location, variants));
             }
             catch(Throwable e)
             {
@@ -165,18 +175,29 @@ public class ModelLoader extends ModelBakery
             {
                 ResourceLocation file = getItemLocation(s);
                 ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
-                IModel model = getModel(file);
-                if(model == null || model == getMissingModel())
+                IModel model = null;
+                try
                 {
-                    FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
-                    registerVariant(getModelBlockDefinition(memory), memory);
+                    model = getModel(file);
                 }
-                else stateModels.put(memory, model);
+                catch (IOException e)
+                {
+                    // Handled by our finally block.
+                }
+                finally
+                {
+                    if (model == null || model == getMissingModel())
+                    {
+                        FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
+                        registerVariant(getModelBlockDefinition(memory), memory);
+                    }
+                    else stateModels.put(memory, model);
+                }
             }
         }
     }
 
-    public IModel getModel(ResourceLocation location)
+    public IModel getModel(ResourceLocation location) throws IOException
     {
         if(!ModelLoaderRegistry.loaded(location)) loadAnyModel(location);
         return ModelLoaderRegistry.getModel(location);
@@ -188,7 +209,7 @@ public class ModelLoader extends ModelBakery
         return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
     }
 
-    private void loadAnyModel(ResourceLocation location)
+    private void loadAnyModel(ResourceLocation location) throws IOException
     {
         if(loadingModels.contains(location))
         {
@@ -226,14 +247,30 @@ public class ModelLoader extends ModelBakery
             // setting parent here to make textures resolve properly
             if(model.getParentLocation() != null)
             {
-                IModel parent = getModel(model.getParentLocation());
-                if(parent instanceof VanillaModelWrapper)
+                try
                 {
-                    model.parent = ((VanillaModelWrapper) parent).model;
+                    IModel parent = getModel(model.getParentLocation());
+                    if(parent instanceof VanillaModelWrapper)
+                    {
+                        model.parent = ((VanillaModelWrapper) parent).model;
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent");
+                    }
                 }
-                else
+                catch (IOException e)
                 {
-                    throw new IllegalStateException("vanilla model" + model + "can't have non-vanilla parent");
+                    FMLLog.warning("Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model + "': " + e.toString());
+                    IModel missing = ModelLoader.this.getMissingModel();
+                    if (missing instanceof VanillaModelWrapper)
+                    {
+                        model.parent = ((VanillaModelWrapper)missing).model;
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("vanilla model '" + model + "' has missing parent, and missing model is not a vanilla model");
+                    }
                 }
             }
 
@@ -403,16 +440,32 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        public WeightedRandomModel(Variants variants)
+        @Deprecated public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
+        public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
             ImmutableMap.Builder<IModelPart, TRSRTransformation> builder = ImmutableMap.builder();
-            for(Variant v : (List<Variant>)variants.getVariants())
+            for (Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
                 locations.add(loc);
 
-                IModel model = getModel(loc);
+                IModel model = null;
+                try
+                {
+                    model = getModel(loc);
+                }
+                catch (Exception e)
+                {
+                    /*
+                     * Vanilla eats this, which makes it only show variants that have models.
+                     * But that doesn't help debugging, so we maintain the missing model
+                     * so that resource pack makers have a hint that their states are broken.
+                     */
+                    FMLLog.warning("Unable to load block model: \'" + loc + "\' for variant: \'" + parent + "\': " + e.toString());
+                    model = getMissingModel();
+                }
+
                 if (v instanceof ISmartVariant)
                 {
                     model = ((ISmartVariant)v).process(model, ModelLoader.this);
@@ -423,7 +476,16 @@ public class ModelLoader extends ModelBakery
                 models.add(model);
                 builder.put(model, new TRSRTransformation(v.getRotation()));
             }
+
+            if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
+            {
+                IModel missing = getMissingModel();
+                models.add(missing);
+                builder.put(missing, new TRSRTransformation(ModelRotation.X0_Y0));
+            }
+
             defaultState = new MapModelState(builder.build());
+
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -495,7 +557,19 @@ public class ModelLoader extends ModelBakery
 
     public IModel getMissingModel()
     {
-        return getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+        if (missingModel == null)
+        {
+            try
+            {
+                missingModel = getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+            }
+            catch (IOException e)
+            {
+                // If this ever happens things are bad. Should never NOT be able to load the missing model.
+                Throwables.propagate(e);
+            }
+        }
+        return missingModel;
     }
 
     static enum VanillaLoader implements ICustomModelLoader
@@ -524,21 +598,9 @@ public class ModelLoader extends ModelBakery
             return true;
         }
 
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IModel loadModel(ResourceLocation modelLocation) throws IOException
         {
-            try
-            {
-                return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation));
-            }
-            catch(IOException e)
-            {
-                if(loader.isLoading) //ToDo: Make this less gaging, hides missing models..
-                {
-                    // holding error until onPostBakeEvent
-                }
-                else FMLLog.log(Level.ERROR, e, "Exception loading model %s with vanilla loader, skipping", modelLocation);
-                return loader.getMissingModel();
-            }
+            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation));
         }
     }
 

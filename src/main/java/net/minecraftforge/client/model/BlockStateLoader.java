@@ -14,6 +14,7 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -186,7 +187,18 @@ public class BlockStateLoader
                 IModelState partState = new TRSRTransformation(matrix);
                 if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
 
-                models.put(entry.getKey(), Pair.of(runModelHooks(loader.getModel(part.getModelLocation()), part.getTextures(), part.getCustomData()), partState));
+                IModel model = null;
+                try
+                {
+                    model = loader.getModel(part.getModelLocation());
+                }
+                catch (IOException e)
+                {
+                    FMLLog.warning("Unable to load block sub-model: \'" + part.getModelLocation() /*+ "\' for variant: \'" + parent*/ + "\': " + e.toString());
+                    model = loader.getMissingModel(); // Will make it look weird, but that is good.
+                }
+
+                models.put(entry.getKey(), Pair.of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
             }
 
             return new MultiModel(hasBase ? base : null, baseRot, models.build());

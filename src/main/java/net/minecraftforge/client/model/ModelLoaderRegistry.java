@@ -1,5 +1,7 @@
 package net.minecraftforge.client.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +16,8 @@ import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
+
+import com.google.common.base.Throwables;
 
 /*
  * Central hub for custom model loaders.
@@ -50,7 +54,7 @@ public class ModelLoaderRegistry
         return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
     }
 
-    public static IModel getModel(ResourceLocation location)
+    public static IModel getModel(ResourceLocation location) throws IOException
     {
         ResourceLocation actual = getActualLocation(location);
         if(cache.containsKey(location)) return cache.get(location);
@@ -87,14 +91,21 @@ public class ModelLoaderRegistry
             FMLLog.severe("no suitable loader found for the model %s, skipping", location);
             model = getMissingModel();
         }
-        else try
+        else
         {
-            model = accepted.loadModel(actual);
-        }
-        catch(Exception e)
-        {
-            FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
-            model = getMissingModel();
+            try
+            {
+                model = accepted.loadModel(actual);
+            }
+            catch (IOException e)
+            {
+                throw e;
+            }
+            catch(Exception e)
+            {
+                FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
+                model = getMissingModel();
+            }
         }
         cache.put(location, model);
         return model;
