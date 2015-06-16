@@ -488,9 +488,9 @@ public class SplashProgress
     public static void finish()
     {
         if(!enabled) return;
-        checkThreadState();
         try
         {
+            checkThreadState();
             done = true;
             thread.join();
             d.releaseContext();
