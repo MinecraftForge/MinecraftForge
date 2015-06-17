@@ -17,6 +17,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -272,10 +273,10 @@ public abstract class GuiScrollingList
         }
         else
         {
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glDisable(GL11.GL_FOG);
+            GlStateManager.disableLighting();
+            GlStateManager.disableFog();
             this.client.renderEngine.bindTexture(Gui.optionsBackground);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float var17 = 32.0F;
             worldr.startDrawingQuads();
             worldr.setColorOpaque_I(2105376);
@@ -306,8 +307,8 @@ public abstract class GuiScrollingList
                 {
                     var14 = boxLeft;
                     int var15 = boxRight;
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    GL11.glDisable(GL11.GL_TEXTURE_2D);
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    GlStateManager.disableTexture2D();
                     worldr.startDrawingQuads();
                     worldr.setColorOpaque_I(8421504);
                     worldr.addVertexWithUV((double)var14, (double)(var19 + var13 + 2), 0.0D, 0.0D, 1.0D);
@@ -320,29 +321,29 @@ public abstract class GuiScrollingList
                     worldr.addVertexWithUV((double)(var15 - 1), (double)(var19 - 1), 0.0D, 1.0D, 0.0D);
                     worldr.addVertexWithUV((double)(var14 + 1), (double)(var19 - 1), 0.0D, 0.0D, 0.0D);
                     tess.draw();
-                    GL11.glEnable(GL11.GL_TEXTURE_2D);
+                    GlStateManager.enableTexture2D();
                 }
 
                 this.drawSlot(var11, boxRight, var19, var13, tess);
             }
         }
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        byte var20 = 4;
+        GlStateManager.disableDepth();
+        byte border = 4;
         if (this.client.theWorld == null)
         {
             this.overlayBackground(0, this.top, 255, 255);
             this.overlayBackground(this.bottom, this.listHeight, 255, 255);
         }
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableAlpha();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableTexture2D();
         worldr.startDrawingQuads();
         worldr.setColorRGBA_I(0, 0);
-        worldr.addVertexWithUV((double)this.left, (double)(this.top + var20), 0.0D, 0.0D, 1.0D);
-        worldr.addVertexWithUV((double)this.right, (double)(this.top + var20), 0.0D, 1.0D, 1.0D);
+        worldr.addVertexWithUV((double)this.left, (double)(this.top + border), 0.0D, 0.0D, 1.0D);
+        worldr.addVertexWithUV((double)this.right, (double)(this.top + border), 0.0D, 1.0D, 1.0D);
         worldr.setColorRGBA_I(0, 255);
         worldr.addVertexWithUV((double)this.right, (double)this.top, 0.0D, 1.0D, 0.0D);
         worldr.addVertexWithUV((double)this.left, (double)this.top, 0.0D, 0.0D, 0.0D);
@@ -352,8 +353,8 @@ public abstract class GuiScrollingList
         worldr.addVertexWithUV((double)this.left, (double)this.bottom, 0.0D, 0.0D, 1.0D);
         worldr.addVertexWithUV((double)this.right, (double)this.bottom, 0.0D, 1.0D, 1.0D);
         worldr.setColorRGBA_I(0, 0);
-        worldr.addVertexWithUV((double)this.right, (double)(this.bottom - var20), 0.0D, 1.0D, 0.0D);
-        worldr.addVertexWithUV((double)this.left, (double)(this.bottom - var20), 0.0D, 0.0D, 0.0D);
+        worldr.addVertexWithUV((double)this.right, (double)(this.bottom - border), 0.0D, 1.0D, 0.0D);
+        worldr.addVertexWithUV((double)this.left, (double)(this.bottom - border), 0.0D, 0.0D, 0.0D);
         tess.draw();
         var19 = this.getContentHeight() - (this.bottom - this.top - 4);
 
@@ -402,10 +403,10 @@ public abstract class GuiScrollingList
         }
 
         this.func_27257_b(mouseX, mouseY);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableTexture2D();
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableAlpha();
+        GlStateManager.disableBlend();
     }
 
     private void overlayBackground(int p_22239_1_, int p_22239_2_, int p_22239_3_, int p_22239_4_)
@@ -413,7 +414,7 @@ public abstract class GuiScrollingList
         Tessellator var5 = Tessellator.getInstance();
         WorldRenderer worldr = var5.getWorldRenderer();
         this.client.renderEngine.bindTexture(Gui.optionsBackground);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         float var6 = 32.0F;
         worldr.startDrawingQuads();
         worldr.setColorRGBA_I(4210752, p_22239_4_);
@@ -435,11 +436,11 @@ public abstract class GuiScrollingList
         float f5 = (float)(par6 >> 16 & 255) / 255.0F;
         float f6 = (float)(par6 >> 8 & 255) / 255.0F;
         float f7 = (float)(par6 & 255) / 255.0F;
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.startDrawingQuads();
@@ -450,9 +451,9 @@ public abstract class GuiScrollingList
         worldrenderer.addVertex((double)par1, (double)par4, 0.0D);
         worldrenderer.addVertex((double)par3, (double)par4, 0.0D);
         tessellator.draw();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
     }
 }

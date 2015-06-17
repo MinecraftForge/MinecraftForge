@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.client.config;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 
 import org.lwjgl.opengl.GL11;
 
@@ -69,12 +70,12 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
             strWidth = mc.fontRendererObj.getStringWidth(buttonText);
             totalWidth = glyphWidth + strWidth;
 
-            GL11.glPushMatrix();
-            GL11.glScalef(glyphScale, glyphScale, 1.0F);
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(glyphScale, glyphScale, 1.0F);
             this.drawCenteredString(mc.fontRendererObj, glyph,
                     (int) (((this.xPosition + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
                     (int) (((this.yPosition + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), color);
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
 
             this.drawCenteredString(mc.fontRendererObj, buttonText, (int) (this.xPosition + (this.width / 2) + (glyphWidth / glyphScale)),
                     this.yPosition + (this.height - 8) / 2, color);
