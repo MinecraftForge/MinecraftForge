@@ -91,3 +91,23 @@
      }
  
      public void func_73866_w_() {}
+@@ -246,7 +265,9 @@
+         {
+             while (Mouse.next())
+             {
++                if (MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre(this))) continue;
+                 this.func_146274_d();
++                if (this.equals(this.field_146297_k.field_71462_r)) MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Post(this));
+             }
+         }
+ 
+@@ -254,7 +275,9 @@
+         {
+             while (Keyboard.next())
+             {
++                if (MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Pre(this))) continue;
+                 this.func_146282_l();
++                if (this.equals(this.field_146297_k.field_71462_r)) MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Post(this));
+             }
+         }
+     }
