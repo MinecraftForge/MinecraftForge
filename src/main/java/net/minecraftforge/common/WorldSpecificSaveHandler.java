@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
@@ -47,7 +49,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             dataDir.mkdirs();
         }
         File file = new File(dataDir, name + ".dat");
-        if (!file.exists() && name.equalsIgnoreCase("FORTRESS"))
+        if (!file.exists() && name.equalsIgnoreCase("FORTRESS") && world.provider.getDimensionId() == -1) //Only copy over the fortress.dat for the vanilla nether.
         {
             File parentFile = parent.getMapFileFromName(name);
             if (parentFile.exists())
