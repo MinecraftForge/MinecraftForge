@@ -1,0 +1,8 @@
+newmtl lambert7SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+#map_Kd minecraft:blocks/redstone_block
+map_Kd forgedebugmodelloaderregistry:texture
+Ni 1.00

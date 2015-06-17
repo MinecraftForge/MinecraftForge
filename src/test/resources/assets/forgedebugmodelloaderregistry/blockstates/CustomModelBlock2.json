@@ -1,0 +1,18 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "#texture": "forgedebugmodelloaderregistry:texture"
+        },
+        "model": "forgedebugmodelloaderregistry:cmb2_tesseract.obj"
+        //"model": "forgedebugmodelloaderregistry:corkscrew.obj"
+     },
+    "variants": {
+        "normal": {
+            "dummy": ""
+        },
+        "inventory": {
+            "dummy": ""
+        }
+    }
+}
