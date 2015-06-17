@@ -47,6 +47,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 
 import org.apache.logging.log4j.Level;
 
@@ -267,6 +268,20 @@ public class GameRegistry
     {
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
+    
+    /**
++     * Register a brewing recipe.
++     * Due to the nature of the brewing stand inputs that stack (a.k.a max stack size > 1) are not allowed.
++     * The item in the output must have a PotionEffect, even if it is an empty String, set by {@link Item#setPotionEffect()}
++     * 
++     * @param input The ItemStack that goes in same slots as the water bottles would.
++     * @param ingredient The ItemStack that goes in the same slot as nether wart would.
++     * @param output The ItemStack that will replace the input once the brewing is done.
++     */
++    public static void addBrewing(ItemStack input, ItemStack ingredient, ItemStack output)
+     {
++       BrewingRecipeRegistry.addRecipe(input, ingredient, output);
++    }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
