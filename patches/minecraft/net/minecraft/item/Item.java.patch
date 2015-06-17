@@ -36,7 +36,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -366,11 +372,564 @@
+@@ -366,11 +372,579 @@
          return false;
      }
  
@@ -595,13 +595,28 @@
 +    {
 +        return this == Items.field_151166_bC || this == Items.field_151045_i || this == Items.field_151043_k || this == Items.field_151042_j;
 +    }
++
++
++    /**
++     * Determine if the player switching between these two item stacks
++     * @param oldStack The old stack that was equipped
++     * @param newStack The new stack
++     * @param slotChanged If the current equipped slot was changed,
++     *                    Vanilla does not play the animation if you switch between two
++     *                    slots that hold the exact same item.
++     * @return True to play the item change animation
++     */
++    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
++    {
++        return !ItemStack.func_77989_b(oldStack, newStack);
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function()
-@@ -936,6 +1495,10 @@
+@@ -936,6 +1510,10 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -612,7 +627,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -970,9 +1533,36 @@
+@@ -970,9 +1548,36 @@
              return this.field_78008_j;
          }
  
