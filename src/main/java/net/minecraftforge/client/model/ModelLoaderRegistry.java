@@ -13,6 +13,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
+import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
@@ -26,6 +27,13 @@ public class ModelLoaderRegistry
 {
     private static final Set<ICustomModelLoader> loaders = new HashSet<ICustomModelLoader>();
     private static final Map<ResourceLocation, IModel> cache = new HashMap<ResourceLocation, IModel>();
+
+    // Forge built-in loaders
+    static
+    {
+        registerLoader(B3DLoader.instance);
+        registerLoader(ModelFluid.FluidLoader.instance);
+    }
 
     /*
      * Makes system aware of your loader.

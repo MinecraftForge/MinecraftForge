@@ -82,11 +82,6 @@ public class B3DLoader implements ICustomModelLoader
     private final Set<String> enabledDomains = new HashSet<String>();
     private final Map<ResourceLocation, B3DModel> cache = new HashMap<ResourceLocation, B3DModel>();
 
-    public B3DLoader()
-    {
-        ModelLoaderRegistry.registerLoader(this);
-    }
-
     public void addDomain(String domain)
     {
         enabledDomains.add(domain.toLowerCase());
