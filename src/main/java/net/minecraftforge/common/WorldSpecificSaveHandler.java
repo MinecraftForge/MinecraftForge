@@ -2,9 +2,10 @@ package net.minecraftforge.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import org.apache.logging.log4j.Level;
+
+import com.google.common.io.Files;
 
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -56,7 +57,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             {
                 try
                 {
-                    Files.copy(parentFile.toPath(), file.toPath());
+                    Files.copy(parentFile, file);
                 }
                 catch (IOException e)
                 {
