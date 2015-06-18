@@ -9,3 +9,11 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
+@@ -812,6 +812,7 @@
+         float f = (float)(p_147281_1_.func_149028_l() * 360) / 256.0F;
+         float f1 = (float)(p_147281_1_.func_149030_m() * 360) / 256.0F;
+         EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.func_75616_a(p_147281_1_.func_149025_e(), this.field_147299_f.field_71441_e);
++        if (entitylivingbase == null) { net.minecraftforge.fml.common.registry.EntityRegistry.failedGlobalIDSpawn(p_147281_1_.func_149025_e()); return; }
+         entitylivingbase.field_70118_ct = p_147281_1_.func_149023_f();
+         entitylivingbase.field_70117_cu = p_147281_1_.func_149034_g();
+         entitylivingbase.field_70116_cv = p_147281_1_.func_149029_h();
