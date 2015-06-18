@@ -17,14 +17,14 @@ import net.minecraftforge.common.ForgeHooks;
 public class ShapedOreRecipe implements IRecipe
 {
     //Added in for future ease of change, but hard coded for now.
-    private static final int MAX_CRAFT_GRID_WIDTH = 3;
-    private static final int MAX_CRAFT_GRID_HEIGHT = 3;
+    public static final int MAX_CRAFT_GRID_WIDTH = 3;
+    public static final int MAX_CRAFT_GRID_HEIGHT = 3;
 
-    private ItemStack output = null;
-    private Object[] input = null;
-    private int width = 0;
-    private int height = 0;
-    private boolean mirrored = true;
+    protected ItemStack output = null;
+    protected Object[] input = null;
+    protected int width = 0;
+    protected int height = 0;
+    protected boolean mirrored = true;
 
     public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
     public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
@@ -184,7 +184,7 @@ public class ShapedOreRecipe implements IRecipe
     }
 
     @SuppressWarnings("unchecked")
-    private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
+    protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
         {
