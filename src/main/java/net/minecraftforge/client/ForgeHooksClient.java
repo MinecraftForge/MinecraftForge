@@ -285,14 +285,12 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
         ModelLoader.White.instance.register(map);
+        FluidRegistry.onTextureStitchedPre(map);
     }
 
     public static void onTextureStitchedPost(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
-
-        FluidRegistry.WATER.setIcons(map.getAtlasSprite("minecraft:blocks/water_still"), map.getAtlasSprite("minecraft:blocks/water_flow"));
-        FluidRegistry.LAVA.setIcons(map.getAtlasSprite("minecraft:blocks/lava_still"), map.getAtlasSprite("minecraft:blocks/lava_flow"));
     }
 
     static int renderPass = -1;

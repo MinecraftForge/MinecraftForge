@@ -70,7 +70,7 @@ public class BlockStateLoader
                             boolean uvLock = var.getUvLock().or(false);
                             int weight = var.getWeight().or(1);
 
-                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0)
+                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0)
                                 mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), rot, uvLock, weight));
                             else
                                 mcVars.add(new ForgeVariant(var.getModel(), rot, uvLock, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));

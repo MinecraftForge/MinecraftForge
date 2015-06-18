@@ -7,10 +7,13 @@ import java.util.Set;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -47,14 +50,14 @@ public abstract class FluidRegistry
     static BiMap<String,String> defaultFluidName = HashBiMap.create();
     static Map<Fluid,FluidDelegate> delegates = Maps.newHashMap();
 
-    public static final Fluid WATER = new Fluid("water") {
+    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.water.name");
         }
     }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
 
-    public static final Fluid LAVA = new Fluid("lava") {
+    public static final Fluid LAVA = new Fluid("lava", new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow")) {
         @Override
         public String getLocalizedName() {
             return StatCollector.translateToLocal("tile.lava.name");
@@ -391,6 +394,23 @@ public abstract class FluidRegistry
         void rebind()
         {
             fluid = fluids.get(name);
+        }
+    }
+
+    public static void onTextureStitchedPre(TextureMap map)
+    {
+        for(Fluid fluid : fluids.values())
+        {
+            if(fluid.getStill() != null)
+            {
+                TextureAtlasSprite still = map.registerSprite(fluid.getStill());
+                fluid.setStillIcon(still);
+            }
+            if(fluid.getFlowing() != null)
+            {
+                TextureAtlasSprite flowing = map.registerSprite(fluid.getFlowing());
+                fluid.setStillIcon(flowing);
+            }
         }
     }
 }

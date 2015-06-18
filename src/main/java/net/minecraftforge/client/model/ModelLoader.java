@@ -116,7 +116,13 @@ public class ModelLoader extends ModelBakery
             }
         });
         sprites.put(new ResourceLocation("missingno"), textureMap.getMissingSprite());
-        Function<ResourceLocation, TextureAtlasSprite> textureGetter = Functions.forMap(sprites, textureMap.getMissingSprite());
+        Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
+        {
+            public TextureAtlasSprite apply(ResourceLocation location)
+            {
+                return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            }
+        };
         IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
         for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {

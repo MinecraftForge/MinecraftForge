@@ -1,0 +1,13 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "fluid": {
+            "model": "forge:fluid",
+            "custom": { "fluid": "testfluid" }
+        },
+        "gas": {
+            "model": "forge:fluid",
+            "custom": { "fluid": "testgas" }
+        }
+    }
+}

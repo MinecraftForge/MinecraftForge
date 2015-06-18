@@ -1,10 +1,7 @@
 package net.minecraftforge.fluids;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -22,8 +19,15 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.PropertyFloat;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 /**
  * This is a base implementation for Fluid blocks.
@@ -84,6 +88,22 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     protected Map<Block, Boolean> displacements = Maps.newHashMap();
 
     public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 15);
+    public static final PropertyFloat[] LEVEL_CORNERS = new PropertyFloat[4];
+    public static final PropertyFloat FLOW_DIRECTION = new PropertyFloat("flow_direction");
+    public static final IUnlistedProperty[] FLUID_RENDER_PROPS;
+
+    static
+    {
+        ImmutableList.Builder<IUnlistedProperty> builder = ImmutableList.builder();
+        builder.add(FLOW_DIRECTION);
+        for(int i = 0; i < 4; i++)
+        {
+            LEVEL_CORNERS[i] = new PropertyFloat("level_corner_" + i);
+            builder.add(LEVEL_CORNERS[i]);
+        }
+        FLUID_RENDER_PROPS = builder.build().toArray(new IUnlistedProperty[0]);
+    }
+
     protected int quantaPerBlock = 8;
     protected float quantaPerBlockFloat = 8F;
     protected int density = 1;
@@ -126,7 +146,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     protected BlockState createBlockState()
     {
-        return new BlockState(this, LEVEL);
+        return new ExtendedBlockState(this, new IProperty[] { LEVEL }, FLUID_RENDER_PROPS);
     }
 
     @Override
@@ -346,12 +366,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public int getRenderType()
-    {
-        return FluidRegistry.renderIdFluid;
-    }
-
-    @Override
     public boolean isOpaqueCube()
     {
         return false;
@@ -397,11 +411,64 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side)
     {
         Block block = world.getBlockState(pos).getBlock();
-        if (block != this)
+        if (block.getMaterial() == this.blockMaterial)
         {
-            return !block.isOpaqueCube();
+            return false;
         }
-        return block.getMaterial() == this.getMaterial() ? false : super.shouldSideBeRendered(world, pos, side);
+        if(densityDir == -1 && side == EnumFacing.UP)
+        {
+            return true;
+        }
+        if(densityDir == 1 && side == EnumFacing.DOWN)
+        {
+            return true;
+        }
+        return super.shouldSideBeRendered(world, pos, side);
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState oldState, IBlockAccess worldIn, BlockPos pos)
+    {
+        IExtendedBlockState state = (IExtendedBlockState)oldState;
+        state = state.withProperty(FLOW_DIRECTION, (float)getFlowDirection(worldIn, pos));
+        float[][] height = new float[3][3];
+        float[][] corner = new float[2][2];
+        height[1][1] = getFluidHeightForRender(worldIn, pos);
+        if(height[1][1] == 1)
+        {
+            for(int i = 0; i < 2; i++)
+            {
+                for(int j = 0; j < 2; j++)
+                {
+                    corner[i][j] = 1;
+                }
+            }
+        }
+        else
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                for(int j = 0; j < 3; j++)
+                {
+                    if(i != 1 || j != 1)
+                    {
+                        height[i][j] = getFluidHeightForRender(worldIn, pos.add(i - 1, 0, j - 1));
+                    }
+                }
+            }
+            for(int i = 0; i < 2; i++)
+            {
+                for(int j = 0; j < 2; j++)
+                {
+                    corner[i][j] = getFluidHeightAverage(height[i][j], height[i][j + 1], height[i + 1][j], height[i + 1][j + 1]);
+                }
+            }
+        }
+        state = state.withProperty(LEVEL_CORNERS[0], corner[0][0]);
+        state = state.withProperty(LEVEL_CORNERS[1], corner[0][1]);
+        state = state.withProperty(LEVEL_CORNERS[2], corner[1][1]);
+        state = state.withProperty(LEVEL_CORNERS[3], corner[1][0]);
+        return state;
     }
 
     /* FLUID FUNCTIONS */
@@ -460,6 +527,52 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     {
         int quantaRemaining = getQuantaValue(world, pos);
         return quantaRemaining / quantaPerBlockFloat;
+    }
+
+    public float getFluidHeightAverage(float... flow)
+    {
+        float total = 0;
+        int count = 0;
+
+        float end = 0;
+
+        for (int i = 0; i < flow.length; i++)
+        {
+            if (flow[i] >= 0.875F && end != 1F)
+            {
+                end = flow[i];
+            }
+
+            if (flow[i] >= 0)
+            {
+                total += flow[i];
+                count++;
+            }
+        }
+
+        if (end == 0)
+            end = total / count;
+
+        return end;
+    }
+
+    public float getFluidHeightForRender(IBlockAccess world, BlockPos pos)
+    {
+        IBlockState here = world.getBlockState(pos);
+        IBlockState up = world.getBlockState(pos.down(densityDir));
+        if (here.getBlock() == this)
+        {
+            if (up.getBlock().getMaterial().isLiquid() || up.getBlock() instanceof IFluidBlock)
+            {
+                return 1;
+            }
+
+            if (getMetaFromState(here) == getMaxRenderHeightMeta())
+            {
+                return 0.875F;
+            }
+        }
+        return !here.getBlock().getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
     }
 
     public Vec3 getFlowVector(IBlockAccess world, BlockPos pos)
