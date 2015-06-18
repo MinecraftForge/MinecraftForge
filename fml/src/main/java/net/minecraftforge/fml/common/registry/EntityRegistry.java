@@ -179,15 +179,16 @@ public class EntityRegistry
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
+        ModContainer activeModContainer = Loader.instance().activeModContainer();
+        String modId = "unknown";
+        if (activeModContainer != null)
+        {
+            modId = activeModContainer.getModId();
+        }
+        
         if (EntityList.classToStringMapping.containsKey(entityClass))
         {
-            ModContainer activeModContainer = Loader.instance().activeModContainer();
-            String modId = "unknown";
-            if (activeModContainer != null)
-            {
-                modId = activeModContainer.getModId();
-            }
-            else
+            if (activeModContainer == null)
             {
                 FMLLog.severe("There is a rogue mod failing to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
             }
@@ -196,6 +197,7 @@ public class EntityRegistry
         }
         id = instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id);
+        warnGlobalIDRegister(modId, id, entityName);
     }
 
     private int validateAndClaimId(int id)
@@ -231,15 +233,16 @@ public class EntityRegistry
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
     {
+        ModContainer activeModContainer = Loader.instance().activeModContainer();
+        String modId = "unknown";
+        if (activeModContainer != null)
+        {
+            modId = activeModContainer.getModId();
+        }
+        
         if (EntityList.classToStringMapping.containsKey(entityClass))
         {
-            ModContainer activeModContainer = Loader.instance().activeModContainer();
-            String modId = "unknown";
-            if (activeModContainer != null)
-            {
-                modId = activeModContainer.getModId();
-            }
-            else
+            if (activeModContainer == null)
             {
                 FMLLog.severe("There is a rogue mod failing to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
             }
@@ -248,6 +251,12 @@ public class EntityRegistry
         }
         instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
+        warnGlobalIDRegister(modId, id, entityName);
+    }
+    
+    private static void warnGlobalIDRegister(String mod, int id, String name)
+    {
+        FMLLog.warning("The mod %s registered global EntityID %s as name %s. This is discouraged. Modder see EntityRegistry.registerModEntity", mod, id, name);
     }
 
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
@@ -364,5 +373,12 @@ public class EntityRegistry
             return true;
         }
         return false;
+    }
+    
+    @Deprecated // internal, do not call
+    public static void failedGlobalIDSpawn(int id)
+    {
+        FMLLog.severe("Failed to spawn Entity with global ID %s. This is most likely a result of mods using the outdated global ID system and a discrepancy between the configuration on server and client.", id);
+        FMLLog.severe("The Entity has been skipped, refer to the mod's configuration files to fix this discrepancy.");
     }
 }
