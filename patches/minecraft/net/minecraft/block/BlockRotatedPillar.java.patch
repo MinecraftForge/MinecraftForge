@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRotatedPillar.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRotatedPillar.java
+@@ -2,6 +2,7 @@
+ 
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.PropertyEnum;
++import net.minecraft.block.state.IBlockState;
+ import net.minecraft.util.EnumFacing;
+ 
+ public abstract class BlockRotatedPillar extends Block
+@@ -13,4 +14,18 @@
+     {
+         super(p_i45425_1_);
+     }
++
++    public boolean rotateBlock(net.minecraft.world.World world, net.minecraft.util.BlockPos pos, EnumFacing axis)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        for (net.minecraft.block.properties.IProperty prop : (java.util.Set<net.minecraft.block.properties.IProperty>)state.func_177228_b().keySet())
++        {
++            if (prop.func_177701_a().equals("axis"))
++            {
++                world.func_175656_a(pos, state.func_177231_a(prop));
++                return true;
++            }
++        }
++        return false;
++    }
+ }

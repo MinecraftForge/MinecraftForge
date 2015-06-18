@@ -9,7 +9,7 @@
      }
  
      protected BlockRailBase(boolean p_i45389_1_)
-@@ -174,7 +174,56 @@
+@@ -174,7 +174,81 @@
      }
  
      public abstract IProperty func_176560_l();
@@ -61,12 +61,37 @@
 +    {
 +    }
 +
++    /**
++     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
++     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
++     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
++     * The method should return true if the rotation was successful though.
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param axis The axis to rotate around
++     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     */
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
++        {
++            if (prop.func_177701_a().equals("shape"))
++            {
++                world.func_175656_a(pos, state.func_177231_a(prop));
++                return true;
++            }
++        }
++        return false;
++    }
++
 +    /* ======================================== FORGE END =====================================*/
 +
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -251,6 +300,7 @@
+@@ -251,6 +325,7 @@
          private final boolean field_150656_f;
          private final List field_150657_g = Lists.newArrayList();
          private static final String __OBFID = "CL_00000196";
@@ -74,7 +99,7 @@
  
          public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -259,7 +309,8 @@
+@@ -259,7 +334,8 @@
              this.field_180366_e = p_i45739_4_;
              this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
              BlockRailBase.EnumRailDirection enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(BlockRailBase.this.func_176560_l());
@@ -84,7 +109,7 @@
              this.func_180360_a(enumraildirection);
          }
  
-@@ -448,7 +499,7 @@
+@@ -448,7 +524,7 @@
                  }
              }
  
@@ -93,7 +118,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -461,7 +512,7 @@
+@@ -461,7 +537,7 @@
                  }
              }
  
@@ -102,7 +127,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -604,7 +655,7 @@
+@@ -604,7 +680,7 @@
                  }
              }
  
@@ -111,7 +136,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -617,7 +668,7 @@
+@@ -617,7 +693,7 @@
                  }
              }
  

@@ -962,7 +962,7 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
 +        {
-+            if (prop.func_177701_a().equals("facing"))
++            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
 +            {
 +                world.func_175656_a(pos, state.func_177231_a(prop));
 +                return true;
