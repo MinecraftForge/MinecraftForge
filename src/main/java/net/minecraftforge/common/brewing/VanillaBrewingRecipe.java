@@ -40,7 +40,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
-        if (ingredient != null && input != null && input.getItem() instanceof ItemPotion)
+        if (ingredient != null && input != null && input.getItem() instanceof ItemPotion && isIngredient(ingredient))
         {
             int inputMeta = input.getMetadata();
             int outputMeta = PotionHelper.applyIngredient(inputMeta, ingredient.getItem().getPotionEffect(ingredient));
