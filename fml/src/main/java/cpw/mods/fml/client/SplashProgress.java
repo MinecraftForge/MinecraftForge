@@ -536,6 +536,10 @@ public class SplashProgress
     private static boolean disableSplash()
     {
         File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        File parent = configFile.getParentFile();
+        if (!parent.exists())
+            parent.mkdirs();
+
         FileReader r = null;
         enabled = false;
         config.setProperty("enabled", "false");
