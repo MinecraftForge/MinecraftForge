@@ -397,7 +397,7 @@
      }
  
      protected void func_71061_d_()
-@@ -1839,6 +1947,8 @@
+@@ -1840,6 +1948,8 @@
      {
          if (p_71008_1_ != this.field_71074_e)
          {
@@ -406,7 +406,7 @@
              this.field_71074_e = p_71008_1_;
              this.field_71072_f = p_71008_2_;
  
-@@ -1908,6 +2018,10 @@
+@@ -1909,6 +2019,10 @@
              this.field_71106_cc = p_71049_1_.field_71106_cc;
              this.func_85040_s(p_71049_1_.func_71037_bA());
              this.field_82152_aq = p_71049_1_.field_82152_aq;
@@ -417,7 +417,7 @@
          }
          else if (this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
-@@ -1920,6 +2034,18 @@
+@@ -1921,6 +2035,18 @@
  
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_70096_w().func_75692_b(10, Byte.valueOf(p_71049_1_.func_70096_w().func_75683_a(10)));
@@ -436,7 +436,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -1953,7 +2079,14 @@
+@@ -1954,7 +2080,14 @@
  
      public void func_70062_b(int p_70062_1_, ItemStack p_70062_2_)
      {
@@ -452,7 +452,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1998,7 +2131,10 @@
+@@ -1999,7 +2132,10 @@
  
      public IChatComponent func_145748_c_()
      {
@@ -464,7 +464,7 @@
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          chatcomponenttext.func_150256_b().func_150209_a(this.func_174823_aP());
          chatcomponenttext.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2007,7 +2143,7 @@
+@@ -2008,7 +2144,7 @@
  
      public float func_70047_e()
      {
@@ -473,7 +473,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2157,6 +2293,120 @@
+@@ -2158,6 +2294,120 @@
          net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
  

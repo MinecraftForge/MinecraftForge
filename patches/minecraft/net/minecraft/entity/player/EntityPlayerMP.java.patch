@@ -74,7 +74,7 @@
          }
  
          Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
-@@ -849,6 +866,7 @@
+@@ -850,6 +867,7 @@
      {
          if (p_71064_1_ != null)
          {

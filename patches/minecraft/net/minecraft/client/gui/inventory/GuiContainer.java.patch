@@ -46,7 +46,7 @@
          Slot slot = this.func_146975_c(p_146286_1_, p_146286_2_);
          int l = this.field_147003_i;
          int i1 = this.field_147009_r;
-@@ -691,4 +702,16 @@
+@@ -698,4 +702,16 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
