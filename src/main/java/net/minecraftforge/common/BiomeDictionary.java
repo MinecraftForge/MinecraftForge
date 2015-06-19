@@ -416,13 +416,13 @@ public class BiomeDictionary
         {
             BiomeDictionary.registerBiomeType(biome, SANDY);
         }
-        else if (biome.topBlock == Blocks.hardened_clay)
-        {
-            BiomeDictionary.registerBiomeType(biome, MESA);
-        }
         else if (biome.topBlock == Blocks.mycelium)
         {
             BiomeDictionary.registerBiomeType(biome, MUSHROOM);
+        }
+        if (biome.fillerBlock == Blocks.hardened_clay)
+        {
+            BiomeDictionary.registerBiomeType(biome, MESA);
         }
     }
 
