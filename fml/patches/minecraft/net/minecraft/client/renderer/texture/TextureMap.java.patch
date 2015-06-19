@@ -1,14 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -96,6 +96,7 @@
+@@ -35,6 +35,7 @@
+ @SideOnly(Side.CLIENT)
+ public class TextureMap extends AbstractTexture implements ITickableTextureObject, IIconRegister
+ {
++    private static final boolean ENABLE_SKIP = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));
+     private static final Logger field_147635_d = LogManager.getLogger();
+     public static final ResourceLocation field_110575_b = new ResourceLocation("textures/atlas/blocks.png");
+     public static final ResourceLocation field_110576_c = new ResourceLocation("textures/atlas/items.png");
+@@ -47,12 +48,18 @@
+     private int field_147637_k = 1;
+     private final TextureAtlasSprite field_94249_f = new TextureAtlasSprite("missingno");
+     private static final String __OBFID = "CL_00001058";
++    private boolean skipFirst = false;
+ 
+     public TextureMap(int p_i1281_1_, String p_i1281_2_)
+     {
++        this(p_i1281_1_, p_i1281_2_, false);
++    }
++    public TextureMap(int p_i1281_1_, String p_i1281_2_, boolean skipFirst)
++    {
+         this.field_94255_a = p_i1281_1_;
+         this.field_94254_c = p_i1281_2_;
+         this.func_110573_f();
++        this.skipFirst = skipFirst && ENABLE_SKIP;
+     }
+ 
+     private void func_110569_e()
+@@ -96,15 +103,17 @@
          this.field_94252_e.clear();
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
-+        cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture stitching", this.field_110574_e.size());
++        cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture Loading", skipFirst ? 0 : this.field_110574_e.size());
          Iterator iterator = this.field_110574_e.entrySet().iterator();
          TextureAtlasSprite textureatlassprite;
  
-@@ -105,6 +106,7 @@
+-        while (iterator.hasNext())
++        while (!skipFirst && iterator.hasNext())
+         {
+             Entry entry = (Entry)iterator.next();
              ResourceLocation resourcelocation = new ResourceLocation((String)entry.getKey());
              textureatlassprite = (TextureAtlasSprite)entry.getValue();
              ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
@@ -16,7 +46,7 @@
  
              try
              {
-@@ -156,12 +158,14 @@
+@@ -156,12 +165,14 @@
              }
              catch (RuntimeException runtimeexception)
              {
@@ -33,7 +63,7 @@
                  continue;
              }
  
-@@ -169,6 +173,7 @@
+@@ -169,6 +180,7 @@
              stitcher.func_110934_a(textureatlassprite);
          }
  
@@ -41,24 +71,26 @@
          int i1 = MathHelper.func_151239_c(j);
  
          if (i1 < this.field_147636_j)
-@@ -178,10 +183,12 @@
+@@ -178,10 +190,12 @@
          }
  
          Iterator iterator1 = this.field_110574_e.values().iterator();
-+        bar = cpw.mods.fml.common.ProgressManager.push("Mipmap generation", this.field_110574_e.size());
++        bar = cpw.mods.fml.common.ProgressManager.push("Mipmap generation", skipFirst ? 0 : this.field_110574_e.size());
  
-         while (iterator1.hasNext())
+-        while (iterator1.hasNext())
++        while (!skipFirst && iterator1.hasNext())
          {
              final TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
 +            bar.step(textureatlassprite1.func_94215_i());
  
              try
              {
-@@ -222,9 +229,12 @@
+@@ -222,9 +236,13 @@
  
          this.field_94249_f.func_147963_d(this.field_147636_j);
          stitcher.func_110934_a(this.field_94249_f);
 +        cpw.mods.fml.common.ProgressManager.pop(bar);
++        skipFirst = false;
 +        bar = cpw.mods.fml.common.ProgressManager.push("Texture creation", 3);
  
          try
@@ -67,7 +99,7 @@
              stitcher.func_94305_f();
          }
          catch (StitcherException stitcherexception)
-@@ -233,10 +243,12 @@
+@@ -233,10 +251,12 @@
          }
  
          field_147635_d.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c});
@@ -80,7 +112,7 @@
          while (iterator2.hasNext())
          {
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
-@@ -274,6 +286,7 @@
+@@ -274,6 +294,7 @@
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
              textureatlassprite.func_94217_a(this.field_94249_f);
          }
