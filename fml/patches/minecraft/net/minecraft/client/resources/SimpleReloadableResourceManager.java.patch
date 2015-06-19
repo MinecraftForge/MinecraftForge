@@ -4,7 +4,7 @@
      public void func_110541_a(List p_110541_1_)
      {
          this.func_110543_a();
-+        cpw.mods.fml.common.ProgressManager.ProgressBar resReload = cpw.mods.fml.common.ProgressManager.push("Loading Resources", p_110541_1_.size()+1);
++        cpw.mods.fml.common.ProgressManager.ProgressBar resReload = cpw.mods.fml.common.ProgressManager.push("Loading Resources", p_110541_1_.size()+1, true);
          field_147967_a.info("Reloading ResourceManager: " + field_130074_a.join(Iterables.transform(p_110541_1_, new Function()
          {
              private static final String __OBFID = "CL_00001092";

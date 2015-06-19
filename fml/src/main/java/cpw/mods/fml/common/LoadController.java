@@ -183,7 +183,7 @@ public class LoadController
         {
             modObjectList = buildModObjectList();
         }
-        ProgressBar bar = ProgressManager.push(stateEvent.description(), activeModList.size());
+        ProgressBar bar = ProgressManager.push(stateEvent.description(), activeModList.size(), true);
         for (ModContainer mc : activeModList)
         {
             bar.step(mc.getName());

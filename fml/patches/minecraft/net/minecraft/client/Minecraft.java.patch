@@ -64,7 +64,7 @@
          this.field_110451_am.func_110542_a(this.field_71464_q);
          this.field_110451_am.func_110542_a(new GrassColorReloadListener());
          this.field_110451_am.func_110542_a(new FoliageColorReloadListener());
-+        cpw.mods.fml.common.ProgressManager.ProgressBar bar= cpw.mods.fml.common.ProgressManager.push("Rendering Setup", 9);
++        cpw.mods.fml.common.ProgressManager.ProgressBar bar= cpw.mods.fml.common.ProgressManager.push("Rendering Setup", 9, true);
 +        bar.step("Loading Render Manager");
          RenderManager.field_78727_a.field_78721_f = new ItemRenderer(this);
 +        bar.step("Loading Entity Renderer");
