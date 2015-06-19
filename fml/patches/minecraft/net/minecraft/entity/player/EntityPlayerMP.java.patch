@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
+@@ -481,6 +481,7 @@
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(entitylivingbase)));
++            if (entityegginfo == null) entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.func_75621_b(entitylivingbase));
+ 
+             if (entityegginfo != null)
+             {

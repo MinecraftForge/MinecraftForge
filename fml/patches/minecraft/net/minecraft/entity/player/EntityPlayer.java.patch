@@ -16,7 +16,15 @@
      }
  
      public int func_82145_z()
-@@ -2139,6 +2141,22 @@
+@@ -1725,6 +1727,7 @@
+         }
+ 
+         EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(p_70074_1_)));
++        if (entityegginfo == null) entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.func_75621_b(p_70074_1_));
+ 
+         if (entityegginfo != null)
+         {
+@@ -2139,6 +2142,22 @@
          this.field_175153_bG = p_175150_1_;
      }
  

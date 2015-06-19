@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiStats.java
++++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiStats.java
+@@ -769,6 +769,7 @@
+             super(p_i45510_2_, GuiStats.this.field_146294_l, GuiStats.this.field_146295_m, 32, GuiStats.this.field_146295_m - 64, GuiStats.this.field_146289_q.field_78288_b * 4);
+             this.func_148130_a(false);
+             Iterator iterator = EntityList.field_75627_a.values().iterator();
++            iterator = com.google.common.collect.Iterators.concat(iterator, net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().values().iterator());
+ 
+             while (iterator.hasNext())
+             {
+@@ -806,7 +807,7 @@
+         protected void func_180791_a(int p_180791_1_, int p_180791_2_, int p_180791_3_, int p_180791_4_, int p_180791_5_, int p_180791_6_)
+         {
+             EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)this.field_148222_l.get(p_180791_1_);
+-            String s = I18n.func_135052_a("entity." + EntityList.func_75617_a(entityegginfo.field_75613_a) + ".name", new Object[0]);
++            String s = I18n.func_135052_a("entity." + entityegginfo.name + ".name", new Object[0]);
+             int k1 = GuiStats.this.field_146546_t.func_77444_a(entityegginfo.field_151512_d);
+             int l1 = GuiStats.this.field_146546_t.func_77444_a(entityegginfo.field_151513_e);
+             String s1 = I18n.func_135052_a("stat.entityKills", new Object[] {Integer.valueOf(k1), s});

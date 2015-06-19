@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +118,9 @@ public class EntityRegistry
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
+    private Map<String, EntityList.EntityEggInfo> entityEggs = Maps.newHashMap();
+    private Map<String, EntityList.EntityEggInfo> entityEggsUn = Collections.unmodifiableMap(entityEggs);
+
     public static EntityRegistry instance()
     {
         return INSTANCE;
@@ -148,6 +152,26 @@ public class EntityRegistry
         instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
     }
 
+    /**
+     * Register the mod entity type with FML
+     * This will also register a spawn egg.
+
+     * @param entityClass The entity class
+     * @param entityName A unique name for the entity
+     * @param id A mod specific ID for the entity
+     * @param mod The mod
+     * @param trackingRange The range at which MC will send tracking updates
+     * @param updateFrequency The frequency of tracking updates
+     * @param sendsVelocityUpdates Whether to send velocity information packets as well
+     * @param eggPrimary Primary egg color
+     * @param eggSecondary Secondary egg color
+     */
+    public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)
+    {
+        instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
+        EntityRegistry.registerEgg(entityClass, eggPrimary, eggSecondary);
+    }
+
     @SuppressWarnings("unchecked")
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
@@ -175,6 +199,40 @@ public class EntityRegistry
             return;
         }
         entityRegistrations.put(mc, er);
+    }
+
+    /**
+     * Registers a spawn egg for the specified entity class.
+     * The class must already be registered in the EntityList.classToStringMapping.
+     * This can be done either by using the global ID system, or preferably the registerModEntity functions above.
+     * Once registered mob eggs can be created by using minecraft:spawn_egg with NBT entry 'entity_name' with
+     * value of the name this class is registered in the classToStringMapping with.
+     *
+     * @param entityClass The entity class
+     * @param primary Primary egg color
+     * @param secondary Secondary egg color
+     *
+     * @throws IllegalArgumentException if entityClass is not registered in classToStringMapping.
+     *
+     */
+    public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
+    {
+        if (!EntityList.classToStringMapping.containsKey(entityClass))
+            throw new IllegalArgumentException("Entity not registered in classToString map: " + entityClass);
+
+        String name = (String)EntityList.classToStringMapping.get(entityClass);
+        EntityRegistry.instance().entityEggs.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
+        FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
+    }
+
+    /**
+     * Returns a Unmodifiable view of the registered entity eggs list.
+     *
+     * @return An Unmodifiable view of the registered entity eggs list.
+     */
+    public static Map<String, EntityList.EntityEggInfo> getEggs()
+    {
+        return instance().entityEggsUn;
     }
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
