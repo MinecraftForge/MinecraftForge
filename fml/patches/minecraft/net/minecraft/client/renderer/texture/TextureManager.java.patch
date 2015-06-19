@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -162,12 +162,15 @@
+ 
+     public void func_110549_a(IResourceManager p_110549_1_)
+     {
++        cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.keySet().size(), true);
+         Iterator iterator = this.field_110585_a.entrySet().iterator();
+ 
+         while (iterator.hasNext())
+         {
+             Entry entry = (Entry)iterator.next();
++            bar.step(entry.getKey().toString());
+             this.func_110579_a((ResourceLocation)entry.getKey(), (ITextureObject)entry.getValue());
+         }
++        cpw.mods.fml.common.ProgressManager.pop(bar);
+     }
+ }
