@@ -116,7 +116,6 @@ public class FMLTweaker implements ITweaker {
     @Override
     public void injectIntoClassLoader(LaunchClassLoader classLoader)
     {
-        classLoader.addClassLoaderExclusion("org.apache.");
         classLoader.addClassLoaderExclusion("com.google.common.");
         classLoader.addClassLoaderExclusion("org.objectweb.asm.");
         classLoader.addTransformerExclusion("net.minecraftforge.fml.repackage.");
