@@ -10,11 +10,13 @@
                              }
                          }
                      }
-@@ -285,7 +284,11 @@
+@@ -284,8 +283,12 @@
+         }
          else
          {
-             ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
+-            ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
 -            return itemstack == null ? false : (this.field_145957_n[2] == null ? true : (!this.field_145957_n[2].func_77969_a(itemstack) ? false : (this.field_145957_n[2].field_77994_a < this.func_70297_j_() && this.field_145957_n[2].field_77994_a < this.field_145957_n[2].func_77976_d() ? true : this.field_145957_n[2].field_77994_a < itemstack.func_77976_d())));
++            ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onFurnaceFindMatchingRecipe(this, this.field_145957_n[0]);
 +            if (itemstack == null) return false;
 +            if (this.field_145957_n[2] == null) return true;
 +            if (!this.field_145957_n[2].func_77969_a(itemstack)) return false;
@@ -23,6 +25,15 @@
          }
      }
  
+@@ -293,7 +296,7 @@
+     {
+         if (this.func_145948_k())
+         {
+-            ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
++            ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onFurnaceFindMatchingRecipe(this, this.field_145957_n[0]);
+ 
+             if (this.field_145957_n[2] == null)
+             {
 @@ -301,7 +304,7 @@
              }
              else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())

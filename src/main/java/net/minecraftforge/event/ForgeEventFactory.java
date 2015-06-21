@@ -18,7 +18,12 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -38,6 +43,9 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
+import net.minecraftforge.event.crafting.BenchFindMatchingRecipeEvent;
+import net.minecraftforge.event.crafting.FurnaceFindMatchingRecipeEvent;
+import net.minecraftforge.event.crafting.PlayerFindMatchingRecipeEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -457,5 +465,29 @@ public class ForgeEventFactory
     public static void onPotionBrewed(ItemStack[] brewingItemStacks)
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
+    }
+    
+    public static ItemStack onPlayerFindMatchingRecipe(ContainerPlayer container, EntityPlayer player)
+    {
+        ItemStack stack = CraftingManager.getInstance().findMatchingRecipe(container.craftMatrix, player.worldObj);
+        PlayerFindMatchingRecipeEvent event = new PlayerFindMatchingRecipeEvent(container, player, stack);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled() ? null : event.getOutput();
+    }
+
+    public static ItemStack onCraftingBenchFindMatchingRecipe(ContainerWorkbench bench, World world, BlockPos pos)
+    {
+        ItemStack stack = CraftingManager.getInstance().findMatchingRecipe(bench.craftMatrix, world);
+        BenchFindMatchingRecipeEvent event = new BenchFindMatchingRecipeEvent(bench, world, stack, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled() ? null : event.getOutput();
+    }
+
+    public static ItemStack onFurnaceFindMatchingRecipe(TileEntityFurnace furnace, ItemStack in)
+    {
+        ItemStack out = FurnaceRecipes.instance().getSmeltingResult(in);
+        FurnaceFindMatchingRecipeEvent event = new FurnaceFindMatchingRecipeEvent(furnace, in, out);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isCanceled() ? null : event.getOutput();
     }
 }

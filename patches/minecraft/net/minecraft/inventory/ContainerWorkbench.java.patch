@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -50,7 +50,7 @@
+ 
+     public void func_75130_a(IInventory p_75130_1_)
+     {
+-        this.field_75160_f.func_70299_a(0, CraftingManager.func_77594_a().func_82787_a(this.field_75162_e, this.field_75161_g));
++        this.field_75160_f.func_70299_a(0, net.minecraftforge.event.ForgeEventFactory.onCraftingBenchFindMatchingRecipe(this, field_75161_g, field_178145_h));
+     }
+ 
+     public void func_75134_a(EntityPlayer p_75134_1_)

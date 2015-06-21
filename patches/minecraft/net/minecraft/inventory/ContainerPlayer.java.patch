@@ -10,3 +10,12 @@
                  }
                  @SideOnly(Side.CLIENT)
                  public String func_178171_c()
+@@ -75,7 +76,7 @@
+ 
+     public void func_75130_a(IInventory p_75130_1_)
+     {
+-        this.field_75179_f.func_70299_a(0, CraftingManager.func_77594_a().func_82787_a(this.field_75181_e, this.field_82862_h.field_70170_p));
++        this.field_75179_f.func_70299_a(0, net.minecraftforge.event.ForgeEventFactory.onPlayerFindMatchingRecipe(this, field_82862_h));
+     }
+ 
+     public void func_75134_a(EntityPlayer p_75134_1_)
