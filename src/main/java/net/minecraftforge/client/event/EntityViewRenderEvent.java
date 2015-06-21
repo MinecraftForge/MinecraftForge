@@ -78,4 +78,22 @@ public abstract class EntityViewRenderEvent extends Event
             this.blue = blue;
         }
     }
+    
+    /** 
+     * Event that allows mods to alter the angles of the player's camera. Mainly useful for applying roll.
+     */
+    public static class CameraSetup extends EntityViewRenderEvent
+    {
+        public float yaw;
+        public float pitch;
+        public float roll;
+
+        public CameraSetup(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float yaw, float pitch, float roll)
+        {
+            super(renderer, entity, block, renderPartialTicks);
+            this.yaw = yaw;
+            this.pitch = pitch;
+            this.roll = roll;
+        }
+    }
 }
