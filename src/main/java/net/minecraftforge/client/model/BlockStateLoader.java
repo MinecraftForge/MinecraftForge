@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,6 +34,50 @@ public class BlockStateLoader
             .registerTypeAdapter(ForgeBlockStateV1.class,         ForgeBlockStateV1.Deserializer.INSTANCE)
             .registerTypeAdapter(ForgeBlockStateV1.Variant.class, ForgeBlockStateV1.Variant.Deserializer.INSTANCE)
             .create();
+    private static final Map<String, ICustomBlockStateLoader> loaders = new HashMap<String, ICustomBlockStateLoader>();
+    
+    static
+    {
+        registerLoader("vanilla", new ICustomBlockStateLoader()
+        {
+            public ModelBlockDefinition load(Reader reader, Gson vanillaGSON)
+            {
+                return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);
+            }
+        });
+        registerLoader("forge_v1", new ICustomBlockStateLoader()
+        {
+            public ModelBlockDefinition load(Reader reader, Gson vanillaGSON) {
+                ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
+                List<ModelBlockDefinition.Variants> variants = Lists.newArrayList();
+    
+                for (Entry<String, Collection<ForgeBlockStateV1.Variant>> entry : v1.variants.asMap().entrySet())
+                {   // Convert Version1 variants into vanilla variants for the ModelBlockDefinition.
+                    List<ModelBlockDefinition.Variant> mcVars = Lists.newArrayList();
+                    for (ForgeBlockStateV1.Variant var : entry.getValue())
+                    {
+                        ModelRotation rot = var.getRotation().or(ModelRotation.X0_Y0);
+                        boolean uvLock = var.getUvLock().or(false);
+                        int weight = var.getWeight().or(1);
+    
+                        if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0)
+                            mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), rot, uvLock, weight));
+                        else
+                            mcVars.add(new ForgeVariant(var.getModel(), rot, uvLock, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
+                    }
+                    variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
+                }
+    
+                return new ModelBlockDefinition((Collection)variants); //Damn lists being collections!
+            }
+        });
+    }
+    
+    public static void registerLoader(String name, ICustomBlockStateLoader loader)
+    {
+        loaders.put(name, loader);
+    }
+    
     /**
      * Loads a BlockStates json file.
      * Will attempt to parse it as a Forge Enhanced version if possible.
@@ -53,36 +98,24 @@ public class BlockStateLoader
             byte[] data = IOUtils.toByteArray(reader);
             reader = new InputStreamReader(new ByteArrayInputStream(data), Charsets.UTF_8);
 
-            Marker marker = GSON.fromJson(new String(data), Marker.class);  // Read "forge_marker" to determine what to load.
-
-            switch (marker.forge_marker)
+            Marker marker = GSON.fromJson(new String(data), Marker.class);  // Read "forge_marker" and "forge_loader" to determine what to load.
+            
+            if(marker.forge_loader == null)
             {
-                case 1: // Version 1
-                    ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
-                    List<ModelBlockDefinition.Variants> variants = Lists.newArrayList();
-
-                    for (Entry<String, Collection<ForgeBlockStateV1.Variant>> entry : v1.variants.asMap().entrySet())
-                    {   // Convert Version1 variants into vanilla variants for the ModelBlockDefinition.
-                        List<ModelBlockDefinition.Variant> mcVars = Lists.newArrayList();
-                        for (ForgeBlockStateV1.Variant var : entry.getValue())
-                        {
-                            ModelRotation rot = var.getRotation().or(ModelRotation.X0_Y0);
-                            boolean uvLock = var.getUvLock().or(false);
-                            int weight = var.getWeight().or(1);
-
-                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0)
-                                mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), rot, uvLock, weight));
-                            else
-                                mcVars.add(new ForgeVariant(var.getModel(), rot, uvLock, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
-                        }
-                        variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
-                    }
-
-                    return new ModelBlockDefinition((Collection)variants); //Damn lists being collections!
-
-                default: //Unknown version.. try loading it as normal.
-                    return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);
+                if(marker.forge_marker == 1)
+                {
+                    marker.forge_loader = "forge_v1";
+                } else
+                {
+                    marker.forge_loader = "vanilla";
+                }
             }
+            ICustomBlockStateLoader loader = loaders.get(marker.forge_loader);
+            if(loader == null)
+            {
+                throw new RuntimeException("Attempted to load block state using non-existing custom loader");
+            }
+            return loader.load(reader, vanillaGSON);
         }
         catch (IOException e)
         {
@@ -94,6 +127,7 @@ public class BlockStateLoader
     public static class Marker
     {
         public int forge_marker = -1;
+        public String forge_loader = null;
     }
 
     //This is here specifically so that we do not have a hard reference to ForgeBlockStateV1.Variant in ForgeVariant
