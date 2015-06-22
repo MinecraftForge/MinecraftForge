@@ -36,13 +36,17 @@ public class BlockStateLoader
             .create();
     private static final Map<String, ICustomBlockStateLoader> loaders = new HashMap<String, ICustomBlockStateLoader>();
     
-    static {
-        registerLoader("vanilla", new ICustomBlockStateLoader() {
-            public ModelBlockDefinition load(Reader reader, Gson vanillaGSON) {
+    static
+    {
+        registerLoader("vanilla", new ICustomBlockStateLoader()
+        {
+            public ModelBlockDefinition load(Reader reader, Gson vanillaGSON)
+            {
                 return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);
             }
         });
-        registerLoader("forge_v1", new ICustomBlockStateLoader() {
+        registerLoader("forge_v1", new ICustomBlockStateLoader()
+        {
             public ModelBlockDefinition load(Reader reader, Gson vanillaGSON) {
                 ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
                 List<ModelBlockDefinition.Variants> variants = Lists.newArrayList();
@@ -69,7 +73,8 @@ public class BlockStateLoader
         });
     }
     
-    public static void registerLoader(String name, ICustomBlockStateLoader loader) {
+    public static void registerLoader(String name, ICustomBlockStateLoader loader)
+    {
         loaders.put(name, loader);
     }
     
@@ -95,15 +100,19 @@ public class BlockStateLoader
 
             Marker marker = GSON.fromJson(new String(data), Marker.class);  // Read "forge_marker" and "forge_loader" to determine what to load.
             
-            if(marker.forge_loader == null) {
-                if(marker.forge_marker == 1) {
+            if(marker.forge_loader == null)
+            {
+                if(marker.forge_marker == 1)
+                {
                     marker.forge_loader = "forge_v1";
-                } else {
+                } else
+                {
                     marker.forge_loader = "vanilla";
                 }
             }
             ICustomBlockStateLoader loader = loaders.get(marker.forge_loader);
-            if(loader == null) {
+            if(loader == null)
+            {
                 throw new RuntimeException("Attempted to load block state using non-existing custom loader");
             }
             return loader.load(reader, vanillaGSON);
