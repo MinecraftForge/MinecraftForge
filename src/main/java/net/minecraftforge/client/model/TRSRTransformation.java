@@ -14,6 +14,8 @@ import net.minecraft.util.Vec3i;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+import com.google.common.base.Objects;
+
 /*
  * Interpolation-friendly affine transformation.
  * If created with matrix, should successfully decompose it to a composition
@@ -53,7 +55,13 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation(ItemTransformVec3f transform)
     {
-        this(transform.translation, quatFromYXZDegrees(transform.rotation), transform.scale, null);
+        this(getMatrix(transform));
+    }
+
+    public static Matrix4f getMatrix(ItemTransformVec3f transform)
+    {
+        TRSRTransformation ret = new TRSRTransformation(transform.translation, quatFromYXZDegrees(transform.rotation), transform.scale, null);
+        return blockCenterToCorner(ret).getMatrix();
     }
 
     public TRSRTransformation(ModelRotation rotation)
@@ -466,5 +474,46 @@ public class TRSRTransformation implements IModelState, ITransformation
     {
         // FIXME check if this is good enough
         return vertexIndex;
+    }
+
+    @Override
+    public String toString()
+    {
+        genCheck();
+        return Objects.toStringHelper(this.getClass())
+            .add("matrix", matrix)
+            .add("translation", translation)
+            .add("leftRot", leftRot)
+            .add("scale", scale)
+            .add("rightRot", rightRot)
+            .toString();
+    }
+
+    /**
+     * convert transformation from assuming center-block system to corner-block system
+     */
+    public static TRSRTransformation blockCenterToCorner(TRSRTransformation transform)
+    {
+        Matrix4f ret = new Matrix4f(transform.getMatrix()), tmp = new Matrix4f();
+        tmp.setIdentity();
+        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
+        ret.mul(tmp, ret);
+        tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
+        ret.mul(tmp);
+        return new TRSRTransformation(ret);
+    }
+
+    /**
+     * convert transformation from assuming corner-block system to center-block system
+     */
+    public static TRSRTransformation blockCornerToCenter(TRSRTransformation transform)
+    {
+        Matrix4f ret = new Matrix4f(transform.getMatrix()), tmp = new Matrix4f();
+        tmp.setIdentity();
+        tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
+        ret.mul(tmp, ret);
+        tmp.m03 = tmp.m13 = tmp.m23 = .5f;
+        ret.mul(tmp);
+        return new TRSRTransformation(ret);
     }
 }

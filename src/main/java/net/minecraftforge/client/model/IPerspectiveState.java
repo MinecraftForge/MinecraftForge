@@ -5,6 +5,7 @@ import java.util.Map;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -55,6 +56,12 @@ public interface IPerspectiveState extends IModelState
             IModelState state = states.get(type);
             if(state == null) state = TRSRTransformation.identity();
             return state;
+        }
+
+        @Override
+        public String toString()
+        {
+            return Objects.toStringHelper(this.getClass()).add("parent", parent).add("states", states).toString();
         }
     }
 }
