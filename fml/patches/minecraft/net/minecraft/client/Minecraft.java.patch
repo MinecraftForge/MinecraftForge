@@ -17,7 +17,7 @@
              }
          });
          this.field_71417_B = new MouseHelper();
-+        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 9);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 5, true);
 +        bar.step("GL Setup");
          this.func_71361_d("Pre startup");
          GlStateManager.func_179098_w();
@@ -26,8 +26,9 @@
          GlStateManager.func_179096_D();
          GlStateManager.func_179128_n(5888);
          this.func_71361_d("Startup");
+-        this.field_147128_au = new TextureMap("textures");
 +        bar.step("Loading Texture Map");
-         this.field_147128_au = new TextureMap("textures");
++        this.field_147128_au = new TextureMap("textures",true);
          this.field_147128_au.func_147633_a(this.field_71474_y.field_151442_I);
          this.field_71446_o.func_110580_a(TextureMap.field_110575_b, this.field_147128_au);
          this.field_71446_o.func_110577_a(TextureMap.field_110575_b);

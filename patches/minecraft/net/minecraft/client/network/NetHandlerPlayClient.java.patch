@@ -29,7 +29,19 @@
          }
      }
  
-@@ -1137,6 +1140,10 @@
+@@ -812,6 +815,11 @@
+         float f = (float)(p_147281_1_.func_149028_l() * 360) / 256.0F;
+         float f1 = (float)(p_147281_1_.func_149030_m() * 360) / 256.0F;
+         EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.func_75616_a(p_147281_1_.func_149025_e(), this.field_147299_f.field_71441_e);
++        if (entitylivingbase == null)
++        {
++            net.minecraftforge.fml.common.FMLLog.info("Server attempted to spawn an unknown entity using ID: {0} at ({1}, {2}, {3}) Skipping!", p_147281_1_.func_149025_e(), d0, d1, d2);
++            return;
++        }
+         entitylivingbase.field_70118_ct = p_147281_1_.func_149023_f();
+         entitylivingbase.field_70117_cu = p_147281_1_.func_149034_g();
+         entitylivingbase.field_70116_cv = p_147281_1_.func_149029_h();
+@@ -1137,6 +1145,10 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }

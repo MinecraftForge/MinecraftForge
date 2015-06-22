@@ -410,7 +410,7 @@ public class SplashProgress
                 drawBox(barWidth - 2, barHeight - 2);
                 // slidy part
                 setColor(barColor);
-                drawBox((barWidth - 2) * b.getStep() / b.getSteps(), barHeight - 2);
+                drawBox((barWidth - 2) * (b.getStep() + 1) / (b.getSteps() + 1), barHeight - 2); // Step can sometimes be 0.
                 // progress text
                 String progress = "" + b.getStep() + "/" + b.getSteps();
                 glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
@@ -535,9 +535,9 @@ public class SplashProgress
     public static void finish()
     {
         if(!enabled) return;
-        checkThreadState();
         try
         {
+            checkThreadState();
             done = true;
             thread.join();
             d.releaseContext();
@@ -583,6 +583,10 @@ public class SplashProgress
     private static boolean disableSplash()
     {
         File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+        File parent = configFile.getParentFile();
+        if (!parent.exists())
+            parent.mkdirs();
+
         FileReader r = null;
         enabled = false;
         config.setProperty("enabled", "false");

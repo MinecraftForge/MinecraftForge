@@ -27,7 +27,7 @@
       "url": "http://files.minecraftforge.net/maven/"
     },
     {
-      "name": "net.minecraft:launchwrapper:1.11",
+      "name": "net.minecraft:launchwrapper:1.12",
       "serverreq":true
     },
     {

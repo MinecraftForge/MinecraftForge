@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -91,6 +91,7 @@
+@@ -104,6 +104,7 @@
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
 +        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
-         net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", this.field_110574_e.size());
+         net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
          Iterator iterator = this.field_110574_e.entrySet().iterator();
  
-@@ -102,6 +103,16 @@
+@@ -115,6 +116,16 @@
              ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
              bar.step(resourcelocation1.func_110623_a());
  
@@ -25,7 +25,7 @@
              try
              {
                  IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
-@@ -287,6 +298,9 @@
+@@ -301,6 +312,9 @@
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
  
@@ -35,7 +35,7 @@
          TextureUtil.func_177055_a(this.field_94254_c.replaceAll("/", "_"), this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
          net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
-@@ -354,4 +368,37 @@
+@@ -368,4 +382,37 @@
      {
          return this.field_94249_f;
      }

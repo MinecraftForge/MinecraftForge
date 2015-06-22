@@ -8,16 +8,7 @@
          this.field_71459_aj = p_i45547_1_.field_178741_d.field_178756_a;
          this.field_71443_c = p_i45547_1_.field_178743_b.field_178764_a > 0 ? p_i45547_1_.field_178743_b.field_178764_a : 1;
          this.field_71440_d = p_i45547_1_.field_178743_b.field_178762_b > 0 ? p_i45547_1_.field_178743_b.field_178762_b : 1;
-@@ -450,7 +449,7 @@
-             }
-         });
-         this.field_71417_B = new MouseHelper();
--        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 9);
-+        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 5);
-         bar.step("GL Setup");
-         this.func_71361_d("Pre startup");
-         GlStateManager.func_179098_w();
-@@ -492,7 +491,7 @@
+@@ -491,7 +490,7 @@
          net.minecraftforge.fml.common.ProgressManager.pop(bar);
          net.minecraftforge.fml.client.FMLClientHandler.instance().finishMinecraftLoading();
          this.func_71361_d("Post startup");
@@ -26,7 +17,7 @@
  
          if (this.field_71475_ae != null)
          {
-@@ -899,11 +898,6 @@
+@@ -898,11 +897,6 @@
  
      public void func_147108_a(GuiScreen p_147108_1_)
      {
@@ -38,7 +29,7 @@
          if (p_147108_1_ == null && this.field_71441_e == null)
          {
              p_147108_1_ = new GuiMainMenu();
-@@ -913,6 +907,17 @@
+@@ -912,6 +906,17 @@
              p_147108_1_ = new GuiGameOver();
          }
  
@@ -56,7 +47,7 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1396,7 +1401,7 @@
+@@ -1395,7 +1400,7 @@
  
                  if (this.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149688_o() != Material.field_151579_a && this.field_71442_b.func_180512_c(blockpos, this.field_71476_x.field_178784_b))
                  {
@@ -65,7 +56,7 @@
                      this.field_71439_g.func_71038_i();
                  }
              }
-@@ -1476,15 +1481,19 @@
+@@ -1475,15 +1480,19 @@
                  case 2:
                      BlockPos blockpos = this.field_71476_x.func_178782_a();
  
@@ -86,7 +77,7 @@
  
                          if (itemstack == null)
                          {
-@@ -1507,7 +1516,8 @@
+@@ -1506,7 +1515,8 @@
          {
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
@@ -96,7 +87,7 @@
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
              }
-@@ -1705,6 +1715,8 @@
+@@ -1704,6 +1714,8 @@
  
              while (Mouse.next())
              {
@@ -105,7 +96,7 @@
                  i = Mouse.getEventButton();
                  KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
  
-@@ -2214,7 +2226,13 @@
+@@ -2213,7 +2225,13 @@
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
          networkmanager.func_179290_a(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
@@ -120,7 +111,7 @@
          this.field_71453_ak = networkmanager;
      }
  
-@@ -2225,6 +2243,8 @@
+@@ -2224,6 +2242,8 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -129,7 +120,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2238,6 +2258,18 @@
+@@ -2237,6 +2257,18 @@
              {
                  this.field_71437_Z.func_71263_m();
                  this.field_71437_Z.func_175592_a();
@@ -148,7 +139,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2369,134 +2401,11 @@
+@@ -2368,134 +2400,11 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -285,7 +276,7 @@
              if (flag)
              {
                  int j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + inventoryplayer.field_70461_c;
-@@ -2752,8 +2661,11 @@
+@@ -2751,8 +2660,11 @@
          p_70001_1_.func_152767_b("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -297,7 +288,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2761,6 +2673,7 @@
+@@ -2760,6 +2672,7 @@
  
              if (j != 0)
              {
