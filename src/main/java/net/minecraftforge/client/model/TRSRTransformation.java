@@ -53,7 +53,7 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation(ItemTransformVec3f transform)
     {
-        this(transform.translation, quatFromYXZ(transform.rotation), transform.scale, null);
+        this(transform.translation, quatFromYXZDegrees(transform.rotation), transform.scale, null);
     }
 
     public TRSRTransformation(ModelRotation rotation)
@@ -95,6 +95,11 @@ public class TRSRTransformation implements IModelState, ITransformation
             this.rightRot = triple.getRight();
             full = true;
         }
+    }
+
+    public static Quat4f quatFromYXZDegrees(Vector3f yxz)
+    {
+        return quatFromYXZ((float)Math.toRadians(yxz.y), (float)Math.toRadians(yxz.x), (float)Math.toRadians(yxz.z));
     }
 
     public static Quat4f quatFromYXZ(Vector3f yxz)

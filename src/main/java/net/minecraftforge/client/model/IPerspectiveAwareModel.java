@@ -2,11 +2,10 @@ package net.minecraftforge.client.model;
 
 import javax.vecmath.Matrix4f;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import net.minecraft.item.ItemStack;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.resources.model.IBakedModel;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 /*
  * Model that changes based on the rendering perspective

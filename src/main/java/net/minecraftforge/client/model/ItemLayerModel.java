@@ -4,27 +4,35 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import javax.vecmath.Matrix4f;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLLog;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 public class ItemLayerModel implements IRetexturableModel {
 
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
+
     private final ImmutableList<ResourceLocation> textures;
 
     public ItemLayerModel(ImmutableList<ResourceLocation> textures)
@@ -75,29 +83,53 @@ public class ItemLayerModel implements IRetexturableModel {
         return new ItemLayerModel(builder.build());
     }
 
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IFlexibleBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+        final TRSRTransformation transform = state.apply(this);
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
-            builder.addAll(getQuadsForSprite(i, sprite, format));
+            builder.addAll(Iterables.transform(getQuadsForSprite(i, sprite, format), new Function<BakedQuad, BakedQuad>()
+            {
+                public BakedQuad apply(BakedQuad input)
+                {
+                    return Attributes.transform(transform, input, format);
+                }
+            }));
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
+        if(state instanceof IPerspectiveState)
+        {
+            IPerspectiveState ps = (IPerspectiveState)state;
+            Map<TransformType, TRSRTransformation> map = Maps.newHashMap();
+            for(TransformType type : TransformType.values())
+            {
+                map.put(type, ps.forPerspective(type).apply(this));
+            }
+            return new BakedModel(builder.build(), particle, format, Maps.immutableEnumMap(map));
+        }
         return new BakedModel(builder.build(), particle, format);
     }
 
-    public static class BakedModel implements IFlexibleBakedModel
+    public static class BakedModel implements IFlexibleBakedModel, IPerspectiveAwareModel
     {
         private final ImmutableList<BakedQuad> quads;
         private final TextureAtlasSprite particle;
         private final VertexFormat format;
+        private final ImmutableMap<TransformType, TRSRTransformation> transforms;
 
         public BakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format)
+        {
+            this(quads, particle, format, ImmutableMap.<TransformType, TRSRTransformation>of());
+        }
+
+        public BakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> transforms)
         {
             this.quads = quads;
             this.particle = particle;
             this.format = format;
+            this.transforms = transforms;
         }
 
         public boolean isAmbientOcclusion() { return true; }
@@ -108,9 +140,17 @@ public class ItemLayerModel implements IRetexturableModel {
         public List<BakedQuad> getFaceQuads(EnumFacing side) { return ImmutableList.of(); }
         public List<BakedQuad> getGeneralQuads() { return quads; }
         public VertexFormat getFormat() { return format; }
+
+        @Override
+        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        {
+            TRSRTransformation tr = transforms.getOrDefault(cameraTransformType, TRSRTransformation.identity());
+            Matrix4f mat = tr == TRSRTransformation.identity() ? null : tr.getMatrix();
+            return Pair.of((IBakedModel)this, mat);
+        }
     }
 
-    public static final ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format)
+    public ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
@@ -131,7 +171,7 @@ public class ItemLayerModel implements IRetexturableModel {
                 ptu = true;
                 for(int u = 0; u < uMax; u++)
                 {
-                    boolean t = (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
+                    boolean t = isTransparent(pixels, uMax, vMax, u, v);
                     if(ptu && !t) // left - transparent, right - opaque
                     {
                         builder.add(buildSideQuad(buf, format, EnumFacing.WEST, tint, sprite, u, v));
@@ -180,6 +220,11 @@ public class ItemLayerModel implements IRetexturableModel {
             0, 1, 8.5f / 16f, sprite.getMinU(), sprite.getMinV()
         ));
         return builder.build();
+    }
+
+    protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
+    {
+        return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
     }
 
     private static BakedQuad buildSideQuad(ByteBuffer buf, VertexFormat format, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v)

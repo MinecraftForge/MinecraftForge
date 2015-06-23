@@ -1,8 +1,12 @@
 package net.minecraftforge.client.model;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.vecmath.Vector4f;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
@@ -103,5 +107,34 @@ public class Attributes
                 break;
             }
         }
+    }
+
+    public static BakedQuad transform(TRSRTransformation transform, BakedQuad quad, VertexFormat format)
+    {
+        for (VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
+        {
+            if (e.getUsage() == VertexFormatElement.EnumUsage.POSITION)
+            {
+                if (e.getType() != VertexFormatElement.EnumType.FLOAT)
+                {
+                    throw new IllegalArgumentException("can only transform float position");
+                }
+                int[] data = Arrays.copyOf(quad.getVertexData(), quad.getVertexData().length);
+                float[] pos = new float[] { 0f, 0f, 0f, 1f };
+                for (int i = 0; i < Math.min(4, e.getElementCount()); i++)
+                {
+                    pos[i] = Float.intBitsToFloat(data[e.getOffset() / 4 + i]);
+                }
+                Vector4f vec = new Vector4f(pos);
+                transform.getMatrix().transform(vec);
+                vec.get(pos);
+                for (int i = 0; i < Math.min(4, e.getElementCount()); i++)
+                {
+                    data[e.getOffset() / 4 + i] = Float.floatToRawIntBits(pos[i]);
+                }
+                return new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+            }
+        }
+        return quad;
     }
 }

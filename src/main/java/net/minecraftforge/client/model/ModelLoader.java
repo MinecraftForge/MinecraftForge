@@ -320,10 +320,11 @@ public class ModelLoader extends ModelBakery
                 throw new IllegalArgumentException("can't bake vanilla models to the format that doesn't fit into the default one: " + format);
             }
             ModelBlock model = this.model;
-            if(hasItemModel(model)) return new ItemLayerModel(model).bake(state, format, bakedTextureGetter);//model = makeItemModel(model);
             if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
-            if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform())), Attributes.DEFAULT_BAKED_FORMAT);
-            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), state instanceof UVLock), Attributes.DEFAULT_BAKED_FORMAT);
+            ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
+            if(hasItemModel(model)) return new ItemLayerModel(model).bake(new IPerspectiveState.Impl(state, transforms), format, bakedTextureGetter);
+            if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
+            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), state instanceof UVLock), format);
         }
 
         public IModelState getDefaultState()
