@@ -33,6 +33,7 @@ public class ModelLoaderRegistry
     {
         registerLoader(B3DLoader.instance);
         registerLoader(ModelFluid.FluidLoader.instance);
+        registerLoader(ItemLayerModel.Loader.instance);
     }
 
     /*

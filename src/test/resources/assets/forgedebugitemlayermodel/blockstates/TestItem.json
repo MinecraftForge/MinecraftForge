@@ -1,0 +1,11 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "inventory": {
+            "model": "forge:item-layer",
+            "textures": {
+                "layer0": "items/diamond_pickaxe"
+            }
+        }
+    }
+}
