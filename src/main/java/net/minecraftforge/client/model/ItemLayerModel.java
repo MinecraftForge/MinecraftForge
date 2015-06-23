@@ -144,8 +144,9 @@ public class ItemLayerModel implements IRetexturableModel {
         @Override
         public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            TRSRTransformation tr = transforms.getOrDefault(cameraTransformType, TRSRTransformation.identity());
-            Matrix4f mat = tr == TRSRTransformation.identity() ? null : tr.getMatrix();
+            TRSRTransformation tr = transforms.get(cameraTransformType);
+            Matrix4f mat = null;
+            if(tr != null && tr != TRSRTransformation.identity()) mat = tr.getMatrix();
             return Pair.of((IBakedModel)this, mat);
         }
     }

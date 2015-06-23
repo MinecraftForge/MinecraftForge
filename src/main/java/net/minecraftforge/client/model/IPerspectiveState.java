@@ -52,7 +52,9 @@ public interface IPerspectiveState extends IModelState
 
         public IModelState forPerspective(TransformType type)
         {
-            return states.getOrDefault(type, TRSRTransformation.identity());
+            IModelState state = states.get(type);
+            if(state == null) state = TRSRTransformation.identity();
+            return state;
         }
     }
 }
