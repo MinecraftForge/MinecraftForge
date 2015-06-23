@@ -41,6 +41,7 @@ import net.minecraft.client.resources.model.BuiltInModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
@@ -111,11 +112,10 @@ public class ModelLoader extends ModelBakery
             {
                 for(ResourceLocation t : textures)
                 {
-                    sprites.put(t, map.registerSprite(t));
+                    map.registerSprite(t);
                 }
             }
         });
-        sprites.put(new ResourceLocation("missingno"), textureMap.getMissingSprite());
         Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
         {
             public TextureAtlasSprite apply(ResourceLocation location)
@@ -324,7 +324,31 @@ public class ModelLoader extends ModelBakery
             ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
             if(hasItemModel(model)) return new ItemLayerModel(model).bake(new IPerspectiveState.Impl(state, transforms), format, bakedTextureGetter);
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
-            return new IFlexibleBakedModel.Wrapper(bakeModel(model, state.apply(this), state instanceof UVLock), format);
+            return bakeNormal(model, state.apply(this), format, bakedTextureGetter, state instanceof UVLock);
+        }
+
+        private IFlexibleBakedModel bakeNormal(ModelBlock model, TRSRTransformation state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        {
+            TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
+            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
+            for(BlockPart part : (Iterable<BlockPart>)model.getElements())
+            {
+                for(Map.Entry<EnumFacing, BlockPartFace> e : (Iterable<Map.Entry<EnumFacing, BlockPartFace>>)part.mapFaces.entrySet())
+                {
+                    TextureAtlasSprite textureatlassprite1 = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName(e.getValue().texture)));
+
+                    if (e.getValue().cullFace == null || !TRSRTransformation.isInteger(state.getMatrix()))
+                    {
+                        builder.addGeneralQuad(makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), state, uvLocked));
+                    }
+                    else
+                    {
+                        builder.addFaceQuad(state.rotate(e.getValue().cullFace), makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), state, uvLocked));
+                    }
+                }
+            }
+
+            return new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format);
         }
 
         public IModelState getDefaultState()
