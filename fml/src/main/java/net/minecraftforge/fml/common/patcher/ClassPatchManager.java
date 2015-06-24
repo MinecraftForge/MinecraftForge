@@ -89,6 +89,11 @@ public class ClassPatchManager {
             {
                 FMLRelaunchLog.warning("Patcher expecting empty class data file for %s, but received non-empty", patch.targetClassName);
             }
+            else if (patch.existsAtTarget && (inputData == null || inputData.length == 0))
+            {
+                FMLRelaunchLog.severe("Patcher expecting non-empty class data file for %s, but received empty.", patch.targetClassName);
+                throw new RuntimeException(String.format("Patcher expecting non-empty class data file for %s, but received empty, your vanilla jar may be corrupt.", patch.targetClassName));
+            }
             else
             {
                 int inputChecksum = Hashing.adler32().hashBytes(inputData).asInt();
