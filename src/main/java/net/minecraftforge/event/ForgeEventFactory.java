@@ -18,6 +18,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
@@ -33,6 +34,8 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
@@ -458,4 +461,20 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
+    
+    public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
+    {
+        return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.fire.getDefaultState(), new BlockPos(player));
+    }
+    
+    public static boolean renderWaterOverlay(EntityPlayer player, float renderPartialTicks)
+    {
+        return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.water.getDefaultState(), new BlockPos(player));
+    }
+    
+    public static boolean renderBlockOverlay(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos pos)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
+    }
+
 }
