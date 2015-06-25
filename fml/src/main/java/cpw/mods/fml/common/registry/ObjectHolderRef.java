@@ -116,7 +116,7 @@ class ObjectHolderRef {
 
         if (thing == null)
         {
-            FMLLog.warning("Unable to lookup %s for %s. Is there something wrong with the registry?", injectedObject, field);
+            FMLLog.getLogger().log(Level.DEBUG, "Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.", injectedObject, field);
             return;
         }
         try
