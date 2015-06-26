@@ -40,6 +40,7 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.OldServerPinger;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FallbackResourceManager;
@@ -382,6 +383,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
     public void onInitializationComplete()
     {
+        // re-sync TEXTURE_2D, splash screen disables it with a direct GL call
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableTexture2D();
         if (wrongMC != null)
         {
             showGuiScreen(new GuiWrongMinecraft(wrongMC));

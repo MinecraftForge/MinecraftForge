@@ -206,7 +206,7 @@ public class GuiIngameForge extends GuiIngame
             GlStateManager.enableAlpha();
             drawTexturedModalRect(width / 2 - 7, height / 2 - 7, 0, 0, 16, 16);
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-            GL11.glDisable(GL11.GL_BLEND);
+            GlStateManager.disableBlend();
         }
         post(CROSSHAIRS);
     }
