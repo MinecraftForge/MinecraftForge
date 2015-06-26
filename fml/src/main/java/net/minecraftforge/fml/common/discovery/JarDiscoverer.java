@@ -14,13 +14,18 @@ package net.minecraftforge.fml.common.discovery;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainerFactory;
+import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.TweakModContainer;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 
 import org.apache.logging.log4j.Level;
@@ -28,6 +33,7 @@ import org.apache.logging.log4j.Level;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class JarDiscoverer implements ITypeDiscoverer
@@ -41,8 +47,9 @@ public class JarDiscoverer implements ITypeDiscoverer
         try
         {
             jar = new JarFile(candidate.getModContainer());
+            Attributes atr = jar.getManifest() != null ? jar.getManifest().getMainAttributes() : null;
 
-            if (jar.getManifest()!=null && (jar.getManifest().getMainAttributes().get("FMLCorePlugin") != null || jar.getManifest().getMainAttributes().get("TweakClass") != null))
+            if (atr != null && (atr.getValue("FMLCorePlugin") != null || (atr.getValue("TweakClass") != null && atr.getValue("TweakName") == null)))
             {
                 FMLLog.finer("Ignoring coremod or tweak system %s", candidate.getModContainer());
                 return foundMods;
@@ -59,6 +66,22 @@ public class JarDiscoverer implements ITypeDiscoverer
                 FMLLog.fine("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(null, "");
             }
+            
+            if (atr!=null && atr.getValue("TweakClass") != null && atr.getValue("TweakName") != null)
+            {
+                // Tweak Mod with TweakName = ModContainer
+                String name = atr.getValue("TweakName");
+                String version = atr.getValue("TweakVersion") != null ? atr.getValue("TweakVersion") : "";
+                Map<String, Object> extraData = ImmutableMap.<String,Object>builder().put("name", name).put("version", version).build();
+                ModMetadata meta = mc.getMetadataForId(name, extraData);
+                if(meta.authorList.isEmpty() && atr.getValue("TweakAuthor") != null)
+                {
+                    meta.authorList = Lists.newArrayList(atr.getValue("TweakAuthor").split(","));
+                }
+                foundMods.add(new InjectedModContainer(new TweakModContainer(meta), candidate.getModContainer()));
+                return foundMods;
+            }
+            
             for (ZipEntry ze : Collections.list(jar.entries()))
             {
                 if (ze.getName()!=null && ze.getName().startsWith("__MACOSX"))
