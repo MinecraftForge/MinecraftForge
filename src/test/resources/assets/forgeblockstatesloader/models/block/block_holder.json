@@ -1,0 +1,19 @@
+{
+	"textures": {
+	    "face":"blocks/cobblestone"
+	},
+    "elements": [
+        {
+            "from": [3, 4, 4],
+            "to": [12, 12, 12],
+            "faces": {
+                "down":  { "texture":"#face" },
+                "up":    { "texture":"#face" },
+                "north": { "texture":"#face" },
+                "south": { "texture":"#face" },
+                "west":  { "texture":"#face" },
+                "east":  { "texture":"#face" }
+            }
+        }
+    ]
+}

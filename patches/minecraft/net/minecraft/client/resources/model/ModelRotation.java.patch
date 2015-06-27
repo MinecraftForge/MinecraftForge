@@ -9,7 +9,7 @@
  {
      X0_Y0(0, 0),
      X0_Y90(0, 90),
-@@ -122,4 +122,9 @@
+@@ -122,4 +122,11 @@
              field_177546_q.put(Integer.valueOf(var3.field_177545_r), var3);
          }
      }
@@ -18,4 +18,6 @@
 +    public javax.vecmath.Matrix4f getMatrix() { return net.minecraftforge.client.ForgeHooksClient.getMatrix(this); }
 +    public EnumFacing rotate(EnumFacing facing) { return func_177523_a(facing); }
 +    public int rotate(EnumFacing facing, int vertexIndex) { return func_177520_a(facing, vertexIndex); }
++    public int getX() { return field_177543_t * 90; }
++    public int getY() { return field_177542_u * 90; }
  }
