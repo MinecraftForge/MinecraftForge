@@ -138,6 +138,23 @@ public class ForgeBlockStateV1 extends Marker
                     }
                 }
 
+                ModelRotation totalRotation = ModelRotation.X0_Y0;  // Rotate the parent model by this rotation
+
+                for (Entry<String, Object> partKey : v.simpleSubmodels.entrySet())
+                { // Scan all the submodels for parent rotations
+                    if (partKey.getValue() == null)
+                        continue;
+                    List<ForgeBlockStateV1.Variant> partList = v.submodels.get(partKey.getKey());
+                    ForgeBlockStateV1.Variant part = partList.get(0);
+                    totalRotation = combine(totalRotation, part.parentRotation.orNull());
+                    part.parentRotation = Optional.absent();
+                }
+
+                if (totalRotation != ModelRotation.X0_Y0)
+                {
+                    v.rotation = Optional.of(combine(totalRotation, v.rotation.or(ModelRotation.X0_Y0)));
+                }
+
                 if (v.textures != null)
                 {
                     for (Entry<String, String> tex : v.textures.entrySet())
@@ -176,6 +193,16 @@ public class ForgeBlockStateV1 extends Marker
             }
 
             return ret;
+        }
+
+        private ModelRotation combine(ModelRotation one, ModelRotation two) {
+            if (one == null)
+                return two;
+            if (two == null)
+                return one;
+            int x = one.getX() + two.getX();
+            int y = one.getY() + two.getY();
+            return ModelRotation.getModelRotation(x % 360, y % 360);
         }
 
         private Multimap<String, ForgeBlockStateV1.Variant> getPermutations(List<String> sorted, Map<String, Map<String, ForgeBlockStateV1.Variant>> base, int depth, String prefix, Multimap<String, ForgeBlockStateV1.Variant> ret, ForgeBlockStateV1.Variant parent)
@@ -254,6 +281,7 @@ public class ForgeBlockStateV1 extends Marker
         private ResourceLocation model = null;
         private boolean modelSet = false;
         private Optional<ModelRotation> rotation = Optional.absent();
+        private Optional<ModelRotation> parentRotation = Optional.absent();
         private Optional<Boolean> uvLock = Optional.absent();
         private Optional<Integer> weight = Optional.absent();
         private Map<String, String> textures = Maps.newHashMap();
@@ -271,6 +299,7 @@ public class ForgeBlockStateV1 extends Marker
             this.model = other.model;
             this.modelSet = other.modelSet;
             this.rotation = other.rotation;
+            this.parentRotation = other.parentRotation;
             this.uvLock = other.uvLock;
             this.weight = other.weight;
             this.textures.putAll(other.textures);
@@ -290,6 +319,7 @@ public class ForgeBlockStateV1 extends Marker
                 this.modelSet = parent.modelSet;
             }
             if (!this.rotation.isPresent()) this.rotation = parent.rotation;
+            if (!this.parentRotation.isPresent()) this.parentRotation = parent.parentRotation;
             if (!this.uvLock.isPresent())   this.uvLock   = parent.uvLock;
             if (!this.weight.isPresent())   this.weight   = parent.weight;
 
@@ -433,6 +463,15 @@ public class ForgeBlockStateV1 extends Marker
                     ret.rotation = Optional.of(ModelRotation.getModelRotation(x, y));
                     if (ret.rotation == null)
                         throw new JsonParseException("Invalid BlockModelRotation x: " + x + " y: " + y);
+                }
+
+                if (json.has("model_x") || json.has("model_y"))
+                {   // The parent model must be rotated
+                    int x = JsonUtils.getJsonObjectIntegerFieldValueOrDefault(json, "model_x", 0);
+                    int y = JsonUtils.getJsonObjectIntegerFieldValueOrDefault(json, "model_y", 0);
+                     ret.parentRotation = Optional.of(ModelRotation.getModelRotation(x, y));
+                     if (ret.parentRotation == null)
+                          throw new JsonParseException("Invalid Parent BlockModelRotation x: " + x + " y: " + y);
                 }
 
                 if (json.has("uvlock"))
