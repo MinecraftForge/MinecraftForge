@@ -70,6 +70,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static int defaultSpawnFuzz = 20;
     public static boolean defaultHasSpawnFuzz = true;
+    public static boolean forgeLightPipelineEnabled = true;
 
     private static Configuration config;
 
@@ -220,6 +221,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "If the overworld has ANY spawn fuzz at all. If not, the spawn will always be the exact same location.");
         prop.setLanguageKey("forge.configgui.hasspawnfuzz").setRequiresWorldRestart(false);
         defaultHasSpawnFuzz = prop.getBoolean(Boolean.TRUE);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,
+                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
+        forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);

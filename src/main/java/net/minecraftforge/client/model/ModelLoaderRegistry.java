@@ -1,6 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,8 +16,6 @@ import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
 
 /*
  * Central hub for custom model loaders.

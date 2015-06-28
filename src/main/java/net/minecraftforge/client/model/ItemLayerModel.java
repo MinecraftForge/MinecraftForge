@@ -1,12 +1,12 @@
 package net.minecraftforge.client.model;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector4f;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -14,19 +14,17 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class ItemLayerModel implements IRetexturableModel {
@@ -90,13 +88,7 @@ public class ItemLayerModel implements IRetexturableModel {
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
-            builder.addAll(Iterables.transform(getQuadsForSprite(i, sprite, format), new Function<BakedQuad, BakedQuad>()
-            {
-                public BakedQuad apply(BakedQuad input)
-                {
-                    return Attributes.transform(transform, input, format);
-                }
-            }));
+            builder.addAll(getQuadsForSprite(i, sprite, format, transform));
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         if(state instanceof IPerspectiveState)
@@ -146,20 +138,17 @@ public class ItemLayerModel implements IRetexturableModel {
         {
             TRSRTransformation tr = transforms.get(cameraTransformType);
             Matrix4f mat = null;
-            if(tr != null && tr != TRSRTransformation.identity()) mat = tr.blockCornerToCenter(tr).getMatrix();
+            if(tr != null && tr != TRSRTransformation.identity()) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
             return Pair.of((IBakedModel)this, mat);
         }
     }
 
-    public ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format)
+    public ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, TRSRTransformation transform)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
         int uMax = sprite.getIconWidth();
         int vMax = sprite.getIconHeight();
-
-        ByteBuffer buf = BufferUtils.createByteBuffer(4 * format.getNextOffset());
-        int[] data;
 
         for(int f = 0; f < sprite.getFrameCount(); f++)
         {
@@ -175,26 +164,26 @@ public class ItemLayerModel implements IRetexturableModel {
                     boolean t = isTransparent(pixels, uMax, vMax, u, v);
                     if(ptu && !t) // left - transparent, right - opaque
                     {
-                        builder.add(buildSideQuad(buf, format, EnumFacing.WEST, tint, sprite, u, v));
+                        builder.add(buildSideQuad(format, transform, EnumFacing.WEST, tint, sprite, u, v));
                     }
                     if(!ptu && t) // left - opaque, right - transparent
                     {
-                        builder.add(buildSideQuad(buf, format, EnumFacing.EAST, tint, sprite, u, v));
+                        builder.add(buildSideQuad(format, transform, EnumFacing.EAST, tint, sprite, u, v));
                     }
                     if(ptv[u] && !t) // up - transparent, down - opaque
                     {
-                        builder.add(buildSideQuad(buf, format, EnumFacing.UP, tint, sprite, u, v));
+                        builder.add(buildSideQuad(format, transform, EnumFacing.UP, tint, sprite, u, v));
                     }
                     if(!ptv[u] && t) // up - opaque, down - transparent
                     {
-                        builder.add(buildSideQuad(buf, format, EnumFacing.DOWN, tint, sprite, u, v));
+                        builder.add(buildSideQuad(format, transform, EnumFacing.DOWN, tint, sprite, u, v));
                     }
                     ptu = t;
                     ptv[u] = t;
                 }
                 if(!ptu) // last - opaque
                 {
-                    builder.add(buildSideQuad(buf, format, EnumFacing.EAST, tint, sprite, uMax, v));
+                    builder.add(buildSideQuad(format, transform, EnumFacing.EAST, tint, sprite, uMax, v));
                 }
             }
             // last line
@@ -202,19 +191,19 @@ public class ItemLayerModel implements IRetexturableModel {
             {
                 if(!ptv[u])
                 {
-                    builder.add(buildSideQuad(buf, format, EnumFacing.DOWN, tint, sprite, u, vMax));
+                    builder.add(buildSideQuad(format, transform, EnumFacing.DOWN, tint, sprite, u, vMax));
                 }
             }
         }
         // front
-        builder.add(buildQuad(buf, format, EnumFacing.SOUTH, tint,
+        builder.add(buildQuad(format, transform, EnumFacing.SOUTH, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
             1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
             1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
         ));
         // back
-        builder.add(buildQuad(buf, format, EnumFacing.NORTH, tint,
+        builder.add(buildQuad(format, transform, EnumFacing.NORTH, tint,
             0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
             1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
@@ -228,7 +217,7 @@ public class ItemLayerModel implements IRetexturableModel {
         return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
     }
 
-    private static BakedQuad buildSideQuad(ByteBuffer buf, VertexFormat format, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v)
+    private static BakedQuad buildSideQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v)
     {
         float x0 = (float)u / sprite.getIconWidth();
         float y0 = (float)v / sprite.getIconHeight();
@@ -256,7 +245,7 @@ public class ItemLayerModel implements IRetexturableModel {
         float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * 1e-2f / sprite.getIconHeight());
         float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * 1e-2f / sprite.getIconHeight());
         return buildQuad(
-            buf, format, side.getOpposite(), tint, // getOpposite is related either to the swapping of V direction, or something else
+            format, transform, side.getOpposite(), tint, // getOpposite is related either to the swapping of V direction, or something else
             x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
             x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
@@ -265,48 +254,50 @@ public class ItemLayerModel implements IRetexturableModel {
     }
 
     private static final BakedQuad buildQuad(
-        ByteBuffer buf, VertexFormat format, EnumFacing side, int tint,
+        VertexFormat format, TRSRTransformation transform, EnumFacing side, int tint,
         float x0, float y0, float z0, float u0, float v0,
         float x1, float y1, float z1, float u1, float v1,
         float x2, float y2, float z2, float u2, float v2,
         float x3, float y3, float z3, float u3, float v3)
     {
-        buf.clear();
-        putVertex(buf, format, side, x0, y0, z0, u0, v0);
-        putVertex(buf, format, side, x1, y1, z1, u1, v1);
-        putVertex(buf, format, side, x2, y2, z2, u2, v2);
-        putVertex(buf, format, side, x3, y3, z3, u3, v3);
-        buf.flip();
-        int[] data = new int[4 * format.getNextOffset() / 4];
-        buf.asIntBuffer().get(data);
-        return new BakedQuad(data, tint, side);
+        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+        builder.setQuadTint(tint);
+        builder.setQuadOrientation(side);
+        putVertex(builder, format, transform, side, x0, y0, z0, u0, v0);
+        putVertex(builder, format, transform, side, x1, y1, z1, u1, v1);
+        putVertex(builder, format, transform, side, x2, y2, z2, u2, v2);
+        putVertex(builder, format, transform, side, x3, y3, z3, u3, v3);
+        return builder.build();
     }
 
-    private static void put(ByteBuffer buf, VertexFormatElement e, Float... fs)
+    private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, TRSRTransformation transform, EnumFacing side, float x, float y, float z, float u, float v)
     {
-        Attributes.put(buf, e, true, 0f, fs);
-    }
-
-    private static void putVertex(ByteBuffer buf, VertexFormat format, EnumFacing side, float x, float y, float z, float u, float v)
-    {
-        for(VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
+        Vector4f vec = new Vector4f();
+        for(int e = 0; e < format.getElementCount(); e++)
         {
-            switch(e.getUsage())
+            switch(format.getElement(e).getUsage())
             {
             case POSITION:
-                put(buf, e, x, y, z, 1f);
+                vec.x = x;
+                vec.y = y;
+                vec.z = z;
+                vec.w = 1;
+                transform.getMatrix().transform(vec);
+                builder.put(e, vec.x, vec.y, vec.z, vec.w);
                 break;
             case COLOR:
-                put(buf, e, 1f, 1f, 1f, 1f);
+                builder.put(e, 1f, 1f, 1f, 1f);
                 break;
-            case UV:
-                put(buf, e, u, v, 0f, 1f);
+            case UV: if(format.getElement(e).getIndex() == 0)
+            {
+                builder.put(e, u, v, 0f, 1f);
                 break;
+            }
             case NORMAL:
-                put(buf, e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
                 break;
             default:
-                put(buf, e);
+                builder.put(e);
                 break;
             }
         }

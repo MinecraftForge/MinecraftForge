@@ -6,10 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.vecmath.Matrix4f;
 
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.resources.model.ModelRotation;

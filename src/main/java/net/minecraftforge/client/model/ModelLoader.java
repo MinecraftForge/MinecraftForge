@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.BuiltInModel;
@@ -47,18 +47,13 @@ import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -123,7 +118,7 @@ public class ModelLoader extends ModelBakery
                 return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
             }
         };
-        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
+        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
         for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
             if(e.getValue() == getMissingModel())
@@ -132,7 +127,7 @@ public class ModelLoader extends ModelBakery
             }
             else
             {
-                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
+                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), DefaultVertexFormats.ITEM, textureGetter));
             }
         }
         return bakedRegistry;
@@ -328,6 +323,7 @@ public class ModelLoader extends ModelBakery
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
+            // TODO perspective awareness for this
             return bakeNormal(model, state.apply(this), format, bakedTextureGetter, state instanceof UVLock);
         }
 

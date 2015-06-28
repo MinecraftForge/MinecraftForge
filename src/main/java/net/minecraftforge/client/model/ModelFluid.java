@@ -1,6 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -11,20 +10,19 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLLog;
-
-import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -115,9 +113,6 @@ public class ModelFluid implements IModelCustomData
             this.gas = gas;
             this.state = stateOption;
 
-            ByteBuffer buf = BufferUtils.createByteBuffer(4 * format.getNextOffset());
-            int[] data;
-
             faceQuads = Maps.newEnumMap(EnumFacing.class);
             for(EnumFacing side : EnumFacing.values())
             {
@@ -157,36 +152,34 @@ public class ModelFluid implements IModelCustomData
                 float s = MathHelper.sin(flow) * scale;
 
                 EnumFacing side = gas ? EnumFacing.DOWN : EnumFacing.UP;
-                buf.clear();
+                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+                builder.setQuadOrientation(side);
+                builder.setQuadColored();
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
-                        buf, side,
+                        builder, side,
                         x[i], y[i], z[i],
                         topSprite.getInterpolatedU(8 + c * (x[i] * 2 - 1) + s * (z[i] * 2 - 1)),
                         topSprite.getInterpolatedV(8 + c * (x[(i + 1) % 4] * 2 - 1) + s * (z[(i + 1) % 4] * 2 - 1)));
                 }
-                buf.flip();
-                data = new int[4 * format.getNextOffset() / 4];
-                buf.asIntBuffer().get(data);
-                faceQuads.put(side, ImmutableList.<BakedQuad>of(new IColoredBakedQuad.ColoredBakedQuad(data, -1, side)));
+                faceQuads.put(side, ImmutableList.<BakedQuad>of(builder.build()));
 
                 // bottom
 
                 side = side.getOpposite();
-                buf.clear();
+                builder = new UnpackedBakedQuad.Builder(format);
+                builder.setQuadOrientation(side);
+                builder.setQuadColored();
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
-                        buf, side,
+                        builder, side,
                         z[i], gas ? 1 : 0, x[i],
                         still.getInterpolatedU(z[i] * 16),
                         still.getInterpolatedV(x[i] * 16));
                 }
-                buf.flip();
-                data = new int[4 * format.getNextOffset() / 4];
-                buf.asIntBuffer().get(data);
-                faceQuads.put(side, ImmutableList.<BakedQuad>of(new IColoredBakedQuad.ColoredBakedQuad(data, -1, side)));
+                faceQuads.put(side, ImmutableList.<BakedQuad>of(builder.build()));
 
                 // sides
 
@@ -197,22 +190,21 @@ public class ModelFluid implements IModelCustomData
 
                     for(int k = 0; k < 2; k++)
                     {
-                        buf.clear();
+                        builder = new UnpackedBakedQuad.Builder(format);
+                        builder.setQuadOrientation(side);
+                        builder.setQuadColored();
                         for(int j = 0; j < 4; j++)
                         {
                             int l = (k * 3) + (1 - 2 * k) * j;
                             float yl = z[l] * y[(i + x[l]) % 4];
                             if(gas && z[l] == 0) yl = 1;
                             putVertex(
-                                buf, side,
+                                builder, side,
                                 x[(i + x[l]) % 4], yl, z[(i + x[l]) % 4],
                                 flowing.getInterpolatedU(x[l] * 8),
                                 flowing.getInterpolatedV((gas ? yl : 1 - yl) * 8));
                         }
-                        buf.flip();
-                        data = new int[4 * format.getNextOffset() / 4];
-                        buf.asIntBuffer().get(data);
-                        q[k] = new IColoredBakedQuad.ColoredBakedQuad(data, -1, side);
+                        q[k] = builder.build();
                     }
                     faceQuads.put(side, ImmutableList.of(q[0], q[1]));
                 }
@@ -221,70 +213,49 @@ public class ModelFluid implements IModelCustomData
             {
                 // 1 quad for inventory
 
-                buf.clear();
+                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+                builder.setQuadOrientation(EnumFacing.UP);
+                builder.setQuadColored();
                 for(int i = 0; i < 4; i++)
                 {
                     putVertex(
-                        buf, EnumFacing.UP,
+                        builder, EnumFacing.UP,
                         z[i], x[i], 0,
                         still.getInterpolatedU(x[i] * 16),
                         still.getInterpolatedV(z[i] * 16));
                 }
-                buf.flip();
-                data = new int[4 * format.getNextOffset() / 4];
-                buf.asIntBuffer().get(data);
-                faceQuads.put(EnumFacing.SOUTH, ImmutableList.<BakedQuad>of(new IColoredBakedQuad.ColoredBakedQuad(data, -1, EnumFacing.UP)));
+                faceQuads.put(EnumFacing.SOUTH, ImmutableList.<BakedQuad>of(builder.build()));
             }
         }
 
-        private void put(ByteBuffer buf, VertexFormatElement e, Float... fs)
+        private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, float x, float y, float z, float u, float v)
         {
-            Attributes.put(buf, e, true, 0f, fs);
-        }
-
-        private float diffuse(EnumFacing side)
-        {
-            switch(side)
-            {
-            case DOWN:
-                return .5f;
-            case UP:
-                return 1f;
-            case NORTH:
-            case SOUTH:
-                return .8f;
-            default:
-                return .6f;
-            }
-        }
-
-        private void putVertex(ByteBuffer buf, EnumFacing side, float x, float y, float z, float u, float v)
-        {
-            for(VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
+            for(int e = 0; e < format.getElementCount(); e++)
             {
                 // TODO transformation
-                switch(e.getUsage())
+                switch(format.getElement(e).getUsage())
                 {
                 case POSITION:
-                    put(buf, e, x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1f);
+                    builder.put(e, x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1f);
                     break;
                 case COLOR:
-                    // temporarily add diffuse lighting
-                    float d = diffuse(side);
-                    put(buf, e,
+                    float d = LightUtil.diffuseLight(side);
+                    builder.put(e,
                         d * ((color >> 16) & 0xFF) / 255f,
                         d * ((color >> 8) & 0xFF) / 255f,
                         d * (color & 0xFF) / 255f,
                         ((color >> 24) & 0xFF) / 255f);
                     break;
-                case UV:
-                    put(buf, e, u, v, 0f, 1f);
+                case UV: if(format.getElement(e).getIndex() == 0)
+                {
+                    builder.put(e, u, v, 0f, 1f);
                     break;
+                }
                 case NORMAL:
-                    put(buf, e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetX(), (float)side.getFrontOffsetX(), 0f);
+                    builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
                     break;
                 default:
-                    put(buf, e);
+                    builder.put(e);
                     break;
                 }
             }

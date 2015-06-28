@@ -74,6 +74,10 @@ public class Attributes
         return true;
     }
 
+    /**
+     * @deprecated use UnpackedBakedQuad.Builder
+     */
+    @Deprecated
     public static void put(ByteBuffer buf, VertexFormatElement e, boolean denormalize, Number fill, Number... ns)
     {
         if(e.getElementCount() > ns.length && fill == null) throw new IllegalArgumentException("not enough elements");
@@ -109,6 +113,10 @@ public class Attributes
         }
     }
 
+    /**
+     * @deprecated use IVertexConsumer
+     */
+    @Deprecated
     public static BakedQuad transform(TRSRTransformation transform, BakedQuad quad, VertexFormat format)
     {
         for (VertexFormatElement e : (List<VertexFormatElement>)format.getElements())

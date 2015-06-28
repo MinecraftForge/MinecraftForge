@@ -52,6 +52,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.MovingObjectPosition;
@@ -83,6 +84,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
 
 import com.google.common.collect.Maps;
 
@@ -682,7 +684,7 @@ public class ForgeHooksClient
             int ncg = Math.min(0xFF, (int)(cg * vcg / 0xFF));
             int ncb = Math.min(0xFF, (int)(cb * vcb / 0xFF));
             int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
-            renderer.putColorRGBA(renderer.getColorIndex(i + 1), ncr, ncg, ncb, nca);
+            renderer.putColorRGBA(renderer.getColorIndex(4 - i), ncr, ncg, ncb, nca);
         }
     }
 
@@ -709,5 +711,16 @@ public class ForgeHooksClient
     public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
     {
         tileItemMap.put(Pair.of(item, metadata), TileClass);
+    }
+
+    public static void fillNormal(int[] faceData, EnumFacing facing)
+    {
+        int x = ((byte)(facing.getFrontOffsetX() * 127)) & 0xFF;
+        int y = ((byte)(facing.getFrontOffsetY() * 127)) & 0xFF;
+        int z = ((byte)(facing.getFrontOffsetZ() * 127)) & 0xFF;
+        for(int i = 0; i < 4; i++)
+        {
+            faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
+        }
     }
 }

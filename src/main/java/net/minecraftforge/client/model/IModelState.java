@@ -1,7 +1,5 @@
 package net.minecraftforge.client.model;
 
-import javax.vecmath.Matrix4f;
-
 import com.google.common.base.Function;
 
 /*
