@@ -80,7 +80,10 @@ processJson {
 task changelog(type: JenkinsChangelog) {
 
     // skip if there is no forge jenkins pass
-    onlyIf { project.hasProperty('forgeJenkinsPass') }
+    onlyIf {
+        project.hasProperty('forgeJenkinsPass')
+        project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
+    }
 
     outputs.upToDateWhen { false } // never up to date
     serverRoot = "http://ci.jenkins.minecraftforge.net/"
