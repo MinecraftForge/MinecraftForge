@@ -9,21 +9,32 @@ import com.google.common.collect.ImmutableMap;
  */
 public class MapModelState implements IModelState
 {
-    private final ImmutableMap<IModelPart, TRSRTransformation> map;
-    private final TRSRTransformation def;
+    private final ImmutableMap<IModelPart, IModelState> map;
+    private final IModelState def;
 
-    public MapModelState(Map<IModelPart, TRSRTransformation> map)
+    public MapModelState(Map<IModelPart, ? extends IModelState> map)
     {
         this(map, TRSRTransformation.identity());
     }
 
-    public MapModelState(Map<IModelPart, TRSRTransformation> map, TRSRTransformation def)
+    public MapModelState(Map<IModelPart, ? extends IModelState> map, TRSRTransformation def)
     {
-        this.map = ImmutableMap.copyOf(map);
+        this(map, (IModelState)def);
+    }
+
+    public MapModelState(Map<IModelPart, ? extends IModelState> map, IModelState def)
+    {
+        this.map = ImmutableMap.<IModelPart, IModelState>copyOf(map);
         this.def = def;
     }
 
     public TRSRTransformation apply(IModelPart part)
+    {
+        if(!map.containsKey(part)) return def.apply(part);
+        return map.get(part).apply(part);
+    }
+
+    public IModelState getState(IModelPart part)
     {
         if(!map.containsKey(part)) return def;
         return map.get(part);

@@ -17,11 +17,13 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -33,6 +35,8 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelCustomData;
 import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.IPerspectiveState;
 import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
@@ -54,7 +58,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
@@ -65,7 +68,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /*
@@ -194,11 +196,25 @@ public class B3DLoader implements ICustomModelLoader
     {
         private final Animation animation;
         private final int frame;
+        private final IModelState parent;
 
         public B3DState(Animation animation, int frame)
         {
+            this(animation, frame, null);
+        }
+
+        public B3DState(Animation animation, int frame, IModelState parent)
+        {
             this.animation = animation;
             this.frame = frame;
+            this.parent = getParent(parent);
+        }
+
+        private IModelState getParent(IModelState parent)
+        {
+            if (parent == null) return null;
+            else if (parent instanceof B3DState) return ((B3DState)parent).parent;
+            return parent;
         }
 
         public Animation getAnimation()
@@ -216,6 +232,10 @@ public class B3DLoader implements ICustomModelLoader
             if(!(part instanceof PartWrapper<?>))
             {
                 throw new IllegalArgumentException("B3DState can only be applied to b3d models");
+            }
+            if(parent != null)
+            {
+                return parent.apply(part).compose(getNodeMatrix(((PartWrapper<?>)part).getNode()));
             }
             return getNodeMatrix(((PartWrapper<?>)part).getNode());
         }
@@ -452,7 +472,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel
+    private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
     {
         private final B3DLoader.Wrapper model;
         private final IModelState state;
@@ -638,7 +658,7 @@ public class B3DLoader implements ICustomModelLoader
         {
             if(!cache.containsKey(frame))
             {
-                cache.put(frame, new BakedWrapper(model, new B3DState(model.getNode().getAnimation(), frame), format, textures));
+                cache.put(frame, new BakedWrapper(model, new B3DState(model.getNode().getAnimation(), frame, state), format, textures));
             }
             return cache.get(frame);
         }
@@ -652,6 +672,15 @@ public class B3DLoader implements ICustomModelLoader
         {
             // TODO specify how to get B3DState from ItemStack
             return this;
+        }
+
+        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        {
+            if(state instanceof IPerspectiveState)
+            {
+                return Pair.of((IBakedModel)this, TRSRTransformation.blockCornerToCenter(((IPerspectiveState)state).forPerspective(cameraTransformType).apply(model)).getMatrix());
+            }
+            return Pair.of((IBakedModel)this, null);
         }
     }
 }

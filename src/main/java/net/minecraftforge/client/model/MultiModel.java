@@ -183,7 +183,7 @@ public class MultiModel implements IModel
         IFlexibleBakedModel bakedBase = null;
         
         if (base != null)
-            bakedBase = base.bake(baseState, format, bakedTextureGetter);
+            bakedBase = base.bake(state, format, bakedTextureGetter);
         
         ImmutableMap.Builder<String, IFlexibleBakedModel> mapBuilder = ImmutableMap.builder();
         
@@ -199,7 +199,7 @@ public class MultiModel implements IModel
     @Override
     public IModelState getDefaultState()
     {
-        return ModelRotation.X0_Y0;
+        return baseState;
     }
     
     /**

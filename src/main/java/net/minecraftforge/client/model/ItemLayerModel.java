@@ -146,7 +146,7 @@ public class ItemLayerModel implements IRetexturableModel {
         {
             TRSRTransformation tr = transforms.get(cameraTransformType);
             Matrix4f mat = null;
-            if(tr != null && tr != TRSRTransformation.identity()) mat = tr.getMatrix();
+            if(tr != null && tr != TRSRTransformation.identity()) mat = tr.blockCornerToCenter(tr).getMatrix();
             return Pair.of((IBakedModel)this, mat);
         }
     }
