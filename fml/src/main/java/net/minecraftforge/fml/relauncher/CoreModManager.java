@@ -360,7 +360,14 @@ public class CoreModManager {
                 Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
                 sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
                 handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
-                loadedCoremods.add(coreMod.getName());
+                if(mfAttributes.getValue("TweakName") != null)
+                {
+                    reparsedCoremods.add(coreMod.getName());
+                }
+                else
+                {
+                    loadedCoremods.add(coreMod.getName());
+                }
                 continue;
             }
             List<String> modTypes = mfAttributes.containsKey(MODTYPE) ? Arrays.asList(mfAttributes.getValue(MODTYPE).split(",")) : ImmutableList.of("FML");
