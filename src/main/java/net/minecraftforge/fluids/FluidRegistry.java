@@ -409,7 +409,7 @@ public abstract class FluidRegistry
             if(fluid.getFlowing() != null)
             {
                 TextureAtlasSprite flowing = map.registerSprite(fluid.getFlowing());
-                fluid.setStillIcon(flowing);
+                fluid.setFlowingIcon(flowing);
             }
         }
     }
