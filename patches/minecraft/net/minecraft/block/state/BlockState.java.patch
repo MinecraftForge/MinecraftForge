@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockState.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockState.java
-@@ -47,6 +47,16 @@
+@@ -43,10 +43,21 @@
+     private final Block field_177627_c;
+     private final ImmutableList field_177624_d;
+     private final ImmutableList field_177625_e;
++    private Map stateMap;
+     private static final String __OBFID = "CL_00002030";
  
      public BlockState(Block p_i45663_1_, IProperty ... p_i45663_2_)
      {
@@ -17,23 +22,111 @@
          this.field_177627_c = p_i45663_1_;
          Arrays.sort(p_i45663_2_, new Comparator()
          {
-@@ -70,7 +80,7 @@
+@@ -62,7 +73,6 @@
+         });
+         this.field_177624_d = ImmutableList.copyOf(p_i45663_2_);
+         LinkedHashMap linkedhashmap = Maps.newLinkedHashMap();
+-        ArrayList arraylist = Lists.newArrayList();
+         Iterable iterable = Cartesian.func_179321_a(this.func_177620_e());
+         Iterator iterator = iterable.iterator();
+ 
+@@ -70,26 +80,26 @@
          {
              List list = (List)iterator.next();
              Map map = MapPopulator.func_179400_b(this.field_177624_d, list);
 -            BlockState.StateImplementation stateimplementation = new BlockState.StateImplementation(p_i45663_1_, ImmutableMap.copyOf(map), null);
 +            BlockState.StateImplementation stateimplementation = createState(p_i45663_1_, ImmutableMap.copyOf(map), unlistedProperties);
              linkedhashmap.put(map, stateimplementation);
-             arraylist.add(stateimplementation);
+-            arraylist.add(stateimplementation);
          }
-@@ -231,5 +241,10 @@
+-
+-        iterator = arraylist.iterator();
+-
+-        while (iterator.hasNext())
+-        {
+-            BlockState.StateImplementation stateimplementation1 = (BlockState.StateImplementation)iterator.next();
+-            stateimplementation1.func_177235_a(linkedhashmap);
+-        }
+-
+-        this.field_177625_e = ImmutableList.copyOf(arraylist);
++        this.stateMap = ImmutableMap.copyOf(linkedhashmap);
++        this.field_177625_e = ImmutableList.copyOf(linkedhashmap.values());
+     }
+ 
+     public ImmutableList func_177619_a()
+     {
+         return this.field_177625_e;
+     }
++    
++    public ImmutableMap getStateMap()
++    {
++        if(!(this.stateMap instanceof ImmutableMap))
++        {
++            this.stateMap = ImmutableMap.copyOf(this.stateMap);
++        }
++        return (ImmutableMap) this.stateMap;
++    }
+ 
+     private List func_177620_e()
+     {
+@@ -165,7 +175,7 @@
+                 }
+                 else
+                 {
+-                    return (IBlockState)(this.field_177237_b.get(p_177226_1_) == p_177226_2_ ? this : (IBlockState)this.field_177238_c.get(p_177226_1_, p_177226_2_));
++                    return (IBlockState)(this.field_177237_b.get(p_177226_1_) == p_177226_2_ ? this : (IBlockState)this.field_177239_a.func_176194_O().getStateMap().get(func_177236_b(p_177226_1_, p_177226_2_)));
+                 }
+             }
+ 
+@@ -189,35 +199,13 @@
+                 return this.field_177237_b.hashCode();
+             }
+ 
++            @Deprecated
+             public void func_177235_a(Map p_177235_1_)
+             {
+-                if (this.field_177238_c != null)
+-                {
+-                    throw new IllegalStateException();
++                if(this.field_177239_a.func_176194_O().stateMap == null) {
++                    this.field_177239_a.func_176194_O().stateMap = Maps.newLinkedHashMap();
+                 }
+-                else
+-                {
+-                    HashBasedTable hashbasedtable = HashBasedTable.create();
+-                    Iterator iterator = this.field_177237_b.keySet().iterator();
+-
+-                    while (iterator.hasNext())
+-                    {
+-                        IProperty iproperty = (IProperty)iterator.next();
+-                        Iterator iterator1 = iproperty.func_177700_c().iterator();
+-
+-                        while (iterator1.hasNext())
+-                        {
+-                            Comparable comparable = (Comparable)iterator1.next();
+-
+-                            if (comparable != this.field_177237_b.get(iproperty))
+-                            {
+-                                hashbasedtable.put(iproperty, comparable, p_177235_1_.get(this.func_177236_b(iproperty, comparable)));
+-                            }
+-                        }
+-                    }
+-
+-                    this.field_177238_c = ImmutableTable.copyOf(hashbasedtable);
+-                }
++                this.field_177239_a.func_176194_O().stateMap.put(p_177235_1_, this);
+             }
+ 
+             private Map func_177236_b(IProperty p_177236_1_, Comparable p_177236_2_)
+@@ -231,5 +219,11 @@
              {
                  this(p_i45661_1_, p_i45661_2_);
              }
 +
++            @Deprecated
 +            public ImmutableTable<IProperty, Comparable, IBlockState> getPropertyValueTable()
 +            {
-+                return field_177238_c;
++                throw new RuntimeException("Deprecated method");
 +            }
          }
  }
