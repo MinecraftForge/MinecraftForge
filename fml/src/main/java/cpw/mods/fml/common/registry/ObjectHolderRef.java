@@ -61,7 +61,7 @@ class ObjectHolderRef {
 
         if (this.injectedObject == null || !isValid())
         {
-            throw new IllegalStateException("The ObjectHolder annotation cannot apply to a field that is not an Item or Block");
+            throw new IllegalStateException(String.format("The ObjectHolder annotation cannot apply to a field that is not an Item or Block (found : %s at %s.%s)", field.getType().getName(), field.getClass().getName(), field.getName()));
         }
         makeWritable(field);
     }
