@@ -161,7 +161,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -971,6 +989,1033 @@
+@@ -971,6 +989,1091 @@
          return Block.EnumOffsetType.NONE;
      }
  
@@ -1166,7 +1166,65 @@
 +    {
 +        return func_180664_k() == layer;
 +    }
-+
++    
++    /**
++     * Whether the given entity can hide in this block
++     * @param entity the entity trying to hide, such as a silverfish
++     * @param state the IBlockState
++     * @param world the World
++     * @param pos the position
++     * @return whether the entity can hide
++     */
++    public boolean canEntityHide(Entity entity, IBlockState state, World world, BlockPos pos)
++    {
++        return entity instanceof net.minecraft.entity.monster.EntitySilverfish &&
++                (state == net.minecraft.init.Blocks.field_150348_b.func_176223_P().func_177226_a(BlockStone.field_176247_a, BlockStone.EnumType.STONE)
++                    || this == net.minecraft.init.Blocks.field_150347_e
++                    || this == net.minecraft.init.Blocks.field_150417_aV);
++    }
++    
++    /**
++     * Called when an entity decides to hide in this block, only called when {@link #canEntityHide} returns true
++     * @param entity the entity hiding
++     * @param state the IBlockState
++     * @param world the world
++     * @param pos the position
++     */
++    public void onEntityHide(Entity entity, IBlockState state, World world, BlockPos pos)
++    {
++        world.func_180501_a(pos, net.minecraft.init.Blocks.field_150418_aU.func_176223_P().func_177226_a(BlockSilverfish.field_176378_a, BlockSilverfish.EnumType.func_176878_a(state)), 3);
++    }
++    
++    /**
++     * Get the type of entity hiding in this block or null if no entity is hiding
++     * @param state the IBlockState
++     * @param world the world
++     * @param pos the position
++     * @return the type of hiding entity
++     */
++    public Class<? extends Entity> getHiddenEntityType(IBlockState state, World world, BlockPos pos)
++    {
++        return this == net.minecraft.init.Blocks.field_150418_aU ? net.minecraft.entity.monster.EntitySilverfish.class : null;
++    }
++    
++    /**
++     * Called to re-summon any entity hiding in this block. Only called if {@link #getHiddenEntityType} does not return null.
++     * @param state the IBlockState
++     * @param world the world
++     * @param pos the position
++     */
++    public void summonHiddenEntity(IBlockState state, World world, BlockPos pos)
++    {
++        if (world.func_82736_K().func_82766_b("mobGriefing"))
++        {
++            world.func_175655_b(pos, true);
++        }
++        else
++        {
++            world.func_180501_a(pos, ((BlockSilverfish.EnumType)state.func_177229_b(BlockSilverfish.field_176378_a)).func_176883_d(), 3);
++        }
++    }
++    
 +    // For Internal use only to capture droped items inside getDrops
 +    protected static ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
 +    {

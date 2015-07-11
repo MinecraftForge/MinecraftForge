@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSilverfish.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSilverfish.java
+@@ -36,6 +36,7 @@
+         return 0;
+     }
+ 
++    @Deprecated // use Block.canEntityHide
+     public static boolean func_176377_d(IBlockState p_176377_0_)
+     {
+         Block block = p_176377_0_.func_177230_c();

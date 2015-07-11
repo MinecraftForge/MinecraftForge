@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
+@@ -164,7 +164,7 @@
+                     BlockPos blockpos = (new BlockPos(EntitySilverfish.this.field_70165_t, EntitySilverfish.this.field_70163_u + 0.5D, EntitySilverfish.this.field_70161_v)).func_177972_a(this.field_179483_b);
+                     IBlockState iblockstate = EntitySilverfish.this.field_70170_p.func_180495_p(blockpos);
+ 
+-                    if (BlockSilverfish.func_176377_d(iblockstate))
++                    if (iblockstate.func_177230_c().canEntityHide(EntitySilverfish.this, iblockstate, field_70170_p, blockpos))
+                     {
+                         this.field_179484_c = true;
+                         return true;
+@@ -193,9 +193,9 @@
+                 BlockPos blockpos = (new BlockPos(EntitySilverfish.this.field_70165_t, EntitySilverfish.this.field_70163_u + 0.5D, EntitySilverfish.this.field_70161_v)).func_177972_a(this.field_179483_b);
+                 IBlockState iblockstate = world.func_180495_p(blockpos);
+ 
+-                if (BlockSilverfish.func_176377_d(iblockstate))
++                if (iblockstate.func_177230_c().canEntityHide(EntitySilverfish.this, iblockstate, world, blockpos))
+                 {
+-                    world.func_180501_a(blockpos, Blocks.field_150418_aU.func_176223_P().func_177226_a(BlockSilverfish.field_176378_a, BlockSilverfish.EnumType.func_176878_a(iblockstate)), 3);
++                    iblockstate.func_177230_c().onEntityHide(EntitySilverfish.this, iblockstate, world, blockpos);
+                     EntitySilverfish.this.func_70656_aK();
+                     EntitySilverfish.this.func_70106_y();
+                 }
+@@ -241,15 +241,15 @@
+                             BlockPos blockpos1 = blockpos.func_177982_a(j, i, k);
+                             IBlockState iblockstate = world.func_180495_p(blockpos1);
+ 
+-                            if (iblockstate.func_177230_c() == Blocks.field_150418_aU)
++                            if (iblockstate.func_177230_c().getHiddenEntityType(iblockstate, world, blockpos1) == EntitySilverfish.class)
+                             {
+-                                if (world.func_82736_K().func_82766_b("mobGriefing"))
++                                if (false && world.func_82736_K().func_82766_b("mobGriefing")) // moved into Block.summonSilverfish
+                                 {
+                                     world.func_175655_b(blockpos1, true);
+                                 }
+                                 else
+                                 {
+-                                    world.func_180501_a(blockpos1, ((BlockSilverfish.EnumType)iblockstate.func_177229_b(BlockSilverfish.field_176378_a)).func_176883_d(), 3);
++                                    iblockstate.func_177230_c().summonHiddenEntity(iblockstate, world, blockpos1);
+                                 }
+ 
+                                 if (random.nextBoolean())
