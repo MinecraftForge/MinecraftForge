@@ -1,6 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
-@@ -220,4 +220,20 @@
+@@ -102,8 +102,8 @@
+         int j;
+         int k;
+         int l;
+-
+-        if (this.field_150632_aF == 3)
++        boolean doGen = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE);
++        if (this.field_150632_aF == 3 && doGen)
+         {
+             for (i = 0; i < 4; ++i)
+             {
+@@ -140,7 +140,8 @@
+         }
+ 
+         j = 0;
+-
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
++        {
+         while (j < i)
+         {
+             k = p_180624_2_.nextInt(3);
+@@ -179,6 +180,7 @@
+                 break;
+             }
+         }
++        }
+ 
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+     }
+@@ -220,4 +222,20 @@
              };
          }
      }

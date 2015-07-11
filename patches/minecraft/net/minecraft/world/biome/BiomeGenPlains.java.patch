@@ -1,6 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
-@@ -109,4 +109,19 @@
+@@ -74,7 +74,8 @@
+             this.field_76760_I.field_76802_A = 4;
+             this.field_76760_I.field_76803_B = 10;
+             field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
+-
++            if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
++            {
+             for (i = 0; i < 7; ++i)
+             {
+                 j = p_180624_2_.nextInt(16) + 8;
+@@ -82,12 +83,14 @@
+                 l = p_180624_2_.nextInt(p_180624_1_.func_175645_m(p_180624_3_.func_177982_a(j, 0, k)).func_177956_o() + 32);
+                 field_180280_ag.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(j, l, k));
+             }
++            }
+         }
+ 
+         if (this.field_150628_aC)
+         {
+             field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.SUNFLOWER);
+-
++            if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
++            {
+             for (i = 0; i < 10; ++i)
+             {
+                 j = p_180624_2_.nextInt(16) + 8;
+@@ -95,6 +98,7 @@
+                 l = p_180624_2_.nextInt(p_180624_1_.func_175645_m(p_180624_3_.func_177982_a(j, 0, k)).func_177956_o() + 32);
+                 field_180280_ag.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(j, l, k));
+             }
++            }
+         }
+ 
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+@@ -109,4 +113,19 @@
          biomegenplains.field_150609_ah = 14273354;
          return biomegenplains;
      }
