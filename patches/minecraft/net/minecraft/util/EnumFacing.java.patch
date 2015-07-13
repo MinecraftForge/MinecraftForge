@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/util/EnumFacing.java
 +++ ../src-work/minecraft/net/minecraft/util/EnumFacing.java
-@@ -376,7 +376,7 @@
+@@ -16,7 +16,8 @@
+     NORTH(2, 3, 2, "north", EnumFacing.AxisDirection.NEGATIVE, EnumFacing.Axis.Z, new Vec3i(0, 0, -1)),
+     SOUTH(3, 2, 0, "south", EnumFacing.AxisDirection.POSITIVE, EnumFacing.Axis.Z, new Vec3i(0, 0, 1)),
+     WEST(4, 5, 1, "west", EnumFacing.AxisDirection.NEGATIVE, EnumFacing.Axis.X, new Vec3i(-1, 0, 0)),
+-    EAST(5, 4, 3, "east", EnumFacing.AxisDirection.POSITIVE, EnumFacing.Axis.X, new Vec3i(1, 0, 0));
++    EAST(5, 4, 3, "east", EnumFacing.AxisDirection.POSITIVE, EnumFacing.Axis.X, new Vec3i(1, 0, 0)),
++    UNKNOWN(0,0,0,"unknown",EnumFacing.AxisDirection.POSITIVE,EnumFacing.Axis.X,new Vec3i(0,0,0));//Just for skyboy be happy
+     private final int field_176748_g;
+     private final int field_176759_h;
+     private final int field_176760_i;
+@@ -376,7 +377,7 @@
          }
      }
  
