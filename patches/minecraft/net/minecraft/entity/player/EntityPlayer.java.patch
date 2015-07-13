@@ -495,7 +495,7 @@
 @@ -2158,6 +2298,120 @@
          net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
      }
-
+ 
 +
 +    /* ======================================== FORGE START =====================================*/
 +    /**
