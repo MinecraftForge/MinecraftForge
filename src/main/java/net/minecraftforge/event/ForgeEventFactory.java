@@ -1,13 +1,11 @@
 package net.minecraftforge.event;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCake;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -18,13 +16,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -33,9 +31,9 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.food.FoodAccess;
+import net.minecraftforge.common.food.FoodValues;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -64,6 +62,10 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.food.ExhaustionEvent;
+import net.minecraftforge.event.food.FoodEvent;
+import net.minecraftforge.event.food.HealthRegenEvent;
+import net.minecraftforge.event.food.StarvationEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
@@ -457,5 +459,114 @@ public class ForgeEventFactory
     public static void onPotionBrewed(ItemStack[] brewingItemStacks)
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
+    }
+
+    public static FoodValues onFoodStatsAdded(ItemStack stack, EntityPlayer player)
+    {
+        return FoodAccess.getFoodValuesForPlayer(stack, player);
+    }
+
+    public static void onPostFoodStatsAdded(ItemStack stack, FoodValues foodValues, int hungerAdded, float saturationAdded, EntityPlayer player)
+    {
+        MinecraftForge.EVENT_BUS.post(new FoodEvent.FoodEaten(player, stack, foodValues, hungerAdded, saturationAdded));
+    }
+
+    public static boolean canAddFoodStats(EntityPlayer player, FoodValues foodValuesToBeAdded)
+    {
+        FoodEvent.FoodStatsAddition event = new FoodEvent.FoodStatsAddition(player, foodValuesToBeAdded);
+        MinecraftForge.EVENT_BUS.post(event);
+        return !event.isCanceled();
+    }
+
+    public static Result fireAllowExhaustionEvent(EntityPlayer player)
+    {
+        ExhaustionEvent.AllowExhaustion event = new ExhaustionEvent.AllowExhaustion(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static float fireExhaustionTickEvent(EntityPlayer player)
+    {
+        return FoodAccess.getMaxExhaustion(player);
+    }
+
+    public static ExhaustionEvent.Exhausted fireExhaustionMaxEvent(EntityPlayer player, float maxExhaustionLevel, float foodExhaustionLevel)
+    {
+        ExhaustionEvent.Exhausted event = new ExhaustionEvent.Exhausted(player, maxExhaustionLevel, foodExhaustionLevel);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static Result fireAllowRegenEvent(EntityPlayer player)
+    {
+        HealthRegenEvent.AllowRegen event = new HealthRegenEvent.AllowRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static int fireRegenTickEvent(EntityPlayer player)
+    {
+        return FoodAccess.getHealthRegenTickPeriod(player);
+    }
+
+    public static HealthRegenEvent.Regen fireRegenEvent(EntityPlayer player)
+    {
+        HealthRegenEvent.Regen event = new HealthRegenEvent.Regen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static Result fireAllowStarvation(EntityPlayer player)
+    {
+        StarvationEvent.AllowStarvation event = new StarvationEvent.AllowStarvation(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static int fireStarvationTickEvent(EntityPlayer player)
+    {
+        return FoodAccess.getStarveDamageTickPeriod(player);
+    }
+
+    public static StarvationEvent.Starve fireStarveEvent(EntityPlayer player)
+    {
+        StarvationEvent.Starve event = new StarvationEvent.Starve(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static HealthRegenEvent.PeacefulRegen firePeacefulRegenEvent(EntityPlayer player)
+    {
+        HealthRegenEvent.PeacefulRegen event = new HealthRegenEvent.PeacefulRegen(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static FoodValues onBlockFoodEaten(Block block, EntityPlayer player)
+    {
+        ItemStack itemStack = getFoodFromBlock(block);
+
+        if (itemStack != null)
+            return FoodAccess.getFoodValuesForPlayer(itemStack, player);
+        else
+            return null;
+    }
+
+    private static ItemStack getFoodFromBlock(Block block)
+    {
+        if (block instanceof BlockCake)
+            return new ItemStack(Items.cake);
+
+        return null;
+    }
+
+    public static void onPostBlockFoodEaten(Block block, FoodValues foodValues, int prevFoodLevel, float prevSaturationLevel, EntityPlayer player)
+    {
+        ItemStack itemStack = getFoodFromBlock(block);
+        int hungerAdded = player.getFoodStats().getFoodLevel() - prevFoodLevel;
+        float saturationAdded = player.getFoodStats().getSaturationLevel() - prevSaturationLevel;
+
+        if (itemStack != null)
+            MinecraftForge.EVENT_BUS.post(new FoodEvent.FoodEaten(player, itemStack, foodValues, hungerAdded, saturationAdded));
     }
 }

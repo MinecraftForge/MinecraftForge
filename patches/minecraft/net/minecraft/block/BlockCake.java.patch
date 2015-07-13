@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCake.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCake.java
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockCake extends Block
++public class BlockCake extends Block implements net.minecraftforge.common.food.IEdible
+ {
+     public static final PropertyInteger field_176589_a = PropertyInteger.func_177719_a("bites", 0, 6);
+     private static final String __OBFID = "CL_00000211";
+@@ -84,7 +84,11 @@
+     {
+         if (p_180682_4_.func_71043_e(false))
+         {
+-            p_180682_4_.func_71024_bL().func_75122_a(2, 0.1F);
++            net.minecraftforge.common.food.FoodValues modifiedFoodValues = net.minecraftforge.event.ForgeEventFactory.onBlockFoodEaten(this, p_180682_4_);
++            int prevFoodLevel = p_180682_4_.func_71024_bL().func_75116_a();
++            float prevSaturationLevel = p_180682_4_.func_71024_bL().func_75115_e();
++            p_180682_4_.func_71024_bL().func_75122_a(modifiedFoodValues.hunger, modifiedFoodValues.saturationModifier);
++            net.minecraftforge.event.ForgeEventFactory.onPostBlockFoodEaten(this, modifiedFoodValues, prevFoodLevel, prevSaturationLevel, p_180682_4_);
+             int i = ((Integer)p_180682_3_.func_177229_b(field_176589_a)).intValue();
+ 
+             if (i < 6)
+@@ -162,4 +166,16 @@
+     {
+         return true;
+     }
++
++    @Override
++    public boolean isEdible(net.minecraft.item.ItemStack stack)
++    {
++        return true;
++    }
++
++    @Override
++    public net.minecraftforge.common.food.FoodValues getFoodValues(net.minecraft.item.ItemStack stack)
++    {
++        return new net.minecraftforge.common.food.FoodValues(2, 0.1F);
++    }
+ }
