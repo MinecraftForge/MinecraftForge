@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -213,6 +213,7 @@
+             }
+             else
+             {
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.item.ThrowableImpactEvent(this, movingobjectposition));
+                 this.func_70184_a(movingobjectposition);
+             }
+         }
