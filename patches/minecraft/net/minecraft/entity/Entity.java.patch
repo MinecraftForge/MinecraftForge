@@ -125,7 +125,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2357,4 +2405,176 @@
+@@ -2357,4 +2405,183 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
@@ -200,6 +200,13 @@
 +            if (id > 0 && EntityList.field_75627_a.containsKey(id))
 +            {
 +                return new ItemStack(net.minecraft.init.Items.field_151063_bx, 1, id);
++            }
++            String name = EntityList.func_75621_b(this);
++            if (name != null && net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().containsKey(name))
++            {
++                ItemStack stack = new ItemStack(net.minecraft.init.Items.field_151063_bx);
++                stack.func_77983_a("entity_name", new net.minecraft.nbt.NBTTagString(name));
++                return stack;
 +            }
 +        }
 +        return null;
