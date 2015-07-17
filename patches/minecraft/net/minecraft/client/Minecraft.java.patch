@@ -56,7 +56,7 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1353,7 +1358,7 @@
+@@ -1352,7 +1357,7 @@
  
                      if (this.field_71439_g.func_82246_f(i, j, k))
                      {
@@ -65,7 +65,7 @@
                          this.field_71439_g.func_71038_i();
                      }
                  }
-@@ -1434,11 +1439,12 @@
+@@ -1433,11 +1438,12 @@
                      int j = this.field_71476_x.field_72312_c;
                      int k = this.field_71476_x.field_72309_d;
  
@@ -80,7 +80,7 @@
                          {
                              flag = false;
                              this.field_71439_g.func_71038_i();
-@@ -1465,7 +1471,8 @@
+@@ -1464,7 +1470,8 @@
          {
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
@@ -90,7 +90,7 @@
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
              }
-@@ -1677,6 +1684,8 @@
+@@ -1676,6 +1683,8 @@
  
              while (Mouse.next())
              {
@@ -99,7 +99,16 @@
                  j = Mouse.getEventButton();
                  KeyBinding.func_74510_a(j - 100, Mouse.getEventButtonState());
  
-@@ -2139,6 +2148,11 @@
+@@ -1865,7 +1874,7 @@
+ 
+             for (j = 0; j < 9; ++j)
+             {
+-                if (this.field_71474_y.field_151456_ac[j].func_151468_f())
++                if (this.field_71474_y.field_151456_ac[j].func_151468_f() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(this.field_71439_g, j)))
+                 {
+                     this.field_71439_g.field_71071_by.field_70461_c = j;
+                 }
+@@ -2138,6 +2147,11 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -111,7 +120,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2151,6 +2165,18 @@
+@@ -2150,6 +2164,18 @@
              if (this.field_71437_Z != null)
              {
                  this.field_71437_Z.func_71263_m();
@@ -130,7 +139,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2299,113 +2325,10 @@
+@@ -2298,113 +2324,10 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -246,7 +255,7 @@
              if (flag)
              {
                  j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + this.field_71439_g.field_71071_by.field_70461_c;
-@@ -2671,8 +2594,15 @@
+@@ -2670,8 +2593,15 @@
          p_70001_1_.func_152767_b("gl_max_texture_size", Integer.valueOf(func_71369_N()));
      }
  
@@ -262,7 +271,7 @@
          for (int i = 16384; i > 0; i >>= 1)
          {
              GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2680,6 +2610,7 @@
+@@ -2679,6 +2609,7 @@
  
              if (j != 0)
              {

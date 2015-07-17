@@ -19,6 +19,15 @@
          entityxporb.field_70118_ct = p_147286_1_.func_148984_d();
          entityxporb.field_70117_cu = p_147286_1_.func_148983_e();
          entityxporb.field_70116_cv = p_147286_1_.func_148982_f();
+@@ -503,7 +506,7 @@
+ 
+     public void func_147257_a(S09PacketHeldItemChange p_147257_1_)
+     {
+-        if (p_147257_1_.func_149385_c() >= 0 && p_147257_1_.func_149385_c() < InventoryPlayer.func_70451_h())
++        if (p_147257_1_.func_149385_c() >= 0 && p_147257_1_.func_149385_c() < InventoryPlayer.func_70451_h() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(this.field_147299_f.field_71439_g, p_147257_1_.func_149385_c())))
+         {
+             this.field_147299_f.field_71439_g.field_71071_by.field_70461_c = p_147257_1_.func_149385_c();
+         }
 @@ -687,7 +690,11 @@
  
      public void func_147251_a(S02PacketChat p_147251_1_)

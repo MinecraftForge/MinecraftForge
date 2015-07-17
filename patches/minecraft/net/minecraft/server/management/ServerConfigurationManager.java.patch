@@ -184,3 +184,12 @@
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);
              }
+@@ -907,7 +948,7 @@
+     {
+         p_72385_1_.func_71120_a(p_72385_1_.field_71069_bz);
+         p_72385_1_.func_71118_n();
+-        p_72385_1_.field_71135_a.func_147359_a(new S09PacketHeldItemChange(p_72385_1_.field_71071_by.field_70461_c));
++        if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeCurrentItemEvent(p_72385_1_, p_72385_1_.field_71071_by.field_70461_c))) p_72385_1_.field_71135_a.func_147359_a(new S09PacketHeldItemChange(p_72385_1_.field_71071_by.field_70461_c));
+     }
+ 
+     public int func_72394_k()
