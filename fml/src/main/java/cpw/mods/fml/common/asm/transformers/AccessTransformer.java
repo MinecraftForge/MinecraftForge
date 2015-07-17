@@ -118,7 +118,7 @@ public class AccessTransformer implements IClassTransformer
             rulesResource = Resources.getResource(rulesFile);
         }
         processATFile(Resources.asCharSource(rulesResource, Charsets.UTF_8));
-        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s\n", modifiers.size(), rulesFile);
+        FMLRelaunchLog.fine("Loaded %d rules from AccessTransformer config file %s", modifiers.size(), rulesFile);
     }
     protected void processATFile(CharSource rulesResource) throws IOException
     {

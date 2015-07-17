@@ -8,7 +8,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -91,11 +92,14 @@
+@@ -98,11 +99,14 @@
  
      public void func_110571_b(IResourceManager p_110571_1_)
      {
@@ -20,10 +20,10 @@
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
 +        ForgeHooksClient.onTextureStitchedPre(this);
-         cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture stitching", this.field_110574_e.size());
+         cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture Loading", skipFirst ? 0 : this.field_110574_e.size());
          Iterator iterator = this.field_110574_e.entrySet().iterator();
          TextureAtlasSprite textureatlassprite;
-@@ -108,6 +112,16 @@
+@@ -115,6 +119,16 @@
              ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
              bar.step(resourcelocation1.func_110623_a());
  
@@ -40,7 +40,7 @@
              try
              {
                  IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
-@@ -286,6 +300,7 @@
+@@ -294,6 +308,7 @@
              textureatlassprite = (TextureAtlasSprite)iterator2.next();
              textureatlassprite.func_94217_a(this.field_94249_f);
          }
@@ -48,7 +48,7 @@
          cpw.mods.fml.common.ProgressManager.pop(bar);
      }
  
-@@ -360,7 +375,7 @@
+@@ -368,7 +383,7 @@
          {
              throw new IllegalArgumentException("Name cannot be null!");
          }
@@ -57,7 +57,7 @@
          {
              Object object = (TextureAtlasSprite)this.field_110574_e.get(p_94245_1_);
  
-@@ -416,4 +431,37 @@
+@@ -424,4 +439,37 @@
      {
          this.field_147637_k = p_147632_1_;
      }

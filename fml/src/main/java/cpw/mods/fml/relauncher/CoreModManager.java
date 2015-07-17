@@ -13,24 +13,30 @@
 package cpw.mods.fml.relauncher;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+
 import org.apache.logging.log4j.Level;
+
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -38,6 +44,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.primitives.Ints;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.asm.transformers.ModAccessTransformer;
 import cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker;
@@ -242,6 +249,42 @@ public class CoreModManager {
             {
                 FMLRelaunchLog.severe("Problem file : %s", f.getName());
             }
+        }
+        FileFilter derpdirfilter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname)
+            {
+                return pathname.isDirectory() && new File(pathname,"META-INF").isDirectory();
+            }
+
+        };
+        File[] derpdirlist = coreMods.listFiles(derpdirfilter);
+        if (derpdirlist != null && derpdirlist.length > 0)
+        {
+            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "There appear to be jars extracted into the mods directory. This is VERY BAD and will almost NEVER WORK WELL");
+            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "You should place original jars only in the mods directory. NEVER extract them to the mods directory.");
+            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "The directories below appear to be extracted jar files. Fix this before you continue.");
+
+            for (File f : derpdirlist)
+            {
+                FMLRelaunchLog.log.getLogger().log(Level.FATAL, "Directory {} contains {}", f.getName(), Arrays.asList(new File(f,"META-INF").list()));
+            }
+
+            RuntimeException re = new RuntimeException("Extracted mod jars found, loading will NOT continue");
+            // We're generating a crash report for the launcher to show to the user here
+            try
+            {
+                Class<?> crashreportclass = classLoader.loadClass("b");
+                Object crashreport = crashreportclass.getMethod("a", Throwable.class, String.class).invoke(null, re, "FML has discovered extracted jar files in the mods directory.\nThis breaks mod loading functionality completely.\nRemove the directories and replace with the jar files originally provided.");
+                File crashreportfile = new File(new File(coreMods.getParentFile(),"crash-reports"),String.format("fml-crash-%1$tY-%1$tm-%1$td_%1$tT.txt",Calendar.getInstance()));
+                crashreportclass.getMethod("a",File.class).invoke(crashreport, crashreportfile);
+                System.out.println("#@!@# FML has crashed the game deliberately. Crash report saved to: #@!@# " + crashreportfile.getAbsolutePath());
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+                // NOOP - hopefully
+            }
+            throw re;
         }
         File[] coreModList = coreMods.listFiles(ff);
         File versionedModDir = new File(coreMods, FMLInjectionData.mccversion);

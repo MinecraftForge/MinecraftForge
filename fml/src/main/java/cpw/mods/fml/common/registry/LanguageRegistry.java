@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -35,6 +36,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StringTranslate;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -273,13 +276,15 @@ public class LanguageRegistry
     private void searchZipForLanguages(File source, Side side) throws IOException
     {
         ZipFile zf = new ZipFile(source);
+        List<String> added = Lists.newArrayList();
         for (ZipEntry ze : Collections.list(zf.entries()))
         {
             Matcher matcher = assetENUSLang.matcher(ze.getName());
             if (matcher.matches())
             {
                 String lang = matcher.group(2);
-                FMLLog.fine("Injecting found translation data for lang %s in zip file %s at %s into language system", lang, source.getName(), ze.getName());
+                //FMLLog.fine("Injecting found translation data for lang %s in zip file %s at %s into language system", lang, source.getName(), ze.getName());
+                added.add(lang);
                 LanguageRegistry.instance().injectLanguage(lang, StringTranslate.parseLangFile(zf.getInputStream(ze)));
                 // Ensure en_US is available to StringTranslate on the server
                 if ("en_US".equals(lang) && side == Side.SERVER)
@@ -288,6 +293,8 @@ public class LanguageRegistry
                 }
             }
         }
+        if (added.size() > 0)
+            FMLLog.fine("Found translations in %s [%s]", source.getName(), Joiner.on(", ").join(added));
         zf.close();
     }
 

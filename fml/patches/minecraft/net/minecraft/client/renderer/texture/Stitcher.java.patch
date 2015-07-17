@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
+@@ -60,6 +60,7 @@
+     public void func_94305_f()
+     {
+         Stitcher.Holder[] aholder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
++        cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture stitching", aholder.length);
+         Arrays.sort(aholder);
+         Stitcher.Holder[] aholder1 = aholder;
+         int i = aholder.length;
+@@ -67,6 +68,7 @@
+         for (int j = 0; j < i; ++j)
+         {
+             Stitcher.Holder holder = aholder1[j];
++            bar.step(holder.func_98150_a().func_94215_i());
+ 
+             if (!this.func_94310_b(holder))
+             {
+@@ -80,6 +82,7 @@
+             this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
+             this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
+         }
++        cpw.mods.fml.common.ProgressManager.pop(bar);
+     }
+ 
+     public List func_94309_g()

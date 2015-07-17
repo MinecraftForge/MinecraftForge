@@ -12,8 +12,12 @@
 
 package cpw.mods.fml.common;
 
+import java.security.cert.Certificate;
+
 import cpw.mods.fml.common.versioning.VersionParser;
 import cpw.mods.fml.common.versioning.VersionRange;
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class MinecraftDummyContainer extends DummyModContainer
 {
@@ -32,5 +36,21 @@ public class MinecraftDummyContainer extends DummyModContainer
     public VersionRange getStaticVersionRange()
     {
         return staticRange;
+    }
+
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        if (FMLLaunchHandler.side() != Side.CLIENT)
+            return null;
+
+        try
+        {
+            Class<?> cbr = Class.forName("net.minecraft.client.ClientBrandRetriever", false, getClass().getClassLoader());
+            Certificate[] certificates = cbr.getProtectionDomain().getCodeSource().getCertificates();
+            return certificates != null ? certificates[0] : null;
+        }
+        catch (Exception e){} // Errors don't matter just return null.
+        return null;
     }
 }
