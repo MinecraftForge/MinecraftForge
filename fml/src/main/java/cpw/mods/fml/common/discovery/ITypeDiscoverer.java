@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -19,7 +19,8 @@ import cpw.mods.fml.common.ModContainer;
 
 public interface ITypeDiscoverer
 {
-    public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
+    // main class part, followed by an optional $ and an "inner class" part. $ cannot be last, otherwise scala breaks
+    public static Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");
 
     public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table);
 }
