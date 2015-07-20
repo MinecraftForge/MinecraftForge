@@ -1,6 +1,8 @@
 
 package net.minecraftforge.fluids;
 
+import com.google.common.base.Optional;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -31,13 +33,13 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
 
     /* IFluidHandler */
     @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
+    public int fill(Optional<EnumFacing> from, FluidStack resource, boolean doFill)
     {
         return tank.fill(resource, doFill);
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
+    public FluidStack drain(Optional<EnumFacing> from, FluidStack resource, boolean doDrain)
     {
         if (resource == null || !resource.isFluidEqual(tank.getFluid()))
         {
@@ -47,25 +49,25 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
+    public FluidStack drain(Optional<EnumFacing> from, int maxDrain, boolean doDrain)
     {
         return tank.drain(maxDrain, doDrain);
     }
 
     @Override
-    public boolean canFill(EnumFacing from, Fluid fluid)
+    public boolean canFill(Optional<EnumFacing> from, Fluid fluid)
     {
         return true;
     }
 
     @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid)
+    public boolean canDrain(Optional<EnumFacing> from, Fluid fluid)
     {
         return true;
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from)
+    public FluidTankInfo[] getTankInfo(Optional<EnumFacing> from)
     {
         return new FluidTankInfo[] { tank.getInfo() };
     }
