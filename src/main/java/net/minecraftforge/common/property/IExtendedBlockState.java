@@ -16,4 +16,6 @@ public interface IExtendedBlockState extends IBlockState
     <V>IExtendedBlockState withProperty(IUnlistedProperty<V> property, V value);
 
     ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties();
+    
+    IBlockState getClean();
 }
