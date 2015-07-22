@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.List;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3d;
@@ -54,6 +55,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.DrawHoveringTextEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -264,6 +266,11 @@ public class ForgeHooksClient
         {
             GL11.glRotatef((float)(block.getBedDirection(world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
         }
+    }
+    
+    public static boolean onDrawHoveringText(List textLines, int posX, int posY)
+    {
+        return MinecraftForge.EVENT_BUS.post(new DrawHoveringTextEvent(textLines, posX, posY));
     }
 
     public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, MovingObjectPosition target, int subID, ItemStack currentItem, float partialTicks)

@@ -20,18 +20,20 @@
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -156,6 +160,11 @@
+@@ -156,7 +160,12 @@
  
      protected void func_146283_a(List p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
+-        if (!p_146283_1_.isEmpty())
 +        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);   
 +    }
 +
 +    protected void drawHoveringText(List p_146283_1_, int p_146283_2_, int p_146283_3_, FontRenderer font)
 +    {
-         if (!p_146283_1_.isEmpty())
++        if (!p_146283_1_.isEmpty() && net.minecraftforge.client.ForgeHooksClient.onDrawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_))
          {
              GlStateManager.func_179101_C();
+             RenderHelper.func_74518_a();
 @@ -168,7 +177,7 @@
              while (iterator.hasNext())
              {
