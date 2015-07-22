@@ -128,6 +128,58 @@ public class GuiScreenEvent extends Event
         }
     }
     
+    public static class DrawHoverTextEvent extends GuiScreenEvent
+    {
+        /**
+         * The x coordinate of the mouse pointer on the screen.
+         */
+        public final int mouseX;
+        /**
+         * The y coordinate of the mouse pointer on the screen.
+         */
+        public final int mouseY;
+        /**
+         * The text to be displayed.
+         */
+        public final List textLines;
+        
+        public DrawHoverTextEvent(GuiScreen gui, int mouseX, int mouseY, List textLines)
+        {
+            super(gui);
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+            this.textLines = textLines;
+        }
+        
+        /**
+         * This event fires just before {@code GuiScreen.drawHoveringText()} is called.
+         * Cancel this event to skip {@code GuiScreen.drawHoveringText()}.
+         * 
+         * @author iLexiconn
+         */
+        @Cancelable
+        public static class Pre extends DrawHoverTextEvent
+        {
+            public Pre(GuiScreen gui, int mouseX, int mouseY, List textLines)
+            {
+                super(gui, mouseX, mouseY, textLines);
+            }
+        }
+        
+        /**
+         * This event fires just after {@code GuiScreen.drawHoveringText()} is called.
+         * 
+         * @author iLexiconn
+         */
+        public static class Post extends DrawHoverTextEvent
+        {
+            public Post(GuiScreen gui, int mouseX, int mouseY, List textLines)
+            {
+                super(gui, mouseX, mouseY, textLines);
+            }
+        }
+    }
+    
     public static class ActionPerformedEvent extends GuiScreenEvent
     {
         /**
