@@ -126,6 +126,7 @@ public class SplashProgress
 
     private static boolean enabled;
     private static boolean rotate;
+    private static boolean centeredMessages;
     private static int logoOffset;
     private static int backgroundColor;
     private static int fontColor;
@@ -177,14 +178,15 @@ public class SplashProgress
 
         // Enable if we have the flag, and there's either no optifine, or optifine has added a key to the blackboard ("optifine.ForgeSplashCompatible")
         // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
-        enabled =            getBool("enabled",      true) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
-        rotate =             getBool("rotate",       false);
-        logoOffset =         getInt("logoOffset",    0);
-        backgroundColor =    getHex("background",    0xFFFFFF);
-        fontColor =          getHex("font",          0x000000);
-        barBorderColor =     getHex("barBorder",     0xC0C0C0);
-        barColor =           getHex("bar",           0xCB3D35);
-        barBackgroundColor = getHex("barBackground", 0xFFFFFF);
+        enabled =            getBool("enabled",          true) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
+        rotate =             getBool("rotate",           false);
+        centeredMessages =   getBool("centeredMessages", true);
+        logoOffset =         getInt("logoOffset",        0);
+        backgroundColor =    getHex("background",        0xFFFFFF);
+        fontColor =          getHex("font",              0x000000);
+        barBorderColor =     getHex("barBorder",         0xC0C0C0);
+        barColor =           getHex("bar",               0xCB3D35);
+        barBackgroundColor = getHex("barBackground",     0xFFFFFF);
 
         final ResourceLocation fontLoc = new ResourceLocation(getString("fontTexture", "textures/font/ascii.png"));
         final ResourceLocation logoLoc = new ResourceLocation(getString("logoTexture", "textures/gui/title/mojang.png"));
@@ -396,7 +398,11 @@ public class SplashProgress
                 setColor(fontColor);
                 glScalef(2, 2, 1);
                 glEnable(GL_TEXTURE_2D);
-                fontRenderer.drawString(b.getTitle() + " - " + b.getMessage(), 0, 0, 0x000000);
+                String message = b.getTitle() + " - " + b.getMessage();
+                if(centeredMessages)
+                    fontRenderer.drawString(message, (int) ((barWidth / 4) - (fontRenderer.getStringWidth(message) / 2)), 0, 0x000000);
+                else
+                    fontRenderer.drawString(message, 0, 0, 0x000000);
                 glDisable(GL_TEXTURE_2D);
                 glPopMatrix();
                 // border
