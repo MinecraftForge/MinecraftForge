@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -146,6 +147,16 @@ public class ForgeBlockStateV1 extends Marker
                         part.state = state;
                     }
                 }
+                
+                Iterator<List<Variant>> iter = v.submodels.values().iterator();
+                
+                while (iter.hasNext())
+                {
+                    List<Variant> submodel = iter.next();
+                    
+                    if (submodel == null)
+                        iter.remove();
+                }
 
                 if (v.textures != null)
                 {
@@ -283,7 +294,7 @@ public class ForgeBlockStateV1 extends Marker
             this.uvLock = other.uvLock;
             this.weight = other.weight;
             this.textures.putAll(other.textures);
-            this.submodels.putAll(other.submodels);
+            this.mergeModelPartVariants(this.submodels, other.submodels);
             this.simpleSubmodels.putAll(other.simpleSubmodels);
             this.customData.putAll(other.customData);
         }
