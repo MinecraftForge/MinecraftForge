@@ -47,19 +47,23 @@ public class ExtendedBlockState extends BlockState
     @Override
     protected StateImplementation createState(Block block, ImmutableMap properties, ImmutableMap unlistedProperties)
     {
-        return new ExtendedStateImplementation(block, properties, unlistedProperties, null);
+        return new ExtendedStateImplementation(block, properties, unlistedProperties);
     }
 
     protected static class ExtendedStateImplementation extends StateImplementation implements IExtendedBlockState
     {
         private final ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties;
-        private Map<Map<IProperty, Comparable>, IBlockState> normalMap;
 
+        @Deprecated
         protected ExtendedStateImplementation(Block block, ImmutableMap properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, ImmutableTable<IProperty, Comparable, IBlockState> table)
+        {
+            this(block, properties, unlistedProperties);
+        }
+        
+        protected ExtendedStateImplementation(Block block, ImmutableMap properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties)
         {
             super(block, properties);
             this.unlistedProperties = unlistedProperties;
-            this.propertyValueTable = table;
         }
 
         @Override
@@ -85,9 +89,7 @@ public class ExtendedBlockState extends BlockState
                 }
                 Map<IProperty, Comparable> map = new HashMap<IProperty, Comparable>(getProperties());
                 map.put(property, value);
-                ImmutableTable<IProperty, Comparable, IBlockState> table = propertyValueTable;
-                table = ((StateImplementation)table.get(property, value)).getPropertyValueTable();
-                return new ExtendedStateImplementation(getBlock(), ImmutableMap.copyOf(map), unlistedProperties, table);
+                return new ExtendedStateImplementation(getBlock(), ImmutableMap.copyOf(map), unlistedProperties);
             }
         }
 
@@ -105,9 +107,9 @@ public class ExtendedBlockState extends BlockState
             newMap.put(property, Optional.fromNullable(value));
             if(Iterables.all(newMap.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
             { // no dynamic properties, lookup normal state
-                return (IExtendedBlockState) normalMap.get(getProperties());
+                return (IExtendedBlockState) getBlock().getBlockState().getStateMap().get(getProperties());
             }
-            return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap), propertyValueTable);
+            return new ExtendedStateImplementation(getBlock(), getProperties(), ImmutableMap.copyOf(newMap));
         }
 
         public Collection<IUnlistedProperty<?>> getUnlistedNames()
@@ -127,13 +129,6 @@ public class ExtendedBlockState extends BlockState
         public ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties()
         {
             return unlistedProperties;
-        }
-
-        @Override
-        public void buildPropertyValueTable(Map map)
-        {
-            this.normalMap = map;
-            super.buildPropertyValueTable(map);
         }
     }
 }
