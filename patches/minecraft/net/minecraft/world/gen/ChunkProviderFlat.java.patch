@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderFlat.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderFlat.java
+@@ -163,6 +163,8 @@
+ 
+     public void func_73153_a(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+     {
++        net.minecraft.block.BlockFalling.field_149832_M = true;
++
+         int k = p_73153_2_ * 16;
+         int l = p_73153_3_ * 16;
+         BlockPos blockpos = new BlockPos(k, 0, l);
+@@ -172,6 +174,9 @@
+         long i1 = this.field_73161_b.nextLong() / 2L * 2L + 1L;
+         long j1 = this.field_73161_b.nextLong() / 2L * 2L + 1L;
+         this.field_73161_b.setSeed((long)p_73153_2_ * i1 + (long)p_73153_3_ * j1 ^ this.field_73163_a.func_72905_C());
++
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Pre(p_73153_1_, field_73163_a, field_73161_b, p_73153_2_, p_73153_3_, flag));
++
+         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_73153_2_, p_73153_3_);
+         Iterator iterator = this.field_82696_f.iterator();
+ 
+@@ -213,6 +218,10 @@
+         {
+             biomegenbase.func_180624_a(this.field_73163_a, this.field_73161_b, new BlockPos(k, 0, l));
+         }
++        
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Post(p_73153_1_, field_73163_a, field_73161_b, p_73153_2_, p_73153_3_, flag));
++
++        net.minecraft.block.BlockFalling.field_149832_M = false;
+     }
+ 
+     public boolean func_177460_a(IChunkProvider p_177460_1_, Chunk p_177460_2_, int p_177460_3_, int p_177460_4_)
