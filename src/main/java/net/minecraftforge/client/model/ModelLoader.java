@@ -209,7 +209,7 @@ public class ModelLoader extends ModelBakery
     {
         return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
     }
-
+    
     private void loadAnyModel(ResourceLocation location) throws IOException
     {
         if(loadingModels.contains(location))

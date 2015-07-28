@@ -629,7 +629,7 @@ public class B3DLoader implements ICustomModelLoader
                 IExtendedBlockState exState = (IExtendedBlockState)state;
                 if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
                 {
-                    B3DState s = (B3DState)exState.getValue(B3DFrameProperty.instance);
+                    B3DState s = exState.getValue(B3DFrameProperty.instance);
                     if(s != null)
                     {
                         return getCachedModel(s.getFrame());
