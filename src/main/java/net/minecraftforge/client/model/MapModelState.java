@@ -27,6 +27,16 @@ public class MapModelState implements IModelState
         this.map = ImmutableMap.<IModelPart, IModelState>copyOf(map);
         this.def = def;
     }
+	
+    public ImmutableMap<IModelPart, IModelState> getMap()
+    {
+        return this.map;
+    }
+    
+    public IModelState getDef()
+    {
+        return this.def;
+    }
 
     public TRSRTransformation apply(IModelPart part)
     {

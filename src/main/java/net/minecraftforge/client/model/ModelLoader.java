@@ -214,6 +214,17 @@ public class ModelLoader extends ModelBakery
     {
         return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
     }
+    
+    @Override
+    public ModelBlockDefinition getModelBlockDefinition(ResourceLocation location)
+    {
+        return super.getModelBlockDefinition(location);
+    }
+    
+    public ResourceLocation getBlockStateLocation(ResourceLocation location)
+    {
+        return new ResourceLocation(location.getResourceDomain(), "blockstates/" + location.getResourcePath() + ".json");
+    }
 
     private void loadAnyModel(ResourceLocation location) throws IOException
     {

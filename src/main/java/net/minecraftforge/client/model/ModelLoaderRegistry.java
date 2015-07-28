@@ -14,6 +14,7 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
@@ -32,6 +33,7 @@ public class ModelLoaderRegistry
     static
     {
         registerLoader(B3DLoader.instance);
+        registerLoader(OBJLoader.instance);
         registerLoader(ModelFluid.FluidLoader.instance);
         registerLoader(ItemLayerModel.Loader.instance);
     }
