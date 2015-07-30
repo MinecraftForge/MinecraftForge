@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
+@@ -101,6 +101,13 @@
+                 entityplayer = this.field_75391_e.func_146083_cb();
+             }
+ 
++            Random random = this.field_75390_d.func_70681_au();
++            int xp = random.nextInt(7) + 1;
++            net.minecraftforge.event.entity.living.LivingProcreateEvent event = net.minecraftforge.common.ForgeHooks.onEntityMate(entityageable, this.field_75390_d, this.field_75391_e, xp);
++            if (event.isCanceled() || event.child == null) return;
++            entityageable = event.child;
++            xp = event.xp;
++
+             if (entityplayer != null)
+             {
+                 entityplayer.func_71029_a(StatList.field_151186_x);
+@@ -118,7 +125,6 @@
+             entityageable.func_70873_a(-24000);
+             entityageable.func_70012_b(this.field_75390_d.field_70165_t, this.field_75390_d.field_70163_u, this.field_75390_d.field_70161_v, 0.0F, 0.0F);
+             this.field_75394_a.func_72838_d(entityageable);
+-            Random random = this.field_75390_d.func_70681_au();
+ 
+             for (int i = 0; i < 7; ++i)
+             {
+@@ -128,9 +134,9 @@
+                 this.field_75394_a.func_175688_a(EnumParticleTypes.HEART, this.field_75390_d.field_70165_t + (double)(random.nextFloat() * this.field_75390_d.field_70130_N * 2.0F) - (double)this.field_75390_d.field_70130_N, this.field_75390_d.field_70163_u + 0.5D + (double)(random.nextFloat() * this.field_75390_d.field_70131_O), this.field_75390_d.field_70161_v + (double)(random.nextFloat() * this.field_75390_d.field_70130_N * 2.0F) - (double)this.field_75390_d.field_70130_N, d0, d1, d2, new int[0]);
+             }
+ 
+-            if (this.field_75394_a.func_82736_K().func_82766_b("doMobLoot"))
++            if (this.field_75394_a.func_82736_K().func_82766_b("doMobLoot") && xp > 0)
+             {
+-                this.field_75394_a.func_72838_d(new EntityXPOrb(this.field_75394_a, this.field_75390_d.field_70165_t, this.field_75390_d.field_70163_u, this.field_75390_d.field_70161_v, random.nextInt(7) + 1));
++                this.field_75394_a.func_72838_d(new EntityXPOrb(this.field_75394_a, this.field_75390_d.field_70165_t, this.field_75390_d.field_70163_u, this.field_75390_d.field_70161_v, xp));
+             }
+         }
+     }
