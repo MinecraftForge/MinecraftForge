@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
+@@ -20,7 +20,7 @@
+ @SideOnly(Side.CLIENT)
+ public class TileEntityItemStackRenderer
+ {
+-    public static TileEntityItemStackRenderer field_147719_a = new TileEntityItemStackRenderer();
++    public static TileEntityItemStackRenderer field_147719_a = new net.minecraftforge.client.ForgeTileEntityItemStackRenderer();
+     private TileEntityChest field_147717_b = new TileEntityChest(0);
+     private TileEntityChest field_147718_c = new TileEntityChest(1);
+     private TileEntityEnderChest field_147716_d = new TileEntityEnderChest();
