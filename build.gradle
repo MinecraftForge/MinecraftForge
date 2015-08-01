@@ -186,7 +186,7 @@ uploadArchives {
         if (project.hasProperty('forgeMavenPass'))
         {
             repository(url: "http://files.minecraftforge.net/maven/manage/upload") {
-                authentication(userName: "forge", project.getProperty('forgeMavenPass')) // the elvis operator. look it up.
+                authentication(userName: "forge", password: project.getProperty('forgeMavenPass')) // the elvis operator. look it up.
             }
         }
         else
