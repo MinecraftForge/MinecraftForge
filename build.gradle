@@ -24,7 +24,7 @@ minecraft {
     //mappings = 'stable_16'
     mappings = "snapshot_nodoc_20141130"
     workspaceDir = "projects"
-    versionJson = "fml/jsons/1.8-dev.json"
+    versionJson = "jsons/1.8-dev.json"
     buildUserdev = true
     buildInstaller = true
     installerVersion = "1.4"
@@ -66,7 +66,7 @@ extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
 processJson {
-    releaseJson = "fml/jsons/1.8-rel.json"
+    releaseJson = "jsons/1.8-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
         "@version@": project.version,
@@ -106,8 +106,8 @@ task crowdin(type: CrowdinDownload) {
 
 def extraTxts = [
     changelog, // yeah we can do thi, because gradle and groovy are awesome
-    "fml/LICENSE-fml.txt",
-    "fml/CREDITS-fml.txt",
+    "LICENSE-fml.txt",
+    "CREDITS-fml.txt",
     "MinecraftForge-Credits.txt",
     "MinecraftForge-License.txt",
     "Paulscode SoundSystem CodecIBXM License.txt",
@@ -125,7 +125,7 @@ outputJar {
     manifest.attributes([
         "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
         "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-        "Class-Path": getServerClasspath(file("fml/jsons/1.8-rel.json"))
+        "Class-Path": getServerClasspath(file("jsons/1.8-rel.json"))
     ])
 }
 
