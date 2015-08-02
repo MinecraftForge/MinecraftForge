@@ -45,6 +45,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
@@ -113,10 +114,22 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         this.classLoader = classLoader;
         try
         {
-            InputStream classData = getClass().getResourceAsStream(deobfFileName);
-            LZMAInputSupplier zis = new LZMAInputSupplier(classData);
-            CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
-            List<String> srgList = srgSource.readLines();
+            List<String> srgList;
+            final String gradleStartProp = System.getProperty("net.minecraftforge.gradle.GradleStart.srg.srg-mcp");
+
+            if (Strings.isNullOrEmpty(gradleStartProp))
+            {
+                // get as a resource
+                InputStream classData = getClass().getResourceAsStream(deobfFileName);
+                LZMAInputSupplier zis = new LZMAInputSupplier(classData);
+                CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
+                srgList = srgSource.readLines();
+            }
+            else
+            {
+                srgList = Files.readLines(new File(gradleStartProp), Charsets.UTF_8);
+            }
+
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
