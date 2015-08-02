@@ -80,7 +80,7 @@ public class ModCandidate
     public void addClassEntry(String name)
     {
         String className = name.substring(0, name.lastIndexOf('.')); // strip the .class
-        foundClasses.add(className.replace('.', '/'));
+        foundClasses.add(className);
         className = className.replace('/','.');
         int pkgIdx = className.lastIndexOf('.');
         if (pkgIdx > -1)

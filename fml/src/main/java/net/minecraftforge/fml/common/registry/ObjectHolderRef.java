@@ -65,7 +65,7 @@ class ObjectHolderRef {
 
         if (this.injectedObject == null || !isValid())
         {
-            throw new IllegalStateException("The ObjectHolder annotation cannot apply to a field that is not an Item or Block");
+            throw new IllegalStateException(String.format("The ObjectHolder annotation cannot apply to a field that is not an Item or Block (found : %s at %s.%s)", field.getType().getName(), field.getClass().getName(), field.getName()));
         }
         makeWritable(field);
     }
@@ -120,7 +120,7 @@ class ObjectHolderRef {
 
         if (thing == null)
         {
-            FMLLog.warning("Unable to lookup %s for %s. Is there something wrong with the registry?", injectedObject, field);
+            FMLLog.getLogger().log(Level.DEBUG, "Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.", injectedObject, field);
             return;
         }
         try
