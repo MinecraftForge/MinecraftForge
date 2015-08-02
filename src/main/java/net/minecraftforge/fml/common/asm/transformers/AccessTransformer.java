@@ -93,7 +93,7 @@ public class AccessTransformer implements IClassTransformer
 
     public AccessTransformer() throws IOException
     {
-        this("fml_at.cfg");
+        this("forge_at.cfg");
     }
     protected AccessTransformer(String rulesFile) throws IOException
     {

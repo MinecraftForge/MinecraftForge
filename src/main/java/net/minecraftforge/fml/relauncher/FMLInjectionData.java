@@ -13,14 +13,11 @@
 package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.common.ForgeVersion;
 
 public class FMLInjectionData
 {
@@ -31,35 +28,18 @@ public class FMLInjectionData
     static String build;
     static String mccversion;
     static String mcpversion;
-    static String deobfuscationDataHash;
 
     public static List<String> containers = new ArrayList<String>();
 
     static void build(File mcHome, LaunchClassLoader classLoader)
     {
         minecraftHome = mcHome;
-        InputStream stream = classLoader.getResourceAsStream("fmlversion.properties");
-        Properties properties = new Properties();
-
-        if (stream != null)
-        {
-            try
-            {
-                properties.load(stream);
-            }
-            catch (IOException ex)
-            {
-                FMLRelaunchLog.log(Level.ERROR, ex, "Could not get FML version information - corrupted installation detected!");
-            }
-        }
-
-        major = properties.getProperty("fmlbuild.major.number", "missing");
-        minor = properties.getProperty("fmlbuild.minor.number", "missing");
-        rev = properties.getProperty("fmlbuild.revision.number", "missing");
-        build = properties.getProperty("fmlbuild.build.number", "missing");
-        mccversion = properties.getProperty("fmlbuild.mcversion", "missing");
-        mcpversion = properties.getProperty("fmlbuild.mcpversion", "missing");
-        deobfuscationDataHash = properties.getProperty("fmlbuild.deobfuscation.hash","deadbeef");
+        major = String.valueOf(ForgeVersion.majorVersion);
+        minor = String.valueOf(ForgeVersion.minorVersion);
+        rev = String.valueOf(ForgeVersion.revisionVersion);
+        build = String.valueOf(ForgeVersion.buildVersion);
+        mccversion = ForgeVersion.mcVersion;
+        mcpversion = ForgeVersion.mcpVersion;
     }
 
     static String debfuscationDataName()
