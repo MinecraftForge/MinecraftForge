@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/util/ResourceLocation.java
++++ ../src-work/minecraft/net/minecraft/util/ResourceLocation.java
+@@ -1,7 +1,5 @@
+ package net.minecraft.util;
+ 
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.commons.lang3.Validate;
+ 
+ public class ResourceLocation
+@@ -22,7 +20,6 @@
+         this(0, func_177516_a(p_i1293_1_));
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public ResourceLocation(String p_i1292_1_, String p_i1292_2_)
+     {
+         this(0, new String[] {p_i1292_1_, p_i1292_2_});
+@@ -51,7 +48,6 @@
+         return this.field_110625_b;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String func_110624_b()
+     {
+         return this.field_110626_a;

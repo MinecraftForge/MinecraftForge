@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
++++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
+@@ -1067,6 +1067,7 @@
+ 
+     public void func_74303_b()
+     {
++        if (net.minecraftforge.fml.client.FMLClientHandler.instance().isLoading()) return;
+         try
+         {
+             PrintWriter printwriter = new PrintWriter(new FileWriter(this.field_74354_ai));

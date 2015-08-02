@@ -66,7 +66,28 @@
          {
              this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M);
          }
-@@ -233,6 +211,7 @@
+@@ -144,9 +122,10 @@
+         this.func_71245_h(true);
+         field_147148_h.info("Generating keypair");
+         this.func_71253_a(CryptManager.func_75891_b());
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+         this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());
+         this.func_71205_p(this.func_71214_G() + " - " + this.field_71305_c[0].func_72912_H().func_76065_j());
+-        return true;
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+     }
+ 
+     public void func_71217_p()
+@@ -171,7 +150,7 @@
+                 {
+                     try
+                     {
+-                        ((FutureTask)this.field_175589_i.poll()).run();
++                        net.minecraftforge.fml.common.FMLCommonHandler.callFuture(((FutureTask)this.field_175589_i.poll()));
+                     }
+                     catch (Throwable throwable)
+                     {
+@@ -232,6 +211,7 @@
  
      public EnumDifficulty func_147135_j()
      {

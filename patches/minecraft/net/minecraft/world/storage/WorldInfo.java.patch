@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -52,6 +52,7 @@
+     private int field_176155_J;
+     private GameRules field_82577_x;
+     private static final String __OBFID = "CL_00000587";
++    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
+ 
+     protected WorldInfo()
+     {
+@@ -803,4 +804,24 @@
+             }
+         });
+     }
++
++    /**
++     * Allow access to additional mod specific world based properties
++     * Used by FML to store mod list associated with a world, and maybe an id map
++     * Used by Forge to store the dimensions available to a world
++     * @param additionalProperties
++     */
++    public void setAdditionalProperties(java.util.Map<String,net.minecraft.nbt.NBTBase> additionalProperties)
++    {
++        // one time set for this
++        if (this.additionalProperties == null)
++        {
++            this.additionalProperties = additionalProperties;
++        }
++    }
++
++    public net.minecraft.nbt.NBTBase getAdditionalProperty(String additionalProperty)
++    {
++        return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
++    }
+ }

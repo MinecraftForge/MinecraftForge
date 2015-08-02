@@ -1,6 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -140,7 +140,8 @@
+@@ -39,8 +39,9 @@
+ public class Block
+ {
+     private static final ResourceLocation field_176230_a = new ResourceLocation("air");
+-    public static final RegistryNamespacedDefaultedByKey field_149771_c = new RegistryNamespacedDefaultedByKey(field_176230_a);
+-    public static final ObjectIntIdentityMap field_176229_d = new ObjectIntIdentityMap();
++    public static final RegistryNamespacedDefaultedByKey field_149771_c = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
++    @Deprecated //Modders: DO NOT use this! Use GameRegistry
++    public static final ObjectIntIdentityMap field_176229_d = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
+     private CreativeTabs field_149772_a;
+     public static final Block.SoundType field_149769_e = new Block.SoundType("stone", 1.0F, 1.0F);
+     public static final Block.SoundType field_149766_f = new Block.SoundType("wood", 1.0F, 1.0F);
+@@ -124,6 +125,9 @@
+     private String field_149770_b;
+     private static final String __OBFID = "CL_00000199";
+ 
++    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Block> delegate =
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
++
+     public static int func_149682_b(Block p_149682_0_)
+     {
+         return field_149771_c.func_148757_b(p_149682_0_);
+@@ -136,7 +140,8 @@
  
      public static Block func_149729_e(int p_149729_0_)
      {
@@ -10,7 +32,7 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
-@@ -304,7 +305,7 @@
+@@ -300,7 +305,7 @@
  
      public boolean func_176200_f(World p_176200_1_, BlockPos p_176200_2_)
      {
@@ -19,7 +41,7 @@
      }
  
      public Block func_149711_c(float p_149711_1_)
-@@ -341,9 +342,10 @@
+@@ -337,9 +342,10 @@
          return this.field_149789_z;
      }
  
@@ -31,7 +53,7 @@
      }
  
      public final void func_149676_a(float p_149676_1_, float p_149676_2_, float p_149676_3_, float p_149676_4_, float p_149676_5_, float p_149676_6_)
-@@ -360,13 +362,13 @@
+@@ -356,13 +362,13 @@
      public int func_176207_c(IBlockAccess p_176207_1_, BlockPos p_176207_2_)
      {
          Block block = p_176207_1_.func_180495_p(p_176207_2_).func_177230_c();
@@ -47,7 +69,7 @@
          }
          else
          {
-@@ -442,7 +444,13 @@
+@@ -438,7 +444,13 @@
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_) {}
  
@@ -62,7 +84,7 @@
  
      public int func_149745_a(Random p_149745_1_)
      {
-@@ -456,8 +464,7 @@
+@@ -452,8 +464,7 @@
  
      public float func_180647_a(EntityPlayer p_180647_1_, World p_180647_2_, BlockPos p_180647_3_)
      {
@@ -72,7 +94,7 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -467,20 +474,16 @@
+@@ -463,20 +474,16 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -98,7 +120,7 @@
                  }
              }
          }
-@@ -488,8 +491,13 @@
+@@ -484,8 +491,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -113,7 +135,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -674,7 +682,7 @@
+@@ -670,7 +682,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -122,7 +144,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumFacing p_180639_5_, float p_180639_6_, float p_180639_7_, float p_180639_8_)
-@@ -776,25 +784,35 @@
+@@ -772,25 +784,35 @@
          p_180657_2_.func_71029_a(StatList.field_75934_C[func_149682_b(this)]);
          p_180657_2_.func_71020_j(0.025F);
  
@@ -161,7 +183,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -971,6 +989,1033 @@
+@@ -967,6 +989,1033 @@
          return Block.EnumOffsetType.NONE;
      }
  

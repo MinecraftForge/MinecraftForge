@@ -39,19 +39,19 @@ minecraft {
     }
 
     projects {
-        fml {
-            rootDir 'fml'
-            patchDir "fml/patches/minecraft"
-            patchAfter "clean"
-            genPatchesFrom "clean"
-
-            with common
-        }
+//        fml {
+//            rootDir 'fml'
+//            patchDir "fml/patches/minecraft"
+//            patchAfter "clean"
+//            genPatchesFrom "clean"
+//
+//            with common
+//        }
         forge {
             rootDir "."
             patchDir "patches/minecraft"
-            patchAfter "fml"
-            genPatchesFrom "fml"
+            patchAfter "clean"
+            genPatchesFrom "clean"
 
             with common
         }
@@ -61,7 +61,7 @@ minecraft {
 group = 'net.minecraftforge'
 version = getVersionFromJava(file("src/main/java/net/minecraftforge/common/ForgeVersion.java"))
 
-extractFmlSources { exclude "**/SideOnly.java", "**/Side.java" }
+extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
