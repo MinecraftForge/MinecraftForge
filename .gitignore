@@ -12,13 +12,14 @@
 /.gradle
 
 #occupational hazards
-/eclipse/
+/projects/
 /repo/
 /buildSrc
 
 #Patch rejects
 *.rej
 /patches-/
+
 # FML changelog
 changelog.txt
 /patches_old/
