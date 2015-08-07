@@ -37,6 +37,12 @@ public class FMLSecurityManager extends SecurityManager {
         return;
     }
 
+    @Override
+    public void checkPermission(Permission perm, Object context)
+    {
+        this.checkPermission(perm);
+    }
+
     public static class ExitTrappedException extends SecurityException {
         private static final long serialVersionUID = 1L;
     }
