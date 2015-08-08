@@ -130,7 +130,18 @@
              {
                  this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
-@@ -764,8 +792,10 @@
+@@ -669,9 +697,8 @@
+         this.field_147367_d.func_147132_au();
+         ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.left", new Object[] {this.field_147369_b.func_145748_c_()});
+         chatcomponenttranslation.func_150256_b().func_150238_a(EnumChatFormatting.YELLOW);
+-        this.field_147367_d.func_71203_ab().func_148539_a(chatcomponenttranslation);
+         this.field_147369_b.func_71123_m();
+-        this.field_147367_d.func_71203_ab().func_72367_e(this.field_147369_b);
++        this.field_147367_d.func_71203_ab().func_72367_e(this.field_147369_b, chatcomponenttranslation);
+ 
+         if (this.field_147367_d.func_71264_H() && this.field_147369_b.func_70005_c_().equals(this.field_147367_d.func_71214_G()))
+         {
+@@ -764,8 +791,10 @@
              }
              else
              {
@@ -143,7 +154,7 @@
              }
  
              this.field_147374_l += 20;
-@@ -907,7 +937,7 @@
+@@ -907,7 +936,7 @@
                          return;
                      }
  
@@ -152,7 +163,7 @@
                  }
  
                  break;
-@@ -1080,7 +1110,10 @@
+@@ -1080,7 +1109,10 @@
                  return;
              }
  

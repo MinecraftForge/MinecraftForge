@@ -36,15 +36,23 @@
          nethandlerplayserver.func_147359_a(new S01PacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_177502_q(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
          nethandlerplayserver.func_147359_a(new S3FPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
          nethandlerplayserver.func_147359_a(new S41PacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
-@@ -168,6 +179,7 @@
+@@ -148,7 +159,6 @@
+         }
+ 
+         chatcomponenttranslation.func_150256_b().func_150238_a(EnumChatFormatting.YELLOW);
+-        this.func_148539_a(chatcomponenttranslation);
+         this.func_72377_c(p_72355_2_);
+         nethandlerplayserver.func_147364_a(p_72355_2_.field_70165_t, p_72355_2_.field_70163_u, p_72355_2_.field_70161_v, p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
+         this.func_72354_b(p_72355_2_, worldserver);
+@@ -168,6 +178,7 @@
  
          p_72355_2_.func_71116_b();
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(p_72355_2_);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(p_72355_2_, chatcomponenttranslation);
          if (nbttagcompound != null && nbttagcompound.func_150297_b("Riding", 10))
          {
              Entity entity = EntityList.func_75615_a(nbttagcompound.func_74775_l("Riding"), worldserver);
-@@ -272,6 +284,7 @@
+@@ -272,6 +283,7 @@
              p_72380_1_.func_70020_e(nbttagcompound);
              nbttagcompound1 = nbttagcompound;
              field_148546_d.debug("loading single player");
@@ -52,7 +60,7 @@
          }
          else
          {
-@@ -281,8 +294,23 @@
+@@ -281,8 +293,23 @@
          return nbttagcompound1;
      }
  
@@ -76,7 +84,7 @@
          this.field_72412_k.func_75753_a(p_72391_1_);
          StatisticsFile statisticsfile = (StatisticsFile)this.field_148547_k.get(p_72391_1_.func_110124_au());
  
-@@ -298,6 +326,7 @@
+@@ -298,6 +325,7 @@
          this.field_177454_f.put(p_72377_1_.func_110124_au(), p_72377_1_);
          this.func_148540_a(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {p_72377_1_}));
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72377_1_.field_71093_bK);
@@ -84,15 +92,20 @@
          worldserver.func_72838_d(p_72377_1_);
          this.func_72375_a(p_72377_1_, (WorldServer)null);
  
-@@ -315,6 +344,7 @@
+@@ -315,6 +343,12 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(p_72367_1_);
++        this.func_72367_e(p_72367_1_, null);
++    }
++
++    public void func_72367_e(EntityPlayerMP p_72367_1_, IChatComponent logoutMessage)
++    {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(p_72367_1_, logoutMessage);
          p_72367_1_.func_71029_a(StatList.field_75947_j);
          this.func_72391_b(p_72367_1_);
          WorldServer worldserver = p_72367_1_.func_71121_q();
-@@ -330,6 +360,7 @@
+@@ -330,6 +364,7 @@
          this.field_72404_b.remove(p_72367_1_);
          this.field_177454_f.remove(p_72367_1_.func_110124_au());
          this.field_148547_k.remove(p_72367_1_.func_110124_au());
@@ -100,7 +113,7 @@
          this.func_148540_a(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {p_72367_1_}));
      }
  
-@@ -411,13 +442,23 @@
+@@ -411,13 +446,23 @@
  
      public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, int p_72368_2_, boolean p_72368_3_)
      {
@@ -126,7 +139,7 @@
          p_72368_1_.field_71093_bK = p_72368_2_;
          Object object;
  
-@@ -433,6 +474,7 @@
+@@ -433,6 +478,7 @@
          EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), (ItemInWorldManager)object);
          entityplayermp1.field_71135_a = p_72368_1_.field_71135_a;
          entityplayermp1.func_71049_a(p_72368_1_, p_72368_3_);
@@ -134,7 +147,7 @@
          entityplayermp1.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp1.func_174817_o(p_72368_1_);
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK);
-@@ -473,19 +515,25 @@
+@@ -473,19 +519,25 @@
          this.field_177454_f.put(entityplayermp1.func_110124_au(), entityplayermp1);
          entityplayermp1.func_71116_b();
          entityplayermp1.func_70606_j(entityplayermp1.func_110143_aJ());
@@ -162,7 +175,7 @@
          this.func_72375_a(p_72356_1_, worldserver);
          p_72356_1_.field_71135_a.func_147364_a(p_72356_1_.field_70165_t, p_72356_1_.field_70163_u, p_72356_1_.field_70161_v, p_72356_1_.field_70177_z, p_72356_1_.field_70125_A);
          p_72356_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -498,17 +546,27 @@
+@@ -498,17 +550,27 @@
              PotionEffect potioneffect = (PotionEffect)iterator.next();
              p_72356_1_.field_71135_a.func_147359_a(new S1DPacketEntityEffect(p_72356_1_.func_145782_y(), potioneffect));
          }
@@ -193,7 +206,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 / d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 / d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -519,7 +577,7 @@
+@@ -519,7 +581,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -202,7 +215,7 @@
          {
              d0 = MathHelper.func_151237_a(d0 * d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
              d1 = MathHelper.func_151237_a(d1 * d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-@@ -530,7 +588,8 @@
+@@ -530,7 +592,8 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
@@ -212,7 +225,7 @@
          {
              BlockPos blockpos;
  
-@@ -565,7 +624,7 @@
+@@ -565,7 +628,7 @@
              if (p_82448_1_.func_70089_S())
              {
                  p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);

@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,6 +43,7 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
@@ -66,7 +65,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
@@ -588,12 +586,34 @@ public class FMLCommonHandler
 
     public void firePlayerLoggedIn(EntityPlayer player)
     {
-        bus().post(new PlayerEvent.PlayerLoggedInEvent(player));
+        this.firePlayerLoggedIn(player, null);
+    }
+
+    public void firePlayerLoggedIn(EntityPlayer player, IChatComponent loginMessage)
+    {
+        PlayerEvent.PlayerLoggedInEvent event = new PlayerEvent.PlayerLoggedInEvent(player);
+        event.setLoginMessage(loginMessage);
+        bus().post(event);
+        if (event.getLoginMessage() != null)
+        {
+            this.getMinecraftServerInstance().getConfigurationManager().sendChatMsg(event.getLoginMessage());
+        }
     }
 
     public void firePlayerLoggedOut(EntityPlayer player)
     {
-        bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
+        this.firePlayerLoggedOut(player, null);
+    }
+
+    public void firePlayerLoggedOut(EntityPlayer player, IChatComponent logoutMessage)
+    {
+        PlayerEvent.PlayerLoggedOutEvent event = new PlayerEvent.PlayerLoggedOutEvent(player);
+        event.setLogoutMessage(logoutMessage);
+        bus().post(event);
+        if (event.getLogoutMessage() != null)
+        {
+            this.getMinecraftServerInstance().getConfigurationManager().sendChatMsg(event.getLogoutMessage());
+        }
     }
 
     public void firePlayerRespawnEvent(EntityPlayer player)
