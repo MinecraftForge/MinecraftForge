@@ -32,3 +32,13 @@
              }
  
              if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
+@@ -326,6 +329,9 @@
+         }
+         else
+         {
++            int moddedBurnTime = net.minecraftforge.event.ForgeEventFactory.getFuelBurnTime(p_145952_0_);
++            if (moddedBurnTime >= 0) return moddedBurnTime;
++
+             Item item = p_145952_0_.func_77973_b();
+ 
+             if (item instanceof ItemBlock && Block.func_149634_a(item) != Blocks.field_150350_a)
