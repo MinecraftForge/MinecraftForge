@@ -157,6 +157,30 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
 uploadArchives.dependsOn signUniversal
 build.dependsOn signUniversal
 
+// MDK package
+
+import org.apache.tools.ant.filters.ReplaceTokens
+task makeMdk(type: Zip) {
+    baseName = project.name
+    classifier = "mdk"
+    version = project.version
+    destinationDir = file('build/distributions')
+
+    from 'mdk'
+    filter(ReplaceTokens, tokens: [
+        VERSION: project.version,
+        MAPPINGS: minecraft.mappings.replace('nodoc_', '')
+    ])
+    rename 'gitignore\\.txt', '.gitignore'
+    from 'MinecraftForge-Credits.txt'
+    from 'MinecraftForge-License.txt'
+    from 'Paulscode IBXM Library License.txt'
+    from 'Paulscode SoundSystem CodecIBXM License.txt'
+    from 'LICENSE-fml.txt'
+    from changelog.output
+}
+tasks.build.dependsOn madeMdk
+
 // launch4j
 
 launch4j {
@@ -176,6 +200,7 @@ tasks.build.dependsOn 'launch4j'
 artifacts {
     archives changelog.output
     archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
+    archives makdeMdk.output
 }
 
 uploadArchives {
