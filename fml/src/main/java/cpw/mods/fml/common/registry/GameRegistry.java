@@ -155,10 +155,13 @@ public class GameRegistry
      * Add a forced persistent substitution alias for the block or item to another block or item. This will have
      * the effect of using the substituted block or item instead of the original, where ever it is
      * referenced.
+     * <br><br>
+     * When replacing a block, you need to replace its item too. Pass your NEW block instance to the ItemBlock constructor,
+     * otherwise you will get an error when loading a world.
      *
-     * @param nameToSubstitute The name to link to (this is the NEW block or item)
+     * @param nameToSubstitute The registry name to substitute
      * @param type The type (Block or Item)
-     * @param object a NEW instance that is type compatible with the existing instance
+     * @param object A NEW instance that is type compatible with the existing instance
      * @throws ExistingSubstitutionException if someone else has already registered an alias either from or to one of the names
      * @throws IncompatibleSubstitutionException if the substitution is incompatible
      */

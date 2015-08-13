@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryNamespaced;
@@ -45,7 +46,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
         this.minId = minIdValue;
     }
 
-    void validateContent(int maxId, String type, BitSet availabilityMap, Set<Integer> blockedIds, FMLControlledNamespacedRegistry<Block> iBlockRegistry)
+    void validateContent(int maxId, String type, BitSet availabilityMap, Set<Integer> blockedIds, FMLControlledNamespacedRegistry<Block> iBlockRegistry, FMLControlledNamespacedRegistry<Item> iItemRegistry)
     {
         for (I obj : typeSafeIterable())
         {
@@ -77,6 +78,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespaced {
             {
                 Block block = ((ItemBlock) obj).field_150939_a;
 
+                // verify substitution consistency
+                if (iBlockRegistry.getPersistentSubstitutions().containsKey(name) && !iItemRegistry.getPersistentSubstitutions().containsKey(name))
+                {
+                    throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, name %s, id %d, is pointing to a substituted block, but the item does not have a substitution.", obj, name, id));
+                }
                 // verify matching block entry
                 if (iBlockRegistry.getId(block) != id)
                 {
