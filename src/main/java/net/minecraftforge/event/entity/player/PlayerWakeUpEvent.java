@@ -9,11 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
  */
 public class PlayerWakeUpEvent extends PlayerEvent
 {
-    @Deprecated //ToDo: Remove in 1.8
-    public PlayerWakeUpEvent(EntityPlayer player)
-    {
-        this(player, false, false, false);
-    }
     /**
      * Used for the 'wake up animation'.
      * This is false if the player is considered 'sleepy' and the overlay should slowly fade away.

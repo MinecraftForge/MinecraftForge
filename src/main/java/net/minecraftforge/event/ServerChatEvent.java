@@ -1,13 +1,14 @@
 package net.minecraftforge.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IChatComponent;
 
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>
- * This event is fired via {@link ForgeHooks#onServerChatEvent(net.minecraft.network.NetHandlerPlayServer, String, ChatComponentTranslation)}, 
+ * This event is fired via {@link ForgeHooks#onServerChatEvent(net.minecraft.network.NetHandlerPlayServer, String, ChatComponentTranslation)},
  * which is executed by the NetHandlerPlayServer#processChatMessage(net.minecraft.network.play.client.C01PacketChatMessage)<br>
  * <br>
  * {@link #username} contains the username of the player sending the chat message.<br>
@@ -27,6 +28,7 @@ public class ServerChatEvent extends Event
 {
     public final String message, username;
     public final EntityPlayerMP player;
+    @Deprecated //Use methods below
     public ChatComponentTranslation component;
     public ServerChatEvent(EntityPlayerMP player, String message, ChatComponentTranslation component)
     {
@@ -35,5 +37,18 @@ public class ServerChatEvent extends Event
         this.player = player;
         this.username = player.getGameProfile().getName();
         this.component = component;
+    }
+
+    public void setComponent(IChatComponent e)
+    {
+        if (e instanceof ChatComponentTranslation)
+            this.component = (ChatComponentTranslation)e;
+        else
+            this.component = new ChatComponentTranslation("%s", e);
+    }
+
+    public IChatComponent getComponent()
+    {
+        return this.component;
     }
 }

@@ -9,7 +9,7 @@
                  NBTBase nbtbase = func_152449_a(b0, s, p_152446_1_, p_152446_2_ + 1, p_152446_3_);
                  this.field_74784_a.put(s, nbtbase);
              }
-@@ -379,6 +379,7 @@
+@@ -396,6 +396,7 @@
  
      private static byte func_152447_a(DataInput p_152447_0_, NBTSizeTracker p_152447_1_) throws IOException
      {
@@ -17,7 +17,7 @@
          return p_152447_0_.readByte();
      }
  
-@@ -389,6 +390,7 @@
+@@ -406,6 +407,7 @@
  
      static NBTBase func_152449_a(byte p_152449_0_, String p_152449_1_, DataInput p_152449_2_, int p_152449_3_, NBTSizeTracker p_152449_4_)
      {

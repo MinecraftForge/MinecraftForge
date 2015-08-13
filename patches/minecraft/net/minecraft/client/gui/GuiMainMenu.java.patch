@@ -1,18 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -25,6 +25,7 @@
- import net.minecraft.world.demo.DemoWorldServer;
- import net.minecraft.world.storage.ISaveFormat;
- import net.minecraft.world.storage.WorldInfo;
-+import net.minecraftforge.client.ForgeHooksClient;
- import org.apache.commons.io.Charsets;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-@@ -507,6 +508,7 @@
+@@ -511,6 +511,7 @@
                  this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + i * (this.field_146289_q.field_78288_b + 1)), 16777215);
              }
          }
-+        ForgeHooksClient.renderMainMenu(this, field_146289_q, field_146294_l, field_146295_m);
++        net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m);
          String s1 = "Copyright Mojang AB. Do not distribute!";
          this.func_73731_b(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.func_78256_a(s1) - 2, this.field_146295_m - 10, -1);
  

@@ -1,29 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -29,6 +29,7 @@
- import net.minecraft.util.MathHelper;
- import net.minecraft.util.ReportedException;
- import net.minecraft.util.ResourceLocation;
-+import net.minecraftforge.client.ForgeHooksClient;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-@@ -98,11 +99,14 @@
- 
-     public void func_110571_b(IResourceManager p_110571_1_)
-     {
-+        func_110573_f(); //Re-gather list of Icons, allows for addition/removal of blocks/items after this map was initially constructed.
-+
-         int i = Minecraft.func_71369_N();
-         Stitcher stitcher = new Stitcher(i, i, true, 0, this.field_147636_j);
-         this.field_94252_e.clear();
+@@ -104,6 +104,8 @@
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
-+        ForgeHooksClient.onTextureStitchedPre(this);
-         cpw.mods.fml.common.ProgressManager.ProgressBar bar = cpw.mods.fml.common.ProgressManager.push("Texture Loading", skipFirst ? 0 : this.field_110574_e.size());
+         int k = 1 << this.field_147636_j;
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
++        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
+         net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.field_110574_e.size());
          Iterator iterator = this.field_110574_e.entrySet().iterator();
-         TextureAtlasSprite textureatlassprite;
-@@ -115,6 +119,16 @@
+ 
+@@ -115,6 +117,16 @@
              ResourceLocation resourcelocation1 = this.func_147634_a(resourcelocation, 0);
              bar.step(resourcelocation1.func_110623_a());
  
@@ -40,26 +26,19 @@
              try
              {
                  IResource iresource = p_110571_1_.func_110536_a(resourcelocation1);
-@@ -294,6 +308,7 @@
-             textureatlassprite = (TextureAtlasSprite)iterator2.next();
-             textureatlassprite.func_94217_a(this.field_94249_f);
+@@ -301,6 +313,9 @@
+             textureatlassprite2.func_94217_a(this.field_94249_f);
          }
-+        ForgeHooksClient.onTextureStitchedPost(this);
-         cpw.mods.fml.common.ProgressManager.pop(bar);
+ 
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
++
++        if (!net.minecraftforge.common.ForgeModContainer.disableStitchedFileSaving)
+         TextureUtil.func_177055_a(this.field_94254_c.replaceAll("/", "_"), this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
+         net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
- 
-@@ -368,7 +383,7 @@
-         {
-             throw new IllegalArgumentException("Name cannot be null!");
-         }
--        else if (p_94245_1_.indexOf(47) == -1 && p_94245_1_.indexOf(92) == -1)
-+        else if (p_94245_1_.indexOf(92) == -1) // Disable backslashes (\) in texture asset paths.
-         {
-             Object object = (TextureAtlasSprite)this.field_110574_e.get(p_94245_1_);
- 
-@@ -424,4 +439,37 @@
+@@ -368,4 +383,37 @@
      {
-         this.field_147637_k = p_147632_1_;
+         return this.field_94249_f;
      }
 +
 +    //===================================================================================================

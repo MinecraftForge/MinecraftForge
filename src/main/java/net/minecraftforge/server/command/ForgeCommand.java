@@ -2,10 +2,14 @@ package net.minecraftforge.server.command;
 
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
+import java.util.List;
+
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.server.ForgeTimeTracker;
@@ -21,7 +25,7 @@ public class ForgeCommand extends CommandBase {
     }
 
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "forge";
     }
@@ -38,7 +42,7 @@ public class ForgeCommand extends CommandBase {
         return 2;
     }
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void execute(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length == 0)
         {
@@ -66,14 +70,34 @@ public class ForgeCommand extends CommandBase {
         }
     }
 
-    private void handleTracking(ICommandSender sender, String[] args)
+    @Override
+    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    {
+        if (args.length == 1)
+        {
+            return getListOfStringsMatchingLastWord(args, "tps", "track");
+        }
+        else if (args.length == 2)
+        {
+            if ("tps".equals(args[0])) {
+                return func_175762_a(args, getServer().worldTickTimes.keySet());
+            }
+            else if ("track".equals(args[0]))
+            {
+                return getListOfStringsMatchingLastWord(args, "te");
+            }
+        }
+        return null;
+    }
+    
+    private void handleTracking(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length != 3)
         {
             throw new WrongUsageException("commands.forge.usage.tracking");
         }
         String type = args[1];
-        int duration = parseIntBounded(sender, args[2], 1, 60);
+        int duration = parseInt(args[2], 1, 60);
 
         if ("te".equals(type))
         {
@@ -97,13 +121,13 @@ public class ForgeCommand extends CommandBase {
 
     }
 
-    private void displayTPS(ICommandSender sender, String[] args)
+    private void displayTPS(ICommandSender sender, String[] args) throws CommandException
     {
         int dim = 0;
         boolean summary = true;
         if (args.length > 1)
         {
-            dim = parseInt(sender, args[1]);
+            dim = parseInt(args[1]);
             summary = false;
         }
         if (summary)

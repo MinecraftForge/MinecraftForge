@@ -1,0 +1,12 @@
+diff -r -U 3 minecraft\net\minecraft\client\renderer\block\model\ModelBlockDefinition.java minecraft_patched\net\minecraft\client\renderer\block\model\ModelBlockDefinition.java
+--- minecraft\net\minecraft\client\renderer\block\model\ModelBlockDefinition.java
++++ minecraft_patched\net\minecraft\client\renderer\block\model\ModelBlockDefinition.java
+@@ -82,7 +82,7 @@
+       public ModelBlockDefinition func_178336_a(JsonElement p_178336_1_, Type p_178336_2_, JsonDeserializationContext p_178336_3_) {
+          JsonObject var4 = p_178336_1_.getAsJsonObject();
+          List var5 = this.func_178334_a(p_178336_3_, var4);
+-         return new ModelBlockDefinition(var5);
++         return new ModelBlockDefinition((Collection)var5);
+       }
+ 
+       protected List func_178334_a(JsonDeserializationContext p_178334_1_, JsonObject p_178334_2_) {

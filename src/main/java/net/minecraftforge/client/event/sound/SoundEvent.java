@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event.sound;
 
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
@@ -13,7 +13,7 @@ public class SoundEvent extends Event
     {
         this.manager = manager;
     }
-    
+
     @Deprecated
     public static SoundPoolEntry getResult(SoundResultEvent event)
     {
@@ -30,7 +30,7 @@ public class SoundEvent extends Event
         public SoundSourceEvent(SoundManager manager, ISound sound, String uuid)
         {
             super(manager);
-            this.name = sound.getPositionedSoundLocation().getResourcePath();
+            this.name = sound.getSoundLocation().getResourcePath();
             this.sound = sound;
             this.uuid = uuid;
         }

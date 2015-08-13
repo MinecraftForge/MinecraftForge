@@ -1,29 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -14,6 +14,9 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.CommandEvent;
-+
- public class CommandHandler implements ICommandManager
- {
-     private static final Logger field_147175_a = LogManager.getLogger();
-@@ -47,6 +50,16 @@
- 
-             if (icommand.func_71519_b(p_71556_1_))
-             {
-+                CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
-+                if (MinecraftForge.EVENT_BUS.post(event))
+@@ -48,6 +48,16 @@
+         }
+         else if (icommand.func_71519_b(p_71556_1_))
+         {
++            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(icommand, p_71556_1_, astring);
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
++                if (event.exception != null)
 +                {
-+                    if (event.exception != null)
-+                    {
-+                        throw event.exception;
-+                    }
-+                    return 1;
++                    com.google.common.base.Throwables.propagateIfPossible(event.exception);
 +                }
++                return 1;
++            }
 +
-                 if (i > -1)
-                 {
-                     EntityPlayerMP[] aentityplayermp = PlayerSelector.func_82380_c(p_71556_1_, astring[i]);
+             if (i > -1)
+             {
+                 List list = PlayerSelector.func_179656_b(p_71556_1_, astring[i], Entity.class);

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -24,7 +24,7 @@
+@@ -25,7 +25,7 @@
  
          if (!p_77654_2_.field_72995_K)
          {
@@ -8,4 +8,4 @@
 +            p_77654_3_.curePotionEffects(p_77654_1_);
          }
  
-         return p_77654_1_.field_77994_a <= 0 ? new ItemStack(Items.field_151133_ar) : p_77654_1_;
+         p_77654_3_.func_71029_a(StatList.field_75929_E[Item.func_150891_b(this)]);

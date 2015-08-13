@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -249,7 +249,7 @@
+@@ -149,7 +149,7 @@
      {
          if (this.field_149764_J == Material.field_151573_f)
          {
@@ -9,12 +9,12 @@
          }
          else
          {
-@@ -367,7 +367,7 @@
+@@ -267,7 +267,7 @@
  
-     public boolean func_149742_c(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return p_149742_3_ >= 255 ? false : World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_ + 1, p_149742_4_);
-+        return p_149742_3_ >= p_149742_1_.func_72800_K() - 1 ? false : World.func_147466_a(p_149742_1_, p_149742_2_, p_149742_3_ - 1, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_) && super.func_149742_c(p_149742_1_, p_149742_2_, p_149742_3_ + 1, p_149742_4_);
+-        return p_176196_2_.func_177956_o() >= 255 ? false : World.func_175683_a(p_176196_1_, p_176196_2_.func_177977_b()) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
++        return p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1 ? false : World.func_175683_a(p_176196_1_, p_176196_2_.func_177977_b()) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
      }
  
      public int func_149656_h()

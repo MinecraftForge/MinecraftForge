@@ -1,22 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -33,6 +33,7 @@
- import net.minecraft.util.IIcon;
- import net.minecraft.util.StatCollector;
- import net.minecraft.world.World;
-+import net.minecraftforge.event.ForgeEventFactory;
+@@ -129,6 +129,7 @@
  
- public final class ItemStack
- {
-@@ -124,6 +125,7 @@
- 
-     public boolean func_77943_a(EntityPlayer p_77943_1_, World p_77943_2_, int p_77943_3_, int p_77943_4_, int p_77943_5_, int p_77943_6_, float p_77943_7_, float p_77943_8_, float p_77943_9_)
+     public boolean func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumFacing p_179546_4_, float p_179546_5_, float p_179546_6_, float p_179546_7_)
      {
-+        if (!p_77943_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
-         boolean flag = this.func_77973_b().func_77648_a(this, p_77943_1_, p_77943_2_, p_77943_3_, p_77943_4_, p_77943_5_, p_77943_6_, p_77943_7_, p_77943_8_, p_77943_9_);
++        if (!p_179546_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
+         boolean flag = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
  
          if (flag)
-@@ -182,7 +184,7 @@
+@@ -201,7 +202,7 @@
  
      public int func_77976_d()
      {
@@ -25,16 +17,16 @@
      }
  
      public boolean func_77985_e()
-@@ -192,7 +194,7 @@
+@@ -211,7 +212,7 @@
  
      public boolean func_77984_f()
      {
--        return this.field_151002_e.func_77612_l() <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable");
-+        return this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable");
+-        return this.field_151002_e == null ? false : (this.field_151002_e.func_77612_l() <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable"));
++        return this.field_151002_e == null ? false : (this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable"));
      }
  
      public boolean func_77981_g()
-@@ -202,32 +204,27 @@
+@@ -221,32 +222,27 @@
  
      public boolean func_77951_h()
      {
@@ -45,13 +37,13 @@
      public int func_77952_i()
      {
 -        return this.field_77991_e;
-+        return func_77973_b().getDisplayDamage(this);
++        return func_77973_b().getDamage(this);
      }
  
      public int func_77960_j()
      {
 -        return this.field_77991_e;
-+        return func_77973_b().getDamage(this);
++        return func_77973_b().getMetadata(this);
      }
  
      public void func_77964_b(int p_77964_1_)
@@ -68,22 +60,22 @@
      public int func_77958_k()
      {
 -        return this.field_151002_e.func_77612_l();
-+        return func_77973_b().getMaxDamage(this);
++        return this.field_151002_e.getMaxDamage(this);
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -259,8 +256,8 @@
+@@ -278,8 +274,8 @@
                  }
              }
  
 -            this.field_77991_e += p_96631_1_;
 -            return this.field_77991_e > this.func_77958_k();
-+            func_77964_b(func_77960_j() + p_96631_1_); //Redirect through Item's callback if applicable.
-+            return func_77960_j() > func_77958_k();
++            func_77964_b(func_77952_i() + p_96631_1_); //Redirect through Item's callback if applicable.
++            return func_77952_i() > func_77958_k();
          }
      }
  
-@@ -319,7 +316,7 @@
+@@ -338,7 +334,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
@@ -92,33 +84,16 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
-@@ -626,16 +623,24 @@
-         {
-             arraylist.add("Durability: " + (this.func_77958_k() - this.func_77952_i()) + " / " + this.func_77958_k());
+@@ -753,6 +749,8 @@
+             }
          }
-+        ForgeEventFactory.onItemTooltip(this, p_82840_1_, arraylist, p_82840_2_);
  
++        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, arraylist, p_82840_2_);
++
          return arraylist;
      }
  
-+    @Deprecated
-     @SideOnly(Side.CLIENT)
-     public boolean func_77962_s()
-     {
--        return this.func_77973_b().func_77636_d(this);
-+        return hasEffect(0);
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+    public boolean hasEffect(int pass)
-+    {
-+        return this.func_77973_b().hasEffect(this, pass);
-+    }
-+
-     public EnumRarity func_77953_t()
-     {
-         return this.func_77973_b().func_77613_e(this);
-@@ -737,7 +742,7 @@
+@@ -863,7 +861,7 @@
          }
          else
          {

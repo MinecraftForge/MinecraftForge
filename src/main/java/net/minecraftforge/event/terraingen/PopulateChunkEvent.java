@@ -2,8 +2,8 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
@@ -27,7 +27,7 @@ public class PopulateChunkEvent extends ChunkProviderEvent
     public final int chunkX;
     public final int chunkZ;
     public final boolean hasVillageGenerated;
-    
+
     public PopulateChunkEvent(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
     {
         super(chunkProvider);
@@ -37,12 +37,12 @@ public class PopulateChunkEvent extends ChunkProviderEvent
         this.chunkZ = chunkZ;
         this.hasVillageGenerated = hasVillageGenerated;
     }
-    
+
     /**
      * PopulateChunkEvent.Pre is fired just before a chunk is populated a terrain feature.<br>
-     * This event is fired just before terrain feature generation in 
+     * This event is fired just before terrain feature generation in
      * ChunkProviderEnd#populate(IChunkProvider, int, int),
-     * ChunkProviderGenerate#populate(IChunkProvider, int, int), 
+     * ChunkProviderGenerate#populate(IChunkProvider, int, int),
      * and ChunkProviderHell#populate(IChunkProvider, int, int). <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
@@ -58,12 +58,12 @@ public class PopulateChunkEvent extends ChunkProviderEvent
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
-    
+
     /**
      * PopulateChunkEvent.Post is fired just after a chunk is populated with a terrain feature.<br>
-     * This event is fired just after terrain feature generation in 
+     * This event is fired just after terrain feature generation in
      * ChunkProviderEnd#populate(IChunkProvider, int, int),
-     * ChunkProviderGenerate#populate(IChunkProvider, int, int), 
+     * ChunkProviderGenerate#populate(IChunkProvider, int, int),
      * and ChunkProviderHell#populate(IChunkProvider, int, int). <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
@@ -79,7 +79,7 @@ public class PopulateChunkEvent extends ChunkProviderEvent
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
-    
+
     /**
      * PopulateChunkEvent.Populate is fired when a chunk is populated with a terrain feature.<br>
      * This event is fired during terrain feature generation in
@@ -101,8 +101,8 @@ public class PopulateChunkEvent extends ChunkProviderEvent
     {
         /** Use CUSTOM to filter custom event types
          */
-        public static enum EventType { DUNGEON, FIRE, GLOWSTONE, ICE, LAKE, LAVA, NETHER_LAVA, ANIMALS, CUSTOM }
-        
+        public static enum EventType { DUNGEON, FIRE, GLOWSTONE, ICE, LAKE, LAVA, NETHER_LAVA, NETHER_LAVA2, ANIMALS, CUSTOM }
+
         public final EventType type;
 
         public Populate(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, EventType type)

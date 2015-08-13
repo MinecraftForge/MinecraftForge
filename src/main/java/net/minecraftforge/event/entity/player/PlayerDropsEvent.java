@@ -1,8 +1,8 @@
 package net.minecraftforge.event.entity.player;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
@@ -23,17 +23,17 @@ public class PlayerDropsEvent extends LivingDropsEvent
     /**
      * Creates a new event containing all the items that will drop into the
      * world when a player dies.
-     * @param entity The dying player. 
+     * @param entity The dying player.
      * @param source The source of the damage which is killing the player.
      * @param drops List of all drops entering the world.
      */
-    public PlayerDropsEvent(EntityPlayer entity, DamageSource source, ArrayList<EntityItem> drops, boolean recentlyHit)
+    public PlayerDropsEvent(EntityPlayer entity, DamageSource source, List<EntityItem> drops, boolean recentlyHit)
     {
-        super(entity, source, drops, 
-            (source.getEntity() instanceof EntityPlayer) ? 
+        super(entity, source, drops,
+            (source.getEntity() instanceof EntityPlayer) ?
                 EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity())) : 0,
-            recentlyHit, 0);
-        
+            recentlyHit);
+
         this.entityPlayer = entity;
     }
 }

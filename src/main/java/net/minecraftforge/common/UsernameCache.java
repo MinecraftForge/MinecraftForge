@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import cpw.mods.fml.relauncher.FMLInjectionData;
+import net.minecraftforge.fml.relauncher.FMLInjectionData;
 
 /**
  * Caches player's last known usernames

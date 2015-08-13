@@ -1,25 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -6,13 +6,18 @@
- import java.io.FileInputStream;
- import java.io.FileOutputStream;
- import java.io.IOException;
-+
-+import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.StartupQuery;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.nbt.CompressedStreamTools;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.world.MinecraftException;
- import net.minecraft.world.WorldProvider;
- import net.minecraft.world.chunk.storage.IChunkLoader;
-+
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-@@ -107,20 +112,29 @@
+@@ -107,20 +107,29 @@
          NBTTagCompound nbttagcompound;
          NBTTagCompound nbttagcompound1;
  
@@ -33,10 +14,10 @@
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
 -                return new WorldInfo(nbttagcompound1);
 +                worldInfo = new WorldInfo(nbttagcompound1);
-+                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
              }
-+            catch (StartupQuery.AbortedException e)
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
 +            {
 +                throw e;
 +            }
@@ -46,50 +27,49 @@
              }
          }
  
-+        FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
          file1 = new File(this.field_75770_b, "level.dat_old");
  
          if (file1.exists())
-@@ -129,8 +143,14 @@
+@@ -129,7 +138,13 @@
              {
                  nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
 -                return new WorldInfo(nbttagcompound1);
 +                worldInfo = new WorldInfo(nbttagcompound1);
-+                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
 +                return worldInfo;
-             }
-+            catch (StartupQuery.AbortedException e)
++             }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
 +            {
 +                throw e;
-+            }
+             }
              catch (Exception exception)
              {
-                 exception.printStackTrace();
-@@ -146,6 +166,8 @@
+@@ -146,6 +161,8 @@
          NBTTagCompound nbttagcompound2 = new NBTTagCompound();
          nbttagcompound2.func_74782_a("Data", nbttagcompound1);
  
-+        FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound2);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound2);
 +
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -184,6 +206,8 @@
+@@ -184,6 +201,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
-+        FMLCommonHandler.instance().handleWorldDataSave(this, p_75761_1_, nbttagcompound1);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75761_1_, nbttagcompound1);
 +
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -296,4 +320,22 @@
+@@ -301,4 +320,22 @@
      {
          return this.field_75767_f;
      }
 +
-+    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    public NBTTagCompound getPlayerNBT(net.minecraft.entity.player.EntityPlayerMP player)
 +    {
 +        try
 +        {

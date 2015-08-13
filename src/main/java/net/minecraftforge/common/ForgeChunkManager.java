@@ -8,14 +8,13 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import org.apache.logging.log4j.Level;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
@@ -33,16 +32,16 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.MathHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -895,7 +894,7 @@ public class ForgeChunkManager
 
     public static void putDormantChunk(long coords, Chunk chunk)
     {
-        Cache<Long, Chunk> cache = dormantChunkCache.get(chunk.worldObj);
+        Cache<Long, Chunk> cache = dormantChunkCache.get(chunk.getWorld());
         if (cache != null)
         {
             cache.put(coords, chunk);
@@ -913,11 +912,12 @@ public class ForgeChunkManager
         Chunk chunk = cache.getIfPresent(coords);
         if (chunk != null)
         {
-            for (List<Entity> eList : (List<Entity>[])chunk.entityLists)
+            for (ClassInheritanceMultiMap eList : chunk.getEntityLists())
             {
-                for (Entity e: eList)
+                Iterator<Entity> itr = (Iterator<Entity>)eList.iterator();
+                while (itr.hasNext())
                 {
-                    e.resetEntityId();
+                    (itr.next()).resetEntityId();
                 }
             }
         }

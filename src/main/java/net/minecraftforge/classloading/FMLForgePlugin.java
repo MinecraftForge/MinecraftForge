@@ -3,7 +3,7 @@ package net.minecraftforge.classloading;
 import java.io.File;
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 public class FMLForgePlugin implements IFMLLoadingPlugin
 {

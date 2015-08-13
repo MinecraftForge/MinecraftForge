@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.eventhandler.Event;
+
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,15 +35,15 @@ public abstract class FluidContainerRegistry
     private static class ContainerKey
     {
         ItemStack container;
-        FluidStack stack;
+        FluidStack fluid;
         private ContainerKey(ItemStack container)
         {
             this.container = container;
         }
-        private ContainerKey(ItemStack container, FluidStack stack)
+        private ContainerKey(ItemStack container, FluidStack fluid)
         {
             this(container);
-            this.stack = stack;
+            this.fluid = fluid;
         }
         @Override
         public int hashCode()
@@ -49,8 +51,8 @@ public abstract class FluidContainerRegistry
             int code = 1;
             code = 31*code + container.getItem().hashCode();
             code = 31*code + container.getItemDamage();
-            if (stack != null)
-                code = 31*code + stack.getFluid().hashCode();
+            if (fluid != null)
+                code = 31*code + fluid.getFluid().hashCode();
             return code;
         }
         @Override
@@ -60,10 +62,10 @@ public abstract class FluidContainerRegistry
             ContainerKey ck = (ContainerKey)o;
             if (container.getItem() != ck.container.getItem()) return false;
             if (container.getItemDamage() != ck.container.getItemDamage()) return false;
-            if (stack == null && ck.stack != null) return false;
-            if (stack != null && ck.stack == null) return false;
-            if (stack == null && ck.stack == null) return true;
-            if (stack.getFluid() != ck.stack.getFluid()) return false;
+            if (fluid == null && ck.fluid != null) return false;
+            if (fluid != null && ck.fluid == null) return false;
+            if (fluid == null && ck.fluid == null) return true;
+            if (fluid.getFluid() != ck.fluid.getFluid()) return false;
             return true;
         }
     }
@@ -112,7 +114,7 @@ public abstract class FluidContainerRegistry
      *            ItemStack representing the container when it is full.
      * @param emptyContainer
      *            ItemStack representing the container when it is empty.
-     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
+     * @return True if container was successfully registered; false if it already is.
      */
     public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer, ItemStack emptyContainer)
     {
@@ -364,6 +366,7 @@ public abstract class FluidContainerRegistry
         public final FluidStack fluid;
         public final ItemStack filledContainer;
         public final ItemStack emptyContainer;
+
 
         public FluidContainerData(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
         {

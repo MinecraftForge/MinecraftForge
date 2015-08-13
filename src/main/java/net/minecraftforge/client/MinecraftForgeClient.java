@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
@@ -46,20 +47,22 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
-    public static int getStencilBits()
+    public static EnumWorldBlockLayer getRenderLayer()
     {
-        return ForgeHooksClient.stencilBits;
+        return ForgeHooksClient.renderLayer.get();
     }
 
-
-    private static BitSet stencilBits = new BitSet(getStencilBits());
+    private static BitSet stencilBits = new BitSet(8);
     static
     {
-        stencilBits.set(0,getStencilBits());
+        stencilBits.set(0,8);
     }
 
     /**
      * Reserve a stencil bit for use in rendering
+     *
+     * Note: you must check the Framebuffer you are working with to
+     * determine if stencil bits are enabled on it before use.
      *
      * @return A bit or -1 if no further stencil bits are available
      */
@@ -80,7 +83,7 @@ public class MinecraftForgeClient
      */
     public static void releaseStencilBit(int bit)
     {
-        if (bit >= 0 && bit < getStencilBits())
+        if (bit >= 0 && bit < stencilBits.length())
         {
             stencilBits.set(bit);
         }

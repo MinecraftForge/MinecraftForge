@@ -1,11 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenSwamp.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenSwamp.java
-@@ -30,6 +30,8 @@
-         this.field_76760_I.field_76803_B = 5;
-         this.field_76759_H = 14745518;
-         this.field_76761_J.add(new BiomeGenBase.SpawnListEntry(EntitySlime.class, 1, 1, 1));
-+        this.flowers.clear();
-+        this.addFlower(Blocks.field_150328_O, 1, 10);
+@@ -86,4 +86,10 @@
+     {
+         return 6975545;
      }
- 
-     public WorldGenAbstractTree func_150567_a(Random p_150567_1_)
++
++    @Override
++    public void addDefaultFlowers()
++    {
++        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.BLUE_ORCHID), 10);
++    }
+ }

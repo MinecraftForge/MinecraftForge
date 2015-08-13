@@ -1,38 +1,43 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -94,7 +94,7 @@
+@@ -101,7 +101,7 @@
  
              if (item != null)
              {
 -                int i = Item.func_150891_b(item);
 +                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 field_75928_D[i] = (new StatCrafting("stat.craftItem." + i, new ChatComponentTranslation("stat.craftItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
-             }
-         }
-@@ -112,7 +112,7 @@
+                 String s = func_180204_a(item);
  
-             if (Item.func_150898_a(block) != null)
+                 if (s != null)
+@@ -121,11 +121,11 @@
+         while (iterator.hasNext())
+         {
+             Block block = (Block)iterator.next();
+-            Item item = Item.func_150898_a(block);
++            Item item = Item.func_150898_a(block); //TODO: Hook FML's stat change event and re-assign these
+ 
+             if (item != null)
              {
 -                int i = Block.func_149682_b(block);
 +                int i = Block.func_149682_b(block); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
  
-                 if (block.func_149652_G())
-                 {
-@@ -135,7 +135,7 @@
- 
-             if (item != null)
-             {
--                int i = Item.func_150891_b(item);
-+                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 field_75929_E[i] = (new StatCrafting("stat.useItem." + i, new ChatComponentTranslation("stat.useItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
- 
-                 if (!(item instanceof ItemBlock))
-@@ -158,7 +158,7 @@
+                 if (s != null && block.func_149652_G())
+@@ -149,7 +149,7 @@
  
              if (item != null)
              {
 -                int i = Item.func_150891_b(item);
 +                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
  
-                 if (item.func_77645_m())
-                 {
+                 if (s != null)
+@@ -177,7 +177,7 @@
+ 
+             if (item != null)
+             {
+-                int i = Item.func_150891_b(item);
++                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
+ 
+                 if (s != null && item.func_77645_m())

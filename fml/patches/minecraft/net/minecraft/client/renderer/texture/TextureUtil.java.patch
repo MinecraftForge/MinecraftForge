@@ -1,14 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
-@@ -201,8 +201,11 @@
+@@ -202,9 +202,11 @@
  
-     public static void func_147946_a(int p_147946_0_, int p_147946_1_, int p_147946_2_, int p_147946_3_, float p_147946_4_)
+     public static void func_180600_a(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
      {
-+        synchronized(cpw.mods.fml.client.SplashProgress.class)
++        synchronized (net.minecraftforge.fml.client.SplashProgress.class)
 +        {
-         func_147942_a(p_147946_0_);
-         func_94277_a(p_147946_0_);
+         func_147942_a(p_180600_0_);
+         func_94277_a(p_180600_0_);
+-
 +        }
- 
-         if (OpenGlHelper.field_148825_d)
+         if (p_180600_1_ >= 0)
          {
+             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, p_180600_1_);

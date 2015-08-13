@@ -1,7 +1,7 @@
 diff -r -U 3 minecraft\net\minecraft\client\gui\FontRenderer.java minecraft_patched\net\minecraft\client\gui\FontRenderer.java
 --- minecraft\net\minecraft\client\gui\FontRenderer.java
 +++ minecraft_patched\net\minecraft\client\gui\FontRenderer.java
-@@ -581,8 +581,6 @@
+@@ -592,8 +592,6 @@
           case 10:
              --var5;
              break;
@@ -10,7 +10,7 @@ diff -r -U 3 minecraft\net\minecraft\client\gui\FontRenderer.java minecraft_patc
           case 167:
              if(var5 < var3 - 1) {
                 ++var5;
-@@ -596,6 +594,8 @@
+@@ -607,6 +605,8 @@
                 }
              }
              break;

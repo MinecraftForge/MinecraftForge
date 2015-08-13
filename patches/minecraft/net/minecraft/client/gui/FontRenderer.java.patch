@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/FontRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/FontRenderer.java
+@@ -97,6 +97,7 @@
+     public void func_110549_a(IResourceManager p_110549_1_)
+     {
+         this.func_111272_d();
++        this.func_98306_d();
+     }
+ 
+     private void func_111272_d()
+@@ -390,7 +391,7 @@
+                     j = k;
+                 }
+ 
+-                float f1 = this.field_78293_l ? 0.5F : 1.0F;
++                float f1 = func_78263_a(c0) / 32f;
+                 boolean flag1 = (c0 == 0 || j == -1 || this.field_78293_l) && p_78255_2_;
+ 
+                 if (flag1)
+@@ -592,11 +593,6 @@
+                 int j = this.field_78287_e[p_78263_1_] >>> 4;
+                 int k = this.field_78287_e[p_78263_1_] & 15;
+ 
+-                if (k > 7)
+-                {
+-                    k = 15;
+-                    j = 0;
+-                }
+ 
+                 ++k;
+                 return (k - j) / 2 + 1;

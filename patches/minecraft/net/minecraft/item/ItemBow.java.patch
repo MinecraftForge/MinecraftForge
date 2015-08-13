@@ -1,27 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -11,6 +11,9 @@
- import net.minecraft.init.Items;
- import net.minecraft.util.IIcon;
- import net.minecraft.world.World;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
-+import net.minecraftforge.event.entity.player.ArrowNockEvent;
- 
- public class ItemBow extends Item
- {
-@@ -28,11 +31,20 @@
+@@ -23,11 +23,15 @@
  
      public void func_77615_a(ItemStack p_77615_1_, World p_77615_2_, EntityPlayer p_77615_3_, int p_77615_4_)
      {
 +        int j = this.func_77626_a(p_77615_1_) - p_77615_4_;
-+
-+        ArrowLooseEvent event = new ArrowLooseEvent(p_77615_3_, p_77615_1_, j);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.isCanceled())
-+        {
-+            return;
-+        }
++        net.minecraftforge.event.entity.player.ArrowLooseEvent event = new net.minecraftforge.event.entity.player.ArrowLooseEvent(p_77615_3_, p_77615_1_, j);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +        j = event.charge;
 +
          boolean flag = p_77615_3_.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantment.field_77342_w.field_77352_x, p_77615_1_) > 0;
@@ -32,16 +17,12 @@
              float f = (float)j / 20.0F;
              f = (f * f + f * 2.0F) / 3.0F;
  
-@@ -108,6 +120,13 @@
+@@ -105,6 +109,9 @@
  
      public ItemStack func_77659_a(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer p_77659_3_)
      {
-+        ArrowNockEvent event = new ArrowNockEvent(p_77659_3_, p_77659_1_);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.isCanceled())
-+        {
-+            return event.result;
-+        }
++        net.minecraftforge.event.entity.player.ArrowNockEvent event = new net.minecraftforge.event.entity.player.ArrowNockEvent(p_77659_3_, p_77659_1_);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.result;
 +
          if (p_77659_3_.field_71075_bZ.field_75098_d || p_77659_3_.field_71071_by.func_146028_b(Items.field_151032_g))
          {

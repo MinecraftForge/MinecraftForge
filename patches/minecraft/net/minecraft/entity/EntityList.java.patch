@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -84,6 +84,7 @@
+@@ -90,6 +90,7 @@
  
      public static void func_75618_a(Class p_75618_0_, String p_75618_1_, int p_75618_2_)
      {

@@ -1,0 +1,37 @@
+diff -r -U 3 minecraft\net\minecraft\client\network\NetHandlerPlayClient.java minecraft_patched\net\minecraft\client\network\NetHandlerPlayClient.java
+--- minecraft\net\minecraft\client\network\NetHandlerPlayClient.java
++++ minecraft_patched\net\minecraft\client\network\NetHandlerPlayClient.java
+@@ -1275,14 +1275,14 @@
+                      private static final String __OBFID = "CL_00002622";
+ 
+                      public void func_73878_a(boolean p_73878_1_, int p_73878_2_) {
+-                        NetHandlerPlayClient.thisxxx.field_147299_f = Minecraft.func_71410_x();
++                        NetHandlerPlayClient.this.field_147299_f = Minecraft.func_71410_x();
+                         if(p_73878_1_) {
+-                           if(NetHandlerPlayClient.thisxx.field_147299_f.func_147104_D() != null) {
+-                              NetHandlerPlayClient.thisxxxxxxx.field_147299_f.func_147104_D().func_152584_a(ServerData.ServerResourceMode.ENABLED);
++                           if(NetHandlerPlayClient.this.field_147299_f.func_147104_D() != null) {
++                              NetHandlerPlayClient.this.field_147299_f.func_147104_D().func_152584_a(ServerData.ServerResourceMode.ENABLED);
+                            }
+ 
+                            NetHandlerPlayClient.this.field_147302_e.func_179290_a(new C19PacketResourcePackStatus(var3, C19PacketResourcePackStatus.Action.ACCEPTED));
+-                           Futures.addCallback(NetHandlerPlayClient.thisx.field_147299_f.func_110438_M().func_180601_a(var2, var3), new FutureCallback() {
++                           Futures.addCallback(NetHandlerPlayClient.this.field_147299_f.func_110438_M().func_180601_a(var2, var3), new FutureCallback() {
+ 
+                               private static final String __OBFID = "CL_00002621";
+ 
+@@ -1294,11 +1294,11 @@
+                               }
+                            });
+                         } else {
+-                           if(NetHandlerPlayClient.thisxxxx.field_147299_f.func_147104_D() != null) {
+-                              NetHandlerPlayClient.thisxxxxx.field_147299_f.func_147104_D().func_152584_a(ServerData.ServerResourceMode.DISABLED);
++                           if(NetHandlerPlayClient.this.field_147299_f.func_147104_D() != null) {
++                              NetHandlerPlayClient.this.field_147299_f.func_147104_D().func_152584_a(ServerData.ServerResourceMode.DISABLED);
+                            }
+ 
+-                           NetHandlerPlayClient.thisxxxxxx.field_147302_e.func_179290_a(new C19PacketResourcePackStatus(var3x, C19PacketResourcePackStatus.Action.DECLINED));
++                           NetHandlerPlayClient.this.field_147302_e.func_179290_a(new C19PacketResourcePackStatus(var3, C19PacketResourcePackStatus.Action.DECLINED));
+                         }
+ 
+                         ServerList.func_147414_b(NetHandlerPlayClient.this.field_147299_f.func_147104_D());

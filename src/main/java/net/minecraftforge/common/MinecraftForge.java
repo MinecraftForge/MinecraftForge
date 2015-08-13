@@ -4,11 +4,11 @@ import java.util.concurrent.Callable;
 
 import com.google.common.collect.ObjectArrays;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.eventhandler.EventBus;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
@@ -62,11 +62,17 @@ public class MinecraftForge
            "net.minecraft.world.World$3",
            "net.minecraft.world.World$4",
            "net.minecraft.world.chunk.Chunk$1",
+           "net.minecraft.world.chunk.Chunk$2",
+           "net.minecraft.world.chunk.Chunk$3",
+           "net.minecraft.command.server.CommandBlockLogic$1",
+           "net.minecraft.command.server.CommandBlockLogic$2",
            "net.minecraft.crash.CrashReportCategory$1",
            "net.minecraft.crash.CrashReportCategory$2",
            "net.minecraft.crash.CrashReportCategory$3",
            "net.minecraft.entity.Entity$1",
            "net.minecraft.entity.Entity$2",
+           "net.minecraft.entity.Entity$3",
+           "net.minecraft.entity.Entity$4",
            "net.minecraft.entity.EntityTracker$1",
            "net.minecraft.world.gen.layer.GenLayer$1",
            "net.minecraft.world.gen.layer.GenLayer$2",
@@ -160,8 +166,6 @@ public class MinecraftForge
        // Load before all the mods, so MC owns the MC fluids
        FluidRegistry.validateFluidRegistry();
    }
-
-
 
    public static String getBrandingVersion()
    {

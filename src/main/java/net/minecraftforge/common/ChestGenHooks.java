@@ -1,7 +1,7 @@
 package net.minecraftforge.common;
 
 import java.util.*;
-
+import com.google.common.collect.ImmutableList;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +16,7 @@ import net.minecraft.world.gen.structure.StructureStrongholdPieces.ChestCorridor
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Library;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.RoomCrossing;
 import net.minecraft.world.gen.structure.StructureVillagePieces.House2;
+import net.minecraft.world.gen.structure.StructureNetherBridgePieces.Corridor;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ChestGenHooks
@@ -31,6 +32,7 @@ public class ChestGenHooks
     public static final String VILLAGE_BLACKSMITH       = "villageBlacksmith";
     public static final String BONUS_CHEST              = "bonusChest";
     public static final String DUNGEON_CHEST            = "dungeonChest";
+    public static final String NETHER_FORTRESS          = "netherFortress";
 
     private static final HashMap<String, ChestGenHooks> chestInfo = new HashMap<String, ChestGenHooks>();
     private static boolean hasInit = false;
@@ -47,37 +49,29 @@ public class ChestGenHooks
         }
 
         hasInit = true;
+        // This causes the classes static initializers to run
+        new WorldGenDungeons();
+        new DesertPyramid();
+        new JunglePyramid();
+        new StructureMineshaftPieces();
+        new StructureOceanMonument();
+        new StructureStrongholdPieces.ChestCorridor();
+        new StructureStrongholdPieces.Library();
+        new StructureStrongholdPieces.RoomCrossing();
+        new StructureVillagePieces.House2();
+        new StructureNetherBridgePieces.Corridor();
+        WorldServer.fillChestHook();
+    }
 
-        addInfo(MINESHAFT_CORRIDOR,       StructureMineshaftPieces.mineshaftChestContents,   3,  7);
-        addInfo(PYRAMID_DESERT_CHEST,     DesertPyramid.itemsToGenerateInTemple,             2,  7);
-        addInfo(PYRAMID_JUNGLE_CHEST,     JunglePyramid.junglePyramidsChestContents,         2,  7);
-        addInfo(PYRAMID_JUNGLE_DISPENSER, JunglePyramid.junglePyramidsDispenserContents,     2,  2);
-        addInfo(STRONGHOLD_CORRIDOR,      ChestCorridor.strongholdChestContents,             2,  4);
-        addInfo(STRONGHOLD_LIBRARY,       Library.strongholdLibraryChestContents,            1,  5);
-        addInfo(STRONGHOLD_CROSSING,      RoomCrossing.strongholdRoomCrossingChestContents,  1,  5);
-        addInfo(VILLAGE_BLACKSMITH,       House2.villageBlacksmithChestContents,             3,  9);
-        addInfo(BONUS_CHEST,              WorldServer.bonusChestContent,                    10, 10);
-        addInfo(DUNGEON_CHEST,            WorldGenDungeons.field_111189_a,                   8,  8);
-
-        ItemStack book = new ItemStack(Items.enchanted_book, 1, 0);
-        WeightedRandomChestContent tmp = new WeightedRandomChestContent(book, 1, 1, 1);
-        getInfo(MINESHAFT_CORRIDOR  ).addItem(tmp);
-        getInfo(PYRAMID_DESERT_CHEST).addItem(tmp);
-        getInfo(PYRAMID_JUNGLE_CHEST).addItem(tmp);
-        getInfo(STRONGHOLD_CORRIDOR ).addItem(tmp);
-        getInfo(STRONGHOLD_LIBRARY  ).addItem(new WeightedRandomChestContent(book, 1, 5, 2));
-        getInfo(STRONGHOLD_CROSSING ).addItem(tmp);
-        getInfo(DUNGEON_CHEST       ).addItem(tmp);
+    // INTERNAL DO NO USE
+    public static void init(String category, List items, int min, int max)
+    {
+        chestInfo.put(category, new ChestGenHooks(category, (List<WeightedRandomChestContent>)items, min, max));
     }
 
     static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)
     {
         dungeon.addItem(new WeightedRandomChestContent(item, min, max, weight));
-    }
-
-    private static void addInfo(String category, WeightedRandomChestContent[] items, int min, int max)
-    {
-        chestInfo.put(category, new ChestGenHooks(category, items, min, max));
     }
 
     /**
@@ -134,7 +128,7 @@ public class ChestGenHooks
     }
 
     //shortcut functions, See the non-static versions below
-    public static WeightedRandomChestContent[] getItems(String category, Random rnd){ return getInfo(category).getItems(rnd); }
+    public static List<WeightedRandomChestContent> getItems(String category, Random rnd){ return getInfo(category).getItems(rnd); }
     public static int getCount(String category, Random rand){ return getInfo(category).getCount(rand); }
     public static void addItem(String category, WeightedRandomChestContent item){ getInfo(category).addItem(item); }
     public static void removeItem(String category, ItemStack item){ getInfo(category).removeItem(item); }
@@ -150,7 +144,7 @@ public class ChestGenHooks
         this.category = category;
     }
 
-    public ChestGenHooks(String category, WeightedRandomChestContent[] items, int min, int max)
+    public ChestGenHooks(String category, List<WeightedRandomChestContent> items, int min, int max)
     {
         this(category);
         for (WeightedRandomChestContent item : items)
@@ -195,7 +189,7 @@ public class ChestGenHooks
      *
      * @return The random objects
      */
-    public WeightedRandomChestContent[] getItems(Random rnd)
+    public List<WeightedRandomChestContent> getItems(Random rnd)
     {
         ArrayList<WeightedRandomChestContent> ret = new ArrayList<WeightedRandomChestContent>();
 
@@ -213,7 +207,7 @@ public class ChestGenHooks
             }
         }
 
-        return ret.toArray(new WeightedRandomChestContent[ret.size()]);
+        return ret;
     }
 
     /**
@@ -236,8 +230,7 @@ public class ChestGenHooks
      */
     public ItemStack getOneItem(Random rand)
     {
-        WeightedRandomChestContent[] items = getItems(rand);
-        WeightedRandomChestContent item = (WeightedRandomChestContent)WeightedRandom.getRandomItem(rand, items);
+        WeightedRandomChestContent item = (WeightedRandomChestContent)WeightedRandom.getRandomItem(rand, getItems(rand));
         ItemStack[] stacks = ChestGenHooks.generateStacks(rand, item.theItemId, item.theMinimumChanceToGenerateItem, item.theMaximumChanceToGenerateItem);
         return (stacks.length > 0 ? stacks[0] : null);
     }

@@ -1,10 +1,10 @@
 
 package net.minecraftforge.fluids;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.registry.RegistryDelegate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
 /**
  * ItemStack substitute for Fluids.

@@ -1,31 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -12,7 +12,10 @@
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.init.Blocks;
- import net.minecraft.nbt.NBTTagCompound;
-+import net.minecraft.network.NetworkManager;
- import net.minecraft.network.Packet;
-+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-+import net.minecraft.util.AxisAlignedBB;
- import net.minecraft.world.World;
+@@ -66,6 +66,7 @@
+     public void func_145839_a(NBTTagCompound p_145839_1_)
+     {
+         this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
++        if (p_145839_1_.func_74764_b("ForgeData")) this.customTileData = p_145839_1_.func_74775_l("ForgeData");
+     }
  
- import org.apache.logging.log4j.Level;
-@@ -278,4 +281,93 @@
-         func_145826_a(TileEntityComparator.class, "Comparator");
+     public void func_145841_b(NBTTagCompound p_145841_1_)
+@@ -82,6 +83,7 @@
+             p_145841_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
+             p_145841_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
+             p_145841_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
++            if (this.customTileData != null) p_145841_1_.func_74782_a("ForgeData", this.customTileData);
+         }
+     }
+ 
+@@ -294,4 +296,135 @@
          func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
+         func_145826_a(TileEntityBanner.class, "Banner");
      }
 +
 +    // -- BEGIN FORGE PATCHES --
-+    /**
-+     * Determines if this TileEntity requires update calls.
-+     * @return True if you want updateEntity() to be called, false if not
-+     */
-+    public boolean canUpdate()
-+    {
-+        return true;
-+    }
-+
 +    /**
 +     * Called when you receive a TileEntityData packet for the location this
 +     * TileEntity is currently in. On the client, the NetworkManager will always
@@ -35,7 +31,7 @@
 +     * @param net The NetworkManager the packet originated from
 +     * @param pkt The data packet
 +     */
-+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
++    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.S35PacketUpdateTileEntity pkt)
 +    {
 +    }
 +
@@ -46,34 +42,31 @@
 +    {
 +    }
 +
-+    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.tileentity");
++    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.");
 +    /**
 +     * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
 +     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
 +     *
++     * @param world Current world
++     * @param pos Tile's world position
 +     * @param oldID The old ID of the block
 +     * @param newID The new ID of the block (May be the same)
-+     * @param oldMeta The old metadata of the block
-+     * @param newMeta The new metadata of the block (May be the same)
-+     * @param world Current world
-+     * @param x X Position
-+     * @param y Y Position
-+     * @param z Z Position
 +     * @return True to remove the old tile entity, false to keep it in tact {and create a new one if the new values specify to}
 +     */
-+    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z)
++    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 +    {
-+        return !isVanilla || (oldBlock != newBlock);
++        return !isVanilla || (oldState.func_177230_c() != newSate.func_177230_c());
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
 +    {
 +        return pass == 0;
 +    }
++
 +    /**
 +     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
 +     */
-+    public static final AxisAlignedBB INFINITE_EXTENT_AABB = AxisAlignedBB.func_72330_a(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
++    public static final net.minecraft.util.AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 +    /**
 +     * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
 +     * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
@@ -82,26 +75,80 @@
 +     * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public AxisAlignedBB getRenderBoundingBox()
++    public net.minecraft.util.AxisAlignedBB getRenderBoundingBox()
 +    {
-+        AxisAlignedBB bb = INFINITE_EXTENT_AABB;
++        net.minecraft.util.AxisAlignedBB bb = INFINITE_EXTENT_AABB;
 +        Block type = func_145838_q();
 +        if (type == Blocks.field_150381_bn)
 +        {
-+            bb = AxisAlignedBB.func_72330_a(field_145851_c, field_145848_d, field_145849_e, field_145851_c + 1, field_145848_d + 1, field_145849_e + 1);
++            bb = new net.minecraft.util.AxisAlignedBB(func_174877_v(), func_174877_v().func_177982_a(1, 1, 1));
 +        }
 +        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
-+            bb = AxisAlignedBB.func_72330_a(field_145851_c - 1, field_145848_d, field_145849_e - 1, field_145851_c + 2, field_145848_d + 2, field_145849_e + 2);
++            bb = new net.minecraft.util.AxisAlignedBB(func_174877_v().func_177982_a(-1, 0, -1), func_174877_v().func_177982_a(2, 2, 2));
 +        }
 +        else if (type != null && type != Blocks.field_150461_bJ)
 +        {
-+            AxisAlignedBB cbb = type.func_149668_a(field_145850_b, field_145851_c, field_145848_d, field_145849_e);
-+            if (cbb != null)
++            net.minecraft.util.AxisAlignedBB cbb = null;
++            try
 +            {
-+                bb = cbb;
++                cbb = type.func_180640_a(field_145850_b, func_174877_v(), field_145850_b.func_180495_p(func_174877_v()));
 +            }
++            catch (Exception e)
++            {
++                // We have to capture any exceptions that may occur here because BUKKIT servers like to send
++                // the tile entity data BEFORE the chunk data, you know, the OPPOSITE of what vanilla does!
++                // So we can not GARENTEE that the world state is the real state for the block...
++                // So, once again in the long line of US having to accommodate BUKKIT breaking things,
++                // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
++                // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
++                cbb = new net.minecraft.util.AxisAlignedBB(func_174877_v().func_177982_a(-1, 0, -1), func_174877_v().func_177982_a(1, 1, 1));
++            }
++            if (cbb != null) bb = cbb;
 +        }
 +        return bb;
++    }
++
++    /**
++     * Checks if this tile entity knows how to render its 'breaking' overlay effect.
++     * If this returns true, The TileEntitySpecialRenderer will be called again with break progress set.
++     * @return True to re-render tile with breaking effect.
++     */
++    public boolean canRenderBreaking()
++    {
++        Block block = this.func_145838_q();
++        return (block instanceof net.minecraft.block.BlockChest ||
++                block instanceof net.minecraft.block.BlockEnderChest ||
++                block instanceof net.minecraft.block.BlockSign ||
++                block instanceof net.minecraft.block.BlockSkull);
++    }
++
++    private NBTTagCompound customTileData;
++
++    /**
++     * Gets a {@link NBTTagCompound} that can be used to store custom data for this tile entity.
++     * It will be written, and read from disc, so it persists over world saves.
++     *
++     * @return A compound tag for custom data
++     */
++    public NBTTagCompound getTileData()
++    {
++        if (this.customTileData == null)
++        {
++            this.customTileData = new NBTTagCompound();
++        }
++        return this.customTileData;
++    }
++
++    /**
++     * Determines if the player can overwrite the NBT data of this tile entity while they place it using a ItemStack.
++     * Added as a fix for MC-75630 - Exploit with signs and command blocks
++     * @return True to prevent NBT copy, false to allow.
++     */
++    public boolean restrictNBTCopy()
++    {
++        return this instanceof TileEntityCommandBlock ||
++               this instanceof TileEntityMobSpawner ||
++               this instanceof TileEntitySign;
 +    }
  }

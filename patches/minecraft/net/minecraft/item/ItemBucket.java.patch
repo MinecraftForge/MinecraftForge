@@ -1,44 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -8,6 +8,9 @@
- import net.minecraft.init.Items;
- import net.minecraft.util.MovingObjectPosition;
- import net.minecraft.world.World;
-+import cpw.mods.fml.common.eventhandler.Event;
-+import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.player.FillBucketEvent;
- 
- public class ItemBucket extends Item
- {
-@@ -32,6 +35,31 @@
+@@ -37,6 +37,9 @@
          }
          else
          {
-+            FillBucketEvent event = new FillBucketEvent(p_77659_3_, p_77659_1_, p_77659_2_, movingobjectposition);
-+            if (MinecraftForge.EVENT_BUS.post(event))
-+            {
-+                return p_77659_1_;
-+            }
++            ItemStack ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_77659_3_, p_77659_2_, p_77659_1_, movingobjectposition);
++            if (ret != null) return ret;
 +
-+            if (event.getResult() == Event.Result.ALLOW)
-+            {
-+                if (p_77659_3_.field_71075_bZ.field_75098_d)
-+                {
-+                    return p_77659_1_;
-+                }
-+
-+                if (--p_77659_1_.field_77994_a <= 0)
-+                {
-+                    return event.result;
-+                }
-+
-+                if (!p_77659_3_.field_71071_by.func_70441_a(event.result))
-+                {
-+                    p_77659_3_.func_71019_a(event.result, false);
-+                }
-+
-+                return p_77659_1_;
-+            }
              if (movingobjectposition.field_72313_a == MovingObjectPosition.MovingObjectType.BLOCK)
              {
-                 int i = movingobjectposition.field_72311_b;
+                 BlockPos blockpos = movingobjectposition.func_178782_a();

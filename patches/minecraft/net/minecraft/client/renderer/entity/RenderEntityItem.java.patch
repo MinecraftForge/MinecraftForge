@@ -1,0 +1,52 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
+@@ -42,7 +42,7 @@
+             boolean flag = p_177077_9_.func_177556_c();
+             int i = this.func_177078_a(itemstack);
+             float f1 = 0.25F;
+-            float f2 = MathHelper.func_76126_a(((float)p_177077_1_.func_174872_o() + p_177077_8_) / 10.0F + p_177077_1_.field_70290_d) * 0.1F + 0.1F;
++            float f2 = shouldBob() ? MathHelper.func_76126_a(((float)p_177077_1_.func_174872_o() + p_177077_8_) / 10.0F + p_177077_1_.field_70290_d) * 0.1F + 0.1F : 0.0F;
+             GlStateManager.func_179109_b((float)p_177077_2_, (float)p_177077_4_ + f2 + 0.25F, (float)p_177077_6_);
+             float f3;
+ 
+@@ -129,6 +129,14 @@
+             }
+             else
+             {
++                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
++                if (j > 0 && shouldSpreadItems())
++                {
++                    float f2 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
++                    float f3 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
++                    float f4 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
++                    GlStateManager.func_179109_b(f2, f3, 0);
++                }
+                 this.field_177080_a.func_180454_a(itemstack, ibakedmodel);
+                 GlStateManager.func_179109_b(0.0F, 0.0F, 0.046875F);
+             }
+@@ -161,4 +169,25 @@
+     {
+         this.func_177075_a((EntityItem)p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
+     }
++
++    /*==================================== FORGE START ===========================================*/
++
++    /**
++     * Items should spread out when rendered in 3d?
++     * @return
++     */
++    public boolean shouldSpreadItems()
++    {
++        return true;
++    }
++
++    /**
++     * Items should have a bob effect
++     * @return
++     */
++    public boolean shouldBob()
++    {
++        return true;
++    }
++    /*==================================== FORGE END =============================================*/
+ }

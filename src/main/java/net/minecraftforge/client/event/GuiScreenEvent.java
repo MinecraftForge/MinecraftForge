@@ -5,10 +5,10 @@ import java.util.List;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Event classes for GuiScreen events.
@@ -173,6 +173,72 @@ public class GuiScreenEvent extends Event
             public Post(GuiScreen gui, GuiButton button, List buttonList)
             {
                 super(gui, button, buttonList);
+            }
+        }
+    }
+
+    public static class MouseInputEvent extends GuiScreenEvent
+    {
+        public MouseInputEvent(GuiScreen gui)
+        {
+            super(gui);
+        }
+
+        /**
+         * This event fires when mouse input is detected by a GuiScreen.
+         * Cancel this event to bypass {@code GuiScreen.handleMouseInput()}.
+         */
+        @Cancelable
+        public static class Pre extends MouseInputEvent
+        {
+            public Pre(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+
+        /**
+         * This event fires after {@code GuiScreen.handleMouseInput()} provided that the active
+         * screen has not been changed as a result of {@code GuiScreen.handleMouseInput()}.
+         */
+        public static class Post extends MouseInputEvent
+        {
+            public Post(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+    }
+
+    public static class KeyboardInputEvent extends GuiScreenEvent
+    {
+        public KeyboardInputEvent(GuiScreen gui)
+        {
+            super(gui);
+        }
+
+        /**
+         * This event fires when keyboard input is detected by a GuiScreen.
+         * Cancel this event to bypass {@code GuiScreen.handleKeyboardInput()}.
+         */
+        @Cancelable
+        public static class Pre extends KeyboardInputEvent
+        {
+            public Pre(GuiScreen gui)
+            {
+                super(gui);
+            }
+        }
+
+        /**
+         * This event fires after {@code GuiScreen.handleKeyboardInput()} provided that the active
+         * screen has not been changed as a result of {@code GuiScreen.handleKeyboardInput()}.
+         */
+        public static class Post extends KeyboardInputEvent
+        {
+            public Post(GuiScreen gui)
+            {
+                super(gui);
             }
         }
     }
