@@ -178,8 +178,9 @@ task makeMdk(type: Zip) {
     from 'Paulscode SoundSystem CodecIBXM License.txt'
     from 'LICENSE-fml.txt'
     from changelog.output
+
 }
-tasks.build.dependsOn madeMdk
+tasks.build.dependsOn makeMdk
 
 // launch4j
 
@@ -200,7 +201,7 @@ tasks.build.dependsOn 'launch4j'
 artifacts {
     archives changelog.output
     archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
-    archives makdeMdk.output
+    archives makeMdk
 }
 
 uploadArchives {
