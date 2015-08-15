@@ -166,6 +166,11 @@ task makeMdk(type: Zip) {
     version = project.version
     destinationDir = file('build/distributions')
 
+    from 'gradlew'
+    from 'gradlew.bat'
+    into ('gradle') {
+    	from 'gradle'
+    }
     from 'mdk'
     filter(ReplaceTokens, tokens: [
         VERSION: project.version,
@@ -178,7 +183,6 @@ task makeMdk(type: Zip) {
     from 'Paulscode SoundSystem CodecIBXM License.txt'
     from 'LICENSE-fml.txt'
     from changelog.output
-
 }
 tasks.build.dependsOn makeMdk
 
