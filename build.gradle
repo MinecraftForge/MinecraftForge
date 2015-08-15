@@ -171,18 +171,19 @@ task makeMdk(type: Zip) {
     into ('gradle') {
     	from 'gradle'
     }
-    from 'mdk'
-    filter(ReplaceTokens, tokens: [
-        VERSION: project.version,
-        MAPPINGS: minecraft.mappings.replace('nodoc_', '')
-    ])
-    rename 'gitignore\\.txt', '.gitignore'
-    from 'MinecraftForge-Credits.txt'
-    from 'MinecraftForge-License.txt'
-    from 'Paulscode IBXM Library License.txt'
-    from 'Paulscode SoundSystem CodecIBXM License.txt'
-    from 'LICENSE-fml.txt'
     from changelog.output
+    from ('mdk') {
+	    filter(ReplaceTokens, tokens: [
+		VERSION: project.version,
+		MAPPINGS: minecraft.mappings.replace('nodoc_', '')
+	    ])
+	    rename 'gitignore\\.txt', '.gitignore'
+	    from 'MinecraftForge-Credits.txt'
+	    from 'MinecraftForge-License.txt'
+	    from 'Paulscode IBXM Library License.txt'
+	    from 'Paulscode SoundSystem CodecIBXM License.txt'
+	    from 'LICENSE-fml.txt'
+    }
 }
 tasks.build.dependsOn makeMdk
 
