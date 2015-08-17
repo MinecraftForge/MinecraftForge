@@ -56,6 +56,7 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.FoodRegenerationEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
@@ -460,6 +461,13 @@ public class ForgeEventFactory
     public static void onPotionBrewed(ItemStack[] brewingItemStacks)
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
+    }
+    
+    public static FoodRegenerationEvent onNaturalRegenerate(EntityPlayer player, float health, float exhaustion)
+    {
+        FoodRegenerationEvent event = new FoodRegenerationEvent(player, health, exhaustion);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
     
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
