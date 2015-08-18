@@ -8,3 +8,15 @@
          if (field_75625_b.containsKey(p_75618_1_))
          {
              throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
+@@ -216,9 +217,9 @@
+         return entity;
+     }
+ 
+-    public static int func_75619_a(Entity p_75619_0_)
++    public static int getEntityID(Class p_75619_0_)
+     {
+-        Integer integer = (Integer)field_75624_e.get(p_75619_0_.getClass());
++        Integer integer = (Integer)field_75624_e.get(p_75619_0_);
+         return integer == null ? 0 : integer.intValue();
+     }
+ 

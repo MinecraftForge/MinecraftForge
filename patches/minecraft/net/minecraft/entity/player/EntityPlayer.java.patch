@@ -397,6 +397,15 @@
      }
  
      protected void func_71061_d_()
+@@ -1726,7 +1834,7 @@
+             this.func_71029_a(AchievementList.field_76023_s);
+         }
+ 
+-        EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(p_70074_1_)));
++        EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.getEntityID(p_70074_1_.getClass())));
+         if (entityegginfo == null) entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.func_75621_b(p_70074_1_));
+ 
+         if (entityegginfo != null)
 @@ -1840,6 +1948,8 @@
      {
          if (p_71008_1_ != this.field_71074_e)

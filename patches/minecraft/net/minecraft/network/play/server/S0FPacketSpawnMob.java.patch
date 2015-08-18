@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/S0FPacketSpawnMob.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/S0FPacketSpawnMob.java
+@@ -35,7 +35,7 @@
+     public S0FPacketSpawnMob(EntityLivingBase p_i45192_1_)
+     {
+         this.field_149042_a = p_i45192_1_.func_145782_y();
+-        this.field_149040_b = (byte)EntityList.func_75619_a(p_i45192_1_);
++        this.field_149040_b = (byte)EntityList.getEntityID(p_i45192_1_.getClass());
+         this.field_149041_c = MathHelper.func_76128_c(p_i45192_1_.field_70165_t * 32.0D);
+         this.field_149038_d = MathHelper.func_76128_c(p_i45192_1_.field_70163_u * 32.0D);
+         this.field_149039_e = MathHelper.func_76128_c(p_i45192_1_.field_70161_v * 32.0D);

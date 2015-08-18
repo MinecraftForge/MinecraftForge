@@ -196,7 +196,7 @@
 +        }
 +        else
 +        {
-+            int id = EntityList.func_75619_a(this);
++            int id = EntityList.getEntityID(this.getClass());
 +            if (id > 0 && EntityList.field_75627_a.containsKey(id))
 +            {
 +                return new ItemStack(net.minecraft.init.Items.field_151063_bx, 1, id);
