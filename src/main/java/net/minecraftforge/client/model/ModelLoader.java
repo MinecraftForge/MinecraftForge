@@ -222,13 +222,20 @@ public class ModelLoader extends ModelBakery
             throw new IllegalStateException("circular model dependencies involving model " + location);
         }
         loadingModels.add(location);
-        IModel model = ModelLoaderRegistry.getModel(location);
-        for(ResourceLocation dep : model.getDependencies())
+        try
         {
-            getModel(dep);
+            IModel model = ModelLoaderRegistry.getModel(location);
+            for (ResourceLocation dep : model.getDependencies())
+            {
+                getModel(dep);
+               
+            }
+            textures.addAll(model.getTextures());
         }
-        textures.addAll(model.getTextures());
-        loadingModels.remove(location);
+        finally
+        {
+            loadingModels.remove(location);
+        }
     }
 
     private class VanillaModelWrapper implements IRetexturableModel
