@@ -101,7 +101,15 @@
              chunk.func_76631_c();
              chunk.func_76624_a(this, this, p_73158_1_, p_73158_2_);
          }
-@@ -270,8 +328,13 @@
+@@ -209,6 +267,7 @@
+             if (this.field_73246_d != null)
+             {
+                 this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);
++                net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(p_73153_2_, p_73153_3_, field_73251_h, field_73246_d, p_73153_1_);
+                 chunk.func_76630_e();
+             }
+         }
+@@ -269,8 +328,13 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -116,7 +124,7 @@
                  if (!this.field_73248_b.isEmpty())
                  {
                      Long olong = (Long)this.field_73248_b.iterator().next();
-@@ -284,6 +347,11 @@
+@@ -283,6 +347,11 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.func_76159_d(olong.longValue());
                          this.field_73245_g.remove(chunk);

@@ -74,7 +74,15 @@
          }
  
          Collection collection = this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c);
-@@ -850,6 +867,7 @@
+@@ -481,6 +498,7 @@
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(entitylivingbase)));
++            if (entityegginfo == null) entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.func_75621_b(entitylivingbase));
+ 
+             if (entityegginfo != null)
+             {
+@@ -849,6 +867,7 @@
      {
          if (p_71064_1_ != null)
          {
