@@ -209,6 +209,21 @@ artifacts {
     archives makeMdk
 }
 
+task ciWriteBuildNumber << {
+    def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");
+    def bn = System.getenv("BUILD_NUMBER")?:0;
+    def outfile = "";
+    def ln = System.getProperty('line.separator')
+
+    file.eachLine{ String s ->
+      if (s.contains("buildVersion") && s.contains("= 0;")) {
+      	s = "    public static final int buildVersion    = ${bn};";
+      }
+      outfile += (s+ln);
+    }
+    file.write(outfile);
+}
+
 uploadArchives {
     repositories.mavenDeployer {
 
