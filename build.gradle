@@ -119,7 +119,7 @@ outputJar {
     from extraTxts
 
     // add crowdin locales
-    from { crowdin.getDidWork() ? zipTree(crowdin.outputs) : null}
+    from { crowdin.getDidWork() ? zipTree(crowdin.output) : null}
     dependsOn 'crowdin'
 
     manifest.attributes([
