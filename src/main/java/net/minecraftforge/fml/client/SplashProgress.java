@@ -595,7 +595,7 @@ public class SplashProgress
                 {
                     stream.println("SplashProgress has detected a error loading Minecraft.");
                     stream.println("This can sometimes be caused by bad video drivers.");
-                    stream.println("We have automatically disabeled the new Splash Screen in config/splash.properties.");
+                    stream.println("We have automatically disabled the new Splash Screen in config/splash.properties.");
                     stream.println("Try reloading minecraft before reporting any errors.");
                 }
             };
@@ -609,7 +609,7 @@ public class SplashProgress
                 {
                     stream.println("SplashProgress has detected a error loading Minecraft.");
                     stream.println("This can sometimes be caused by bad video drivers.");
-                    stream.println("Please try disabeling the new Splash Screen in config/splash.properties.");
+                    stream.println("Please try disabling the new Splash Screen in config/splash.properties.");
                     stream.println("After doing so, try reloading minecraft before reporting any errors.");
                 }
             };
