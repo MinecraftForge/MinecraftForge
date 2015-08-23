@@ -82,7 +82,8 @@ task changelog(type: JenkinsChangelog) {
     // skip if there is no forge jenkins pass
     onlyIf {
         project.hasProperty('forgeJenkinsPass')
-        project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
+        // Not sure what abrar was trying to do here...
+        //project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
     }
 
     outputs.upToDateWhen { false } // never up to date
@@ -216,10 +217,10 @@ task ciWriteBuildNumber << {
     def ln = System.getProperty('line.separator')
 
     file.eachLine{ String s ->
-      if (s.contains("buildVersion") && s.contains("= 0;")) {
-      	s = "    public static final int buildVersion    = ${bn};";
-      }
-      outfile += (s+ln);
+        if (s.contains("buildVersion") && s.contains("= 0;")) {
+            s = "    public static final int buildVersion    = ${bn};";
+        }
+        outfile += (s+ln);
     }
     file.write(outfile);
 }
