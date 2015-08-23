@@ -60,6 +60,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Properties;
@@ -81,7 +82,6 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
@@ -103,6 +103,7 @@ import org.lwjgl.util.glu.GLU;
  * @deprecated not a stable API, will break, don't use this yet
  */
 @Deprecated
+@SuppressWarnings("serial")
 public class SplashProgress
 {
     private static Drawable d;
@@ -159,6 +160,11 @@ public class SplashProgress
     public static void start()
     {
         File configFile = new File(Minecraft.getMinecraft().mcDataDir, "config/splash.properties");
+
+        File parent = configFile.getParentFile();
+        if (!parent.exists())
+            parent.mkdirs();
+
         FileReader r = null;
         config = new Properties();
         try
@@ -175,9 +181,14 @@ public class SplashProgress
             IOUtils.closeQuietly(r);
         }
 
+        //Some system do not support this and have weird effects so we need to detect and disable by default.
+        //The user can always force enable it if they want to take the responsibility for bugs.
+        //For now macs derp so disable them.
+        boolean defaultEnabled = !System.getProperty("os.name").toLowerCase().contains("mac");
+
         // Enable if we have the flag, and there's either no optifine, or optifine has added a key to the blackboard ("optifine.ForgeSplashCompatible")
         // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
-        enabled =            getBool("enabled",      true) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
+        enabled =            getBool("enabled",      defaultEnabled) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
         rotate =             getBool("rotate",       false);
         logoOffset =         getInt("logoOffset",    0);
         backgroundColor =    getHex("background",    0xFFFFFF);
@@ -243,9 +254,13 @@ public class SplashProgress
         catch (LWJGLException e)
         {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            disableSplash(e);
         }
-        Thread mainThread = Thread.currentThread();
+
+        //Call this ASAP if splash is enabled so that threading doesn't cause issues later
+        getMaxTextureSize();
+
+        //Thread mainThread = Thread.currentThread();
         thread = new Thread(new Runnable()
         {
             private final int barWidth = 400;
@@ -478,6 +493,22 @@ public class SplashProgress
         checkThreadState();
     }
 
+    private static int max_texture_size = -1;
+    public static int getMaxTextureSize()
+    {
+        if (max_texture_size != -1) return max_texture_size;
+        for (int i = 0x4000; i > 0; i >>= 1)
+        {
+            GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
+            if (GL11.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH) != 0)
+            {
+                max_texture_size = i;
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private static void checkThreadState()
     {
         if(thread.getState() == Thread.State.TERMINATED || threadError != null)
@@ -549,34 +580,39 @@ public class SplashProgress
         catch (Exception e)
         {
             e.printStackTrace();
-            if (disableSplash())
+            disableSplash(e);
+        }
+    }
+
+    private static boolean disableSplash(Exception e)
+    {
+        if (disableSplash())
+        {
+            throw new EnhancedRuntimeException(e)
             {
-                throw new EnhancedRuntimeException(e)
+                @Override
+                protected void printStackTrace(WrappedPrintStream stream)
                 {
-                    @Override
-                    protected void printStackTrace(WrappedPrintStream stream)
-                    {
-                        stream.println("SplashProgress has detected a error loading Minecraft.");
-                        stream.println("This can sometimes be caused by bad video drivers.");
-                        stream.println("We have automatically disabeled the new Splash Screen in config/splash.properties.");
-                        stream.println("Try reloading minecraft before reporting any errors.");
-                    }
-                };
-            }
-            else
+                    stream.println("SplashProgress has detected a error loading Minecraft.");
+                    stream.println("This can sometimes be caused by bad video drivers.");
+                    stream.println("We have automatically disabeled the new Splash Screen in config/splash.properties.");
+                    stream.println("Try reloading minecraft before reporting any errors.");
+                }
+            };
+        }
+        else
+        {
+            throw new EnhancedRuntimeException(e)
             {
-                throw new EnhancedRuntimeException(e)
+                @Override
+                protected void printStackTrace(WrappedPrintStream stream)
                 {
-                    @Override
-                    protected void printStackTrace(WrappedPrintStream stream)
-                    {
-                        stream.println("SplashProgress has detected a error loading Minecraft.");
-                        stream.println("This can sometimes be caused by bad video drivers.");
-                        stream.println("Please try disabeling the new Splash Screen in config/splash.properties.");
-                        stream.println("After doing so, try reloading minecraft before reporting any errors.");
-                    }
-                };
-            }
+                    stream.println("SplashProgress has detected a error loading Minecraft.");
+                    stream.println("This can sometimes be caused by bad video drivers.");
+                    stream.println("Please try disabeling the new Splash Screen in config/splash.properties.");
+                    stream.println("After doing so, try reloading minecraft before reporting any errors.");
+                }
+            };
         }
     }
 
@@ -587,7 +623,6 @@ public class SplashProgress
         if (!parent.exists())
             parent.mkdirs();
 
-        FileReader r = null;
         enabled = false;
         config.setProperty("enabled", "false");
 
@@ -623,6 +658,7 @@ public class SplashProgress
 
     private static final IntBuffer buf = BufferUtils.createIntBuffer(4 * 1024 * 1024);
 
+    @SuppressWarnings("unused")
     private static class Texture
     {
         private final ResourceLocation location;
