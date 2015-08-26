@@ -172,17 +172,22 @@ task makeMdk(type: Zip) {
     into ('gradle') {
     	from 'gradle'
     }
+    into ('eclipse') {
+        from 'mdk/eclipse'
+    }
     from changelog.output
     from ('mdk') {
 	    filter(ReplaceTokens, tokens: [
 		VERSION: project.version,
 		MAPPINGS: minecraft.mappings.replace('nodoc_', '')
 	    ])
+	    exclude 'eclipse'
 	    rename 'gitignore\\.txt', '.gitignore'
 	    from 'MinecraftForge-Credits.txt'
 	    from 'MinecraftForge-License.txt'
 	    from 'Paulscode IBXM Library License.txt'
 	    from 'Paulscode SoundSystem CodecIBXM License.txt'
+	    from 'CREDITS-fml.txt'
 	    from 'LICENSE-fml.txt'
     }
 }
