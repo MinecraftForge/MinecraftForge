@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 // for people who want stable
 plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.0"
+    id "net.minecraftforge.gradle.forge" version "2.0.1"
 }
 
 version = "1.0"
@@ -26,7 +26,7 @@ archivesBaseName = "modid"
 
 minecraft {
     version = "@VERSION@"
-    runDir = "eclipse"
+    runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -34,6 +34,7 @@ minecraft {
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "@MAPPINGS@"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 dependencies {
