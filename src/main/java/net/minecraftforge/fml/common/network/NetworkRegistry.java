@@ -141,7 +141,7 @@ public enum NetworkRegistry
      */
     public EnumMap<Side,FMLEmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
     {
-        if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || name.startsWith("FML"))
+        if (channels.get(Side.CLIENT).containsKey(name) || channels.get(Side.SERVER).containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || name.startsWith("FML"))
         {
             throw new RuntimeException("That channel is already registered");
         }
@@ -187,7 +187,7 @@ public enum NetworkRegistry
      */
     public EnumMap<Side,FMLEmbeddedChannel> newChannel(ModContainer container, String name, ChannelHandler... handlers)
     {
-        if (channels.containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || (name.startsWith("FML") && !("FML".equals(container.getModId()))))
+        if (channels.get(Side.CLIENT).containsKey(name) || channels.get(Side.SERVER).containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || (name.startsWith("FML") && !("FML".equals(container.getModId()))))
         {
             throw new RuntimeException("That channel is already registered");
         }
