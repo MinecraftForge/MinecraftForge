@@ -29,6 +29,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLContainer;
 import net.minecraftforge.fml.common.FMLLog;
@@ -73,7 +74,7 @@ public class FMLNetworkHandler
     public static void openGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, int x, int y, int z)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
-        if (entityPlayer instanceof EntityPlayerMP)
+        if (entityPlayer instanceof EntityPlayerMP && !(entityPlayer instanceof FakePlayer))
         {
             EntityPlayerMP entityPlayerMP = (EntityPlayerMP) entityPlayer;
             Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
@@ -91,6 +92,10 @@ public class FMLNetworkHandler
                 entityPlayerMP.openContainer.windowId = windowId;
                 entityPlayerMP.openContainer.addCraftingToCrafters(entityPlayerMP);
             }
+        }
+        else if (entityPlayer instanceof FakePlayer)
+        {
+            // NO OP - I won't even log a message!
         }
         else if (FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
         {
