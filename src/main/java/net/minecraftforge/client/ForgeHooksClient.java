@@ -694,8 +694,7 @@ public class ForgeHooksClient
                 metadata));
         if (tileClass != null)
         {
-            TileEntitySpecialRenderer r = TileEntityRendererDispatcher.instance
-                    .getSpecialRendererByClass(tileClass);
+            TileEntitySpecialRenderer r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
             if (r != null)
             {
                 r.renderTileEntityAt(null, 0, 0, 0, 0, -1);
