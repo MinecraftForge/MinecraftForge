@@ -1,4 +1,4 @@
-package net.minecraftforge.test;
+package net.minecraftforge.debug;
 
 import java.util.List;
 
