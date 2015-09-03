@@ -1,6 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -241,9 +241,9 @@
+@@ -193,6 +193,10 @@
+         this.field_178636_l.put("default", this.field_178637_m);
+         this.field_178636_l.put("slim", new RenderPlayer(this, true));
+     }
++	
++    public Map<String, RenderPlayer> getSkinMap() {
++        return (Map<String, RenderPlayer>) java.util.Collections.unmodifiableMap(field_178636_l);
++    }
+ 
+     public void func_178628_a(double p_178628_1_, double p_178628_3_, double p_178628_5_)
+     {
+@@ -241,9 +245,9 @@
              IBlockState iblockstate = p_180597_1_.func_180495_p(new BlockPos(p_180597_3_));
              Block block = iblockstate.func_177230_c();
  

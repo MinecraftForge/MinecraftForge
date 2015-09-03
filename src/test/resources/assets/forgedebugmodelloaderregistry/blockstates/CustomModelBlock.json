@@ -8,11 +8,28 @@
         "model": "forgedebugmodelloaderregistry:chest.b3d"
      },
     "variants": {
-        "normal": {
-            "dummy": ""
-        },
-        "inventory": {
-            "dummy": ""
+        "normal": [{
+            /*"transform": {
+                "rotation": {"y": 45}
+            }*/
+        }],
+        "inventory": [{
+            /*"transform": {
+                "thirdperson": {
+                    "translation": [ 0, 0.09375, -0.171875 ],
+                    "rotation": [ {"y": -45}, {"x": 10}, {"z": 170} ],
+                    "scale": 0.375
+                }
+            }*/
+            "transform": "forge:default-block"
+        }],
+        "facing": {
+            "down": {"model": "forgedebugmodelloaderregistry:chest.b3d", "x": 90},
+            "up": {"model": "forgedebugmodelloaderregistry:chest.b3d", "x": 270},
+            "north": {"model": "forgedebugmodelloaderregistry:chest.b3d"},
+            "south": {"model": "forgedebugmodelloaderregistry:chest.b3d", "y": 180},
+            "west": {"model": "forgedebugmodelloaderregistry:chest.b3d", "y": 270},
+            "east": {"model": "forgedebugmodelloaderregistry:chest.b3d", "y": 90}
         }
     }
 }

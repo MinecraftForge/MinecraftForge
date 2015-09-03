@@ -9,3 +9,21 @@
      }
  
      public ModelBlockDefinition(Collection p_i46221_1_)
+@@ -178,11 +178,17 @@
+                 return this.field_178437_a;
+             }
+ 
++            @Deprecated
+             public ModelRotation func_178432_b()
+             {
+                 return this.field_178435_b;
+             }
+ 
++            public net.minecraftforge.client.model.IModelState getState()
++            {
++                return this.field_178435_b;
++            }
++
+             public boolean func_178433_c()
+             {
+                 return this.field_178436_c;

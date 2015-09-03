@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class MinecraftForge
@@ -162,6 +163,8 @@ public class MinecraftForge
        }
 
        UsernameCache.load();
+       // Load before all the mods, so MC owns the MC fluids
+       FluidRegistry.validateFluidRegistry();
    }
 
    public static String getBrandingVersion()

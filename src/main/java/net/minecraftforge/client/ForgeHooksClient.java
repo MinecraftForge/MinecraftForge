@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3d;
@@ -33,6 +34,8 @@ import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.client.resources.I18n;
@@ -44,7 +47,9 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -78,6 +83,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
+import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {
@@ -677,5 +684,30 @@ public class ForgeHooksClient
             int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
             renderer.putColorRGBA(renderer.getColorIndex(i + 1), ncr, ncg, ncb, nca);
         }
+    }
+
+    private static Map<Pair<Item, Integer>, Class<? extends TileEntity>> tileItemMap = Maps.newHashMap();
+
+    public static void renderTileItem(Item item, int metadata)
+    {
+        Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item,
+                metadata));
+        if (tileClass != null)
+        {
+            TileEntitySpecialRenderer r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
+            if (r != null)
+            {
+                r.renderTileEntityAt(null, 0, 0, 0, 0, -1);
+            }
+        }
+    }
+
+    /**
+     * @deprecated Will be removed as soon as possible, hopefully 1.9.
+     */
+    @Deprecated
+    public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
+    {
+        tileItemMap.put(Pair.of(item, metadata), TileClass);
     }
 }

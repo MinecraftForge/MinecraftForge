@@ -114,7 +114,7 @@ public abstract class FluidRegistry
             Integer id = localFluidIDs.remove(oldFluid);
             localFluidIDs.put(fluid, id);
         }
-        BiMap<Integer, String> localFluidNames = fluidNames;
+        BiMap<Integer, String> localFluidNames = HashBiMap.create();
         for (Entry<Fluid, Integer> e : localFluidIDs.entrySet()) {
             localFluidNames.put(e.getValue(), e.getKey().getName());
         }

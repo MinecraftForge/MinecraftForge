@@ -322,7 +322,11 @@ public class ModelLoader extends ModelBakery
             ModelBlock model = this.model;
             if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
             ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
-            if(hasItemModel(model)) return new ItemLayerModel(model).bake(new IPerspectiveState.Impl(state, transforms), format, bakedTextureGetter);
+            if(hasItemModel(model))
+            {
+                IPerspectiveState perState = state instanceof IPerspectiveState ? (IPerspectiveState)state : new IPerspectiveState.Impl(state, transforms);
+                return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
+            }
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
             return bakeNormal(model, state.apply(this), format, bakedTextureGetter, state instanceof UVLock);
         }
@@ -475,7 +479,7 @@ public class ModelLoader extends ModelBakery
         public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
-            ImmutableMap.Builder<IModelPart, TRSRTransformation> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<IModelPart, IModelState> builder = ImmutableMap.builder();
             for (Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
@@ -505,14 +509,14 @@ public class ModelLoader extends ModelBakery
 
                 model = new WeightedPartWrapper(model);
                 models.add(model);
-                builder.put(model, new TRSRTransformation(v.getRotation()));
+                builder.put(model, v.getState());
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
             {
                 IModel missing = getMissingModel();
                 models.add(missing);
-                builder.put(missing, new TRSRTransformation(ModelRotation.X0_Y0));
+                builder.put(missing, TRSRTransformation.identity());
             }
 
             defaultState = new MapModelState(builder.build());
@@ -535,6 +539,15 @@ public class ModelLoader extends ModelBakery
             return state;
         }
 
+        private IModelState getState(IModelState state, IModelPart part)
+        {
+            if(state instanceof MapModelState)
+            {
+                return ((MapModelState)state).getState(part);
+            }
+            return state;
+        }
+
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
@@ -545,14 +558,14 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = models.get(0);
-                return model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter);
+                return model.bake(addUV(v.isUvLocked(), getState(state, model)), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
                 Variant v =  variants.get(i);
-                builder.add(model.bake(addUV(v.isUvLocked(), state.apply(model)), format, bakedTextureGetter), variants.get(i).getWeight());
+                builder.add(model.bake(addUV(v.isUvLocked(), getState(state, model)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
             return new FlexibleWeightedBakedModel(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }

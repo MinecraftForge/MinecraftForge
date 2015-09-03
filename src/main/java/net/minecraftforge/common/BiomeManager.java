@@ -175,7 +175,7 @@ public class BiomeManager
                 if (t.name().equals(name)) return t;
             }
 
-            BiomeType ret = EnumHelper.addEnum(BiomeType.class, name, BiomeType.class);
+            BiomeType ret = EnumHelper.addEnum(BiomeType.class, name, new Class[0], new Object[0]);
 
             if (ret.ordinal() >= biomes.length)
             {

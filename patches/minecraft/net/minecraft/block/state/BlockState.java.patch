@@ -26,7 +26,21 @@
              linkedhashmap.put(map, stateimplementation);
              arraylist.add(stateimplementation);
          }
-@@ -231,5 +241,10 @@
+@@ -135,6 +145,13 @@
+                 this.field_177239_a = p_i45660_1_;
+                 this.field_177237_b = p_i45660_2_;
+             }
++            
++            protected StateImplementation(Block blockIn, ImmutableMap propertiesIn, ImmutableTable propertyValueTable)
++            {
++                this.field_177239_a = blockIn;
++                this.field_177237_b = propertiesIn;
++                this.field_177238_c = propertyValueTable;
++            }
+ 
+             public Collection func_177227_a()
+             {
+@@ -231,5 +248,10 @@
              {
                  this(p_i45661_1_, p_i45661_2_);
              }

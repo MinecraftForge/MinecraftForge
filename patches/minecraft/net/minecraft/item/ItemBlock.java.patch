@@ -38,7 +38,7 @@
 +                //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
 +                final net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.func_71276_C();
 +                if (!p_179224_0_.field_72995_K && tileentity.restrictNBTCopy() &&
-+                   (server == null || server.func_71203_ab().func_152596_g(player.func_146103_bH())))
++                   (server == null || !server.func_71203_ab().func_152596_g(player.func_146103_bH())))
 +                       return false;
                  NBTTagCompound nbttagcompound = new NBTTagCompound();
                  NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttagcompound.func_74737_b();

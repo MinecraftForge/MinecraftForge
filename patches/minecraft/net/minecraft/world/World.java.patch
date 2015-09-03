@@ -417,8 +417,12 @@
                      }
                  }
              }
-@@ -1628,6 +1767,10 @@
+@@ -1626,15 +1765,19 @@
+             }
+         }
  
+-        this.field_147481_N = false;
+-
          if (!this.field_147483_b.isEmpty())
          {
 +            for (Object tile : field_147483_b)
@@ -428,6 +432,13 @@
              this.field_175730_i.removeAll(this.field_147483_b);
              this.field_147482_g.removeAll(this.field_147483_b);
              this.field_147483_b.clear();
+         }
+ 
++        this.field_147481_N = false;  //FML Move below remove to prevent CMEs
++
+         this.field_72984_F.func_76318_c("pendingBlockEntities");
+ 
+         if (!this.field_147484_a.isEmpty())
 @@ -1668,7 +1811,8 @@
  
      public boolean func_175700_a(TileEntity p_175700_1_)
@@ -792,7 +803,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
--        return this.field_72986_A.func_76067_t().getHorizon(this);
+-        return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;
 +        return field_73011_w.getHorizon();
      }
  

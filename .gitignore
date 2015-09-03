@@ -3,6 +3,9 @@
 /.settings
 /.classpath
 
+#In case people make their workspace in the repo
+/eclipse/
+
 #idea
 /.idea
 *.iml
@@ -12,13 +15,14 @@
 /.gradle
 
 #occupational hazards
-/eclipse/
+/projects/
 /repo/
 /buildSrc
 
 #Patch rejects
 *.rej
 /patches-/
+
 # FML changelog
 changelog.txt
 /patches_old/

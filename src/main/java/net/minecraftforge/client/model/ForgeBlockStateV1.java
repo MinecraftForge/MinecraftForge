@@ -4,11 +4,20 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +31,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -131,11 +141,21 @@ public class ForgeBlockStateV1 extends Marker
 
                         ForgeBlockStateV1.Variant part = partList.get(0);
                         // Must keep old rotation for the part, because the base variant's rotation is applied to the parts already.
-                        Optional<ModelRotation> rotation = part.rotation;
+                        Optional<IModelState> state = part.state;
                         part.sync(v);
                         part.simpleSubmodels.clear();
-                        part.rotation = rotation;
+                        part.state = state;
                     }
+                }
+                
+                Iterator<List<Variant>> iter = v.submodels.values().iterator();
+                
+                while (iter.hasNext())
+                {
+                    List<Variant> submodel = iter.next();
+                    
+                    if (submodel == null)
+                        iter.remove();
                 }
 
                 if (v.textures != null)
@@ -253,7 +273,7 @@ public class ForgeBlockStateV1 extends Marker
 
         private ResourceLocation model = null;
         private boolean modelSet = false;
-        private Optional<ModelRotation> rotation = Optional.absent();
+        private Optional<IModelState> state = Optional.absent();
         private Optional<Boolean> uvLock = Optional.absent();
         private Optional<Integer> weight = Optional.absent();
         private Map<String, String> textures = Maps.newHashMap();
@@ -270,11 +290,11 @@ public class ForgeBlockStateV1 extends Marker
         {
             this.model = other.model;
             this.modelSet = other.modelSet;
-            this.rotation = other.rotation;
+            this.state = other.state;
             this.uvLock = other.uvLock;
             this.weight = other.weight;
             this.textures.putAll(other.textures);
-            this.submodels.putAll(other.submodels);
+            this.mergeModelPartVariants(this.submodels, other.submodels);
             this.simpleSubmodels.putAll(other.simpleSubmodels);
             this.customData.putAll(other.customData);
         }
@@ -289,7 +309,7 @@ public class ForgeBlockStateV1 extends Marker
                 this.model    = parent.model;
                 this.modelSet = parent.modelSet;
             }
-            if (!this.rotation.isPresent()) this.rotation = parent.rotation;
+            if (!this.state.isPresent()) this.state = parent.state;
             if (!this.uvLock.isPresent())   this.uvLock   = parent.uvLock;
             if (!this.weight.isPresent())   this.weight   = parent.weight;
 
@@ -346,7 +366,7 @@ public class ForgeBlockStateV1 extends Marker
 
         protected SubModel asGenericSubModel()
         {
-            return new SubModel(rotation.or(ModelRotation.X0_Y0), uvLock.or(false), getTextures(), model, getCustomData());
+            return new SubModel(state.or(TRSRTransformation.identity()), uvLock.or(false), getTextures(), model, getCustomData());
         }
 
         /**
@@ -430,9 +450,130 @@ public class ForgeBlockStateV1 extends Marker
                 {   // Load rotation values.
                     int x = JsonUtils.getJsonObjectIntegerFieldValueOrDefault(json, "x", 0);
                     int y = JsonUtils.getJsonObjectIntegerFieldValueOrDefault(json, "y", 0);
-                    ret.rotation = Optional.of(ModelRotation.getModelRotation(x, y));
-                    if (ret.rotation == null)
+                    ret.state = Optional.<IModelState>of(new TRSRTransformation(ModelRotation.getModelRotation(x, y)));
+                    if (!ret.state.isPresent())
                         throw new JsonParseException("Invalid BlockModelRotation x: " + x + " y: " + y);
+                }
+
+                if (json.has("transform"))
+                {
+                    if (json.get("transform").isJsonPrimitive() && json.get("transform").getAsJsonPrimitive().isString())
+                    {
+                        String transform = json.get("transform").getAsString();
+                        // Note: these strings might change to a full-blown resource locations in the future, and move from here to some json somewhere
+                        if (transform.equals("identity"))
+                        {
+                            ret.state = Optional.<IModelState>of(TRSRTransformation.identity());
+                        }
+                        else if (transform.equals("forge:default-block"))
+                        {
+                            IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                                new Vector3f(0, 1.5f / 16, -2.75f / 16),
+                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)),
+                                new Vector3f(0.375f, 0.375f, 0.375f),
+                                null));
+                            ret.state = Optional.<IModelState>of(new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson)));
+                        }
+                        else if (transform.equals("forge:default-item"))
+                        {
+                            IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                                new Vector3f(0, 1f / 16, -3f / 16),
+                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(-90, 0, 0)),
+                                new Vector3f(0.55f, 0.55f, 0.55f),
+                                null));
+                            IModelState firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                                new Vector3f(0, 4f / 16, 2f / 16),
+                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
+                                new Vector3f(1.7f, 1.7f, 1.7f),
+                                null));
+                            ret.state = Optional.<IModelState>of(new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
+                        }
+                        else if (transform.equals("forge:default-tool"))
+                        {
+                            IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                                new Vector3f(0, 1.25f / 16, -3.5f / 16),
+                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, 90, -35)),
+                                new Vector3f(0.85f, 0.85f, 0.85f),
+                                null));
+                            IModelState firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                                new Vector3f(0, 4f / 16, 2f / 16),
+                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
+                                new Vector3f(1.7f, 1.7f, 1.7f),
+                                null));
+                            ret.state = Optional.<IModelState>of(new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
+                        }
+                        else
+                        {
+                            throw new JsonParseException("transform: unknown default string: " + transform);
+                        }
+                    }
+                    else if (!json.get("transform").isJsonObject())
+                    {
+                        try
+                        {
+                            TRSRTransformation base = context.deserialize(json.get("transform"), TRSRTransformation.class);
+                            ret.state = Optional.<IModelState>of(TRSRTransformation.blockCenterToCorner(base));
+                        }
+                        catch (JsonParseException e)
+                        {
+                            throw new JsonParseException("transform: expected a string, object or valid base transformation, got: " + json.get("transform"));
+                        }
+                    }
+                    else
+                    {
+                        JsonObject transform = json.get("transform").getAsJsonObject();
+                        EnumMap<TransformType, IModelState> transforms = Maps.newEnumMap(TransformType.class);
+                        if(transform.has("thirdperson"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("thirdperson"), TRSRTransformation.class);
+                            transform.remove("thirdperson");
+                            transforms.put(TransformType.THIRD_PERSON, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("firstperson"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("firstperson"), TRSRTransformation.class);
+                            transform.remove("firstperson");
+                            transforms.put(TransformType.FIRST_PERSON, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("gui"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("gui"), TRSRTransformation.class);
+                            transform.remove("gui");
+                            transforms.put(TransformType.GUI, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("head"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("head"), TRSRTransformation.class);
+                            transform.remove("head");
+                            transforms.put(TransformType.HEAD, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        int k = transform.entrySet().size();
+                        if(transform.has("matrix")) k--;
+                        if(transform.has("translation")) k--;
+                        if(transform.has("rotation")) k--;
+                        if(transform.has("scale")) k--;
+                        if(transform.has("post-rotation")) k--;
+                        if(k > 0)
+                        {
+                            throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation'");
+                        }
+                        TRSRTransformation base = TRSRTransformation.identity();
+                        if(!transform.entrySet().isEmpty())
+                        {
+                            base = context.deserialize(transform, TRSRTransformation.class);
+                            base = TRSRTransformation.blockCenterToCorner(base);
+                        }
+                        IModelState state;
+                        if(transforms.isEmpty())
+                        {
+                            state = base;
+                        }
+                        else
+                        {
+                            state = new IPerspectiveState.Impl(base, Maps.immutableEnumMap(transforms));
+                        }
+                        ret.state = Optional.of(state);
+                    }
                 }
 
                 if (json.has("uvlock"))
@@ -518,11 +659,194 @@ public class ForgeBlockStateV1 extends Marker
 
         public ResourceLocation getModel() { return model; }
         public boolean isModelSet() { return modelSet; }
-        public Optional<ModelRotation> getRotation() { return rotation; }
+        public Optional<IModelState> getState() { return state; }
         public Optional<Boolean> getUvLock() { return uvLock; }
         public Optional<Integer> getWeight() { return weight; }
         public ImmutableMap<String, String> getTextures() { return ImmutableMap.copyOf(textures); }
         public ImmutableMap<String, List<ForgeBlockStateV1.Variant>> getSubmodels() { return ImmutableMap.copyOf(submodels); }
         public ImmutableMap<String, String> getCustomData() { return ImmutableMap.copyOf(customData); }
+    }
+
+    public static class TRSRDeserializer implements JsonDeserializer<TRSRTransformation>
+    {
+        public static TRSRDeserializer INSTANCE = new TRSRDeserializer();
+
+        public TRSRTransformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+        {
+            if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())
+            {
+                String transform = json.getAsString();
+                if(transform.equals("identity"))
+                {
+                    return TRSRTransformation.identity();
+                }
+                else
+                {
+                    throw new JsonParseException("TRSR: unknown default string: " + transform);
+                }
+            }
+            if (json.isJsonArray())
+            {
+                // direct matrix array
+                return new TRSRTransformation(parseMatrix(json));
+            }
+            if (!json.isJsonObject()) throw new JsonParseException("TRSR: expected array or object, got: " + json);
+            JsonObject obj = json.getAsJsonObject();
+            TRSRTransformation ret;
+            if (obj.has("matrix"))
+            {
+                // matrix as a sole key
+                ret = new TRSRTransformation(parseMatrix(obj.get("matrix")));
+                obj.remove("matrix");
+                if (obj.entrySet().size() != 0)
+                {
+                    throw new JsonParseException("TRSR: can't combine matrix and other keys");
+                }
+                return ret;
+            }
+            Vector3f translation = null;
+            Quat4f leftRot = null;
+            Vector3f scale = null;
+            Quat4f rightRot = null;
+            if (obj.has("translation"))
+            {
+                translation = new Vector3f(parseFloatArray(obj.get("translation"), 3, "Translation"));
+                obj.remove("translation");
+            }
+            if (obj.has("rotation"))
+            {
+                leftRot = parseRotation(obj.get("rotation"));
+                obj.remove("rotation");
+            }
+            if (obj.has("scale"))
+            {
+                if(!obj.get("scale").isJsonArray())
+                {
+                    try
+                    {
+                        float s = obj.get("scale").getAsNumber().floatValue();
+                        scale = new Vector3f(s, s, s);
+                    }
+                    catch (ClassCastException ex)
+                    {
+                        throw new JsonParseException("TRSR scale: expected number or array, got: " + obj.get("scale"));
+                    }
+                }
+                else
+                {
+                    scale = new Vector3f(parseFloatArray(obj.get("scale"), 3, "Scale"));
+                }
+                obj.remove("scale");
+            }
+            if (obj.has("post-rotation"))
+            {
+                rightRot = parseRotation(obj.get("post-rotation"));
+                obj.remove("post-rotation");
+            }
+            if (!obj.entrySet().isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation', 'scale', 'post-rotation'");
+            return new TRSRTransformation(translation, leftRot, scale, rightRot);
+        }
+
+        public static Matrix4f parseMatrix(JsonElement e)
+        {
+            if (!e.isJsonArray()) throw new JsonParseException("Matrix: expected an array, got: " + e);
+            JsonArray m = e.getAsJsonArray();
+            if (m.size() != 3) throw new JsonParseException("Matrix: expected an array of length 3, got: " + m.size());
+            Matrix4f ret = new Matrix4f();
+            for (int i = 0; i < 3; i++)
+            {
+                if (!m.get(i).isJsonArray()) throw new JsonParseException("Matrix row: expected an array, got: " + m.get(i));
+                JsonArray r = m.get(i).getAsJsonArray();
+                if (r.size() != 4) throw new JsonParseException("Matrix row: expected an array of length 4, got: " + r.size());
+                for (int j = 0; j < 4; j++)
+                {
+                    try
+                    {
+                        ret.setElement(i, j, r.get(j).getAsNumber().floatValue());
+                    }
+                    catch (ClassCastException ex)
+                    {
+                        throw new JsonParseException("Matrix element: expected number, got: " + r.get(j));
+                    }
+                }
+            }
+            return ret;
+        }
+
+        public static float[] parseFloatArray(JsonElement e, int length, String prefix)
+        {
+            if (!e.isJsonArray()) throw new JsonParseException(prefix + ": expected an array, got: " + e);
+            JsonArray t = e.getAsJsonArray();
+            if (t.size() != length) throw new JsonParseException(prefix + ": expected an array of length " + length + ", got: " + t.size());
+            float[] ret = new float[length];
+            for (int i = 0; i < length; i++)
+            {
+                try
+                {
+                    ret[i] = t.get(i).getAsNumber().floatValue();
+                }
+                catch (ClassCastException ex)
+                {
+                    throw new JsonParseException(prefix + " element: expected number, got: " + t.get(i));
+                }
+            }
+            return ret;
+        }
+
+        public static Quat4f parseAxisRotation(JsonElement e)
+        {
+            if (!e.isJsonObject()) throw new JsonParseException("Axis rotation: object expected, got: " + e);
+            JsonObject obj  = e.getAsJsonObject();
+            if (obj.entrySet().size() != 1) throw new JsonParseException("Axis rotation: expected single axis object, got: " + e);
+            Map.Entry<String, JsonElement> entry = obj.entrySet().iterator().next();
+            Quat4f ret = new Quat4f();
+            try
+            {
+                if (entry.getKey().equals("x"))
+                {
+                    ret.set(new AxisAngle4d(1, 0, 0, Math.toRadians(entry.getValue().getAsNumber().floatValue())));
+                }
+                else if (entry.getKey().equals("y"))
+                {
+                    ret.set(new AxisAngle4d(0, 1, 0, Math.toRadians(entry.getValue().getAsNumber().floatValue())));
+                }
+                else if (entry.getKey().equals("z"))
+                {
+                    ret.set(new AxisAngle4d(0, 0, 1, Math.toRadians(entry.getValue().getAsNumber().floatValue())));
+                }
+                else throw new JsonParseException("Axis rotation: expected single axis key, got: " + entry.getKey());
+            }
+            catch(ClassCastException ex)
+            {
+                throw new JsonParseException("Axis rotation value: expected number, got: " + entry.getValue());
+            }
+            return ret;
+        }
+
+        public static Quat4f parseRotation(JsonElement e)
+        {
+            if (e.isJsonArray())
+            {
+                if (e.getAsJsonArray().get(0).isJsonObject())
+                {
+                    Quat4f ret = new Quat4f(0, 0, 0, 1);
+                    for (JsonElement a : e.getAsJsonArray())
+                    {
+                        ret.mul(parseAxisRotation(a));
+                    }
+                    return ret;
+                }
+                else
+                {
+                    // quaternion
+                    return new Quat4f(parseFloatArray(e, 4, "Rotation"));
+                }
+            }
+            else if (e.isJsonObject())
+            {
+                return parseAxisRotation(e);
+            }
+            else throw new JsonParseException("Rotation: expected array or object, got: " + e);
+        }
     }
 }

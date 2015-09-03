@@ -32,6 +32,7 @@ public class BlockStateLoader
     private static final Gson GSON = (new GsonBuilder())
             .registerTypeAdapter(ForgeBlockStateV1.class,         ForgeBlockStateV1.Deserializer.INSTANCE)
             .registerTypeAdapter(ForgeBlockStateV1.Variant.class, ForgeBlockStateV1.Variant.Deserializer.INSTANCE)
+            .registerTypeAdapter(TRSRTransformation.class, ForgeBlockStateV1.TRSRDeserializer.INSTANCE)
             .create();
     /**
      * Loads a BlockStates json file.
@@ -66,14 +67,13 @@ public class BlockStateLoader
                         List<ModelBlockDefinition.Variant> mcVars = Lists.newArrayList();
                         for (ForgeBlockStateV1.Variant var : entry.getValue())
                         {
-                            ModelRotation rot = var.getRotation().or(ModelRotation.X0_Y0);
                             boolean uvLock = var.getUvLock().or(false);
                             int weight = var.getWeight().or(1);
 
-                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0)
-                                mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), rot, uvLock, weight));
+                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0 && var.getState().orNull() instanceof ModelRotation)
+                                mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), (ModelRotation)var.getState().get(), uvLock, weight));
                             else
-                                mcVars.add(new ForgeVariant(var.getModel(), rot, uvLock, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
+                                mcVars.add(new ForgeVariant(var.getModel(), var.getState().or(TRSRTransformation.identity()), uvLock, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
                         }
                         variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
                     }
@@ -99,22 +99,22 @@ public class BlockStateLoader
     //This is here specifically so that we do not have a hard reference to ForgeBlockStateV1.Variant in ForgeVariant
     public static class SubModel
     {
-        private final ModelRotation rotation;
+        private final IModelState state;
         private final boolean uvLock;
         private final ImmutableMap<String, String> textures;
         private final ResourceLocation model;
         private final ImmutableMap<String, String> customData;
 
-        public SubModel(ModelRotation rotation, boolean uvLock, ImmutableMap<String, String> textures, ResourceLocation model, ImmutableMap<String, String> customData)
+        public SubModel(IModelState state, boolean uvLock, ImmutableMap<String, String> textures, ResourceLocation model, ImmutableMap<String, String> customData)
         {
-            this.rotation = rotation;
+            this.state = state;
             this.uvLock = uvLock;
             this.textures = textures;
             this.model = model;
             this.customData = customData;
         }
 
-        public ModelRotation getRotation() { return rotation; }
+        public IModelState getState() { return state; }
         public boolean isUVLock() { return uvLock; }
         public ImmutableMap<String, String> getTextures() { return textures; }
         public ResourceLocation getModelLocation() { return model; }
@@ -126,13 +126,15 @@ public class BlockStateLoader
         private final ImmutableMap<String, String> textures;
         private final ImmutableMap<String, SubModel> parts;
         private final ImmutableMap<String, String> customData;
+        private final IModelState state;
 
-        public ForgeVariant(ResourceLocation model, ModelRotation rotation, boolean uvLock, int weight, ImmutableMap<String, String> textures, ImmutableMap<String, SubModel> parts, ImmutableMap<String, String> customData)
+        public ForgeVariant(ResourceLocation model, IModelState state, boolean uvLock, int weight, ImmutableMap<String, String> textures, ImmutableMap<String, SubModel> parts, ImmutableMap<String, String> customData)
         {
-            super(model == null ? new ResourceLocation("builtin/missing") : model, rotation, uvLock, weight);
+            super(model == null ? new ResourceLocation("builtin/missing") : model, state instanceof ModelRotation ? (ModelRotation)state : ModelRotation.X0_Y0, uvLock, weight);
             this.textures = textures;
             this.parts = parts;
             this.customData = customData;
+            this.state = state;
         }
 
         protected IModel runModelHooks(IModel base, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
@@ -176,16 +178,11 @@ public class BlockStateLoader
             // Apply rotation of base model to submodels.
             // If baseRot is non-null, then that rotation will be applied instead of the base model's rotation.
             // This is used to allow replacing base model with a submodel when there is no base model for a variant.
-            ModelRotation baseRot = getRotation();
+            IModelState baseTr = getState();
             ImmutableMap.Builder<String, Pair<IModel, IModelState>> models = ImmutableMap.builder();
             for (Entry<String, SubModel> entry : parts.entrySet())
             {
                 SubModel part = entry.getValue();
-
-                Matrix4f matrix = new Matrix4f(baseRot.getMatrix());
-                matrix.mul(part.getRotation().getMatrix());
-                IModelState partState = new TRSRTransformation(matrix);
-                if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
 
                 IModel model = null;
                 try
@@ -198,10 +195,19 @@ public class BlockStateLoader
                     model = loader.getMissingModel(); // Will make it look weird, but that is good.
                 }
 
+                IModelState partState = new ModelStateComposition(baseTr, part.getState());
+                if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
+
                 models.put(entry.getKey(), Pair.of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
             }
 
-            return new MultiModel(hasBase ? base : null, baseRot, models.build());
+            return new MultiModel(hasBase ? base : null, baseTr, models.build());
+        }
+
+        @Override
+        public IModelState getState()
+        {
+            return state;
         }
 
         @Override

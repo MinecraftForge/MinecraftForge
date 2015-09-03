@@ -8,16 +8,108 @@
          this.field_71459_aj = p_i45547_1_.field_178741_d.field_178756_a;
          this.field_71443_c = p_i45547_1_.field_178743_b.field_178764_a > 0 ? p_i45547_1_.field_178743_b.field_178764_a : 1;
          this.field_71440_d = p_i45547_1_.field_178743_b.field_178762_b > 0 ? p_i45547_1_.field_178743_b.field_178762_b : 1;
-@@ -491,7 +490,7 @@
-         net.minecraftforge.fml.common.ProgressManager.pop(bar);
-         net.minecraftforge.fml.client.FMLClientHandler.instance().finishMinecraftLoading();
+@@ -411,10 +410,10 @@
+         this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
+         this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
+         this.field_110451_am.func_110542_a(this.field_135017_as);
+-        this.func_110436_a();
++        net.minecraftforge.fml.client.FMLClientHandler.instance().beginMinecraftLoading(this, this.field_110449_ao, this.field_110451_am);
+         this.field_71446_o = new TextureManager(this.field_110451_am);
+         this.field_110451_am.func_110542_a(this.field_71446_o);
+-        this.func_180510_a(this.field_71446_o);
++        net.minecraftforge.fml.client.SplashProgress.drawVanillaScreen(this.field_71446_o);
+         this.func_175595_al();
+         this.field_152350_aA = new SkinManager(this.field_71446_o, new File(this.field_110446_Y, "skins"), this.field_152355_az);
+         this.field_71469_aa = new AnvilSaveConverter(new File(this.field_71412_D, "saves"));
+@@ -450,6 +449,8 @@
+             }
+         });
+         this.field_71417_B = new MouseHelper();
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 5, true);
++        bar.step("GL Setup");
+         this.func_71361_d("Pre startup");
+         GlStateManager.func_179098_w();
+         GlStateManager.func_179103_j(7425);
+@@ -463,17 +464,21 @@
+         GlStateManager.func_179096_D();
+         GlStateManager.func_179128_n(5888);
+         this.func_71361_d("Startup");
+-        this.field_147128_au = new TextureMap("textures");
++        bar.step("Loading Texture Map");
++        this.field_147128_au = new TextureMap("textures",true);
+         this.field_147128_au.func_147633_a(this.field_71474_y.field_151442_I);
+         this.field_71446_o.func_110580_a(TextureMap.field_110575_b, this.field_147128_au);
+         this.field_71446_o.func_110577_a(TextureMap.field_110575_b);
+         this.field_147128_au.func_174937_a(false, this.field_71474_y.field_151442_I > 0);
++        bar.step("Loading Model Manager");
+         this.field_175617_aL = new ModelManager(this.field_147128_au);
+         this.field_110451_am.func_110542_a(this.field_175617_aL);
++        bar.step("Loading Item Renderer");
+         this.field_175621_X = new RenderItem(this.field_71446_o, this.field_175617_aL);
+         this.field_175616_W = new RenderManager(this.field_71446_o, this.field_175621_X);
+         this.field_175620_Y = new ItemRenderer(this);
+         this.field_110451_am.func_110542_a(this.field_175621_X);
++        bar.step("Loading Entity Renderer");
+         this.field_71460_t = new EntityRenderer(this, this.field_110451_am);
+         this.field_110451_am.func_110542_a(this.field_71460_t);
+         this.field_175618_aM = new BlockRendererDispatcher(this.field_175617_aL.func_174954_c(), this.field_71474_y);
+@@ -483,22 +488,25 @@
+         this.field_71458_u = new GuiAchievement(this);
+         GlStateManager.func_179083_b(0, 0, this.field_71443_c, this.field_71440_d);
+         this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
++        net.minecraftforge.fml.client.FMLClientHandler.instance().finishMinecraftLoading();
          this.func_71361_d("Post startup");
 -        this.field_71456_v = new GuiIngame(this);
 +        this.field_71456_v = new net.minecraftforge.client.GuiIngameForge(this);
  
          if (this.field_71475_ae != null)
          {
-@@ -898,11 +897,6 @@
+-            this.func_147108_a(new GuiConnecting(new GuiMainMenu(), this, this.field_71475_ae, this.field_71477_af));
++            net.minecraftforge.fml.client.FMLClientHandler.instance().connectToServerAtStartup(this.field_71475_ae, this.field_71477_af);
+         }
+         else
+         {
+             this.func_147108_a(new GuiMainMenu());
+         }
+ 
+-        this.field_71446_o.func_147645_c(this.field_152354_ay);
++        net.minecraftforge.fml.client.SplashProgress.clearVanillaResources(field_71446_o, field_152354_ay);
+         this.field_152354_ay = null;
+         this.field_71461_s = new LoadingScreenRenderer(this);
+ 
++        net.minecraftforge.fml.client.FMLClientHandler.instance().onInitializationComplete();
+         if (this.field_71474_y.field_74353_u && !this.field_71431_Q)
+         {
+             this.func_71352_k();
+@@ -682,21 +690,23 @@
+         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+         Bootstrap.func_179870_a(p_71377_1_.func_71502_e());
+ 
++        int retVal;
+         if (p_71377_1_.func_71497_f() != null)
+         {
+             Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + p_71377_1_.func_71497_f());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else if (p_71377_1_.func_147149_a(file2))
+         {
+             Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else
+         {
+             Bootstrap.func_179870_a("#@?@# Game crashed! Crash report could not be saved. #@?@#");
+-            System.exit(-2);
++            retVal = -2;
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleExit(retVal);
+     }
+ 
+     public boolean func_152349_b()
+@@ -888,11 +898,6 @@
  
      public void func_147108_a(GuiScreen p_147108_1_)
      {
@@ -29,7 +121,7 @@
          if (p_147108_1_ == null && this.field_71441_e == null)
          {
              p_147108_1_ = new GuiMainMenu();
-@@ -912,6 +906,17 @@
+@@ -902,6 +907,17 @@
              p_147108_1_ = new GuiGameOver();
          }
  
@@ -47,7 +139,28 @@
          if (p_147108_1_ instanceof GuiMainMenu)
          {
              this.field_71474_y.field_74330_P = false;
-@@ -1395,7 +1400,7 @@
+@@ -1000,7 +1016,7 @@
+         {
+             while (!this.field_152351_aB.isEmpty())
+             {
+-                ((FutureTask)this.field_152351_aB.poll()).run();
++                net.minecraftforge.fml.common.FMLCommonHandler.callFuture(((FutureTask)this.field_152351_aB.poll()));
+             }
+         }
+ 
+@@ -1035,9 +1051,11 @@
+ 
+         if (!this.field_71454_w)
+         {
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickStart(this.field_71428_T.field_74281_c);
+             this.field_71424_I.func_76318_c("gameRenderer");
+             this.field_71460_t.func_78480_b(this.field_71428_T.field_74281_c);
+             this.field_71424_I.func_76319_b();
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickEnd(this.field_71428_T.field_74281_c);
+         }
+ 
+         this.field_71424_I.func_76319_b();
+@@ -1383,7 +1401,7 @@
  
                  if (this.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149688_o() != Material.field_151579_a && this.field_71442_b.func_180512_c(blockpos, this.field_71476_x.field_178784_b))
                  {
@@ -56,7 +169,7 @@
                      this.field_71439_g.func_71038_i();
                  }
              }
-@@ -1475,15 +1480,19 @@
+@@ -1463,15 +1481,19 @@
                  case 2:
                      BlockPos blockpos = this.field_71476_x.func_178782_a();
  
@@ -77,7 +190,7 @@
  
                          if (itemstack == null)
                          {
-@@ -1506,7 +1515,8 @@
+@@ -1494,7 +1516,8 @@
          {
              ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
@@ -87,7 +200,16 @@
              {
                  this.field_71460_t.field_78516_c.func_78445_c();
              }
-@@ -1704,6 +1714,8 @@
+@@ -1592,6 +1615,8 @@
+             --this.field_71467_ac;
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreClientTick();
++
+         this.field_71424_I.func_76320_a("gui");
+ 
+         if (!this.field_71445_n)
+@@ -1690,6 +1715,8 @@
  
              while (Mouse.next())
              {
@@ -96,11 +218,58 @@
                  i = Mouse.getEventButton();
                  KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
  
-@@ -2213,7 +2225,13 @@
+@@ -1745,6 +1772,7 @@
+                         this.field_71462_r.func_146274_d();
+                     }
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
+             }
+ 
+             if (this.field_71429_W > 0)
+@@ -1921,6 +1949,7 @@
+                         }
+                     }
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireKeyInput();
+             }
+ 
+             for (i = 0; i < 9; ++i)
+@@ -2121,12 +2150,15 @@
+             this.field_71453_ak.func_74428_b();
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostClientTick();
++
+         this.field_71424_I.func_76319_b();
+         this.field_71423_H = func_71386_F();
+     }
+ 
+     public void func_71371_a(String p_71371_1_, String p_71371_2_, WorldSettings p_71371_3_)
+     {
++        net.minecraftforge.fml.client.FMLClientHandler.instance().startIntegratedServer(p_71371_1_, p_71371_2_, p_71371_3_);
+         this.func_71403_a((WorldClient)null);
+         System.gc();
+         ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
+@@ -2162,6 +2194,12 @@
+ 
+         while (!this.field_71437_Z.func_71200_ad())
+         {
++            if (!net.minecraftforge.fml.common.StartupQuery.check())
++            {
++                func_71403_a(null);
++                func_147108_a(null);
++                return;
++            }
+             String s2 = this.field_71437_Z.func_71195_b_();
+ 
+             if (s2 != null)
+@@ -2187,8 +2225,14 @@
+         SocketAddress socketaddress = this.field_71437_Z.func_147137_ag().func_151270_a();
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
-         networkmanager.func_179290_a(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
+-        networkmanager.func_179290_a(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
 -        networkmanager.func_179290_a(new C00PacketLoginStart(this.func_110432_I().func_148256_e()));
++        networkmanager.func_179290_a(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
 +        com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
 +        if (!this.func_110432_I().hasCachedProperties())
 +        {
@@ -111,7 +280,7 @@
          this.field_71453_ak = networkmanager;
      }
  
-@@ -2224,6 +2242,8 @@
+@@ -2199,6 +2243,8 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
@@ -120,7 +289,7 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2237,6 +2257,18 @@
+@@ -2212,6 +2258,18 @@
              {
                  this.field_71437_Z.func_71263_m();
                  this.field_71437_Z.func_175592_a();
@@ -139,7 +308,15 @@
              }
  
              this.field_71437_Z = null;
-@@ -2368,134 +2400,11 @@
+@@ -2238,6 +2296,7 @@
+ 
+             this.func_71351_a((ServerData)null);
+             this.field_71455_al = false;
++            net.minecraftforge.fml.client.FMLClientHandler.instance().handleClientWorldClosing(this.field_71441_e);
+         }
+ 
+         this.field_147127_av.func_147690_c();
+@@ -2342,134 +2401,11 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -276,23 +453,24 @@
              if (flag)
              {
                  int j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + inventoryplayer.field_70461_c;
-@@ -2751,8 +2660,11 @@
-         p_70001_1_.func_152767_b("gl_max_texture_size", Integer.valueOf(func_71369_N()));
-     }
+@@ -2727,18 +2663,8 @@
  
-+    //Forge: Adds a optimization to the getGLMaximumTextureSize, only calculate it once.
-+    private static int max_texture_size = -1;
      public static int func_71369_N()
      {
-+        if (max_texture_size != -1) return max_texture_size;
-         for (int i = 16384; i > 0; i >>= 1)
-         {
-             GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
-@@ -2760,6 +2672,7 @@
+-        for (int i = 16384; i > 0; i >>= 1)
+-        {
+-            GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)null);
+-            int j = GL11.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+-
+-            if (j != 0)
+-            {
+-                return i;
+-            }
+-        }
+-
+-        return -1;
++        //Forge we redirect this to our code which caches the value before any splash screen stuff is done.
++        return net.minecraftforge.fml.client.SplashProgress.getMaxTextureSize();
+     }
  
-             if (j != 0)
-             {
-+                max_texture_size = i;
-                 return i;
-             }
-         }
+     public boolean func_70002_Q()
