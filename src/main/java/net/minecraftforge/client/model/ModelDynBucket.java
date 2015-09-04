@@ -3,19 +3,16 @@ package net.minecraftforge.client.model;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BreakingFour;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -25,8 +22,10 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,8 @@ public class ModelDynBucket implements IModel {
   protected final IModel bucket;
   protected static final ResourceLocation interior = new ResourceLocation("forge", "items/bucket_interior");
   protected static final ResourceLocation front = new ResourceLocation("forge", "items/bucket_front");
+
+  private boolean hasTextures;
 
   public ModelDynBucket(IModel bucket) {
     this.bucket = bucket;
@@ -53,8 +54,24 @@ public class ModelDynBucket implements IModel {
   public Collection<ResourceLocation> getTextures() {
     ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
-    builder.add(interior);
-    builder.add(front);
+    // Do the textures for interiors exist?
+
+    try {
+      ResourceLocation loc = interior;
+      loc = new ResourceLocation(loc.getResourceDomain(), "textures/" + loc.getResourcePath() + ".png");
+      Minecraft.getMinecraft().getResourceManager().getAllResources(loc);
+      loc = front;
+      loc = new ResourceLocation(loc.getResourceDomain(), "textures/" + loc.getResourcePath() + ".png");
+      Minecraft.getMinecraft().getResourceManager().getAllResources(loc);
+
+      // both found
+      builder.add(interior);
+      builder.add(front);
+      hasTextures = true;
+    } catch(IOException e) {
+      // either interior, front or both textures weren't found. we don't require them.
+      hasTextures = false;
+    }
 
     return builder.build();
   }
@@ -65,7 +82,7 @@ public class ModelDynBucket implements IModel {
     // bucket model
     IFlexibleBakedModel bakedBucket = bucket.bake(bucket.getDefaultState(), format, bakedTextureGetter);
 
-    return new BakedDynBucket(bakedBucket, FluidRegistry.WATER);
+    return new BakedDynBucket(bakedBucket, FluidRegistry.WATER, hasTextures);
   }
 
   @Override
@@ -99,9 +116,11 @@ public class ModelDynBucket implements IModel {
     private final Map<String, IFlexibleBakedModel> cache = Maps.newHashMap(); // contains all the baked models since they'll never change
 
     private final List<BakedQuad> generalQuads;
+    private final boolean hasTextures;
 
-    public BakedDynBucket(IFlexibleBakedModel bakedBucket, Fluid fluid) {
+    public BakedDynBucket(IFlexibleBakedModel bakedBucket, Fluid fluid, boolean hasTextures) {
       this.vanillaBakedBucket = bakedBucket;
+      this.hasTextures = hasTextures;
 
       TextureAtlasSprite interiorSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(interior.toString());
       TextureAtlasSprite frontSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(front.toString());
@@ -121,7 +140,7 @@ public class ModelDynBucket implements IModel {
       cache.clear();
       
       if(!cache.containsKey(name)) {
-        cache.put(name, new BakedDynBucket(vanillaBakedBucket, fluidStack.getFluid()));
+        cache.put(name, new BakedDynBucket(vanillaBakedBucket, fluidStack.getFluid(), hasTextures));
       }
 
       return cache.get(name);
@@ -132,14 +151,41 @@ public class ModelDynBucket implements IModel {
 
       // back
       builder.addAll(vanillaBakedBucket.getGeneralQuads());
-
       TextureAtlasSprite fluidSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString());
 
-      builder.addAll(ModelHelper.convertTexture(interior, fluidSprite, fluid.getColor()));
+      ByteBuffer buf = BufferUtils.createByteBuffer(4 * this.getFormat().getNextOffset());
+      VertexFormat format = this.getFormat();
 
-      // add the front cover
-      builder.add(ModelHelper.genQuad(0, 0, 16, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
-      builder.add(ModelHelper.genQuad(0, 0, 16, 16, front, 0.03f, EnumFacing.SOUTH, 0xffffffff));
+      if(hasTextures) {
+
+        builder.addAll(ModelHelper.convertTexture(buf, format, interior, fluidSprite, fluid.getColor()));
+
+        // add the front cover
+/*
+        builder.add(ModelHelper.genQuad(buf, format, 0, 0, 8, 8, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
+        builder.add(ModelHelper.genQuad(buf, format, 8, 0, 16, 8, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
+        builder.add(ModelHelper.genQuad(buf, format, 0, 8, 8, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
+        builder.add(ModelHelper.genQuad(buf, format, 8, 8, 16, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
+        */
+        builder.add(ModelHelper.genQuad(buf, format, 0, 0, 16, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
+        //builder.add(ModelHelper.genQuad(buf, format, 0, 0, 16, 16, front, 0.03f, EnumFacing.SOUTH, 0xffffffff));
+      }
+      else {
+        int color = fluid.getColor();
+        //fluidSprite = vanillaBakedBucket.getTexture();
+        float offset = 0.01f;
+
+        for(EnumFacing face : new EnumFacing[]{EnumFacing.NORTH}){
+          builder.add(ModelHelper.genQuad(buf, format, 5, 3, 11, 4, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 3, 4, 13, 5, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 4, 5, 12, 6, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 6, 6, 10, 7, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 10, 7, 12, 8, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 6, 8, 7, 9, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 10, 8, 11, 10, fluidSprite, offset, face, color));
+          builder.add(ModelHelper.genQuad(buf, format, 10, 11, 11, 12, fluidSprite, offset, face, color));
+        }
+      }
 
       return builder.build();
     }

@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid="DynBucketTest", version="0.1")
+@Mod(modid="DynBucketTest", version="0.1", dependencies = "after:" + ModelFluidDebug.MODID)
 public class DynBucketTest {
     public static final Item dynBucket = new DynBucket();
     

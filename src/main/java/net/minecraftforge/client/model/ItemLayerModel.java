@@ -207,24 +207,14 @@ public class ItemLayerModel implements IRetexturableModel {
             }
         }
         // front
-        builder.add(buildQuad(buf, format, EnumFacing.SOUTH, tint,
-            0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
-            0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
-            1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
-            1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
-        ));
+        builder.add(buildFrontQuad(buf, format, tint, 0, 0, 1, 1, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV()));
         // back
-        builder.add(buildQuad(buf, format, EnumFacing.NORTH, tint,
-            0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
-            1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
-            1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
-            0, 1, 8.5f / 16f, sprite.getMinU(), sprite.getMinV()
-        ));
+        builder.add(buildBackQuad(buf, format, tint, 0, 0, 1, 1, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV()));
+
         return builder.build();
     }
 
-    protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
-    {
+    protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v) {
         return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
     }
 
@@ -262,6 +252,26 @@ public class ItemLayerModel implements IRetexturableModel {
             x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x0, y0, z2, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
         );
+    }
+
+    static final BakedQuad buildFrontQuad(ByteBuffer buf, VertexFormat format, int tint,
+                                          float x0, float y0, float x1, float y1,
+                                          float u0, float v0, float u1, float v1) {
+        return buildQuad(buf, format, EnumFacing.SOUTH, tint,
+                         x0, y0, 7.5f / 16f, u0, v1,
+                         x0, y1, 7.5f / 16f, u0, v0,
+                         x1, y1, 7.5f / 16f, u1, v0,
+                         x1, y0, 7.5f / 16f, u1, v1);
+    }
+
+    static final BakedQuad buildBackQuad(ByteBuffer buf, VertexFormat format, int tint,
+                                         float x0, float y0, float x1, float y1,
+                                         float u0, float v0, float u1, float v1) {
+        return buildQuad(buf, format, EnumFacing.NORTH, tint,
+                         x0, y0, 8.5f / 16f, u0, v1,
+                         x1, y0, 8.5f / 16f, u1, v1,
+                         x1, y1, 8.5f / 16f, u1, v0,
+                         x0, y1, 8.5f / 16f, u0, v0);
     }
 
     private static final BakedQuad buildQuad(
