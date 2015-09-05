@@ -36,6 +36,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -230,6 +231,19 @@ public class GameRegistry
             FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
             throw new LoaderException(e);
         }
+    }
+
+    /** Called from Potion Constructor */
+    public static int registerPotion(Potion potion, String name, int potionID) {
+        return GameData.getMain().registerPotion(potion, name, potionID);
+    }
+
+    public static String[] getPotionMapAsArray() {
+        List<String> names = Lists.newLinkedList();
+        for(ResourceLocation location : (Set<ResourceLocation>)GameData.getPotionRegistry().getKeys()) {
+            names.add(location.toString());
+        }
+        return names.toArray(new String[names.size()]);
     }
 
     public static void addRecipe(ItemStack output, Object... params)

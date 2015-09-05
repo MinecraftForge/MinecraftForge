@@ -15,6 +15,7 @@ package net.minecraftforge.fml.common.registry;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -70,6 +72,8 @@ public class GameData {
     static final int MAX_BLOCK_ID = 4095;
     static final int MIN_ITEM_ID = 4096;
     static final int MAX_ITEM_ID = 31999;
+    public static final int MIN_POTION_ID = 32; // 0-31 are vanilla, ours start at 32
+    public static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
 
     private static final GameData mainData = new GameData();
     private static Map<UniqueIdentifier, ModContainer> customOwners = Maps.newHashMap();
@@ -93,6 +97,15 @@ public class GameData {
      */
     public static FMLControlledNamespacedRegistry<Item> getItemRegistry() {
         return getMain().iItemRegistry;
+    }
+
+    /**
+     * Get the currently active potion registry.
+     *
+     * @return Potion Registry.
+     */
+    public static FMLControlledNamespacedRegistry<Potion> getPotionRegistry() {
+        return getMain().potionRegistry;
     }
 
     /***************************************************
@@ -147,6 +160,7 @@ public class GameData {
         GameDataSnapshot snap = new GameDataSnapshot();
         snap.entries.put("fml:blocks", new GameDataSnapshot.Entry(getMain().getBlockRegistry()));
         snap.entries.put("fml:items", new GameDataSnapshot.Entry(getMain().getItemRegistry()));
+        snap.entries.put("fml:potions", new GameDataSnapshot.Entry(getMain().getPotionRegistry()));
         for (Map.Entry<String, FMLControlledNamespacedRegistry<?>> e : getMain().genericRegistries.entrySet()) {
             snap.entries.put("fmlgr:"+e.getKey(), new GameDataSnapshot.Entry(e.getValue()));
         }
@@ -346,14 +360,18 @@ public class GameData {
         FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         Map<String, Integer[]> remapBlocks = Maps.newHashMap();
         Map<String, Integer[]> remapItems = Maps.newHashMap();
+        Map<String, Integer[]> remapPotions = Maps.newHashMap();
         LinkedHashMap<String, Integer> missingBlocks = new LinkedHashMap<String, Integer>();
         LinkedHashMap<String, Integer> missingItems = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String, Integer> missingPotions = new LinkedHashMap<String, Integer>();
         getMain().testConsistency();
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
+        getMain().potionRegistry.dump();
 
         GameDataSnapshot.Entry blocks = snapshot.entries.get("fml:blocks");
         GameDataSnapshot.Entry items = snapshot.entries.get("fml:items");
+        GameDataSnapshot.Entry potions = snapshot.entries.get("fml:potions");
 
         GameData newData = new GameData();
 
@@ -450,6 +468,42 @@ public class GameData {
             }
         }
 
+        // Update potion IDs and array
+        Arrays.fill(Potion.potionTypes, null); // first we clear the array
+        for(Map.Entry<String, Integer> entry : potions.ids.entrySet()) {
+            String name = entry.getKey();
+            int newId = entry.getValue();
+            int currId = getMain().potionRegistry.getId(name);
+
+            if (currId == -1)
+            {
+                FMLLog.info("Found a missing potion id from the world %s", name);
+                missingPotions.put(entry.getKey(), newId);
+                continue; // no potion -> nothing to adjust
+            }
+            else if (currId != newId)
+            {
+                FMLLog.fine("Fixed potion id mismatch for %s. Attempt to fix: %d (init) -> %d (map).", name, currId, newId);
+                remapPotions.put(name, new Integer[] { currId, newId });
+            }
+
+            Potion potion = getMain().potionRegistry.getRaw(name);
+            currId = newData.registerPotion(potion, name, newId);
+
+            if (currId != newId)
+            {
+                throw new IllegalStateException(
+                    String.format("Can't map potion %s to id %d (seen at: %d), already occupied by %s",
+                                  name, newId, currId, newData.potionRegistry.getRaw(newId)));
+            }
+
+            // fix the data in the potion and the potions-array
+            potion.id = currId;
+            Potion.ensureArraySize(currId);
+            Potion.potionTypes[currId] = potion;
+        }
+
+
         List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missingBlocks, missingItems, isLocalWorld, newData, remapBlocks, remapItems);
         if (!missedMappings.isEmpty()) return missedMappings;
 
@@ -495,6 +549,33 @@ public class GameData {
                             remaps.put(itemName, new Integer[] { entry.getValue(), newId });
                         }
                     }
+                }
+            }
+
+            Map<String, Integer> newPotions = frozen.potionRegistry.getEntriesNotIn(newData.potionRegistry);
+            if(!newPotions.isEmpty()) {
+                FMLLog.info("Injecting new potion data into this server instance.");
+
+                for (Entry<String, Integer> entry : newPotions.entrySet())
+                {
+                    String name = entry.getKey();
+                    int currId = entry.getValue();
+                    int newId;
+
+                    Potion potion = frozen.potionRegistry.getRaw(name);
+                    newId = newData.registerPotion(potion, name, currId);
+
+                    FMLLog.info("Injected new potion %s: %d (init) -> %d (map).", name, currId, newId);
+
+                    if (newId != currId) // a new id was assigned
+                    {
+                        remapPotions.put(name, new Integer[] { entry.getValue(), newId });
+                    }
+
+                    // fix the data in the potion and the potions-array
+                    potion.id = newId;
+                    Potion.ensureArraySize(newId);
+                    Potion.potionTypes[newId] = potion;
                 }
             }
         }
@@ -677,11 +758,14 @@ public class GameData {
     private final BitSet availabilityMap;
     // IDs previously allocated in a world, but now unmapped/dangling; prevents the IDs from being reused
     private final Set<Integer> blockedIds;
+    // Potions
+    private final FMLControlledNamespacedRegistry<Potion> potionRegistry;
 
     private GameData()
     {
         iBlockRegistry = new FMLControlledNamespacedRegistry<Block>(new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, Block.class);
         iItemRegistry = new FMLControlledNamespacedRegistry<Item>(null, MAX_ITEM_ID, MIN_ITEM_ID, Item.class);
+        potionRegistry = new FMLControlledNamespacedRegistry<Potion>(null, MAX_POTION_ID, MIN_POTION_ID, Potion.class);
         availabilityMap = new BitSet(MAX_ITEM_ID + 1);
         blockedIds = new HashSet<Integer>();
         genericRegistries = new HashMap<String,FMLControlledNamespacedRegistry<?>>();
@@ -697,6 +781,7 @@ public class GameData {
     {
         iBlockRegistry.set(data.iBlockRegistry);
         iItemRegistry.set(data.iItemRegistry);
+        potionRegistry.set(data.potionRegistry);
         availabilityMap.clear();
         availabilityMap.or(data.availabilityMap);
         blockedIds.clear();
@@ -841,6 +926,13 @@ public class GameData {
         }
 
         return blockId;
+    }
+
+    /**
+     * Called from GameRegistry, which is called from Potion-Constructor
+     */
+    int registerPotion(Potion potion, String name, int id) {
+        return potionRegistry.add(id, name, potion);
     }
 
     /**
@@ -1110,7 +1202,4 @@ public class GameData {
     public static <T> FMLControlledNamespacedRegistry<T> getRegistry(String registryName, Class<T> type) {
         return getMain().getGenericRegistry(registryName, type);
     }
-
-
-
 }
