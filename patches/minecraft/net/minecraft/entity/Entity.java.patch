@@ -125,7 +125,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2357,4 +2405,183 @@
+@@ -2357,4 +2405,196 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
@@ -306,6 +306,19 @@
 +    public boolean shouldDismountInWater(Entity rider)
 +    {
 +        return this instanceof EntityLivingBase;
++    }
++    
++    /**
++     * An entity-sensitive version of {@link Entity#getBoundingBox()}.<br>
++     * It will block the actual movement of the entity (like a block does or the {@link EntityBoat})
++     * 
++     * @param entity The entity that this will collide with
++     * @return a bounding box (for example {@code this.boundingBox}) or null,
++     *         if no collision should take place.
++     */
++    public AxisAlignedBB getBoundingBox(Entity entity)
++    {
++        return this.func_70046_E();
 +    }
 +    /* ================================== Forge End =====================================*/
  }
