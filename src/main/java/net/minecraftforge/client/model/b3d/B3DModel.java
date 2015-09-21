@@ -210,6 +210,8 @@ public class B3DModel
             while(buf.hasRemaining())
             {
                 String path = readString();
+                if(!path.startsWith("#"))
+                    path = "#"+path;
                 int flags = buf.getInt();
                 int blend = buf.getInt();
                 Vector2f pos = new Vector2f(buf.getFloat(), buf.getFloat());
