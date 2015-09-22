@@ -91,7 +91,7 @@
 +        }
      }
 +
-+    private static String getEntityName(ItemStack stack)
++    public static String getEntityName(ItemStack stack)
 +    {
 +        if (stack.func_77942_o() && stack.func_77978_p().func_150297_b("entity_name", 8))
 +            return stack.func_77978_p().func_74779_i("entity_name");
