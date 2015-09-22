@@ -8,6 +8,15 @@
      static void func_151353_a()
      {
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151032_g, new BehaviorProjectileDispense()
+@@ -144,7 +145,7 @@
+                 double d0 = p_82487_1_.func_82615_a() + (double)enumfacing.func_82601_c();
+                 double d1 = (double)((float)p_82487_1_.func_180699_d().func_177956_o() + 0.2F);
+                 double d2 = p_82487_1_.func_82616_c() + (double)enumfacing.func_82599_e();
+-                Entity entity = ItemMonsterPlacer.func_77840_a(p_82487_1_.func_82618_k(), p_82487_2_.func_77960_j(), d0, d1, d2);
++                Entity entity = ItemMonsterPlacer.spawnCreature(p_82487_1_.func_82618_k(), ItemMonsterPlacer.getEntityName(p_82487_2_), d0, d1, d2);
+ 
+                 if (entity instanceof EntityLivingBase && p_82487_2_.func_82837_s())
+                 {
 @@ -509,6 +510,7 @@
                  }
              }
