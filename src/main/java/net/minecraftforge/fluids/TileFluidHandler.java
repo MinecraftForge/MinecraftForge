@@ -1,9 +1,11 @@
 
 package net.minecraftforge.fluids;
 
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Reference Tile Entity implementation of {@link IFluidHandler}. Use/extend this or write your own.
@@ -31,15 +33,19 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
 
     /* IFluidHandler */
     @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill)
+    public int fill(@Nullable EnumFacing from, FluidStack resource, boolean doFill)
     {
-        return tank.fill(resource, doFill);
+        if(from==null)
+        	from=EnumFacing.NORTH;
+    	return tank.fill(resource, doFill);
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain)
+    public FluidStack drain(@Nullable EnumFacing from, FluidStack resource, boolean doDrain)
     {
-        if (resource == null || !resource.isFluidEqual(tank.getFluid()))
+    	if(from==null)
+        	from=EnumFacing.NORTH;
+    	if (resource == null || !resource.isFluidEqual(tank.getFluid()))
         {
             return null;
         }
@@ -47,26 +53,34 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain)
+    public FluidStack drain(@Nullable EnumFacing from, int maxDrain, boolean doDrain)
     {
-        return tank.drain(maxDrain, doDrain);
+    	if(from==null)
+        	from=EnumFacing.NORTH;
+    	return tank.drain(maxDrain, doDrain);
     }
 
     @Override
-    public boolean canFill(EnumFacing from, Fluid fluid)
+    public boolean canFill(@Nullable EnumFacing from, Fluid fluid)
     {
-        return true;
+    	if(from==null)
+        	from=EnumFacing.NORTH;
+    	return true;
     }
 
     @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid)
+    public boolean canDrain(@Nullable EnumFacing from, Fluid fluid)
     {
-        return true;
+    	if(from==null)
+        	from=EnumFacing.NORTH;
+    	return true;
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from)
+    public FluidTankInfo[] getTankInfo(@Nullable EnumFacing from)
     {
-        return new FluidTankInfo[] { tank.getInfo() };
+    	if(from==null)
+        	from=EnumFacing.NORTH;
+    	return new FluidTankInfo[] { tank.getInfo() };
     }
 }

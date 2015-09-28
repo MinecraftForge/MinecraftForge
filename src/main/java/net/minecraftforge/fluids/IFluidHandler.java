@@ -1,6 +1,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.util.EnumFacing;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Implement this interface on TileEntities which should handle fluids, generally storing them in
@@ -24,7 +25,7 @@ public interface IFluidHandler
      *            If false, fill will only be simulated.
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
-    int fill(EnumFacing from, FluidStack resource, boolean doFill);
+    int fill(@Nullable EnumFacing from, FluidStack resource, boolean doFill);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -38,7 +39,7 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      *         simulated) drained.
      */
-    FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain);
+    FluidStack drain(@Nullable EnumFacing from, FluidStack resource, boolean doDrain);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -54,21 +55,21 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      *         simulated) drained.
      */
-    FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain);
+    FluidStack drain(@Nullable EnumFacing from, int maxDrain, boolean doDrain);
 
     /**
      * Returns true if the given fluid can be inserted into the given direction.
      *
      * More formally, this should return true if fluid is able to enter from the given direction.
      */
-    boolean canFill(EnumFacing from, Fluid fluid);
+    boolean canFill(@Nullable EnumFacing from, Fluid fluid);
 
     /**
      * Returns true if the given fluid can be extracted from the given direction.
      *
      * More formally, this should return true if fluid is able to leave from the given direction.
      */
-    boolean canDrain(EnumFacing from, Fluid fluid);
+    boolean canDrain(@Nullable EnumFacing from, Fluid fluid);
 
     /**
      * Returns an array of objects which represent the internal tanks. These objects cannot be used
@@ -78,5 +79,5 @@ public interface IFluidHandler
      *            Orientation determining which tanks should be queried.
      * @return Info for the relevant internal tanks.
      */
-    FluidTankInfo[] getTankInfo(EnumFacing from);
+    FluidTankInfo[] getTankInfo(@Nullable EnumFacing from);
 }
