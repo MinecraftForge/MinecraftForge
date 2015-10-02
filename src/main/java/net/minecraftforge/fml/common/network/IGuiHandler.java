@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.common.network;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public interface IGuiHandler
@@ -23,12 +24,10 @@ public interface IGuiHandler
      * @param ID The Gui ID Number
      * @param player The player viewing the Gui
      * @param world The current world
-     * @param x X Position
-     * @param y Y Position
-     * @param z Z Position
+     * @param pos Position
      * @return A GuiScreen/Container to be displayed to the user, null if none.
      */
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z);
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, BlockPos pos);
     /**
      * Returns a Container to be displayed to the user. On the client side, this
      * needs to return a instance of GuiScreen On the server side, this needs to
@@ -37,10 +36,8 @@ public interface IGuiHandler
      * @param ID The Gui ID Number
      * @param player The player viewing the Gui
      * @param world The current world
-     * @param x X Position
-     * @param y Y Position
-     * @param z Z Position
+     * @param pos Position
      * @return A GuiScreen/Container to be displayed to the user, null if none.
      */
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z);
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, BlockPos pos);
 }

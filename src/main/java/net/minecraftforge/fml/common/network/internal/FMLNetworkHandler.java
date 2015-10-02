@@ -28,6 +28,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -71,19 +72,19 @@ public class FMLNetworkHandler
         dispatcher.clientToServerHandshake();
     }
 
-    public static void openGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, int x, int y, int z)
+    public static void openGui(EntityPlayer entityPlayer, Object mod, int modGuiId, World world, BlockPos pos)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
         if (entityPlayer instanceof EntityPlayerMP && !(entityPlayer instanceof FakePlayer))
         {
             EntityPlayerMP entityPlayerMP = (EntityPlayerMP) entityPlayer;
-            Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
+            Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, pos);
             if (remoteGuiContainer != null)
             {
                 entityPlayerMP.getNextWindowId();
                 entityPlayerMP.closeContainer();
                 int windowId = entityPlayerMP.currentWindowId;
-                FMLMessage.OpenGui openGui = new FMLMessage.OpenGui(windowId, mc.getModId(), modGuiId, x, y, z);
+                FMLMessage.OpenGui openGui = new FMLMessage.OpenGui(windowId, mc.getModId(), modGuiId, pos);
                 EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
                 embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
                 embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityPlayerMP);
@@ -99,7 +100,7 @@ public class FMLNetworkHandler
         }
         else if (FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
         {
-            Object guiContainer = NetworkRegistry.INSTANCE.getLocalGuiContainer(mc, entityPlayer, modGuiId, world, x, y, z);
+            Object guiContainer = NetworkRegistry.INSTANCE.getLocalGuiContainer(mc, entityPlayer, modGuiId, world, pos);
             FMLCommonHandler.instance().showGuiScreen(guiContainer);
         }
         else

@@ -14,6 +14,7 @@ import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
@@ -47,19 +48,15 @@ public abstract class FMLMessage {
         int windowId;
         String modId;
         int modGuiId;
-        int x;
-        int y;
-        int z;
+        BlockPos pos;
 
         public OpenGui() {}
-        OpenGui(int windowId, String modId, int modGuiId, int x, int y, int z)
+        OpenGui(int windowId, String modId, int modGuiId, BlockPos pos)
         {
             this.windowId = windowId;
             this.modId = modId;
             this.modGuiId = modGuiId;
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.pos = pos;
         }
 
         @Override
@@ -68,9 +65,7 @@ public abstract class FMLMessage {
             buf.writeInt(windowId);
             ByteBufUtils.writeUTF8String(buf, modId);
             buf.writeInt(modGuiId);
-            buf.writeInt(x);
-            buf.writeInt(y);
-            buf.writeInt(z);
+            buf.writeLong(pos.toLong());
         }
 
         @Override
@@ -79,9 +74,7 @@ public abstract class FMLMessage {
             windowId = buf.readInt();
             modId = ByteBufUtils.readUTF8String(buf);
             modGuiId = buf.readInt();
-            x = buf.readInt();
-            y = buf.readInt();
-            z = buf.readInt();
+            pos = BlockPos.fromLong(buf.readLong());
         }
     }
 
