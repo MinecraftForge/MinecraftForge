@@ -28,6 +28,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -230,18 +231,16 @@ public enum NetworkRegistry
      * @param player Player
      * @param modGuiId guiId
      * @param world World
-     * @param x X coord
-     * @param y Y coord
-     * @param z Z coord
+     * @param pos Position
      * @return The server side GUI object (An instance of {@link Container})
      */
-    public Container getRemoteGuiContainer(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
+    public Container getRemoteGuiContainer(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, BlockPos pos)
     {
         IGuiHandler handler = serverGuiHandlers.get(mc);
 
         if (handler != null)
         {
-            return (Container)handler.getServerGuiElement(modGuiId, player, world, x, y, z);
+            return (Container)handler.getServerGuiElement(modGuiId, player, world, pos);
         }
         else
         {
@@ -255,15 +254,13 @@ public enum NetworkRegistry
      * @param player Player
      * @param modGuiId guiId
      * @param world World
-     * @param x X coord
-     * @param y Y coord
-     * @param z Z coord
+     * @param pos Position
      * @return The client side GUI object (An instance of {@link GUI})
      */
-    public Object getLocalGuiContainer(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
+    public Object getLocalGuiContainer(ModContainer mc, EntityPlayer player, int modGuiId, World world, BlockPos pos)
     {
         IGuiHandler handler = clientGuiHandlers.get(mc);
-        return handler.getClientGuiElement(modGuiId, player, world, x, y, z);
+        return handler.getClientGuiElement(modGuiId, player, world, pos);
     }
 
     /**
