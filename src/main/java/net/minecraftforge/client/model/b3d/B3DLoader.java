@@ -354,7 +354,9 @@ public class B3DLoader implements ICustomModelLoader
             for(Texture t : textures)
             {
                 String path = t.getPath();
-                builder.put(path, new ResourceLocation(getLocation(path)));
+                String location = getLocation(path);
+                if(!location.startsWith("#")) location = "#" + location;
+                builder.put(path, new ResourceLocation(location));
             }
             return builder.build();
         }
