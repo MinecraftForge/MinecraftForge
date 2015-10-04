@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/command/PlayerSelector.java
++++ ../src-work/minecraft/net/minecraft/command/PlayerSelector.java
+@@ -38,9 +38,9 @@
+ 
+ public class PlayerSelector
+ {
+-    private static final Pattern field_82389_a = Pattern.compile("^@([pare])(?:\\[([\\w=,!-]*)\\])?$");
++    private static final Pattern field_82389_a = Pattern.compile("^@([pare])(?:\\[([\\w=,!\\.-]*)\\])?$");
+     private static final Pattern field_82387_b = Pattern.compile("\\G([-!]?[\\w-]*)(?:$|,)");
+-    private static final Pattern field_82388_c = Pattern.compile("\\G(\\w+)=([-!]?[\\w-]*)(?:$|,)");
++    private static final Pattern field_82388_c = Pattern.compile("\\G(\\w+)=([-!]?[\\w\\.-]*)(?:$|,)");
+     private static final Set field_179666_d = Sets.newHashSet(new String[] {"x", "y", "z", "dx", "dy", "dz", "rm", "r"});
+     private static final String __OBFID = "CL_00000086";
+ 
