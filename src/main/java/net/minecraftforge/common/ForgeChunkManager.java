@@ -1071,4 +1071,64 @@ public class ForgeChunkManager
             cat.put(propertyName, prop);
         }
     }
+    
+    /**
+     * Represents ChunkCoordIntPair as a primitive long
+     */
+    public static long packedChunkCoordIntPair(int x, int z)
+    {
+        long leftX = ((long)x) << 32;
+        long rightZ = z & 0xFFFFFFFFl; // sign extend
+        return leftX | rightZ;
+    }
+    
+    public static int packedChunkCoordX(long intPair)
+    {
+        return (int)(intPair >> 32);
+    }
+    
+    public static int packedChunkCoordZ(long intPair)
+    {
+        return (int)(intPair & 0xFFFFFFFFl);
+    }
+    
+    public static Set packedChunkCoordSet()
+    {
+        return new CoordFlyweightSet();
+    }
+    
+    public static void addActiveChunk(Set activeChunkSet, int x, int z)
+    {
+        if(activeChunkSet instanceof CoordFlyweightSet)
+        {
+            ((CoordFlyweightSet)activeChunkSet).add(x, z);
+        } else {
+            // Forge: compatibility mode, please don't assign to World.activeChunkSet
+            activeChunkSet.add(new ChunkCoordIntPair(x, z));
+        }
+    }
+    
+    public static long nextPackedCoord(Iterator itr)
+    {
+        if(itr instanceof CoordFlyweightSet.Iterator)
+        {
+            return ((CoordFlyweightSet.Iterator)itr).nextPacked();
+        } else {
+            // Forge: compatibility mode
+            ChunkCoordIntPair intPair = (ChunkCoordIntPair)itr.next();
+            return ForgeChunkManager.packedChunkCoordIntPair(intPair.chunkXPos, intPair.chunkZPos);
+        }
+    }
+    
+    public static void addPackedCoord(Set previousActiveChunkSet, long intPair)
+    {
+        if(previousActiveChunkSet instanceof CoordFlyweightSet)
+        {
+            ((CoordFlyweightSet)previousActiveChunkSet).addPacked(intPair);
+        } else {
+            // Forge: compatibility mode, please don't assign to World.activeChunkSet
+            previousActiveChunkSet.add(new ChunkCoordIntPair(
+                    packedChunkCoordX(intPair), packedChunkCoordZ(intPair)));
+        }
+    }
 }
