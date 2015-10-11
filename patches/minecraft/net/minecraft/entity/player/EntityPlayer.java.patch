@@ -377,7 +377,7 @@
  
              switch (EntityPlayer.SwitchEnumFacing.field_179420_a[enumfacing.ordinal()])
              {
-@@ -1511,16 +1611,22 @@
+@@ -1511,16 +1611,23 @@
  
      public BlockPos func_180470_cg()
      {
@@ -394,6 +394,7 @@
  
      public void func_180473_a(BlockPos p_180473_1_, boolean p_180473_2_)
      {
++        if(net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_180473_1_, p_180473_2_)) return;
 +        if (this.field_71093_bK != 0)
 +        {
 +            setSpawnChunk(p_180473_1_, p_180473_2_, this.field_71093_bK);
@@ -402,7 +403,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1702,6 +1808,10 @@
+@@ -1702,6 +1809,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -413,7 +414,7 @@
      }
  
      protected void func_71061_d_()
-@@ -1725,6 +1835,7 @@
+@@ -1725,6 +1836,7 @@
          }
  
          EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(p_70074_1_)));
@@ -421,7 +422,7 @@
  
          if (entityegginfo != null)
          {
-@@ -1837,6 +1948,8 @@
+@@ -1837,6 +1949,8 @@
      {
          if (p_71008_1_ != this.field_71074_e)
          {
@@ -430,7 +431,7 @@
              this.field_71074_e = p_71008_1_;
              this.field_71072_f = p_71008_2_;
  
-@@ -1906,6 +2019,10 @@
+@@ -1906,6 +2020,10 @@
              this.field_71106_cc = p_71049_1_.field_71106_cc;
              this.func_85040_s(p_71049_1_.func_71037_bA());
              this.field_82152_aq = p_71049_1_.field_82152_aq;
@@ -441,7 +442,7 @@
          }
          else if (this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
-@@ -1918,6 +2035,18 @@
+@@ -1918,6 +2036,18 @@
  
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_70096_w().func_75692_b(10, Byte.valueOf(p_71049_1_.func_70096_w().func_75683_a(10)));
@@ -460,7 +461,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -1951,7 +2080,14 @@
+@@ -1951,7 +2081,14 @@
  
      public void func_70062_b(int p_70062_1_, ItemStack p_70062_2_)
      {
@@ -476,7 +477,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1996,7 +2132,10 @@
+@@ -1996,7 +2133,10 @@
  
      public IChatComponent func_145748_c_()
      {
@@ -488,7 +489,7 @@
          chatcomponenttext.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          chatcomponenttext.func_150256_b().func_150209_a(this.func_174823_aP());
          chatcomponenttext.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2005,7 +2144,7 @@
+@@ -2005,7 +2145,7 @@
  
      public float func_70047_e()
      {
@@ -497,7 +498,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2139,6 +2278,136 @@
+@@ -2139,6 +2279,136 @@
          this.field_175153_bG = p_175150_1_;
      }
  
