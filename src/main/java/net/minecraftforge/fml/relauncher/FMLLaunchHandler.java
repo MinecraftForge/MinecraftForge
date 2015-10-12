@@ -56,8 +56,13 @@ public class FMLLaunchHandler
         this.minecraftHome = tweaker.getGameDir();
         this.classLoader.addClassLoaderExclusion("net.minecraftforge.fml.relauncher.");
         this.classLoader.addClassLoaderExclusion("net.minecraftforge.classloading.");
-        this.classLoader.addTransformerExclusion("net.minecraftforge.fml.common.asm.transformers.deobf.");
+        this.classLoader.addTransformerExclusion("net.minecraftforge.fml.common.asm.transformers.");
         this.classLoader.addTransformerExclusion("net.minecraftforge.fml.common.patcher.");
+        this.classLoader.addTransformerExclusion("net.minecraftforge.fml.repackage.");
+        this.classLoader.addClassLoaderExclusion("org.apache.");
+        this.classLoader.addClassLoaderExclusion("com.google.common.");
+        this.classLoader.addClassLoaderExclusion("org.objectweb.asm.");
+        this.classLoader.addClassLoaderExclusion("LZMA.");
     }
 
     private void setupClient()
