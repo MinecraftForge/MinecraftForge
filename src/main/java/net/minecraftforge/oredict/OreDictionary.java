@@ -312,13 +312,40 @@ public class OreDictionary
     }
 
     /**
-     * Gets all the integer ID for the ores that the specified item stakc is registered to.
+     * Gets all the ore names that the specified item stack is registered as.
+     * If the item stack is not linked to any ore, this will return an empty set.
+     *
+     * @param stack The item stack to get ore names from.
+     * @return The set of ore names that this item stack is registered as.
+     */
+    public static Set<String> getOreNames(ItemStack stack)
+    {
+        Set<Integer> oreDictIds = OreDictionary.getOreIDsSet(stack);
+        Set<String> oreDictNames = new HashSet<String>(oreDictIds.size());
+        for (int oreId : oreDictIds)
+            oreDictNames.add(getOreName(oreId));
+        return oreDictNames;
+    }
+
+    /**
+     * Gets all the integer IDs for the ores that the specified item stack is registered to.
      * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
      *
      * @param stack The item stack of the ore.
-     * @return An array of ids that this ore is registerd as.
+     * @return An array of ids that this ore is registered as.
      */
     public static int[] getOreIDs(ItemStack stack)
+    {
+        Set<Integer> set = getOreIDsSet(stack);
+
+        int[] ret = new int[set.size()];
+        int index = 0;
+        for (int x : set)
+            ret[index++] = x;
+        return ret;
+    }
+
+    private static Set<Integer> getOreIDsSet(ItemStack stack)
     {
         if (stack == null || stack.getItem() == null) throw new IllegalArgumentException("Stack can not be null!");
 
@@ -329,12 +356,7 @@ public class OreDictionary
         if (ids != null) set.addAll(ids);
         ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16));
         if (ids != null) set.addAll(ids);
-
-        Integer[] tmp = set.toArray(new Integer[set.size()]);
-        int[] ret = new int[tmp.length];
-        for (int x = 0; x < tmp.length; x++)
-            ret[x] = tmp[x];
-        return ret;
+        return set;
     }
 
     /**
@@ -411,6 +433,35 @@ public class OreDictionary
             return false;
         }
         return (target.getItem() == input.getItem() && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || target.getItemDamage() == input.getItemDamage()));
+    }
+
+    /**
+     * Compares all the ore IDs for the two items to see if they have any in common.
+     *
+     * @param stack1 The first stack to compare.
+     * @param stack2 The second stack to compare.
+     * @return True if stack1 and stack2 share an ore dictionary ID.
+     */
+    public static boolean itemsShareOreID(ItemStack stack1, ItemStack stack2)
+    {
+        if (stack1 == null || stack2 == null)
+        {
+            return false;
+        }
+        return !Collections.disjoint(getOreIDsSet(stack1), getOreIDsSet(stack2));
+    }
+
+    /**
+     * Checks to see if an item is registered with a specific oreName.
+     *
+     * @param stack The stack to check.
+     * @param oreName The unique name for this ore 'oreIron', 'ingotIron', etc..
+     * @return True if stack is registered with the ore dictionary under oreName.
+     */
+    public static boolean itemHasOreName(ItemStack stack, String oreName)
+    {
+        Set<Integer> oreIds = getOreIDsSet(stack);
+        return oreIds.contains(getOreID(oreName));
     }
 
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
