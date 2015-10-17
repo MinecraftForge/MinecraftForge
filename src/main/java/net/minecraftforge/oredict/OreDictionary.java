@@ -261,7 +261,7 @@ public class OreDictionary
                     continue;
                 }
 
-                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
+                if(containsMatch(true, (List<ItemStack>)recipe.recipeItems, replaceStacks))
                 {
                     recipesToRemove.add((IRecipe)obj);
                     IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
@@ -374,22 +374,7 @@ public class OreDictionary
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
     }
 
-    private static boolean containsMatch(boolean strict, ItemStack[] inputs, ItemStack... targets)
-    {
-        for (ItemStack input : inputs)
-        {
-            for (ItemStack target : targets)
-            {
-                if (itemMatches(target, input, strict))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
+    private static boolean containsMatch(boolean strict, Iterable<ItemStack> inputs, ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {
