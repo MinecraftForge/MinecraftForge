@@ -22,12 +22,7 @@ public class NoPotionEffectRenderTest {
     }
 
     @Override
-    public boolean hasStatusIcon() {
-      return false;
-    }
-
-    @Override
-    public boolean shouldRenderInvText(PotionEffect effect) {
+    public boolean shouldRender(PotionEffect effect) {
       return false;
     }
   }

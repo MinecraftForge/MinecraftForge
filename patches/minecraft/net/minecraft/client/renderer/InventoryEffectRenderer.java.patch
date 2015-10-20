@@ -9,7 +9,7 @@
 +        for(Object o : this.field_146297_k.field_71439_g.func_70651_bq()) {
 +            PotionEffect potioneffect = (PotionEffect)o;
 +            Potion potion = Potion.field_76425_a[potioneffect.func_76456_a()];
-+            if(potion.shouldRenderInvText(potioneffect) || potion.func_76400_d()) { hasVisibleEffect = true; break; }
++            if(potion.shouldRender(potioneffect)) { hasVisibleEffect = true; break; }
 +        }
 +        if (!this.field_146297_k.field_71439_g.func_70651_bq().isEmpty() && hasVisibleEffect)
          {
@@ -19,7 +19,7 @@
              {
                  PotionEffect potioneffect = (PotionEffect)iterator.next();
                  Potion potion = Potion.field_76425_a[potioneffect.func_76456_a()];
-+                if(!potion.shouldRenderInvText(potioneffect) && !potion.func_76400_d()) continue;
++                if(!potion.shouldRender(potioneffect)) continue;
                  GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
                  this.field_146297_k.func_110434_K().func_110577_a(field_147001_a);
                  this.func_73729_b(i, j, 0, 166, 140, 32);
