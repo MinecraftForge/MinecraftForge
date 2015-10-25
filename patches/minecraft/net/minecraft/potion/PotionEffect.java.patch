@@ -31,7 +31,7 @@
      public static PotionEffect func_82722_b(NBTTagCompound p_82722_0_)
      {
 -        byte b0 = p_82722_0_.func_74771_c("Id");
-+        int b0 = p_82722_0_.func_74771_c("Id") < 0 ? p_82722_0_.func_74771_c("Id") + 256 : p_82722_0_.func_74771_c("Id");
++        int b0 = p_82722_0_.func_74771_c("Id") & 0xff;
  
          if (b0 >= 0 && b0 < Potion.field_76425_a.length && Potion.field_76425_a[b0] != null)
          {

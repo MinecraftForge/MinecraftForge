@@ -26,8 +26,8 @@ public class PotionRegistryDebug {
 
   @Mod.EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    new PotionForge(new ResourceLocation("forge", "forge"), false, 0xff00ff);
-    new PotionForge(new ResourceLocation("forge", "forgy"), true, 0x00ff00);
+    new PotionForge(new ResourceLocation("forge", "forge"), false, 0xff00ff); // test automatic id distribution
+    new PotionForge(200, new ResourceLocation("forge", "forgy"), true, 0x00ff00); // test that ids above 127 work
 
     Random rand = new Random();
     TIntSet taken = new TIntHashSet(100);
