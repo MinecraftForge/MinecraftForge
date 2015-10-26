@@ -68,6 +68,25 @@ public class TRSRTransformation implements IModelState, ITransformation
     {
         this(rotation.getMatrix());
     }
+    
+    public TRSRTransformation(EnumFacing facing)
+    {
+        this(getMatrix(facing));
+    }
+    
+    public static Matrix4f getMatrix(EnumFacing facing)
+    {
+        switch(facing)
+        {
+        case DOWN: return ModelRotation.X90_Y0.getMatrix();
+        case UP: return ModelRotation.X270_Y0.getMatrix();
+        case NORTH: return TRSRTransformation.identity.matrix;
+        case SOUTH: return ModelRotation.X0_Y180.getMatrix();
+        case WEST: return ModelRotation.X0_Y270.getMatrix();
+        case EAST: return ModelRotation.X0_Y90.getMatrix();
+        default: return new Matrix4f();
+        }
+    }
 
     private static final TRSRTransformation identity;
 
@@ -515,5 +534,29 @@ public class TRSRTransformation implements IModelState, ITransformation
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp);
         return new TRSRTransformation(ret);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((matrix == null) ? 0 : matrix.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        TRSRTransformation other = (TRSRTransformation) obj;
+        if (matrix == null)
+        {
+            if (other.matrix != null) return false;
+        }
+        else if (!matrix.equals(other.matrix)) return false;
+        return true;
     }
 }

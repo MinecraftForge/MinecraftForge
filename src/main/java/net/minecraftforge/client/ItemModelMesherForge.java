@@ -28,6 +28,15 @@ public class ItemModelMesherForge extends ItemModelMesher
         super(manager);
     }
 
+    public ModelResourceLocation getLocation(Item item, int meta)
+    {
+        if (item != null)
+        {
+            return locations.get(item).get(meta);
+        }
+        return null;
+    }
+    
     protected IBakedModel getItemModel(Item item, int meta)
     {
         TIntObjectHashMap<IBakedModel> map = models.get(item);

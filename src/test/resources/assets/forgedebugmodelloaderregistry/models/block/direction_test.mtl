@@ -1,0 +1,11 @@
+newmtl front
+map_Kd forgedebugmodelloaderregistry:direction_test_front
+
+newmtl back
+map_Kd forgedebugmodelloaderregistry:direction_test_back
+
+newmtl side
+map_Kd forgedebugmodelloaderregistry:direction_test_arrow
+
+newmtl top
+map_Kd forgedebugmodelloaderregistry:direction_test_arrow_top

@@ -560,8 +560,6 @@ public class B3DLoader implements ICustomModelLoader
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
             int oldPos = buf.position();
-            Number[] ns = new Number[16];
-            for(int i = 0; i < ns.length; i++) ns[i] = 0f;
             for(VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
             {
                 switch(e.getUsage())
@@ -644,7 +642,7 @@ public class B3DLoader implements ICustomModelLoader
                 IExtendedBlockState exState = (IExtendedBlockState)state;
                 if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
                 {
-                    B3DState s = (B3DState)exState.getValue(B3DFrameProperty.instance);
+                    B3DState s = exState.getValue(B3DFrameProperty.instance);
                     if(s != null)
                     {
                         return getCachedModel(s.getFrame());
