@@ -40,7 +40,14 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation(Matrix4f matrix)
     {
-        this.matrix = matrix;
+        if(matrix == null)
+        {
+            this.matrix = identity.matrix;
+        }
+        else
+        {
+            this.matrix = matrix;
+        }
     }
 
     public TRSRTransformation(Vector3f translation, Quat4f leftRot, Vector3f scale, Quat4f rightRot)

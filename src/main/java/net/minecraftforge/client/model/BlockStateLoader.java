@@ -198,7 +198,7 @@ public class BlockStateLoader
                 models.put(entry.getKey(), Pair.of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
             }
 
-            return new MultiModel(hasBase ? base : null, baseTr, models.build());
+            return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());
         }
 
         @Override

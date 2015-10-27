@@ -209,7 +209,7 @@ public class ModelLoader extends ModelBakery
     {
         return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
     }
-    
+
     private void loadAnyModel(ResourceLocation location) throws IOException
     {
         if(loadingModels.contains(location))
@@ -324,17 +324,23 @@ public class ModelLoader extends ModelBakery
             ModelBlock model = this.model;
             if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
             ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
+            boolean uvlock = false;
+            if(state instanceof UVLock)
+            {
+                uvlock = true;
+                state = ((UVLock)state).getParent();
+            }
+            IPerspectiveState perState = state instanceof IPerspectiveState ? (IPerspectiveState)state : new IPerspectiveState.Impl(state, transforms);
             if(hasItemModel(model))
             {
-                IPerspectiveState perState = state instanceof IPerspectiveState ? (IPerspectiveState)state : new IPerspectiveState.Impl(state, transforms);
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
             // TODO perspective awareness for this
-            return bakeNormal(model, state.apply(this), format, bakedTextureGetter, state instanceof UVLock);
+            return bakeNormal(model, perState, state.apply(this), format, bakedTextureGetter, uvlock);
         }
 
-        private IFlexibleBakedModel bakeNormal(ModelBlock model, TRSRTransformation state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IFlexibleBakedModel bakeNormal(ModelBlock model, IPerspectiveState perState, TRSRTransformation state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
@@ -355,7 +361,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format);
+            return new IPerspectiveAwareModel.MapWrapper(new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format), perState, this);
         }
 
         public IModelState getDefaultState()
@@ -427,16 +433,21 @@ public class ModelLoader extends ModelBakery
 
     public static class UVLock implements IModelState
     {
-        private final IModelState state;
+        private final IModelState parent;
 
-        public UVLock(IModelState state)
+        public UVLock(IModelState parent)
         {
-            this.state = state;
+            this.parent = parent;
+        }
+
+        public IModelState getParent()
+        {
+            return parent;
         }
 
         public TRSRTransformation apply(IModelPart part)
         {
-            return state.apply(part);
+            return parent.apply(part);
         }
     }
 

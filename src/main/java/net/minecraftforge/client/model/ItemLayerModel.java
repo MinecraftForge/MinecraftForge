@@ -94,11 +94,7 @@ public class ItemLayerModel implements IRetexturableModel {
         if(state instanceof IPerspectiveState)
         {
             IPerspectiveState ps = (IPerspectiveState)state;
-            Map<TransformType, TRSRTransformation> map = Maps.newHashMap();
-            for(TransformType type : TransformType.values())
-            {
-                map.put(type, ps.forPerspective(type).apply(this));
-            }
+            ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(ps, this);
             return new BakedModel(builder.build(), particle, format, Maps.immutableEnumMap(map));
         }
         return new BakedModel(builder.build(), particle, format);
