@@ -64,8 +64,8 @@ public class ModelLoaderRegistry
 
     public static IModel getModel(ResourceLocation location) throws IOException
     {
-        ResourceLocation actual = getActualLocation(location);
         if(cache.containsKey(location)) return cache.get(location);
+        ResourceLocation actual = getActualLocation(location);
         ICustomModelLoader accepted = null;
         for(ICustomModelLoader loader : loaders)
         {
@@ -127,5 +127,9 @@ public class ModelLoaderRegistry
     public static void clearModelCache()
     {
         cache.clear();
+        // putting the builtin models in
+        cache.put(new ResourceLocation("minecraft:builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
+        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
+        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
     }
 }

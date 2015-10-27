@@ -69,6 +69,7 @@ public class ModelLoader extends ModelBakery
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private IModel missingModel = null;
+    private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -255,29 +256,36 @@ public class ModelLoader extends ModelBakery
             // setting parent here to make textures resolve properly
             if(model.getParentLocation() != null)
             {
-                try
+                if(model.getParentLocation().getResourcePath().equals("builtin/generated"))
                 {
-                    IModel parent = getModel(model.getParentLocation());
-                    if(parent instanceof VanillaModelWrapper)
-                    {
-                        model.parent = ((VanillaModelWrapper) parent).model;
-                    }
-                    else
-                    {
-                        throw new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent");
-                    }
+                    model.parent = MODEL_GENERATED;
                 }
-                catch (IOException e)
+                else
                 {
-                    FMLLog.warning("Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model + "': " + e.toString());
-                    IModel missing = ModelLoader.this.getMissingModel();
-                    if (missing instanceof VanillaModelWrapper)
+                    try
                     {
-                        model.parent = ((VanillaModelWrapper)missing).model;
+                        IModel parent = getModel(model.getParentLocation());
+                        if(parent instanceof VanillaModelWrapper)
+                        {
+                            model.parent = ((VanillaModelWrapper) parent).model;
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent");
+                        }
                     }
-                    else
+                    catch (IOException e)
                     {
-                        throw new IllegalStateException("vanilla model '" + model + "' has missing parent, and missing model is not a vanilla model");
+                        FMLLog.warning("Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model + "': " + e.toString());
+                        IModel missing = ModelLoader.this.getMissingModel();
+                        if (missing instanceof VanillaModelWrapper)
+                        {
+                            model.parent = ((VanillaModelWrapper)missing).model;
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("vanilla model '" + model + "' has missing parent, and missing model is not a vanilla model");
+                        }
                     }
                 }
             }
@@ -628,6 +636,11 @@ public class ModelLoader extends ModelBakery
             }
         }
         return missingModel;
+    }
+
+    public IModel getItemModel()
+    {
+        return itemModel;
     }
 
     static enum VanillaLoader implements ICustomModelLoader
