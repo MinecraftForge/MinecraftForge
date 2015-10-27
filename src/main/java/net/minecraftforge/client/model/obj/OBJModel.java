@@ -90,7 +90,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             Material mat = materialIterator.next();
             ResourceLocation textureLoc = new ResourceLocation(mat.getTexture().getPath());
-            if (!textures.contains(textureLoc))
+            if (!textures.contains(textureLoc) && !mat.isWhite())
                 textures.add(textureLoc);
         }
         return textures;
@@ -1423,7 +1423,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         break;
                     case COLOR:
                         float d = LightUtil.diffuseLight(n.normal.x, n.normal.y, n.normal.z);
-                        if (v.getMaterial() != null) builder.put(e, d * v.getMaterial().getColor().x, d * v.getMaterial().getColor().y, d * v.getMaterial().getColor().z, d * v.getMaterial().getColor().w);
+                        if (v.getMaterial() != null) builder.put(e, d * v.getMaterial().getColor().x, d * v.getMaterial().getColor().y, d * v.getMaterial().getColor().z, v.getMaterial().getColor().w);
                         else builder.put(e, d, d, d, 1);
                         break;
                     case UV:
