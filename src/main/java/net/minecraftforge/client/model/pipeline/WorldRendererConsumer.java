@@ -36,7 +36,7 @@ public class WorldRendererConsumer implements IVertexConsumer
             if(v == 4)
             {
                 renderer.addVertexData(quadData);
-                renderer.checkAndGrow();
+                renderer.putPosition(0, 0, 0);
                 Arrays.fill(quadData, 0);
                 v = 0;
             }

@@ -141,9 +141,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                     case POSITION:
                         float[] pos = new float[4];
                         System.arraycopy(position[v], 0, pos, 0, position[v].length);
-                        pos[0] += (blockInfo.getBlockPos().getX() & 0xF);
-                        pos[1] += (blockInfo.getBlockPos().getY() & 0xF);
-                        pos[2] += (blockInfo.getBlockPos().getZ() & 0xF);
+                        pos[0] += blockInfo.getBlockPos().getX();
+                        pos[1] += blockInfo.getBlockPos().getY();
+                        pos[2] += blockInfo.getBlockPos().getZ();
                         parent.put(e, pos);
                         break;
                     case NORMAL: if(normalIndex != -1)
