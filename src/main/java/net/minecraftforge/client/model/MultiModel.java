@@ -175,7 +175,7 @@ public class MultiModel implements IModel
         {
             if(transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
-            return Pair.of(p.getLeft(), p.getRight().getMatrix());
+            return Pair.of((IBakedModel)p.getLeft(), p.getRight().getMatrix());
         }
     }
 
