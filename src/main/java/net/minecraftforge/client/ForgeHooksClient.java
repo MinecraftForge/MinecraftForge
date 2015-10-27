@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.block.Block;
@@ -713,11 +714,23 @@ public class ForgeHooksClient
         tileItemMap.put(Pair.of(item, metadata), TileClass);
     }
 
+    /**
+     * internal, relies on fixed format of FaceBakery
+     */
     public static void fillNormal(int[] faceData, EnumFacing facing)
     {
-        int x = ((byte)(facing.getFrontOffsetX() * 127)) & 0xFF;
-        int y = ((byte)(facing.getFrontOffsetY() * 127)) & 0xFF;
-        int z = ((byte)(facing.getFrontOffsetZ() * 127)) & 0xFF;
+        Vector3f v1 = new Vector3f(faceData[3 * 7 + 0], faceData[3 * 7 + 1], faceData[3 * 7 + 2]);
+        Vector3f t = new Vector3f(faceData[1 * 7 + 0], faceData[1 * 7 + 1], faceData[1 * 7 + 2]);
+        Vector3f v2 = new Vector3f(faceData[2 * 7 + 0], faceData[2 * 7 + 1], faceData[2 * 7 + 2]);
+        v1.sub(t);
+        t.set(faceData[0 * 7 + 0], faceData[0 * 7 + 1], faceData[0 * 7 + 2]);
+        v2.sub(t);
+        v1.cross(v2, v1);
+        v1.normalize();
+
+        int x = ((byte)(v1.x * 127)) & 0xFF;
+        int y = ((byte)(v1.y * 127)) & 0xFF;
+        int z = ((byte)(v1.z * 127)) & 0xFF;
         for(int i = 0; i < 4; i++)
         {
             faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
