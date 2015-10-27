@@ -173,7 +173,7 @@ public class MultiModel implements IModel
         @Override
         public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            if(transforms.isEmpty()) return Pair.of(this, null);
+            if(transforms.isEmpty()) return Pair.<IBakedModel, Matrix4f>of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
             return Pair.of((IBakedModel)p.getLeft(), p.getRight().getMatrix());
         }
