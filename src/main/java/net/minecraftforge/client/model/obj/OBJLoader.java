@@ -28,11 +28,10 @@ public class OBJLoader implements ICustomModelLoader {
     private final Set<String> enabledDomains = new HashSet<String>();
     private final Map<ResourceLocation, OBJModel> cache = new HashMap<ResourceLocation, OBJModel>();
 
-    public OBJLoader() {}
-
     public void addDomain(String domain)
     {
         enabledDomains.add(domain.toLowerCase());
+        FMLLog.log(Level.INFO, "OBJLoader: Domain %s has been added.", domain.toLowerCase());
     }
 
     public void onResourceManagerReload(IResourceManager resourceManager)
@@ -46,8 +45,7 @@ public class OBJLoader implements ICustomModelLoader {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
     }
 
-    @SuppressWarnings("unchecked")
-    public IModel loadModel(ResourceLocation modelLocation)
+    public IModel loadModel(ResourceLocation modelLocation) throws IOException
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
@@ -68,13 +66,20 @@ public class OBJLoader implements ICustomModelLoader {
                     else throw e;
                 }
                 OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
-                OBJModel model = parser.parse();
-                cache.put(modelLocation, model);
+                OBJModel model = null;
+                try
+                {
+                	model = parser.parse();
+                }
+                finally
+                {
+                	cache.put(modelLocation, model);
+                }
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Exception loading model %s with OBJ loader, skipping", modelLocation);
-                cache.put(modelLocation, null);
+//                FMLLog.log(Level.ERROR, e, "Exception loading model '%s' with OBJ loader, skipping", modelLocation);
+                throw e;
             }
         }
         OBJModel model = cache.get(file);
