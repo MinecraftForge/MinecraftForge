@@ -169,16 +169,15 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
     {
-        float e1 = 1 - 1e-2f;
         float e2 = 0.95f;
         BlockPos pos = blockInfo.getBlockPos();
 
-        if(y < -e1 && normal[1] < -e2) pos = pos.down();
-        if(y >  e1 && normal[1] >  e2) pos = pos.up();
-        if(z < -e1 && normal[2] < -e2) pos = pos.north();
-        if(z >  e1 && normal[2] >  e2) pos = pos.south();
-        if(x < -e1 && normal[0] < -e2) pos = pos.west();
-        if(x >  e1 && normal[0] >  e2) pos = pos.east();
+        if(normal[1] < -e2) pos = pos.down();
+        if(normal[1] >  e2) pos = pos.up();
+        if(normal[2] < -e2) pos = pos.north();
+        if(normal[2] >  e2) pos = pos.south();
+        if(normal[0] < -e2) pos = pos.west();
+        if(normal[0] >  e2) pos = pos.east();
 
         int brightness = blockInfo.getBlock().getMixedBrightnessForBlock(blockInfo.getWorld(), pos);
 
