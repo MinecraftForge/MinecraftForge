@@ -582,11 +582,11 @@ public class B3DLoader implements ICustomModelLoader
                 case NORMAL:
                     if(v.getNormal() != null)
                     {
-                        builder.put(e, v.getNormal().x, v.getNormal().y, v.getNormal().z, 1);
+                        builder.put(e, v.getNormal().x, v.getNormal().y, v.getNormal().z, 0);
                     }
                     else
                     {
-                        builder.put(e, faceNormal.x, faceNormal.y, faceNormal.z, 1);
+                        builder.put(e, faceNormal.x, faceNormal.y, faceNormal.z, 0);
                     }
                     break;
                 default:

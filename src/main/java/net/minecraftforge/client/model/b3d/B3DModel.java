@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector2f;
@@ -625,7 +626,8 @@ public class B3DModel
                     bm.mul(bone.getLeft());
                     t.add(bm);
                 }
-                if(totalWeight != 0) t.mul(1f / totalWeight);
+                if(Math.abs(totalWeight) > 1e-4) t.mul(1f / totalWeight);
+                else t.setIdentity();
             }
 
             // pos
@@ -635,12 +637,12 @@ public class B3DModel
             Vector3f rPos = new Vector3f(newPos.x / newPos.w, newPos.y / newPos.w, newPos.z / newPos.w);
 
             // normal
-            t.invert();
-            t.transpose();
-            Vector4f normal = new Vector4f(this.normal), newNormal = new Vector4f();
-            normal.w = 1;
-            t.transform(normal, newNormal);
-            Vector3f rNormal = new Vector3f(newNormal.x / newNormal.w, newNormal.y / newNormal.w, newNormal.z / newNormal.w);
+            Matrix3f tm = new Matrix3f();
+            t.getRotationScale(tm);
+            tm.invert();
+            tm.transpose();
+            Vector3f normal = new Vector3f(this.normal), rNormal = new Vector3f();
+            tm.transform(normal, rNormal);
             rNormal.normalize();
 
             // texCoords TODO
