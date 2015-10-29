@@ -439,6 +439,7 @@ public class GameData {
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
 
+        getMain().iItemRegistry.resetSubstitutionDelegates();
         GameData newData = new GameData();
 
         for (int id : blockedIds)

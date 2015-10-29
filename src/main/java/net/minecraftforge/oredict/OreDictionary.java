@@ -29,6 +29,7 @@ import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.registry.GameData;
 
 public class OreDictionary
 {
@@ -493,7 +494,8 @@ public class OreDictionary
         }
 
         int oreID = getOreID(name);
-        int hash = Item.getIdFromItem(ore.getItem());
+	// HACK: use the registry name's ID. It is unique and it knows about substitutions
+        int hash = GameData.getItemRegistry().getId(ore.getItem().delegate.name());
         if (ore.getItemDamage() != WILDCARD_VALUE)
         {
             hash |= ((ore.getItemDamage() + 1) << 16); // +1 so 0 is significant
@@ -537,7 +539,8 @@ public class OreDictionary
             if (ores == null) continue;
             for (ItemStack ore : ores)
             {
-                int hash = Item.getIdFromItem(ore.getItem());
+		// HACK: use the registry name's ID. It is unique and it knows about substitutions
+                int hash = GameData.getItemRegistry().getId(ore.getItem().delegate.name());
                 if (ore.getItemDamage() != WILDCARD_VALUE)
                 {
                     hash |= ((ore.getItemDamage() + 1) << 16); // +1 so meta 0 is significant
