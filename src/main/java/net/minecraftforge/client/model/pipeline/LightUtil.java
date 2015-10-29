@@ -247,9 +247,9 @@ public class LightUtil
         {
             cons = new ItemConsumer(new WorldRendererConsumer(wr));
         }
-        float r = (float)(auxColor & 0xFF) / 0xFF;
+        float b = (float)(auxColor & 0xFF) / 0xFF;
         float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
-        float b = (float)((auxColor >>> 16) & 0xFF) / 0xFF;
+        float r = (float)((auxColor >>> 16) & 0xFF) / 0xFF;
         float a = (float)((auxColor >>> 24) & 0xFF) / 0xFF;
         cons.setAuxColor(r, g, b, a);
         quad.pipe(cons);
