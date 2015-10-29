@@ -3,7 +3,6 @@ package net.minecraftforge.client.model.obj;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector2f;
@@ -25,14 +25,12 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelCustomData;
@@ -52,6 +50,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -66,13 +65,18 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
     private final ResourceLocation modelLocation;
-    private boolean ambientOcclusion = true;
-    private boolean gui3d = true;
+    private CustomData customData;
 
     public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation)
     {
+    	this(matLib, modelLocation, null);
+    }
+
+    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation, CustomData customData)
+    {
         this.matLib = matLib;
         this.modelLocation = modelLocation;
+        this.customData = customData;
     }
 
     @Override
@@ -106,7 +110,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#"))
             {
-                FMLLog.severe("unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
+                FMLLog.severe("OBJLoader: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
                 builder.put(e.getKey(), missing);
             }
             else
@@ -115,7 +119,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             }
         }
         builder.put("missingno", missing);
-        return new OBJBakedModel(this, state, format, builder.build(), ambientOcclusion, gui3d);
+        return new OBJBakedModel(this, state, format, builder.build());
     }
 
     public TRSRTransformation getDefaultState()
@@ -127,31 +131,54 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     {
         return this.matLib;
     }
+    
+    public boolean hasCustomData()
+    {
+    	return this.customData != null;
+    }
 
     @Override
     public IModel process(ImmutableMap<String, String> customData)
     {
-        for (Map.Entry<String, String> e : customData.entrySet())
-        {
-            if (e.getKey().equals("ambient"))
-                this.ambientOcclusion = GSON.fromJson(e.getValue(), Boolean.TYPE);
-            else if (e.getKey().equals("gui3d"))
-                this.gui3d = GSON.fromJson(e.getValue(), Boolean.TYPE);
-        }
-        return this;
+    	OBJModel ret = new OBJModel(this.matLib, this.modelLocation, new CustomData(customData));
+        return ret;
     }
 
     @Override
     public IModel retexture(ImmutableMap<String, String> textures)
     {
-        OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation);
-        ret.ambientOcclusion = this.ambientOcclusion;
-        ret.gui3d = this.gui3d;
+        OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
         return ret;
+    }
+    
+    public static class CustomData
+    {
+    	public boolean ambientOcclusion = true;
+    	public boolean gui3d = true;
+    	public boolean modifyUVs = false;
+    	
+    	public CustomData(ImmutableMap<String, String> customData)
+    	{
+    		this.process(customData);
+    	}
+    	
+    	public void process(ImmutableMap<String, String> customData)
+    	{
+    		for (Map.Entry<String, String> e : customData.entrySet())
+    		{
+    			if (e.getKey().equals("ambient"))
+    				this.ambientOcclusion = Boolean.valueOf(e.getValue());
+    			else if (e.getKey().equals("gui3d"))
+    				this.gui3d = Boolean.valueOf(e.getValue());
+    			else if (e.getKey().equals("modifyUVs"))
+    				this.modifyUVs = Boolean.valueOf(e.getValue());
+    		}
+    	}
     }
 
     public static class Parser
     {
+    	private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
         private static Set<String> unknownObjectCommands = new HashSet<String>();
         public MaterialLibrary materialLibrary = new MaterialLibrary();
         private IResourceManager manager;
@@ -163,11 +190,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         private List<Vertex> vertices = Lists.newArrayList();
         private List<Normal> normals = Lists.newArrayList();
         private List<TextureCoordinate> texCoords = Lists.newArrayList();
-
-        private float minU = 0f;
-        private float maxU = 1f;
-        private float minV = 0f;
-        private float maxV = 1f;
 
         public Parser(IResource from, IResourceManager manager) throws IOException
         {
@@ -187,16 +209,20 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             String currentLine = "";
             Material material = new Material();
             int usemtlCounter = 0;
+            
+//            float[] minUVBounds = new float[] {0.0f, 0.0f};
+//            float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
             for (;;)
             {
                 currentLine = objReader.readLine();
                 if (currentLine == null) break;
                 if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
-
-                String[] fields = currentLine.split(" ", 2);
+                
+                String[] fields = WHITE_SPACE.split(currentLine, 2);
                 String key = fields[0];
                 String data = fields[1];
+                String[] splitData = WHITE_SPACE.split(data);
 
                 if (key.equalsIgnoreCase("mtllib"))
                     this.materialLibrary.parseMaterials(manager, data, objFrom);
@@ -207,7 +233,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 }
                 else if (key.equalsIgnoreCase("v"))
                 {
-                    String[] splitData = data.split(" ");
                     float[] floatSplitData = new float[splitData.length];
                     for (int i = 0; i < splitData.length; i++)
                         floatSplitData[i] = Float.parseFloat(splitData[i]);
@@ -217,63 +242,68 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 }
                 else if (key.equalsIgnoreCase("vn"))
                 {
-                    String[] splitData = data.split(" ");
                     float[] floatSplitData = new float[splitData.length];
                     for (int i = 0; i < splitData.length; i++)
                         floatSplitData[i] = Float.parseFloat(splitData[i]);
-                    Normal normal = new Normal(new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData[2]));
+                    Normal normal = new Normal(floatSplitData);
                     this.normals.add(normal);
                 }
                 else if (key.equalsIgnoreCase("vt"))
                 {
-                    String[] splitData = data.split(" ");
                     float[] floatSplitData = new float[splitData.length];
                     for (int i = 0; i < splitData.length; i++)
                         floatSplitData[i] = Float.parseFloat(splitData[i]);
                     TextureCoordinate texCoord = new TextureCoordinate(new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData.length == 3 ? floatSplitData[2] : 1));
-                    if (floatSplitData[0] < this.minU)
-                        this.minU = floatSplitData[0];
-                    else if (floatSplitData[0] > this.maxU)
-                        this.maxU = floatSplitData[0];
-
-                    if (floatSplitData[1] < this.minV)
-                        this.minV = floatSplitData[1];
-                    else if (floatSplitData[1] > this.maxV)
-                        this.maxV = floatSplitData[1];
+                    if (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f)
+                    	throw new UVsOutOfBoundsException(this.objFrom);
+//                    this.UVsOutOfBounds = (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f);
                     
+//                    if (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f)
+//                    {
+//                    	this.UVsOutOfBounds = true;
+//                    	texCoord.u -= Math.floor(texCoord.u);
+//                    	texCoord.v -= Math.floor(texCoord.v);
+//                    }
+
+//                    minUVBounds[0] = floatSplitData[0] < minUVBounds[0] ? floatSplitData[0] : minUVBounds[0];
+//                    minUVBounds[1] = floatSplitData[1] < minUVBounds[1] ? floatSplitData[1] : minUVBounds[1];
+//                    maxUVBounds[0] = floatSplitData[0] > maxUVBounds[0] ? floatSplitData[0] : maxUVBounds[0];
+//                    maxUVBounds[1] = floatSplitData[1] > maxUVBounds[1] ? floatSplitData[1] : maxUVBounds[1];
+//                    FMLLog.info("u: [%f, %f] v: [%f, %f]", minUVBounds[]);
                     this.texCoords.add(texCoord);
                 }
                 else if (key.equalsIgnoreCase("f"))
                 {
-                    String[] splitSpace = data.split(" ");
-                    String[][] splitSlash = new String[splitSpace.length][];
-                    if (splitSpace.length > 4) FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+                    String[][] splitSlash = new String[splitData.length][];
+                    if (splitData.length > 4) FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
 
                     int vert = 0;
                     int texCoord = 0;
                     int norm = 0;
 
-                    List<Vertex> v = Lists.newArrayListWithCapacity(splitSpace.length);
-                    List<TextureCoordinate> t = Lists.newArrayListWithCapacity(splitSpace.length);
-                    List<Normal> n = Lists.newArrayListWithCapacity(splitSpace.length);
+                    List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
+//                    List<TextureCoordinate> t = Lists.newArrayListWithCapacity(splitData.length);
+//                    List<Normal> n = Lists.newArrayListWithCapacity(splitData.length);
 
-                    for (int i = 0; i < splitSpace.length; i++)
+                    for (int i = 0; i < splitData.length; i++)
                     {
-                        if (splitSpace[i].contains("//"))
+                        if (splitData[i].contains("//"))
                         {
-                            splitSlash[i] = splitSpace[i].split("//");
+                            splitSlash[i] = splitData[i].split("//");
 
                             vert = Integer.parseInt(splitSlash[i][0]);
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
                             norm = Integer.parseInt(splitSlash[i][1]);
                             norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
 
+                            this.vertices.get(vert).setNormal(this.normals.get(norm));
+                            
                             v.add(this.vertices.get(vert));
-                            n.add(this.normals.get(norm));
+//                            n.add(this.normals.get(norm));
                         }
-                        else if (splitSpace[i].contains("/"))
+                        else if (splitData[i].contains("/"))
                         {
-                            splitSlash[i] = splitSpace[i].split("/");
+                            splitSlash[i] = splitData[i].split("/");
 
                             vert = Integer.parseInt(splitSlash[i][0]);
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
@@ -284,14 +314,17 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                                 norm = Integer.parseInt(splitSlash[i][2]);
                                 norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
                             }
+                            
+                            this.vertices.get(vert).setTextureCoordinate(this.texCoords.get(texCoord));
+                            this.vertices.get(vert).setNormal(splitSlash[i].length > 2 ? this.normals.get(norm) : null);
 
                             v.add(this.vertices.get(vert));
-                            t.add(this.texCoords.get(texCoord));
-                            if (splitSlash[i].length > 2) n.add(this.normals.get(norm));
+//                            t.add(this.texCoords.get(texCoord));
+//                            if (splitSlash[i].length > 2) n.add(this.normals.get(norm));
                         }
                         else
                         {
-                            splitSlash[i] = splitSpace[i].split("");
+                            splitSlash[i] = splitData[i].split("");
 
                             vert = Integer.parseInt(splitSlash[i][0]);
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
@@ -302,11 +335,11 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
                     Vertex[] va = new Vertex[v.size()];
                     v.toArray(va);
-                    TextureCoordinate[] ta = new TextureCoordinate[t.size()];
-                    t.toArray(ta);
-                    Normal[] na = new Normal[n.size()];
-                    n.toArray(na);
-                    Face face = new Face(va, na, ta, material.name);
+//                    TextureCoordinate[] ta = new TextureCoordinate[t.size()];
+//                    t.toArray(ta);
+//                    Normal[] na = new Normal[n.size()];
+//                    n.toArray(na);
+                    Face face = new Face(va, material.name);
                     if (usemtlCounter < this.vertices.size())
                     {
                         for (Vertex ver : face.getVertices())
@@ -368,23 +401,24 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     }
                 }
             }
-            OBJModel model = new OBJModel(this.materialLibrary, this.objFrom);
-            model.getMatLib().setUVBounds(minU, maxU, minV, maxV);
+            
+            OBJModel model = new OBJModel(this.materialLibrary, this.objFrom, null);
+//            model.getMatLib().setUVBounds(minUVBounds[0], maxUVBounds[0], minUVBounds[1], maxUVBounds[1]);
             return model;
         }
     }
 
     public static class MaterialLibrary
     {
+    	private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
         private Set<String> unknownMaterialCommands = new HashSet<String>();
         private Map<String, Material> materials = new HashMap<String, Material>();
         private Map<String, Group> groups = new HashMap<String, Group>();
         private InputStreamReader mtlStream;
         private BufferedReader mtlReader;
-        private float minU = 0f;
-        private float maxU = 1f;
-        private float minV = 0f;
-        private float maxV = 1f;
+
+//        private float[] minUVBounds = new float[] {0.0f, 0.0f};
+//        private float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
         public MaterialLibrary()
         {
@@ -414,40 +448,28 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             ret.groups = this.groups;
             ret.mtlStream = this.mtlStream;
             ret.mtlReader = this.mtlReader;
-            ret.minU = this.minU;
-            ret.maxU = this.maxU;
-            ret.minV = this.minV;
-            ret.maxV = this.maxV;
+//            ret.minUVBounds = this.minUVBounds;
+//            ret.maxUVBounds = this.maxUVBounds;
             return ret;
         }
 
-        public float getMinU()
-        {
-            return this.minU;
-        }
+//        public float[] getMinUVBounds() 
+//        {
+//        	return this.minUVBounds;
+//        }
+        
+//        public float[] getMaxUVBounds()
+//        {
+//        	return this.maxUVBounds;
+//        }
 
-        public float getMaxU()
-        {
-            return this.maxU;
-        }
-
-        public float getMinV()
-        {
-            return this.minV;
-        }
-
-        public float getMaxV()
-        {
-            return this.maxV;
-        }
-
-        public void setUVBounds(float minU, float maxU, float minV, float maxV)
-        {
-            this.minU = minU;
-            this.maxU = maxU;
-            this.minV = minV;
-            this.maxV = maxV;
-        }
+//        public void setUVBounds(float minU, float maxU, float minV, float maxV)
+//        {
+//            this.minUVBounds[0] = minU;
+//            this.maxUVBounds[0] = maxU;
+//            this.minUVBounds[1] = minV;
+//            this.maxUVBounds[1] = maxV;
+//        }
 
         public Map<String, Group> getGroups()
         {
@@ -490,18 +512,17 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             boolean hasSetTexture = false;
             boolean hasSetColor = false;
             String domain = from.getResourceDomain();
-            if (!path.contains("/")) {
-                path = from.getResourcePath().substring(0, from.getResourcePath().lastIndexOf("/") + 1) + path;
-            }
+            if (!path.contains("/")) 
+            	path = from.getResourcePath().substring(0, from.getResourcePath().lastIndexOf("/") + 1) + path;
             mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), Charsets.UTF_8);
             mtlReader = new BufferedReader(mtlStream);
 
             String currentLine = "";
             Material material = new Material();
             material.setName(Material.WHITE_NAME);
-            material.setTexture(Texture.White);
+            material.setTexture(Texture.WHITE);
             this.materials.put(Material.WHITE_NAME, material);
-            this.materials.put(Material.DEFAULT_NAME, new Material(Texture.White));
+            this.materials.put(Material.DEFAULT_NAME, new Material(Texture.WHITE));
 
             for (;;)
             {
@@ -509,7 +530,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 if (currentLine == null) break;
                 if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
 
-                String[] fields = currentLine.split(" ", 2);
+                String[] fields = WHITE_SPACE.split(currentLine, 2);
                 String key = fields[0];
                 String data = fields[1];
 
@@ -525,7 +546,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 {
                     if (key.equalsIgnoreCase("Kd") || !hasSetColor)
                     {
-                        String[] rgbStrings = data.split(" ", 3);
+                        String[] rgbStrings = WHITE_SPACE.split(data, 3);
                         Vector4f color = new Vector4f(Float.parseFloat(rgbStrings[0]), Float.parseFloat(rgbStrings[1]), Float.parseFloat(rgbStrings[2]), 1.0f);
                         hasSetColor = true;
                         material.setColor(color);
@@ -541,7 +562,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     {
                         if (data.contains(" "))
                         {
-                            String[] mapStrings = data.split(" ");
+                            String[] mapStrings = WHITE_SPACE.split(data);
                             String texturePath = mapStrings[mapStrings.length - 1];
                             Texture texture = new Texture(texturePath);
                             hasSetTexture = true;
@@ -559,12 +580,20 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         FMLLog.info("OBJModel: A texture has already been defined for material '%s' in '%s'. The texture defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
+                else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
+                {
+                	//d <-optional key here> float[0.0:1.0, 1.0]
+                	//Tr r g b OR Tr spectral map file OR Tr xyz r g b (CIEXYZ colorspace)
+                	String[] splitData = WHITE_SPACE.split(data);	
+                	float alpha = Float.parseFloat(splitData[splitData.length - 1]);
+                	material.getColor().setW(alpha);
+                }
                 else
                 {
                     if (!unknownMaterialCommands.contains(key))
                     {
                         unknownMaterialCommands.add(key);
-                        FMLLog.info("OBJLoader.MaterialLibrary: command '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+                        FMLLog.info("OBJLoader.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
                     }
                 }
             }
@@ -576,7 +605,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         public static final String WHITE_NAME = "OBJModel.White.Texture.Name";
         public static final String DEFAULT_NAME = "OBJModel.Default.Texture.Name";
         private Vector4f color;
-        private Texture texture = Texture.White;
+        private Texture texture = Texture.WHITE;
         private String name = DEFAULT_NAME;
 
         public Material()
@@ -586,7 +615,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         public Material(Vector4f color)
         {
-            this(color, Texture.White, WHITE_NAME);
+            this(color, Texture.WHITE, WHITE_NAME);
         }
 
         public Material(Texture texture)
@@ -633,7 +662,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         public boolean isWhite()
         {
-            return this.texture.equals(Texture.White);
+            return this.texture.equals(Texture.WHITE);
         }
 
         @Override
@@ -649,7 +678,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
     public static class Texture
     {
-        public static Texture White = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
+        public static Texture WHITE = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
         private String path;
         private Vector2f position;
         private Vector2f scale;
@@ -718,57 +747,52 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     public static class Face
     {
         private Vertex[] verts = new Vertex[4];
-        private Normal[] norms = new Normal[4];
-        private TextureCoordinate[] texCoords = new TextureCoordinate[4];
+//        private Normal[] norms = new Normal[4];
+//        private TextureCoordinate[] texCoords = new TextureCoordinate[4];
         private String materialName = Material.DEFAULT_NAME;
+        private boolean isTri = false;
 
         public Face(Vertex[] verts)
         {
-            this(verts, new Normal[0], new TextureCoordinate[0]);
+            this(verts, Material.DEFAULT_NAME);
+        }
+        
+        public Face(Vertex[] verts, String materialName) {
+        	this.verts = verts != null && verts.length > 2 ? verts : null;
+        	setMaterialName(materialName);
+        	checkData();
         }
 
-        public Face(Vertex[] verts, Normal[] norms)
-        {
-            this(verts, norms, null);
-        }
+//        public Face(Vertex[] verts, Normal[] norms)
+//        {
+//            this(verts, norms, null);
+//        }
 
-        public Face(Vertex[] verts, TextureCoordinate[] texCoords)
-        {
-            this(verts, null, texCoords);
-        }
+//        public Face(Vertex[] verts, TextureCoordinate[] texCoords)
+//        {
+//            this(verts, null, texCoords);
+//        }
 
-        public Face(Vertex[] verts, Normal[] norms, TextureCoordinate[] texCoords)
-        {
-            this(verts, norms, texCoords, Material.DEFAULT_NAME);
-        }
+//        public Face(Vertex[] verts, Normal[] norms, TextureCoordinate[] texCoords)
+//        {
+//            this(verts, norms, texCoords, Material.DEFAULT_NAME);
+//        }
 
-        public Face(Vertex[] verts, Normal[] norms, TextureCoordinate[] texCoords, String materialName)
-        {
-            this.verts = verts;
-            this.verts = this.verts != null && this.verts.length > 0 ? this.verts : null;
-            this.norms = norms;
-            this.norms = this.norms != null && this.norms.length > 0 ? this.norms : null;
-            this.texCoords = texCoords;
-            this.texCoords = this.texCoords != null && this.texCoords.length > 0 ? this.texCoords : null;
-            setMaterialName(materialName);
-            ensureQuads();
-        }
+//        public Face(Vertex[] verts, Normal[] norms, TextureCoordinate[] texCoords, String materialName)
+//        {
+//        	this.verts = verts != null && verts.length > 2 ? verts : null;
+//        	this.norms = norms != null && norms.length > 2 ? norms : null;
+//        	this.texCoords = texCoords != null && texCoords.length > 2 ? texCoords : null;
+//            setMaterialName(materialName);
+//            checkData();
+//        }
 
-        private void ensureQuads()
+        private void checkData()
         {
             if (this.verts != null && this.verts.length == 3)
             {
+            	this.isTri = true;
                 this.verts = new Vertex[]{this.verts[0], this.verts[1], this.verts[2], this.verts[2]};
-            }
-
-            if (this.norms != null && this.norms.length == 3)
-            {
-                this.norms = new Normal[]{this.norms[0], this.norms[1], this.norms[2], this.norms[2]};
-            }
-
-            if (this.texCoords != null && this.texCoords.length == 3)
-            {
-                this.texCoords = new TextureCoordinate[]{this.texCoords[0], this.texCoords[1], this.texCoords[2], this.texCoords[2]};
             }
         }
 
@@ -786,6 +810,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             if (verts == null) return false;
             else this.verts = verts;
+            checkData();
             return true;
         }
 
@@ -794,188 +819,129 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return this.verts;
         }
 
-        public boolean setNormals(Normal[] norms)
-        {
-            if (norms == null) return false;
-            else this.norms = norms;
-            return true;
-        }
-
-        public Normal[] getNormals()
-        {
-            return this.norms;
-        }
-
-        public boolean setTextureCoordinates(TextureCoordinate[] texCoords)
-        {
-            if (texCoords == null) return false;
-            else this.texCoords = texCoords;
-            return true;
-        }
-
-        public TextureCoordinate[] getTextureCoordinates()
-        {
-            return this.texCoords;
-        }
-
-        public boolean areUVsNormalized()
-        {
-            for (TextureCoordinate t : this.texCoords)
-            {
-                if (!(t.getPosition().x > 0.0f && t.getPosition().x < 1.0f && t.getPosition().y > 0.0f && t.getPosition().y < 1.0f))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+//        public boolean areUVsNormalized()
+//        {
+//            for (Vertex v : this.verts)
+//            	if (!v.hasNormalizedUVs()) 
+//            		return false;
+//            return true;
+//        }
+        
+//        public void normalizeUVs(float[] min, float[] max)
+//        {
+//        	if (!this.areUVsNormalized())
+//        	{
+//        		for (int i = 0; i < this.verts.length; i++) {
+//        			TextureCoordinate texCoord = this.verts[i].getTextureCoordinate();
+//        			min[0] = texCoord.u < min[0] ? texCoord.u : min[0];
+//        			max[0] = texCoord.u > max[0] ? texCoord.u : max[0];
+//        			min[1] = texCoord.v < min[1] ? texCoord.v : min[1];
+//        			max[1] = texCoord.v > max[1] ? texCoord.v : max[1];
+//        		}
+//        		
+//        		for (Vertex v : this.verts) {
+//        			v.texCoord.u = (v.texCoord.u - min[0]) / (max[0] - min[0]);
+//        			v.texCoord.v = (v.texCoord.v - min[1]) / (max[1] - max[1]);
+//        		}
+//        	}
+//        }
 
         public Face bake(TRSRTransformation transform)
         {
             Matrix4f m = transform.getMatrix();
             Vertex[] vertices = new Vertex[verts.length];
-            Normal[] normals = norms != null ? new Normal[norms.length] : null;
-            TextureCoordinate[] textureCoords = texCoords != null ? new TextureCoordinate[texCoords.length] : null;
+//            Normal[] normals = norms != null ? new Normal[norms.length] : null;
+//            TextureCoordinate[] textureCoords = texCoords != null ? new TextureCoordinate[texCoords.length] : null;
 
             for (int i = 0; i < verts.length; i++)
             {
                 m = transform.getMatrix();
                 Vertex v = verts[i];
-                Normal n = norms != null ? norms[i] : null;
-                TextureCoordinate t = texCoords != null ? texCoords[i] : null;
+//                Normal n = norms != null ? norms[i] : null;
+//                TextureCoordinate t = texCoords != null ? texCoords[i] : null;
 
-                Vector4f pos = new Vector4f(v.getPosition()), newPos = new Vector4f();
+                Vector4f pos = new Vector4f(v.getPos()), newPos = new Vector4f();
                 pos.w = 1;
                 m.transform(pos, newPos);
-                Vector4f rPos = new Vector4f(newPos.x, newPos.y, newPos.z, newPos.w);
-                vertices[i] = new Vertex(rPos, v.getMaterial());
-
-                if (n != null)
+                vertices[i] = new Vertex(newPos, v.getMaterial());
+                
+                if (v.hasNormal())
                 {
-                    m.invert();
-                    m.transpose();
-                    Vector4f normal = new Vector4f(n.getNormal()), newNormal = new Vector4f();
-                    normal.w = 1;
-                    m.transform(normal, newNormal);
-                    Vector3f rNormal = new Vector3f(newNormal.x / newNormal.w, newNormal.y / newNormal.w, newNormal.z / newNormal.w);
-                    rNormal.normalize();
-                    normals[i] = new Normal(rNormal);
+                	m.invert();
+                	Vector4f normal = new Vector4f(v.getNormal().getData()), newNormal = new Vector4f();
+                	normal.w = 1.0f;
+                	m.transform(normal, newNormal);
+                	Vector3f rNormal = new Vector3f(newNormal.x / newNormal.w, newNormal.y / newNormal.w, newNormal.z / newNormal.w);
+                	rNormal.normalize();
+                	vertices[i].setNormal(new Normal(rNormal));
                 }
+                else v.setNormal(new Normal(0.0f, 1.0f, 0.0f));
+                
+                if (v.hasTextureCoordinate()) vertices[i].setTextureCoordinate(v.getTextureCoordinate());
+                else v.setTextureCoordinate(TextureCoordinate.getDefaultUVs()[i]);
+
+//                if (n != null)
+//                {
+//                    m.invert();
+//                    m.transpose();
+//                    Vector4f normal = new Vector4f(n.getData()), newNormal = new Vector4f();
+//                    normal.w = 1;
+//                    m.transform(normal, newNormal);
+//                    Vector3f rNormal = new Vector3f(newNormal.x / newNormal.w, newNormal.y / newNormal.w, newNormal.z / newNormal.w);
+//                    rNormal.normalize();
+//                    normals[i] = new Normal(rNormal);
+//                }
 
                 //texCoords TODO
-                if (t != null) textureCoords[i] = t;
+//                if (t != null) textureCoords[i] = t;
             }
-            return new Face(vertices, normals, textureCoords, this.materialName);
+            return new Face(vertices, this.materialName);
         }
 
         public Normal getNormal()
         {
-            if (norms == null)
-            { // use vertices to calculate normal
-                Vector3f v1 = new Vector3f(this.verts[0].getPosition().x, this.verts[0].getPosition().y, this.verts[0].getPosition().z);
-                Vector3f v2 = new Vector3f(this.verts[1].getPosition().x, this.verts[1].getPosition().y, this.verts[1].getPosition().z);
-                Vector3f v3 = new Vector3f(this.verts[2].getPosition().x, this.verts[2].getPosition().y, this.verts[2].getPosition().z);
-                Vector3f v4 = this.verts.length > 3 ? new Vector3f(this.verts[3].getPosition().x, this.verts[3].getPosition().y, this.verts[3].getPosition().z) : null;
-
-                if (v4 == null)
-                {
-                    Vector3f v2c = new Vector3f(v2.x, v2.y, v2.z);
-                    Vector3f v1c = new Vector3f(v1.x, v1.y, v1.z);
-                    v1c.sub(v2c);
-                    Vector3f v3c = new Vector3f(v3.x, v3.y, v3.z);
-                    v3c.sub(v2c);
-                    Vector3f c = new Vector3f();
-                    c.cross(v1c, v3c);
-                    c.normalize();
-                    Normal normal = new Normal(c);
-                    return normal;
-                }
-                else
-                {
-                    Vector3f v2c = new Vector3f(v2.x, v2.y, v2.z);
-                    Vector3f v1c = new Vector3f(v1.x, v1.y, v1.z);
-                    v1c.sub(v2c);
-                    Vector3f v3c = new Vector3f(v3.x, v3.y, v3.z);
-                    v3c.sub(v2c);
-                    Vector3f c = new Vector3f();
-                    c.cross(v1c, v3c);
-                    c.normalize();
-
-                    v1c = new Vector3f(v1.x, v1.y, v1.z);
-                    v3c = new Vector3f(v3.x, v3.y, v3.z);
-
-                    Vector3f v4c = new Vector3f(v4.x, v4.y, v4.z);
-                    v1c.sub(v4c);
-                    v3c.sub(v4c);
-                    Vector3f d = new Vector3f();
-                    d.cross(v1c, v3c);
-                    d.normalize();
-
-                    Vector3f avg = new Vector3f();
-                    avg.x = (c.x + d.x) * 0.5f;
-                    avg.y = (c.y + d.y) * 0.5f;
-                    avg.z = (c.z + d.z) * 0.5f;
-                    avg.normalize();
-                    Normal normal = new Normal(avg);
-                    return normal;
-                }
-            }
-            else
-            { // use normals to calculate normal
-                Vector3f n1 = this.norms[0].getNormal();
-                Vector3f n2 = this.norms[1].getNormal();
-                Vector3f n3 = this.norms[2].getNormal();
-                Vector3f n4 = this.norms.length > 3 ? this.norms[3].getNormal() : null;
-
-                if (n4 == null)
-                {
-                    Vector3f n2c = new Vector3f(n2.x, n2.y, n2.z);
-                    Vector3f n1c = new Vector3f(n1.x, n1.y, n1.z);
-                    n1c.sub(n2c);
-                    Vector3f n3c = new Vector3f(n3.x, n3.y, n3.z);
-                    n3c.sub(n2c);
-                    Vector3f c = new Vector3f();
-                    c.cross(n1c, n3c);
-                    c.normalize();
-                    Normal normal = new Normal(c);
-                    return normal;
-                }
-                else
-                {
-                    Vector3f n2c = new Vector3f(n2.x, n2.y, n2.z);
-                    Vector3f n1c = new Vector3f(n1.x, n1.y, n1.z);
-                    n1c.sub(n2c);
-                    Vector3f n3c = new Vector3f(n3.x, n3.y, n3.z);
-                    n3c.sub(n2c);
-                    Vector3f c = new Vector3f();
-                    c.cross(n1c, n3c);
-                    c.normalize();
-
-                    n1c = new Vector3f(n1.x, n1.y, n1.z);
-                    n3c = new Vector3f(n3.x, n3.y, n3.z);
-
-                    Vector3f n4c = new Vector3f(n4.x, n4.y, n4.z);
-                    n1c.sub(n4c);
-                    n3c.sub(n4c);
-                    Vector3f d = new Vector3f();
-                    d.cross(n1c, n3c);
-                    d.normalize();
-
-                    Vector3f avg = new Vector3f();
-                    avg.x = (c.x + d.x) * 0.5f;
-                    avg.y = (c.y + d.y) * 0.5f;
-                    avg.z = (c.z + d.z) * 0.5f;
-                    avg.normalize();
-                    Normal normal = new Normal(avg);
-                    return normal;
-                }
-            }
+        	for (Vertex v : this.verts)
+        	{
+        		if (!v.hasNormal())
+        		{
+        			Vector3f vPos = v.getPos3();
+        			vPos.normalize();
+        			v.setNormal(new Normal(vPos));
+        		}
+        	}
+        	
+        	Vector3f a = this.verts[1].getNormal().getData();
+        	a.sub(this.verts[0].getNormal().getData());
+        	Vector3f b = this.verts[2].getNormal().getData();
+        	b.sub(this.verts[0].getNormal().getData());
+        	Vector3f c = new Vector3f();
+        	c.cross(a, b);
+        	c.normalize();
+        	
+        	if (this.isTri) return new Normal(c);
+        	else
+        	{
+        		a = this.verts[1].getNormal().getData();
+        		a.sub(this.verts[3].getNormal().getData());
+        		b = this.verts[2].getNormal().getData();
+        		b.sub(this.verts[3].getNormal().getData());
+        		Vector3f c1 = new Vector3f();
+        		c1.cross(a, b);
+        		c1.normalize();
+        		Vector3f normal = new Vector3f();
+        		normal.add(c, c1);
+        		normal.scale(0.5f);
+        		normal.normalize();
+        		return new Normal(normal);
+        	}
         }
     }
 
     public static class Vertex
     {
         private Vector4f position;
+        private Normal normal;
+        private TextureCoordinate texCoord;
         private Material material = new Material();
 
         public Vertex(Vector4f position, Material material)
@@ -989,10 +955,50 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             this.position = position;
         }
 
-        public Vector4f getPosition()
+        public Vector4f getPos()
         {
             return this.position;
         }
+        
+        public Vector3f getPos3()
+        {
+        	return new Vector3f(this.position.x, this.position.y, this.position.z);
+        }
+        
+        public boolean hasNormal()
+        {
+        	return this.normal != null;
+        }
+        
+        public void setNormal(Normal normal)
+        {
+        	this.normal = normal;
+        }
+        
+        public Normal getNormal()
+        {
+        	return this.normal;
+        }
+        
+        public boolean hasTextureCoordinate()
+        {
+        	return this.texCoord != null;
+        }
+        
+        public void setTextureCoordinate(TextureCoordinate texCoord)
+        {
+        	this.texCoord = texCoord;
+        }
+        
+        public TextureCoordinate getTextureCoordinate()
+        {
+        	return this.texCoord;
+        }
+
+//        public boolean hasNormalizedUVs()
+//        {
+//        	return this.texCoord.u >= 0.0f && this.texCoord.u <= 1.0f && this.texCoord.v >= 0.0f && this.texCoord.v <= 1.0f;
+//        }
 
         public void setMaterial(Material material)
         {
@@ -1014,45 +1020,78 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return builder.toString();
         }
     }
-
+    
     public static class Normal
     {
-        private Vector3f normal;
-
-        public Normal(Vector3f normal)
-        {
-            this.normal = normal;
-        }
-
-        public void setNormal(Vector3f normal)
-        {
-            this.normal = normal;
-        }
-
-        public Vector3f getNormal()
-        {
-            return this.normal;
-        }
+    	public float x, y, z;
+    	
+    	public Normal()
+    	{
+    		this(0.0f, 0.0f, 0.0f);
+    	}
+    	
+    	public Normal(float[] data)
+    	{
+    		this(data[0], data[1], data[2]);
+    	}
+    	
+    	public Normal(Vector3f vector3f)
+    	{
+    		this(vector3f.x, vector3f.y, vector3f.z);
+    	}
+    	
+    	public Normal(float x, float y, float z) {
+    		this.x = x;
+    		this.y = y;
+    		this.z = z;
+    	}
+    	
+    	public Vector3f getData()
+    	{
+    		return new Vector3f(this.x, this.y, this.z);
+    	}
     }
 
     public static class TextureCoordinate
     {
-        private Vector3f position;
-
-        public TextureCoordinate(Vector3f position)
-        {
-            this.position = position;
-        }
-
-        public void setPosition(Vector3f position)
-        {
-            this.position = position;
-        }
-
-        public Vector3f getPosition()
-        {
-            return this.position;
-        }
+    	public float u, v, w;
+    	
+    	public TextureCoordinate()
+    	{
+    		this(0.0f, 0.0f, 1.0f);
+    	}
+    	
+    	public TextureCoordinate(float[] data)
+    	{
+    		this(data[0], data[1], data[2]);
+    	}
+    	
+    	public TextureCoordinate(Vector3f data)
+    	{
+    		this(data.x, data.y, data.z);
+    	}
+    	
+    	public TextureCoordinate(float u, float v, float w)
+    	{
+    		this.u = u;
+    		this.v = v;
+    		this.w = w;
+    	}
+    	
+    	public Vector3f getData()
+    	{
+    		return new Vector3f(this.u, this.v, this.w);
+    	}
+    	
+    	public static TextureCoordinate[] getDefaultUVs()
+    	{
+    		TextureCoordinate[] texCoords = new TextureCoordinate[4];
+    		texCoords[0] = new TextureCoordinate(0.0f, 0.0f, 1.0f);
+    		texCoords[1] = new TextureCoordinate(1.0f, 0.0f, 1.0f);
+    		texCoords[2] = new TextureCoordinate(1.0f, 1.0f, 1.0f);
+    		texCoords[3] = new TextureCoordinate(0.0f, 1.0f, 1.0f);
+    		return texCoords;
+    	}
     }
 
     public static class Group implements IModelPart
@@ -1062,6 +1101,11 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         public static final String ALL_EXCEPT = "OBJModel.Group.All.Except.Key";
         private String name = DEFAULT_NAME;
         private LinkedHashSet<Face> faces = new LinkedHashSet<Face>();
+        public float[] minUVBounds = new float[] {0.0f, 0.0f};
+        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
+
+//        public float[] minUVBounds = new float[] {0.0f, 0.0f};
+//        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
         public Group(String name, LinkedHashSet<Face> faces)
         {
@@ -1074,6 +1118,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             LinkedHashSet<Face> faceSet = new LinkedHashSet<Face>();
             for (Face f : this.faces)
             {
+//            	if (minUVBounds != null && maxUVBounds != null) f.normalizeUVs(minUVBounds, maxUVBounds);
                 faceSet.add(f.bake(transform));
             }
             return faceSet;
@@ -1122,7 +1167,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             for (String s : visibleGroups) this.visibilityMap.put(s, visibility);
         }
 
-        private IModelState getParent(IModelState parent)
+        public IModelState getParent(IModelState parent)
         {
             if (parent == null) return null;
             else if (parent instanceof OBJState) return ((OBJState) parent).parent;
@@ -1255,27 +1300,16 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         private IModelState state;
         private final VertexFormat format;
         private Set<BakedQuad> quads;
-        private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
-        private static final int VERTICES_IN_QUAD = 4;
         private ImmutableMap<String, TextureAtlasSprite> textures;
         private TextureAtlasSprite sprite = ModelLoader.White.instance;
-        private boolean ambientOcclusion = true;
-        private boolean gui3d = true;
-
+        
         public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
         {
-            this(model, state, format, textures, true, true);
-        }
-
-        public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures, boolean ambientOcclusion, boolean gui3d)
-        {
-            this.model = model;
+        	this.model = model;
             this.state = state;
             if (this.state instanceof OBJState) this.updateStateVisibilityMap((OBJState) this.state);
             this.format = format;
             this.textures = textures;
-            this.ambientOcclusion = ambientOcclusion;
-            this.gui3d = gui3d;
         }
 
         public void scheduleRebake()
@@ -1299,6 +1333,10 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 TRSRTransformation transform = TRSRTransformation.identity();
                 for (Group g : this.model.getMatLib().getGroups().values())
                 {
+//                	g.minUVBounds = this.model.getMatLib().minUVBounds;
+//                	g.maxUVBounds = this.model.getMatLib().maxUVBounds;
+//                	FMLLog.info("Group: %s u: [%f, %f] v: [%f, %f]", g.name, g.minUVBounds[0], g.maxUVBounds[0], g.minUVBounds[1], g.maxUVBounds[1]);
+                	
                     if (this.state instanceof OBJState)
                     {
                         OBJState state = (OBJState) this.state;
@@ -1306,6 +1344,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         {
                             transform = (TRSRTransformation) state.parent;
                         }
+                        //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
                         if (state.getGroupNamesFromMap().contains(Group.ALL))
                         {
                             state.visibilityMap.clear();
@@ -1362,43 +1401,13 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         }
                         sprite = ModelLoader.White.instance;
                     } else sprite = this.textures.get(f.getMaterialName());
-
-                    float minU = 0.0f;
-                    float maxU = 1.0f;
-                    float minV = 0.0f;
-                    float maxV = 1.0f;
-
-                    if (f.texCoords != null && !f.areUVsNormalized())
-                    {
-                        for (TextureCoordinate t : f.texCoords)
-                        {
-                            minU = t.getPosition().x < minU ? t.getPosition().x : minU;
-                            maxU = t.getPosition().x > maxU ? t.getPosition().x : maxU;
-                            minV = t.getPosition().y < minV ? t.getPosition().y : minV;
-                            maxV = t.getPosition().y > maxV ? t.getPosition().y : maxV;
-                        }
-
-                        for (int i = 0; i < f.texCoords.length; i++)
-                        {
-                            TextureCoordinate t = f.texCoords[i];
-                            float U = (t.getPosition().x - minU) / (maxU - minU);
-                            float V = (t.getPosition().y - minV) / (maxV - minV);
-                            Vector3f normPos = new Vector3f(U, V, t.getPosition().z);
-                            f.texCoords[i] = new TextureCoordinate(normPos);
-                        }
-                    }
-
-                    TextureCoordinate def1 = new TextureCoordinate(new Vector3f(minU, minV, 1));
-                    TextureCoordinate def2 = new TextureCoordinate(new Vector3f(maxU, minV, 1));
-                    TextureCoordinate def3 = new TextureCoordinate(new Vector3f(maxU, maxV, 1));
-                    TextureCoordinate def4 = new TextureCoordinate(new Vector3f(minU, maxV, 1));
                     UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+                    builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
                     builder.setQuadColored();
-                    builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().normal.x, f.getNormal().normal.y, f.getNormal().normal.z));
-                    putVertexData(builder, f.verts[0], f.texCoords != null ? f.texCoords[0] : def1, f.norms != null ? f.norms[0] : f.getNormal(), sprite);
-                    putVertexData(builder, f.verts[1], f.texCoords != null ? f.texCoords[1] : def2, f.norms != null ? f.norms[1] : f.getNormal(), sprite);
-                    putVertexData(builder, f.verts[2], f.texCoords != null ? f.texCoords[2] : def3, f.norms != null ? f.norms[2] : f.getNormal(), sprite);
-                    putVertexData(builder, f.verts[3], f.texCoords != null ? f.texCoords[3] : def4, f.norms != null ? f.norms[3] : f.getNormal(), sprite);
+                    putVertexData(builder, f.verts[0], f.getNormal(), TextureCoordinate.getDefaultUVs()[0], sprite);
+                    putVertexData(builder, f.verts[1], f.getNormal(), TextureCoordinate.getDefaultUVs()[1], sprite);
+                    putVertexData(builder, f.verts[2], f.getNormal(), TextureCoordinate.getDefaultUVs()[2], sprite);
+                    putVertexData(builder, f.verts[3], f.getNormal(), TextureCoordinate.getDefaultUVs()[3], sprite);
                     quads.add(builder.build());
                 }
             }
@@ -1406,36 +1415,51 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return quadList;
         }
 
-        private void put(ByteBuffer buffer, VertexFormatElement e, Float... fs)
-        {
-            Attributes.put(buffer, e, true, 0f, fs);
-        }
-
-        @SuppressWarnings("unchecked")
-        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, TextureCoordinate t, Normal n, TextureAtlasSprite sprite)
+        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Normal faceNormal, TextureCoordinate defUV, TextureAtlasSprite sprite)
         {
             for (int e = 0; e < format.getElementCount(); e++)
             {
                 switch (format.getElement(e).getUsage())
                 {
                     case POSITION:
-                        builder.put(e, v.getPosition().x, v.getPosition().y, v.getPosition().z, v.getPosition().w);
+                        builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, v.getPos().w);
                         break;
                     case COLOR:
-                        float d = LightUtil.diffuseLight(n.normal.x, n.normal.y, n.normal.z);
-                        if (v.getMaterial() != null) builder.put(e, d * v.getMaterial().getColor().x, d * v.getMaterial().getColor().y, d * v.getMaterial().getColor().z, v.getMaterial().getColor().w);
-                        else builder.put(e, d, d, d, 1);
+                        float d;
+                        if (v.hasNormal()) 
+                        	d = LightUtil.diffuseLight(v.getNormal().x, v.getNormal().y, v.getNormal().z);
+                        else 
+                        	d = LightUtil.diffuseLight(faceNormal.x, faceNormal.y, faceNormal.z);
+                        
+                        if (v.getMaterial() != null) 
+                        	builder.put(e, 
+                        			d * v.getMaterial().getColor().x, 
+                        			d * v.getMaterial().getColor().y,
+                        			d * v.getMaterial().getColor().z, 
+                        			v.getMaterial().getColor().w);
+                        else 
+                        	builder.put(e, d, d, d, 1);
                         break;
                     case UV:
-                        if (t != null) builder.put(e, sprite.getInterpolatedU(t.getPosition().x * 16), sprite.getInterpolatedV(t.getPosition().y * 16));
-                        else builder.put(e);
+                    	if (!v.hasTextureCoordinate())
+                    		builder.put(e, 
+                    				sprite.getInterpolatedU(defUV.u * 16), 
+                    				sprite.getInterpolatedV(defUV.v * 16), 
+                    				0, 1);
+                    	else 
+                    		builder.put(e, 
+                    				sprite.getInterpolatedU(v.getTextureCoordinate().u * 16), 
+                    				sprite.getInterpolatedV(v.getTextureCoordinate().v * 16), 
+                    				0, 1);
                         break;
                     case NORMAL:
-                        builder.put(e, n.normal.x, n.normal.y, n.normal.z, 0);
+                        if (!v.hasNormal()) 
+                        	builder.put(e, faceNormal.x, faceNormal.y, faceNormal.z, 1);
+                        else 
+                        	builder.put(e, v.getNormal().x, v.getNormal().y, v.getNormal().z, 1);
                         break;
                     default:
                         builder.put(e);
-                        break;
                 }
             }
         }
@@ -1443,13 +1467,13 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         @Override
         public boolean isAmbientOcclusion()
         {
-            return ambientOcclusion;
+            return model != null && model.hasCustomData() ? model.customData.ambientOcclusion : true;
         }
 
         @Override
         public boolean isGui3d()
         {
-            return gui3d;
+            return model != null && model.hasCustomData() ? model.customData.gui3d : true;
         }
 
         @Override
@@ -1577,5 +1601,17 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             return this.model.modelLocation.toString();
         }
+    }
+    
+    @SuppressWarnings("serial")
+    public static class UVsOutOfBoundsException extends RuntimeException
+    {
+    	public ResourceLocation modelLocation;
+    	
+    	public UVsOutOfBoundsException(ResourceLocation modelLocation)
+    	{
+    		super(String.format("Model '%s' has UVs ('vt') out of bounds 0-1! The missing model will be used instead. Support for UV processing will be added to the OBJ loader in the future.", modelLocation));
+    		this.modelLocation = modelLocation;
+    	}
     }
 }
