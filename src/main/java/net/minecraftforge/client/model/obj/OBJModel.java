@@ -51,7 +51,6 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -302,9 +301,10 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                             norm = Integer.parseInt(splitSlash[i][1]);
                             norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
 
-                            this.vertices.get(vert).setNormal(this.normals.get(norm));
+                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), material);
+                            newV.setNormal(this.normals.get(norm));
 
-                            v.add(this.vertices.get(vert));
+                            v.add(newV);
 //                            n.add(this.normals.get(norm));
                         }
                         else if (splitData[i].contains("/"))
@@ -321,10 +321,11 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                                 norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
                             }
 
-                            this.vertices.get(vert).setTextureCoordinate(this.texCoords.get(texCoord));
-                            this.vertices.get(vert).setNormal(splitSlash[i].length > 2 ? this.normals.get(norm) : null);
+                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), material);
+                            newV.setTextureCoordinate(this.texCoords.get(texCoord));
+                            newV.setNormal(splitSlash[i].length > 2 ? this.normals.get(norm) : null);
 
-                            v.add(this.vertices.get(vert));
+                            v.add(newV);
 //                            t.add(this.texCoords.get(texCoord));
 //                            if (splitSlash[i].length > 2) n.add(this.normals.get(norm));
                         }
@@ -335,7 +336,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                             vert = Integer.parseInt(splitSlash[i][0]);
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
 
-                            v.add(this.vertices.get(vert));
+                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), material);
+                            v.add(newV);
                         }
                     }
 
