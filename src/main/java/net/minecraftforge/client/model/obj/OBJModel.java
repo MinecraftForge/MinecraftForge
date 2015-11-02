@@ -301,7 +301,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                             norm = Integer.parseInt(splitSlash[i][1]);
                             norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
 
-                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), material);
+                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
                             newV.setNormal(this.normals.get(norm));
 
                             v.add(newV);
@@ -321,7 +321,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                                 norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
                             }
 
-                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), material);
+                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
                             newV.setTextureCoordinate(this.texCoords.get(texCoord));
                             newV.setNormal(splitSlash[i].length > 2 ? this.normals.get(norm) : null);
 
@@ -336,7 +336,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                             vert = Integer.parseInt(splitSlash[i][0]);
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
 
-                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), material);
+                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
                             v.add(newV);
                         }
                     }
