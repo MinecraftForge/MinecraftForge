@@ -27,7 +27,9 @@ public class BlockInfo
     public int getColorMultiplier(int tint)
     {
         if(cachedTint == tint) return cachedMultiplier;
-        return block.colorMultiplier(world, blockPos, tint);
+        cachedTint = tint;
+        cachedMultiplier = block.colorMultiplier(world, blockPos, tint);
+        return cachedMultiplier;
     }
 
     public void updateShift()
