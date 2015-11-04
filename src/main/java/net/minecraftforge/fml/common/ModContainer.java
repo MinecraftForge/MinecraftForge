@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.common;
 
 import java.io.File;
+import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Map;
@@ -149,4 +150,6 @@ public interface ModContainer
     List<String> getOwnedPackages();
 
     boolean shouldLoadInEnvironment();
+
+    URL getUpdateUrl();
 }

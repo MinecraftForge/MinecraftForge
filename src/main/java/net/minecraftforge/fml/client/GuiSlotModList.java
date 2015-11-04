@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.StringUtils;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.ForgeVersion.CheckResult;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer;
@@ -79,7 +81,7 @@ public class GuiSlotModList extends GuiScrollingList
         String       name     = StringUtils.stripControlCodes(mc.getName());
         String       version  = StringUtils.stripControlCodes(mc.getDisplayVersion());
         FontRenderer font     = this.parent.getFontRenderer();
-        //CheckResult  vercheck = ForgeVersion.getResult(mc);
+        CheckResult  vercheck = ForgeVersion.getResult(mc);
 
         if (Loader.instance().getModState(mc) == ModState.DISABLED)
         {
@@ -93,7 +95,7 @@ public class GuiSlotModList extends GuiScrollingList
             font.drawString(font.trimStringToWidth(version, listWidth - 10), this.left + 3 , top + 12, 0xCCCCCC);
             font.drawString(font.trimStringToWidth(mc.getMetadata() != null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 10), this.left + 3 , top + 22, 0xCCCCCC);
 
-            /*switch(vercheck.status) //TODO: Change to icons?
+            switch(vercheck.status) //TODO: Change to icons?
             {
                 case BETA_OUTDATED:
                 case OUTDATED:
@@ -105,8 +107,7 @@ public class GuiSlotModList extends GuiScrollingList
                 case PENDING:
                 case UP_TO_DATE:
                     break;
-            }*/
+            }
         }
     }
-
 }

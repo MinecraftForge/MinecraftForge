@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -43,10 +44,14 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.ForgeVersion.CheckResult;
+import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import static net.minecraft.util.EnumChatFormatting.*;
 
 import org.apache.logging.log4j.Level;
@@ -343,7 +348,7 @@ public class GuiModList extends GuiScreen
         ResourceLocation logoPath = null;
         Dimension logoDims = new Dimension(0, 0);
         List<String> lines = new ArrayList<String>();
-        //CheckResult vercheck = ForgeVersion.getResult(selectedMod);
+        CheckResult vercheck = ForgeVersion.getResult(selectedMod);
 
         String logoFile = selectedMod.getMetadata().logoFile;
         if (!logoFile.isEmpty())
@@ -408,8 +413,8 @@ public class GuiModList extends GuiScreen
             else
                 lines.add("Child mods: " + selectedMod.getMetadata().getChildModList());
 
-            //if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-            //    lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+            if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
+                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
             lines.add(selectedMod.getMetadata().description);
@@ -419,15 +424,15 @@ public class GuiModList extends GuiScreen
             lines.add(WHITE + selectedMod.getName());
             lines.add(WHITE + "Version: " + selectedMod.getVersion());
             lines.add(WHITE + "Mod State: " + Loader.instance().getModState(selectedMod));
-            //if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-            //    lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+            if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
+                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
             lines.add(RED + "No mod information found");
             lines.add(RED + "Ask your mod author to provide a mod mcmod.info file");
         }
 
-        /*if ((vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
+        if ((vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
         {
             lines.add(null);
             lines.add("Changes:");
@@ -437,7 +442,7 @@ public class GuiModList extends GuiScreen
                 lines.add(entry.getValue());
                 lines.add(null);
             }
-        }*/
+        }
 
         modInfo = new Info(this.width - this.listWidth - 30, lines, logoPath, logoDims);
     }
