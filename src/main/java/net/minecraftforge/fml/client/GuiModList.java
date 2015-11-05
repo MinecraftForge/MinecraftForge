@@ -226,7 +226,12 @@ public class GuiModList extends GuiScreen
     {
         ArrayList<ModContainer> mods = modList.getMods();
         mods.clear();
-        for (ModContainer m : Loader.instance().getActiveModList())
+        
+        ArrayList<ModContainer> activeMods = Lists.newArrayList();
+        FMLClientHandler.instance().addSpecialModEntries(activeMods);
+        activeMods.addAll(Loader.instance().getActiveModList());
+        
+        for (ModContainer m : activeMods)
         {
             // If it passes the filter, and is not a child mod
             if (m.getName().toLowerCase().contains(search.getText().toLowerCase()) && m.getMetadata().parentMod == null)
