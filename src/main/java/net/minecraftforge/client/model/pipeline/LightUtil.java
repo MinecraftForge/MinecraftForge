@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.IColoredBakedQuad;
 
 import com.google.common.cache.CacheBuilder;
@@ -236,7 +237,8 @@ public class LightUtil
         return itemConsumer;
     }
 
-    public static void renderQuadColor(WorldRenderer wr, BakedQuad quad, int auxColor)
+    // renders quad in any Vertex Format, but is slower
+    public static void renderQuadColorSlow(WorldRenderer wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
         if(wr == Tessellator.getInstance().getWorldRenderer())
@@ -251,8 +253,22 @@ public class LightUtil
         float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
         float r = (float)((auxColor >>> 16) & 0xFF) / 0xFF;
         float a = (float)((auxColor >>> 24) & 0xFF) / 0xFF;
+
         cons.setAuxColor(r, g, b, a);
         quad.pipe(cons);
+    }
+
+    public static void renderQuadColor(WorldRenderer wr, BakedQuad quad, int auxColor)
+    {
+        wr.addVertexData(quad.getVertexData());
+        if(quad instanceof IColoredBakedQuad)
+        {
+            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+        }
+        else
+        {
+            wr.putColor4(auxColor);
+        }
     }
 
     public static class ItemConsumer extends VertexTransformer
