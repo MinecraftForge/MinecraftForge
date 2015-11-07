@@ -212,6 +212,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             String currentLine = "";
             Material material = new Material();
+            material.setName(Material.DEFAULT_NAME);
             int usemtlCounter = 0;
 
 //            float[] minUVBounds = new float[] {0.0f, 0.0f};
@@ -431,6 +432,9 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         public MaterialLibrary()
         {
             this.groups.put(Group.DEFAULT_NAME, new Group(Group.DEFAULT_NAME, null));
+            Material def = new Material();
+            def.setName(Material.DEFAULT_NAME);
+            this.materials.put(Material.DEFAULT_NAME, def);
         }
 
         public MaterialLibrary makeLibWithReplacements(ImmutableMap<String, String> replacements)
@@ -438,10 +442,24 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             Map<String, Material> mats = new HashMap<String, Material>();
             for (Map.Entry<String, Material> e : this.materials.entrySet())
             {
-                if (replacements.containsKey(e.getKey()) || replacements.containsKey("all"))
+                // key for the material name, with # added if missing
+                String keyMat = e.getKey();
+                if(!keyMat.startsWith("#")) keyMat = "#" + keyMat;
+                // key for the texture name, with ".png" stripped and # added if missing
+                String keyTex = e.getValue().getTexture().getPath();
+                if(keyTex.endsWith(".png")) keyTex = keyTex.substring(0, keyTex.length() - ".png".length());
+                if(!keyTex.startsWith("#")) keyTex = "#" + keyTex;
+                if (replacements.containsKey(keyMat))
                 {
                     Texture currentTexture = e.getValue().texture;
-                    Texture replacementTexture = new Texture(replacements.get(e.getKey()), currentTexture.position, currentTexture.scale, currentTexture.rotation);
+                    Texture replacementTexture = new Texture(replacements.get(keyMat), currentTexture.position, currentTexture.scale, currentTexture.rotation);
+                    Material replacementMaterial = new Material(e.getValue().color, replacementTexture, e.getValue().name);
+                    mats.put(e.getKey(), replacementMaterial);
+                }
+                else if (replacements.containsKey(keyTex))
+                {
+                    Texture currentTexture = e.getValue().texture;
+                    Texture replacementTexture = new Texture(replacements.get(keyTex), currentTexture.position, currentTexture.scale, currentTexture.rotation);
                     Material replacementMaterial = new Material(e.getValue().color, replacementTexture, e.getValue().name);
                     mats.put(e.getKey(), replacementMaterial);
                 }
