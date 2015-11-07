@@ -161,7 +161,7 @@ public class GameData {
     static Block findBlock(String modId, String name)
     {
         String key = modId + ":" + name;
-        return getMain().iBlockRegistry.containsKey(key) ? getMain().iBlockRegistry.getObject(key) : null;
+        return getMain().iBlockRegistry.containsKey(new ResourceLocation(key)) ? getMain().iBlockRegistry.getObject(key) : null;
     }
 
     static UniqueIdentifier getUniqueName(Block block)
