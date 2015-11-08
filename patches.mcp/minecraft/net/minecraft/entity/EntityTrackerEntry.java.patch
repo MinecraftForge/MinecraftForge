@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
+@@ -388,6 +388,14 @@
+                     this.lastTrackedEntityMotionY = this.trackedEntity.motionY;
+                     this.motionZ = this.trackedEntity.motionZ;
+ 
++                    int posX = MathHelper.floor_double(this.trackedEntity.posX * 32.0D);
++                    int posY = MathHelper.floor_double(this.trackedEntity.posY * 32.0D);
++                    int posZ = MathHelper.floor_double(this.trackedEntity.posZ * 32.0D);
++                    if (posX != this.encodedPosX || posY != this.encodedPosY || posZ != this.encodedPosZ)
++                    {
++                        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.makeEntitySpawnAdjustment(this.trackedEntity, p_73117_1_, this.encodedPosX, this.encodedPosY, this.encodedPosZ);
++                    }
++
+                     if (this.sendVelocityUpdates && !(packet instanceof S0FPacketSpawnMob))
+                     {
+                         p_73117_1_.playerNetServerHandler.sendPacket(new S12PacketEntityVelocity(this.trackedEntity.getEntityId(), this.trackedEntity.motionX, this.trackedEntity.motionY, this.trackedEntity.motionZ));
+@@ -437,12 +445,14 @@
+                             p_73117_1_.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(this.trackedEntity.getEntityId(), potioneffect));
+                         }
+                     }
++                    net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(trackedEntity, p_73117_1_);
+                 }
+             }
+             else if (this.trackingPlayers.contains(p_73117_1_))
+             {
+                 this.trackingPlayers.remove(p_73117_1_);
+                 p_73117_1_.func_152339_d(this.trackedEntity);
++                net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(trackedEntity, p_73117_1_);
+             }
+         }
+     }
+@@ -474,6 +484,9 @@
+             logger.warn("Fetching addPacket for removed entity");
+         }
+ 
++        Packet pkt = net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.getEntitySpawningPacket(this.trackedEntity);
++        if (pkt != null) return pkt;
++
+         if (this.trackedEntity instanceof EntityItem)
+         {
+             return new S0EPacketSpawnObject(this.trackedEntity, 2, 1);

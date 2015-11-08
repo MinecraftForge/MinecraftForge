@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -308,7 +308,7 @@
+ 
+         if (this.itemToRender != null)
+         {
+-            if (this.itemToRender.getItem() == Items.filled_map)
++            if (this.itemToRender.getItem() instanceof net.minecraft.item.ItemMap)
+             {
+                 this.func_178097_a(entityplayersp, f3, f1, f2);
+             }
+@@ -359,7 +359,8 @@
+ 
+         if (this.mc.thePlayer.isEntityInsideOpaqueBlock())
+         {
+-            IBlockState iblockstate = this.mc.theWorld.getBlockState(new BlockPos(this.mc.thePlayer));
++            BlockPos blockpos = new BlockPos(this.mc.thePlayer);
++            IBlockState iblockstate = this.mc.theWorld.getBlockState(blockpos);
+             EntityPlayerSP entityplayersp = this.mc.thePlayer;
+ 
+             for (int i = 0; i < 8; ++i)
+@@ -367,7 +368,7 @@
+                 double d0 = entityplayersp.posX + (double)(((float)((i >> 0) % 2) - 0.5F) * entityplayersp.width * 0.8F);
+                 double d1 = entityplayersp.posY + (double)(((float)((i >> 1) % 2) - 0.5F) * 0.1F);
+                 double d2 = entityplayersp.posZ + (double)(((float)((i >> 2) % 2) - 0.5F) * entityplayersp.width * 0.8F);
+-                BlockPos blockpos = new BlockPos(d0, d1 + (double)entityplayersp.getEyeHeight(), d2);
++                blockpos = new BlockPos(d0, d1 + (double)entityplayersp.getEyeHeight(), d2);
+                 IBlockState iblockstate1 = this.mc.theWorld.getBlockState(blockpos);
+ 
+                 if (iblockstate1.getBlock().isVisuallyOpaque())
+@@ -378,6 +379,7 @@
+ 
+             if (iblockstate.getBlock().getRenderType() != -1)
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, blockpos))
+                 this.func_178108_a(p_78447_1_, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
+             }
+         }
+@@ -386,11 +388,13 @@
+         {
+             if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(mc.thePlayer, p_78447_1_))
+                 this.renderWaterOverlayTexture(p_78447_1_);
+             }
+ 
+             if (this.mc.thePlayer.isBurning())
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(mc.thePlayer, p_78447_1_))
+                 this.renderFireInFirstPerson(p_78447_1_);
+             }
+         }
+@@ -507,6 +511,12 @@
+         {
+             if (!this.itemToRender.getIsItemStackEqual(itemstack))
+             {
++                if (!this.itemToRender.getItem().shouldCauseReequipAnimation(this.itemToRender, itemstack, equippedItemSlot != entityplayersp.inventory.currentItem))
++                {
++                    this.itemToRender = itemstack;
++                    this.equippedItemSlot = entityplayersp.inventory.currentItem;
++                    return;
++                }
+                 flag = true;
+             }
+         }

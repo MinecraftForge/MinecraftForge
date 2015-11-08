@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
++++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
+@@ -59,7 +59,7 @@
+     {
+         if (!worldIn.isRemote)
+         {
+-            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity() > 2)
++            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity(worldIn, pos.up()) > 2)
+             {
+                 worldIn.setBlockState(pos, Blocks.dirt.getDefaultState());
+             }
+@@ -73,7 +73,7 @@
+                         Block block = worldIn.getBlockState(blockpos1.up()).getBlock();
+                         IBlockState iblockstate1 = worldIn.getBlockState(blockpos1);
+ 
+-                        if (iblockstate1.getBlock() == Blocks.dirt && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos1.up()) >= 4 && block.getLightOpacity() <= 2)
++                        if (iblockstate1.getBlock() == Blocks.dirt && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos1.up()) >= 4 && block.getLightOpacity(worldIn, blockpos1.up()) <= 2)
+                         {
+                             worldIn.setBlockState(blockpos1, Blocks.grass.getDefaultState());
+                         }
+@@ -120,18 +120,11 @@
+                         continue;
+                     }
+                 }
+-                else if (worldIn.getBlockState(blockpos2).getBlock().blockMaterial == Material.air)
++                else if (worldIn.isAirBlock(blockpos2))
+                 {
+                     if (rand.nextInt(8) == 0)
+                     {
+-                        BlockFlower.EnumFlowerType enumflowertype = worldIn.getBiomeGenForCoords(blockpos2).pickRandomFlower(rand, blockpos2);
+-                        BlockFlower blockflower = enumflowertype.getBlockType().getBlock();
+-                        IBlockState iblockstate1 = blockflower.getDefaultState().withProperty(blockflower.getTypeProperty(), enumflowertype);
+-
+-                        if (blockflower.canBlockStay(worldIn, blockpos2, iblockstate1))
+-                        {
+-                            worldIn.setBlockState(blockpos2, iblockstate1, 3);
+-                        }
++                        worldIn.getBiomeGenForCoords(blockpos2).plantFlower(worldIn, rand, blockpos2);
+                     }
+                     else
+                     {
