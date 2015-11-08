@@ -15,16 +15,22 @@ buildscript {
     }
 }
 
+repositories {
+        maven {
+            name = "local"
+            url = "file:///home/cpw/projects/repo"
+        }
+}
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
-    version = "1.8"
+    version = "1.8.8"
     //mappings = 'stable_16'
     mappings = "snapshot_nodoc_20141130"
     workspaceDir = "projects"
-    versionJson = "jsons/1.8-dev.json"
+    versionJson = "jsons/1.8.8-dev.json"
     buildUserdev = true
     buildInstaller = true
     installerVersion = "1.4"
@@ -39,20 +45,12 @@ minecraft {
     }
 
     projects {
-//        fml {
-//            rootDir 'fml'
-//            patchDir "fml/patches/minecraft"
-//            patchAfter "clean"
-//            genPatchesFrom "clean"
-//
-//            with common
-//        }
         forge {
             rootDir "."
             patchDir "patches/minecraft"
             patchAfter "clean"
             genPatchesFrom "clean"
-
+            genMcpPatches = true
             with common
         }
     }
@@ -66,7 +64,7 @@ extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
 processJson {
-    releaseJson = "jsons/1.8-rel.json"
+    releaseJson = "jsons/1.8.8-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
         "@version@": project.version,
