@@ -155,13 +155,12 @@ public class GameData {
 
     static Item findItem(String modId, String name)
     {
-        return (Item)getMain().iItemRegistry.getObject(modId + ":" + name);
+        return getMain().iItemRegistry.getObject(modId + ":" + name);
     }
 
     static Block findBlock(String modId, String name)
     {
-        String key = modId + ":" + name;
-        return getMain().iBlockRegistry.containsKey(key) ? getMain().iBlockRegistry.getObject(key) : null;
+        return getMain().iBlockRegistry.getObject(modId + ":" + name);
     }
 
     static UniqueIdentifier getUniqueName(Block block)
