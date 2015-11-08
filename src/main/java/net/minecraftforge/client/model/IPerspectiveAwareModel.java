@@ -59,7 +59,7 @@ public interface IPerspectiveAwareModel extends IBakedModel
         public boolean isGui3d() { return parent.isGui3d(); }
         public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
         public TextureAtlasSprite getTexture() { return parent.getTexture(); }
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
+        public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
         public List<BakedQuad> getFaceQuads(EnumFacing side) { return parent.getFaceQuads(side); }
         public List<BakedQuad> getGeneralQuads() { return parent.getGeneralQuads(); }
         public VertexFormat getFormat() { return parent.getFormat(); }

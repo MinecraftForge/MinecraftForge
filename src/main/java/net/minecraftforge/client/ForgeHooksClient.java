@@ -545,22 +545,25 @@ public class ForgeHooksClient
             if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             return pair.getLeft();
         }
-        switch(cameraTransformType)
+        else
         {
-            case FIRST_PERSON:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
-                break;
-            case GUI:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
-                break;
-            case HEAD:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
-                break;
-            case THIRD_PERSON:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
-                break;
-            default:
-                break;
+            switch(cameraTransformType)
+            {
+                case FIRST_PERSON:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
+                    break;
+                case GUI:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
+                    break;
+                case HEAD:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
+                    break;
+                case THIRD_PERSON:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
+                    break;
+                default:
+                    break;
+            }
         }
         return model;
     }
