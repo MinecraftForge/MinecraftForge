@@ -5,6 +5,7 @@ import javax.vecmath.Vector3f;
 import com.google.common.base.Objects;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.BlockPos;
@@ -132,6 +133,10 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
             updateLightmap(normal[v], lightmap[v], x, y, z);
             updateColor(normal[v], color[v], x, y, z, tint, multiplier);
+            if(EntityRenderer.anaglyphEnable)
+            {
+                applyAnaglyph(color[v]);
+            }
 
             // no need for remapping cause all we could've done is add 1 element to the end
             for(int e = 0; e < parent.getVertexFormat().getElementCount(); e++)
@@ -165,6 +170,14 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             }
         }
         tint = -1;
+    }
+
+    protected void applyAnaglyph(float[] color)
+    {
+        float r = color[0];
+        color[0] = (r * 30 + color[1] * 59 + color[2] * 11) / 100;
+        color[1] = (r * 3 + color[1] * 7) / 10;
+        color[2] = (r * 3 + color[2] * 7) / 10;
     }
 
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
