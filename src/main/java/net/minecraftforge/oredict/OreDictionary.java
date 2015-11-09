@@ -1,6 +1,7 @@
 package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -301,7 +302,20 @@ public class OreDictionary
     {
         if (stack == null || stack.getItem() == null) return -1;
 
-        int id = Item.getIdFromItem(stack.getItem());
+        // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
+        // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
+        // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
+        String registryName = stack.getItem().delegate.name();
+        int id;
+        if (registryName == null)
+        {
+            FMLLog.log(Level.DEBUG, "Attempted to find the oreIDs for an unregistered object (%s). This won't work very well.", stack);
+            return -1;
+        }
+        else
+        {
+            id = GameData.getItemRegistry().getId(registryName);
+        }
         List<Integer> ids = stackToId.get(id); //Try the wildcard first
         if (ids == null || ids.size() == 0)
         {
@@ -323,7 +337,20 @@ public class OreDictionary
 
         Set<Integer> set = new HashSet<Integer>();
 
-        int id = Item.getIdFromItem(stack.getItem());
+        // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
+        // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
+        // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
+        String registryName = stack.getItem().delegate.name();
+        int id;
+        if (registryName == null)
+        {
+            FMLLog.log(Level.DEBUG, "Attempted to find the oreIDs for an unregistered object (%s). This won't work very well.", stack);
+            return new int[0];
+        }
+        else
+        {
+            id = GameData.getItemRegistry().getId(registryName);
+        }
         List<Integer> ids = stackToId.get(id);
         if (ids != null) set.addAll(ids);
         ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16));
@@ -354,39 +381,39 @@ public class OreDictionary
     /**
      * Retrieves the List of items that are registered to this ore type at this instant.
      * If the flag is TRUE, then it will create the list as empty if it did not exist.
-     * 
+     *
      * This option should be used by modders who are doing blanket scans in postInit.
      * It greatly reduces clutter in the OreDictionary is the responsible and proper
      * way to use the dictionary in a large number of cases.
-     * 
+     *
      * The other function above is utilized in OreRecipe and is required for the
      * operation of that code.
-     * 
+     *
      * @param name The ore name, directly calls getOreID if the flag is TRUE
      * @param alwaysCreateEntry Flag - should a new entry be created if empty
      * @return An arraylist containing ItemStacks registered for this ore
      */
     public static List<ItemStack> getOres(String name, boolean alwaysCreateEntry)
     {
-    	if (alwaysCreateEntry) {
-    		return getOres(getOreID(name));
-    	}
-    	return nameToId.get(name) != null ? getOres(getOreID(name)) : EMPTY_LIST;
+        if (alwaysCreateEntry) {
+            return getOres(getOreID(name));
+        }
+        return nameToId.get(name) != null ? getOres(getOreID(name)) : EMPTY_LIST;
     }
 
     /**
      * Returns whether or not an oreName exists in the dictionary.
      * This function can be used to safely query the Ore Dictionary without
      * adding needless clutter to the underlying map structure.
-     * 
+     *
      * Please use this when possible and appropriate.
-     * 
+     *
      * @param name The ore name
      * @return Whether or not that name is in the Ore Dictionary.
      */
     public static boolean doesOreNameExist(String name)
     {
-    	return nameToId.get(name) != null;
+        return nameToId.get(name) != null;
     }
 
     /**
@@ -492,8 +519,8 @@ public class OreDictionary
         if (name == null || name.isEmpty() || "Unknown".equals(name)) return; //prevent bad IDs.
         if (ore == null || ore.getItem() == null)
         {
-        	FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
-        	return; //prevent bad ItemStacks.
+            FMLLog.bigWarning("Invalid registration attempt for an Ore Dictionary item with name %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", name);
+            return; //prevent bad ItemStacks.
         }
 
         int oreID = getOreID(name);
