@@ -60,7 +60,7 @@
 -                        GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
 -                }
 +                // moved to VertexFormatElement.postDraw
-+                vertexformatelement1.getUsage().postDraw(vertexformat, j1, i, bytebuffer);
++                vertexformatelement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
              }
          }
  
