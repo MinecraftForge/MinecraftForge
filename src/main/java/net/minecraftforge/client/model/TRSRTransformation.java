@@ -67,7 +67,7 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
-        TRSRTransformation ret = new TRSRTransformation(transform.translation, quatFromYXZDegrees(transform.rotation), transform.scale, null);
+        TRSRTransformation ret = new TRSRTransformation(toVecmath(transform.translation), quatFromYXZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
         return blockCenterToCorner(ret).getMatrix();
     }
 
@@ -428,7 +428,7 @@ public class TRSRTransformation implements IModelState, ITransformation
      */
     public ItemTransformVec3f toItemTransform()
     {
-        return new ItemTransformVec3f(getTranslation(), toYXZ(getLeftRot()), getScale());
+        return new ItemTransformVec3f(toLwjgl(getTranslation()), toLwjgl(toYXZ(getLeftRot())), toLwjgl(getScale()));
     }
 
     public Matrix4f getMatrix()
@@ -565,5 +565,56 @@ public class TRSRTransformation implements IModelState, ITransformation
         }
         else if (!matrix.equals(other.matrix)) return false;
         return true;
+    }
+
+    public static Vector3f toVecmath(org.lwjgl.util.vector.Vector3f vec)
+    {
+        return new Vector3f(vec.x, vec.y, vec.z);
+    }
+
+    public static Vector4f toVecmath(org.lwjgl.util.vector.Vector4f vec)
+    {
+        return new Vector4f(vec.x, vec.y, vec.z, vec.w);
+    }
+
+    public static Matrix4f toVecmath(org.lwjgl.util.vector.Matrix4f m)
+    {
+        return new Matrix4f(
+            m.m00, m.m10, m.m20, m.m30,
+            m.m01, m.m11, m.m21, m.m31,
+            m.m02, m.m12, m.m22, m.m32,
+            m.m03, m.m13, m.m23, m.m33);
+    }
+
+    public static org.lwjgl.util.vector.Vector3f toLwjgl(Vector3f vec)
+    {
+        return new org.lwjgl.util.vector.Vector3f(vec.x, vec.y, vec.z);
+    }
+
+    public static org.lwjgl.util.vector.Vector4f toLwjgl(Vector4f vec)
+    {
+        return new org.lwjgl.util.vector.Vector4f(vec.x, vec.y, vec.z, vec.w);
+    }
+
+    public static org.lwjgl.util.vector.Matrix4f toLwjgl(Matrix4f m)
+    {
+        org.lwjgl.util.vector.Matrix4f r = new org.lwjgl.util.vector.Matrix4f();
+        r.m00 = m.m00;
+        r.m01 = m.m10;
+        r.m02 = m.m20;
+        r.m03 = m.m30;
+        r.m10 = m.m01;
+        r.m11 = m.m11;
+        r.m12 = m.m21;
+        r.m13 = m.m31;
+        r.m20 = m.m02;
+        r.m21 = m.m12;
+        r.m22 = m.m22;
+        r.m23 = m.m32;
+        r.m30 = m.m03;
+        r.m31 = m.m13;
+        r.m32 = m.m23;
+        r.m33 = m.m33;
+        return r;
     }
 }

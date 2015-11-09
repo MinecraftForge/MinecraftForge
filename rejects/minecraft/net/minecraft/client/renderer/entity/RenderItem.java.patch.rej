@@ -1,62 +1,3 @@
-++++ REJECTED PATCH 2
-         BakedQuad bakedquad;
-         int j;
- 
--        for (Iterator iterator = quads.iterator(); iterator.hasNext(); this.renderQuad(renderer, bakedquad, j))
-+        for (Iterator iterator = quads.iterator(); iterator.hasNext(); net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(renderer, bakedquad, j))
-         {
-             bakedquad = (BakedQuad)iterator.next();
-             j = color;
-++++ END PATCH
-++++ REJECTED PATCH 4
- 
-     protected void applyTransform(ItemTransformVec3f transform)
-     {
-+        applyVanillaTransform(transform);
-+    }
-+
-+    public static void applyVanillaTransform(ItemTransformVec3f transform)
-+    {
-         if (transform != ItemTransformVec3f.DEFAULT)
-         {
-             GlStateManager.translate(transform.translation.x + debugItemOffsetX, transform.translation.y + debugItemOffsetY, transform.translation.z + debugItemOffsetZ);
-++++ END PATCH
-++++ REJECTED PATCH 5
-         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-         GlStateManager.pushMatrix();
- 
--        switch (RenderItem.SwitchTransformType.TRANSFORM_LOOKUP[cameraTransformType.ordinal()])
--        {
--            case 1:
--            default:
--                break;
--            case 2:
--                this.applyTransform(model.getItemCameraTransforms().thirdPerson);
--                break;
--            case 3:
--                this.applyTransform(model.getItemCameraTransforms().firstPerson);
--                break;
--            case 4:
--                this.applyTransform(model.getItemCameraTransforms().head);
--                break;
--            case 5:
--                this.applyTransform(model.getItemCameraTransforms().gui);
--        }
-+        model = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(model, cameraTransformType);
- 
-         this.renderItem(stack, model);
-         GlStateManager.popMatrix();
-++++ END PATCH
-++++ REJECTED PATCH 6
-         GlStateManager.blendFunc(770, 771);
-         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-         this.setupGuiTransform(x, y, ibakedmodel.isGui3d());
--        this.applyTransform(ibakedmodel.getItemCameraTransforms().gui);
-+        ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GUI);
-         this.renderItem(stack, ibakedmodel);
-         GlStateManager.disableAlpha();
-         GlStateManager.disableRescaleNormal();
-++++ END PATCH
 ++++ REJECTED PATCH 7
                  GlStateManager.enableDepth();
              }
@@ -84,12 +25,6 @@
                  GlStateManager.enableLighting();
 ++++ END PATCH
 ++++ REJECTED PATCH 9
-         this.registerBlock(Blocks.brown_mushroom_block, BlockHugeMushroom.EnumType.ALL_INSIDE.getMetadata(), "brown_mushroom_block");
-         this.registerBlock(Blocks.red_mushroom_block, BlockHugeMushroom.EnumType.ALL_INSIDE.getMetadata(), "red_mushroom_block");
-         this.registerBlock(Blocks.dragon_egg, "dragon_egg");
-+        net.minecraftforge.client.model.ModelLoader.onRegisterItems(this.itemModelMesher);
-     }
- 
      public void onResourceManagerReload(IResourceManager resourceManager)
      {
          this.itemModelMesher.rebuildCache();

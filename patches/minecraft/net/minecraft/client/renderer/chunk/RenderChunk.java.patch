@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -132,7 +132,7 @@
+                 return;
+             }
+ 
+-            iblockaccess = new RegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
++            iblockaccess = createRegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
+             p_178581_4_.setCompiledChunk(compiledchunk);
+         }
+         finally
 @@ -159,7 +159,7 @@
                      lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
                  }
@@ -9,7 +18,18 @@
                  {
                      TileEntity tileentity = iblockaccess.getTileEntity(new BlockPos(blockpos$mutableblockpos));
                      TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.instance.<TileEntity>getSpecialRenderer(tileentity);
-@@ -190,6 +190,7 @@
+@@ -175,7 +175,9 @@
+                     }
+                 }
+ 
+-                EnumWorldBlockLayer enumworldblocklayer1 = block.getBlockLayer();
++                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
++                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
++                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
+                 int j = enumworldblocklayer1.ordinal();
+ 
+                 if (block.getRenderType() != -1)
+@@ -190,6 +192,7 @@
  
                      aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, iblockaccess, worldrenderer);
                  }
@@ -17,7 +37,7 @@
              }
  
              for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
-@@ -386,6 +387,26 @@
+@@ -386,6 +389,26 @@
          return this.needsUpdate;
      }
  

@@ -1,15 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -580,6 +580,14 @@
+@@ -580,6 +580,11 @@
          }
      }
  
 +    public void checkAndGrow()
 +    {
-+        if (this.rawBufferIndex >= this.bufferSize - this.vertexFormat.getNextOffset())
-+        {
-+            this.growBuffer(2097152);
-+        }
++        this.func_181670_b(vertexFormat.getNextOffset()/* / 4 * 4 */);
 +    }
 +
      @SideOnly(Side.CLIENT)

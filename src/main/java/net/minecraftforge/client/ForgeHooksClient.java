@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.client.resources.I18n;
@@ -72,6 +73,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -85,6 +87,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
+
 
 
 import com.google.common.collect.Maps;
@@ -518,7 +522,7 @@ public class ForgeHooksClient
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
-        m.setTranslation(transform.translation);
+        m.setTranslation(TRSRTransformation.toVecmath(transform.translation));
         t.setIdentity();
         t.rotY(transform.rotation.y);
         m.mul(t);
@@ -547,23 +551,7 @@ public class ForgeHooksClient
         }
         else
         {
-            switch(cameraTransformType)
-            {
-                case FIRST_PERSON:
-                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
-                    break;
-                case GUI:
-                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
-                    break;
-                case HEAD:
-                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
-                    break;
-                case THIRD_PERSON:
-                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
-                    break;
-                default:
-                    break;
-            }
+            model.getItemCameraTransforms().func_181689_a(cameraTransformType);
         }
         return model;
     }
@@ -585,9 +573,10 @@ public class ForgeHooksClient
 
     // moved and expanded from WorldVertexBufferUploader.draw
 
-    public static void preDraw(EnumUsage attrType, VertexFormatElement attr, int stride, ByteBuffer buffer)
+    public static void preDraw(EnumUsage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
-        buffer.position(attr.getOffset());
+        VertexFormatElement attr = format.getElement(element);
+        buffer.position(format.func_181720_d(element));
         switch(attrType)
         {
             case POSITION:
@@ -622,8 +611,9 @@ public class ForgeHooksClient
         }
     }
 
-    public static void postDraw(EnumUsage attrType, VertexFormatElement attr, int stride, ByteBuffer buffer)
+    public static void postDraw(EnumUsage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
+        VertexFormatElement attr = format.getElement(element);
         switch(attrType)
         {
             case POSITION:
@@ -651,9 +641,9 @@ public class ForgeHooksClient
         }
     }
 
-    public static void transform(Vector3d vec, Matrix4f m)
+    public static void transform(org.lwjgl.util.vector.Vector3f vec, Matrix4f m)
     {
-        Vector4f tmp = new Vector4f((float)vec.x, (float)vec.y, (float)vec.z, 1f);
+        Vector4f tmp = new Vector4f(vec.x, vec.y, vec.z, 1f);
         m.transform(tmp);
         if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
         vec.set(tmp.x, tmp.y, tmp.z);
@@ -661,7 +651,7 @@ public class ForgeHooksClient
 
     public static Matrix4f getMatrix(ModelRotation modelRotation)
     {
-        Matrix4f ret = new Matrix4f(modelRotation.getMatrix4d()), tmp = new Matrix4f();
+        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.getMatrix4d())), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp, ret);

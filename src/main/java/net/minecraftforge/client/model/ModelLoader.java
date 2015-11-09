@@ -331,7 +331,7 @@ public class ModelLoader extends ModelBakery
             }
             ModelBlock model = this.model;
             if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
-            ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
+            ItemCameraTransforms transforms = model.func_181682_g();
             boolean uvlock = false;
             if(state instanceof UVLock)
             {
@@ -391,7 +391,7 @@ public class ModelLoader extends ModelBakery
 
             ModelBlock neweModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
-                new ItemCameraTransforms(this.model.getThirdPersonTransform(), this.model.getFirstPersonTransform(), this.model.getHeadTransform(), this.model.getInGuiTransform()));
+                model.func_181682_g());
             neweModel.name = this.model.name;
             neweModel.parent = this.model.parent;
 
@@ -700,7 +700,14 @@ public class ModelLoader extends ModelBakery
             graphics.clearRect(0, 0, 16, 16);
             BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
             images[0] = image;
-            loadSprite(images, null);
+            try
+            {
+                loadSprite(images, null);
+            }
+            catch(IOException e)
+            {
+                throw new RuntimeException(e);
+            }
             return false;
         }
 
