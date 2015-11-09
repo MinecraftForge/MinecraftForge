@@ -7,12 +7,12 @@
 +        this(blockIn, properties, null);
 +    }
 +
-+    protected StateImplementation createState(Block block, ImmutableMap properties, ImmutableMap unlistedProperties)
++    protected StateImplementation createState(Block block, ImmutableMap<IProperty, Comparable> properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
 +    {
 +        return new StateImplementation(block, properties);
 +    }
 +
-+    protected BlockState(Block blockIn, IProperty[] properties, ImmutableMap unlistedProperties)
++    protected BlockState(Block blockIn, IProperty[] properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
 +    {
          this.block = blockIn;
          Arrays.sort(properties, new Comparator<IProperty>()
@@ -22,7 +22,7 @@
          {
              Map<IProperty, Comparable> map1 = MapPopulator.<IProperty, Comparable>createMap(this.properties, list1);
 -            BlockState.StateImplementation blockstate$stateimplementation = new BlockState.StateImplementation(blockIn, ImmutableMap.copyOf(map1));
-+            BlockState.StateImplementation blockstate$stateimplementation = createState(blockIn, ImmutableMap.copyOf(map), unlistedProperties);
++            BlockState.StateImplementation blockstate$stateimplementation = createState(blockIn, ImmutableMap.copyOf(map1), unlistedProperties);
              map.put(map1, blockstate$stateimplementation);
              list.add(blockstate$stateimplementation);
          }
@@ -30,7 +30,7 @@
                  }
              }
  
-+            protected StateImplementation(Block blockIn, ImmutableMap propertiesIn, ImmutableTable propertyValueTable)
++            protected StateImplementation(Block blockIn, ImmutableMap<IProperty, Comparable> propertiesIn, ImmutableTable<IProperty, Comparable, IBlockState> propertyValueTable)
 +            {
 +                this.block = blockIn;
 +                this.properties = propertiesIn;

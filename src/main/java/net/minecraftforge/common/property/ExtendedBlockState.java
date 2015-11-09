@@ -56,7 +56,7 @@ public class ExtendedBlockState extends BlockState
         private final ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties;
         private Map<Map<IProperty, Comparable>, IBlockState> normalMap;
 
-        protected ExtendedStateImplementation(Block block, ImmutableMap properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, ImmutableTable<IProperty, Comparable, IBlockState> table)
+        protected ExtendedStateImplementation(Block block, ImmutableMap<IProperty, Comparable> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, ImmutableTable<IProperty, Comparable, IBlockState> table)
         {
             super(block, properties);
             this.unlistedProperties = unlistedProperties;
@@ -64,7 +64,7 @@ public class ExtendedBlockState extends BlockState
         }
 
         @Override
-        public IBlockState withProperty(IProperty property, Comparable value)
+        public <T extends Comparable<T>, V extends T> IBlockState withProperty(IProperty<T> property, V value)
         {
             if (!this.getProperties().containsKey(property))
             {
