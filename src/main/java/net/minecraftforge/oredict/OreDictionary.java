@@ -5,12 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.RandomAccess;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -24,9 +20,10 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -38,7 +35,8 @@ public class OreDictionary
     private static Map<String, Integer>  nameToId = new HashMap<String, Integer>();
     private static List<List<ItemStack>> idToStack = Lists.newArrayList();
     private static List<List<ItemStack>> idToStackUn = Lists.newArrayList();
-    private static Map<Integer, List<Integer>> stackToId = Maps.newHashMap();
+    private static Multimap<Integer, Integer> stackToId = HashMultimap.create();
+    private static Multimap<Integer, String> stackToName = HashMultimap.create();
     public static final ImmutableList<ItemStack> EMPTY_LIST = ImmutableList.of();
 
     /**
@@ -312,29 +310,52 @@ public class OreDictionary
     }
 
     /**
-     * Gets all the integer ID for the ores that the specified item stakc is registered to.
-     * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
+     * Gets all the ore names that the specified item stack is registered as.
+     * If the item stack is not linked to any ore, this will return an empty set.
      *
-     * @param stack The item stack of the ore.
-     * @return An array of ids that this ore is registerd as.
+     * @param stack The item stack to get ore names from.
+     * @return The set of ore names that this item stack is registered as.
      */
-    public static int[] getOreIDs(ItemStack stack)
+    public static Set<String> getOreNames(ItemStack stack)
     {
         if (stack == null || stack.getItem() == null) throw new IllegalArgumentException("Stack can not be null!");
 
-        Set<Integer> set = new HashSet<Integer>();
+        int id = Item.getIdFromItem(stack.getItem());
+
+        Set<String> set = new HashSet<String>();
+        set.addAll(stackToName.get(id));
+        set.addAll(stackToName.get(id | ((stack.getItemDamage() + 1) << 16)));
+        return set;
+    }
+
+    /**
+     * Gets all the integer IDs for the ores that the specified item stack is registered to.
+     * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
+     *
+     * @param stack The item stack of the ore.
+     * @return An array of ids that this ore is registered as.
+     */
+    public static int[] getOreIDs(ItemStack stack)
+    {
+        Set<Integer> set = getOreIDsSet(stack);
+
+        int[] ret = new int[set.size()];
+        int index = 0;
+        for (int x : set)
+            ret[index++] = x;
+        return ret;
+    }
+
+    private static Set<Integer> getOreIDsSet(ItemStack stack)
+    {
+        if (stack == null || stack.getItem() == null) throw new IllegalArgumentException("Stack can not be null!");
 
         int id = Item.getIdFromItem(stack.getItem());
-        List<Integer> ids = stackToId.get(id);
-        if (ids != null) set.addAll(ids);
-        ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16));
-        if (ids != null) set.addAll(ids);
 
-        Integer[] tmp = set.toArray(new Integer[set.size()]);
-        int[] ret = new int[tmp.length];
-        for (int x = 0; x < tmp.length; x++)
-            ret[x] = tmp[x];
-        return ret;
+        Set<Integer> set = new HashSet<Integer>();
+        set.addAll(stackToId.get(id));
+        set.addAll(stackToId.get(id | ((stack.getItemDamage() + 1) << 16)));
+        return set;
     }
 
     /**
@@ -413,6 +434,22 @@ public class OreDictionary
         return (target.getItem() == input.getItem() && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || target.getItemDamage() == input.getItemDamage()));
     }
 
+    /**
+     * Compares all the ore IDs for the two items to see if they have any in common.
+     *
+     * @param stack1 The first stack to compare.
+     * @param stack2 The second stack to compare.
+     * @return True if stack1 and stack2 share an ore dictionary ID.
+     */
+    public static boolean itemsShareOreID(ItemStack stack1, ItemStack stack2)
+    {
+        if (stack1 == null || stack2 == null)
+        {
+            return false;
+        }
+        return !Collections.disjoint(getOreIDsSet(stack1), getOreIDsSet(stack2));
+    }
+
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
     public static void registerOre(String name, Item      ore){ registerOre(name, new ItemStack(ore));  }
     public static void registerOre(String name, Block     ore){ registerOre(name, new ItemStack(ore));  }
@@ -437,14 +474,9 @@ public class OreDictionary
         }
 
         //Add things to the baked version, and prevent duplicates
-        List<Integer> ids = stackToId.get(hash);
-        if (ids != null && ids.contains(oreID)) return;
-        if (ids == null)
-        {
-            ids = Lists.newArrayList();
-            stackToId.put(hash, ids);
-        }
-        ids.add(oreID);
+        if (stackToId.containsEntry(hash, oreID)) return;
+        stackToId.put(hash, oreID);
+        stackToName.put(hash, name);
 
         //Add to the unbaked version
         ore = ore.copy();
@@ -468,6 +500,7 @@ public class OreDictionary
     {
         //System.out.println("Baking OreDictionary:");
         stackToId.clear();
+        stackToName.clear();
         for (int id = 0; id < idToStack.size(); id++)
         {
             List<ItemStack> ores = idToStack.get(id);
@@ -479,13 +512,8 @@ public class OreDictionary
                 {
                     hash |= ((ore.getItemDamage() + 1) << 16); // +1 so meta 0 is significant
                 }
-                List<Integer> ids = stackToId.get(hash);
-                if (ids == null)
-                {
-                    ids = Lists.newArrayList();
-                    stackToId.put(hash, ids);
-                }
-                ids.add(id);
+                stackToId.put(hash, id);
+                stackToName.put(hash, getOreName(id));
                 //System.out.println(id + " " + getOreName(id) + " " + Integer.toHexString(hash) + " " + ore);
             }
         }
