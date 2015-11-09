@@ -1,0 +1,97 @@
+--- ../src-base/minecraft/net/minecraft/item/Item.java
++++ ../src-work/minecraft/net/minecraft/item/Item.java
+@@ -62,6 +62,9 @@
+     private String unlocalizedName;
+     private static final String __OBFID = "CL_00000041";
+ 
++    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate =
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)itemRegistry).getDelegate(this, Item.class);
++
+     public static int getIdFromItem(Item itemIn)
+     {
+         return itemIn == null ? 0 : itemRegistry.getIDForObject(itemIn);
+@@ -127,6 +130,7 @@
+         return stack;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version below.
+     public int getItemStackLimit()
+     {
+         return this.maxStackSize;
+@@ -240,6 +244,7 @@
+         return this.containerItem;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version below.
+     public boolean hasContainerItem()
+     {
+         return this.containerItem != null;
+@@ -317,7 +322,7 @@
+ 
+     public boolean isItemTool(ItemStack stack)
+     {
+-        return this.getItemStackLimit() == 1 && this.isDamageable();
++        return this.getItemStackLimit(stack) == 1 && this.isDamageable();
+     }
+ 
+     protected MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+@@ -335,6 +340,10 @@
+         float f6 = f3 * f4;
+         float f7 = f2 * f4;
+         double d3 = 5.0D;
++        if (playerIn instanceof net.minecraft.entity.player.EntityPlayerMP)
++        {
++            d3 = ((net.minecraft.entity.player.EntityPlayerMP)playerIn).theItemInWorldManager.getBlockReachDistance();
++        }
+         Vec3 vec31 = vec3.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
+         return worldIn.rayTraceBlocks(vec3, vec31, useLiquids, !useLiquids, false);
+     }
+@@ -874,6 +883,10 @@
+         private final int enchantability;
+         private static final String __OBFID = "CL_00000042";
+ 
++        //Added by forge for custom Tool materials.
++        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
++        private ItemStack repairMaterial = null;
++
+         private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
+         {
+             this.harvestLevel = harvestLevel;
+@@ -908,9 +921,36 @@
+             return this.enchantability;
+         }
+ 
++        @Deprecated // Use getRepairItemStack below
+         public Item getRepairItem()
+         {
+-            return this == WOOD ? Item.getItemFromBlock(Blocks.planks) : (this == STONE ? Item.getItemFromBlock(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
++            switch (this)
++            {
++                case WOOD:    return Item.getItemFromBlock(Blocks.planks);
++                case STONE:   return Item.getItemFromBlock(Blocks.cobblestone);
++                case GOLD:    return Items.gold_ingot;
++                case IRON:    return Items.iron_ingot;
++                case EMERALD: return Items.diamond;
++                default:      return customCraftingMaterial;
++            }
+         }
++
++        public ToolMaterial setRepairItem(ItemStack stack)
++        {
++            if (this.repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
++            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == EMERALD) throw new RuntimeException("Can not change vanilla tool repair materials");
++            this.repairMaterial = stack;
++            this.customCraftingMaterial = stack.getItem();
++            return this;
++        }
++
++        public ItemStack getRepairItemStack()
++        {
++            if (repairMaterial != null) return repairMaterial;
++            Item ret = this.getRepairItem();
++            if (ret == null) return null;
++            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++            return repairMaterial;
++        }
+     }
+ }

@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
++++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
+@@ -30,6 +30,7 @@
+     public void setServerDescription(IChatComponent motd)
+     {
+         this.serverMotd = motd;
++        invalidateJson();
+     }
+ 
+     public ServerStatusResponse.PlayerCountData getPlayerCountData()
+@@ -40,6 +41,7 @@
+     public void setPlayerCountData(ServerStatusResponse.PlayerCountData countData)
+     {
+         this.playerCount = countData;
++        invalidateJson();
+     }
+ 
+     public ServerStatusResponse.MinecraftProtocolVersionIdentifier getProtocolVersionInfo()
+@@ -50,11 +52,13 @@
+     public void setProtocolVersionInfo(ServerStatusResponse.MinecraftProtocolVersionIdentifier protocolVersionData)
+     {
+         this.protocolVersion = protocolVersionData;
++        invalidateJson();
+     }
+ 
+     public void setFavicon(String faviconBlob)
+     {
+         this.favicon = faviconBlob;
++        invalidateJson();
+     }
+ 
+     public String getFavicon()
+@@ -224,6 +228,7 @@
+                     serverstatusresponse.setFavicon(JsonUtils.getJsonObjectStringFieldValue(jsonobject, "favicon"));
+                 }
+ 
++                net.minecraftforge.fml.client.FMLClientHandler.instance().captureAdditionalData(serverstatusresponse, jsonobject);
+                 return serverstatusresponse;
+             }
+ 
+@@ -251,6 +256,7 @@
+                     jsonobject.addProperty("favicon", p_serialize_1_.getFavicon());
+                 }
+ 
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.enhanceStatusQuery(jsonobject);
+                 return jsonobject;
+             }
+         }

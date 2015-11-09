@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 9
+         }
+     }
+ 
+-    public static enum Plane implements Predicate, Iterable {
++    public static enum Plane implements Predicate, Iterable<EnumFacing> { //Forge re-add generic because it just makes life easier.
+         HORIZONTAL,
+         VERTICAL;
+ 
+++++ END PATCH

@@ -1,0 +1,15 @@
+++++ REJECTED PATCH 1
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
++        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
++    }
++
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> dropped = super.getDrops(world, pos, state, fortune);
+         int j = ((Integer)state.getValue(AGE)).intValue();
+         byte b0 = 1;
+ 
+++++ END PATCH

@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
+@@ -398,6 +398,7 @@
+ 
+     private static byte readType(DataInput input, NBTSizeTracker sizeTracker) throws IOException
+     {
++        sizeTracker.read(8);
+         return input.readByte();
+     }
+ 
+@@ -408,6 +409,7 @@
+ 
+     static NBTBase readNBT(byte id, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException
+     {
++        sizeTracker.read(32); //Forge: 4 extra bytes for the object allocation.
+         NBTBase nbtbase = NBTBase.createNewByType(id);
+ 
+         try

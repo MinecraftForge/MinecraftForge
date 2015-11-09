@@ -1,0 +1,23 @@
+++++ REJECTED PATCH 1
+             {
+                 this.field_92102_a = new ItemStack(Items.fireworks);
+ 
++                nbttagcompound = new NBTTagCompound();
+                 if (l > 0)
+                 {
+-                    nbttagcompound = new NBTTagCompound();
+                     nbttagcompound1 = new NBTTagCompound();
+                     NBTTagList nbttaglist = new NBTTagList();
+ 
+++++ END PATCH
+++++ REJECTED PATCH 2
+                     nbttagcompound1.setTag("Explosions", nbttaglist);
+                     nbttagcompound1.setByte("Flight", (byte)j);
+                     nbttagcompound.setTag("Fireworks", nbttagcompound1);
+-                    this.field_92102_a.setTagCompound(nbttagcompound);
+                 }
++                this.field_92102_a.setTagCompound(nbttagcompound); //Forge BugFix: NPE Protection
+ 
+                 return true;
+             }
+++++ END PATCH

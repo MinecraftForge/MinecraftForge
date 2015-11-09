@@ -1,0 +1,25 @@
+++++ REJECTED PATCH 1
+     public void doStitch()
+     {
+         Stitcher.Holder[] aholder = (Stitcher.Holder[])this.setStitchHolders.toArray(new Stitcher.Holder[this.setStitchHolders.size()]);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", aholder.length);
+         Arrays.sort(aholder);
+         Stitcher.Holder[] aholder1 = aholder;
+         int i = aholder.length;
+++++ END PATCH
+++++ REJECTED PATCH 2
+         for (int j = 0; j < i; ++j)
+         {
+             Stitcher.Holder holder = aholder1[j];
++            bar.step(holder.getAtlasSprite().getIconName());
+ 
+             if (!this.allocateSlot(holder))
+             {
+                 String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", new Object[] {holder.getAtlasSprite().getIconName(), Integer.valueOf(holder.getAtlasSprite().getIconWidth()), Integer.valueOf(holder.getAtlasSprite().getIconHeight())});
++                net.minecraftforge.fml.common.FMLLog.info(s);
++                for (Stitcher.Holder h : aholder)
++                    net.minecraftforge.fml.common.FMLLog.info("  %s", h);
+                 throw new StitcherException(holder, s);
+             }
+         }
+++++ END PATCH

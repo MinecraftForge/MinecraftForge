@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiOverlayDebug.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiOverlayDebug.java
+@@ -107,6 +107,9 @@
+     {
+         BlockPos blockpos = new BlockPos(this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().getEntityBoundingBox().minY, this.mc.getRenderViewEntity().posZ);
+ 
++        arraylist.add("");
++        arraylist.addAll(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(false));
++
+         if (this.isReducedDebug())
+         {
+             return Lists.newArrayList(new String[] {"Minecraft 1.8.8 (" + this.mc.getVersion() + "/" + ClientBrandRetriever.getClientModName() + ")", this.mc.debug, this.mc.renderGlobal.getDebugInfoRenders(), this.mc.renderGlobal.getDebugInfoEntities(), "P: " + this.mc.effectRenderer.getStatistics() + ". T: " + this.mc.theWorld.getDebugLoadedEntities(), this.mc.theWorld.getProviderName(), "", String.format("Chunk-relative: %d %d %d", new Object[]{Integer.valueOf(blockpos.getX() & 15), Integer.valueOf(blockpos.getY() & 15), Integer.valueOf(blockpos.getZ() & 15)})});

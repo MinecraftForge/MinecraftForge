@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
+@@ -194,6 +194,10 @@
+         this.skinMap.put("default", this.field_178637_m);
+         this.skinMap.put("slim", new RenderPlayer(this, true));
+     }
++	
++    public Map<String, RenderPlayer> getSkinMap() {
++        return (Map<String, RenderPlayer>) java.util.Collections.unmodifiableMap(skinMap);
++    }
+ 
+     public void setRenderPosition(double p_178628_1_, double p_178628_3_, double p_178628_5_)
+     {
+@@ -242,9 +246,9 @@
+             IBlockState iblockstate = worldIn.getBlockState(new BlockPos(p_180597_3_));
+             Block block = iblockstate.getBlock();
+ 
+-            if (block == Blocks.bed)
++            if (block.isBed(worldIn, new BlockPos(p_180597_3_), (EntityLivingBase)p_180597_3_))
+             {
+-                int i = ((EnumFacing)iblockstate.getValue(BlockBed.FACING)).getHorizontalIndex();
++                int i = block.getBedDirection(worldIn, new BlockPos(p_180597_3_)).getHorizontalIndex();
+                 this.playerViewY = (float)(i * 90 + 180);
+                 this.playerViewX = 0.0F;
+             }

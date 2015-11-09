@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
+@@ -25,14 +25,16 @@
+     {
+         Block block;
+ 
+-        while (((block = worldIn.getBlockState(p_180709_3_).getBlock()).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && p_180709_3_.getY() > 0)
++        do
+         {
++            block = worldIn.getBlockState(p_180709_3_).getBlock();
++            if (!block.isAir(worldIn, p_180709_3_) && !block.isLeaves(worldIn, p_180709_3_)) break;
+             p_180709_3_ = p_180709_3_.down();
+-        }
++        } while (p_180709_3_.getY() > 0);
+ 
+         Block block1 = worldIn.getBlockState(p_180709_3_).getBlock();
+ 
+-        if (block1 == Blocks.dirt || block1 == Blocks.grass)
++        if (block1.canSustainPlant(worldIn, p_180709_3_, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling)))
+         {
+             p_180709_3_ = p_180709_3_.up();
+             this.func_175903_a(worldIn, p_180709_3_, this.field_150527_b);

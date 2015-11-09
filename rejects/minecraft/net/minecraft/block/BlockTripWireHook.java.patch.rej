@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 2
+ 
+             enumfacing = (EnumFacing)iterator.next();
+         }
+-        while (!worldIn.getBlockState(pos.offset(enumfacing)).getBlock().isNormalCube());
++        while (!worldIn.isSideSolid(pos.offset(enumfacing), enumfacing.getOpposite(), true));
+ 
+         return true;
+     }
+++++ END PATCH

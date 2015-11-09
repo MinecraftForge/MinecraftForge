@@ -1,0 +1,67 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -38,7 +38,7 @@
+     public String getItemStackDisplayName(ItemStack stack)
+     {
+         String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
+-        String s1 = EntityList.getStringFromID(stack.getMetadata());
++        String s1 = ItemMonsterPlacer.getEntityName(stack);
+ 
+         if (s1 != null)
+         {
+@@ -76,7 +76,7 @@
+                 if (tileentity instanceof TileEntityMobSpawner)
+                 {
+                     MobSpawnerBaseLogic mobspawnerbaselogic = ((TileEntityMobSpawner)tileentity).getSpawnerBaseLogic();
+-                    mobspawnerbaselogic.setEntityName(EntityList.getStringFromID(stack.getMetadata()));
++                    mobspawnerbaselogic.setEntityName(ItemMonsterPlacer.getEntityName(stack));
+                     tileentity.markDirty();
+                     worldIn.markBlockForUpdate(pos);
+ 
+@@ -97,7 +97,7 @@
+                 d0 = 0.5D;
+             }
+ 
+-            Entity entity = spawnCreature(worldIn, stack.getMetadata(), (double)pos.getX() + 0.5D, (double)pos.getY() + d0, (double)pos.getZ() + 0.5D);
++            Entity entity = spawnCreature(worldIn, ItemMonsterPlacer.getEntityName(stack), (double)pos.getX() + 0.5D, (double)pos.getY() + d0, (double)pos.getZ() + 0.5D);
+ 
+             if (entity != null)
+             {
+@@ -148,7 +148,7 @@
+ 
+                     if (worldIn.getBlockState(blockpos).getBlock() instanceof BlockLiquid)
+                     {
+-                        Entity entity = spawnCreature(worldIn, itemStackIn.getMetadata(), (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D);
++                        Entity entity = spawnCreature(worldIn, ItemMonsterPlacer.getEntityName(itemStackIn), (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D);
+ 
+                         if (entity != null)
+                         {
+@@ -209,5 +209,28 @@
+         {
+             subItems.add(new ItemStack(itemIn, 1, entitylist$entityegginfo.spawnedID));
+         }
++
++        for (String name : net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().keySet())
++        {
++            ItemStack stack = new ItemStack(itemIn);
++            net.minecraft.nbt.NBTTagCompound nbt = new net.minecraft.nbt.NBTTagCompound();
++            nbt.setString("entity_name", name);
++            stack.setTagCompound(nbt);
++            subItems.add(stack);
++        }
+     }
++
++    public static String getEntityName(ItemStack stack)
++    {
++        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("entity_name", 8))
++            return stack.getTagCompound().getString("entity_name");
++        return EntityList.getStringFromID(stack.getMetadata());
++    }
++
++    private static EntityList.EntityEggInfo getEggInfo(ItemStack stack)
++    {
++        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("entity_name", 8))
++            return net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(stack.getTagCompound().getString("entity_name"));
++        return (EntityList.EntityEggInfo)EntityList.entityEggs.get(stack.getMetadata());
++    }
+ }

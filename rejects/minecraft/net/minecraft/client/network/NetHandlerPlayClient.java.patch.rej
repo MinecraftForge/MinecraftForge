@@ -1,0 +1,11 @@
+++++ REJECTED PATCH 2
+     public void handleSpawnExperienceOrb(S11PacketSpawnExperienceOrb packetIn)
+     {
+         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
+-        EntityXPOrb entityxporb = new EntityXPOrb(this.clientWorldController, (double)packetIn.func_148984_d(), (double)packetIn.func_148983_e(), (double)packetIn.func_148982_f(), packetIn.func_148986_g());
++        EntityXPOrb entityxporb = new EntityXPOrb(this.clientWorldController, (double)packetIn.func_148984_d() / 32.0D, (double)packetIn.func_148983_e() / 32.0D, (double)packetIn.func_148982_f() / 32.0D, packetIn.func_148986_g());
++        // FORGE: BugFix MC-12013 Wrong XP orb clientside spawn position
+         entityxporb.serverPosX = packetIn.func_148984_d();
+         entityxporb.serverPosY = packetIn.func_148983_e();
+         entityxporb.serverPosZ = packetIn.func_148982_f();
+++++ END PATCH

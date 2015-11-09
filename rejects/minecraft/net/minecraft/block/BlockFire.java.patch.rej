@@ -1,0 +1,73 @@
+++++ REJECTED PATCH 5
+                     b0 = -50;
+                 }
+ 
+-                this.catchOnFire(worldIn, pos.east(), 300 + b0, rand, i);
+-                this.catchOnFire(worldIn, pos.west(), 300 + b0, rand, i);
+-                this.catchOnFire(worldIn, pos.down(), 250 + b0, rand, i);
+-                this.catchOnFire(worldIn, pos.up(), 250 + b0, rand, i);
+-                this.catchOnFire(worldIn, pos.north(), 300 + b0, rand, i);
+-                this.catchOnFire(worldIn, pos.south(), 300 + b0, rand, i);
++                this.tryCatchFire(worldIn, pos.east(), 300 + b0, rand, i, EnumFacing.WEST);
++                this.tryCatchFire(worldIn, pos.west(), 300 + b0, rand, i, EnumFacing.EAST);
++                this.tryCatchFire(worldIn, pos.down(), 250 + b0, rand, i, EnumFacing.UP);
++                this.tryCatchFire(worldIn, pos.up(), 250 + b0, rand, i, EnumFacing.DOWN);
++                this.tryCatchFire(worldIn, pos.north(), 300 + b0, rand, i, EnumFacing.SOUTH);
++                this.tryCatchFire(worldIn, pos.south(), 300 + b0, rand, i, EnumFacing.NORTH);
+ 
+                 for (int j = -1; j <= 1; ++j)
+                 {
+++++ END PATCH
+++++ REJECTED PATCH 6
+         return false;
+     }
+ 
++    @Deprecated // Use Block.getFlammability
+     public int getFlammability(Block blockIn)
+     {
+         Integer integer = (Integer)this.flammabilities.get(blockIn);
+         return integer == null ? 0 : integer.intValue();
+     }
+ 
++    @Deprecated // Use Block.getFlammability
+     public int getEncouragement(Block blockIn)
+     {
+         Integer integer = (Integer)this.encouragements.get(blockIn);
+         return integer == null ? 0 : integer.intValue();
+     }
+ 
++    @Deprecated // Use tryCatchFire with face below
+     private void catchOnFire(World worldIn, BlockPos pos, int chance, Random random, int age)
+     {
+-        int k = this.getFlammability(worldIn.getBlockState(pos).getBlock());
++        this.tryCatchFire(worldIn, pos, chance, random, age, EnumFacing.UP);
++    }
+ 
++    private void tryCatchFire(World worldIn, BlockPos pos, int chance, Random random, int age, EnumFacing face)
++    {
++        int k = worldIn.getBlockState(pos).getBlock().getFlammability(worldIn, pos, face);
++
+         if (random.nextInt(chance) < k)
+         {
+             IBlockState iblockstate = worldIn.getBlockState(pos);
+++++ END PATCH
+++++ REJECTED PATCH 7
+         {
+             EnumFacing enumfacing = aenumfacing[j];
+ 
+-            if (this.canCatchFire(worldIn, pos.offset(enumfacing)))
++            if (this.canCatchFire(worldIn, pos.offset(enumfacing), enumfacing.getOpposite()))
+             {
+                 return true;
+             }
+++++ END PATCH
+++++ REJECTED PATCH 8
+             for (int k = 0; k < j; ++k)
+             {
+                 EnumFacing enumfacing = aenumfacing[k];
+-                i = Math.max(this.getEncouragement(worldIn.getBlockState(pos.offset(enumfacing)).getBlock()), i);
++                i = Math.max(worldIn.getBlockState(pos.offset(enumfacing)).getBlock().getFlammability(worldIn, pos.offset(enumfacing), enumfacing.getOpposite()), i);
+             }
+ 
+             return i;
+++++ END PATCH

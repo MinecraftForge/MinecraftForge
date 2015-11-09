@@ -1,0 +1,73 @@
+++++ REJECTED PATCH 1
+ 
+                             if (d3 < d2 || d2 == 0.0D)
+                             {
+-                                if (entity1 == entity.ridingEntity)
++                                if (entity1 == entity.ridingEntity && !entity.canRiderInteract())
+                                 {
+                                     if (d2 == 0.0D)
+                                     {
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+                 try
+                 {
+-                    this.mc.currentScreen.drawScreen(l, i1, partialTicks);
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.mc.currentScreen, l, i1, partialTicks);
+                 }
+                 catch (Throwable throwable)
+                 {
+++++ END PATCH
+++++ REJECTED PATCH 6
+             GlStateManager.pushMatrix();
+             RenderHelper.enableStandardItemLighting();
+             this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             renderglobal.renderEntities(entity, frustum, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             RenderHelper.disableStandardItemLighting();
+             this.disableLightmap();
+             GlStateManager.matrixMode(5888);
+++++ END PATCH
+++++ REJECTED PATCH 8
+             entityplayer = (EntityPlayer)entity;
+             GlStateManager.disableAlpha();
+             this.mc.mcProfiler.endStartSection("outline");
++            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, entityplayer.getHeldItem(), partialTicks))
+             renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
+             GlStateManager.enableAlpha();
+         }
+++++ END PATCH
+++++ REJECTED PATCH 9
+             renderglobal.renderBlockLayer(EnumWorldBlockLayer.TRANSLUCENT, (double)partialTicks, pass, entity);
+         }
+ 
++        if (!this.debugView) //Only render if render pass 0 happens as well.
++        {
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
++            renderglobal.renderEntities(entity, frustum, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
++        }
++
+         GlStateManager.shadeModel(7424);
+         GlStateManager.depthMask(true);
+         GlStateManager.enableCull();
+++++ END PATCH
+++++ REJECTED PATCH 11
+ 
+     protected void renderRainSnow(float partialTicks)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.mc.theWorld.provider.getWeatherRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, this.mc.theWorld, mc);
++            return;
++        }
++
+         float f1 = this.mc.theWorld.getRainStrength(partialTicks);
+ 
+         if (f1 > 0.0F)
+++++ END PATCH

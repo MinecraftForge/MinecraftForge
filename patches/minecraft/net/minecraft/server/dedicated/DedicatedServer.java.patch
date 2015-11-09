@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -49,6 +49,7 @@
+     private boolean canSpawnStructures;
+     private WorldSettings.GameType gameType;
+     private boolean guiIsEnabled;
++    public static boolean allowPlayerLogins = false;
+     private static final String __OBFID = "CL_00001784";
+ 
+     public DedicatedServer(File workDir)
+@@ -110,6 +111,8 @@
+             logger.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
++
+         logger.info("Loading properties");
+         this.settings = new PropertyManager(new File("server.properties"));
+         this.eula = new ServerEula(new File("eula.txt"));
+@@ -201,6 +204,7 @@
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 this.setConfigManager(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+@@ -247,6 +251,7 @@
+                 this.setBuildLimit((this.getBuildLimit() + 8) / 16 * 16);
+                 this.setBuildLimit(MathHelper.clamp_int(this.getBuildLimit(), 64, 256));
+                 this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+                 logger.info("Preparing level \"" + this.getFolderName() + "\"");
+                 this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+@@ -275,7 +280,7 @@
+                     thread1.start();
+                 }
+ 
+-                return true;
++                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+             }
+         }
+     }

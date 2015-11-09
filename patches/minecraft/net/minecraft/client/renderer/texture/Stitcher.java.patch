@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
+@@ -74,6 +74,7 @@
+             this.currentWidth = MathHelper.roundUpToPowerOfTwo(this.currentWidth);
+             this.currentHeight = MathHelper.roundUpToPowerOfTwo(this.currentHeight);
+         }
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
+     }
+ 
+     public List<TextureAtlasSprite> getStichSlots()
+@@ -262,7 +263,7 @@
+ 
+             public String toString()
+             {
+-                return "Holder{width=" + this.width + ", height=" + this.height + '}';
++                return "Holder{width=" + this.width + ", height=" + this.height + ", name=" + this.theTexture.getIconName() + '}';
+             }
+ 
+             public int compareTo(Stitcher.Holder p_compareTo_1_)

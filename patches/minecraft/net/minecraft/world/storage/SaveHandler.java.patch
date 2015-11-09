@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -144,6 +144,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.setTag("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound2);
++
+         try
+         {
+             File file1 = new File(this.worldDirectory, "level.dat_new");
+@@ -182,6 +184,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.setTag("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.worldDirectory, "level.dat_new");
+@@ -230,6 +234,7 @@
+             }
+ 
+             file1.renameTo(file2);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_75753_1_, this.playersDirectory, p_75753_1_.getUniqueID().toString());
+         }
+         catch (Exception var5)
+         {
+@@ -260,6 +265,7 @@
+             p_75752_1_.readFromNBT(nbttagcompound);
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_75752_1_, playersDirectory, p_75752_1_.getUniqueID().toString());
+         return nbttagcompound;
+     }
+ 
+@@ -301,4 +307,22 @@
+     {
+         return this.saveDirectoryName;
+     }
++
++    public NBTTagCompound getPlayerNBT(net.minecraft.entity.player.EntityPlayerMP player)
++    {
++        try
++        {
++            File file1 = new File(this.playersDirectory, player.getUniqueID().toString() + ".dat");
++
++            if (file1.exists() && file1.isFile())
++            {
++                return CompressedStreamTools.readCompressed(new FileInputStream(file1));
++            }
++        }
++        catch (Exception exception)
++        {
++            logger.warn("Failed to load player data for " + player.getName());
++        }
++        return null;
++    }
+ }

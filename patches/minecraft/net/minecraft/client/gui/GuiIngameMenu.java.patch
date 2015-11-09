@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
+@@ -75,13 +75,19 @@
+                 this.mc.setIngameFocus();
+                 break;
+             case 5:
++                if (this.mc.thePlayer != null)
+                 this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.thePlayer.getStatFileWriter()));
+                 break;
+             case 6:
++                if (this.mc.thePlayer != null)
+                 this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
+                 break;
+             case 7:
+                 this.mc.displayGuiScreen(new GuiShareToLan(this));
++                break;
++            case 12:
++                net.minecraftforge.fml.client.FMLClientHandler.instance().showInGameModOptions(this);
++                break;
+         }
+     }
+ 

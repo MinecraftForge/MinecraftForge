@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
+@@ -158,4 +158,25 @@
+     {
+         return TextureMap.locationBlocksTexture;
+     }
++
++    /*==================================== FORGE START ===========================================*/
++
++    /**
++     * Items should spread out when rendered in 3d?
++     * @return
++     */
++    public boolean shouldSpreadItems()
++    {
++        return true;
++    }
++
++    /**
++     * Items should have a bob effect
++     * @return
++     */
++    public boolean shouldBob()
++    {
++        return true;
++    }
++    /*==================================== FORGE END =============================================*/
+ }

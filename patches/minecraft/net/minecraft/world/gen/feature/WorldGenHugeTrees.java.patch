@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
+@@ -146,4 +146,10 @@
+             }
+         }
+     }
++
++    //Just a helper macro
++    private void onPlantGrow(World world, BlockPos pos, BlockPos source)
++    {
++        world.getBlockState(pos).getBlock().onPlantGrow(world, pos, source);
++    }
+ }

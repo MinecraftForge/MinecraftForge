@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+ 
+     public void set(int x, int y, int z, IBlockState state)
+     {
++        if (state instanceof net.minecraftforge.common.property.IExtendedBlockState)
++            state = ((net.minecraftforge.common.property.IExtendedBlockState) state).getClean();
+         IBlockState iblockstate1 = this.get(x, y, z);
+         Block block = iblockstate1.getBlock();
+         Block block1 = state.getBlock();
+++++ END PATCH

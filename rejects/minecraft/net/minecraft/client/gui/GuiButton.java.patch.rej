@@ -1,0 +1,15 @@
+++++ REJECTED PATCH 2
+             this.mouseDragged(mc, mouseX, mouseY);
+             int l = 14737632;
+ 
+-            if (!this.enabled)
++            if (packedFGColour != 0)
+             {
++                l = packedFGColour;
++            }
++            else if (!this.enabled)
++            {
+                 l = 10526880;
+             }
+             else if (this.hovered)
+++++ END PATCH

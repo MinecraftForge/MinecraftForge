@@ -1,0 +1,21 @@
+++++ REJECTED PATCH 3
+         while (iterator.hasNext())
+         {
+             Item item = (Item)iterator.next();
++            if (item == null)
++            {
++                continue;
++            }
+ 
+-            if (item != null && item.getCreativeTab() == this)
++            for (CreativeTabs tab : item.getCreativeTabs())
+             {
+-                item.getSubItems(item, this, p_78018_1_);
++                if (tab == this)
++                {
++                    item.getSubItems(item, this, p_78018_1_);
++                }
+             }
+         }
+ 
+++++ END PATCH

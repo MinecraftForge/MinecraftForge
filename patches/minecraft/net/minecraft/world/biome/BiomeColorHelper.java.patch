@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeColorHelper.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeColorHelper.java
+@@ -29,7 +29,7 @@
+         private static final String __OBFID = "CL_00002146";
+         public int getColorAtPos(BiomeGenBase p_180283_1_, BlockPos blockPosition)
+         {
+-            return p_180283_1_.waterColorMultiplier;
++            return p_180283_1_.getWaterColorMultiplier();
+         }
+     };
+     private static final String __OBFID = "CL_00002149";

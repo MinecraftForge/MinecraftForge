@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatList.java
++++ ../src-work/minecraft/net/minecraft/stats/StatList.java
+@@ -110,7 +110,7 @@
+         {
+             if (item != null)
+             {
+-                int i = Item.getIdFromItem(item);
++                int i = Item.getIdFromItem(item); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
+ 
+                 if (s != null)
+@@ -151,7 +151,7 @@
+         {
+             if (item != null)
+             {
+-                int i = Item.getIdFromItem(item);
++                int i = Item.getIdFromItem(item); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
+ 
+                 if (s != null)
+@@ -175,7 +175,7 @@
+         {
+             if (item != null)
+             {
+-                int i = Item.getIdFromItem(item);
++                int i = Item.getIdFromItem(item); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
+ 
+                 if (s != null && item.isDamageable())

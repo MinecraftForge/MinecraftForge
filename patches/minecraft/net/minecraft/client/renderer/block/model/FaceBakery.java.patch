@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
+@@ -21,6 +21,11 @@
+ 
+     public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+     {
++        return makeBakedQuad(posFrom, posTo, face, sprite, facing, (net.minecraftforge.client.model.ITransformation)modelRotationIn, partRotation, uvLocked, shade);
++    }
++
++    public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
++    {
+         int[] aint = this.makeQuadVertexData(face, sprite, facing, this.getPositionsDiv16(posFrom, posTo), modelRotationIn, partRotation, uvLocked, shade);
+         EnumFacing enumfacing = getFacingFromVertexData(aint);
+ 

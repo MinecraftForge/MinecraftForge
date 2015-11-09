@@ -1,0 +1,104 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
+@@ -49,6 +49,8 @@
+     private boolean field_147057_D;
+     private CreativeCrafting field_147059_E;
+     private static final String __OBFID = "CL_00000752";
++    private static int tabPage = 0;
++    private int maxPages = 0;
+ 
+     public GuiContainerCreative(EntityPlayer p_i1088_1_)
+     {
+@@ -260,6 +262,13 @@
+             this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[i]);
+             this.field_147059_E = new CreativeCrafting(this.mc);
+             this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_147059_E);
++            int tabCount = CreativeTabs.creativeTabArray.length;
++            if (tabCount > 12)
++            {
++                buttonList.add(new GuiButton(101, guiLeft,              guiTop - 50, 20, 20, "<"));
++                buttonList.add(new GuiButton(102, guiLeft + xSize - 20, guiTop - 50, 20, 20, ">"));
++                maxPages = ((tabCount - 12) / 10) + 1;
++            }
+         }
+         else
+         {
+@@ -281,7 +290,7 @@
+ 
+     protected void keyTyped(char typedChar, int keyCode) throws IOException
+     {
+-        if (selectedTabIndex != CreativeTabs.tabAllSearch.getTabIndex())
++        if (!CreativeTabs.creativeTabArray[selectedTabIndex].hasSearchBar())
+         {
+             if (GameSettings.isKeyDown(this.mc.gameSettings.keyBindChat))
+             {
+@@ -366,7 +375,7 @@
+     {
+         CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
+ 
+-        if (creativetabs.drawInForegroundOfTab())
++        if (creativetabs != null && creativetabs.drawInForegroundOfTab())
+         {
+             GlStateManager.disableBlend();
+             this.fontRendererObj.drawString(I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]), 8, 6, 4210752);
+@@ -414,11 +423,13 @@
+ 
+     private boolean needsScrollBars()
+     {
++        if (CreativeTabs.creativeTabArray[selectedTabIndex] == null) return false;
+         return selectedTabIndex != CreativeTabs.tabInventory.getTabIndex() && CreativeTabs.creativeTabArray[selectedTabIndex].shouldHidePlayerInventory() && ((GuiContainerCreative.ContainerCreative)this.inventorySlots).func_148328_e();
+     }
+ 
+     private void setCurrentCreativeTab(CreativeTabs p_147050_1_)
+     {
++        if (p_147050_1_ == null) return;
+         int i = selectedTabIndex;
+         selectedTabIndex = p_147050_1_.getTabIndex();
+         GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
+@@ -484,12 +495,14 @@
+ 
+         if (this.searchField != null)
+         {
+-            if (p_147050_1_ == CreativeTabs.tabAllSearch)
++            if (p_147050_1_.hasSearchBar())
+             {
+                 this.searchField.setVisible(true);
+                 this.searchField.setCanLoseFocus(false);
+                 this.searchField.setFocused(true);
+                 this.searchField.setText("");
++                this.searchField.width = p_147050_1_.getSearchbarWidth();
++                this.searchField.xPosition = this.guiLeft + (82 /*default left*/ + 89 /*default width*/) - this.searchField.width;
+                 this.updateCreativeSearch();
+             }
+             else
+@@ -658,6 +671,14 @@
+             this.drawTexturedModalRect(i, j + (int)((float)(k - j - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+         }
+ 
++        if (creativetabs == null || creativetabs.getTabPage() != tabPage)
++        {
++            if (creativetabs != CreativeTabs.tabAllSearch && creativetabs != CreativeTabs.tabInventory)
++            {
++                return;
++            }
++        }
++
+         this.func_147051_a(creativetabs);
+ 
+         if (creativetabs == CreativeTabs.tabInventory)
+@@ -790,6 +811,15 @@
+         {
+             this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
+         }
++
++        if (button.id == 101)
++        {
++            tabPage = Math.max(tabPage - 1, 0);
++        }
++        else if (button.id == 102)
++        {
++            tabPage = Math.min(tabPage + 1, maxPages);
++        }
+     }
+ 
+     public int getSelectedTabIndex()

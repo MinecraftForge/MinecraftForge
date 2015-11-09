@@ -1,0 +1,29 @@
+++++ REJECTED PATCH 3
+                         if (chunk.isPopulated())
+                         {
+                             arraylist.add(chunk);
+-                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
++                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
++                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
+                             iterator1.remove();
+                         }
+                     }
+++++ END PATCH
+++++ REJECTED PATCH 4
+                 {
+                     chunk = (Chunk)iterator2.next();
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
+                 }
+             }
+         }
+++++ END PATCH
+++++ REJECTED PATCH 7
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(EntityList.getEntityID(entitylivingbase)));
++            if (entityegginfo == null) entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.getEntityString(entitylivingbase));
+ 
+             if (entityegginfo != null)
+             {
+++++ END PATCH

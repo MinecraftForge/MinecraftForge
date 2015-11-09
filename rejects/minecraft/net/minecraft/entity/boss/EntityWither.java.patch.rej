@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+                                 int l = j1 + i2;
+                                 Block block = this.worldObj.getBlockState(new BlockPos(j2, k, l)).getBlock();
+ 
+-                                if (block.getMaterial() != Material.air && block != Blocks.bedrock && block != Blocks.end_portal && block != Blocks.end_portal_frame && block != Blocks.command_block && block != Blocks.barrier)
++                                if (!block.isAir(worldObj, new BlockPos(j2, k, l)) && block.canEntityDestroy(worldObj, new BlockPos(j2, k, l), this))
+                                 {
+                                     flag = this.worldObj.destroyBlock(new BlockPos(j2, k, l), true) || flag;
+                                 }
+++++ END PATCH

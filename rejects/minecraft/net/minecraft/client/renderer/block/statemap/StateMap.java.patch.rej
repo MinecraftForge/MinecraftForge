@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+         }
+         else
+         {
+-            s = this.property.getName((Comparable)linkedhashmap.remove(this.property));
++            s = String.format("%s:%s", ((ResourceLocation)Block.blockRegistry.getNameForObject(p_178132_1_.getBlock())).getResourceDomain(), this.property.getName((Comparable)linkedhashmap.remove(this.property)));
+         }
+ 
+         if (this.suffix != null)
+++++ END PATCH

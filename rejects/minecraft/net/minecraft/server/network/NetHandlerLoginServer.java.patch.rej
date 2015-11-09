@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 2
+             }
+ 
+             this.networkManager.sendPacket(new S02PacketLoginSuccess(this.loginGameProfile));
+-            this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
++            net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getConfigurationManager(), this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
+         }
+     }
+ 
+++++ END PATCH

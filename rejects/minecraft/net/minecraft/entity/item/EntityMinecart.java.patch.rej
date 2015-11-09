@@ -1,0 +1,68 @@
+++++ REJECTED PATCH 4
+             }
+ 
+             this.setRotation(this.rotationYaw, this.rotationPitch);
+-            Iterator iterator = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(0.20000000298023224D, 0.0D, 0.20000000298023224D)).iterator();
++            AxisAlignedBB box;
++            if (getCollisionHandler() != null) box = this.getCollisionHandler().getMinecartCollisionBox(this);
++            else                               box = this.getEntityBoundingBox().expand(0.20000000298023224D, 0.0D, 0.20000000298023224D);
++            Iterator iterator = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box).iterator();
+ 
+             while (iterator.hasNext())
+             {
+++++ END PATCH
+++++ REJECTED PATCH 8
+             flag1 = !flag;
+         }
+ 
+-        double d0 = 0.0078125D;
++        double slopeAdjustment = getSlopeAdjustment();
+         BlockRailBase.EnumRailDirection enumraildirection = (BlockRailBase.EnumRailDirection)p_180460_2_.getValue(blockrailbase.getShapeProperty());
+ 
+         switch (EntityMinecart.SwitchEnumMinecartType.RAIL_SHAPE_LOOKUP[enumraildirection.ordinal()])
+         {
+             case 1:
+-                this.motionX -= 0.0078125D;
++                this.motionX -= slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case 2:
+-                this.motionX += 0.0078125D;
++                this.motionX += slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case 3:
+-                this.motionZ += 0.0078125D;
++                this.motionZ += slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case 4:
+-                this.motionZ -= 0.0078125D;
++                this.motionZ -= slopeAdjustment;
+                 ++this.posY;
+         }
+ 
+++++ END PATCH
+++++ REJECTED PATCH 10
+         this.posX = d7 + d1 * d6;
+         this.posZ = d8 + d2 * d6;
+         this.setPosition(this.posX, this.posY, this.posZ);
+-        d11 = this.motionX;
+-        d12 = this.motionZ;
++        this.moveMinecartOnRail(p_180460_1_);
+ 
+-        if (this.riddenByEntity != null)
+-        {
+-            d11 *= 0.75D;
+-            d12 *= 0.75D;
+-        }
+-
+-        double d13 = this.func_174898_m();
+-        d11 = MathHelper.clamp_double(d11, -d13, d13);
+-        d12 = MathHelper.clamp_double(d12, -d13, d13);
+-        this.moveEntity(d11, 0.0D, d12);
+-
+         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - p_180460_1_.getX() == aint[0][0] && MathHelper.floor_double(this.posZ) - p_180460_1_.getZ() == aint[0][2])
+         {
+             this.setPosition(this.posX, this.posY + (double)aint[0][1], this.posZ);
+++++ END PATCH

@@ -1,0 +1,15 @@
+++++ REJECTED PATCH 2
+         while (iterator.hasNext())
+         {
+             Block block = (Block)iterator.next();
+-            Item item = Item.getItemFromBlock(block);
++            Item item = Item.getItemFromBlock(block); //TODO: Hook FML's stat change event and re-assign these
+ 
+             if (item != null)
+             {
+-                int i = Block.getIdFromBlock(block);
++                int i = Block.getIdFromBlock(block); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
+ 
+                 if (s != null && block.getEnableStats())
+++++ END PATCH

@@ -1,0 +1,11 @@
+++++ REJECTED PATCH 2
+ 
+     public float getSmeltingExperience(ItemStack stack)
+     {
++        float ret = stack.getItem().getSmeltingExperience(stack);
++        if (ret != -1) return ret;
++
+         Iterator iterator = this.experienceList.entrySet().iterator();
+         Entry entry;
+ 
+++++ END PATCH

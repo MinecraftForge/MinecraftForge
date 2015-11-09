@@ -1,0 +1,45 @@
+++++ REJECTED PATCH 1
+             int i = this.getMetadata(stack.getMetadata());
+             IBlockState iblockstate1 = this.block.onBlockPlaced(worldIn, pos, side, hitX, hitY, hitZ, i, playerIn);
+ 
+-            if (worldIn.setBlockState(pos, iblockstate1, 3))
++            if (placeBlockAt(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ, iblockstate1))
+             {
+-                iblockstate1 = worldIn.getBlockState(pos);
+-
+-                if (iblockstate1.getBlock() == this.block)
+-                {
+-                    setTileEntityNBT(worldIn, pos, stack);
+-                    this.block.onBlockPlacedBy(worldIn, pos, iblockstate1, playerIn, stack);
+-                }
+-
+                 worldIn.playSoundEffect((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F), this.block.stepSound.getPlaceSound(), (this.block.stepSound.getVolume() + 1.0F) / 2.0F, this.block.stepSound.getFrequency() * 0.8F);
+                 --stack.stackSize;
+             }
+++++ END PATCH
+++++ REJECTED PATCH 2
+         }
+     }
+ 
++    @Deprecated //Use player sensitive version
+     public static boolean setTileEntityNBT(World worldIn, BlockPos pos, ItemStack stack)
+     {
++        return setTileEntityNBT(worldIn, pos, stack, null);
++    }
++    public static boolean setTileEntityNBT(World worldIn, BlockPos pos, ItemStack stack, EntityPlayer player)
++    {
+         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("BlockEntityTag", 10))
+         {
+             TileEntity tileentity = worldIn.getTileEntity(pos);
+ 
+             if (tileentity != null)
+             {
++                //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
++                final net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.getServer();
++                if (!worldIn.isRemote && tileentity.restrictNBTCopy() &&
++                   (server == null || !server.getConfigurationManager().canSendCommands(player.getGameProfile())))
++                       return false;
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttagcompound.copy();
+                 tileentity.writeToNBT(nbttagcompound);
+++++ END PATCH

@@ -1,0 +1,13 @@
+++++ REJECTED PATCH 3
+     {
+         TileEntity tileentity = null;
+ 
++        Class oclass = null;
+         try
+         {
+-            Class oclass = (Class)nameToClassMap.get(nbt.getString("id"));
++            oclass = (Class)nameToClassMap.get(nbt.getString("id"));
+ 
+             if (oclass != null)
+             {
+++++ END PATCH

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiSlot.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiSlot.java
+@@ -459,4 +459,19 @@
+     {
+         return this.slotHeight;
+     }
++
++    protected void drawContainerBackground(Tessellator tessellator)
++    {
++        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
++        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
++        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
++        float f1 = 32.0F;
++        worldrenderer.startDrawingQuads();
++        worldrenderer.setColorOpaque_I(2105376);
++        worldrenderer.addVertexWithUV((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / f1), (double)((float)(this.bottom + (int)this.amountScrolled) / f1));
++        worldrenderer.addVertexWithUV((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / f1), (double)((float)(this.bottom + (int)this.amountScrolled) / f1));
++        worldrenderer.addVertexWithUV((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / f1), (double)((float)(this.top + (int)this.amountScrolled) / f1));
++        worldrenderer.addVertexWithUV((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / f1), (double)((float)(this.top + (int)this.amountScrolled) / f1));
++        tessellator.draw();
++    }
+ }

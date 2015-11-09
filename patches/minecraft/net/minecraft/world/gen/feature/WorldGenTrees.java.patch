@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
+@@ -114,7 +114,7 @@
+                                     BlockPos blockpos = new BlockPos(k1, i3, i2);
+                                     Block block = worldIn.getBlockState(blockpos).getBlock();
+ 
+-                                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves || block.getMaterial() == Material.vine)
++                                    if (block.isAir(worldIn, blockpos1) || block.isLeaves(worldIn, blockpos1) || block.getMaterial() == Material.vine)
+                                     {
+                                         this.func_175903_a(worldIn, blockpos, this.metaLeaves);
+                                     }

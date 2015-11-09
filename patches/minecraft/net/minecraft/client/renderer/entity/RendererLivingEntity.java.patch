@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RendererLivingEntity.java
+@@ -39,6 +39,9 @@
+     protected boolean renderOutlines = false;
+     private static final String __OBFID = "CL_00001012";
+ 
++    public static float NAME_TAG_RANGE = 64.0f;
++    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
++
+     public RendererLivingEntity(RenderManager p_i46156_1_, ModelBase p_i46156_2_, float p_i46156_3_)
+     {
+         super(p_i46156_1_);
+@@ -84,6 +87,7 @@
+ 
+     public void doRender(T entity, double x, double y, double z, float p_76986_8_, float partialTicks)
+     {
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre(entity, this, x, y, z))) return;
+         GlStateManager.pushMatrix();
+         GlStateManager.disableCull();
+         this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
+@@ -192,6 +196,7 @@
+         {
+             super.doRender(entity, x, y, z, p_76986_8_, partialTicks);
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post(entity, this, x, y, z));
+     }
+ 
+     protected boolean func_177088_c(T p_177088_1_)
+@@ -519,6 +524,7 @@
+                 }
+             }
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Post(p_77033_1_, this, p_77033_2_, p_77033_4_, p_77033_6_));
+     }
+ 
+     protected boolean canRenderName(T entity)

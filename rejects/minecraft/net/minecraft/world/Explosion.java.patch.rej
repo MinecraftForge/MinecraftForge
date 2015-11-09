@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 4
+         int k1 = MathHelper.floor_double(this.explosionZ - (double)f3 - 1.0D);
+         int i1 = MathHelper.floor_double(this.explosionZ + (double)f3 + 1.0D);
+         List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, new AxisAlignedBB((double)j, (double)j1, (double)k1, (double)k, (double)l, (double)i1));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, f3);
+         Vec3 vec3 = new Vec3(this.explosionX, this.explosionY, this.explosionZ);
+ 
+         for (int l1 = 0; l1 < list.size(); ++l1)
+++++ END PATCH

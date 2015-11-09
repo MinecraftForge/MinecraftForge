@@ -1,0 +1,185 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
+@@ -381,6 +381,7 @@
+     {
+         this.entityLivingToAttack = livingBase;
+         this.revengeTimer = this.ticksExisted;
++        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, livingBase);
+     }
+ 
+     public EntityLivingBase getLastAttacker()
+@@ -664,7 +665,6 @@
+         return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void removePotionEffectClient(int p_70618_1_)
+     {
+         this.activePotionsMap.remove(Integer.valueOf(p_70618_1_));
+@@ -733,6 +733,7 @@
+ 
+     public boolean attackEntityFrom(DamageSource source, float amount)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+         if (this.isEntityInvulnerable(source))
+         {
+             return false;
+@@ -798,9 +799,9 @@
+                         this.recentlyHit = 100;
+                         this.attackingPlayer = (EntityPlayer)entity;
+                     }
+-                    else if (entity instanceof EntityWolf)
++                    else if (entity instanceof net.minecraft.entity.passive.EntityTameable)
+                     {
+-                        EntityWolf entitywolf = (EntityWolf)entity;
++                        net.minecraft.entity.passive.EntityTameable entitywolf = (net.minecraft.entity.passive.EntityTameable)entity;
+ 
+                         if (entitywolf.isTamed())
+                         {
+@@ -884,6 +885,7 @@
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+         Entity entity = cause.getEntity();
+         EntityLivingBase entitylivingbase = this.func_94060_bK();
+ 
+@@ -909,6 +911,9 @@
+                 i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
+             }
+ 
++            captureDrops = true;
++            capturedDrops.clear();
++
+             if (this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+             {
+                 this.dropFewItems(this.recentlyHit > 0, i);
+@@ -919,6 +924,16 @@
+                     this.addRandomArmor();
+                 }
+             }
++
++            captureDrops = false;
++
++            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, cause, capturedDrops, i, recentlyHit > 0))
++            {
++                for (EntityItem item : capturedDrops)
++                {
++                    worldObj.spawnEntityInWorld(item);
++                }
++            }
+         }
+ 
+         this.worldObj.setEntityState(this, (byte)3);
+@@ -973,7 +988,7 @@
+         int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
+         int k = MathHelper.floor_double(this.posZ);
+         Block block = this.worldObj.getBlockState(new BlockPos(i, j, k)).getBlock();
+-        return (block == Blocks.ladder || block == Blocks.vine) && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).isSpectator());
++        return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(block, worldObj, new BlockPos(i, j, k), this);
+     }
+ 
+     public boolean isEntityAlive()
+@@ -983,6 +998,9 @@
+ 
+     public void fall(float distance, float damageMultiplier)
+     {
++        float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, distance, damageMultiplier);
++        if (ret == null) return;
++        distance = ret[0]; damageMultiplier = ret[1];
+         super.fall(distance, damageMultiplier);
+         PotionEffect potioneffect = this.getActivePotionEffect(Potion.jump);
+         float f = potioneffect != null ? (float)(potioneffect.getAmplifier() + 1) : 0.0F;
+@@ -1095,6 +1113,8 @@
+     {
+         if (!this.isEntityInvulnerable(damageSrc))
+         {
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
++            if (damageAmount <= 0) return;
+             damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
+             damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
+             float f = damageAmount;
+@@ -1143,6 +1163,11 @@
+ 
+     public void swingItem()
+     {
++        ItemStack stack = this.getHeldItem();
++        if (stack != null && stack.getItem() != null)
++        {
++            if (stack.getItem().onEntitySwing(this, stack)) return;
++        }
+         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
+         {
+             this.swingProgressInt = -1;
+@@ -1282,6 +1307,7 @@
+ 
+     public void dismountEntity(Entity p_110145_1_)
+     {
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_110145_1_, false)){ return; }
+         double d0 = p_110145_1_.posX;
+         double d1 = p_110145_1_.getEntityBoundingBox().minY + (double)p_110145_1_.height;
+         double d2 = p_110145_1_.posZ;
+@@ -1347,6 +1373,7 @@
+         }
+ 
+         this.isAirBorne = true;
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
+ 
+     protected void updateAITick()
+@@ -1531,6 +1558,7 @@
+ 
+     public void onUpdate()
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
+         super.onUpdate();
+ 
+         if (!this.worldObj.isRemote)
+@@ -1819,6 +1847,7 @@
+ 
+     public void mountEntity(Entity entityIn)
+     {
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entityIn, true)){ return; }
+         if (this.ridingEntity != null && entityIn == null)
+         {
+             if (!this.worldObj.isRemote)
+@@ -2000,4 +2029,39 @@
+     {
+         this.potionsNeedUpdate = true;
+     }
++
++    /***
++     * Removes all potion effects that have curativeItem as a curative item for its effect
++     * @param curativeItem The itemstack we are using to cure potion effects
++     */
++    public void curePotionEffects(ItemStack curativeItem)
++    {
++        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
++        if (worldObj.isRemote) return;
++
++        while (potionKey.hasNext())
++        {
++            Integer key = potionKey.next();
++            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++
++            if (effect.isCurativeItem(curativeItem))
++            {
++                potionKey.remove();
++                onFinishedPotionEffect(effect);
++                this.potionsNeedUpdate = true;
++            }
++        }
++    }
++
++    /**
++     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
++     * currently only used in vanilla code by pigs.
++     *
++     * @param player The player who is riding the entity.
++     * @return If the player should orient the same direction as this entity.
++     */
++    public boolean shouldRiderFaceForward(EntityPlayer player)
++    {
++        return this instanceof net.minecraft.entity.passive.EntityPig;
++    }
+ }

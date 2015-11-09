@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+                     }
+                 }
+ 
++                WorldType.worldTypes[this.selectedIndex].onGUICreateWorldPress();
++
+                 WorldSettings.GameType gametype = WorldSettings.GameType.getByName(this.field_146342_r);
+                 WorldSettings worldsettings = new WorldSettings(i, gametype, this.field_146341_s, this.field_146337_w, WorldType.worldTypes[this.selectedIndex]);
+                 worldsettings.setWorldName(this.chunkProviderSettingsJson);
+++++ END PATCH

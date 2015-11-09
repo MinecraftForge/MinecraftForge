@@ -1,0 +1,17 @@
+++++ REJECTED PATCH 6
+                 BlockPartFace blockpartface = (BlockPartFace)blockpart.mapFaces.get(enumfacing);
+                 TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)this.sprites.get(new ResourceLocation(modelBlockIn.resolveTextureName(blockpartface.texture)));
+ 
+-                if (blockpartface.cullFace == null)
++                if (blockpartface.cullFace == null || !net.minecraftforge.client.model.TRSRTransformation.isInteger(modelRotationIn.getMatrix()))
+                 {
+                     builder.addGeneralQuad(this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
+                 }
+                 else
+                 {
+-                    builder.addFaceQuad(modelRotationIn.rotateFace(blockpartface.cullFace), this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
++                    builder.addFaceQuad(modelRotationIn.rotate(blockpartface.cullFace), this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
+                 }
+             }
+         }
+++++ END PATCH

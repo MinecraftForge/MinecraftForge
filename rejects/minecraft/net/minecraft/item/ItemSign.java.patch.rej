@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+                 --stack.stackSize;
+                 TileEntity tileentity = worldIn.getTileEntity(pos);
+ 
+-                if (tileentity instanceof TileEntitySign && !ItemBlock.setTileEntityNBT(worldIn, pos, stack))
++                if (tileentity instanceof TileEntitySign && !ItemBlock.setTileEntityNBT(worldIn, pos, stack, playerIn))
+                 {
+                     playerIn.openEditSign((TileEntitySign)tileentity);
+                 }
+++++ END PATCH

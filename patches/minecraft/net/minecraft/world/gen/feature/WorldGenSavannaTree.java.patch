@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSavannaTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSavannaTree.java
+@@ -72,11 +72,13 @@
+             }
+             else
+             {
+-                Block block = worldIn.getBlockState(p_180709_3_.down()).getBlock();
++                BlockPos down = p_180709_3_.down();
++                Block block = worldIn.getBlockState(down).getBlock();
++                boolean isSoil = block.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-                if ((block == Blocks.grass || block == Blocks.dirt) && p_180709_3_.getY() < 256 - i - 1)
++                if (isSoil && p_180709_3_.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, p_180709_3_.down());
++                    block.onPlantGrow(worldIn, down, p_180709_3_);
+                     EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(p_180709_2_);
+                     int k2 = i - p_180709_2_.nextInt(4) - 1;
+                     int l2 = 3 - p_180709_2_.nextInt(3);
+@@ -210,9 +212,9 @@
+ 
+     private void func_175924_b(World worldIn, BlockPos p_175924_2_)
+     {
+-        Material material = worldIn.getBlockState(p_175924_2_).getBlock().getMaterial();
++        Block block = worldIn.getBlockState(p_175924_2_).getBlock();
+ 
+-        if (material == Material.air || material == Material.leaves)
++        if (block.isAir(worldIn, p_175924_2_) || block.isLeaves(worldIn, p_175924_2_))
+         {
+             this.func_175903_a(worldIn, p_175924_2_, field_181644_b);
+         }

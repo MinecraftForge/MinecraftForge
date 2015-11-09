@@ -1,0 +1,70 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
+@@ -526,8 +526,10 @@
+ 
+     public void renderEntities(Entity p_180446_1_, ICamera p_180446_2_, float partialTicks)
+     {
++        int pass = net.minecraftforge.client.MinecraftForgeClient.getRenderPass();
+         if (this.renderEntitiesStartupCounter > 0)
+         {
++            if (pass > 0) return;
+             --this.renderEntitiesStartupCounter;
+         }
+         else
+@@ -1162,6 +1164,12 @@
+ 
+     public void renderSky(float partialTicks, int pass)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.getDimensionId() == 1)
+         {
+             this.renderSkyEnd();
+@@ -1379,6 +1387,12 @@
+ 
+     public void renderClouds(float p_180447_1_, int p_180447_2_)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.mc.theWorld.provider.getCloudRenderer();
++        if (renderer != null)
++        {
++            renderer.render(p_180447_1_, this.mc.theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.isSurfaceWorld())
+         {
+             if (this.mc.gameSettings.func_181147_e() == 2)
+@@ -1794,8 +1808,11 @@
+                 double d4 = (double)blockpos.getY() - d1;
+                 double d5 = (double)blockpos.getZ() - d2;
+                 Block block = this.theWorld.getBlockState(blockpos).getBlock();
++                TileEntity te = this.theWorld.getTileEntity(blockpos);
++                boolean hasBreak = block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockSign || block instanceof BlockSkull;
++                if (!hasBreak) hasBreak = te != null && te.canRenderBreaking();
+ 
+-                if (!(block instanceof BlockChest) && !(block instanceof BlockEnderChest) && !(block instanceof BlockSign) && !(block instanceof BlockSkull))
++                if (!hasBreak)
+                 {
+                     if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
+                     {
+@@ -1950,13 +1967,16 @@
+         if (recordName != null)
+         {
+             ItemRecord itemrecord = ItemRecord.getRecord(recordName);
++            ResourceLocation resource = null;
+ 
+             if (itemrecord != null)
+             {
+                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.getRecordNameLocal());
++                resource = itemrecord.getRecordResource(recordName);
+             }
+ 
+-            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(new ResourceLocation(recordName), (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
++            if (resource == null) resource = new ResourceLocation(recordName);
++            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(resource, (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
+             this.mapSoundPositions.put(blockPosIn, positionedsoundrecord);
+             this.mc.getSoundHandler().playSound(positionedsoundrecord);
+         }

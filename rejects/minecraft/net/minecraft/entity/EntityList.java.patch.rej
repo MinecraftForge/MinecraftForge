@@ -1,0 +1,13 @@
+++++ REJECTED PATCH 2
+             p_75615_0_.removeTag("Type");
+         }
+ 
++        Class oclass = null;
+         try
+         {
+-            Class oclass = (Class)stringToClassMapping.get(p_75615_0_.getString("id"));
++            oclass = (Class)stringToClassMapping.get(p_75615_0_.getString("id"));
+ 
+             if (oclass != null)
+             {
+++++ END PATCH

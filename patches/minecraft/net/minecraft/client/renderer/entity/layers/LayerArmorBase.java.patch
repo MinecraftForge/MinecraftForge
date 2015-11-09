@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
+@@ -136,11 +136,13 @@
+         GlStateManager.disableBlend();
+     }
+ 
++    @Deprecated //Use the more sensitive version getArmorResource below
+     private ResourceLocation getArmorResource(ItemArmor p_177181_1_, boolean p_177181_2_)
+     {
+         return this.getArmorResource(p_177181_1_, p_177181_2_, (String)null);
+     }
+ 
++    @Deprecated //Use the more sensitive version getArmorResource below
+     private ResourceLocation getArmorResource(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
+     {
+         String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.getArmorMaterial().getName(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});

@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
+@@ -216,13 +216,14 @@
+             this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new ChatComponentText(stringbuilder.toString()), 1);
+         }
+ 
+-        this.inputField.writeText((String)this.foundPlayerNames.get(this.autocompleteIndex++));
++        this.inputField.writeText(net.minecraft.util.EnumChatFormatting.getTextWithoutFormattingCodes((String)this.foundPlayerNames.get(this.autocompleteIndex++)));
+     }
+ 
+     private void sendAutocompleteRequest(String p_146405_1_, String p_146405_2_)
+     {
+         if (p_146405_1_.length() >= 1)
+         {
++            net.minecraftforge.client.ClientCommandHandler.instance.autoComplete(p_146405_1_, p_146405_2_);
+             BlockPos blockpos = null;
+ 
+             if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)

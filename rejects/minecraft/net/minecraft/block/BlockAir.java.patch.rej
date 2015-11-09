@@ -1,0 +1,8 @@
+++++ REJECTED PATCH 1
+     }
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {}
++
++    public boolean isReplaceable(World worldIn, BlockPos pos){ return true; }
+ }
+++++ END PATCH

@@ -1,0 +1,17 @@
+++++ REJECTED PATCH 3
+ 
+     public int getAverageGroundLevel()
+     {
+-        return this.terrainType == WorldType.FLAT ? 4 : 64;
++        return this.terrainType.getMinimumSpawnHeight(this.worldObj);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public double getVoidFogYFactor()
+     {
+-        return this.terrainType == WorldType.FLAT ? 1.0D : 0.03125D;
++        return this.terrainType.voidFadeMagnitude();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+++++ END PATCH

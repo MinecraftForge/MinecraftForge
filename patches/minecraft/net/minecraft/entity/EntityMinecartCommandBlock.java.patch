@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityMinecartCommandBlock.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityMinecartCommandBlock.java
+@@ -111,6 +111,7 @@
+ 
+     public boolean interactFirst(EntityPlayer playerIn)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, playerIn))) return true;
+         this.commandBlockLogic.func_175574_a(playerIn);
+         return false;
+     }

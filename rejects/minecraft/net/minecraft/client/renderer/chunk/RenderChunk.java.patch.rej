@@ -1,0 +1,22 @@
+++++ REJECTED PATCH 1
+                 return;
+             }
+ 
+-            regionrendercache = new RegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
++            regionrendercache = createRegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
+             p_178581_4_.setCompiledChunk(compiledchunk);
+         }
+         finally
+++++ END PATCH
+++++ REJECTED PATCH 3
+                     }
+                 }
+ 
+-                EnumWorldBlockLayer enumworldblocklayer1 = block.getBlockLayer();
++                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
++                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
++                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
+                 int i = enumworldblocklayer1.ordinal();
+ 
+                 if (block.getRenderType() != -1)
+++++ END PATCH

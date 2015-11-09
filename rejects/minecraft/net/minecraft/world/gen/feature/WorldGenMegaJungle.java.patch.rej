@@ -1,0 +1,53 @@
+++++ REJECTED PATCH 1
+             {
+                 BlockPos blockpos1 = p_180709_3_.up(i2);
+ 
+-                if (this.func_175931_a(worldIn.getBlockState(blockpos1).getBlock().getMaterial()))
++                if (this.isAirLeaves(worldIn, blockpos1))
+                 {
+                     this.func_175905_a(worldIn, blockpos1, Blocks.log, this.woodMetadata);
+ 
+++++ END PATCH
+++++ REJECTED PATCH 2
+                 {
+                     BlockPos blockpos2 = blockpos1.east();
+ 
+-                    if (this.func_175931_a(worldIn.getBlockState(blockpos2).getBlock().getMaterial()))
++                    if (this.isAirLeaves(worldIn, blockpos2))
+                     {
+                         this.func_175905_a(worldIn, blockpos2, Blocks.log, this.woodMetadata);
+ 
+++++ END PATCH
+++++ REJECTED PATCH 3
+ 
+                     BlockPos blockpos3 = blockpos1.south().east();
+ 
+-                    if (this.func_175931_a(worldIn.getBlockState(blockpos3).getBlock().getMaterial()))
++                    if (this.isAirLeaves(worldIn, blockpos3))
+                     {
+                         this.func_175905_a(worldIn, blockpos3, Blocks.log, this.woodMetadata);
+ 
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+                     BlockPos blockpos4 = blockpos1.south();
+ 
+-                    if (this.func_175931_a(worldIn.getBlockState(blockpos4).getBlock().getMaterial()))
++                    if (this.isAirLeaves(worldIn, blockpos4))
+                     {
+                         this.func_175905_a(worldIn, blockpos4, Blocks.log, this.woodMetadata);
+ 
+++++ END PATCH
+++++ REJECTED PATCH 5
+         }
+     }
+ 
+-    private boolean func_175931_a(Material p_175931_1_)
+-    {
+-        return p_175931_1_ == Material.air || p_175931_1_ == Material.leaves;
+-    }
+-
+     private void func_175932_b(World worldIn, Random p_175932_2_, BlockPos p_175932_3_, int p_175932_4_)
+     {
+         if (p_175932_2_.nextInt(3) > 0 && worldIn.isAirBlock(p_175932_3_))
+++++ END PATCH

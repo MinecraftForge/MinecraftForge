@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+             int i1 = p_180624_2_.nextInt(16);
+             BlockPos blockpos1 = p_180624_3_.add(k, l, i1);
+ 
+-            if (worldIn.getBlockState(blockpos1).getBlock() == Blocks.stone)
++            if (worldIn.getBlockState(blockpos1).getBlock().isReplaceableOreGen(worldIn, blockpos1, net.minecraft.block.state.pattern.BlockHelper.forBlock(Blocks.stone)))
+             {
+                 worldIn.setBlockState(blockpos1, Blocks.emerald_ore.getDefaultState(), 2);
+             }
+++++ END PATCH

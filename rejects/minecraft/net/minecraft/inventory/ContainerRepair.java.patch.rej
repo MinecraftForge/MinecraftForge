@@ -1,0 +1,20 @@
+++++ REJECTED PATCH 3
+ 
+             if (itemstack2 != null)
+             {
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, i2)) return;
+                 flag7 = itemstack2.getItem() == Items.enchanted_book && Items.enchanted_book.getEnchantments(itemstack2).tagCount() > 0;
+                 int k;
+                 int l;
+++++ END PATCH
+++++ REJECTED PATCH 4
+                             {
+                                 int l1 = ((Integer)iterator.next()).intValue();
+ 
+-                                if (l1 != l && !enchantment.canApplyTogether(Enchantment.getEnchantmentById(l1)))
++                                Enchantment e2 = Enchantment.getEnchantmentById(l1);
++                                if (l1 != l && !(enchantment.canApplyTogether(e2) && e2.canApplyTogether(enchantment))) //Forge BugFix: Let Both enchantments veto being together
+                                 {
+                                     flag8 = false;
+                                     ++i;
+++++ END PATCH

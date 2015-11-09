@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 3
+                 }
+             }
+         });
++        if (false){ //Forge: Removed, Fixes  MC-75630 - Exploit with signs and command blocks
+         BlockDispenser.dispenseBehaviorRegistry.putObject(Item.getItemFromBlock(Blocks.command_block), new BehaviorDefaultDispenseItem()
+         {
+             private static final String __OBFID = "CL_00002276";
+++++ END PATCH

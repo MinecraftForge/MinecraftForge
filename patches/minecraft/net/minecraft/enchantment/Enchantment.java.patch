@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
++++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -62,7 +62,7 @@
+ 
+         if (enchantmentsList[enchID] != null)
+         {
+-            throw new IllegalArgumentException("Duplicate enchantment id!");
++            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + enchantmentsList[enchID].getClass() + " Enchantment ID:" + enchID);
+         }
+         else
+         {

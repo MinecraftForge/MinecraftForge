@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerProfileCache.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerProfileCache.java
+@@ -229,6 +229,20 @@
+         {
+             IOUtils.closeQuietly((Reader)bufferedreader);
+         }
++            }
++            catch (FileNotFoundException filenotfoundexception)
++            {
++                ;
++            }
++            catch (com.google.gson.JsonParseException parsefail)
++            {
++                // No op - the cache can quietly rebuild if it's junk
++            }
++            finally
++            {
++                IOUtils.closeQuietly(bufferedreader);
++            }
++        }
+     }
+ 
+     public void func_152658_c()

@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
+@@ -23,10 +23,12 @@
+     {
+         Block block;
+ 
+-        while (((block = worldIn.getBlockState(p_180709_3_).getBlock()).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && p_180709_3_.getY() > 0)
++        do
+         {
++            block = worldIn.getBlockState(p_180709_3_).getBlock();
++            if (!block.isAir(worldIn, p_180709_3_) && !block.isLeaves(worldIn, p_180709_3_)) break;
+             p_180709_3_ = p_180709_3_.down();
+-        }
++        } while (p_180709_3_.getY() > 0);
+ 
+         for (int i = 0; i < 128; ++i)
+         {

@@ -1,0 +1,15 @@
+++++ REJECTED PATCH 2
+             String[] astring1 = p_146406_1_;
+             int i = p_146406_1_.length;
+ 
++            String[] complete = net.minecraftforge.client.ClientCommandHandler.instance.latestAutoComplete;
++            if (complete != null)
++            {
++                astring1 = com.google.common.collect.ObjectArrays.concat(complete, astring1, String.class);
++                i = astring1.length;
++            }
++
+             for (int j = 0; j < i; ++j)
+             {
+                 String s = astring1[j];
+++++ END PATCH

@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
+@@ -366,6 +366,18 @@
+         }
+     }
+ 
++    /*===================================== Forge Start ==============================*/
++    public static void setCarriable(Block block, boolean canCarry)
++    {
++        if (canCarry) carriableBlocks.add(block);
++        else          carriableBlocks.remove(block);
++    }
++    public static boolean getCarriable(Block block)
++    {
++        return carriableBlocks.contains(block);
++    }
++    /*===================================== Forge End ==============================*/
++
+     public boolean isScreaming()
+     {
+         return this.dataWatcher.getWatchableObjectByte(18) > 0;

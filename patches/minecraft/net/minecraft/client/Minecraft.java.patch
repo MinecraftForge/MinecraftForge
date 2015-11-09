@@ -1,0 +1,244 @@
+--- ../src-base/minecraft/net/minecraft/client/Minecraft.java
++++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
+@@ -302,7 +302,6 @@
+         this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
+         this.session = gameConfig.userInfo.session;
+         logger.info("Setting user: " + this.session.getUsername());
+-        logger.info("(Session ID is " + this.session.getSessionID() + ")");
+         this.isDemo = gameConfig.gameInfo.isDemo;
+         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
+         this.displayHeight = gameConfig.displayInfo.height > 0 ? gameConfig.displayInfo.height : 1;
+@@ -416,10 +415,10 @@
+         this.mcResourceManager = new SimpleReloadableResourceManager(this.metadataSerializer_);
+         this.mcLanguageManager = new LanguageManager(this.metadataSerializer_, this.gameSettings.language);
+         this.mcResourceManager.registerReloadListener(this.mcLanguageManager);
+-        this.refreshResources();
++        net.minecraftforge.fml.client.FMLClientHandler.instance().beginMinecraftLoading(this, this.defaultResourcePacks, this.mcResourceManager);
+         this.renderEngine = new TextureManager(this.mcResourceManager);
+         this.mcResourceManager.registerReloadListener(this.renderEngine);
+-        this.drawSplashScreen(this.renderEngine);
++        net.minecraftforge.fml.client.SplashProgress.drawVanillaScreen(this.renderEngine);
+         this.initStream();
+         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
+         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
+@@ -455,6 +454,8 @@
+             }
+         });
+         this.mouseHelper = new MouseHelper();
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 5, true);
++        bar.step("GL Setup");
+         this.checkGLError("Pre startup");
+         GlStateManager.enableTexture2D();
+         GlStateManager.shadeModel(7425);
+@@ -468,17 +469,21 @@
+         GlStateManager.loadIdentity();
+         GlStateManager.matrixMode(5888);
+         this.checkGLError("Startup");
+-        this.textureMapBlocks = new TextureMap("textures");
++        bar.step("Loading Texture Map");
++        this.textureMapBlocks = new TextureMap("textures",true);
+         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
+         this.renderEngine.loadTickableTexture(TextureMap.locationBlocksTexture, this.textureMapBlocks);
+         this.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+         this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
++        bar.step("Loading Model Manager");
+         this.modelManager = new ModelManager(this.textureMapBlocks);
+         this.mcResourceManager.registerReloadListener(this.modelManager);
++        bar.step("Loading Item Renderer");
+         this.renderItem = new RenderItem(this.renderEngine, this.modelManager);
+         this.renderManager = new RenderManager(this.renderEngine, this.renderItem);
+         this.itemRenderer = new ItemRenderer(this);
+         this.mcResourceManager.registerReloadListener(this.renderItem);
++        bar.step("Loading Entity Renderer");
+         this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
+         this.mcResourceManager.registerReloadListener(this.entityRenderer);
+         this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.gameSettings);
+@@ -488,22 +493,25 @@
+         this.guiAchievement = new GuiAchievement(this);
+         GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
+         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
++        net.minecraftforge.fml.client.FMLClientHandler.instance().finishMinecraftLoading();
+         this.checkGLError("Post startup");
+-        this.ingameGUI = new GuiIngame(this);
++        this.ingameGUI = new net.minecraftforge.client.GuiIngameForge(this);
+ 
+         if (this.serverName != null)
+         {
+-            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
++            net.minecraftforge.fml.client.FMLClientHandler.instance().connectToServerAtStartup(this.serverName, this.serverPort);
+         }
+         else
+         {
+             this.displayGuiScreen(new GuiMainMenu());
+         }
+ 
+-        this.renderEngine.deleteTexture(this.mojangLogo);
++        net.minecraftforge.fml.client.SplashProgress.clearVanillaResources(renderEngine, mojangLogo);
+         this.mojangLogo = null;
+         this.loadingScreen = new LoadingScreenRenderer(this);
+ 
++        net.minecraftforge.fml.client.FMLClientHandler.instance().onInitializationComplete();
+         if (this.gameSettings.fullScreen && !this.fullscreen)
+         {
+             this.toggleFullscreen();
+@@ -684,21 +692,23 @@
+         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+         Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
+ 
++        int retVal;
+         if (crashReportIn.getFile() != null)
+         {
+             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else if (crashReportIn.saveToFile(file2))
+         {
+             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else
+         {
+             Bootstrap.printToSYSOUT("#@?@# Game crashed! Crash report could not be saved. #@?@#");
+-            System.exit(-2);
++            retVal = -2;
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleExit(retVal);
+     }
+ 
+     public boolean isUnicode()
+@@ -886,11 +896,6 @@
+ 
+     public void displayGuiScreen(GuiScreen guiScreenIn)
+     {
+-        if (this.currentScreen != null)
+-        {
+-            this.currentScreen.onGuiClosed();
+-        }
+-
+         if (guiScreenIn == null && this.theWorld == null)
+         {
+             guiScreenIn = new GuiMainMenu();
+@@ -900,6 +905,17 @@
+             guiScreenIn = new GuiGameOver();
+         }
+ 
++        GuiScreen old = this.currentScreen;
++        net.minecraftforge.client.event.GuiOpenEvent event = new net.minecraftforge.client.event.GuiOpenEvent(guiScreenIn);
++
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
++
++        guiScreenIn = event.gui;
++        if (old != null && guiScreenIn != old)
++        {
++            old.onGuiClosed();
++        }
++
+         if (guiScreenIn instanceof GuiMainMenu)
+         {
+             this.gameSettings.showDebugInfo = false;
+@@ -1380,7 +1396,7 @@
+ 
+                 if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air && this.playerController.func_180512_c(blockpos, this.objectMouseOver.sideHit))
+                 {
+-                    this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver.sideHit);
++                    this.effectRenderer.addBlockHitEffects(blockpos, this.objectMouseOver);
+                     this.thePlayer.swingItem();
+                 }
+             }
+@@ -1601,6 +1617,8 @@
+             --this.rightClickDelayTimer;
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreClientTick();
++
+         this.mcProfiler.startSection("gui");
+ 
+         if (!this.isGamePaused)
+@@ -1750,6 +1768,7 @@
+                         this.currentScreen.handleMouseInput();
+                     }
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
+             }
+ 
+             if (this.leftClickCounter > 0)
+@@ -1928,6 +1947,7 @@
+                         }
+                     }
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireKeyInput();
+             }
+ 
+             for (int l = 0; l < 9; ++l)
+@@ -2124,12 +2144,15 @@
+             this.myNetworkManager.processReceivedPackets();
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostClientTick();
++
+         this.mcProfiler.endSection();
+         this.systemTime = getSystemTime();
+     }
+ 
+     public void launchIntegratedServer(String folderName, String worldName, WorldSettings worldSettingsIn)
+     {
++        net.minecraftforge.fml.client.FMLClientHandler.instance().startIntegratedServer(folderName, worldName, worldSettingsIn);
+         this.loadWorld((WorldClient)null);
+         System.gc();
+         ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
+@@ -2190,8 +2213,14 @@
+         SocketAddress socketaddress = this.theIntegratedServer.getNetworkSystem().addLocalEndpoint();
+         NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
+         networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
+-        networkmanager.sendPacket(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN));
+-        networkmanager.sendPacket(new C00PacketLoginStart(this.getSession().getProfile()));
++        networkmanager.sendPacket(new C00Handshake(47, socketaddress.toString(), 0, EnumConnectionState.LOGIN, true));
++        com.mojang.authlib.GameProfile gameProfile = this.getSession().getProfile();
++        if (!this.getSession().hasCachedProperties())
++        {
++            gameProfile = sessionService.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
++            this.getSession().setProperties(gameProfile.getProperties());
++        }
++        networkmanager.sendPacket(new C00PacketLoginStart(gameProfile));
+         this.myNetworkManager = networkmanager;
+     }
+ 
+@@ -2202,6 +2231,8 @@
+ 
+     public void loadWorld(WorldClient worldClientIn, String loadingMessage)
+     {
++        if (theWorld != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(theWorld));
++
+         if (worldClientIn == null)
+         {
+             NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
+@@ -2215,6 +2246,18 @@
+             {
+                 this.theIntegratedServer.initiateShutdown();
+                 this.theIntegratedServer.setStaticInstance();
++                if (loadingScreen != null)
++                {
++                    this.loadingScreen.displayLoadingString(I18n.format("forge.client.shutdown.internal"));
++                }
++                while (!theIntegratedServer.isServerStopped())
++                {
++                    try
++                    {
++                        Thread.sleep(10);
++                    }
++                    catch (InterruptedException ie) {}
++                }
+             }
+ 
+             this.theIntegratedServer = null;
+@@ -2237,6 +2280,7 @@
+             this.ingameGUI.func_181029_i();
+             this.setServerData((ServerData)null);
+             this.integratedServerIsRunning = false;
++            net.minecraftforge.fml.client.FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
+         }
+ 
+         this.mcSoundHandler.stopSounds();

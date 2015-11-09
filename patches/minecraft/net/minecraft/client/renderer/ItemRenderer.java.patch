@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -314,7 +314,7 @@
+ 
+         if (this.itemToRender != null)
+         {
+-            if (this.itemToRender.getItem() == Items.filled_map)
++            if (this.itemToRender.getItem() instanceof net.minecraft.item.ItemMap)
+             {
+                 this.func_178097_a(abstractclientplayer, f2, f, f1);
+             }
+@@ -384,6 +384,7 @@
+ 
+             if (iblockstate.getBlock().getRenderType() != -1)
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, blockpos))
+                 this.func_178108_a(p_78447_1_, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
+             }
+         }
+@@ -392,11 +393,13 @@
+         {
+             if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(mc.thePlayer, p_78447_1_))
+                 this.renderWaterOverlayTexture(p_78447_1_);
+             }
+ 
+             if (this.mc.thePlayer.isBurning())
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(mc.thePlayer, p_78447_1_))
+                 this.renderFireInFirstPerson(p_78447_1_);
+             }
+         }
+@@ -513,6 +516,12 @@
+         {
+             if (!this.itemToRender.getIsItemStackEqual(itemstack))
+             {
++                if (!this.itemToRender.getItem().shouldCauseReequipAnimation(this.itemToRender, itemstack, equippedItemSlot != entityplayersp.inventory.currentItem))
++                {
++                    this.itemToRender = itemstack;
++                    this.equippedItemSlot = entityplayersp.inventory.currentItem;
++                    return;
++                }
+                 flag = true;
+             }
+         }

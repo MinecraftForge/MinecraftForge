@@ -1,0 +1,23 @@
+++++ REJECTED PATCH 2
+             else
+             {
+                 worldclient.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
+-                boolean flag = worldclient.setBlockToAir(pos);
++                boolean flag = block1.removedByPlayer(worldclient, pos, mc.thePlayer, false);
+ 
+                 if (flag)
+                 {
+++++ END PATCH
+++++ REJECTED PATCH 5
+             {
+                 playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = itemstack1;
+ 
+-                if (itemstack1.stackSize == 0)
++                if (itemstack1.stackSize <= 0)
+                 {
+                     playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = null;
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(playerIn, itemstack1);
+                 }
+ 
+                 return true;
+++++ END PATCH

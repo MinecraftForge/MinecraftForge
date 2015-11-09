@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
+@@ -73,7 +73,7 @@
+     public RenderItem(TextureManager textureManager, ModelManager modelManager)
+     {
+         this.textureManager = textureManager;
+-        this.itemModelMesher = new ItemModelMesher(modelManager);
++        this.itemModelMesher = new net.minecraftforge.client.ItemModelMesherForge(modelManager);
+         this.registerItems();
+     }
+ 
+@@ -250,6 +250,10 @@
+             {
+                 GlStateManager.scale(2.0F, 2.0F, 2.0F);
+             }
++            else
++            {
++                modelresourcelocation = item.getModel(stack, entityplayer, entityplayer.getItemInUseCount());
++            }
+ 
+             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         }

@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 3
+             ItemStack itemstack2 = (ItemStack)arraylist.get(0);
+             itemstack = (ItemStack)arraylist.get(1);
+ 
+-            if (itemstack2.getItem() == itemstack.getItem() && itemstack2.stackSize == 1 && itemstack.stackSize == 1 && itemstack2.getItem().isDamageable())
++            if (itemstack2.getItem() == itemstack.getItem() && itemstack2.stackSize == 1 && itemstack.stackSize == 1 && itemstack2.getItem().isRepairable())
+             {
+                 Item item = itemstack2.getItem();
+                 int j = item.getMaxDamage() - itemstack2.getItemDamage();
+++++ END PATCH

@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
+@@ -132,4 +132,11 @@
+             this.func_175925_a(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
+         }
+     }
++
++    //Helper macro
++    private boolean isAirLeaves(World world, BlockPos pos)
++    {
++        net.minecraft.block.Block block = world.getBlockState(pos).getBlock();
++        return block.isAir(world, pos) || block.isLeaves(world, pos);
++    }
+ }

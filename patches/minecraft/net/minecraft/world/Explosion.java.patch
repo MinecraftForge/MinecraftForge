@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/world/Explosion.java
++++ ../src-work/minecraft/net/minecraft/world/Explosion.java
+@@ -39,6 +39,7 @@
+     private final List<BlockPos> affectedBlockPositions;
+     private final Map<EntityPlayer, Vec3> field_77288_k;
+     private static final String __OBFID = "CL_00000134";
++    private final Vec3 position;
+ 
+     @SideOnly(Side.CLIENT)
+     public Explosion(World worldIn, Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_)
+@@ -66,6 +67,7 @@
+         this.explosionZ = p_i45754_7_;
+         this.isFlaming = p_i45754_10_;
+         this.isSmoking = p_i45754_11_;
++        this.position = new Vec3(explosionX, explosionY, explosionZ);
+     }
+ 
+     public void doExplosionA()
+@@ -100,7 +102,7 @@
+ 
+                             if (iblockstate.getBlock().getMaterial() != Material.air)
+                             {
+-                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance((Entity)null);
++                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(worldObj, blockpos, (Entity)null, this);
+                                 f -= (f2 + 0.3F) * 0.3F;
+                             }
+ 
+@@ -214,8 +216,7 @@
+                         block.dropBlockAsItemWithChance(this.worldObj, blockpos, this.worldObj.getBlockState(blockpos), 1.0F / this.explosionSize, 0);
+                     }
+ 
+-                    this.worldObj.setBlockState(blockpos, Blocks.air.getDefaultState(), 3);
+-                    block.onBlockDestroyedByExplosion(this.worldObj, blockpos, this);
++                    block.onBlockExploded(this.worldObj, blockpos, this);
+                 }
+             }
+         }
+@@ -251,4 +252,6 @@
+     {
+         return this.affectedBlockPositions;
+     }
++
++    public Vec3 getPosition(){ return this.position; }
+ }

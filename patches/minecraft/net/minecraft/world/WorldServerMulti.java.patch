@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
++++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
+@@ -11,13 +11,14 @@
+ public class WorldServerMulti extends WorldServer
+ {
+     private WorldServer delegate;
++    private IBorderListener borderListener;
+     private static final String __OBFID = "CL_00001430";
+ 
+     public WorldServerMulti(MinecraftServer server, ISaveHandler saveHandlerIn, int dimensionId, WorldServer delegate, Profiler profilerIn)
+     {
+         super(server, saveHandlerIn, new DerivedWorldInfo(delegate.getWorldInfo()), dimensionId, profilerIn);
+         this.delegate = delegate;
+-        delegate.getWorldBorder().addListener(new IBorderListener()
++        this.borderListener = new IBorderListener()
+         {
+             private static final String __OBFID = "CL_00002273";
+             public void onSizeChanged(WorldBorder border, double newSize)
+@@ -75,4 +76,12 @@
+ 
+         return this;
+     }
++
++
++    @Override
++    public void flush()
++    {
++        super.flush();
++        this.delegate.getWorldBorder().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
++    }
+ }

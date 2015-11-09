@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureNetherBridgePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureNetherBridgePieces.java
+@@ -156,7 +156,7 @@
+                 if (this.field_111021_b && p_74875_3_.func_175898_b(new BlockPos(this.getXWithOffset(3, 3), this.getYWithOffset(2), this.getZWithOffset(3, 3))))
+                 {
+                     this.field_111021_b = false;
+-                    this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 3, 2, 3, field_111019_a, 2 + p_74875_2_.nextInt(4));
++                    this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 3, 2, 3, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.NETHER_FORTRESS, p_74875_2_), net.minecraftforge.common.ChestGenHooks.getCount(net.minecraftforge.common.ChestGenHooks.NETHER_FORTRESS, p_74875_2_));
+                 }
+ 
+                 this.func_175804_a(worldIn, p_74875_3_, 0, 6, 0, 4, 6, 4, Blocks.nether_brick.getDefaultState(), Blocks.nether_brick.getDefaultState(), false);
+@@ -228,7 +228,7 @@
+                 if (this.field_111020_b && p_74875_3_.func_175898_b(new BlockPos(this.getXWithOffset(1, 3), this.getYWithOffset(2), this.getZWithOffset(1, 3))))
+                 {
+                     this.field_111020_b = false;
+-                    this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 1, 2, 3, field_111019_a, 2 + p_74875_2_.nextInt(4));
++                    this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 1, 2, 3, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.NETHER_FORTRESS, p_74875_2_), net.minecraftforge.common.ChestGenHooks.getCount(net.minecraftforge.common.ChestGenHooks.NETHER_FORTRESS, p_74875_2_));
+                 }
+ 
+                 this.func_175804_a(worldIn, p_74875_3_, 0, 6, 0, 4, 6, 4, Blocks.nether_brick.getDefaultState(), Blocks.nether_brick.getDefaultState(), false);

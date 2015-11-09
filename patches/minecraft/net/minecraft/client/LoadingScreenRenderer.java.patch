@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/client/LoadingScreenRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/LoadingScreenRenderer.java
+@@ -140,6 +140,10 @@
+                     GlStateManager.clear(16640);
+                 }
+ 
++                try
++                {
++                if (!net.minecraftforge.fml.client.FMLClientHandler.instance().handleLoadingScreen(scaledresolution)) //FML Don't render while FML's pre-screen is rendering
++                {
+                 Tessellator tessellator = Tessellator.getInstance();
+                 WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+                 this.mc.getTextureManager().bindTexture(Gui.optionsBackground);

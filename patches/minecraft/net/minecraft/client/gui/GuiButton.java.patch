@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiButton.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiButton.java
+@@ -22,6 +22,7 @@
+     public boolean visible;
+     protected boolean hovered;
+     private static final String __OBFID = "CL_00000668";
++    public int packedFGColour; //FML
+ 
+     public GuiButton(int buttonId, int x, int y, String buttonText)
+     {

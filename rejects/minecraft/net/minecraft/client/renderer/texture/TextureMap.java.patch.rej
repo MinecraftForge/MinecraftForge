@@ -1,0 +1,118 @@
+++++ REJECTED PATCH 3
+ 
+     public TextureMap(String p_i46100_1_, IIconCreator iconCreatorIn)
+     {
++        this(p_i46100_1_, iconCreatorIn, false);
++    }
++
++    public TextureMap(String p_i46100_1_, boolean skipFirst)
++    {
++        this(p_i46100_1_, null, skipFirst);
++    }
++
++    public TextureMap(String p_i46100_1_, IIconCreator iconCreatorIn, boolean skipFirst)
++    {
+         this.listAnimatedSprites = Lists.newArrayList();
+         this.mapRegisteredSprites = Maps.newHashMap();
+         this.mapUploadedSprites = Maps.newHashMap();
+         this.missingImage = new TextureAtlasSprite("missingno");
+         this.basePath = p_i46100_1_;
+         this.iconCreator = iconCreatorIn;
++        this.skipFirst = skipFirst && ENABLE_SKIP;
+     }
+ 
+     private void initMissingImage()
+++++ END PATCH
+++++ REJECTED PATCH 4
+         this.listAnimatedSprites.clear();
+         int j = Integer.MAX_VALUE;
+         int k = 1 << this.mipmapLevels;
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
++        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.mapRegisteredSprites.size());
+         Iterator iterator = this.mapRegisteredSprites.entrySet().iterator();
+ 
+-        while (iterator.hasNext())
++        while (!skipFirst && iterator.hasNext())
+         {
+             Entry entry = (Entry)iterator.next();
+             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             ResourceLocation resourcelocation = new ResourceLocation(textureatlassprite.getIconName());
+             ResourceLocation resourcelocation1 = this.completeResourceLocation(resourcelocation, 0);
++            bar.step(resourcelocation1.getResourcePath());
+ 
++            if (textureatlassprite.hasCustomLoader(resourceManager, resourcelocation))
++            {
++                if (!textureatlassprite.load(resourceManager, resourcelocation))
++                {
++                    j = Math.min(j, Math.min(textureatlassprite.getIconWidth(), textureatlassprite.getIconHeight()));
++                    stitcher.addSprite(textureatlassprite);
++                }
++                continue;
++            }
++
+             try
+             {
+                 IResource iresource = resourceManager.getResource(resourcelocation1);
+++++ END PATCH
+++++ REJECTED PATCH 5
+             }
+             catch (RuntimeException runtimeexception)
+             {
+-                logger.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
++                //logger.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation1, runtimeexception.getMessage());
+                 continue;
+             }
+             catch (IOException ioexception1)
+             {
+-                logger.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                //logger.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation1);
+                 continue;
+             }
+ 
+++++ END PATCH
+++++ REJECTED PATCH 7
+         }
+ 
+         Iterator iterator1 = this.mapRegisteredSprites.values().iterator();
++        bar = net.minecraftforge.fml.common.ProgressManager.push("Mipmap generation", skipFirst ? 0 : this.mapRegisteredSprites.size());
+ 
+-        while (iterator1.hasNext())
++        while (!skipFirst && iterator1.hasNext())
+         {
+             final TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)iterator1.next();
++            bar.step(textureatlassprite1.getIconName());
+ 
+             try
+             {
+++++ END PATCH
+++++ REJECTED PATCH 9
+         }
+ 
+         logger.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
++        bar.step("Allocating GL texture");
+         TextureUtil.allocateTextureImpl(this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
+         HashMap hashmap = Maps.newHashMap(this.mapRegisteredSprites);
+         Iterator iterator2 = stitcher.getStichSlots().iterator();
+         TextureAtlasSprite textureatlassprite2;
+ 
++        bar.step("Uploading GL texture");
+         while (iterator2.hasNext())
+         {
+             textureatlassprite2 = (TextureAtlasSprite)iterator2.next();
+++++ END PATCH
+++++ REJECTED PATCH 10
+             textureatlassprite2.copyFrom(this.missingImage);
+         }
+ 
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
++
++        if (!net.minecraftforge.common.ForgeModContainer.disableStitchedFileSaving)
+         TextureUtil.saveGlTexture(this.basePath.replaceAll("/", "_"), this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
+     }
+ 
+     private ResourceLocation completeResourceLocation(ResourceLocation location, int p_147634_2_)
+++++ END PATCH

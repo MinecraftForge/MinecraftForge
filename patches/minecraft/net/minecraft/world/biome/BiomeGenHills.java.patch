@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
+@@ -50,7 +50,7 @@
+             int i1 = p_180624_2_.nextInt(16);
+             BlockPos blockpos = p_180624_3_.add(k, l, i1);
+ 
+-            if (worldIn.getBlockState(blockpos).getBlock() == Blocks.stone)
++            if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockHelper.forBlock(Blocks.stone)))
+             {
+                 worldIn.setBlockState(blockpos, Blocks.emerald_ore.getDefaultState(), 2);
+             }

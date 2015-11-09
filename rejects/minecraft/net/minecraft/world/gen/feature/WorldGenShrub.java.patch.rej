@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 2
+                         {
+                             BlockPos blockpos1 = new BlockPos(l, i, j1);
+ 
+-                            if (!worldIn.getBlockState(blockpos1).getBlock().isFullBlock())
++                            if (worldIn.getBlockState(blockpos1).getBlock().canBeReplacedByLeaves(worldIn, blockpos1))
+                             {
+                                 this.func_175905_a(worldIn, blockpos1, Blocks.leaves, this.field_150528_a);
+                             }
+++++ END PATCH

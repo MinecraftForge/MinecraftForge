@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
++++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
+@@ -57,6 +57,19 @@
+         }
+     }
+ 
++    // -- Forge hooks
++    /**
++     * Allow a mod to submit a custom implementation that can delegate item stack generation beyond simple stack lookup
++     *
++     * @param random The current random for generation
++     * @param newInventory The inventory being generated (do not populate it, but you can refer to it)
++     * @return An array of {@link ItemStack} to put into the chest
++     */
++    protected ItemStack[] generateChestContent(Random random, IInventory newInventory)
++    {
++        return net.minecraftforge.common.ChestGenHooks.generateStacks(random, theItemId, theMinimumChanceToGenerateItem, theMaximumChanceToGenerateItem);
++    }
++
+     public static void generateDispenserContents(Random random, List<WeightedRandomChestContent> p_177631_1_, TileEntityDispenser dispenser, int p_177631_3_)
+     {
+         for (int i = 0; i < p_177631_3_; ++i)

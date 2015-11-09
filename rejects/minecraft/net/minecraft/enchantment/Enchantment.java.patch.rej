@@ -1,0 +1,55 @@
+++++ REJECTED PATCH 2
+ 
+     public boolean canApply(ItemStack stack)
+     {
+-        return this.type.canEnchantItem(stack.getItem());
++        return canApplyAtEnchantingTable(stack);
+     }
+ 
+     public void onEntityDamaged(EntityLivingBase user, Entity target, int level) {}
+ 
+     public void onUserHurt(EntityLivingBase user, Entity attacker, int level) {}
+ 
++    /**
++     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
++     * applies for <i>all possible</i> enchantments.
++     * @param stack
++     * @return
++     */
++    public boolean canApplyAtEnchantingTable(ItemStack stack)
++    {
++        return this.type.canEnchantItem(stack.getItem());
++    }
++
++    private static final java.lang.reflect.Field bookSetter = Enchantment.class.getDeclaredFields()[1];
++    /**
++     * Add to the list of enchantments applicable by the anvil from a book
++     *
++     * @param enchantment
++     */
++    public static void addToBookList(Enchantment enchantment)
++    {
++        try
++        {
++            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
++                com.google.common.collect.ObjectArrays.concat(enchantmentsBookList, enchantment));
++        }
++        catch (Exception e)
++        {
++            throw new RuntimeException(e); //Rethrow see what happens
++        }
++    }
++
++    /**
++     * Is this enchantment allowed to be enchanted on books via Enchantment Table
++     * @return false to disable the vanilla feature
++     */
++    public boolean isAllowedOnBooks()
++    {
++        return true;
++    }
++
+     static
+     {
+         ArrayList var0 = Lists.newArrayList();
+++++ END PATCH

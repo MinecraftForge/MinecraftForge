@@ -1,0 +1,15 @@
+++++ REJECTED PATCH 1
+         {
+             sizeTracker.read(8L);
+             this.tagType = input.readByte();
++            sizeTracker.read(32); //Forge: Count the length as well
+             int j = input.readInt();
+             this.tagList = Lists.newArrayList();
+ 
+             for (int k = 0; k < j; ++k)
+             {
++                sizeTracker.read(32); //Forge: 4 extra bytes for the object allocation.
+                 NBTBase nbtbase = NBTBase.createNewByType(this.tagType);
+                 nbtbase.read(input, depth + 1, sizeTracker);
+                 this.tagList.add(nbtbase);
+++++ END PATCH

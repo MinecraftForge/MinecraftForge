@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
+@@ -580,6 +580,14 @@
+         }
+     }
+ 
++    public void checkAndGrow()
++    {
++        if (this.rawBufferIndex >= this.bufferSize - this.vertexFormat.getNextOffset())
++        {
++            this.growBuffer(2097152);
++        }
++    }
++
+     @SideOnly(Side.CLIENT)
+     public class State
+     {

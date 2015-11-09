@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
+@@ -102,7 +102,7 @@
+                                     BlockPos blockpos = new BlockPos(i3, i2, k1);
+                                     Block block = worldIn.getBlockState(blockpos).getBlock();
+ 
+-                                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
++                                    if (block.isAir(worldIn, blockpos1) || block.isLeaves(worldIn, blockpos1))
+                                     {
+                                         this.func_175903_a(worldIn, blockpos, field_181630_b);
+                                     }
