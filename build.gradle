@@ -51,6 +51,7 @@ minecraft {
             patchAfter "clean"
             genPatchesFrom "clean"
             genMcpPatches = true
+            applyMcpPatches = true
             with common
         }
     }

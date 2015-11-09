@@ -255,6 +255,7 @@ public class ForgeVersion
 
     public static CheckResult getResult(ModContainer mod)
     {
+        if (mod == null) return PENDING_CHECK;
         if (mod instanceof InjectedModContainer)
             mod = ((InjectedModContainer)mod).wrappedContainer;
         CheckResult ret = results.get(mod);
