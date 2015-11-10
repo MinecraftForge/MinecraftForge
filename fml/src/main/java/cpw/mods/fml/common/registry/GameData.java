@@ -39,6 +39,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -735,6 +736,8 @@ public class GameData {
 
             getMain().set(frozen);
         }
+        // the id mapping has reverted, fire remap events for those that care about id changes
+        Loader.instance().fireRemapEvent(ImmutableMap.<String,Integer[]>of());
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
     }
