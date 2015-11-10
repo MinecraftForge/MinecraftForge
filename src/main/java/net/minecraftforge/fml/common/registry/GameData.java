@@ -351,6 +351,8 @@ public class GameData {
         getMain().iBlockRegistry.dump();
         getMain().iItemRegistry.dump();
 
+        getMain().iItemRegistry.resetSubstitutionDelegates();
+
         GameDataSnapshot.Entry blocks = snapshot.entries.get("fml:blocks");
         GameDataSnapshot.Entry items = snapshot.entries.get("fml:items");
 
@@ -655,6 +657,8 @@ public class GameData {
 
             getMain().set(frozen);
         }
+        // the id mapping has reverted, fire remap events for those that care about id changes
+        Loader.instance().fireRemapEvent(ImmutableMap.<String,Integer[]>of(), ImmutableMap.<String,Integer[]>of());
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
     }

@@ -10,8 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
@@ -20,6 +22,7 @@ import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
+import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -54,6 +57,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             int id = getId(obj);
             Object name = getNameForObject(obj);
+            boolean isSubstituted = activeSubstitutions.containsKey(name);
 
             // name lookup failed -> obj is not in the obj<->name map
             if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
@@ -63,19 +67,21 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             if (loc == null && nameS == null) throw new IllegalStateException(String.format("Registry entry for %s %s name is invalid, must be a String or ResourceLocation %s", type, obj, name));
 
             // id lookup failed -> obj is not in the obj<->id map
-            if (id < 0) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", type, obj, name));
+            if (!isSubstituted && id < 0) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", type, obj, name));
             // id is too high
             if (id > maxId) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", type, obj, name));
             // empty name
             if (name.toString().isEmpty()) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, yields an empty name.", type, obj, id));
             // non-prefixed name
             if (name.toString().indexOf(':') == -1) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, has the non-prefixed name %s.", type, obj, id, name));
+            // the rest of the tests don't really work for substituted items or blocks
+            if (isSubstituted) continue;
             // id -> obj lookup is inconsistent
             if (getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
             // name -> obj lookup is inconsistent
-            if (!(activeSubstitutions.containsKey(name) || activeSubstitutions.containsValue(name)) && getRaw(nameS) != obj ) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
+            if (getRaw(nameS) != obj ) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
             // name -> id lookup is inconsistent
-            if (!(activeSubstitutions.containsKey(name) || activeSubstitutions.containsValue(name)) && getId(nameS) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+            if (getId(nameS) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
             // id isn't marked as unavailable
             if (!availabilityMap.get(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as empty.", type, obj, id, name));
             // entry is blocked, thus should be empty
@@ -510,6 +516,19 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     {
         if (getPersistentSubstitutions().containsKey(nameToReplace))
         {
+            I original = getRaw(nameToReplace);
+            if (superType == Item.class) {
+                Item sub = (Item) getPersistentSubstitutions().get(nameToReplace);
+                if (original == null) {
+                    // When we're activated from the server side, we need to set the delegate on the original instance to
+                    // point to us. Go to the "default state" registry to get it
+                    original = (I)GameData.getItemRegistry().getRaw(nameToReplace);
+                }
+                FMLLog.log(Level.DEBUG, "Replacing %s with %s (name %s)", original, sub, nameToReplace);
+                Delegate<Item> delegate = (Delegate<Item>)((Item)original).delegate;
+                delegate.changeReference(sub);
+                ((Delegate<Item>)sub.delegate).setName(nameToReplace);
+            }
             activeSubstitutions.put(nameToReplace, getPersistentSubstitutions().get(nameToReplace));
         }
     }
@@ -537,6 +556,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             FMLLog.severe("The substitute %s for %s is registered into the game independently. This won't work", replacement.getClass().getName(), nameToReplace);
             throw new IllegalArgumentException("The object substitution is already registered. This won't work");
         }
+        FMLLog.log(Level.DEBUG, "Adding substitution %s with %s (name %s)", original, replacement, nameToReplace);
         getPersistentSubstitutions().put(nameToReplace, replacement);
     }
 
@@ -555,9 +575,28 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         if (this.optionalDefaultKey != null)
             Validate.notNull(this.optionalDefaultObject);
     }
+    /*
+     * This iterator is used by some regular MC methods to visit all blocks, we need to include substitutions
+     * Compare #typeSafeIterable()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Iterator<I> iterator()
+    {
+        return Iterators.concat(super.iterator(),getPersistentSubstitutions().values().iterator());
+    }
+
 
 
     FMLControlledNamespacedRegistry<I> makeShallowCopy() {
         return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, maxId, minId, superType);
+    }
+    // ONLY CALLED ON ITEM registry
+    void resetSubstitutionDelegates()
+    {
+        for (I item: typeSafeIterable()) {
+            Delegate<Item> delegate = (Delegate<Item>)((Item)item).delegate;
+            delegate.changeReference((Item)item);
+        }
     }
 }
