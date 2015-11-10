@@ -1010,7 +1010,7 @@ public class GameData {
             .put("minecraft:items", Item.class).build());
 
     private void findSuperTypes(Class<?> type, Set<Class<?>> types) {
-        if (type == Object.class) {
+        if (type == null || type == Object.class) {
             return;
         }
         types.add(type);
