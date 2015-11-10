@@ -16,7 +16,37 @@
          {
              private static final String __OBFID = "CL_00002273";
              public void onSizeChanged(WorldBorder border, double newSize)
-@@ -75,4 +76,12 @@
+@@ -48,11 +49,13 @@
+             {
+                 WorldServerMulti.this.getWorldBorder().setDamageBuffer(newSize);
+             }
+-        });
++        };
++        this.delegate.getWorldBorder().addListener(this.borderListener);
+     }
+ 
+     protected void saveLevel() throws MinecraftException
+     {
++        this.perWorldStorage.saveAllData();
+     }
+ 
+     public World init()
+@@ -60,12 +63,12 @@
+         this.mapStorage = this.delegate.getMapStorage();
+         this.worldScoreboard = this.delegate.getScoreboard();
+         String s = VillageCollection.fileNameForProvider(this.provider);
+-        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, s);
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.loadData(VillageCollection.class, s);
+ 
+         if (villagecollection == null)
+         {
+             this.villageCollectionObj = new VillageCollection(this);
+-            this.mapStorage.setData(s, this.villageCollectionObj);
++            this.perWorldStorage.setData(s, this.villageCollectionObj);
+         }
+         else
+         {
+@@ -75,4 +78,12 @@
  
          return this;
      }

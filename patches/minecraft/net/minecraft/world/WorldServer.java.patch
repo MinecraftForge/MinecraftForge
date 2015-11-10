@@ -60,7 +60,15 @@
          this.theProfiler.endSection();
          this.sendQueuedBlockEvents();
      }
-@@ -269,10 +289,7 @@
+@@ -218,6 +238,7 @@
+     public BiomeGenBase.SpawnListEntry func_175734_a(EnumCreatureType p_175734_1_, BlockPos p_175734_2_)
+     {
+         List<BiomeGenBase.SpawnListEntry> list = this.getChunkProvider().func_177458_a(p_175734_1_, p_175734_2_);
++        list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(this, p_175734_1_, p_175734_2_, list);
+         return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
+     }
+ 
+@@ -269,10 +290,7 @@
  
      private void resetRainAndThunder()
      {
@@ -72,7 +80,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -350,7 +367,7 @@
+@@ -350,7 +368,7 @@
                  chunk.func_150804_b(false);
                  this.theProfiler.endStartSection("thunder");
  
@@ -81,7 +89,7 @@
                  {
                      this.updateLCG = this.updateLCG * 3 + 1013904223;
                      int i1 = this.updateLCG >> 2;
-@@ -364,7 +381,7 @@
+@@ -364,7 +382,7 @@
  
                  this.theProfiler.endStartSection("iceandsnow");
  
@@ -90,7 +98,17 @@
                  {
                      this.updateLCG = this.updateLCG * 3 + 1013904223;
                      int k2 = this.updateLCG >> 2;
-@@ -510,7 +527,7 @@
+@@ -458,6 +476,9 @@
+             if (p_175654_2_.requiresUpdates())
+             {
+                 i = 8;
++                //Keeping here as a note for future when it may be restored.
++                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.position.getX() >> 4, nextticklistentry.position.getZ() >> 4));
++                i = isForced ? 0 : 8;
+ 
+                 if (this.isAreaLoaded(nextticklistentry.position.add(-i, -i, -i), nextticklistentry.position.add(i, i, i)))
+                 {
+@@ -510,7 +531,7 @@
  
      public void updateEntities()
      {
@@ -99,7 +117,53 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -714,6 +731,10 @@
+@@ -575,6 +596,9 @@
+                 {
+                     NextTickListEntry nextticklistentry1 = (NextTickListEntry)iterator.next();
+                     iterator.remove();
++                    //Keeping here as a note for future when it may be restored.
++                    //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++                    //byte b0 = isForced ? 0 : 8;
+                     int k = 0;
+ 
+                     if (this.isAreaLoaded(nextticklistentry1.position.add(-k, -k, -k), nextticklistentry1.position.add(k, k, k)))
+@@ -698,22 +722,39 @@
+     {
+         List<TileEntity> list = Lists.<TileEntity>newArrayList();
+ 
+-        for (int i = 0; i < this.loadedTileEntityList.size(); ++i)
++        //Forge: Optomize this loop to only grab from the chunks it needs
++        for (int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
+         {
+-            TileEntity tileentity = (TileEntity)this.loadedTileEntityList.get(i);
+-            BlockPos blockpos = tileentity.getPos();
+-
+-            if (blockpos.getX() >= p_147486_1_ && blockpos.getY() >= p_147486_2_ && blockpos.getZ() >= p_147486_3_ && blockpos.getX() < p_147486_4_ && blockpos.getY() < p_147486_5_ && blockpos.getZ() < p_147486_6_)
++            for (int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
+             {
+-                list.add(tileentity);
++                Chunk chunk = this.getChunkFromChunkCoords(x, z);
++                if (chunk != null)
++                {
++                    for (TileEntity entity : chunk.getTileEntityMap().values())
++                    {
++                        if (!entity.isInvalid())
++                        {
++                            BlockPos pos = entity.getPos();
++                            if (pos.getX() >= p_147486_1_ && pos.getY() >= p_147486_2_ && pos.getZ() >= p_147486_3_ &&
++                                pos.getX() <= p_147486_4_ && pos.getY() <= p_147486_5_ && pos.getZ() <= p_147486_6_)
++                            {
++                                list.add(entity);
++                            }
++
++                        }
++                    }
++                }
+             }
+         }
+-
+         return list;
+     }
  
      public boolean isBlockModifiable(EntityPlayer player, BlockPos pos)
      {
@@ -110,7 +174,7 @@
          return !this.mcServer.isBlockProtected(this, pos, player) && this.getWorldBorder().contains(pos);
      }
  
-@@ -779,6 +800,7 @@
+@@ -779,6 +820,7 @@
          }
          else
          {
@@ -118,7 +182,7 @@
              this.findingSpawnPoint = true;
              WorldChunkManager worldchunkmanager = this.provider.getWorldChunkManager();
              List<BiomeGenBase> list = worldchunkmanager.getBiomesToSpawnIn();
-@@ -824,7 +846,7 @@
+@@ -824,7 +866,7 @@
  
      protected void createBonusChest()
      {
@@ -127,7 +191,15 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -894,6 +916,7 @@
+@@ -861,6 +903,7 @@
+             }
+ 
+             this.chunkProvider.saveChunks(p_73044_1_, p_73044_2_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
+ 
+             for (Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a()))
+             {
+@@ -894,6 +937,7 @@
          this.worldInfo.setBorderLerpTime(this.getWorldBorder().getTimeUntilTarget());
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -135,7 +207,7 @@
      }
  
      public void onEntityAdded(Entity p_72923_1_)
-@@ -949,6 +972,7 @@
+@@ -949,6 +993,7 @@
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -143,7 +215,7 @@
          explosion.doExplosionA();
          explosion.doExplosionB(false);
  
-@@ -1028,19 +1052,23 @@
+@@ -1028,19 +1073,23 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.getDimensionId());
          }
  
@@ -171,3 +243,15 @@
          }
      }
  
+@@ -1106,6 +1155,11 @@
+         return this.mcServer.isCallingFromMinecraftThread();
+     }
+ 
++    public java.io.File getChunkSaveLocation()
++    {
++        return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)theChunkProviderServer.chunkLoader).chunkSaveLocation;
++    }
++
+     static class ServerBlockEventList extends ArrayList<BlockEventData>
+         {
+             private static final String __OBFID = "CL_00001439";

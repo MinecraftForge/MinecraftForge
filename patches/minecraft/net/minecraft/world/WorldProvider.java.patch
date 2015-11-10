@@ -45,6 +45,22 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -176,13 +162,13 @@
+ 
+     public int getAverageGroundLevel()
+     {
+-        return this.terrainType == WorldType.FLAT ? 4 : this.worldObj.func_181545_F() + 1;
++        return this.terrainType.getMinimumSpawnHeight(this.worldObj);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public double getVoidFogYFactor()
+     {
+-        return this.terrainType == WorldType.FLAT ? 1.0D : 0.03125D;
++        return this.terrainType.voidFadeMagnitude();
+     }
+ 
+     @SideOnly(Side.CLIENT)
 @@ -224,4 +210,319 @@
      {
          return new WorldBorder();
