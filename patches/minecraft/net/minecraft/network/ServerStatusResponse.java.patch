@@ -38,7 +38,7 @@
                  return serverstatusresponse;
              }
  
-@@ -251,6 +256,7 @@
+@@ -251,7 +256,47 @@
                      jsonobject.addProperty("favicon", p_serialize_1_.getFavicon());
                  }
  
@@ -46,3 +46,43 @@
                  return jsonobject;
              }
          }
++
++    private java.util.concurrent.Semaphore mutex = new java.util.concurrent.Semaphore(1);
++    private String json = null;
++    /**
++     * Returns this object as a Json string.
++     * Converting to JSON if a cached version is not available.
++     *
++     * Also to prevent potentially large memory allocations on the server
++     * this is moved from the S00PacketServerInfo writePacket function
++     *
++     * As this method is called from the network threads thread safety is important!
++     *
++     * @return
++     */
++    public String getJson()
++    {
++        String ret = this.json;
++        if (ret == null)
++        {
++            mutex.acquireUninterruptibly();
++            ret = this.json;
++            if (ret == null)
++            {
++                ret = net.minecraft.network.status.server.S00PacketServerInfo.GSON.toJson(this);
++                this.json = ret;
++            }
++            mutex.release();
++        }
++        return ret;
++    }
++
++    /**
++     * Invalidates the cached json, causing the next call to getJson to rebuild it.
++     * This is needed externally because PlayerCountData.setPlayer's is public.
++     */
++    public void invalidateJson()
++    {
++        this.json = null;
++    }
+ }

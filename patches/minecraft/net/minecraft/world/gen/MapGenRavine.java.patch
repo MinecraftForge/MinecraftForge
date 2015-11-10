@@ -5,11 +5,42 @@
                                      IBlockState iblockstate = p_180707_5_.getBlockState(j1, l1, k1);
  
 -                                    if (iblockstate.getBlock() == Blocks.flowing_water || iblockstate.getBlock() == Blocks.water)
-+                                    if (isOceanBlock(p_180707_5_, k2, i2, l2, p_180707_3_, p_180707_4_))
++                                    if (isOceanBlock(p_180707_5_, j1, l1, k1, p_180707_3_, p_180707_4_))
                                      {
                                          flag2 = true;
                                      }
-@@ -222,4 +222,68 @@
+@@ -166,28 +166,12 @@
+                                         {
+                                             IBlockState iblockstate1 = p_180707_5_.getBlockState(j3, j2, i2);
+ 
+-                                            if (iblockstate1.getBlock() == Blocks.grass)
++                                            if (isTopBlock(p_180707_5_, j3, j2, i2, p_180707_3_, p_180707_4_))
+                                             {
+                                                 flag = true;
+                                             }
+ 
+-                                            if (iblockstate1.getBlock() == Blocks.stone || iblockstate1.getBlock() == Blocks.dirt || iblockstate1.getBlock() == Blocks.grass)
+-                                            {
+-                                                if (j2 - 1 < 10)
+-                                                {
+-                                                    p_180707_5_.setBlockState(j3, j2, i2, Blocks.flowing_lava.getDefaultState());
+-                                                }
+-                                                else
+-                                                {
+-                                                    p_180707_5_.setBlockState(j3, j2, i2, Blocks.air.getDefaultState());
+-
+-                                                    if (flag && p_180707_5_.getBlockState(j3, j2 - 1, i2).getBlock() == Blocks.dirt)
+-                                                    {
+-                                                        blockpos$mutableblockpos.func_181079_c(j3 + p_180707_3_ * 16, 0, i2 + p_180707_4_ * 16);
+-                                                        p_180707_5_.setBlockState(j3, j2 - 1, i2, this.worldObj.getBiomeGenForCoords(blockpos$mutableblockpos).topBlock);
+-                                                    }
+-                                                }
+-                                            }
++                                            digBlock(p_180707_5_, j3, j2, i2, p_180707_3_, p_180707_4_, flag);
+                                         }
+                                     }
+                                 }
+@@ -222,4 +206,68 @@
              }
          }
      }

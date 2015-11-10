@@ -25,3 +25,11 @@
      public Vec3 crossProduct(Vec3 vec)
      {
          return new Vec3(this.yCoord * vec.zCoord - this.zCoord * vec.yCoord, this.zCoord * vec.xCoord - this.xCoord * vec.zCoord, this.xCoord * vec.yCoord - this.yCoord * vec.xCoord);
+@@ -80,7 +75,6 @@
+         return new Vec3(this.xCoord + x, this.yCoord + y, this.zCoord + z);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public double distanceTo(Vec3 vec)
+     {
+         double d0 = vec.xCoord - this.xCoord;

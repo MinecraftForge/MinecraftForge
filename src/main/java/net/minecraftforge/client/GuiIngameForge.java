@@ -94,7 +94,7 @@ public class GuiIngameForge extends GuiIngame
     @Override
     public void renderGameOverlay(float partialTicks)
     {
-        res = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        res = new ScaledResolution(mc);
         eventParent = new RenderGameOverlayEvent(partialTicks, res);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();

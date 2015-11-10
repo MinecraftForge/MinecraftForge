@@ -1110,7 +1110,7 @@
 +     */
 +    public void setHarvestLevel(String toolClass, int level)
 +    {
-+        Iterator<IBlockState> itr = getBlockState().getValidStates().iterator();
++        java.util.Iterator<IBlockState> itr = getBlockState().getValidStates().iterator();
 +        while (itr.hasNext())
 +        {
 +            setHarvestLevel(toolClass, level, itr.next());
