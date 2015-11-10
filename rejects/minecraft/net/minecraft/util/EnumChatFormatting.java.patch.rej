@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
-         return this.controlString;
-     }
- 
--    @SideOnly(Side.CLIENT)
-     public static String getTextWithoutFormattingCodes(String text)
-     {
-         return text == null ? null : formattingCodePattern.matcher(text).replaceAll("");
-++++ END PATCH

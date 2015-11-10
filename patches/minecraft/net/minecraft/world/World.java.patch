@@ -1,0 +1,869 @@
+--- ../src-base/minecraft/net/minecraft/world/World.java
++++ ../src-work/minecraft/net/minecraft/world/World.java
+@@ -57,6 +57,13 @@
+ 
+ public abstract class World implements IBlockAccess
+ {
++    /**
++     * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
++     * Modders should change this variable to a higher value if it is less then the radius
++     * of one of there entities.
++     */
++    public static double MAX_ENTITY_RADIUS = 2.0D;
++
+     private int field_181546_a = 63;
+     protected boolean scheduledUpdatesAreImmediate;
+     public final List<Entity> loadedEntityList = Lists.<Entity>newArrayList();
+@@ -99,6 +106,10 @@
+     int[] lightUpdateBlockList;
+     private static final String __OBFID = "CL_00000140";
+ 
++    public boolean restoringBlockSnapshots = false;
++    public boolean captureBlockSnapshots = false;
++    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
++
+     protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client)
+     {
+         this.ambientTickCountdown = this.rand.nextInt(12000);
+@@ -111,6 +122,7 @@
+         this.provider = providerIn;
+         this.isRemote = client;
+         this.worldBorder = providerIn.getWorldBorder();
++        perWorldStorage = new MapStorage((ISaveHandler)null);
+     }
+ 
+     public World init()
+@@ -120,6 +132,11 @@
+ 
+     public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
+     {
++        return this.provider.getBiomeGenForCoords(pos);
++    }
++
++    public BiomeGenBase getBiomeGenForCoordsBody(final BlockPos pos)
++    {
+         if (this.isBlockLoaded(pos))
+         {
+             Chunk chunk = this.getChunkFromBlockCoords(pos);
+@@ -186,7 +203,7 @@
+ 
+     public boolean isAirBlock(BlockPos pos)
+     {
+-        return this.getBlockState(pos).getBlock().getMaterial() == Material.air;
++        return this.getBlockState(pos).getBlock().isAir(this, pos);
+     }
+ 
+     public boolean isBlockLoaded(BlockPos pos)
+@@ -286,39 +303,61 @@
+         {
+             Chunk chunk = this.getChunkFromBlockCoords(pos);
+             Block block = newState.getBlock();
++
++            net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
++            if (this.captureBlockSnapshots && !this.isRemote)
++            {
++                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, pos, flags);
++                this.capturedBlockSnapshots.add(blockSnapshot);
++            }
++            int oldLight = getBlockState(pos).getBlock().getLightValue(this, pos);
++
+             IBlockState iblockstate = chunk.setBlockState(pos, newState);
+ 
+             if (iblockstate == null)
+             {
++                if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
+                 return false;
+             }
+             else
+             {
+                 Block block1 = iblockstate.getBlock();
+ 
+-                if (block.getLightOpacity() != block1.getLightOpacity() || block.getLightValue() != block1.getLightValue())
++                if (block.getLightOpacity() != block1.getLightOpacity() || block.getLightValue(this, pos) != block1.getLightValue())
+                 {
+                     this.theProfiler.startSection("checkLight");
+                     this.checkLight(pos);
+                     this.theProfiler.endSection();
+                 }
+ 
+-                if ((flags & 2) != 0 && (!this.isRemote || (flags & 4) == 0) && chunk.isPopulated())
++                if (blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
+                 {
+-                    this.markBlockForUpdate(pos);
++                    this.markAndNotifyBlock(pos, chunk, iblockstate, newState, flags); // Modularize client and physic updates
+                 }
+ 
++                return true;
++            }
++        }
++    }
++
++    // Split off from original setBlockState(BlockPos, IBlockState Block p_147465_4_, int) method in order to directly send client and physic updates
++    public void markAndNotifyBlock(BlockPos pos, Chunk chunk, IBlockState old, IBlockState new_, int flags)
++    {
++        if ((flags & 2) != 0 && (!this.isRemote || (flags & 4) == 0) && (chunk == null || chunk.isPopulated()))
++        {
++            this.markBlockForUpdate(pos);
++        }
++        {
++            {
+                 if (!this.isRemote && (flags & 1) != 0)
+                 {
+-                    this.notifyNeighborsRespectDebug(pos, iblockstate.getBlock());
++                    this.notifyNeighborsRespectDebug(pos, new_.getBlock());
+ 
+-                    if (block.hasComparatorInputOverride())
++                    if (new_.getBlock().hasComparatorInputOverride())
+                     {
+-                        this.updateComparatorOutputLevel(pos, block);
++                        this.updateComparatorOutputLevel(pos, new_.getBlock());
+                     }
+                 }
+-
+-                return true;
+             }
+         }
+     }
+@@ -406,6 +445,9 @@
+ 
+     public void notifyNeighborsOfStateChange(BlockPos pos, Block blockType)
+     {
++        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, pos, this.getBlockState(pos), java.util.EnumSet.allOf(EnumFacing.class)).isCanceled())
++            return;
++
+         this.notifyBlockOfStateChange(pos.west(), blockType);
+         this.notifyBlockOfStateChange(pos.east(), blockType);
+         this.notifyBlockOfStateChange(pos.down(), blockType);
+@@ -416,6 +458,11 @@
+ 
+     public void notifyNeighborsOfStateExcept(BlockPos pos, Block blockType, EnumFacing skipSide)
+     {
++        java.util.EnumSet<EnumFacing> directions = java.util.EnumSet.allOf(EnumFacing.class);
++        directions.remove(skipSide);
++        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, pos, this.getBlockState(pos), directions).isCanceled())
++            return;
++
+         if (skipSide != EnumFacing.WEST)
+         {
+             this.notifyBlockOfStateChange(pos.west(), blockType);
+@@ -780,7 +827,7 @@
+ 
+     public boolean isDaytime()
+     {
+-        return this.skylightSubtracted < 4;
++        return this.provider.isDaytime();
+     }
+ 
+     public MovingObjectPosition rayTraceBlocks(Vec3 p_72933_1_, Vec3 p_72933_2_)
+@@ -975,6 +1022,12 @@
+ 
+     public void playSoundAtEntity(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_)
+     {
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_72956_1_, p_72956_2_, p_72956_3_, p_72956_4_);
++        if (event.isCanceled() || event.name == null) return;
++        p_72956_2_ = event.name;
++        p_72956_3_ = event.newVolume;
++        p_72956_4_ = event.newPitch;
++
+         for (int i = 0; i < this.worldAccesses.size(); ++i)
+         {
+             ((IWorldAccess)this.worldAccesses.get(i)).playSound(p_72956_2_, p_72956_1_.posX, p_72956_1_.posY, p_72956_1_.posZ, p_72956_3_, p_72956_4_);
+@@ -983,6 +1036,12 @@
+ 
+     public void playSoundToNearExcept(EntityPlayer p_85173_1_, String p_85173_2_, float p_85173_3_, float p_85173_4_)
+     {
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_85173_1_, p_85173_2_, p_85173_3_, p_85173_4_);
++        if (event.isCanceled() || event.name == null) return;
++        p_85173_2_ = event.name;
++        p_85173_3_ = event.newVolume;
++        p_85173_4_ = event.newPitch;
++
+         for (int i = 0; i < this.worldAccesses.size(); ++i)
+         {
+             ((IWorldAccess)this.worldAccesses.get(i)).playSoundToNearExcept(p_85173_1_, p_85173_2_, p_85173_1_.posX, p_85173_1_.posY, p_85173_1_.posZ, p_85173_3_, p_85173_4_);
+@@ -1036,6 +1095,9 @@
+ 
+     public boolean spawnEntityInWorld(Entity p_72838_1_)
+     {
++        // do not drop any items while restoring blocksnapshots. Prevents dupes
++        if (!this.isRemote && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
++
+         int i = MathHelper.floor_double(p_72838_1_.posX / 16.0D);
+         int j = MathHelper.floor_double(p_72838_1_.posZ / 16.0D);
+         boolean flag = p_72838_1_.forceSpawn;
+@@ -1058,6 +1120,8 @@
+                 this.updateAllPlayersSleepingFlag();
+             }
+ 
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_72838_1_, this)) && !flag) return false;
++
+             this.getChunkFromChunkCoords(i, j).addEntity(p_72838_1_);
+             this.loadedEntityList.add(p_72838_1_);
+             this.onEntityAdded(p_72838_1_);
+@@ -1270,17 +1334,29 @@
+ 
+     public int calculateSkylightSubtracted(float p_72967_1_)
+     {
++        float f = provider.getSunBrightnessFactor(p_72967_1_);
++        f = 1 - f;
++        return (int)(f * 11);
++    }
++
++    /**
++     * The current sun brightness factor for this dimension.
++     * 0.0f means no light at all, and 1.0f means maximum sunlight.
++     * Highly recommended for sunlight detection like solar panel.
++     *
++     * @return The current brightness factor
++     * */
++    public float getSunBrightnessFactor(float p_72967_1_)
++    {
+         float f = this.getCelestialAngle(p_72967_1_);
+         float f1 = 1.0F - (MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F);
+         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+         f1 = 1.0F - f1;
+         f1 = (float)((double)f1 * (1.0D - (double)(this.getRainStrength(p_72967_1_) * 5.0F) / 16.0D));
+         f1 = (float)((double)f1 * (1.0D - (double)(this.getThunderStrength(p_72967_1_) * 5.0F) / 16.0D));
+-        f1 = 1.0F - f1;
+-        return (int)(f1 * 11.0F);
++        return f1;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void removeWorldAccess(IWorldAccess p_72848_1_)
+     {
+         this.worldAccesses.remove(p_72848_1_);
+@@ -1289,6 +1365,12 @@
+     @SideOnly(Side.CLIENT)
+     public float getSunBrightness(float p_72971_1_)
+     {
++        return this.provider.getSunBrightness(p_72971_1_);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public float getSunBrightnessBody(float p_72971_1_)
++    {
+         float f = this.getCelestialAngle(p_72971_1_);
+         float f1 = 1.0F - (MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+@@ -1301,6 +1383,12 @@
+     @SideOnly(Side.CLIENT)
+     public Vec3 getSkyColor(Entity p_72833_1_, float p_72833_2_)
+     {
++        return this.provider.getSkyColor(p_72833_1_, p_72833_2_);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 getSkyColorBody(Entity p_72833_1_, float p_72833_2_)
++    {
+         float f = this.getCelestialAngle(p_72833_2_);
+         float f1 = MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+@@ -1308,9 +1396,7 @@
+         int j = MathHelper.floor_double(p_72833_1_.posY);
+         int k = MathHelper.floor_double(p_72833_1_.posZ);
+         BlockPos blockpos = new BlockPos(i, j, k);
+-        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(blockpos);
+-        float f2 = biomegenbase.getFloatTemperature(blockpos);
+-        int l = biomegenbase.getSkyColorByTemp(f2);
++        int l = net.minecraftforge.client.ForgeHooksClient.getSkyBlendColour(this, blockpos);
+         float f3 = (float)(l >> 16 & 255) / 255.0F;
+         float f4 = (float)(l >> 8 & 255) / 255.0F;
+         float f5 = (float)(l & 255) / 255.0F;
+@@ -1370,6 +1456,11 @@
+ 
+     public float getCurrentMoonPhaseFactor()
+     {
++        return provider.getCurrentMoonPhaseFactor();
++    }
++
++    public float getCurrentMoonPhaseFactorBody()
++    {
+         return WorldProvider.moonPhaseFactors[this.provider.getMoonPhase(this.worldInfo.getWorldTime())];
+     }
+ 
+@@ -1382,6 +1473,12 @@
+     @SideOnly(Side.CLIENT)
+     public Vec3 getCloudColour(float p_72824_1_)
+     {
++        return this.provider.drawClouds(p_72824_1_);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 drawCloudsBody(float p_72824_1_)
++    {
+         float f = this.getCelestialAngle(p_72824_1_);
+         float f1 = MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+@@ -1437,9 +1534,9 @@
+         for (blockpos = new BlockPos(pos.getX(), chunk.getTopFilledSegment() + 16, pos.getZ()); blockpos.getY() >= 0; blockpos = blockpos1)
+         {
+             blockpos1 = blockpos.down();
+-            Material material = chunk.getBlock(blockpos1).getMaterial();
++            Block block = chunk.getBlock(blockpos1);
+ 
+-            if (material.blocksMovement() && material != Material.leaves)
++            if (block.getMaterial().blocksMovement() && !block.isLeaves(this, blockpos1) && !block.isFoliage(this, blockpos1))
+             {
+                 break;
+             }
+@@ -1451,6 +1548,12 @@
+     @SideOnly(Side.CLIENT)
+     public float getStarBrightness(float p_72880_1_)
+     {
++        return this.provider.getStarBrightness(p_72880_1_);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public float getStarBrightnessBody(float p_72880_1_)
++    {
+         float f = this.getCelestialAngle(p_72880_1_);
+         float f1 = 1.0F - (MathHelper.cos(f * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
+         f1 = MathHelper.clamp_float(f1, 0.0F, 1.0F);
+@@ -1497,7 +1600,15 @@
+                     entity.addEntityCrashInfo(crashreportcategory);
+                 }
+ 
+-                throw new ReportedException(crashreport);
++                if (net.minecraftforge.common.ForgeModContainer.removeErroringEntities)
++                {
++                    net.minecraftforge.fml.common.FMLLog.severe(crashreport.getCompleteReport());
++                    removeEntity(entity);
++                }
++                else
++                {
++                    throw new ReportedException(crashreport);
++                }
+             }
+ 
+             if (entity.isDead)
+@@ -1557,7 +1668,15 @@
+                     CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Ticking entity");
+                     CrashReportCategory crashreportcategory2 = crashreport1.makeCategory("Entity being ticked");
+                     entity2.addEntityCrashInfo(crashreportcategory2);
+-                    throw new ReportedException(crashreport1);
++                    if (net.minecraftforge.common.ForgeModContainer.removeErroringEntities)
++                    {
++                        net.minecraftforge.fml.common.FMLLog.severe(crashreport1.getCompleteReport());
++                        removeEntity(entity2);
++                    }
++                    else
++                    {
++                        throw new ReportedException(crashreport1);
++                    }
+                 }
+             }
+ 
+@@ -1604,7 +1723,16 @@
+                         CrashReport crashreport2 = CrashReport.makeCrashReport(throwable, "Ticking block entity");
+                         CrashReportCategory crashreportcategory1 = crashreport2.makeCategory("Block entity being ticked");
+                         tileentity.addInfoToCrashReport(crashreportcategory1);
+-                        throw new ReportedException(crashreport2);
++                        if (net.minecraftforge.common.ForgeModContainer.removeErroringTileEntities)
++                        {
++                            net.minecraftforge.fml.common.FMLLog.severe(crashreport2.getCompleteReport());
++                            tileentity.invalidate();
++                            this.removeTileEntity(tileentity.getPos());
++                        }
++                        else
++                        {
++                            throw new ReportedException(crashreport2);
++                        }
+                     }
+                 }
+             }
+@@ -1621,15 +1749,20 @@
+             }
+         }
+ 
+-        this.processingLoadedTiles = false;
+-
+         if (!this.tileEntitiesToBeRemoved.isEmpty())
+         {
++            for (Object tile : tileEntitiesToBeRemoved)
++            {
++               ((TileEntity)tile).onChunkUnload();
++            }
++
+             this.tickableTileEntities.removeAll(this.tileEntitiesToBeRemoved);
+             this.loadedTileEntityList.removeAll(this.tileEntitiesToBeRemoved);
+             this.tileEntitiesToBeRemoved.clear();
+         }
+ 
++        this.processingLoadedTiles = false;  //FML Move below remove to prevent CMEs
++
+         this.theProfiler.endStartSection("pendingBlockEntities");
+ 
+         if (!this.addedTileEntityList.isEmpty())
+@@ -1663,7 +1796,8 @@
+ 
+     public boolean addTileEntity(TileEntity tile)
+     {
+-        boolean flag = this.loadedTileEntityList.add(tile);
++        List<TileEntity> dest = processingLoadedTiles ? addedTileEntityList : loadedTileEntityList;
++        boolean flag = dest.add(tile);
+ 
+         if (flag && tile instanceof ITickable)
+         {
+@@ -1702,9 +1836,13 @@
+     {
+         int i = MathHelper.floor_double(p_72866_1_.posX);
+         int j = MathHelper.floor_double(p_72866_1_.posZ);
+-        int k = 32;
++        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
++        int k = isForced ? 0 : 32;
++        boolean canUpdate = !p_72866_2_ || this.isAreaLoaded(i - k, 0, j - k, i + k, 0, j + k, true);
+ 
+-        if (!p_72866_2_ || this.isAreaLoaded(i - k, 0, j - k, i + k, 0, j + k, true))
++        if (!canUpdate) canUpdate = net.minecraftforge.event.ForgeEventFactory.canEntityUpdate(p_72866_1_);
++
++        if (canUpdate)
+         {
+             p_72866_1_.lastTickPosX = p_72866_1_.posX;
+             p_72866_1_.lastTickPosY = p_72866_1_.posY;
+@@ -1832,7 +1970,7 @@
+                 {
+                     Block block = this.getBlockState(blockpos$mutableblockpos.func_181079_c(k1, l1, i2)).getBlock();
+ 
+-                    if (block.getMaterial() != Material.air)
++                    if (!block.isAir(this, new BlockPos(k1, l1, i2)))
+                     {
+                         return true;
+                     }
+@@ -1897,6 +2035,10 @@
+                         {
+                             return true;
+                         }
++                        else if (block.isBurning(this, new BlockPos(k1, l1, i2)))
++                        {
++                            return true;
++                        }
+                     }
+                 }
+             }
+@@ -2037,6 +2179,7 @@
+     public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
+     {
+         Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
++        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
+         explosion.doExplosionA();
+         explosion.doExplosionB(true);
+         return explosion;
+@@ -2183,19 +2326,27 @@
+             else
+             {
+                 this.addTileEntity(tileEntityIn);
+-                this.getChunkFromBlockCoords(pos).addTileEntity(pos, tileEntityIn);
++                Chunk chunk = this.getChunkFromBlockCoords(pos); //Forge add NPE protection
++                if (chunk != null) chunk.addTileEntity(pos, tileEntityIn);
+             }
++            this.updateComparatorOutputLevel(pos, getBlockState(pos).getBlock()); //Notify neighbors of changes
+         }
+     }
+ 
+     public void removeTileEntity(BlockPos pos)
+     {
++        //Chunk chunk = this.getChunkFromBlockCoords(pos);
++        //if (chunk != null) chunk.removeTileEntity(pos);
++        //Forge ToDO: Are these patches needed anymore?
++
+         TileEntity tileentity = this.getTileEntity(pos);
+ 
+         if (tileentity != null && this.processingLoadedTiles)
+         {
+             tileentity.invalidate();
+             this.addedTileEntityList.remove(tileentity);
++            if (!(tileentity instanceof ITickable)) //Forge: If they are not tickable they wont be removed in the update loop.
++                this.loadedTileEntityList.remove(tileentity);
+         }
+         else
+         {
+@@ -2208,6 +2359,7 @@
+ 
+             this.getChunkFromBlockCoords(pos).removeTileEntity(pos);
+         }
++        this.updateComparatorOutputLevel(pos, getBlockState(pos).getBlock()); //Notify neighbors of changes
+     }
+ 
+     public void markTileEntityForRemoval(TileEntity tileEntityIn)
+@@ -2226,7 +2378,7 @@
+     {
+         IBlockState iblockstate = p_175683_0_.getBlockState(p_175683_1_);
+         Block block = iblockstate.getBlock();
+-        return block.getMaterial().isOpaque() && block.isFullCube() ? true : (block instanceof BlockStairs ? iblockstate.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP : (block instanceof BlockSlab ? iblockstate.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP : (block instanceof BlockHopper ? true : (block instanceof BlockSnow ? ((Integer)iblockstate.getValue(BlockSnow.LAYERS)).intValue() == 7 : false))));
++        return block.isSideSolid(p_175683_0_, p_175683_1_, EnumFacing.UP);
+     }
+ 
+     public boolean isBlockNormalCube(BlockPos p_175677_1_, boolean p_175677_2_)
+@@ -2246,7 +2398,7 @@
+             else
+             {
+                 Block block = this.getBlockState(p_175677_1_).getBlock();
+-                return block.getMaterial().isOpaque() && block.isFullCube();
++                return block.isNormalCube(this, p_175677_1_);
+             }
+         }
+     }
+@@ -2265,6 +2417,7 @@
+     {
+         this.spawnHostileMobs = hostile;
+         this.spawnPeacefulMobs = peaceful;
++        this.provider.setAllowedSpawnTypes(hostile, peaceful);
+     }
+ 
+     public void tick()
+@@ -2274,6 +2427,11 @@
+ 
+     protected void calculateInitialWeather()
+     {
++        this.provider.calculateInitialWeather();
++    }
++
++    public void calculateInitialWeatherBody()
++    {
+         if (this.worldInfo.isRaining())
+         {
+             this.rainingStrength = 1.0F;
+@@ -2287,6 +2445,11 @@
+ 
+     protected void updateWeather()
+     {
++        this.provider.updateWeather();
++    }
++
++    public void updateWeatherBody()
++    {
+         if (!this.provider.getHasNoSky())
+         {
+             if (!this.isRemote)
+@@ -2381,6 +2544,7 @@
+     {
+         this.activeChunkSet.clear();
+         this.theProfiler.startSection("buildList");
++        this.activeChunkSet.addAll(getPersistentChunks().keySet());
+ 
+         for (int i = 0; i < this.playerEntities.size(); ++i)
+         {
+@@ -2438,7 +2602,7 @@
+             j = j + p_147467_1_;
+             k = k + p_147467_2_;
+ 
+-            if (block.getMaterial() == Material.air && this.getLight(blockpos) <= this.rand.nextInt(8) && this.getLightFor(EnumSkyBlock.SKY, blockpos) <= 0)
++            if (block.isAir(this, blockpos) && this.getLight(blockpos) <= this.rand.nextInt(8) && this.getLightFor(EnumSkyBlock.SKY, blockpos) <= 0)
+             {
+                 EntityPlayer entityplayer = this.getClosestPlayer((double)j + 0.5D, (double)l + 0.5D, (double)k + 0.5D, 8.0D);
+ 
+@@ -2478,6 +2642,11 @@
+ 
+     public boolean canBlockFreeze(BlockPos pos, boolean noWaterAdj)
+     {
++        return this.provider.canBlockFreeze(pos, noWaterAdj);
++    }
++
++    public boolean canBlockFreezeBody(BlockPos pos, boolean noWaterAdj)
++    {
+         BiomeGenBase biomegenbase = this.getBiomeGenForCoords(pos);
+         float f = biomegenbase.getFloatTemperature(pos);
+ 
+@@ -2519,6 +2688,11 @@
+ 
+     public boolean canSnowAt(BlockPos pos, boolean checkLight)
+     {
++        return this.provider.canSnowAt(pos, checkLight);
++    }
++
++    public boolean canSnowAtBody(BlockPos pos, boolean checkLight)
++    {
+         BiomeGenBase biomegenbase = this.getBiomeGenForCoords(pos);
+         float f = biomegenbase.getFloatTemperature(pos);
+ 
+@@ -2536,7 +2710,7 @@
+             {
+                 Block block = this.getBlockState(pos).getBlock();
+ 
+-                if (block.getMaterial() == Material.air && Blocks.snow_layer.canPlaceBlockAt(this, pos))
++                if (block.isAir(this, pos) && Blocks.snow_layer.canPlaceBlockAt(this, pos))
+                 {
+                     return true;
+                 }
+@@ -2568,10 +2742,11 @@
+         else
+         {
+             Block block = this.getBlockState(pos).getBlock();
+-            int i = lightType == EnumSkyBlock.SKY ? 0 : block.getLightValue();
+-            int j = block.getLightOpacity();
++            int blockLight = block.getLightValue(this, pos);
++            int i = lightType == EnumSkyBlock.SKY ? 0 : blockLight;
++            int j = block.getLightOpacity(this, pos);
+ 
+-            if (j >= 15 && block.getLightValue() > 0)
++            if (j >= 15 && blockLight > 0)
+             {
+                 j = 1;
+             }
+@@ -2771,10 +2946,10 @@
+     public List<Entity> func_175674_a(Entity entityIn, AxisAlignedBB p_175674_2_, Predicate <? super Entity > p_175674_3_)
+     {
+         List<Entity> list = Lists.<Entity>newArrayList();
+-        int i = MathHelper.floor_double((p_175674_2_.minX - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((p_175674_2_.maxX + 2.0D) / 16.0D);
+-        int k = MathHelper.floor_double((p_175674_2_.minZ - 2.0D) / 16.0D);
+-        int l = MathHelper.floor_double((p_175674_2_.maxZ + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((p_175674_2_.minX - MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((p_175674_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
++        int k = MathHelper.floor_double((p_175674_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.floor_double((p_175674_2_.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+ 
+         for (int i1 = i; i1 <= j; ++i1)
+         {
+@@ -2827,10 +3002,10 @@
+ 
+     public <T extends Entity> List<T> getEntitiesWithinAABB(Class <? extends T > clazz, AxisAlignedBB aabb, Predicate <? super T > filter)
+     {
+-        int i = MathHelper.floor_double((aabb.minX - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((aabb.maxX + 2.0D) / 16.0D);
+-        int k = MathHelper.floor_double((aabb.minZ - 2.0D) / 16.0D);
+-        int l = MathHelper.floor_double((aabb.maxZ + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((aabb.minX - MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((aabb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
++        int k = MathHelper.floor_double((aabb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.floor_double((aabb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+         List<T> list = Lists.<T>newArrayList();
+ 
+         for (int i1 = i; i1 <= j; ++i1)
+@@ -2908,11 +3083,13 @@
+ 
+     public void loadEntities(Collection<Entity> entityCollection)
+     {
+-        this.loadedEntityList.addAll(entityCollection);
+-
+         for (Entity entity : entityCollection)
+         {
+-            this.onEntityAdded(entity);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entity, this)))
++            {
++                loadedEntityList.add(entity);
++                this.onEntityAdded(entity);
++            }
+         }
+     }
+ 
+@@ -2925,7 +3102,9 @@
+     {
+         Block block = this.getBlockState(p_175716_2_).getBlock();
+         AxisAlignedBB axisalignedbb = p_175716_3_ ? null : p_175716_1_.getCollisionBoundingBox(this, p_175716_2_, p_175716_1_.getDefaultState());
+-        return axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_175716_5_) ? false : (block.getMaterial() == Material.circuits && p_175716_1_ == Blocks.anvil ? true : block.getMaterial().isReplaceable() && p_175716_1_.canReplace(this, p_175716_2_, p_175716_4_, p_175716_6_));
++        if (axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_175716_5_)) return false;
++        if (block.getMaterial() == Material.circuits && p_175716_1_ == Blocks.anvil) return true;
++        return block.isReplaceable(this, p_175716_2_) && p_175716_1_.canReplace(this, p_175716_2_, p_175716_4_, p_175716_6_);
+     }
+ 
+     public int func_181545_F()
+@@ -3010,7 +3189,7 @@
+     {
+         IBlockState iblockstate = this.getBlockState(pos);
+         Block block = iblockstate.getBlock();
+-        return block.isNormalCube() ? this.getStrongPower(pos) : block.isProvidingWeakPower(this, pos, iblockstate, facing);
++        return block.shouldCheckWeakPower(this, pos, facing) ? this.getStrongPower(pos) : block.isProvidingWeakPower(this, pos, iblockstate, facing);
+     }
+ 
+     public boolean isBlockPowered(BlockPos pos)
+@@ -3137,7 +3316,7 @@
+ 
+     public long getSeed()
+     {
+-        return this.worldInfo.getSeed();
++        return this.provider.getSeed();
+     }
+ 
+     public long getTotalWorldTime()
+@@ -3147,17 +3326,17 @@
+ 
+     public long getWorldTime()
+     {
+-        return this.worldInfo.getWorldTime();
++        return this.provider.getWorldTime();
+     }
+ 
+     public void setWorldTime(long time)
+     {
+-        this.worldInfo.setWorldTime(time);
++        this.provider.setWorldTime(time);
+     }
+ 
+     public BlockPos getSpawnPoint()
+     {
+-        BlockPos blockpos = new BlockPos(this.worldInfo.getSpawnX(), this.worldInfo.getSpawnY(), this.worldInfo.getSpawnZ());
++        BlockPos blockpos = this.provider.getSpawnPoint();
+ 
+         if (!this.getWorldBorder().contains(blockpos))
+         {
+@@ -3169,7 +3348,7 @@
+ 
+     public void setSpawnPoint(BlockPos pos)
+     {
+-        this.worldInfo.setSpawn(pos);
++        this.provider.setSpawnPoint(pos);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -3189,12 +3368,18 @@
+ 
+         if (!this.loadedEntityList.contains(entityIn))
+         {
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entityIn, this)))
+             this.loadedEntityList.add(entityIn);
+         }
+     }
+ 
+     public boolean isBlockModifiable(EntityPlayer player, BlockPos pos)
+     {
++        return this.provider.canMineBlock(player, pos);
++    }
++
++    public boolean canMineBlockBody(EntityPlayer player, BlockPos pos)
++    {
+         return true;
+     }
+ 
+@@ -3288,8 +3473,7 @@
+ 
+     public boolean isBlockinHighHumidity(BlockPos pos)
+     {
+-        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(pos);
+-        return biomegenbase.isHighHumidity();
++        return this.provider.isBlockHighHumidity(pos);
+     }
+ 
+     public MapStorage getMapStorage()
+@@ -3348,12 +3532,12 @@
+ 
+     public int getHeight()
+     {
+-        return 256;
++        return this.provider.getHeight();
+     }
+ 
+     public int getActualHeight()
+     {
+-        return this.provider.getHasNoSky() ? 128 : 256;
++        return this.provider.getActualHeight();
+     }
+ 
+     public Random setRandomSeed(int p_72843_1_, int p_72843_2_, int p_72843_3_)
+@@ -3410,7 +3594,7 @@
+     @SideOnly(Side.CLIENT)
+     public double getHorizon()
+     {
+-        return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
++        return provider.getHorizon();
+     }
+ 
+     public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress)
+@@ -3452,18 +3636,14 @@
+             {
+                 IBlockState iblockstate = this.getBlockState(blockpos);
+ 
+-                if (Blocks.unpowered_comparator.isAssociated(iblockstate.getBlock()))
++                iblockstate.getBlock().onNeighborChange(this, blockpos, pos);
++                if (iblockstate.getBlock().isNormalCube(this, blockpos))
+                 {
+-                    iblockstate.getBlock().onNeighborBlockChange(this, blockpos, iblockstate, blockIn);
+-                }
+-                else if (iblockstate.getBlock().isNormalCube())
+-                {
+-                    blockpos = blockpos.offset(enumfacing);
+-                    iblockstate = this.getBlockState(blockpos);
+-
+-                    if (Blocks.unpowered_comparator.isAssociated(iblockstate.getBlock()))
++                    BlockPos posOther = blockpos.offset(enumfacing);
++                    Block other = getBlockState(posOther).getBlock();
++                    if (other.getWeakChanges(this, posOther))
+                     {
+-                        iblockstate.getBlock().onNeighborBlockChange(this, blockpos, iblockstate, blockIn);
++                        other.onNeighborChange(this, posOther, pos);
+                     }
+                 }
+             }
+@@ -3533,4 +3713,81 @@
+         int k = 128;
+         return i >= -k && i <= k && j >= -k && j <= k;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Determine if the given block is considered solid on the
++     * specified side.  Used by placement logic.
++     *
++     * @param pos Block Position
++     * @param side The Side in question
++     * @return True if the side is solid
++    */
++    public boolean isSideSolid(BlockPos pos, EnumFacing side)
++    {
++       return isSideSolid(pos, side, false);
++    }
++
++    /**
++     * Determine if the given block is considered solid on the
++     * specified side.  Used by placement logic.
++     *
++     * @param pos Block Position
++     * @param side The Side in question
++     * @param _default The default to return if the block doesn't exist.
++     * @return True if the side is solid
++     */
++    @Override
++    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
++    {
++        if (!this.isValid(pos)) return _default;
++
++        Chunk chunk = getChunkFromBlockCoords(pos);
++        if (chunk == null || chunk.isEmpty()) return _default;
++        return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
++    }
++
++    /**
++     * Get the persistent chunks for this world
++     *
++     * @return
++     */
++    public com.google.common.collect.ImmutableSetMultimap<ChunkCoordIntPair, net.minecraftforge.common.ForgeChunkManager.Ticket> getPersistentChunks()
++    {
++        return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this);
++    }
++
++    /**
++     * Readded as it was removed, very useful helper function
++     *
++     * @param pos Block position
++     * @return The blocks light opacity
++     */
++    public int getBlockLightOpacity(BlockPos pos)
++    {
++        if (!this.isValid(pos)) return 0;
++        return getChunkFromBlockCoords(pos).getBlockLightOpacity(pos);
++    }
++
++    /**
++     * Returns a count of entities that classify themselves as the specified creature type.
++     */
++    public int countEntities(net.minecraft.entity.EnumCreatureType type, boolean forSpawnCount)
++    {
++        int count = 0;
++        for (int x = 0; x < loadedEntityList.size(); x++)
++        {
++            if (((Entity)loadedEntityList.get(x)).isCreatureType(type, forSpawnCount))
++            {
++                count++;
++            }
++        }
++        return count;
++    }
++
++    protected MapStorage perWorldStorage; //Moved to a getter to simulate final without being final so we can load in subclasses.
++    public MapStorage getPerWorldStorage()
++    {
++        return perWorldStorage;
++    }
+ }
