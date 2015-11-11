@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiSlot.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiSlot.java
-@@ -459,4 +459,19 @@
+@@ -182,15 +182,8 @@
+             GlStateManager.disableFog();
+             Tessellator tessellator = Tessellator.getInstance();
+             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+-            this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
+-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+-            float f = 32.0F;
+-            worldrenderer.func_181668_a(7, DefaultVertexFormats.field_181709_i);
+-            worldrenderer.func_181662_b((double)this.left, (double)this.bottom, 0.0D).func_181673_a((double)((float)this.left / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-            worldrenderer.func_181662_b((double)this.right, (double)this.bottom, 0.0D).func_181673_a((double)((float)this.right / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-            worldrenderer.func_181662_b((double)this.right, (double)this.top, 0.0D).func_181673_a((double)((float)this.right / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-            worldrenderer.func_181662_b((double)this.left, (double)this.top, 0.0D).func_181673_a((double)((float)this.left / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-            tessellator.draw();
++            // Forge: background rendering moved into separate method.
++            this.drawContainerBackground(tessellator);
+             int k = this.left + this.width / 2 - this.getListWidth() / 2 + 2;
+             int l = this.top + 4 - (int)this.amountScrolled;
+ 
+@@ -459,4 +452,18 @@
      {
          return this.slotHeight;
      }
@@ -10,13 +28,12 @@
 +        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 +        this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
 +        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-+        float f1 = 32.0F;
-+        worldrenderer.startDrawingQuads();
-+        worldrenderer.setColorOpaque_I(2105376);
-+        worldrenderer.addVertexWithUV((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / f1), (double)((float)(this.bottom + (int)this.amountScrolled) / f1));
-+        worldrenderer.addVertexWithUV((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / f1), (double)((float)(this.bottom + (int)this.amountScrolled) / f1));
-+        worldrenderer.addVertexWithUV((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / f1), (double)((float)(this.top + (int)this.amountScrolled) / f1));
-+        worldrenderer.addVertexWithUV((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / f1), (double)((float)(this.top + (int)this.amountScrolled) / f1));
++        float f = 32.0F;
++        worldrenderer.func_181668_a(7, DefaultVertexFormats.field_181709_i);
++        worldrenderer.func_181662_b((double)this.left, (double)this.bottom, 0.0D).func_181673_a((double)((float)this.left / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
++        worldrenderer.func_181662_b((double)this.right, (double)this.bottom, 0.0D).func_181673_a((double)((float)this.right / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
++        worldrenderer.func_181662_b((double)this.right, (double)this.top, 0.0D).func_181673_a((double)((float)this.right / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
++        worldrenderer.func_181662_b((double)this.left, (double)this.top, 0.0D).func_181673_a((double)((float)this.left / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).func_181669_b(32, 32, 32, 255).func_181675_d();
 +        tessellator.draw();
 +    }
  }
