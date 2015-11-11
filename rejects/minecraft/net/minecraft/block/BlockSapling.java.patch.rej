@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
- 
-     public void generateTree(World worldIn, BlockPos pos, IBlockState state, Random rand)
-     {
-+        if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(worldIn, rand, pos)) return;
-         Object object = rand.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true);
-         int i = 0;
-         int j = 0;
-++++ END PATCH

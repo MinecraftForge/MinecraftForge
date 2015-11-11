@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
-                 return new ModelResourceLocation(s + "_double_slab", s1);
-             }
-         });
-+        net.minecraftforge.client.model.ModelLoader.onRegisterAllBlocks(this);
-     }
- 
-     @SideOnly(Side.CLIENT)
-++++ END PATCH
