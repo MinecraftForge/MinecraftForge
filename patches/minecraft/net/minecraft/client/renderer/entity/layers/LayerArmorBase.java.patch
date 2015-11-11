@@ -28,7 +28,7 @@
 -                case 4:
 -                case 5:
 +                    this.field_177190_a.func_110776_a(this.getArmorResource(p_177182_1_, itemstack, flag ? 2 : 1, "overlay"));
-+                }
++                } else
 +                { // Non-cloth
                      GlStateManager.func_179131_c(this.field_177184_f, this.field_177185_g, this.field_177192_h, this.field_177187_e);
                      modelbase.func_78088_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
