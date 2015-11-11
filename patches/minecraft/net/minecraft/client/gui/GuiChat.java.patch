@@ -16,3 +16,16 @@
              BlockPos blockpos = null;
  
              if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+@@ -282,6 +283,12 @@
+             this.playerNamesFound = false;
+             this.foundPlayerNames.clear();
+ 
++            String[] complete = net.minecraftforge.client.ClientCommandHandler.instance.latestAutoComplete;
++            if (complete != null)
++            {
++                p_146406_1_ = com.google.common.collect.ObjectArrays.concat(complete, p_146406_1_, String.class);
++            }
++
+             for (String s : p_146406_1_)
+             {
+                 if (s.length() > 0)
