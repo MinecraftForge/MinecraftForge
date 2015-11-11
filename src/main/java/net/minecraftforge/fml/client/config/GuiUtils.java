@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -181,15 +182,15 @@ public class GuiUtils
 
     public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, float zLevel)
     {
-        float var7 = 0.00390625F;
-        float var8 = 0.00390625F;
+        float uScale = 1f / 0x100;
+        float vScale = 1f / 0x100;
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldr = tessellator.getWorldRenderer();
-        worldr.startDrawingQuads();
-        worldr.addVertexWithUV((x + 0), (y + height), zLevel, ((u + 0) * var7), ((v + height) * var8));
-        worldr.addVertexWithUV((x + width), (y + height), zLevel, ((u + width) * var7), ((v + height) * var8));
-        worldr.addVertexWithUV((x + width), (y + 0), zLevel, ((u + width) * var7), ((v + 0) * var8));
-        worldr.addVertexWithUV((x + 0), (y + 0), zLevel, ((u + 0) * var7), ((v + 0) * var8));
+        WorldRenderer wr = tessellator.getWorldRenderer();
+        wr.func_181668_a(7, DefaultVertexFormats.field_181707_g);
+        wr.func_181662_b(x        , y + height, zLevel).func_181673_a( u          * uScale, ((v + height) * vScale)).func_181675_d();
+        wr.func_181662_b(x + width, y + height, zLevel).func_181673_a((u + width) * uScale, ((v + height) * vScale)).func_181675_d();
+        wr.func_181662_b(x + width, y         , zLevel).func_181673_a((u + width) * uScale, ( v           * vScale)).func_181675_d();
+        wr.func_181662_b(x        , y         , zLevel).func_181673_a( u          * uScale, ( v           * vScale)).func_181675_d();
         tessellator.draw();
     }
 

@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ChatComponentText;
@@ -529,13 +530,13 @@ public class GuiModList extends GuiScreen
             {
                 GlStateManager.enableBlend();
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
-                WorldRenderer world = tess.getWorldRenderer();
+                WorldRenderer wr = tess.getWorldRenderer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
-                world.startDrawingQuads();
-                world.addVertexWithUV(offset,                  top + logoDims.height, zLevel, 0, 1);
-                world.addVertexWithUV(offset + logoDims.width, top + logoDims.height, zLevel, 1, 1);
-                world.addVertexWithUV(offset + logoDims.width, top,                   zLevel, 1, 0);
-                world.addVertexWithUV(offset,                  top,                   zLevel, 0, 0);
+                wr.func_181668_a(7, DefaultVertexFormats.field_181707_g);
+                wr.func_181662_b(offset,                  top + logoDims.height, zLevel).func_181673_a(0, 1).func_181675_d();
+                wr.func_181662_b(offset + logoDims.width, top + logoDims.height, zLevel).func_181673_a(1, 1).func_181675_d();
+                wr.func_181662_b(offset + logoDims.width, top,                   zLevel).func_181673_a(1, 0).func_181675_d();
+                wr.func_181662_b(offset,                  top,                   zLevel).func_181673_a(0, 0).func_181675_d();
                 tess.draw();
                 GlStateManager.disableBlend();
                 top += logoDims.height + 10;
