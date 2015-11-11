@@ -51,7 +51,19 @@
              {
                  this.func_180460_a(blockpos, iblockstate);
  
-@@ -368,6 +384,7 @@
+@@ -349,7 +365,10 @@
+ 
+             this.setRotation(this.rotationYaw, this.rotationPitch);
+ 
+-            for (Entity entity : this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(0.20000000298023224D, 0.0D, 0.20000000298023224D)))
++            AxisAlignedBB box;
++            if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
++            else                               box = this.getEntityBoundingBox().expand(0.20000000298023224D, 0.0D, 0.20000000298023224D);
++            for (Entity entity : this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box))
+             {
+                 if (entity != this.riddenByEntity && entity.canBePushed() && entity instanceof EntityMinecart)
+                 {
+@@ -368,6 +387,7 @@
              }
  
              this.handleWaterMovement();
@@ -59,7 +71,7 @@
          }
      }
  
-@@ -382,10 +399,21 @@
+@@ -382,10 +402,21 @@
  
      protected void moveDerailedMinecart()
      {
@@ -82,7 +94,7 @@
          if (this.onGround)
          {
              this.motionX *= 0.5D;
-@@ -393,13 +421,13 @@
+@@ -393,13 +424,13 @@
              this.motionZ *= 0.5D;
          }
  
@@ -100,7 +112,38 @@
          }
      }
  
-@@ -482,7 +510,7 @@
+@@ -419,25 +450,25 @@
+             flag1 = !flag;
+         }
+ 
+-        double d0 = 0.0078125D;
++        double slopeAdjustment = getSlopeAdjustment();
+         BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_180460_2_.getValue(blockrailbase.getShapeProperty());
+ 
+         switch (blockrailbase$enumraildirection)
+         {
+             case ASCENDING_EAST:
+-                this.motionX -= 0.0078125D;
++                this.motionX -= slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case ASCENDING_WEST:
+-                this.motionX += 0.0078125D;
++                this.motionX += slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case ASCENDING_NORTH:
+-                this.motionZ += 0.0078125D;
++                this.motionZ += slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case ASCENDING_SOUTH:
+-                this.motionZ -= 0.0078125D;
++                this.motionZ -= slopeAdjustment;
+                 ++this.posY;
+         }
+ 
+@@ -482,7 +513,7 @@
              }
          }
  
@@ -109,7 +152,29 @@
          {
              double d17 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -578,8 +606,14 @@
+@@ -528,20 +559,8 @@
+         this.posX = d19 + d1 * d18;
+         this.posZ = d20 + d2 * d18;
+         this.setPosition(this.posX, this.posY, this.posZ);
+-        double d22 = this.motionX;
+-        double d23 = this.motionZ;
++        this.moveMinecartOnRail(p_180460_1_);
+ 
+-        if (this.riddenByEntity != null)
+-        {
+-            d22 *= 0.75D;
+-            d23 *= 0.75D;
+-        }
+-
+-        double d13 = this.func_174898_m();
+-        d22 = MathHelper.clamp_double(d22, -d13, d13);
+-        d23 = MathHelper.clamp_double(d23, -d13, d13);
+-        this.moveEntity(d22, 0.0D, d23);
+-
+         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - p_180460_1_.getX() == aint[0][0] && MathHelper.floor_double(this.posZ) - p_180460_1_.getZ() == aint[0][2])
+         {
+             this.setPosition(this.posX, this.posY + (double)aint[0][1], this.posZ);
+@@ -578,8 +597,14 @@
              this.motionZ = d5 * (double)(i - p_180460_1_.getZ());
          }
  
@@ -125,7 +190,7 @@
              double d15 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
              if (d15 > 0.01D)
-@@ -818,13 +852,20 @@
+@@ -818,13 +843,20 @@
  
      public void applyEntityCollision(Entity entityIn)
      {
@@ -147,7 +212,7 @@
                      {
                          entityIn.mountEntity(this);
                      }
-@@ -870,7 +911,7 @@
+@@ -870,7 +902,7 @@
                              double d7 = entityIn.motionX + this.motionX;
                              double d8 = entityIn.motionZ + this.motionZ;
  
@@ -156,7 +221,7 @@
                              {
                                  this.motionX *= 0.20000000298023224D;
                                  this.motionZ *= 0.20000000298023224D;
-@@ -878,7 +919,7 @@
+@@ -878,7 +910,7 @@
                                  entityIn.motionX *= 0.949999988079071D;
                                  entityIn.motionZ *= 0.949999988079071D;
                              }
@@ -165,7 +230,7 @@
                              {
                                  entityIn.motionX *= 0.20000000298023224D;
                                  entityIn.motionZ *= 0.20000000298023224D;
-@@ -1043,6 +1084,221 @@
+@@ -1043,6 +1075,221 @@
          }
      }
  

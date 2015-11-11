@@ -139,7 +139,19 @@
          if (guiScreenIn instanceof GuiMainMenu)
          {
              this.gameSettings.showDebugInfo = false;
-@@ -1380,7 +1396,7 @@
+@@ -1033,9 +1049,11 @@
+ 
+         if (!this.skipRenderWorld)
+         {
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickStart(this.timer.renderPartialTicks);
+             this.mcProfiler.endStartSection("gameRenderer");
+             this.entityRenderer.func_181560_a(this.timer.renderPartialTicks, i);
+             this.mcProfiler.endSection();
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickEnd(this.timer.renderPartialTicks);
+         }
+ 
+         this.mcProfiler.endSection();
+@@ -1380,7 +1398,7 @@
  
                  if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air && this.playerController.func_180512_c(blockpos, this.objectMouseOver.sideHit))
                  {
@@ -148,7 +160,38 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1601,6 +1617,8 @@
+@@ -1466,15 +1484,19 @@
+                     case BLOCK:
+                         BlockPos blockpos = this.objectMouseOver.getBlockPos();
+ 
+-                        if (this.theWorld.getBlockState(blockpos).getBlock().getMaterial() != Material.air)
++                        if (!this.theWorld.isAirBlock(blockpos))
+                         {
+                             int i = itemstack != null ? itemstack.stackSize : 0;
+ 
++
++                            boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(thePlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, this.theWorld, blockpos, this.objectMouseOver.sideHit).isCanceled();
++                            if (result) { //Forge: Kept separate to simplify patch
+                             if (this.playerController.func_178890_a(this.thePlayer, this.theWorld, itemstack, blockpos, this.objectMouseOver.sideHit, this.objectMouseOver.hitVec))
+                             {
+                                 flag = false;
+                                 this.thePlayer.swingItem();
+                             }
++                            }
+ 
+                             if (itemstack == null)
+                             {
+@@ -1497,7 +1519,8 @@
+             {
+                 ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
+ 
+-                if (itemstack1 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
++                boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(thePlayer, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, theWorld, null, null).isCanceled();
++                if (result && itemstack1 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
+                 {
+                     this.entityRenderer.itemRenderer.resetEquippedProgress2();
+                 }
+@@ -1601,6 +1624,8 @@
              --this.rightClickDelayTimer;
          }
  
@@ -157,7 +200,16 @@
          this.mcProfiler.startSection("gui");
  
          if (!this.isGamePaused)
-@@ -1750,6 +1768,7 @@
+@@ -1695,6 +1720,8 @@
+ 
+             while (Mouse.next())
+             {
++                if (net.minecraftforge.client.ForgeHooksClient.postMouseEvent()) continue;
++
+                 int i = Mouse.getEventButton();
+                 KeyBinding.setKeyBindState(i - 100, Mouse.getEventButtonState());
+ 
+@@ -1750,6 +1777,7 @@
                          this.currentScreen.handleMouseInput();
                      }
                  }
@@ -165,7 +217,7 @@
              }
  
              if (this.leftClickCounter > 0)
-@@ -1928,6 +1947,7 @@
+@@ -1928,6 +1956,7 @@
                          }
                      }
                  }
@@ -173,7 +225,7 @@
              }
  
              for (int l = 0; l < 9; ++l)
-@@ -2124,12 +2144,15 @@
+@@ -2124,12 +2153,15 @@
              this.myNetworkManager.processReceivedPackets();
          }
  
@@ -189,7 +241,20 @@
          this.loadWorld((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.saveLoader.getSaveLoader(folderName, false);
-@@ -2190,8 +2213,14 @@
+@@ -2165,6 +2197,12 @@
+ 
+         while (!this.theIntegratedServer.serverIsInRunLoop())
+         {
++            if (!net.minecraftforge.fml.common.StartupQuery.check())
++            {
++                loadWorld(null);
++                displayGuiScreen(null);
++                return;
++            }
+             String s = this.theIntegratedServer.getUserMessage();
+ 
+             if (s != null)
+@@ -2190,8 +2228,14 @@
          SocketAddress socketaddress = this.theIntegratedServer.getNetworkSystem().addLocalEndpoint();
          NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
          networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
@@ -206,7 +271,7 @@
          this.myNetworkManager = networkmanager;
      }
  
-@@ -2202,6 +2231,8 @@
+@@ -2202,6 +2246,8 @@
  
      public void loadWorld(WorldClient worldClientIn, String loadingMessage)
      {
@@ -215,7 +280,7 @@
          if (worldClientIn == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
-@@ -2215,6 +2246,18 @@
+@@ -2215,6 +2261,18 @@
              {
                  this.theIntegratedServer.initiateShutdown();
                  this.theIntegratedServer.setStaticInstance();
@@ -234,7 +299,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2237,6 +2280,7 @@
+@@ -2237,6 +2295,7 @@
              this.ingameGUI.func_181029_i();
              this.setServerData((ServerData)null);
              this.integratedServerIsRunning = false;
@@ -242,3 +307,153 @@
          }
  
          this.mcSoundHandler.stopSounds();
+@@ -2341,126 +2400,10 @@
+         if (this.objectMouseOver != null)
+         {
+             boolean flag = this.thePlayer.capabilities.isCreativeMode;
+-            int i = 0;
+-            boolean flag1 = false;
+-            TileEntity tileentity = null;
+-            Item item;
+-
+-            if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+-            {
+-                BlockPos blockpos = this.objectMouseOver.getBlockPos();
+-                Block block = this.theWorld.getBlockState(blockpos).getBlock();
+-
+-                if (block.getMaterial() == Material.air)
+-                {
+-                    return;
+-                }
+-
+-                item = block.getItem(this.theWorld, blockpos);
+-
+-                if (item == null)
+-                {
+-                    return;
+-                }
+-
+-                if (flag && GuiScreen.isCtrlKeyDown())
+-                {
+-                    tileentity = this.theWorld.getTileEntity(blockpos);
+-                }
+-
+-                Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
+-                i = block1.getDamageValue(this.theWorld, blockpos);
+-                flag1 = item.getHasSubtypes();
+-            }
+-            else
+-            {
+-                if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
+-                {
+-                    return;
+-                }
+-
+-                if (this.objectMouseOver.entityHit instanceof EntityPainting)
+-                {
+-                    item = Items.painting;
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
+-                {
+-                    item = Items.lead;
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
+-                {
+-                    EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
+-                    ItemStack itemstack = entityitemframe.getDisplayedItem();
+-
+-                    if (itemstack == null)
+-                    {
+-                        item = Items.item_frame;
+-                    }
+-                    else
+-                    {
+-                        item = itemstack.getItem();
+-                        i = itemstack.getMetadata();
+-                        flag1 = true;
+-                    }
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
+-                {
+-                    EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
+-
+-                    switch (entityminecart.getMinecartType())
+-                    {
+-                        case FURNACE:
+-                            item = Items.furnace_minecart;
+-                            break;
+-                        case CHEST:
+-                            item = Items.chest_minecart;
+-                            break;
+-                        case TNT:
+-                            item = Items.tnt_minecart;
+-                            break;
+-                        case HOPPER:
+-                            item = Items.hopper_minecart;
+-                            break;
+-                        case COMMAND_BLOCK:
+-                            item = Items.command_block_minecart;
+-                            break;
+-                        default:
+-                            item = Items.minecart;
+-                    }
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
+-                {
+-                    item = Items.boat;
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
+-                {
+-                    item = Items.armor_stand;
+-                }
+-                else
+-                {
+-                    item = Items.spawn_egg;
+-                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
+-                    flag1 = true;
+-
+-                    if (!EntityList.entityEggs.containsKey(Integer.valueOf(i)))
+-                    {
+-                        return;
+-                    }
+-                }
+-            }
+-
+             InventoryPlayer inventoryplayer = this.thePlayer.inventory;
+ 
+-            if (tileentity == null)
+-            {
+-                inventoryplayer.setCurrentItem(item, i, flag1, flag);
+-            }
+-            else
+-            {
+-                ItemStack itemstack1 = this.func_181036_a(item, i, tileentity);
+-                inventoryplayer.setInventorySlotContents(inventoryplayer.currentItem, itemstack1);
+-            }
+-
++            if (!net.minecraftforge.common.ForgeHooks.onPickBlock(this.objectMouseOver, this.thePlayer, this.theWorld)) return;
++            // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
+             if (flag)
+             {
+                 int j = this.thePlayer.inventoryContainer.inventorySlots.size() - 9 + inventoryplayer.currentItem;
+@@ -2773,18 +2716,8 @@
+ 
+     public static int getGLMaximumTextureSize()
+     {
+-        for (int i = 16384; i > 0; i >>= 1)
+-        {
+-            GL11.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer)((ByteBuffer)null));
+-            int j = GL11.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+-
+-            if (j != 0)
+-            {
+-                return i;
+-            }
+-        }
+-
+-        return -1;
++        //Forge we redirect this to our code which caches the value before any splash screen stuff is done.
++        return net.minecraftforge.fml.client.SplashProgress.getMaxTextureSize();
+     }
+ 
+     public boolean isSnooperEnabled()

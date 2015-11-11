@@ -8,7 +8,19 @@
          if (stringToClassMapping.containsKey(p_75618_1_))
          {
              throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
-@@ -168,7 +169,17 @@
+@@ -152,9 +153,10 @@
+             p_75615_0_.removeTag("Type");
+         }
+ 
++        Class <? extends Entity > oclass = null;
+         try
+         {
+-            Class <? extends Entity > oclass = (Class)stringToClassMapping.get(p_75615_0_.getString("id"));
++            oclass = stringToClassMapping.get(p_75615_0_.getString("id"));
+ 
+             if (oclass != null)
+             {
+@@ -168,7 +170,17 @@
  
          if (entity != null)
          {
@@ -26,7 +38,7 @@
          }
          else
          {
-@@ -344,7 +355,9 @@
+@@ -344,7 +356,9 @@
  
      public static class EntityEggInfo
          {
@@ -36,7 +48,7 @@
              public final int primaryColor;
              public final int secondaryColor;
              public final StatBase field_151512_d;
-@@ -358,6 +371,17 @@
+@@ -358,6 +372,17 @@
                  this.secondaryColor = p_i1583_3_;
                  this.field_151512_d = StatList.getStatKillEntity(this);
                  this.field_151513_e = StatList.getStatEntityKilledBy(this);

@@ -1,16 +1,17 @@
-++++ REJECTED PATCH 1
-     public void reloadResources(List p_110541_1_)
+--- ../src-base/minecraft/net/minecraft/client/resources/SimpleReloadableResourceManager.java
++++ ../src-work/minecraft/net/minecraft/client/resources/SimpleReloadableResourceManager.java
+@@ -93,6 +93,7 @@
+     public void reloadResources(List<IResourcePack> p_110541_1_)
      {
          this.clearResources();
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Loading Resources", p_110541_1_.size()+1, true);
-         logger.info("Reloading ResourceManager: " + joinerResourcePacks.join(Iterables.transform(p_110541_1_, new Function()
+         logger.info("Reloading ResourceManager: " + joinerResourcePacks.join(Iterables.transform(p_110541_1_, new Function<IResourcePack, String>()
          {
              private static final String __OBFID = "CL_00001092";
-++++ END PATCH
-++++ REJECTED PATCH 2
-         while (iterator.hasNext())
+@@ -104,23 +105,32 @@
+ 
+         for (IResourcePack iresourcepack : p_110541_1_)
          {
-             IResourcePack iresourcepack = (IResourcePack)iterator.next();
 +            resReload.step(iresourcepack.getPackName());
              this.reloadResourcePack(iresourcepack);
          }
@@ -22,25 +23,21 @@
  
      public void registerReloadListener(IResourceManagerReloadListener p_110542_1_)
      {
-         this.reloadListeners.add(p_110542_1_);
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Loading Resource", 1);
 +        resReload.step(p_110542_1_.getClass());
+         this.reloadListeners.add(p_110542_1_);
          p_110542_1_.onResourceManagerReload(this);
 +        net.minecraftforge.fml.common.ProgressManager.pop(resReload);
      }
  
      private void notifyReloadListeners()
      {
-         Iterator iterator = this.reloadListeners.iterator();
- 
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Reloading", this.reloadListeners.size());
-         while (iterator.hasNext())
+         for (IResourceManagerReloadListener iresourcemanagerreloadlistener : this.reloadListeners)
          {
-             IResourceManagerReloadListener iresourcemanagerreloadlistener = (IResourceManagerReloadListener)iterator.next();
 +            resReload.step(iresourcemanagerreloadlistener.getClass());
              iresourcemanagerreloadlistener.onResourceManagerReload(this);
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(resReload);
      }
  }
-++++ END PATCH

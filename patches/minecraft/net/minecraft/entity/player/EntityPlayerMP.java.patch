@@ -27,7 +27,25 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -425,6 +426,7 @@
+@@ -265,7 +266,8 @@
+                         if (chunk.isPopulated())
+                         {
+                             list.add(chunk);
+-                            list1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
++                            list1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 15));
++                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
+                             iterator1.remove();
+                         }
+                     }
+@@ -295,6 +297,7 @@
+                 for (Chunk chunk1 : list)
+                 {
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk1);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk1.getChunkCoordIntPair(), this));
+                 }
+             }
+         }
+@@ -425,6 +428,7 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -35,7 +53,7 @@
          if (this.worldObj.getGameRules().getGameRuleBooleanValue("showDeathMessages"))
          {
              Team team = this.getTeam();
-@@ -448,7 +450,20 @@
+@@ -448,7 +452,20 @@
  
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
@@ -56,7 +74,15 @@
          }
  
          for (ScoreObjective scoreobjective : this.worldObj.getScoreboard().getObjectivesFromCriteria(IScoreObjectiveCriteria.deathCount))
-@@ -832,6 +847,7 @@
+@@ -462,6 +479,7 @@
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(EntityList.getEntityID(entitylivingbase)));
++            if (entitylist$entityegginfo == null) entitylist$entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.getEntityString(entitylivingbase));
+ 
+             if (entitylist$entityegginfo != null)
+             {
+@@ -832,6 +850,7 @@
      {
          if (stat != null)
          {

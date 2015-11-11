@@ -13,6 +13,15 @@
          if (this.currentGameType.isCreative() && this.mc.thePlayer.getHeldItem() != null && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)
          {
              return false;
+@@ -129,7 +135,7 @@
+             else
+             {
+                 world.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
+-                boolean flag = world.setBlockToAir(pos);
++                boolean flag = block1.removedByPlayer(world, pos, mc.thePlayer, false);
+ 
+                 if (flag)
+                 {
 @@ -357,11 +363,19 @@
          {
              if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
@@ -46,3 +55,15 @@
                  }
              }
              else
+@@ -421,9 +437,10 @@
+             {
+                 playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = itemstack;
+ 
+-                if (itemstack.stackSize == 0)
++                if (itemstack.stackSize <= 0)
+                 {
+                     playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = null;
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(playerIn, itemstack);
+                 }
+ 
+                 return true;

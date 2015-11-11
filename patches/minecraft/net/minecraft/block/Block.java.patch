@@ -179,7 +179,7 @@
      }
  
      protected ItemStack createStackedBlock(IBlockState state)
-@@ -1015,6 +1035,1033 @@
+@@ -1015,6 +1035,1029 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  
@@ -939,11 +939,7 @@
 +     */
 +    public boolean canEntityDestroy(IBlockAccess world, BlockPos pos, Entity entity)
 +    {
-+        if (entity instanceof net.minecraft.entity.boss.EntityWither)
-+        {
-+            return this != net.minecraft.init.Blocks.barrier && this != net.minecraft.init.Blocks.bedrock && this != net.minecraft.init.Blocks.end_portal && this != net.minecraft.init.Blocks.end_portal_frame && this != net.minecraft.init.Blocks.command_block;
-+        }
-+        else if (entity instanceof net.minecraft.entity.boss.EntityDragon)
++        if (entity instanceof net.minecraft.entity.boss.EntityDragon)
 +        {
 +            return this != net.minecraft.init.Blocks.barrier && this != net.minecraft.init.Blocks.obsidian && this != net.minecraft.init.Blocks.end_stone && this != net.minecraft.init.Blocks.bedrock && this != net.minecraft.init.Blocks.command_block;
 +        }

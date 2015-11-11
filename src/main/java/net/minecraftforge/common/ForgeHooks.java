@@ -24,10 +24,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLeashKnot;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -38,6 +46,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
@@ -249,6 +258,127 @@ public class ForgeHooks
      */
     public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
     {
+        /*
+            int i = 0;
+            boolean flag1 = false;
+            TileEntity tileentity = null;
+            Item item;
+
+            if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            {
+                BlockPos blockpos = this.objectMouseOver.getBlockPos();
+                Block block = this.theWorld.getBlockState(blockpos).getBlock();
+
+                if (block.getMaterial() == Material.air)
+                {
+                    return;
+                }
+
+                item = block.getItem(this.theWorld, blockpos);
+
+                if (item == null)
+                {
+                    return;
+                }
+
+                if (flag && GuiScreen.isCtrlKeyDown())
+                {
+                    tileentity = this.theWorld.getTileEntity(blockpos);
+                }
+
+                Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
+                i = block1.getDamageValue(this.theWorld, blockpos);
+                flag1 = item.getHasSubtypes();
+            }
+            else
+            {
+                if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
+                {
+                    return;
+                }
+
+                if (this.objectMouseOver.entityHit instanceof EntityPainting)
+                {
+                    item = Items.painting;
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
+                {
+                    item = Items.lead;
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
+                {
+                    EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
+                    ItemStack itemstack = entityitemframe.getDisplayedItem();
+
+                    if (itemstack == null)
+                    {
+                        item = Items.item_frame;
+                    }
+                    else
+                    {
+                        item = itemstack.getItem();
+                        i = itemstack.getMetadata();
+                        flag1 = true;
+                    }
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
+                {
+                    EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
+
+                    switch (entityminecart.getMinecartType())
+                    {
+                        case FURNACE:
+                            item = Items.furnace_minecart;
+                            break;
+                        case CHEST:
+                            item = Items.chest_minecart;
+                            break;
+                        case TNT:
+                            item = Items.tnt_minecart;
+                            break;
+                        case HOPPER:
+                            item = Items.hopper_minecart;
+                            break;
+                        case COMMAND_BLOCK:
+                            item = Items.command_block_minecart;
+                            break;
+                        default:
+                            item = Items.minecart;
+                    }
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
+                {
+                    item = Items.boat;
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
+                {
+                    item = Items.armor_stand;
+                }
+                else
+                {
+                    item = Items.spawn_egg;
+                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
+                    flag1 = true;
+
+                    if (!EntityList.entityEggs.containsKey(Integer.valueOf(i)))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            InventoryPlayer inventoryplayer = this.thePlayer.inventory;
+
+            if (tileentity == null)
+            {
+                inventoryplayer.setCurrentItem(item, i, flag1, flag);
+            }
+            else
+            {
+                ItemStack itemstack1 = this.func_181036_a(item, i, tileentity);
+                inventoryplayer.setInventorySlotContents(inventoryplayer.currentItem, itemstack1);
+            }
+         */
         ItemStack result = null;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;

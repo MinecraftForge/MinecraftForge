@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
+@@ -238,7 +238,7 @@
+                     }
+                 }
+ 
+-                if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity instanceof EntityLivingBase)
++                if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity != null && ridingEntity.shouldDismountInWater(this))
+                 {
+                     this.mountEntity((Entity)null);
+                 }
+@@ -320,7 +320,7 @@
+             if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+             {
+                 int i = this.getExperiencePoints(this.attackingPlayer);
+-
++                i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.attackingPlayer, i);
+                 while (i > 0)
+                 {
+                     int j = EntityXPOrb.getXPSplit(i);
 @@ -381,6 +381,7 @@
      {
          this.entityLivingToAttack = livingBase;
@@ -16,7 +34,16 @@
      public void removePotionEffectClient(int p_70618_1_)
      {
          this.activePotionsMap.remove(Integer.valueOf(p_70618_1_));
-@@ -733,6 +733,7 @@
+@@ -713,6 +713,8 @@
+ 
+     public void heal(float healAmount)
+     {
++        healAmount = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, healAmount);
++        if (healAmount <= 0) return;
+         float f = this.getHealth();
+ 
+         if (f > 0.0F)
+@@ -733,6 +735,7 @@
  
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
@@ -24,7 +51,7 @@
          if (this.isEntityInvulnerable(source))
          {
              return false;
-@@ -798,9 +799,9 @@
+@@ -798,9 +801,9 @@
                          this.recentlyHit = 100;
                          this.attackingPlayer = (EntityPlayer)entity;
                      }
@@ -36,7 +63,7 @@
  
                          if (entitywolf.isTamed())
                          {
-@@ -884,6 +885,7 @@
+@@ -884,6 +887,7 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -44,7 +71,7 @@
          Entity entity = cause.getEntity();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
-@@ -909,6 +911,9 @@
+@@ -909,6 +913,9 @@
                  i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
              }
  
@@ -54,7 +81,7 @@
              if (this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
                  this.dropFewItems(this.recentlyHit > 0, i);
-@@ -919,6 +924,16 @@
+@@ -919,6 +926,16 @@
                      this.addRandomArmor();
                  }
              }
@@ -71,7 +98,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -973,7 +988,7 @@
+@@ -973,7 +990,7 @@
          int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
          int k = MathHelper.floor_double(this.posZ);
          Block block = this.worldObj.getBlockState(new BlockPos(i, j, k)).getBlock();
@@ -80,7 +107,7 @@
      }
  
      public boolean isEntityAlive()
-@@ -983,6 +998,9 @@
+@@ -983,6 +1000,9 @@
  
      public void fall(float distance, float damageMultiplier)
      {
@@ -90,7 +117,7 @@
          super.fall(distance, damageMultiplier);
          PotionEffect potioneffect = this.getActivePotionEffect(Potion.jump);
          float f = potioneffect != null ? (float)(potioneffect.getAmplifier() + 1) : 0.0F;
-@@ -1095,6 +1113,8 @@
+@@ -1095,6 +1115,8 @@
      {
          if (!this.isEntityInvulnerable(damageSrc))
          {
@@ -99,7 +126,7 @@
              damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
              damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
              float f = damageAmount;
-@@ -1143,6 +1163,11 @@
+@@ -1143,6 +1165,11 @@
  
      public void swingItem()
      {
@@ -111,7 +138,7 @@
          if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
          {
              this.swingProgressInt = -1;
-@@ -1282,6 +1307,7 @@
+@@ -1282,6 +1309,7 @@
  
      public void dismountEntity(Entity p_110145_1_)
      {
@@ -119,7 +146,7 @@
          double d0 = p_110145_1_.posX;
          double d1 = p_110145_1_.getEntityBoundingBox().minY + (double)p_110145_1_.height;
          double d2 = p_110145_1_.posZ;
-@@ -1347,6 +1373,7 @@
+@@ -1347,6 +1375,7 @@
          }
  
          this.isAirBorne = true;
@@ -127,7 +154,7 @@
      }
  
      protected void updateAITick()
-@@ -1531,6 +1558,7 @@
+@@ -1531,6 +1560,7 @@
  
      public void onUpdate()
      {
@@ -135,7 +162,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -1819,6 +1847,7 @@
+@@ -1819,6 +1849,7 @@
  
      public void mountEntity(Entity entityIn)
      {
@@ -143,7 +170,7 @@
          if (this.ridingEntity != null && entityIn == null)
          {
              if (!this.worldObj.isRemote)
-@@ -2000,4 +2029,39 @@
+@@ -2000,4 +2031,39 @@
      {
          this.potionsNeedUpdate = true;
      }
