@@ -10,7 +10,6 @@ import java.nio.FloatBuffer;
 import java.util.Map;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
@@ -23,7 +22,7 @@ import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -32,7 +31,6 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -87,6 +85,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
 
 
 
@@ -326,10 +325,10 @@ public class ForgeHooksClient
         renderLayer.set(layer);
     }
 
-    public static ModelBase getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBase _default)
+    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
     {
-        ModelBase modelbase = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
-        return modelbase == null ? _default : modelbase;
+        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
+        return model == null ? _default : model;
     }
 
     //This properly moves the domain, if provided, to the front of the string before concatenating

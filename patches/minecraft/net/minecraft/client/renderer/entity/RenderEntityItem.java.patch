@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
+@@ -42,7 +42,7 @@
+             boolean flag = p_177077_9_.isGui3d();
+             int i = this.func_177078_a(itemstack);
+             float f = 0.25F;
+-            float f1 = MathHelper.sin(((float)p_177077_1_.getAge() + p_177077_8_) / 10.0F + p_177077_1_.hoverStart) * 0.1F + 0.1F;
++            float f1 = shouldBob() ? MathHelper.sin(((float)p_177077_1_.getAge() + p_177077_8_) / 10.0F + p_177077_1_.hoverStart) * 0.1F + 0.1F : 0;
+             float f2 = p_177077_9_.getItemCameraTransforms().func_181688_b(ItemCameraTransforms.TransformType.GROUND).scale.y;
+             GlStateManager.translate((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
+ 
 @@ -158,4 +158,25 @@
      {
          return TextureMap.locationBlocksTexture;

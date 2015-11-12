@@ -71,7 +71,7 @@
 +    /**
 +     * ItemStack sensitive version of getItemAttributeModifiers
 +     */
-+    public Multimap getAttributeModifiers(ItemStack stack)
++    public Multimap<String, AttributeModifier> getAttributeModifiers(ItemStack stack)
 +    {
 +        return this.getItemAttributeModifiers();
 +    }

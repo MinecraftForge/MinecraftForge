@@ -121,7 +121,24 @@
      }
  
      public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn)
-@@ -861,6 +858,7 @@
+@@ -743,6 +740,7 @@
+             }
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, playerIn, list, advanced);
+         return list;
+     }
+ 
+@@ -853,7 +851,7 @@
+         }
+         else
+         {
+-            multimap = this.getItem().getItemAttributeModifiers();
++            multimap = this.getItem().getAttributeModifiers(this);
+         }
+ 
+         return multimap;
+@@ -861,6 +859,7 @@
  
      public void setItem(Item newItem)
      {

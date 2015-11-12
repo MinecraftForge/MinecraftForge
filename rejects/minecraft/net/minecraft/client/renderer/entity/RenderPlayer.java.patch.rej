@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
- 
-     public void func_180596_a(AbstractClientPlayer p_180596_1_, double p_180596_2_, double p_180596_4_, double p_180596_6_, float p_180596_8_, float p_180596_9_)
-     {
-+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_180596_1_, this, p_180596_9_, p_180596_2_, p_180596_4_, p_180596_6_))) return;
-         if (!p_180596_1_.isUser() || this.renderManager.livingPlayer == p_180596_1_)
-         {
-             double d3 = p_180596_4_;
-++++ END PATCH
