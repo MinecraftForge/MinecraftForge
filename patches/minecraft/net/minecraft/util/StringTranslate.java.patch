@@ -1,17 +1,10 @@
-++++ REJECTED PATCH 1
- {
-     private static final Pattern numericVariablePattern = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
-     private static final Splitter equalSignSplitter = Splitter.on('=').limit(2);
-+    private final Map languageList;
-     private static StringTranslate instance = new StringTranslate();
--    private final Map languageList = Maps.newHashMap();
-     private long lastUpdateTimeInMilliseconds;
-     private static final String __OBFID = "CL_00001212";
+--- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
++++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
+@@ -24,9 +24,29 @@
  
      public StringTranslate()
      {
 +        InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
-+        languageList = Maps.newHashMap();
 +        inject(this, inputstream);
 +    }
 +
@@ -35,12 +28,10 @@
 -            InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
 +            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
 +            if (inputstream == null) return table;
-+
-             Iterator iterator = IOUtils.readLines(inputstream, Charsets.UTF_8).iterator();
  
-             while (iterator.hasNext())
-++++ END PATCH
-++++ REJECTED PATCH 2
+             for (String s : IOUtils.readLines(inputstream, Charsets.UTF_8))
+             {
+@@ -38,17 +58,17 @@
                      {
                          String s1 = astring[0];
                          String s2 = numericVariablePattern.matcher(astring[1]).replaceAll("%$1s");
@@ -52,8 +43,8 @@
  
 -            this.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
          }
--        catch (IOException ioexception)
-+        catch (Exception ioexception)
+-        catch (IOException var7)
++        catch (Exception var7)
          {
              ;
          }
@@ -61,4 +52,3 @@
      }
  
      static StringTranslate getInstance()
-++++ END PATCH

@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
+@@ -423,7 +423,7 @@
+ 
+                         if (d3 < d2 || d2 == 0.0D)
+                         {
+-                            if (entity1 == entity.ridingEntity)
++                            if (entity1 == entity.ridingEntity && !entity.canRiderInteract())
+                             {
+                                 if (d2 == 0.0D)
+                                 {
 @@ -580,14 +580,8 @@
              {
                  BlockPos blockpos = new BlockPos(entity);
@@ -44,6 +53,15 @@
          }
  
          GlStateManager.translate(0.0F, -f, 0.0F);
+@@ -1107,7 +1104,7 @@
+ 
+                 try
+                 {
+-                    this.mc.currentScreen.drawScreen(k1, l1, p_181560_1_);
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.mc.currentScreen, k1, l1, p_181560_1_);
+                 }
+                 catch (Throwable throwable)
+                 {
 @@ -1171,7 +1168,7 @@
  
                      if (this.mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)
@@ -53,7 +71,17 @@
                      }
                      else
                      {
-@@ -1333,6 +1330,7 @@
+@@ -1321,7 +1318,9 @@
+             GlStateManager.pushMatrix();
+             RenderHelper.enableStandardItemLighting();
+             this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             renderglobal.renderEntities(entity, icamera, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             RenderHelper.disableStandardItemLighting();
+             this.disableLightmap();
+             GlStateManager.matrixMode(5888);
+@@ -1333,6 +1332,7 @@
                  EntityPlayer entityplayer = (EntityPlayer)entity;
                  GlStateManager.disableAlpha();
                  this.mc.mcProfiler.endStartSection("outline");
@@ -61,7 +89,31 @@
                  renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
                  GlStateManager.enableAlpha();
              }
-@@ -1399,8 +1397,12 @@
+@@ -1346,6 +1346,7 @@
+             EntityPlayer entityplayer1 = (EntityPlayer)entity;
+             GlStateManager.disableAlpha();
+             this.mc.mcProfiler.endStartSection("outline");
++            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer1, mc.objectMouseOver, 0, entityplayer1.getHeldItem(), partialTicks))
+             renderglobal.drawSelectionBox(entityplayer1, this.mc.objectMouseOver, 0, partialTicks);
+             GlStateManager.enableAlpha();
+         }
+@@ -1387,6 +1388,15 @@
+         GlStateManager.shadeModel(7425);
+         this.mc.mcProfiler.endStartSection("translucent");
+         renderglobal.renderBlockLayer(EnumWorldBlockLayer.TRANSLUCENT, (double)partialTicks, pass, entity);
++        if (!this.debugView) //Only render if render pass 0 happens as well.
++        {
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
++            renderglobal.renderEntities(entity, icamera, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
++        }
+         GlStateManager.shadeModel(7424);
+         GlStateManager.depthMask(true);
+         GlStateManager.enableCull();
+@@ -1399,8 +1409,12 @@
              this.renderCloudsCheck(renderglobal, partialTicks, pass);
          }
  
@@ -74,7 +126,21 @@
          if (this.renderHand)
          {
              GlStateManager.clear(256);
-@@ -1837,6 +1839,13 @@
+@@ -1512,6 +1526,13 @@
+ 
+     protected void renderRainSnow(float partialTicks)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.mc.theWorld.provider.getWeatherRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, this.mc.theWorld, mc);
++            return;
++        }
++
+         float f = this.mc.theWorld.getRainStrength(partialTicks);
+ 
+         if (f > 0.0F)
+@@ -1837,6 +1858,13 @@
              this.fogColorBlue = f7;
          }
  
@@ -88,7 +154,7 @@
          GlStateManager.clearColor(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 0.0F);
      }
  
-@@ -1855,6 +1864,10 @@
+@@ -1855,6 +1883,10 @@
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
          Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.theWorld, entity, partialTicks);
  
@@ -99,11 +165,11 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).isPotionActive(Potion.blindness))
          {
              float f1 = 5.0F;
-@@ -1932,6 +1945,7 @@
+@@ -1932,6 +1964,7 @@
                  GlStateManager.setFogStart(f * 0.05F);
                  GlStateManager.setFogEnd(Math.min(f, 192.0F) * 0.5F);
              }
-+            net.minecraftforge.client.ForgeHooksClient.onFogRender(this, entity, block, partialTicks, p_78468_1_, f1);
++            net.minecraftforge.client.ForgeHooksClient.onFogRender(this, entity, block, partialTicks, p_78468_1_, f);
          }
  
          GlStateManager.enableColorMaterial();
