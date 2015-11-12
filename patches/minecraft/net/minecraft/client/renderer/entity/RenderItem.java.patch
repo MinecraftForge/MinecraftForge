@@ -24,7 +24,7 @@
                  }
 +                else
 +                {
-+                    // TODO: add back getModel; maybe switch to the smart player model / normal smart item model?
++                    // TODO: maybe switch to the smart player model / normal smart item model?
 +                    modelresourcelocation = item.getModel(stack, entityplayer, entityplayer.getItemInUseCount());
 +                }
  
@@ -56,7 +56,31 @@
          this.renderItem(stack, ibakedmodel);
          GlStateManager.disableAlpha();
          GlStateManager.disableRescaleNormal();
-@@ -1048,6 +1048,7 @@
+@@ -464,10 +464,11 @@
+                 GlStateManager.enableDepth();
+             }
+ 
+-            if (stack.isItemDamaged())
++            if (stack.getItem().showDurabilityBar(stack))
+             {
+-                int j = (int)Math.round(13.0D - (double)stack.getItemDamage() * 13.0D / (double)stack.getMaxDamage());
+-                int i = (int)Math.round(255.0D - (double)stack.getItemDamage() * 255.0D / (double)stack.getMaxDamage());
++                double health = stack.getItem().getDurabilityForDisplay(stack);
++                int j = (int)Math.round(13.0D - health * 13.0D);
++                int i = (int)Math.round(255.0D - health * 255.0D);
+                 GlStateManager.disableLighting();
+                 GlStateManager.disableDepth();
+                 GlStateManager.disableTexture2D();
+@@ -478,7 +479,7 @@
+                 this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
+                 this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
+                 this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, j, 1, 255 - i, i, 0, 255);
+-                GlStateManager.enableBlend();
++                //GlStateManager.enableBlend(); // Forge: Disable Blend because it screws with a lot of things down the line.
+                 GlStateManager.enableAlpha();
+                 GlStateManager.enableTexture2D();
+                 GlStateManager.enableLighting();
+@@ -1048,6 +1049,7 @@
          this.registerBlock(Blocks.brown_mushroom_block, BlockHugeMushroom.EnumType.ALL_INSIDE.getMetadata(), "brown_mushroom_block");
          this.registerBlock(Blocks.red_mushroom_block, BlockHugeMushroom.EnumType.ALL_INSIDE.getMetadata(), "red_mushroom_block");
          this.registerBlock(Blocks.dragon_egg, "dragon_egg");

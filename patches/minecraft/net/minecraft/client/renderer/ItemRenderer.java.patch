@@ -13,7 +13,7 @@
  
              if (iblockstate.getBlock().getRenderType() != -1)
              {
-+                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, blockpos))
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, new BlockPos(this.mc.thePlayer)))
                  this.func_178108_a(p_78447_1_, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
              }
          }
@@ -35,10 +35,10 @@
          {
              if (!this.itemToRender.getIsItemStackEqual(itemstack))
              {
-+                if (!this.itemToRender.getItem().shouldCauseReequipAnimation(this.itemToRender, itemstack, equippedItemSlot != entityplayersp.inventory.currentItem))
++                if (!this.itemToRender.getItem().shouldCauseReequipAnimation(this.itemToRender, itemstack, equippedItemSlot != entityplayer.inventory.currentItem))
 +                {
 +                    this.itemToRender = itemstack;
-+                    this.equippedItemSlot = entityplayersp.inventory.currentItem;
++                    this.equippedItemSlot = entityplayer.inventory.currentItem;
 +                    return;
 +                }
                  flag = true;
