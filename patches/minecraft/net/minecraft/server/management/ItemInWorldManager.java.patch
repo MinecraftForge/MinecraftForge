@@ -167,7 +167,7 @@
                  if (itemstack.stackSize == 0)
                  {
                      player.inventory.mainInventory[player.inventory.currentItem] = null;
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, itemstack1);
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, itemstack);
                  }
  
                  if (!player.isUsingItem())

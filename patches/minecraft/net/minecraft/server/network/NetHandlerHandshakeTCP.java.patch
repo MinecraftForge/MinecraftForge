@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerHandshakeTCP.java
+@@ -23,6 +23,8 @@
+ 
+     public void processHandshake(C00Handshake packetIn)
+     {
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(packetIn, this.networkManager)) return;
++
+         switch (packetIn.getRequestedState())
+         {
+             case LOGIN:

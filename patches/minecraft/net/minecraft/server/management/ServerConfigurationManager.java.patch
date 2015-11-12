@@ -92,11 +92,81 @@
          playerIn.triggerAchievement(StatList.leaveGameStat);
          this.writePlayerData(playerIn);
          WorldServer worldserver = playerIn.getServerForPlayer();
-@@ -495,17 +525,27 @@
+@@ -328,6 +358,7 @@
+             this.uuidToPlayerMap.remove(uuid);
+             this.playerStatFiles.remove(uuid);
+         }
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
+ 
+         this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {playerIn}));
+     }
+@@ -411,13 +442,23 @@
+ 
+     public EntityPlayerMP recreatePlayerEntity(EntityPlayerMP playerIn, int dimension, boolean conqueredEnd)
+     {
++        World world = mcServer.worldServerForDimension(dimension);
++        if (world == null)
++        {
++            dimension = 0;
++        }
++        else if (!world.provider.canRespawnHere())
++        {
++            dimension = world.provider.getRespawnDimension(playerIn);
++        }
++
+         playerIn.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(playerIn);
+         playerIn.getServerForPlayer().getEntityTracker().untrackEntity(playerIn);
+         playerIn.getServerForPlayer().getPlayerManager().removePlayer(playerIn);
+         this.playerEntityList.remove(playerIn);
+         this.mcServer.worldServerForDimension(playerIn.dimension).removePlayerEntityDangerously(playerIn);
+-        BlockPos blockpos = playerIn.getBedLocation();
+-        boolean flag = playerIn.isSpawnForced();
++        BlockPos blockpos = playerIn.getBedLocation(dimension);
++        boolean flag = playerIn.isSpawnForced(dimension);
+         playerIn.dimension = dimension;
+         ItemInWorldManager iteminworldmanager;
+ 
+@@ -433,6 +474,7 @@
+         EntityPlayerMP entityplayermp = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(playerIn.dimension), playerIn.getGameProfile(), iteminworldmanager);
+         entityplayermp.playerNetServerHandler = playerIn.playerNetServerHandler;
+         entityplayermp.clonePlayer(playerIn, conqueredEnd);
++        entityplayermp.dimension = dimension;
+         entityplayermp.setEntityId(playerIn.getEntityId());
+         entityplayermp.func_174817_o(playerIn);
+         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
+@@ -472,19 +514,25 @@
+         this.uuidToPlayerMap.put(entityplayermp.getUniqueID(), entityplayermp);
+         entityplayermp.addSelfToInternalCraftingInventory();
+         entityplayermp.setHealth(entityplayermp.getHealth());
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp);
+         return entityplayermp;
+     }
+ 
+     public void transferPlayerToDimension(EntityPlayerMP playerIn, int dimension)
+     {
++        transferPlayerToDimension(playerIn, dimension, mcServer.worldServerForDimension(dimension).getDefaultTeleporter());
++    }
++
++    public void transferPlayerToDimension(EntityPlayerMP playerIn, int dimension, net.minecraft.world.Teleporter teleporter)
++    {
+         int i = playerIn.dimension;
+         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
+         playerIn.dimension = dimension;
+         WorldServer worldserver1 = this.mcServer.worldServerForDimension(playerIn.dimension);
+-        playerIn.playerNetServerHandler.sendPacket(new S07PacketRespawn(playerIn.dimension, playerIn.worldObj.getDifficulty(), playerIn.worldObj.getWorldInfo().getTerrainType(), playerIn.theItemInWorldManager.getGameType()));
++        playerIn.playerNetServerHandler.sendPacket(new S07PacketRespawn(playerIn.dimension, worldserver1.getDifficulty(), worldserver1.getWorldInfo().getTerrainType(), playerIn.theItemInWorldManager.getGameType()));
+         worldserver.removePlayerEntityDangerously(playerIn);
+         playerIn.isDead = false;
+-        this.transferEntityToWorld(playerIn, i, worldserver, worldserver1);
++        this.transferEntityToWorld(playerIn, i, worldserver, worldserver1, teleporter);
+         this.func_72375_a(playerIn, worldserver);
+         playerIn.playerNetServerHandler.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
+         playerIn.theItemInWorldManager.setWorld(worldserver1);
+@@ -495,17 +543,27 @@
          {
              playerIn.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(playerIn.getEntityId(), potioneffect));
          }
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(playerIn, j, dimension);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(playerIn, i, dimension);
      }
  
      public void transferEntityToWorld(Entity entityIn, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
@@ -123,7 +193,7 @@
          {
              d0 = MathHelper.clamp_double(d0 / d2, p_82448_4_.getWorldBorder().minX() + 16.0D, p_82448_4_.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp_double(d1 / d2, p_82448_4_.getWorldBorder().minZ() + 16.0D, p_82448_4_.getWorldBorder().maxZ() - 16.0D);
-@@ -516,7 +556,7 @@
+@@ -516,7 +574,7 @@
                  p_82448_3_.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -132,7 +202,7 @@
          {
              d0 = MathHelper.clamp_double(d0 * d2, p_82448_4_.getWorldBorder().minX() + 16.0D, p_82448_4_.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp_double(d1 * d2, p_82448_4_.getWorldBorder().minZ() + 16.0D, p_82448_4_.getWorldBorder().maxZ() - 16.0D);
-@@ -527,7 +567,8 @@
+@@ -527,7 +585,8 @@
                  p_82448_3_.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -142,7 +212,7 @@
          {
              BlockPos blockpos;
  
-@@ -562,7 +603,7 @@
+@@ -562,7 +621,7 @@
              if (entityIn.isEntityAlive())
              {
                  entityIn.setLocationAndAngles(d0, entityIn.posY, d1, entityIn.rotationYaw, entityIn.rotationPitch);

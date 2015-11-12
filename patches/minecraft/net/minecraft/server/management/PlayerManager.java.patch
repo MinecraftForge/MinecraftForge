@@ -5,7 +5,7 @@
          p_72683_1_.managedPosX = p_72683_1_.posX;
          p_72683_1_.managedPosZ = p_72683_1_.posZ;
 +        // Load nearby chunks first
-+        List<ChunkCoordIntPair> chunkList = new ArrayList<ChunkCoordIntPair>();
++        List<ChunkCoordIntPair> chunkList = Lists.newArrayList();
  
          for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
          {
@@ -30,7 +30,7 @@
              int i1 = this.playerViewRadius;
              int j1 = i - k;
              int k1 = j - l;
-+            List<ChunkCoordIntPair> chunksToLoad = new ArrayList<ChunkCoordIntPair>();
++            List<ChunkCoordIntPair> chunksToLoad = Lists.newArrayList();
  
              if (j1 != 0 || k1 != 0)
              {
@@ -176,7 +176,7 @@
          public void onUpdate()
          {
              if (this.numBlocksToUpdate != 0)
-@@ -441,7 +515,7 @@
+@@ -441,18 +515,19 @@
                      BlockPos blockpos = new BlockPos(i, j, k);
                      this.sendToAllPlayersWatchingChunk(new S23PacketBlockChange(PlayerManager.this.theWorldServer, blockpos));
  
@@ -185,3 +185,37 @@
                      {
                          this.sendTileToAllPlayersWatchingChunk(PlayerManager.this.theWorldServer.getTileEntity(blockpos));
                      }
+                 }
+-                else if (this.numBlocksToUpdate == 64)
++                else if (this.numBlocksToUpdate >= net.minecraftforge.common.ForgeModContainer.clumpingThreshold)
+                 {
+                     int i1 = this.chunkCoords.chunkXPos * 16;
+                     int k1 = this.chunkCoords.chunkZPos * 16;
+                     this.sendToAllPlayersWatchingChunk(new S21PacketChunkData(PlayerManager.this.theWorldServer.getChunkFromChunkCoords(this.chunkCoords.chunkXPos, this.chunkCoords.chunkZPos), false, this.flagsYAreasToUpdate));
+ 
+-                    for (int i2 = 0; i2 < 16; ++i2)
++                    // Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
++                    for (int i2 = 0; false && i2 < 16; ++i2)
+                     {
+                         if ((this.flagsYAreasToUpdate & 1 << i2) != 0)
+                         {
+@@ -469,7 +544,9 @@
+                 else
+                 {
+                     this.sendToAllPlayersWatchingChunk(new S22PacketMultiBlockChange(this.numBlocksToUpdate, this.locationOfBlockChange, PlayerManager.this.theWorldServer.getChunkFromChunkCoords(this.chunkCoords.chunkXPos, this.chunkCoords.chunkZPos)));
+-
++                }
++                { // Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
++                    WorldServer world = PlayerManager.this.theWorldServer;
+                     for (int j1 = 0; j1 < this.numBlocksToUpdate; ++j1)
+                     {
+                         int l1 = (this.locationOfBlockChange[j1] >> 12 & 15) + this.chunkCoords.chunkXPos * 16;
+@@ -477,7 +554,7 @@
+                         int l2 = (this.locationOfBlockChange[j1] >> 8 & 15) + this.chunkCoords.chunkZPos * 16;
+                         BlockPos blockpos1 = new BlockPos(l1, j2, l2);
+ 
+-                        if (PlayerManager.this.theWorldServer.getBlockState(blockpos1).getBlock().hasTileEntity())
++                        if (world.getBlockState(blockpos1).getBlock().hasTileEntity(world.getBlockState(blockpos1)))
+                         {
+                             this.sendTileToAllPlayersWatchingChunk(PlayerManager.this.theWorldServer.getTileEntity(blockpos1));
+                         }
