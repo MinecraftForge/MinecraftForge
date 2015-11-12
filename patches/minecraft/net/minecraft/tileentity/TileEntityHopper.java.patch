@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
+@@ -516,17 +516,31 @@
+ 
+             if (itemstack == null)
+             {
++                //Forge: BUGFIX: Again, make things respect max stack sizes.
++                int max = Math.min(p_174916_1_.getMaxStackSize(), p_174916_0_.getInventoryStackLimit());
++                if (max >= p_174916_1_.stackSize)
++                {
+                 p_174916_0_.setInventorySlotContents(p_174916_2_, p_174916_1_);
+                 p_174916_1_ = null;
++                }
++                else
++                {
++                    p_174916_0_.setInventorySlotContents(p_174916_2_, p_174916_1_.splitStack(max));
++                }
+                 flag = true;
+             }
+             else if (canCombine(itemstack, p_174916_1_))
+             {
+-                int i = p_174916_1_.getMaxStackSize() - itemstack.stackSize;
++                //Forge: BUGFIX: Again, make things respect max stack sizes.
++                int max = Math.min(p_174916_1_.getMaxStackSize(), p_174916_0_.getInventoryStackLimit());
++                if (max > itemstack.stackSize)
++                {
++                int i = max - itemstack.stackSize;
+                 int j = Math.min(p_174916_1_.stackSize, i);
+                 p_174916_1_.stackSize -= j;
+                 itemstack.stackSize += j;
+                 flag = j > 0;
++                }
+             }
+ 
+             if (flag)

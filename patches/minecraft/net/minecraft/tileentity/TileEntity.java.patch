@@ -16,7 +16,19 @@
          }
      }
  
-@@ -103,7 +105,17 @@
+@@ -83,9 +85,10 @@
+     {
+         TileEntity tileentity = null;
+ 
++        Class <? extends TileEntity > oclass = null;
+         try
+         {
+-            Class <? extends TileEntity > oclass = (Class)nameToClassMap.get(nbt.getString("id"));
++            oclass = (Class)nameToClassMap.get(nbt.getString("id"));
+ 
+             if (oclass != null)
+             {
+@@ -103,7 +106,17 @@
          }
          else
          {
@@ -34,7 +46,7 @@
          }
  
          return tileentity;
-@@ -135,7 +147,6 @@
+@@ -135,7 +148,6 @@
          }
      }
  
@@ -42,7 +54,7 @@
      public double getDistanceSq(double x, double y, double z)
      {
          double d0 = (double)this.pos.getX() + 0.5D - x;
-@@ -283,4 +294,135 @@
+@@ -283,4 +295,135 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
          addMapping(TileEntityBanner.class, "Banner");
      }
