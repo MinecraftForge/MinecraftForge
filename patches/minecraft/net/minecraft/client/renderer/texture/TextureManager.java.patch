@@ -1,17 +1,15 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -139,9 +139,12 @@
  
      public void onResourceManagerReload(IResourceManager resourceManager)
      {
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.mapTextureObjects.keySet().size(), true);
-         Iterator iterator = this.mapTextureObjects.entrySet().iterator();
- 
-         while (iterator.hasNext())
+         for (Entry<ResourceLocation, ITextureObject> entry : this.mapTextureObjects.entrySet())
          {
-             Entry entry = (Entry)iterator.next();
 +            bar.step(entry.getKey().toString());
              this.loadTexture((ResourceLocation)entry.getKey(), (ITextureObject)entry.getValue());
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  }
-++++ END PATCH
