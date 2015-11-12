@@ -9,6 +9,15 @@
  
          if (s1 != null)
          {
+@@ -51,7 +51,7 @@
+     @SideOnly(Side.CLIENT)
+     public int getColorFromItemStack(ItemStack stack, int renderPass)
+     {
+-        EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(stack.getMetadata()));
++        EntityList.EntityEggInfo entitylist$entityegginfo = ItemMonsterPlacer.getEggInfo(stack);
+         return entitylist$entityegginfo != null ? (renderPass == 0 ? entitylist$entityegginfo.primaryColor : entitylist$entityegginfo.secondaryColor) : 16777215;
+     }
+ 
 @@ -76,7 +76,7 @@
                  if (tileentity instanceof TileEntityMobSpawner)
                  {
@@ -36,7 +45,38 @@
  
                          if (entity != null)
                          {
-@@ -209,5 +209,28 @@
+@@ -172,19 +172,29 @@
+         }
+     }
+ 
++    @Deprecated // Use string version below.
+     public static Entity spawnCreature(World worldIn, int entityID, double x, double y, double z)
+     {
+         if (!EntityList.entityEggs.containsKey(Integer.valueOf(entityID)))
+         {
+             return null;
+         }
++        return spawnCreature(worldIn, EntityList.getStringFromID(entityID), x, y, z);
++    }
++
++    public static Entity spawnCreature(World worldIn, String name, double x, double y, double z)
++    {
++        if (!EntityList.stringToClassMapping.containsKey(name))
++        {
++            return null;
++        }
+         else
+         {
+             Entity entity = null;
+ 
+             for (int i = 0; i < 1; ++i)
+             {
+-                entity = EntityList.createEntityByID(entityID, worldIn);
++                entity = EntityList.createEntityByName(name, worldIn);
+ 
+                 if (entity instanceof EntityLivingBase)
+                 {
+@@ -209,5 +219,28 @@
          {
              subItems.add(new ItemStack(itemIn, 1, entitylist$entityegginfo.spawnedID));
          }
