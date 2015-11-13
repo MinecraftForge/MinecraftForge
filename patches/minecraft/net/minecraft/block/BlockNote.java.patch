@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNote.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNote.java
-@@ -59,7 +59,9 @@
+@@ -58,7 +58,9 @@
              if (tileentity instanceof TileEntityNote)
              {
                  TileEntityNote tileentitynote = (TileEntityNote)tileentity;
@@ -10,7 +10,7 @@
                  tileentitynote.triggerNote(worldIn, pos);
                  playerIn.triggerAchievement(StatList.field_181735_S);
              }
-@@ -99,6 +101,10 @@
+@@ -98,6 +100,10 @@
  
      public boolean onBlockEventReceived(World worldIn, BlockPos pos, IBlockState state, int eventID, int eventParam)
      {

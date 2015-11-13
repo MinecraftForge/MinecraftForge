@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -59,7 +59,7 @@
+@@ -58,7 +58,7 @@
      {
          if (!worldIn.isRemote)
          {
@@ -9,7 +9,7 @@
              {
                  worldIn.setBlockState(pos, Blocks.dirt.getDefaultState());
              }
-@@ -73,7 +73,7 @@
+@@ -72,7 +72,7 @@
                          Block block = worldIn.getBlockState(blockpos.up()).getBlock();
                          IBlockState iblockstate = worldIn.getBlockState(blockpos);
  
@@ -18,7 +18,7 @@
                          {
                              worldIn.setBlockState(blockpos, Blocks.grass.getDefaultState());
                          }
-@@ -111,7 +111,7 @@
+@@ -110,7 +110,7 @@
              {
                  if (j >= i / 16)
                  {

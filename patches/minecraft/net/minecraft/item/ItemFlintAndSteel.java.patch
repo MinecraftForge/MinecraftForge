@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemFlintAndSteel.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemFlintAndSteel.java
-@@ -29,7 +29,7 @@
+@@ -27,7 +27,7 @@
          }
          else
          {

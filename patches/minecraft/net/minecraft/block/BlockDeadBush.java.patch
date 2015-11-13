@@ -7,9 +7,9 @@
 -public class BlockDeadBush extends BlockBush
 +public class BlockDeadBush extends BlockBush implements net.minecraftforge.common.IShearable
  {
-     private static final String __OBFID = "CL_00000224";
- 
-@@ -47,14 +47,15 @@
+     protected BlockDeadBush()
+     {
+@@ -45,14 +45,15 @@
  
      public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
      {

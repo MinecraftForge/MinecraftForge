@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
-@@ -199,6 +199,8 @@
+@@ -198,6 +198,8 @@
      {
          EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
          BlockPos blockpos = pos.offset(enumfacing.getOpposite());

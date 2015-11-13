@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -43,8 +43,41 @@
+@@ -42,8 +42,41 @@
          this.chunkSaveLocation = chunkSaveLocationIn;
      }
  
@@ -42,7 +42,7 @@
          ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
          NBTTagCompound nbttagcompound = (NBTTagCompound)this.chunksToRemove.get(chunkcoordintpair);
  
-@@ -60,11 +93,17 @@
+@@ -59,11 +92,17 @@
              nbttagcompound = CompressedStreamTools.read(datainputstream);
          }
  
@@ -61,7 +61,7 @@
          if (!p_75822_4_.hasKey("Level", 10))
          {
              logger.error("Chunk file at " + x + "," + z + " is missing level data, skipping");
-@@ -88,10 +127,29 @@
+@@ -87,10 +126,29 @@
                      logger.error("Chunk file at " + x + "," + z + " is in the wrong location; relocating. (Expected " + x + ", " + z + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
                      nbttagcompound.setInteger("xPos", x);
                      nbttagcompound.setInteger("zPos", z);
@@ -92,7 +92,7 @@
              }
          }
      }
-@@ -106,6 +164,7 @@
+@@ -105,6 +163,7 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.setTag("Level", nbttagcompound1);
              this.writeChunkToNBT(chunkIn, worldIn, nbttagcompound1);
@@ -100,7 +100,7 @@
              this.addChunkToPending(chunkIn.getChunkCoordIntPair(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -282,11 +341,20 @@
+@@ -281,11 +340,20 @@
              {
                  NBTTagCompound nbttagcompound1 = new NBTTagCompound();
  
@@ -121,7 +121,7 @@
              }
          }
  
-@@ -296,8 +364,17 @@
+@@ -295,8 +363,17 @@
          for (TileEntity tileentity : chunkIn.getTileEntityMap().values())
          {
              NBTTagCompound nbttagcompound2 = new NBTTagCompound();
@@ -139,7 +139,7 @@
          }
  
          p_75820_3_.setTag("TileEntities", nbttaglist2);
-@@ -377,6 +454,12 @@
+@@ -376,6 +453,12 @@
              chunk.setBiomeArray(p_75823_2_.getByteArray("Biomes"));
          }
  
@@ -152,7 +152,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -448,7 +531,5 @@
+@@ -447,7 +530,5 @@
                  }
              }
          }

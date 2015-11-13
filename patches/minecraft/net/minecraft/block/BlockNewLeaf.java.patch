@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNewLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNewLeaf.java
-@@ -101,14 +101,15 @@
+@@ -99,14 +99,15 @@
  
      public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
      {

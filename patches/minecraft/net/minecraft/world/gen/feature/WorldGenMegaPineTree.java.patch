@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaPineTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaPineTree.java
-@@ -44,30 +44,24 @@
+@@ -43,30 +43,24 @@
              {
                  Block block = worldIn.getBlockState(p_180709_3_.up(j)).getBlock();
  
@@ -35,7 +35,7 @@
                      {
                          this.func_175903_a(worldIn, p_180709_3_.add(0, j, 1), this.woodMetadata);
                      }
-@@ -133,16 +127,23 @@
+@@ -132,16 +126,23 @@
              BlockPos blockpos = p_175934_2_.up(i);
              Block block = worldIn.getBlockState(blockpos).getBlock();
  

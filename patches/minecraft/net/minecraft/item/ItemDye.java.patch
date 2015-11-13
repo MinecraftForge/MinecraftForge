@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemDye.java
-@@ -48,7 +48,7 @@
+@@ -47,7 +47,7 @@
  
              if (enumdyecolor == EnumDyeColor.WHITE)
              {
@@ -9,7 +9,7 @@
                  {
                      if (!worldIn.isRemote)
                      {
-@@ -98,8 +98,18 @@
+@@ -97,8 +97,18 @@
  
      public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target)
      {
@@ -28,7 +28,7 @@
          if (iblockstate.getBlock() instanceof IGrowable)
          {
              IGrowable igrowable = (IGrowable)iblockstate.getBlock();
-@@ -133,7 +143,7 @@
+@@ -132,7 +142,7 @@
  
          Block block = worldIn.getBlockState(pos).getBlock();
  
@@ -37,7 +37,7 @@
          {
              block.setBlockBoundsBasedOnState(worldIn, pos);
  
-@@ -145,6 +155,16 @@
+@@ -144,6 +154,16 @@
                  worldIn.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)pos.getX() + itemRand.nextFloat()), (double)pos.getY() + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)pos.getZ() + itemRand.nextFloat()), d0, d1, d2, new int[0]);
              }
          }

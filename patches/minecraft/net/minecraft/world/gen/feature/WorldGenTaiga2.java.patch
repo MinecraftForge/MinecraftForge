@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
-@@ -56,7 +56,7 @@
+@@ -55,7 +55,7 @@
                          {
                              Block block = worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(k1, i1, l1)).getBlock();
  
@@ -9,7 +9,7 @@
                              {
                                  flag = false;
                              }
-@@ -75,11 +75,13 @@
+@@ -74,11 +74,13 @@
              }
              else
              {
@@ -26,7 +26,7 @@
                      int i3 = p_180709_2_.nextInt(2);
                      int j3 = 1;
                      int k3 = 0;
-@@ -100,7 +102,7 @@
+@@ -99,7 +101,7 @@
                                  {
                                      BlockPos blockpos = new BlockPos(i2, j4, k2);
  
@@ -35,7 +35,7 @@
                                      {
                                          this.func_175903_a(worldIn, blockpos, field_181646_b);
                                      }
-@@ -129,9 +131,10 @@
+@@ -128,9 +130,10 @@
  
                      for (int k4 = 0; k4 < i - i4; ++k4)
                      {

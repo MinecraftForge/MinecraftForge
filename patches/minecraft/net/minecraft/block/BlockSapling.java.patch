@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSapling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSapling.java
-@@ -72,6 +72,7 @@
+@@ -71,6 +71,7 @@
  
      public void generateTree(World worldIn, BlockPos pos, IBlockState state, Random rand)
      {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -122,6 +122,7 @@
+@@ -121,6 +121,7 @@
      public void setAttackTarget(EntityLivingBase p_70624_1_)
      {
          this.attackTarget = p_70624_1_;
@@ -8,7 +8,7 @@
      }
  
      public boolean canAttackClass(Class <? extends EntityLivingBase > p_70686_1_)
-@@ -499,10 +500,22 @@
+@@ -498,10 +499,22 @@
  
      protected void despawnEntity()
      {
@@ -31,7 +31,7 @@
          else
          {
              Entity entity = this.worldObj.getClosestPlayerToEntity(this, -1.0D);
-@@ -622,7 +635,6 @@
+@@ -621,7 +634,6 @@
          return this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this) && this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox()).isEmpty() && !this.worldObj.isAnyLiquid(this.getEntityBoundingBox());
      }
  

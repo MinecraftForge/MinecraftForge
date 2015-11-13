@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/Locale.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/Locale.java
-@@ -96,6 +96,8 @@
+@@ -95,6 +95,8 @@
  
      private void loadLocaleData(InputStream p_135021_1_) throws IOException
      {

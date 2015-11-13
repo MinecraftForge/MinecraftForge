@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-@@ -72,7 +72,7 @@
+@@ -71,7 +71,7 @@
              }
          }
  
@@ -9,7 +9,7 @@
          {
              this.closeConnection("Took too long to log in");
          }
-@@ -132,7 +132,7 @@
+@@ -130,7 +130,7 @@
              }
              else
              {

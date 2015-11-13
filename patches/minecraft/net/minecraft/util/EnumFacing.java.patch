@@ -9,7 +9,7 @@
  
  public enum EnumFacing implements IStringSerializable
  {
-@@ -61,7 +59,6 @@
+@@ -60,7 +58,6 @@
          return getFront(this.opposite);
      }
  
@@ -17,7 +17,7 @@
      public EnumFacing rotateAround(EnumFacing.Axis axis)
      {
          switch (axis)
-@@ -112,7 +109,6 @@
+@@ -111,7 +108,6 @@
          }
      }
  
@@ -25,7 +25,7 @@
      private EnumFacing rotateX()
      {
          switch (this)
-@@ -132,7 +128,6 @@
+@@ -131,7 +127,6 @@
          }
      }
  
@@ -33,7 +33,7 @@
      private EnumFacing rotateZ()
      {
          switch (this)
-@@ -193,7 +188,6 @@
+@@ -192,7 +187,6 @@
          return this.axis;
      }
  
@@ -41,7 +41,7 @@
      public static EnumFacing byName(String name)
      {
          return name == null ? null : (EnumFacing)NAME_LOOKUP.get(name.toLowerCase());
-@@ -219,7 +213,6 @@
+@@ -218,7 +212,6 @@
          return values()[rand.nextInt(values().length)];
      }
  
@@ -49,7 +49,7 @@
      public static EnumFacing getFacingFromVector(float p_176737_0_, float p_176737_1_, float p_176737_2_)
      {
          EnumFacing enumfacing = NORTH;
-@@ -262,7 +255,6 @@
+@@ -261,7 +254,6 @@
          throw new IllegalArgumentException("No such direction: " + p_181076_0_ + " " + p_181076_1_);
      }
  
@@ -57,7 +57,7 @@
      public Vec3i getDirectionVec()
      {
          return this.directionVec;
-@@ -299,7 +291,6 @@
+@@ -297,7 +289,6 @@
              this.plane = plane;
          }
  

@@ -19,7 +19,7 @@
      private KeyPair serverKeyPair;
      private String serverOwner;
      private String folderName;
-@@ -229,8 +230,6 @@
+@@ -227,8 +228,6 @@
      {
          this.convertMapIfNeeded(p_71247_1_);
          this.setUserMessage("menu.loadingLevel");
@@ -28,7 +28,7 @@
          ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(p_71247_1_, true);
          this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
-@@ -261,47 +260,21 @@
+@@ -259,47 +258,21 @@
              worldsettings = new WorldSettings(worldinfo);
          }
  
@@ -84,7 +84,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -316,7 +289,7 @@
+@@ -314,7 +287,7 @@
          this.setUserMessage("menu.generatingTerrain");
          int j1 = 0;
          logger.info("Preparing start region for level " + j1);
@@ -93,7 +93,7 @@
          BlockPos blockpos = worldserver.getSpawnPoint();
          long k1 = getCurrentTimeMillis();
  
-@@ -405,7 +378,7 @@
+@@ -403,7 +376,7 @@
  
      public void stopServer()
      {
@@ -102,7 +102,7 @@
          {
              logger.info("Stopping server");
  
-@@ -429,8 +402,15 @@
+@@ -427,8 +400,15 @@
                  for (int i = 0; i < this.worldServers.length; ++i)
                  {
                      WorldServer worldserver = this.worldServers[i];
@@ -118,7 +118,7 @@
              }
  
              if (this.usageSnooper.isSnooperRunning())
-@@ -462,6 +442,7 @@
+@@ -460,6 +440,7 @@
          {
              if (this.startServer())
              {
@@ -126,7 +126,7 @@
                  this.currentTime = getCurrentTimeMillis();
                  long i = 0L;
                  this.statusResponse.setServerDescription(new ChatComponentText(this.motd));
-@@ -506,12 +487,20 @@
+@@ -504,12 +485,20 @@
                      Thread.sleep(Math.max(1L, 50L - i));
                      this.serverIsRunning = true;
                  }
@@ -147,7 +147,7 @@
          catch (Throwable throwable1)
          {
              logger.error("Encountered an unexpected exception", throwable1);
-@@ -537,6 +526,7 @@
+@@ -535,6 +524,7 @@
                  logger.error("We were unable to save this crash report to disk.");
              }
  
@@ -155,7 +155,7 @@
              this.finalTick(crashreport);
          }
          finally
-@@ -552,6 +542,8 @@
+@@ -550,6 +540,8 @@
              }
              finally
              {
@@ -164,7 +164,7 @@
                  this.systemExitNow();
              }
          }
-@@ -601,6 +593,7 @@
+@@ -599,6 +591,7 @@
      public void tick()
      {
          long i = System.nanoTime();
@@ -172,7 +172,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -627,6 +620,7 @@
+@@ -625,6 +618,7 @@
  
              Collections.shuffle(Arrays.asList(agameprofile));
              this.statusResponse.getPlayerCountData().setPlayers(agameprofile);
@@ -180,7 +180,7 @@
          }
  
          if (this.tickCounter % 900 == 0)
-@@ -654,6 +648,7 @@
+@@ -652,6 +646,7 @@
  
          this.theProfiler.endSection();
          this.theProfiler.endSection();
@@ -188,7 +188,7 @@
      }
  
      public void updateTimeLightAndEntities()
-@@ -669,14 +664,17 @@
+@@ -667,14 +662,17 @@
          }
  
          this.theProfiler.endStartSection("levels");
@@ -209,7 +209,7 @@
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
  
                  if (this.tickCounter % 20 == 0)
-@@ -687,6 +685,7 @@
+@@ -685,6 +683,7 @@
                  }
  
                  this.theProfiler.startSection("tick");
@@ -217,7 +217,7 @@
  
                  try
                  {
-@@ -710,6 +709,7 @@
+@@ -708,6 +707,7 @@
                      throw new ReportedException(crashreport1);
                  }
  
@@ -225,7 +225,7 @@
                  this.theProfiler.endSection();
                  this.theProfiler.startSection("tracker");
                  worldserver.getEntityTracker().updateTrackedEntities();
-@@ -717,9 +717,11 @@
+@@ -715,9 +715,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -238,7 +238,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkSystem().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -741,6 +743,7 @@
+@@ -739,6 +741,7 @@
  
      public void startServerThread()
      {
@@ -246,7 +246,7 @@
          this.serverThread = new Thread(this, "Server thread");
          this.serverThread.start();
      }
-@@ -757,7 +760,13 @@
+@@ -755,7 +758,13 @@
  
      public WorldServer worldServerForDimension(int dimension)
      {
@@ -261,7 +261,7 @@
      }
  
      public String getMinecraftVersion()
-@@ -787,7 +796,7 @@
+@@ -785,7 +794,7 @@
  
      public String getServerModName()
      {
@@ -270,7 +270,7 @@
      }
  
      public CrashReport addServerInfoToCrashReport(CrashReport report)
-@@ -1000,6 +1009,7 @@
+@@ -996,6 +1005,7 @@
  
              if (worldserver != null)
              {

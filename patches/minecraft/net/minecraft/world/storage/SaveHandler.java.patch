@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -105,13 +105,17 @@
+@@ -104,13 +104,17 @@
      {
          File file1 = new File(this.worldDirectory, "level.dat");
  
@@ -19,7 +19,7 @@
              }
              catch (Exception exception1)
              {
-@@ -119,6 +123,7 @@
+@@ -118,6 +122,7 @@
              }
          }
  
@@ -27,7 +27,7 @@
          file1 = new File(this.worldDirectory, "level.dat_old");
  
          if (file1.exists())
-@@ -127,7 +132,13 @@
+@@ -126,7 +131,13 @@
              {
                  NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
                  NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
@@ -42,7 +42,7 @@
              }
              catch (Exception exception)
              {
-@@ -144,6 +155,8 @@
+@@ -143,6 +154,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.setTag("Data", nbttagcompound);
  
@@ -51,7 +51,7 @@
          try
          {
              File file1 = new File(this.worldDirectory, "level.dat_new");
-@@ -182,6 +195,8 @@
+@@ -181,6 +194,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.setTag("Data", nbttagcompound);
  
@@ -60,7 +60,7 @@
          try
          {
              File file1 = new File(this.worldDirectory, "level.dat_new");
-@@ -230,6 +245,7 @@
+@@ -229,6 +244,7 @@
              }
  
              file1.renameTo(file2);
@@ -68,7 +68,7 @@
          }
          catch (Exception var5)
          {
-@@ -260,6 +276,7 @@
+@@ -259,6 +275,7 @@
              p_75752_1_.readFromNBT(nbttagcompound);
          }
  
@@ -76,7 +76,7 @@
          return nbttagcompound;
      }
  
-@@ -301,4 +318,22 @@
+@@ -300,4 +317,22 @@
      {
          return this.saveDirectoryName;
      }

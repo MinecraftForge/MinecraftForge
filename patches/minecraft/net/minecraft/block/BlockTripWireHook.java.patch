@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTripWireHook.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
-@@ -59,14 +59,14 @@
+@@ -58,14 +58,14 @@
  
      public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side)
      {
@@ -17,7 +17,7 @@
              {
                  return true;
              }
-@@ -100,7 +100,7 @@
+@@ -99,7 +99,7 @@
              {
                  EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
  

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/border/WorldBorder.java
 +++ ../src-work/minecraft/net/minecraft/world/border/WorldBorder.java
-@@ -278,4 +278,9 @@
+@@ -277,4 +277,9 @@
              iborderlistener.onWarningDistanceChanged(this, warningDistance);
          }
      }

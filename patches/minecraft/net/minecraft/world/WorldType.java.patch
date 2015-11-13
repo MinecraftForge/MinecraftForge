@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -28,6 +28,7 @@
+@@ -27,6 +27,7 @@
  
      private WorldType(int id, String name, int version)
      {
@@ -8,7 +8,7 @@
          this.worldType = name;
          this.generatorVersion = version;
          this.canBeCreated = true;
-@@ -114,4 +115,144 @@
+@@ -113,4 +114,144 @@
          this.hasNotificationData = true;
          return this;
      }

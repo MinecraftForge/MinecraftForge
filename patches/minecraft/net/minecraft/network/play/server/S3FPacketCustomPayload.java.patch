@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/S3FPacketCustomPayload.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/S3FPacketCustomPayload.java
-@@ -47,7 +47,11 @@
+@@ -46,7 +46,11 @@
      public void writePacketData(PacketBuffer buf) throws IOException
      {
          buf.writeString(this.channel);

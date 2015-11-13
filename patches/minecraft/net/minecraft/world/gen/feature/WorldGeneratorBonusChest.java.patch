@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGeneratorBonusChest.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGeneratorBonusChest.java
-@@ -27,10 +27,12 @@
+@@ -26,10 +26,12 @@
      {
          Block block;
  

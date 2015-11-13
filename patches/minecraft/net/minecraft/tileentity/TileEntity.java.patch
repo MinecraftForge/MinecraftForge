@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -60,6 +60,7 @@
+@@ -59,6 +59,7 @@
      public void readFromNBT(NBTTagCompound compound)
      {
          this.pos = new BlockPos(compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z"));
@@ -8,7 +8,7 @@
      }
  
      public void writeToNBT(NBTTagCompound compound)
-@@ -76,6 +77,7 @@
+@@ -75,6 +76,7 @@
              compound.setInteger("x", this.pos.getX());
              compound.setInteger("y", this.pos.getY());
              compound.setInteger("z", this.pos.getZ());
@@ -16,7 +16,7 @@
          }
      }
  
-@@ -83,9 +85,10 @@
+@@ -82,9 +84,10 @@
      {
          TileEntity tileentity = null;
  
@@ -28,7 +28,7 @@
  
              if (oclass != null)
              {
-@@ -103,7 +106,17 @@
+@@ -102,7 +105,17 @@
          }
          else
          {
@@ -46,7 +46,7 @@
          }
  
          return tileentity;
-@@ -135,7 +148,6 @@
+@@ -134,7 +147,6 @@
          }
      }
  
@@ -54,7 +54,7 @@
      public double getDistanceSq(double x, double y, double z)
      {
          double d0 = (double)this.pos.getX() + 0.5D - x;
-@@ -283,4 +295,135 @@
+@@ -279,4 +291,135 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
          addMapping(TileEntityBanner.class, "Banner");
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -110,7 +110,7 @@
+@@ -109,7 +109,7 @@
          {
              if (item != null)
              {
@@ -9,7 +9,7 @@
                  String s = func_180204_a(item);
  
                  if (s != null)
-@@ -127,11 +127,11 @@
+@@ -126,11 +126,11 @@
      {
          for (Block block : Block.blockRegistry)
          {
@@ -23,7 +23,7 @@
                  String s = func_180204_a(item);
  
                  if (s != null && block.getEnableStats())
-@@ -151,7 +151,7 @@
+@@ -150,7 +150,7 @@
          {
              if (item != null)
              {
@@ -32,7 +32,7 @@
                  String s = func_180204_a(item);
  
                  if (s != null)
-@@ -175,7 +175,7 @@
+@@ -174,7 +174,7 @@
          {
              if (item != null)
              {

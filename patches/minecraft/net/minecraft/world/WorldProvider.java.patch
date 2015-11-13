@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -52,26 +52,12 @@
+@@ -51,26 +51,12 @@
  
      protected void registerWorldChunkManager()
      {
@@ -29,7 +29,7 @@
      }
  
      public boolean canCoordinateBeSpawn(int x, int z)
-@@ -154,13 +140,13 @@
+@@ -153,13 +139,13 @@
  
      public static WorldProvider getProviderForDimension(int dimension)
      {
@@ -45,7 +45,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -176,13 +162,13 @@
+@@ -175,13 +161,13 @@
  
      public int getAverageGroundLevel()
      {
@@ -61,7 +61,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -224,4 +210,319 @@
+@@ -223,4 +209,319 @@
      {
          return new WorldBorder();
      }

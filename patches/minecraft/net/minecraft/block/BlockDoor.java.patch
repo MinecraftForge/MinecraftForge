@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -155,7 +155,7 @@
+@@ -154,7 +154,7 @@
      {
          if (this.blockMaterial == Material.iron)
          {
@@ -9,7 +9,7 @@
          }
          else
          {
-@@ -273,7 +273,7 @@
+@@ -272,7 +272,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {

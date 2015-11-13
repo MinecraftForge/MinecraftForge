@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
-@@ -57,7 +57,7 @@
+@@ -55,7 +55,7 @@
              {
                  BlockPos blockpos = p_180709_3_.up(i2);
  
@@ -9,7 +9,7 @@
                  {
                      this.func_175903_a(worldIn, blockpos, this.woodMetadata);
  
-@@ -72,7 +72,7 @@
+@@ -70,7 +70,7 @@
                  {
                      BlockPos blockpos1 = blockpos.east();
  
@@ -18,7 +18,7 @@
                      {
                          this.func_175903_a(worldIn, blockpos1, this.woodMetadata);
  
-@@ -85,7 +85,7 @@
+@@ -83,7 +83,7 @@
  
                      BlockPos blockpos2 = blockpos.south().east();
  
@@ -27,7 +27,7 @@
                      {
                          this.func_175903_a(worldIn, blockpos2, this.woodMetadata);
  
-@@ -98,7 +98,7 @@
+@@ -96,7 +96,7 @@
  
                      BlockPos blockpos3 = blockpos.south();
  
@@ -36,7 +36,7 @@
                      {
                          this.func_175903_a(worldIn, blockpos3, this.woodMetadata);
  
-@@ -132,4 +132,11 @@
+@@ -130,4 +130,11 @@
              this.func_175925_a(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
          }
      }

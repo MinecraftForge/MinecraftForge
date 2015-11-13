@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
 +++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
-@@ -120,8 +120,17 @@
+@@ -119,8 +119,17 @@
              if (this.useDepth)
              {
                  OpenGlHelper.glBindRenderbuffer(OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
@@ -18,7 +18,7 @@
              }
  
              this.framebufferClear();
-@@ -281,4 +290,36 @@
+@@ -280,4 +289,36 @@
          GlStateManager.clear(i);
          this.unbindFramebuffer();
      }

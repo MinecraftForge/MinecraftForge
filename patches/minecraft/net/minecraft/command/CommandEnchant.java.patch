@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandEnchant.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandEnchant.java
-@@ -95,7 +95,7 @@
+@@ -93,7 +93,7 @@
                                  {
                                      Enchantment enchantment2 = Enchantment.getEnchantmentById(l);
  

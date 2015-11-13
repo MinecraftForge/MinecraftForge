@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMycelium.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMycelium.java
-@@ -40,7 +40,7 @@
+@@ -39,7 +39,7 @@
      {
          if (!worldIn.isRemote)
          {
@@ -9,7 +9,7 @@
              {
                  worldIn.setBlockState(pos, Blocks.dirt.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
              }
-@@ -54,7 +54,7 @@
+@@ -53,7 +53,7 @@
                          IBlockState iblockstate = worldIn.getBlockState(blockpos);
                          Block block = worldIn.getBlockState(blockpos.up()).getBlock();
  

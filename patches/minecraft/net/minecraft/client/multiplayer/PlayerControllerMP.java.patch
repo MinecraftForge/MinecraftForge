@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -112,6 +112,12 @@
+@@ -111,6 +111,12 @@
              }
          }
  
@@ -13,7 +13,7 @@
          if (this.currentGameType.isCreative() && this.mc.thePlayer.getHeldItem() != null && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)
          {
              return false;
-@@ -129,7 +135,7 @@
+@@ -128,7 +134,7 @@
              else
              {
                  world.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
@@ -22,7 +22,7 @@
  
                  if (flag)
                  {
-@@ -357,11 +363,19 @@
+@@ -356,11 +362,19 @@
          {
              if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
              {
@@ -44,7 +44,7 @@
                  }
  
                  if (!flag && p_178890_3_ != null && p_178890_3_.getItem() instanceof ItemBlock)
-@@ -394,7 +408,9 @@
+@@ -393,7 +407,9 @@
                  }
                  else
                  {
@@ -55,7 +55,7 @@
                  }
              }
              else
-@@ -421,9 +437,10 @@
+@@ -420,9 +436,10 @@
              {
                  playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = itemstack;
  

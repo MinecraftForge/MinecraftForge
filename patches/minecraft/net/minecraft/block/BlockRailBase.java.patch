@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
-@@ -32,7 +32,7 @@
+@@ -31,7 +31,7 @@
      public static boolean isRailBlock(IBlockState state)
      {
          Block block = state.getBlock();
@@ -9,7 +9,7 @@
      }
  
      protected BlockRailBase(boolean isPowered)
-@@ -176,6 +176,81 @@
+@@ -175,6 +175,81 @@
  
      public abstract IProperty<BlockRailBase.EnumRailDirection> getShapeProperty();
  
@@ -91,15 +91,15 @@
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -248,6 +323,7 @@
+@@ -245,6 +320,7 @@
+         private IBlockState state;
          private final boolean isPowered;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
-         private static final String __OBFID = "CL_00000196";
 +        private final boolean canMakeSlopes;
  
          public Rail(World worldIn, BlockPos pos, IBlockState state)
          {
-@@ -256,7 +332,8 @@
+@@ -253,7 +329,8 @@
              this.state = state;
              this.block = (BlockRailBase)state.getBlock();
              BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(BlockRailBase.this.getShapeProperty());
@@ -109,7 +109,7 @@
              this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -442,7 +519,7 @@
+@@ -439,7 +516,7 @@
                  }
              }
  
@@ -118,7 +118,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
                  {
-@@ -455,7 +532,7 @@
+@@ -452,7 +529,7 @@
                  }
              }
  
@@ -127,7 +127,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos3.up()))
                  {
-@@ -598,7 +675,7 @@
+@@ -595,7 +672,7 @@
                  }
              }
  
@@ -136,7 +136,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
                  {
-@@ -611,7 +688,7 @@
+@@ -608,7 +685,7 @@
                  }
              }
  

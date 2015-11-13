@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
-@@ -106,8 +106,10 @@
+@@ -105,8 +105,10 @@
  
      protected void genDecorations(BiomeGenBase p_150513_1_)
      {
@@ -11,7 +11,7 @@
          for (int i = 0; i < this.sandPerChunk2; ++i)
          {
              int j = this.randomGenerator.nextInt(16) + 8;
-@@ -115,6 +117,7 @@
+@@ -114,6 +116,7 @@
              this.sandGen.generate(this.currentWorld, this.randomGenerator, this.currentWorld.getTopSolidOrLiquidBlock(this.field_180294_c.add(j, 0, k)));
          }
  
@@ -19,7 +19,7 @@
          for (int i1 = 0; i1 < this.clayPerChunk; ++i1)
          {
              int l1 = this.randomGenerator.nextInt(16) + 8;
-@@ -122,6 +125,7 @@
+@@ -121,6 +124,7 @@
              this.clayGen.generate(this.currentWorld, this.randomGenerator, this.currentWorld.getTopSolidOrLiquidBlock(this.field_180294_c.add(l1, 0, i6)));
          }
  
@@ -27,7 +27,7 @@
          for (int j1 = 0; j1 < this.sandPerChunk; ++j1)
          {
              int i2 = this.randomGenerator.nextInt(16) + 8;
-@@ -136,6 +140,7 @@
+@@ -135,6 +139,7 @@
              ++k1;
          }
  
@@ -35,7 +35,7 @@
          for (int j2 = 0; j2 < k1; ++j2)
          {
              int k6 = this.randomGenerator.nextInt(16) + 8;
-@@ -150,6 +155,7 @@
+@@ -149,6 +154,7 @@
              }
          }
  
@@ -43,7 +43,7 @@
          for (int k2 = 0; k2 < this.bigMushroomsPerChunk; ++k2)
          {
              int l6 = this.randomGenerator.nextInt(16) + 8;
-@@ -157,6 +163,7 @@
+@@ -156,6 +162,7 @@
              this.bigMushroomGen.generate(this.currentWorld, this.randomGenerator, this.currentWorld.getHorizon(this.field_180294_c.add(l6, 0, k10)));
          }
  
@@ -51,7 +51,7 @@
          for (int l2 = 0; l2 < this.flowersPerChunk; ++l2)
          {
              int i7 = this.randomGenerator.nextInt(16) + 8;
-@@ -178,6 +185,7 @@
+@@ -177,6 +184,7 @@
              }
          }
  
@@ -59,7 +59,7 @@
          for (int i3 = 0; i3 < this.grassPerChunk; ++i3)
          {
              int j7 = this.randomGenerator.nextInt(16) + 8;
-@@ -191,6 +199,7 @@
+@@ -190,6 +198,7 @@
              }
          }
  
@@ -67,7 +67,7 @@
          for (int j3 = 0; j3 < this.deadBushPerChunk; ++j3)
          {
              int k7 = this.randomGenerator.nextInt(16) + 8;
-@@ -204,6 +213,7 @@
+@@ -203,6 +212,7 @@
              }
          }
  
@@ -75,7 +75,7 @@
          for (int k3 = 0; k3 < this.waterlilyPerChunk; ++k3)
          {
              int l7 = this.randomGenerator.nextInt(16) + 8;
-@@ -230,6 +240,8 @@
+@@ -229,6 +239,8 @@
              }
          }
  
@@ -84,7 +84,7 @@
          for (int l3 = 0; l3 < this.mushroomsPerChunk; ++l3)
          {
              if (this.randomGenerator.nextInt(4) == 0)
-@@ -280,7 +292,9 @@
+@@ -279,7 +291,9 @@
                  this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, this.field_180294_c.add(j4, l15, l8));
              }
          }
@@ -95,7 +95,7 @@
          for (int k4 = 0; k4 < this.reedsPerChunk; ++k4)
          {
              int i9 = this.randomGenerator.nextInt(16) + 8;
-@@ -306,7 +320,8 @@
+@@ -305,7 +319,8 @@
                  this.reedGen.generate(this.currentWorld, this.randomGenerator, this.field_180294_c.add(j9, i19, i13));
              }
          }
@@ -105,7 +105,7 @@
          if (this.randomGenerator.nextInt(32) == 0)
          {
              int i5 = this.randomGenerator.nextInt(16) + 8;
-@@ -320,6 +335,7 @@
+@@ -319,6 +334,7 @@
              }
          }
  
@@ -113,7 +113,7 @@
          for (int j5 = 0; j5 < this.cactiPerChunk; ++j5)
          {
              int l9 = this.randomGenerator.nextInt(16) + 8;
-@@ -335,6 +351,7 @@
+@@ -334,6 +350,7 @@
  
          if (this.generateLakes)
          {
@@ -121,7 +121,7 @@
              for (int k5 = 0; k5 < 50; ++k5)
              {
                  int i10 = this.randomGenerator.nextInt(16) + 8;
-@@ -349,6 +366,7 @@
+@@ -348,6 +365,7 @@
                  }
              }
  
@@ -129,7 +129,7 @@
              for (int l5 = 0; l5 < 20; ++l5)
              {
                  int j10 = this.randomGenerator.nextInt(16) + 8;
-@@ -358,6 +376,7 @@
+@@ -357,6 +375,7 @@
                  (new WorldGenLiquids(Blocks.flowing_lava)).generate(this.currentWorld, this.randomGenerator, blockpos3);
              }
          }
@@ -137,7 +137,7 @@
      }
  
      protected void genStandardOre1(int p_76795_1_, WorldGenerator p_76795_2_, int p_76795_3_, int p_76795_4_)
-@@ -398,16 +417,29 @@
+@@ -397,16 +416,29 @@
  
      protected void generateOres()
      {

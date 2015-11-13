@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemLilyPad.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemLilyPad.java
-@@ -51,7 +51,14 @@
+@@ -49,7 +49,14 @@
  
                  if (iblockstate.getBlock().getMaterial() == Material.water && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0 && worldIn.isAirBlock(blockpos1))
                  {

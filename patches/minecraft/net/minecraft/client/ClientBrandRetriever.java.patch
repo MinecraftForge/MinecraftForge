@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/ClientBrandRetriever.java
 +++ ../src-work/minecraft/net/minecraft/client/ClientBrandRetriever.java
-@@ -10,6 +10,6 @@
- 
+@@ -8,6 +8,6 @@
+ {
      public static String getClientModName()
      {
 -        return "vanilla";

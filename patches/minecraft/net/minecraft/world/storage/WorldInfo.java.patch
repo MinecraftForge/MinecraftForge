@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
-@@ -52,6 +52,7 @@
+@@ -51,6 +51,7 @@
+     private int borderWarningDistance = 5;
      private int borderWarningTime = 15;
      private GameRules theGameRules = new GameRules();
-     private static final String __OBFID = "CL_00000587";
 +    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
  
      protected WorldInfo()
      {
-@@ -755,4 +756,24 @@
+@@ -745,4 +746,24 @@
              }
          });
      }

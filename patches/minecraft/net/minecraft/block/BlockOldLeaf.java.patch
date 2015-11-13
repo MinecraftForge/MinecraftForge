@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOldLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOldLeaf.java
-@@ -144,11 +144,17 @@
+@@ -142,11 +142,17 @@
          if (!worldIn.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.shears)
          {
              player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);

@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/creativetab/CreativeTabs.java
 +++ ../src-work/minecraft/net/minecraft/creativetab/CreativeTabs.java
-@@ -138,8 +138,22 @@
+@@ -125,8 +125,22 @@
+     @SideOnly(Side.CLIENT)
      private ItemStack iconItemStack;
-     private static final String __OBFID = "CL_00000005";
  
 +    public CreativeTabs(String label)
 +    {
@@ -23,7 +23,7 @@
          this.tabIndex = index;
          this.tabLabel = label;
          creativeTabArray[index] = this;
-@@ -222,12 +236,20 @@
+@@ -209,12 +223,20 @@
      @SideOnly(Side.CLIENT)
      public int getTabColumn()
      {
@@ -44,7 +44,7 @@
          return this.tabIndex < 6;
      }
  
-@@ -269,10 +291,17 @@
+@@ -256,10 +278,17 @@
      {
          for (Item item : Item.itemRegistry)
          {
@@ -64,7 +64,7 @@
          }
  
          if (this.getRelevantEnchantmentTypes() != null)
-@@ -305,4 +334,39 @@
+@@ -292,4 +321,39 @@
              }
          }
      }

@@ -9,7 +9,7 @@
      public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
      public static final PropertyBool OPEN = PropertyBool.create("open");
      public static final PropertyEnum<BlockTrapDoor.DoorHalf> HALF = PropertyEnum.<BlockTrapDoor.DoorHalf>create("half", BlockTrapDoor.DoorHalf.class);
-@@ -141,9 +143,10 @@
+@@ -140,9 +142,10 @@
      {
          if (!worldIn.isRemote)
          {
@@ -21,7 +21,7 @@
              {
                  worldIn.setBlockToAir(pos);
                  this.dropBlockAsItem(worldIn, pos, state, 0);
-@@ -187,7 +190,10 @@
+@@ -186,7 +189,10 @@
  
      public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side)
      {
@@ -33,7 +33,7 @@
      }
  
      protected static EnumFacing getFacing(int meta)
-@@ -224,6 +230,7 @@
+@@ -223,6 +229,7 @@
  
      private static boolean isValidSupportBlock(Block blockIn)
      {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -55,16 +55,8 @@
+@@ -54,16 +54,8 @@
              int i = this.getMetadata(stack.getMetadata());
              IBlockState iblockstate1 = this.block.onBlockPlaced(worldIn, pos, side, hitX, hitY, hitZ, i, playerIn);
  
@@ -18,7 +18,7 @@
                  worldIn.playSoundEffect((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F), this.block.stepSound.getPlaceSound(), (this.block.stepSound.getVolume() + 1.0F) / 2.0F, this.block.stepSound.getFrequency() * 0.8F);
                  --stack.stackSize;
              }
-@@ -163,4 +155,26 @@
+@@ -162,4 +154,26 @@
      {
          return this.block;
      }

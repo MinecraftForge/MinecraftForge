@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
-@@ -62,6 +62,8 @@
+@@ -61,6 +61,8 @@
      {
          int i = (pos.getX() >> 4) - this.chunkX;
          int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -9,7 +9,7 @@
          return this.chunkArray[i][j].getTileEntity(pos, Chunk.EnumCreateEntityType.IMMEDIATE);
      }
  
-@@ -85,6 +87,7 @@
+@@ -84,6 +86,7 @@
          {
              int i = (pos.getX() >> 4) - this.chunkX;
              int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -17,7 +17,7 @@
  
              if (i >= 0 && i < this.chunkArray.length && j >= 0 && j < this.chunkArray[i].length)
              {
-@@ -140,6 +143,8 @@
+@@ -139,6 +142,8 @@
              {
                  int i = (pos.getX() >> 4) - this.chunkX;
                  int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -26,7 +26,7 @@
                  return this.chunkArray[i][j].getLightFor(p_175629_1_, pos);
              }
          }
-@@ -151,7 +156,7 @@
+@@ -150,7 +155,7 @@
  
      public boolean isAirBlock(BlockPos pos)
      {
@@ -35,7 +35,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -161,6 +166,7 @@
+@@ -160,6 +165,7 @@
          {
              int i = (pos.getX() >> 4) - this.chunkX;
              int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -43,7 +43,7 @@
              return this.chunkArray[i][j].getLightFor(p_175628_1_, pos);
          }
          else
-@@ -180,4 +186,15 @@
+@@ -179,4 +185,15 @@
      {
          return this.worldObj.getWorldType();
      }

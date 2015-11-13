@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSword.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSword.java
-@@ -102,7 +102,9 @@
+@@ -101,7 +101,9 @@
  
      public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
      {

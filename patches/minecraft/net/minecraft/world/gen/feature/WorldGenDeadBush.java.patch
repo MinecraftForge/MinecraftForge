@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
-@@ -15,10 +15,12 @@
+@@ -13,10 +13,12 @@
      {
          Block block;
  

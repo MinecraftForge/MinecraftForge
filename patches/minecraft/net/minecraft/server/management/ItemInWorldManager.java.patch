@@ -9,7 +9,7 @@
      public World theWorld;
      public EntityPlayerMP thisPlayerMP;
      private WorldSettings.GameType gameType = WorldSettings.GameType.NOT_SET;
-@@ -131,6 +133,14 @@
+@@ -130,6 +132,14 @@
  
      public void onBlockClicked(BlockPos pos, EnumFacing side)
      {
@@ -24,7 +24,7 @@
          if (this.isCreative())
          {
              if (!this.theWorld.extinguishFire((EntityPlayer)null, pos, side))
-@@ -165,18 +175,35 @@
+@@ -164,18 +174,35 @@
                  }
              }
  
@@ -64,7 +64,7 @@
                  this.tryHarvestBlock(pos);
              }
              else
-@@ -197,7 +224,7 @@
+@@ -196,7 +223,7 @@
              int i = this.curblockDamage - this.initialDamage;
              Block block = this.theWorld.getBlockState(pos).getBlock();
  
@@ -73,7 +73,7 @@
              {
                  float f = block.getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, pos) * (float)(i + 1);
  
-@@ -226,9 +253,13 @@
+@@ -225,9 +252,13 @@
  
      private boolean removeBlock(BlockPos pos)
      {
@@ -88,7 +88,7 @@
  
          if (flag)
          {
-@@ -240,7 +271,8 @@
+@@ -239,7 +270,8 @@
  
      public boolean tryHarvestBlock(BlockPos pos)
      {
@@ -98,7 +98,7 @@
          {
              return false;
          }
-@@ -249,40 +281,21 @@
+@@ -248,40 +280,21 @@
              IBlockState iblockstate = this.theWorld.getBlockState(pos);
              TileEntity tileentity = this.theWorld.getTileEntity(pos);
  
@@ -144,7 +144,7 @@
  
                  if (itemstack1 != null)
                  {
-@@ -294,12 +307,18 @@
+@@ -293,12 +306,18 @@
                      }
                  }
  
@@ -163,7 +163,7 @@
              return flag1;
          }
      }
-@@ -333,6 +352,7 @@
+@@ -332,6 +351,7 @@
                  if (itemstack.stackSize == 0)
                  {
                      player.inventory.mainInventory[player.inventory.currentItem] = null;
@@ -171,7 +171,7 @@
                  }
  
                  if (!player.isUsingItem())
-@@ -381,33 +401,51 @@
+@@ -380,33 +400,51 @@
          }
          else
          {
@@ -241,7 +241,7 @@
          }
      }
  
-@@ -415,4 +453,13 @@
+@@ -414,4 +452,13 @@
      {
          this.theWorld = serverWorld;
      }

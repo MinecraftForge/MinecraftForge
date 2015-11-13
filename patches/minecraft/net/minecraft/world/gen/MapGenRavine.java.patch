@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/MapGenRavine.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/MapGenRavine.java
-@@ -129,7 +129,7 @@
+@@ -128,7 +128,7 @@
                                  {
                                      IBlockState iblockstate = p_180707_5_.getBlockState(j1, l1, k1);
  
@@ -9,7 +9,7 @@
                                      {
                                          flag2 = true;
                                      }
-@@ -166,28 +166,12 @@
+@@ -165,28 +165,12 @@
                                          {
                                              IBlockState iblockstate1 = p_180707_5_.getBlockState(j3, j2, i2);
  
@@ -40,7 +40,7 @@
                                          }
                                      }
                                  }
-@@ -222,4 +206,68 @@
+@@ -221,4 +205,68 @@
              }
          }
      }

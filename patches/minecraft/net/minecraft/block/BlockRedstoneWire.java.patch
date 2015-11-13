@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
-@@ -59,10 +59,10 @@
+@@ -58,10 +58,10 @@
          BlockPos blockpos = pos.offset(direction);
          Block block = worldIn.getBlockState(pos.offset(direction)).getBlock();
  
@@ -13,7 +13,7 @@
          }
          else
          {
-@@ -360,35 +360,24 @@
+@@ -359,35 +359,24 @@
          Block block = iblockstate.getBlock();
          boolean flag = block.isNormalCube();
          boolean flag1 = worldIn.getBlockState(pos.up()).getBlock().isNormalCube();

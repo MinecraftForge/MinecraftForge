@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
-@@ -79,7 +79,7 @@
+@@ -78,7 +78,7 @@
      {
          Block block = this.world.getBlockState(origin).getBlock();
  
@@ -9,7 +9,7 @@
          {
              return true;
          }
-@@ -110,7 +110,7 @@
+@@ -109,7 +109,7 @@
                      BlockPos blockpos = origin.offset(this.moveDirection.getOpposite(), i);
                      block = this.world.getBlockState(blockpos).getBlock();
  
@@ -18,7 +18,7 @@
                      {
                          break;
                      }
-@@ -157,7 +157,7 @@
+@@ -156,7 +156,7 @@
  
                      block = this.world.getBlockState(blockpos1).getBlock();
  

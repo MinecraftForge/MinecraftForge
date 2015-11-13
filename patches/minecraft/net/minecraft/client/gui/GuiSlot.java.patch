@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiSlot.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiSlot.java
-@@ -182,15 +182,8 @@
+@@ -181,15 +181,8 @@
              GlStateManager.disableFog();
              Tessellator tessellator = Tessellator.getInstance();
              WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -18,7 +18,7 @@
              int k = this.left + this.width / 2 - this.getListWidth() / 2 + 2;
              int l = this.top + 4 - (int)this.amountScrolled;
  
-@@ -459,4 +452,18 @@
+@@ -458,4 +451,18 @@
      {
          return this.slotHeight;
      }

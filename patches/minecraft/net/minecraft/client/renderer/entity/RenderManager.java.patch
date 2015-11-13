@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -194,6 +194,10 @@
+@@ -193,6 +193,10 @@
          this.skinMap.put("default", this.field_178637_m);
          this.skinMap.put("slim", new RenderPlayer(this, true));
      }
@@ -11,7 +11,7 @@
  
      public void setRenderPosition(double p_178628_1_, double p_178628_3_, double p_178628_5_)
      {
-@@ -242,9 +246,9 @@
+@@ -241,9 +245,9 @@
              IBlockState iblockstate = worldIn.getBlockState(new BlockPos(p_180597_3_));
              Block block = iblockstate.getBlock();
  

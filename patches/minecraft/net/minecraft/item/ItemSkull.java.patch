@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
-@@ -35,6 +35,11 @@
+@@ -34,6 +34,11 @@
  
      public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
      {
@@ -12,7 +12,7 @@
          if (side == EnumFacing.DOWN)
          {
              return false;
-@@ -47,7 +52,7 @@
+@@ -46,7 +51,7 @@
  
              if (!flag)
              {
@@ -21,7 +21,7 @@
                  {
                      return false;
                  }
-@@ -67,6 +72,7 @@
+@@ -66,6 +71,7 @@
              {
                  if (!worldIn.isRemote)
                  {

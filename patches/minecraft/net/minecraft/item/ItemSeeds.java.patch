@@ -9,7 +9,7 @@
  {
      private Block crops;
      private Block soilBlockID;
-@@ -30,7 +30,7 @@
+@@ -29,7 +29,7 @@
          {
              return false;
          }
@@ -18,7 +18,7 @@
          {
              worldIn.setBlockState(pos.up(), this.crops.getDefaultState());
              --stack.stackSize;
-@@ -41,4 +41,16 @@
+@@ -40,4 +40,16 @@
              return false;
          }
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
-@@ -45,7 +45,7 @@
+@@ -44,7 +44,7 @@
              case 4:
                  return butcherVillagerTextures;
              default:

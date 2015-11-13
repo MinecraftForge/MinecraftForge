@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLadder.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLadder.java
-@@ -79,7 +79,10 @@
+@@ -78,7 +78,10 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -12,7 +12,7 @@
      }
  
      public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
-@@ -117,7 +120,7 @@
+@@ -116,7 +119,7 @@
  
      protected boolean canBlockStay(World worldIn, BlockPos pos, EnumFacing facing)
      {
@@ -21,7 +21,7 @@
      }
  
      public IBlockState getStateFromMeta(int meta)
-@@ -147,4 +150,6 @@
+@@ -146,4 +149,6 @@
      {
          return new BlockState(this, new IProperty[] {FACING});
      }

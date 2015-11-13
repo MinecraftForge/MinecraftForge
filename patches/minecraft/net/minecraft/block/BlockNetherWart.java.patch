@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -39,7 +39,7 @@
+@@ -38,7 +38,7 @@
  
      public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -9,7 +9,7 @@
      }
  
      public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-@@ -55,9 +55,11 @@
+@@ -54,9 +54,11 @@
          super.updateTick(worldIn, pos, state, rand);
      }
  
@@ -22,7 +22,7 @@
          {
              int i = 1;
  
-@@ -108,4 +110,24 @@
+@@ -107,4 +109,24 @@
      {
          return new BlockState(this, new IProperty[] {AGE});
      }

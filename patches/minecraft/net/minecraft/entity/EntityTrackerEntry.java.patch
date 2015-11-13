@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -380,6 +380,14 @@
+@@ -379,6 +379,14 @@
                      this.lastTrackedEntityMotionY = this.trackedEntity.motionY;
                      this.motionZ = this.trackedEntity.motionZ;
  
@@ -15,7 +15,7 @@
                      if (this.sendVelocityUpdates && !(packet instanceof S0FPacketSpawnMob))
                      {
                          p_73117_1_.playerNetServerHandler.sendPacket(new S12PacketEntityVelocity(this.trackedEntity.getEntityId(), this.trackedEntity.motionX, this.trackedEntity.motionY, this.trackedEntity.motionZ));
-@@ -427,12 +435,14 @@
+@@ -426,12 +434,14 @@
                              p_73117_1_.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(this.trackedEntity.getEntityId(), potioneffect));
                          }
                      }
@@ -30,7 +30,7 @@
              }
          }
      }
-@@ -464,6 +474,9 @@
+@@ -463,6 +473,9 @@
              logger.warn("Fetching addPacket for removed entity");
          }
  

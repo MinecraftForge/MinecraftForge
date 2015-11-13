@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -53,12 +53,13 @@
+@@ -52,12 +52,13 @@
          super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), WorldProvider.getProviderForDimension(p_i45063_3_), p_i45063_5_, true);
          this.sendQueue = p_i45063_1_;
          this.getWorldInfo().setDifficulty(p_i45063_4_);

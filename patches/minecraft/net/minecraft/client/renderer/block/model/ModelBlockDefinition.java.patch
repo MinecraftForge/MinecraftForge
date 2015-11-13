@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
-@@ -30,7 +30,7 @@
+@@ -29,7 +29,7 @@
  
      public static ModelBlockDefinition parseFromReader(Reader p_178331_0_)
      {
@@ -9,7 +9,7 @@
      }
  
      public ModelBlockDefinition(Collection<ModelBlockDefinition.Variants> p_i46221_1_)
-@@ -160,11 +160,17 @@
+@@ -155,11 +155,17 @@
                  return this.modelLocation;
              }
  

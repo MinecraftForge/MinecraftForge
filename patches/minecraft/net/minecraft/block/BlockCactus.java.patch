@@ -8,8 +8,8 @@
 +public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
  {
      public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
-     private static final String __OBFID = "CL_00000210";
-@@ -110,7 +110,7 @@
+ 
+@@ -109,7 +109,7 @@
          }
  
          Block block = worldIn.getBlockState(pos.down()).getBlock();
@@ -18,7 +18,7 @@
      }
  
      public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
-@@ -138,4 +138,16 @@
+@@ -137,4 +137,16 @@
      {
          return new BlockState(this, new IProperty[] {AGE});
      }

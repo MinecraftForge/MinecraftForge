@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -37,48 +37,39 @@
+@@ -36,48 +36,39 @@
          for (int i = 0; i < p_177630_3_; ++i)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(random, p_177630_1_);

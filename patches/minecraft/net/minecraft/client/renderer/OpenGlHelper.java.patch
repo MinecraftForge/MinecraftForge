@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
-@@ -84,6 +84,10 @@
+@@ -83,6 +83,10 @@
+     public static int GL_ARRAY_BUFFER;
      public static int GL_STATIC_DRAW;
-     private static final String __OBFID = "CL_00001179";
  
 +    /* Stores the last values sent into setLightmapTextureCoords */
 +    public static float lastBrightnessX = 0.0f;
@@ -11,7 +11,7 @@
      public static void initializeTextures()
      {
          ContextCapabilities contextcapabilities = GLContext.getCapabilities();
-@@ -844,6 +848,12 @@
+@@ -843,6 +847,12 @@
          {
              GL13.glMultiTexCoord2f(p_77475_0_, p_77475_1_, p_77475_2_);
          }

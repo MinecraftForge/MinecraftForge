@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
-@@ -50,7 +50,7 @@
+@@ -49,7 +49,7 @@
              int i1 = p_180624_2_.nextInt(16);
              BlockPos blockpos = p_180624_3_.add(k, l, i1);
  

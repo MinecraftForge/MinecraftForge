@@ -9,7 +9,7 @@
  {
      public static final PropertyBool DECAYABLE = PropertyBool.create("decayable");
      public static final PropertyBool CHECK_DECAY = PropertyBool.create("check_decay");
-@@ -76,9 +76,9 @@
+@@ -75,9 +75,9 @@
                          BlockPos blockpos = pos.add(j1, k1, l1);
                          IBlockState iblockstate = worldIn.getBlockState(blockpos);
  
@@ -21,7 +21,7 @@
                          }
                      }
                  }
-@@ -118,9 +118,9 @@
+@@ -117,9 +117,9 @@
                              {
                                  Block block = worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)).getBlock();
  
@@ -33,7 +33,7 @@
                                      {
                                          this.surroundings[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
                                      }
-@@ -227,40 +227,7 @@
+@@ -226,40 +226,7 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -75,7 +75,7 @@
      }
  
      protected void dropApple(World worldIn, BlockPos pos, IBlockState state, int chance)
-@@ -297,4 +264,48 @@
+@@ -296,4 +263,48 @@
      }
  
      public abstract BlockPlanks.EnumType getWoodType(int meta);

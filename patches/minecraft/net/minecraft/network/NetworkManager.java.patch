@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -97,6 +97,11 @@
+@@ -93,6 +93,11 @@
          this.direction = packetDirection;
      }
  
@@ -12,7 +12,7 @@
      public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
      {
          super.channelActive(p_channelActive_1_);
-@@ -212,7 +217,7 @@
+@@ -208,7 +213,7 @@
          final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
          final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.channel.attr(attrKeyConnectionState).get();
  
@@ -21,7 +21,7 @@
          {
              logger.debug("Disabled auto read");
              this.channel.config().setAutoRead(false);
-@@ -220,7 +225,7 @@
+@@ -216,7 +221,7 @@
  
          if (this.channel.eventLoop().inEventLoop())
          {
@@ -30,8 +30,8 @@
              {
                  this.setConnectionState(enumconnectionstate);
              }
-@@ -241,7 +246,7 @@
-                 private static final String __OBFID = "CL_00002312";
+@@ -236,7 +241,7 @@
+             {
                  public void run()
                  {
 -                    if (enumconnectionstate != enumconnectionstate1)
@@ -39,7 +39,7 @@
                      {
                          NetworkManager.this.setConnectionState(enumconnectionstate);
                      }
-@@ -462,6 +467,11 @@
+@@ -455,6 +460,11 @@
          }
      }
  

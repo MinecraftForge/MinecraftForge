@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/audio/SoundManager.java
 +++ ../src-work/minecraft/net/minecraft/client/audio/SoundManager.java
-@@ -70,6 +70,7 @@
+@@ -69,6 +69,7 @@
          {
              SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
@@ -8,7 +8,7 @@
          }
          catch (SoundSystemException soundsystemexception)
          {
-@@ -81,6 +82,7 @@
+@@ -80,6 +81,7 @@
      {
          this.unloadSoundSystem();
          this.loadSoundSystem();
@@ -16,7 +16,7 @@
      }
  
      private synchronized void loadSoundSystem()
-@@ -319,6 +321,9 @@
+@@ -316,6 +318,9 @@
              }
              else
              {
@@ -26,7 +26,7 @@
                  SoundEventAccessorComposite soundeventaccessorcomposite = this.sndHandler.getSound(sound.getSoundLocation());
  
                  if (soundeventaccessorcomposite == null)
-@@ -360,10 +365,12 @@
+@@ -357,10 +362,12 @@
                              if (soundpoolentry.isStreamingSound())
                              {
                                  this.sndSystem.newStreamingSource(false, s, getURLForSoundResource(resourcelocation), resourcelocation.toString(), flag, sound.getXPosF(), sound.getYPosF(), sound.getZPosF(), sound.getAttenuationType().getTypeInt(), f1);

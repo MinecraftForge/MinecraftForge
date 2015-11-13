@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
-@@ -19,6 +19,8 @@
+@@ -18,6 +18,8 @@
+     @SideOnly(Side.CLIENT)
      private boolean isPotionDurationMax;
      private boolean showParticles;
-     private static final String __OBFID = "CL_00001529";
 +    /** List of ItemStack that can cure the potion effect **/
 +    private java.util.List<net.minecraft.item.ItemStack> curativeItems;
  
      public PotionEffect(int id, int effectDuration)
      {
-@@ -37,6 +39,8 @@
+@@ -36,6 +38,8 @@
          this.amplifier = effectAmplifier;
          this.isAmbient = ambient;
          this.showParticles = showParticles;
@@ -18,7 +18,7 @@
      }
  
      public PotionEffect(PotionEffect other)
-@@ -46,6 +50,7 @@
+@@ -45,6 +49,7 @@
          this.amplifier = other.amplifier;
          this.isAmbient = other.isAmbient;
          this.showParticles = other.showParticles;
@@ -26,7 +26,7 @@
      }
  
      public void combine(PotionEffect other)
-@@ -191,7 +196,7 @@
+@@ -190,7 +195,7 @@
  
      public static PotionEffect readCustomPotionEffectFromNBT(NBTTagCompound nbt)
      {
@@ -35,7 +35,7 @@
  
          if (i >= 0 && i < Potion.potionTypes.length && Potion.potionTypes[i] != null)
          {
-@@ -224,4 +229,62 @@
+@@ -223,4 +228,62 @@
      {
          return this.isPotionDurationMax;
      }

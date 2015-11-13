@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
-@@ -60,7 +60,7 @@
+@@ -59,7 +59,7 @@
                  {
                      for (int l = -j; l <= j && flag; ++l)
                      {
@@ -9,7 +9,7 @@
                          {
                              flag = false;
                          }
-@@ -80,13 +80,14 @@
+@@ -79,13 +79,14 @@
      {
          BlockPos blockpos = p_175927_1_.down();
          Block block = worldIn.getBlockState(blockpos).getBlock();
@@ -29,7 +29,7 @@
              return true;
          }
          else
-@@ -114,9 +115,9 @@
+@@ -113,9 +114,9 @@
                  if (j * j + k * k <= i || l * l + i1 * i1 <= i || j * j + i1 * i1 <= i || l * l + k * k <= i)
                  {
                      BlockPos blockpos = p_175925_2_.add(j, 0, k);
@@ -41,7 +41,7 @@
                      {
                          this.func_175903_a(worldIn, blockpos, this.leavesMetadata);
                      }
-@@ -136,9 +137,9 @@
+@@ -135,9 +136,9 @@
                  if (j * j + k * k <= i)
                  {
                      BlockPos blockpos = p_175928_2_.add(j, 0, k);
@@ -53,7 +53,7 @@
                      {
                          this.func_175903_a(worldIn, blockpos, this.leavesMetadata);
                      }
-@@ -146,4 +147,10 @@
+@@ -145,4 +146,10 @@
              }
          }
      }

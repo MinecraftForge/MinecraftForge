@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenCanopyTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenCanopyTree.java
-@@ -34,9 +34,10 @@
+@@ -33,9 +33,10 @@
          if (k >= 1 && k + i + 1 < 256)
          {
              BlockPos blockpos = p_180709_3_.down();
@@ -13,7 +13,7 @@
              {
                  return false;
              }
-@@ -46,10 +47,10 @@
+@@ -45,10 +46,10 @@
              }
              else
              {
@@ -28,7 +28,7 @@
                  EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(p_180709_2_);
                  int i1 = i - p_180709_2_.nextInt(4);
                  int j1 = 2 - p_180709_2_.nextInt(3);
-@@ -68,9 +69,9 @@
+@@ -67,9 +68,9 @@
  
                      int k2 = k + j2;
                      BlockPos blockpos1 = new BlockPos(k1, k2, l1);
@@ -40,7 +40,7 @@
                      {
                          this.func_181639_b(worldIn, blockpos1);
                          this.func_181639_b(worldIn, blockpos1.east());
-@@ -188,7 +189,7 @@
+@@ -187,7 +188,7 @@
              {
                  for (int k1 = -i1; k1 <= i1; ++k1)
                  {
@@ -49,7 +49,7 @@
                      {
                          return false;
                      }
-@@ -210,11 +211,17 @@
+@@ -209,11 +210,17 @@
      private void func_150526_a(World worldIn, int p_150526_2_, int p_150526_3_, int p_150526_4_)
      {
          BlockPos blockpos = new BlockPos(p_150526_2_, p_150526_3_, p_150526_4_);

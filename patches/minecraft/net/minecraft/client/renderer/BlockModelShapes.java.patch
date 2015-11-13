@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
-@@ -317,5 +317,6 @@
+@@ -309,5 +309,6 @@
                  return new ModelResourceLocation(s + "_double_slab", s1);
              }
          });

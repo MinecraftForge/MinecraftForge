@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockButton.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockButton.java
-@@ -75,8 +75,7 @@
+@@ -74,8 +74,7 @@
  
      protected static boolean func_181088_a(World p_181088_0_, BlockPos p_181088_1_, EnumFacing p_181088_2_)
      {

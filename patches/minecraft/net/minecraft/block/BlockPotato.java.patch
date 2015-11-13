@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPotato.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPotato.java
-@@ -24,13 +24,14 @@
+@@ -22,13 +22,14 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);

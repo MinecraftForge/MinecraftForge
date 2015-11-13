@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -37,6 +37,9 @@
+@@ -36,6 +36,9 @@
          }
          else
          {

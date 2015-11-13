@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/GuiConnecting.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/GuiConnecting.java
-@@ -69,7 +69,7 @@
+@@ -67,7 +67,7 @@
                      inetaddress = InetAddress.getByName(ip);
                      GuiConnecting.this.networkManager = NetworkManager.func_181124_a(inetaddress, port, GuiConnecting.this.mc.gameSettings.func_181148_f());
                      GuiConnecting.this.networkManager.setNetHandler(new NetHandlerLoginClient(GuiConnecting.this.networkManager, GuiConnecting.this.mc, GuiConnecting.this.previousGuiScreen));

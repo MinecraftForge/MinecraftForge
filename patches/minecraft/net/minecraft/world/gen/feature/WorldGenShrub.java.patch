@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenShrub.java
-@@ -25,14 +25,16 @@
+@@ -24,14 +24,16 @@
      {
          Block block;
  
@@ -20,7 +20,7 @@
          {
              p_180709_3_ = p_180709_3_.up();
              this.func_175903_a(worldIn, p_180709_3_, this.field_150527_b);
-@@ -54,7 +56,7 @@
+@@ -53,7 +55,7 @@
                          {
                              BlockPos blockpos = new BlockPos(l, i, j1);
  

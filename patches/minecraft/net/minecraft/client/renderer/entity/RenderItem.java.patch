@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
-@@ -73,7 +73,7 @@
+@@ -72,7 +72,7 @@
      public RenderItem(TextureManager textureManager, ModelManager modelManager)
      {
          this.textureManager = textureManager;
@@ -9,7 +9,7 @@
          this.registerItems();
      }
  
-@@ -227,7 +227,7 @@
+@@ -226,7 +226,7 @@
                  k = k | -16777216;
              }
  
@@ -18,7 +18,7 @@
          }
      }
  
-@@ -297,6 +297,11 @@
+@@ -296,6 +296,11 @@
                          modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
                      }
                  }
@@ -30,7 +30,7 @@
  
                  if (modelresourcelocation != null)
                  {
-@@ -318,14 +323,9 @@
+@@ -317,14 +322,9 @@
          GlStateManager.enableBlend();
          GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
          GlStateManager.pushMatrix();
@@ -47,7 +47,7 @@
          this.renderItem(stack, model);
          GlStateManager.cullFace(1029);
          GlStateManager.popMatrix();
-@@ -353,7 +353,7 @@
+@@ -352,7 +352,7 @@
          GlStateManager.blendFunc(770, 771);
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
          this.setupGuiTransform(x, y, ibakedmodel.isGui3d());
@@ -56,7 +56,7 @@
          this.renderItem(stack, ibakedmodel);
          GlStateManager.disableAlpha();
          GlStateManager.disableRescaleNormal();
-@@ -464,10 +464,11 @@
+@@ -459,10 +459,11 @@
                  GlStateManager.enableDepth();
              }
  
@@ -71,7 +71,7 @@
                  GlStateManager.disableLighting();
                  GlStateManager.disableDepth();
                  GlStateManager.disableTexture2D();
-@@ -478,7 +479,7 @@
+@@ -473,7 +474,7 @@
                  this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
                  this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
                  this.func_181565_a(worldrenderer, xPosition + 2, yPosition + 13, j, 1, 255 - i, i, 0, 255);
@@ -80,7 +80,7 @@
                  GlStateManager.enableAlpha();
                  GlStateManager.enableTexture2D();
                  GlStateManager.enableLighting();
-@@ -1048,6 +1049,7 @@
+@@ -1038,6 +1039,7 @@
          this.registerBlock(Blocks.brown_mushroom_block, BlockHugeMushroom.EnumType.ALL_INSIDE.getMetadata(), "brown_mushroom_block");
          this.registerBlock(Blocks.red_mushroom_block, BlockHugeMushroom.EnumType.ALL_INSIDE.getMetadata(), "red_mushroom_block");
          this.registerBlock(Blocks.dragon_egg, "dragon_egg");

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/LoadingScreenRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/LoadingScreenRenderer.java
-@@ -140,6 +140,10 @@
+@@ -139,6 +139,10 @@
                      GlStateManager.clear(16640);
                  }
  
@@ -11,7 +11,7 @@
                  Tessellator tessellator = Tessellator.getInstance();
                  WorldRenderer worldrenderer = tessellator.getWorldRenderer();
                  this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
-@@ -175,6 +179,12 @@
+@@ -174,6 +178,12 @@
                  GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
                  this.mc.fontRendererObj.drawStringWithShadow(this.currentlyDisplayedText, (float)((k - this.mc.fontRendererObj.getStringWidth(this.currentlyDisplayedText)) / 2), (float)(l / 2 - 4 - 16), 16777215);
                  this.mc.fontRendererObj.drawStringWithShadow(this.message, (float)((k - this.mc.fontRendererObj.getStringWidth(this.message)) / 2), (float)(l / 2 - 4 + 8), 16777215);

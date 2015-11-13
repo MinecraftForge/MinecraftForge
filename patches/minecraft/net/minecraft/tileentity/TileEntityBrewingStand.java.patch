@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -105,7 +105,7 @@
+@@ -104,7 +104,7 @@
  
      private boolean canBrew()
      {
@@ -9,7 +9,7 @@
          {
              ItemStack itemstack = this.brewingItemStacks[3];
  
-@@ -119,7 +119,7 @@
+@@ -118,7 +118,7 @@
  
                  for (int i = 0; i < 3; ++i)
                  {
@@ -18,7 +18,7 @@
                      {
                          int j = this.brewingItemStacks[i].getMetadata();
                          int k = this.func_145936_c(j, itemstack);
-@@ -146,19 +146,22 @@
+@@ -145,19 +145,22 @@
          }
          else
          {
@@ -43,7 +43,7 @@
                  {
                      int j = this.brewingItemStacks[i].getMetadata();
                      int k = this.func_145936_c(j, itemstack);
-@@ -178,10 +181,11 @@
+@@ -177,10 +180,11 @@
                      }
                  }
              }
@@ -57,7 +57,7 @@
              }
              else
              {
-@@ -192,6 +196,7 @@
+@@ -191,6 +195,7 @@
                      this.brewingItemStacks[3] = null;
                  }
              }
@@ -65,7 +65,7 @@
          }
      }
  
-@@ -311,7 +316,9 @@
+@@ -310,7 +315,9 @@
  
      public boolean isItemValidForSlot(int index, ItemStack stack)
      {

@@ -11,9 +11,9 @@
      protected static final UUID itemModifierUUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
      private CreativeTabs tabToDisplayOn;
      protected static Random itemRand = new Random();
-@@ -62,6 +62,9 @@
+@@ -61,6 +61,9 @@
+     private String potionEffect;
      private String unlocalizedName;
-     private static final String __OBFID = "CL_00000041";
  
 +    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate =
 +            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)itemRegistry).getDelegate(this, Item.class);
@@ -21,7 +21,7 @@
      public static int getIdFromItem(Item itemIn)
      {
          return itemIn == null ? 0 : itemRegistry.getIDForObject(itemIn);
-@@ -127,6 +130,7 @@
+@@ -126,6 +129,7 @@
          return stack;
      }
  
@@ -29,7 +29,7 @@
      public int getItemStackLimit()
      {
          return this.maxStackSize;
-@@ -240,6 +244,7 @@
+@@ -239,6 +243,7 @@
          return this.containerItem;
      }
  
@@ -37,7 +37,7 @@
      public boolean hasContainerItem()
      {
          return this.containerItem != null;
-@@ -317,7 +322,7 @@
+@@ -316,7 +321,7 @@
  
      public boolean isItemTool(ItemStack stack)
      {
@@ -46,7 +46,7 @@
      }
  
      protected MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
-@@ -335,6 +340,10 @@
+@@ -334,6 +339,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -57,7 +57,7 @@
          Vec3 vec31 = vec3.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return worldIn.rayTraceBlocks(vec3, vec31, useLiquids, !useLiquids, false);
      }
-@@ -372,11 +381,578 @@
+@@ -371,11 +380,578 @@
          return false;
      }
  
@@ -636,9 +636,9 @@
      public static void registerItems()
      {
          registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
-@@ -874,6 +1450,10 @@
+@@ -855,6 +1431,10 @@
+         private final float damageVsEntity;
          private final int enchantability;
-         private static final String __OBFID = "CL_00000042";
  
 +        //Added by forge for custom Tool materials.
 +        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
@@ -647,7 +647,7 @@
          private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
          {
              this.harvestLevel = harvestLevel;
-@@ -908,9 +1488,36 @@
+@@ -889,9 +1469,36 @@
              return this.enchantability;
          }
  

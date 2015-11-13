@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSnow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSnow.java
-@@ -69,4 +69,10 @@
+@@ -67,4 +67,10 @@
      {
          return damage;
      }

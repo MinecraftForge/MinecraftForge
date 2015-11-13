@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -80,7 +80,7 @@
+@@ -79,7 +79,7 @@
      {
          IBlockState iblockstate = worldIn.getBlockState(pos.down());
          Block block = iblockstate.getBlock();
@@ -9,7 +9,7 @@
      }
  
      public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
-@@ -92,7 +92,6 @@
+@@ -91,7 +91,6 @@
      {
          if (!this.canPlaceBlockAt(worldIn, p_176314_2_))
          {
@@ -17,7 +17,7 @@
              worldIn.setBlockToAir(p_176314_2_);
              return false;
          }
-@@ -104,9 +103,8 @@
+@@ -103,9 +102,8 @@
  
      public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
      {
@@ -28,7 +28,7 @@
      }
  
      public Item getItemDropped(IBlockState state, Random rand, int fortune)
-@@ -116,14 +114,13 @@
+@@ -115,14 +113,13 @@
  
      public int quantityDropped(Random random)
      {
@@ -44,7 +44,7 @@
              worldIn.setBlockToAir(pos);
          }
      }
-@@ -153,4 +150,6 @@
+@@ -152,4 +149,6 @@
      {
          return new BlockState(this, new IProperty[] {LAYERS});
      }

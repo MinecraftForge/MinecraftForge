@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -95,30 +95,46 @@
+@@ -94,30 +94,46 @@
+     private static final List<WeightedRandomChestContent> bonusChestContent = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.stick, 0, 1, 3, 10), new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.planks), 0, 1, 3, 10), new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.log), 0, 1, 3, 10), new WeightedRandomChestContent(Items.stone_axe, 0, 1, 1, 3), new WeightedRandomChestContent(Items.wooden_axe, 0, 1, 1, 5), new WeightedRandomChestContent(Items.stone_pickaxe, 0, 1, 1, 3), new WeightedRandomChestContent(Items.wooden_pickaxe, 0, 1, 1, 5), new WeightedRandomChestContent(Items.apple, 0, 2, 3, 5), new WeightedRandomChestContent(Items.bread, 0, 2, 3, 3), new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.log2), 0, 1, 3, 10)});
      private List<NextTickListEntry> pendingTickListEntriesThisTick = Lists.<NextTickListEntry>newArrayList();
-     private static final String __OBFID = "CL_00001437";
  
 +    /** Stores the recently processed (lighting) chunks */
 +    protected Set<ChunkCoordIntPair> doneChunks = new java.util.HashSet<ChunkCoordIntPair>();
@@ -49,7 +49,7 @@
          }
          else
          {
-@@ -211,6 +227,10 @@
+@@ -210,6 +226,10 @@
          this.villageSiege.tick();
          this.theProfiler.endStartSection("portalForcer");
          this.worldTeleporter.removeStalePortalLocations(this.getTotalWorldTime());
@@ -60,7 +60,7 @@
          this.theProfiler.endSection();
          this.sendQueuedBlockEvents();
      }
-@@ -218,6 +238,7 @@
+@@ -217,6 +237,7 @@
      public BiomeGenBase.SpawnListEntry func_175734_a(EnumCreatureType p_175734_1_, BlockPos p_175734_2_)
      {
          List<BiomeGenBase.SpawnListEntry> list = this.getChunkProvider().func_177458_a(p_175734_1_, p_175734_2_);
@@ -68,7 +68,7 @@
          return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
      }
  
-@@ -269,10 +290,7 @@
+@@ -268,10 +289,7 @@
  
      private void resetRainAndThunder()
      {
@@ -80,7 +80,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -350,7 +368,7 @@
+@@ -349,7 +367,7 @@
                  chunk.func_150804_b(false);
                  this.theProfiler.endStartSection("thunder");
  
@@ -89,7 +89,7 @@
                  {
                      this.updateLCG = this.updateLCG * 3 + 1013904223;
                      int i1 = this.updateLCG >> 2;
-@@ -364,7 +382,7 @@
+@@ -363,7 +381,7 @@
  
                  this.theProfiler.endStartSection("iceandsnow");
  
@@ -98,7 +98,7 @@
                  {
                      this.updateLCG = this.updateLCG * 3 + 1013904223;
                      int k2 = this.updateLCG >> 2;
-@@ -458,6 +476,9 @@
+@@ -456,6 +474,9 @@
              if (p_175654_2_.requiresUpdates())
              {
                  i = 8;
@@ -108,7 +108,7 @@
  
                  if (this.isAreaLoaded(nextticklistentry.position.add(-i, -i, -i), nextticklistentry.position.add(i, i, i)))
                  {
-@@ -510,7 +531,7 @@
+@@ -508,7 +529,7 @@
  
      public void updateEntities()
      {
@@ -117,7 +117,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -575,6 +596,9 @@
+@@ -573,6 +594,9 @@
                  {
                      NextTickListEntry nextticklistentry1 = (NextTickListEntry)iterator.next();
                      iterator.remove();
@@ -127,7 +127,7 @@
                      int k = 0;
  
                      if (this.isAreaLoaded(nextticklistentry1.position.add(-k, -k, -k), nextticklistentry1.position.add(k, k, k)))
-@@ -698,22 +722,39 @@
+@@ -696,22 +720,39 @@
      {
          List<TileEntity> list = Lists.<TileEntity>newArrayList();
  
@@ -174,7 +174,7 @@
          return !this.mcServer.isBlockProtected(this, pos, player) && this.getWorldBorder().contains(pos);
      }
  
-@@ -779,6 +820,7 @@
+@@ -777,6 +818,7 @@
          }
          else
          {
@@ -182,7 +182,7 @@
              this.findingSpawnPoint = true;
              WorldChunkManager worldchunkmanager = this.provider.getWorldChunkManager();
              List<BiomeGenBase> list = worldchunkmanager.getBiomesToSpawnIn();
-@@ -824,7 +866,7 @@
+@@ -822,7 +864,7 @@
  
      protected void createBonusChest()
      {
@@ -191,7 +191,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -861,6 +903,7 @@
+@@ -859,6 +901,7 @@
              }
  
              this.chunkProvider.saveChunks(p_73044_1_, p_73044_2_);
@@ -199,7 +199,7 @@
  
              for (Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a()))
              {
-@@ -894,6 +937,7 @@
+@@ -892,6 +935,7 @@
          this.worldInfo.setBorderLerpTime(this.getWorldBorder().getTimeUntilTarget());
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -207,7 +207,7 @@
      }
  
      public void onEntityAdded(Entity p_72923_1_)
-@@ -949,6 +993,7 @@
+@@ -947,6 +991,7 @@
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -215,7 +215,7 @@
          explosion.doExplosionA();
          explosion.doExplosionB(false);
  
-@@ -1028,19 +1073,23 @@
+@@ -1026,19 +1071,23 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.getDimensionId());
          }
  
@@ -243,7 +243,7 @@
          }
      }
  
-@@ -1106,6 +1155,11 @@
+@@ -1104,6 +1153,11 @@
          return this.mcServer.isCallingFromMinecraftThread();
      }
  
@@ -254,4 +254,4 @@
 +
      static class ServerBlockEventList extends ArrayList<BlockEventData>
          {
-             private static final String __OBFID = "CL_00001439";
+             private ServerBlockEventList()

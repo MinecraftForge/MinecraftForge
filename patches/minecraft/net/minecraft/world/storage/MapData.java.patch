@@ -9,7 +9,7 @@
      public byte scale;
      public byte[] colors = new byte[16384];
      public List<MapData.MapInfo> playersArrayList = Lists.<MapData.MapInfo>newArrayList();
-@@ -45,7 +45,17 @@
+@@ -44,7 +44,17 @@
  
      public void readFromNBT(NBTTagCompound nbt)
      {
@@ -28,7 +28,7 @@
          this.xCenter = nbt.getInteger("xCenter");
          this.zCenter = nbt.getInteger("zCenter");
          this.scale = nbt.getByte("scale");
-@@ -86,7 +96,7 @@
+@@ -85,7 +95,7 @@
  
      public void writeToNBT(NBTTagCompound nbt)
      {
@@ -37,7 +37,7 @@
          nbt.setInteger("xCenter", this.xCenter);
          nbt.setInteger("zCenter", this.zCenter);
          nbt.setByte("scale", this.scale);
-@@ -165,7 +175,7 @@
+@@ -164,7 +174,7 @@
              p_82567_8_ = p_82567_8_ + (p_82567_8_ < 0.0D ? -8.0D : 8.0D);
              b2 = (byte)((int)(p_82567_8_ * 16.0D / 360.0D));
  

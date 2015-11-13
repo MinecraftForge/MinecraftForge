@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -580,6 +580,11 @@
+@@ -578,6 +578,11 @@
          }
      }
  

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
-@@ -120,7 +120,7 @@
+@@ -115,7 +115,7 @@
                          ;
                      }
  

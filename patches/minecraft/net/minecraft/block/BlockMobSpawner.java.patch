@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMobSpawner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMobSpawner.java
-@@ -39,10 +39,14 @@
+@@ -37,10 +37,14 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);

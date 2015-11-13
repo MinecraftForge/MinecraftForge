@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-@@ -74,7 +74,7 @@
+@@ -73,7 +73,7 @@
                                  {
                                      BlockPos blockpos = new BlockPos(l1, i2, j2);
  

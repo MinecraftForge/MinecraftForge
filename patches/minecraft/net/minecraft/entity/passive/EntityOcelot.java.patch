@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
-@@ -280,7 +280,7 @@
+@@ -279,7 +279,7 @@
  
              Block block = this.worldObj.getBlockState(blockpos.down()).getBlock();
  

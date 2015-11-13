@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySign.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySign.java
-@@ -63,7 +63,7 @@
+@@ -61,7 +61,7 @@
              }
              public boolean canUseCommand(int permLevel, String commandName)
              {

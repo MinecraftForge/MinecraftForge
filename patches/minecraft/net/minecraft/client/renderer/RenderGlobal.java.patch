@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -526,8 +526,10 @@
+@@ -525,8 +525,10 @@
  
      public void renderEntities(Entity p_180446_1_, ICamera p_180446_2_, float partialTicks)
      {
@@ -11,7 +11,7 @@
              --this.renderEntitiesStartupCounter;
          }
          else
-@@ -538,9 +540,12 @@
+@@ -537,9 +539,12 @@
              this.theWorld.theProfiler.startSection("prepare");
              TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRendererObj, this.mc.getRenderViewEntity(), partialTicks);
              this.renderManager.cacheActiveRenderInfo(this.theWorld, this.mc.fontRendererObj, this.mc.getRenderViewEntity(), this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
@@ -24,7 +24,7 @@
              Entity entity = this.mc.getRenderViewEntity();
              double d3 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
              double d4 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;
-@@ -552,11 +557,15 @@
+@@ -551,11 +556,15 @@
              this.mc.entityRenderer.enableLightmap();
              this.theWorld.theProfiler.endStartSection("global");
              List<Entity> list = this.theWorld.getLoadedEntityList();
@@ -40,7 +40,7 @@
                  ++this.countEntitiesRendered;
  
                  if (entity1.isInRangeToRender3d(d0, d1, d2))
-@@ -578,6 +587,7 @@
+@@ -577,6 +586,7 @@
                  for (int j = 0; j < list.size(); ++j)
                  {
                      Entity entity3 = (Entity)list.get(j);
@@ -48,7 +48,7 @@
                      boolean flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping();
                      boolean flag1 = entity3.isInRangeToRender3d(d0, d1, d2) && (entity3.ignoreFrustumCheck || p_180446_2_.isBoundingBoxInFrustum(entity3.getEntityBoundingBox()) || entity3.riddenByEntity == this.mc.thePlayer) && entity3 instanceof EntityPlayer;
  
-@@ -627,6 +637,7 @@
+@@ -626,6 +636,7 @@
                              }
  
                              entity2 = (Entity)iterator.next();
@@ -56,7 +56,7 @@
                              flag2 = this.renderManager.shouldRender(entity2, p_180446_2_, d0, d1, d2) || entity2.riddenByEntity == this.mc.thePlayer;
  
                              if (!flag2)
-@@ -663,6 +674,7 @@
+@@ -662,6 +673,7 @@
                  {
                      for (TileEntity tileentity2 : list1)
                      {
@@ -64,7 +64,7 @@
                          TileEntityRendererDispatcher.instance.renderTileEntity(tileentity2, partialTicks, -1);
                      }
                  }
-@@ -672,6 +684,7 @@
+@@ -671,6 +683,7 @@
              {
                  for (TileEntity tileentity : this.field_181024_n)
                  {
@@ -72,7 +72,7 @@
                      TileEntityRendererDispatcher.instance.renderTileEntity(tileentity, partialTicks, -1);
                  }
              }
-@@ -701,7 +714,7 @@
+@@ -700,7 +713,7 @@
  
                  Block block = this.theWorld.getBlockState(blockpos).getBlock();
  
@@ -81,7 +81,7 @@
                  {
                      TileEntityRendererDispatcher.instance.renderTileEntity(tileentity1, partialTicks, destroyblockprogress.getPartialBlockDamage());
                  }
-@@ -1162,6 +1175,12 @@
+@@ -1161,6 +1174,12 @@
  
      public void renderSky(float partialTicks, int pass)
      {
@@ -94,7 +94,7 @@
          if (this.mc.theWorld.provider.getDimensionId() == 1)
          {
              this.renderSkyEnd();
-@@ -1379,6 +1398,12 @@
+@@ -1378,6 +1397,12 @@
  
      public void renderClouds(float p_180447_1_, int p_180447_2_)
      {
@@ -107,7 +107,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.func_181147_e() == 2)
-@@ -1794,8 +1819,11 @@
+@@ -1793,8 +1818,11 @@
                  double d4 = (double)blockpos.getY() - d1;
                  double d5 = (double)blockpos.getZ() - d2;
                  Block block = this.theWorld.getBlockState(blockpos).getBlock();
@@ -120,7 +120,7 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
-@@ -1950,13 +1978,16 @@
+@@ -1949,13 +1977,16 @@
          if (recordName != null)
          {
              ItemRecord itemrecord = ItemRecord.getRecord(recordName);

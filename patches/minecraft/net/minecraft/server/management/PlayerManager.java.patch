@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerManager.java
-@@ -118,15 +118,24 @@
+@@ -117,15 +117,24 @@
          int j = (int)p_72683_1_.posZ >> 4;
          p_72683_1_.managedPosX = p_72683_1_.posX;
          p_72683_1_.managedPosZ = p_72683_1_.posZ;
@@ -26,7 +26,7 @@
          this.players.add(p_72683_1_);
          this.filterChunkLoadQueue(p_72683_1_);
      }
-@@ -226,6 +235,7 @@
+@@ -225,6 +234,7 @@
              int i1 = this.playerViewRadius;
              int j1 = i - k;
              int k1 = j - l;
@@ -34,7 +34,7 @@
  
              if (j1 != 0 || k1 != 0)
              {
-@@ -235,7 +245,7 @@
+@@ -234,7 +244,7 @@
                      {
                          if (!this.overlaps(l1, i2, k, l, i1))
                          {
@@ -43,7 +43,7 @@
                          }
  
                          if (!this.overlaps(l1 - j1, i2 - k1, i, j, i1))
-@@ -253,6 +263,18 @@
+@@ -252,6 +262,18 @@
                  this.filterChunkLoadQueue(p_72685_1_);
                  p_72685_1_.managedPosX = p_72685_1_.posX;
                  p_72685_1_.managedPosZ = p_72685_1_.posZ;
@@ -62,7 +62,7 @@
              }
          }
      }
-@@ -323,12 +345,21 @@
+@@ -322,11 +344,20 @@
          private int numBlocksToUpdate;
          private int flagsYAreasToUpdate;
          private long previousWorldTime;
@@ -75,7 +75,6 @@
 +                PlayerInstance.this.loaded = true;
 +            }
 +        };
-         private static final String __OBFID = "CL_00001435";
  
          public PlayerInstance(int p_i1518_2_, int p_i1518_3_)
          {
@@ -85,7 +84,7 @@
          }
  
          public void addPlayer(EntityPlayerMP p_73255_1_)
-@@ -345,7 +376,24 @@
+@@ -343,7 +374,24 @@
                  }
  
                  this.playersWatchingChunk.add(p_73255_1_);
@@ -110,7 +109,7 @@
              }
          }
  
-@@ -353,6 +401,24 @@
+@@ -351,6 +399,24 @@
          {
              if (this.playersWatchingChunk.contains(p_73252_1_))
              {
@@ -135,7 +134,7 @@
                  Chunk chunk = PlayerManager.this.theWorldServer.getChunkFromChunkCoords(this.chunkCoords.chunkXPos, this.chunkCoords.chunkZPos);
  
                  if (chunk.isPopulated())
-@@ -360,9 +426,12 @@
+@@ -358,9 +424,12 @@
                      p_73252_1_.playerNetServerHandler.sendPacket(new S21PacketChunkData(chunk, true, 0));
                  }
  
@@ -148,7 +147,7 @@
                  if (this.playersWatchingChunk.isEmpty())
                  {
                      long i = (long)this.chunkCoords.chunkXPos + 2147483647L | (long)this.chunkCoords.chunkZPos + 2147483647L << 32;
-@@ -400,7 +469,7 @@
+@@ -398,7 +467,7 @@
  
              this.flagsYAreasToUpdate |= 1 << (p_151253_2_ >> 4);
  
@@ -157,7 +156,7 @@
              {
                  short short1 = (short)(p_151253_1_ << 12 | p_151253_3_ << 8 | p_151253_2_);
  
-@@ -412,6 +481,10 @@
+@@ -410,6 +479,10 @@
                      }
                  }
  
@@ -168,7 +167,7 @@
                  this.locationOfBlockChange[this.numBlocksToUpdate++] = short1;
              }
          }
-@@ -429,6 +502,7 @@
+@@ -427,6 +500,7 @@
              }
          }
  
@@ -176,7 +175,7 @@
          public void onUpdate()
          {
              if (this.numBlocksToUpdate != 0)
-@@ -441,18 +515,19 @@
+@@ -439,18 +513,19 @@
                      BlockPos blockpos = new BlockPos(i, j, k);
                      this.sendToAllPlayersWatchingChunk(new S23PacketBlockChange(PlayerManager.this.theWorldServer, blockpos));
  
@@ -199,7 +198,7 @@
                      {
                          if ((this.flagsYAreasToUpdate & 1 << i2) != 0)
                          {
-@@ -469,7 +544,9 @@
+@@ -467,7 +542,9 @@
                  else
                  {
                      this.sendToAllPlayersWatchingChunk(new S22PacketMultiBlockChange(this.numBlocksToUpdate, this.locationOfBlockChange, PlayerManager.this.theWorldServer.getChunkFromChunkCoords(this.chunkCoords.chunkXPos, this.chunkCoords.chunkZPos)));
@@ -210,7 +209,7 @@
                      for (int j1 = 0; j1 < this.numBlocksToUpdate; ++j1)
                      {
                          int l1 = (this.locationOfBlockChange[j1] >> 12 & 15) + this.chunkCoords.chunkXPos * 16;
-@@ -477,7 +554,7 @@
+@@ -475,7 +552,7 @@
                          int l2 = (this.locationOfBlockChange[j1] >> 8 & 15) + this.chunkCoords.chunkZPos * 16;
                          BlockPos blockpos1 = new BlockPos(l1, j2, l2);
  

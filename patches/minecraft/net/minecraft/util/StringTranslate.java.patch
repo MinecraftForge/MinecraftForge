@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
 +++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
-@@ -24,9 +24,29 @@
+@@ -23,9 +23,29 @@
  
      public StringTranslate()
      {
@@ -31,7 +31,7 @@
  
              for (String s : IOUtils.readLines(inputstream, Charsets.UTF_8))
              {
-@@ -38,17 +58,17 @@
+@@ -37,17 +57,17 @@
                      {
                          String s1 = astring[0];
                          String s2 = numericVariablePattern.matcher(astring[1]).replaceAll("%$1s");

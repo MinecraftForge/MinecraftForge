@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/AbstractResourcePack.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/AbstractResourcePack.java
-@@ -59,7 +59,7 @@
+@@ -58,7 +58,7 @@
  
      protected void logNameNotLowercase(String p_110594_1_)
      {

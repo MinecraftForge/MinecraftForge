@@ -8,15 +8,15 @@
      private static final Logger logger = LogManager.getLogger();
      public static final ResourceLocation LOCATION_MISSING_TEXTURE = new ResourceLocation("missingno");
      public static final ResourceLocation locationBlocksTexture = new ResourceLocation("textures/atlas/blocks.png");
-@@ -39,6 +40,7 @@
+@@ -38,6 +39,7 @@
+     private final IIconCreator iconCreator;
      private int mipmapLevels;
      private final TextureAtlasSprite missingImage;
-     private static final String __OBFID = "CL_00001058";
 +    private boolean skipFirst = false;
  
      public TextureMap(String p_i46099_1_)
      {
-@@ -47,12 +49,23 @@
+@@ -46,12 +48,23 @@
  
      public TextureMap(String p_i46100_1_, IIconCreator iconCreatorIn)
      {
@@ -40,7 +40,7 @@
      }
  
      private void initMissingImage()
-@@ -91,12 +104,28 @@
+@@ -90,12 +103,28 @@
          int j = Integer.MAX_VALUE;
          int k = 1 << this.mipmapLevels;
  
@@ -69,7 +69,7 @@
              try
              {
                  IResource iresource = resourceManager.getResource(resourcelocation1);
-@@ -146,12 +175,14 @@
+@@ -145,12 +174,14 @@
              }
              catch (RuntimeException runtimeexception)
              {
@@ -86,7 +86,7 @@
                  continue;
              }
  
-@@ -167,6 +198,7 @@
+@@ -166,6 +197,7 @@
              stitcher.addSprite(textureatlassprite);
          }
  
@@ -94,7 +94,7 @@
          int j1 = Math.min(j, k);
          int k1 = MathHelper.calculateLogBaseTwo(j1);
  
-@@ -176,8 +208,10 @@
+@@ -175,8 +207,10 @@
              this.mipmapLevels = k1;
          }
  
@@ -105,7 +105,7 @@
              try
              {
                  textureatlassprite1.generateMipmaps(this.mipmapLevels);
-@@ -217,9 +251,13 @@
+@@ -213,9 +247,13 @@
  
          this.missingImage.generateMipmaps(this.mipmapLevels);
          stitcher.addSprite(this.missingImage);
@@ -119,7 +119,7 @@
              stitcher.doStitch();
          }
          catch (StitcherException stitcherexception)
-@@ -228,9 +266,11 @@
+@@ -224,9 +262,11 @@
          }
  
          logger.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
@@ -131,7 +131,7 @@
          for (TextureAtlasSprite textureatlassprite2 : stitcher.getStichSlots())
          {
              String s = textureatlassprite2.getIconName();
-@@ -260,6 +300,13 @@
+@@ -256,6 +296,13 @@
          {
              textureatlassprite3.copyFrom(this.missingImage);
          }
@@ -145,7 +145,7 @@
      }
  
      private ResourceLocation completeResourceLocation(ResourceLocation location, int p_147634_2_)
-@@ -323,4 +370,37 @@
+@@ -319,4 +366,37 @@
      {
          return this.missingImage;
      }

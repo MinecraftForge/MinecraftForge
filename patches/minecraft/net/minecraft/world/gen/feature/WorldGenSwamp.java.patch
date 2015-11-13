@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-@@ -61,7 +61,7 @@
+@@ -60,7 +60,7 @@
                          {
                              Block block = worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(l, j, i1)).getBlock();
  
@@ -9,7 +9,7 @@
                              {
                                  if (block != Blocks.water && block != Blocks.flowing_water)
                                  {
-@@ -87,11 +87,13 @@
+@@ -86,11 +86,13 @@
              }
              else
              {
@@ -26,7 +26,7 @@
  
                      for (int l1 = p_180709_3_.getY() - 3 + i; l1 <= p_180709_3_.getY() + i; ++l1)
                      {
-@@ -110,7 +112,7 @@
+@@ -109,7 +111,7 @@
                                  {
                                      BlockPos blockpos = new BlockPos(k3, l1, j1);
  
@@ -35,7 +35,7 @@
                                      {
                                          this.func_175903_a(worldIn, blockpos, field_181649_b);
                                      }
-@@ -121,9 +123,10 @@
+@@ -120,9 +122,10 @@
  
                      for (int i2 = 0; i2 < i; ++i2)
                      {
@@ -48,7 +48,7 @@
                          {
                              this.func_175903_a(worldIn, p_180709_3_.up(i2), field_181648_a);
                          }
-@@ -141,29 +144,29 @@
+@@ -140,29 +143,29 @@
                              {
                                  blockpos$mutableblockpos1.func_181079_c(i4, j2, j4);
  
@@ -83,7 +83,7 @@
                                      {
                                          this.func_181647_a(worldIn, blockpos2, BlockVine.NORTH);
                                      }
-@@ -192,7 +195,7 @@
+@@ -191,7 +194,7 @@
          this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
          int i = 4;
  

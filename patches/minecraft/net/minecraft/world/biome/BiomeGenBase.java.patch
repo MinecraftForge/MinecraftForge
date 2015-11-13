@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -139,6 +139,10 @@
+@@ -138,6 +138,10 @@
  
      public BiomeGenBase(int p_i1971_1_)
      {
@@ -11,7 +11,7 @@
          this.minHeight = height_Default.rootHeight;
          this.maxHeight = height_Default.variation;
          this.temperature = 0.5F;
-@@ -153,6 +157,7 @@
+@@ -152,6 +156,7 @@
          this.worldGeneratorBigTree = new WorldGenBigTree(false);
          this.worldGeneratorSwamp = new WorldGenSwamp();
          this.biomeID = p_i1971_1_;
@@ -19,7 +19,7 @@
          biomeList[p_i1971_1_] = this;
          this.theBiomeDecorator = this.createBiomeDecorator();
          this.spawnableCreatureList.add(new BiomeGenBase.SpawnListEntry(EntitySheep.class, 12, 4, 4));
-@@ -169,11 +174,12 @@
+@@ -168,11 +173,12 @@
          this.spawnableMonsterList.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.spawnableWaterCreatureList.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.spawnableCaveCreatureList.add(new BiomeGenBase.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -33,7 +33,7 @@
      }
  
      public BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_)
-@@ -343,7 +349,7 @@
+@@ -342,7 +348,7 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -42,7 +42,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -351,7 +357,7 @@
+@@ -350,7 +356,7 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -51,7 +51,7 @@
      }
  
      public boolean isSnowyBiome()
-@@ -498,6 +504,84 @@
+@@ -497,6 +503,84 @@
          }
      }
  

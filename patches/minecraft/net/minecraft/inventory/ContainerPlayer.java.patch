@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -45,7 +45,8 @@
+@@ -43,7 +43,8 @@
                  }
                  public boolean isItemValid(ItemStack stack)
                  {

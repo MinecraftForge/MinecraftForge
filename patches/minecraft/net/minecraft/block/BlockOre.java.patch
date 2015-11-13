@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
-@@ -60,34 +60,40 @@
+@@ -58,34 +58,40 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);

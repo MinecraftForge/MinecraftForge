@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
-@@ -100,9 +100,9 @@
+@@ -99,9 +99,9 @@
                  if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(p_181631_2_ * p_181631_2_))
                  {
                      BlockPos blockpos = p_181631_1_.add(j, 0, k);
@@ -12,7 +12,7 @@
                      {
                          this.func_175903_a(this.world, blockpos, p_181631_3_);
                      }
-@@ -255,7 +255,7 @@
+@@ -254,7 +254,7 @@
              {
                  BlockPos blockpos1 = p_175936_1_.add((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
  
@@ -21,7 +21,7 @@
                  {
                      return j;
                  }
-@@ -283,6 +283,7 @@
+@@ -282,6 +282,7 @@
  
          if (!this.validTreeLocation())
          {
@@ -29,7 +29,7 @@
              return false;
          }
          else
-@@ -291,15 +292,18 @@
+@@ -290,15 +291,18 @@
              this.func_175941_b();
              this.func_175942_c();
              this.func_175939_d();

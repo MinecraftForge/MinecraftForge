@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -311,4 +311,27 @@
+@@ -310,4 +310,27 @@
      {
          return p_111183_2_.getAmount() * (double)(p_111183_1_ + 1);
      }

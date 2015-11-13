@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenJungle.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenJungle.java
-@@ -69,7 +69,9 @@
+@@ -68,7 +68,9 @@
          super.decorate(worldIn, p_180624_2_, p_180624_3_);
          int i = p_180624_2_.nextInt(16) + 8;
          int j = p_180624_2_.nextInt(16) + 8;

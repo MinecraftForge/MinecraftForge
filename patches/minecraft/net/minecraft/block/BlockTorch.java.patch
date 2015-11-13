@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
-@@ -65,7 +65,7 @@
+@@ -63,7 +63,7 @@
          else
          {
              Block block = worldIn.getBlockState(pos).getBlock();
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -86,7 +86,7 @@
+@@ -84,7 +84,7 @@
      {
          BlockPos blockpos = pos.offset(facing.getOpposite());
          boolean flag = facing.getAxis().isHorizontal();
@@ -18,7 +18,7 @@
      }
  
      public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
-@@ -99,7 +99,7 @@
+@@ -97,7 +97,7 @@
          {
              for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
              {
@@ -27,7 +27,7 @@
                  {
                      return this.getDefaultState().withProperty(FACING, enumfacing);
                  }
-@@ -132,7 +132,7 @@
+@@ -130,7 +130,7 @@
              EnumFacing enumfacing1 = enumfacing.getOpposite();
              boolean flag = false;
  

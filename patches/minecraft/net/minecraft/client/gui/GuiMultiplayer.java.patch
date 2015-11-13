@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
-@@ -41,6 +41,7 @@
+@@ -40,6 +40,7 @@
      public GuiMultiplayer(GuiScreen parentScreen)
      {
          this.parentScreen = parentScreen;
@@ -8,7 +8,7 @@
      }
  
      public void initGui()
-@@ -373,7 +374,7 @@
+@@ -372,7 +373,7 @@
  
      private void connectToServer(ServerData server)
      {

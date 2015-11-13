@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -45,6 +45,16 @@
+@@ -44,6 +44,16 @@
          }
          else if (icommand.canCommandSenderUse(sender))
          {

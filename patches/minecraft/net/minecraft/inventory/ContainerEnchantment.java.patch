@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
-@@ -69,9 +69,12 @@
+@@ -65,9 +65,12 @@
+         });
          this.addSlotToContainer(new Slot(this.tableInventory, 1, 35, 47)
          {
-             private static final String __OBFID = "CL_00002185";
 +            java.util.List<ItemStack> ores = net.minecraftforge.oredict.OreDictionary.getOres("gemLapis");
              public boolean isItemValid(ItemStack stack)
              {
@@ -14,7 +14,7 @@
              }
          });
  
-@@ -150,6 +153,7 @@
+@@ -146,6 +149,7 @@
                  if (!this.worldPointer.isRemote)
                  {
                      int l = 0;
@@ -22,7 +22,7 @@
  
                      for (int j = -1; j <= 1; ++j)
                      {
-@@ -157,37 +161,14 @@
+@@ -153,37 +157,14 @@
                          {
                              if ((j != 0 || k != 0) && this.worldPointer.isAirBlock(this.position.add(k, 0, j)) && this.worldPointer.isAirBlock(this.position.add(k, 1, j)))
                              {
@@ -66,7 +66,7 @@
                                  }
                              }
                          }
-@@ -197,7 +178,7 @@
+@@ -193,7 +174,7 @@
  
                      for (int i1 = 0; i1 < 3; ++i1)
                      {

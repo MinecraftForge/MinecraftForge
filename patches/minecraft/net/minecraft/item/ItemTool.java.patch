@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemTool.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemTool.java
-@@ -29,6 +29,18 @@
+@@ -28,6 +28,18 @@
          this.efficiencyOnProperMaterial = material.getEfficiencyOnProperMaterial();
          this.damageVsEntity = attackDamage + material.getDamageVsEntity();
          this.setCreativeTab(CreativeTabs.tabTools);
@@ -19,7 +19,7 @@
      }
  
      public float getStrVsBlock(ItemStack stack, Block block)
-@@ -75,7 +87,9 @@
+@@ -74,7 +86,9 @@
  
      public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
      {
@@ -30,7 +30,7 @@
      }
  
      public Multimap<String, AttributeModifier> getItemAttributeModifiers()
-@@ -84,4 +98,38 @@
+@@ -83,4 +97,38 @@
          multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Tool modifier", (double)this.damageVsEntity, 0));
          return multimap;
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
-@@ -536,8 +536,19 @@
+@@ -533,8 +533,19 @@
      @SideOnly(Side.CLIENT)
      public static enum EnumNeighborInfo
      {

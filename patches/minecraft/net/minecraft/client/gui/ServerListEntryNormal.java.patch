@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
-@@ -84,7 +84,7 @@
+@@ -82,7 +82,7 @@
          boolean flag1 = this.field_148301_e.version < 47;
          boolean flag2 = flag || flag1;
          this.field_148300_d.fontRendererObj.drawString(this.field_148301_e.serverName, x + 32 + 3, y + 1, 16777215);
@@ -9,7 +9,7 @@
  
          for (int i = 0; i < Math.min(list.size(), 2); ++i)
          {
-@@ -178,6 +178,11 @@
+@@ -176,6 +176,11 @@
          int i1 = mouseX - x;
          int j1 = mouseY - y;
  

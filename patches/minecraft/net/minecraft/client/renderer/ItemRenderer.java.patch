@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -314,7 +314,7 @@
+@@ -313,7 +313,7 @@
  
          if (this.itemToRender != null)
          {
@@ -9,7 +9,7 @@
              {
                  this.func_178097_a(abstractclientplayer, f2, f, f1);
              }
-@@ -366,6 +366,7 @@
+@@ -365,6 +365,7 @@
          if (this.mc.thePlayer.isEntityInsideOpaqueBlock())
          {
              IBlockState iblockstate = this.mc.theWorld.getBlockState(new BlockPos(this.mc.thePlayer));
@@ -17,7 +17,7 @@
              EntityPlayer entityplayer = this.mc.thePlayer;
  
              for (int i = 0; i < 8; ++i)
-@@ -379,11 +380,13 @@
+@@ -378,11 +379,13 @@
                  if (iblockstate1.getBlock().isVisuallyOpaque())
                  {
                      iblockstate = iblockstate1;
@@ -31,7 +31,7 @@
                  this.func_178108_a(p_78447_1_, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
              }
          }
-@@ -392,11 +395,13 @@
+@@ -391,11 +394,13 @@
          {
              if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
              {
@@ -45,7 +45,7 @@
                  this.renderFireInFirstPerson(p_78447_1_);
              }
          }
-@@ -513,6 +518,12 @@
+@@ -512,6 +517,12 @@
          {
              if (!this.itemToRender.getIsItemStackEqual(itemstack))
              {

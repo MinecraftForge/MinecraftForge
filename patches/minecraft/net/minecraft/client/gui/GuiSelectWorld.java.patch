@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
-@@ -187,7 +187,7 @@
+@@ -186,7 +186,7 @@
  
              if (this.mc.getSaveLoader().canLoadWorld(s))
              {

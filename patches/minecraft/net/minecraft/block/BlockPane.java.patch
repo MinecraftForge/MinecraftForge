@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -39,7 +39,10 @@
+@@ -38,7 +38,10 @@
  
      public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
      {
@@ -12,7 +12,7 @@
      }
  
      public Item getItemDropped(IBlockState state, Random rand, int fortune)
-@@ -65,10 +68,10 @@
+@@ -64,10 +67,10 @@
  
      public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
      {
@@ -27,7 +27,7 @@
  
          if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
          {
-@@ -187,4 +190,11 @@
+@@ -186,4 +189,11 @@
      {
          return new BlockState(this, new IProperty[] {NORTH, EAST, WEST, SOUTH});
      }

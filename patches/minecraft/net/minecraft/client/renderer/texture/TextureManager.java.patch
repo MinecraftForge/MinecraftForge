@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -139,9 +139,12 @@
+@@ -137,9 +137,12 @@
  
      public void onResourceManagerReload(IResourceManager resourceManager)
      {

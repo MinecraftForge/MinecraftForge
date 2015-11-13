@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityWither.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
-@@ -345,7 +345,7 @@
+@@ -343,7 +343,7 @@
                                  BlockPos blockpos = new BlockPos(i3, k, l);
                                  Block block = this.worldObj.getBlockState(blockpos).getBlock();
  

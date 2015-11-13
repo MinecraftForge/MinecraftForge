@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
-@@ -22,18 +22,12 @@
+@@ -20,18 +20,12 @@
      {
          File file1 = this.getWorldDirectory();
  

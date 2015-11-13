@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -528,7 +528,7 @@
+@@ -527,7 +527,7 @@
  
      private boolean isBelowSolidBlock(World worldIn, BlockPos pos)
      {

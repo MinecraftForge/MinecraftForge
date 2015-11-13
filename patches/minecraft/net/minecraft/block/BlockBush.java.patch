@@ -7,9 +7,9 @@
 -public class BlockBush extends Block
 +public class BlockBush extends Block implements net.minecraftforge.common.IPlantable
  {
-     private static final String __OBFID = "CL_00000208";
- 
-@@ -38,7 +38,7 @@
+     protected BlockBush()
+     {
+@@ -36,7 +36,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -18,7 +18,7 @@
      }
  
      protected boolean canPlaceBlockOn(Block ground)
-@@ -68,7 +68,10 @@
+@@ -66,7 +66,10 @@
  
      public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -30,7 +30,7 @@
      }
  
      public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
-@@ -91,4 +94,33 @@
+@@ -89,4 +92,33 @@
      {
          return EnumWorldBlockLayer.CUTOUT;
      }

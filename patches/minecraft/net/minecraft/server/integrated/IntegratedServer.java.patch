@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-@@ -72,8 +72,6 @@
+@@ -71,8 +71,6 @@
      protected void loadAllWorlds(String p_71247_1_, String p_71247_2_, long seed, WorldType type, String p_71247_6_)
      {
          this.convertMapIfNeeded(p_71247_1_);
@@ -9,7 +9,7 @@
          ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(p_71247_1_, true);
          this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
-@@ -87,44 +85,24 @@
+@@ -86,44 +84,24 @@
              worldinfo.setWorldName(p_71247_2_);
          }
  
@@ -66,7 +66,7 @@
          {
              this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
          }
-@@ -142,9 +120,10 @@
+@@ -141,9 +119,10 @@
          this.setAllowFlight(true);
          logger.info("Generating keypair");
          this.setKeyPair(CryptManager.generateKeyPair());
@@ -78,7 +78,7 @@
      }
  
      public void tick()
-@@ -217,6 +196,7 @@
+@@ -216,6 +195,7 @@
  
      public EnumDifficulty getDifficulty()
      {

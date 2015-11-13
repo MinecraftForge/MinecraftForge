@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
-@@ -21,6 +21,11 @@
+@@ -20,6 +20,11 @@
  
      public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
      {
@@ -12,7 +12,7 @@
          int[] aint = this.makeQuadVertexData(face, sprite, facing, this.getPositionsDiv16(posFrom, posTo), modelRotationIn, partRotation, uvLocked, shade);
          EnumFacing enumfacing = getFacingFromVertexData(aint);
  
-@@ -34,11 +39,17 @@
+@@ -33,11 +38,17 @@
              this.func_178408_a(aint, enumfacing);
          }
  
@@ -30,7 +30,7 @@
          int[] aint = new int[28];
  
          for (int i = 0; i < 4; ++i)
-@@ -89,7 +100,12 @@
+@@ -88,7 +99,12 @@
  
      private void fillVertexData(int[] faceData, int vertexIndex, EnumFacing facing, BlockPartFace partFace, float[] p_178402_5_, TextureAtlasSprite sprite, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
      {
@@ -44,7 +44,7 @@
          int i = shade ? this.getFaceShadeColor(enumfacing) : -1;
          EnumFaceDirection.VertexInformation enumfacedirection$vertexinformation = EnumFaceDirection.getFacing(facing).func_179025_a(vertexIndex);
          Vector3f vector3f = new Vector3f(p_178402_5_[enumfacedirection$vertexinformation.field_179184_a], p_178402_5_[enumfacedirection$vertexinformation.field_179182_b], p_178402_5_[enumfacedirection$vertexinformation.field_179183_c]);
-@@ -155,14 +171,19 @@
+@@ -154,14 +170,19 @@
  
      public int rotateVertex(Vector3f position, EnumFacing facing, int vertexIndex, ModelRotation modelRotationIn, boolean uvLocked)
      {

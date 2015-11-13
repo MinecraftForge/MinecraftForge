@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
-@@ -59,7 +59,7 @@
+@@ -58,7 +58,7 @@
                      {
                          if (j >= 0 && j < 256)
                          {
@@ -9,7 +9,7 @@
                              {
                                  flag = false;
                              }
-@@ -78,11 +78,13 @@
+@@ -77,11 +77,13 @@
              }
              else
              {
@@ -26,7 +26,7 @@
  
                      for (int i2 = p_180709_3_.getY() - 3 + i; i2 <= p_180709_3_.getY() + i; ++i2)
                      {
-@@ -102,7 +104,7 @@
+@@ -101,7 +103,7 @@
                                      BlockPos blockpos = new BlockPos(i3, i2, k1);
                                      Block block = worldIn.getBlockState(blockpos).getBlock();
  
@@ -35,7 +35,7 @@
                                      {
                                          this.func_175903_a(worldIn, blockpos, field_181630_b);
                                      }
-@@ -113,9 +115,9 @@
+@@ -112,9 +114,9 @@
  
                      for (int j2 = 0; j2 < i; ++j2)
                      {

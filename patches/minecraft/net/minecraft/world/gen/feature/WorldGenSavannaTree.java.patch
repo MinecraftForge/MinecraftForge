@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSavannaTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSavannaTree.java
-@@ -53,7 +53,7 @@
+@@ -52,7 +52,7 @@
                      {
                          if (j >= 0 && j < 256)
                          {
@@ -9,7 +9,7 @@
                              {
                                  flag = false;
                              }
-@@ -72,11 +72,13 @@
+@@ -71,11 +71,13 @@
              }
              else
              {
@@ -26,7 +26,7 @@
                      EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(p_180709_2_);
                      int k2 = i - p_180709_2_.nextInt(4) - 1;
                      int l2 = 3 - p_180709_2_.nextInt(3);
-@@ -96,9 +98,9 @@
+@@ -95,9 +97,9 @@
                          }
  
                          BlockPos blockpos = new BlockPos(i3, i2, j1);
@@ -38,7 +38,7 @@
                          {
                              this.func_181642_b(worldIn, blockpos);
                              k1 = i2;
-@@ -150,9 +152,9 @@
+@@ -149,9 +151,9 @@
                                  i3 += enumfacing1.getFrontOffsetX();
                                  j1 += enumfacing1.getFrontOffsetZ();
                                  BlockPos blockpos1 = new BlockPos(i3, j2, j1);
@@ -50,7 +50,7 @@
                                  {
                                      this.func_181642_b(worldIn, blockpos1);
                                      k1 = j2;
-@@ -210,9 +212,9 @@
+@@ -209,9 +211,9 @@
  
      private void func_175924_b(World worldIn, BlockPos p_175924_2_)
      {

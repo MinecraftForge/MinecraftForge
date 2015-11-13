@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -346,6 +346,15 @@
+@@ -345,6 +345,15 @@
          this.mc.ingameGUI.getChatGUI().printChatMessage(chatComponent);
      }
  
@@ -16,7 +16,7 @@
      protected boolean pushOutOfBlocks(double x, double y, double z)
      {
          if (this.noClip)
-@@ -358,30 +367,34 @@
+@@ -357,30 +366,34 @@
              double d0 = x - (double)blockpos.getX();
              double d1 = z - (double)blockpos.getZ();
  
@@ -56,7 +56,7 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
-@@ -449,6 +462,12 @@
+@@ -448,6 +461,12 @@
  
      public void playSound(String name, float volume, float pitch)
      {

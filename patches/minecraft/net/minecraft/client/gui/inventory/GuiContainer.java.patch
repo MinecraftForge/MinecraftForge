@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -176,8 +176,11 @@
+@@ -175,8 +175,11 @@
          GlStateManager.translate(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
          this.itemRender.zLevel = 200.0F;
@@ -13,7 +13,7 @@
          this.zLevel = 0.0F;
          this.itemRender.zLevel = 0.0F;
      }
-@@ -240,13 +243,12 @@
+@@ -239,13 +242,12 @@
  
          if (itemstack == null)
          {
@@ -30,7 +30,7 @@
                  this.drawTexturedModalRect(i, j, textureatlassprite, 16, 16);
                  GlStateManager.enableLighting();
                  flag1 = true;
-@@ -464,6 +466,7 @@
+@@ -463,6 +465,7 @@
  
      protected void mouseReleased(int mouseX, int mouseY, int state)
      {
@@ -38,7 +38,7 @@
          Slot slot = this.getSlotAtPosition(mouseX, mouseY);
          int i = this.guiLeft;
          int j = this.guiTop;
-@@ -686,4 +689,16 @@
+@@ -685,4 +688,16 @@
              this.mc.thePlayer.closeScreen();
          }
      }

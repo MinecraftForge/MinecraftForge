@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
-@@ -157,7 +157,7 @@
+@@ -154,7 +154,7 @@
  
          public boolean isItemValid(ItemStack stack)
          {
@@ -9,7 +9,7 @@
          }
  
          public int getSlotStackLimit()
-@@ -189,7 +189,7 @@
+@@ -185,7 +185,7 @@
  
              public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack)
              {
@@ -18,7 +18,7 @@
                  {
                      this.player.triggerAchievement(AchievementList.potion);
                  }
-@@ -199,7 +199,7 @@
+@@ -195,7 +195,7 @@
  
              public static boolean canHoldPotion(ItemStack p_75243_0_)
              {

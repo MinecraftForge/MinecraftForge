@@ -9,7 +9,7 @@
  {
      X0_Y0(0, 0),
      X0_Y90(0, 90),
-@@ -117,4 +117,9 @@
+@@ -116,4 +116,9 @@
              mapRotations.put(Integer.valueOf(modelrotation.combinedXY), modelrotation);
          }
      }

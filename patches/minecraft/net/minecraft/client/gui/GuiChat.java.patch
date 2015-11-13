@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
-@@ -216,13 +216,14 @@
+@@ -215,13 +215,14 @@
              this.mc.ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new ChatComponentText(stringbuilder.toString()), 1);
          }
  
@@ -16,7 +16,7 @@
              BlockPos blockpos = null;
  
              if (this.mc.objectMouseOver != null && this.mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
-@@ -282,6 +283,12 @@
+@@ -281,6 +282,12 @@
              this.playerNamesFound = false;
              this.foundPlayerNames.clear();
  

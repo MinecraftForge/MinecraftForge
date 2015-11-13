@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -28,6 +28,9 @@
+@@ -27,6 +27,9 @@
          if (flag || playerIn.inventory.hasItem(Items.arrow))
          {
              int i = this.getMaxItemUseDuration(stack) - timeLeft;
@@ -10,7 +10,7 @@
              float f = (float)i / 20.0F;
              f = (f * f + f * 2.0F) / 3.0F;
  
-@@ -105,6 +108,9 @@
+@@ -104,6 +107,9 @@
  
      public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
      {

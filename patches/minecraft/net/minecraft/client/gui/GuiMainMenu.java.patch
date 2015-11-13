@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -198,6 +198,11 @@
+@@ -197,6 +197,11 @@
          this.buttonList.add(new GuiButton(1, this.width / 2 - 100, p_73969_1_, I18n.format("menu.singleplayer", new Object[0])));
          this.buttonList.add(new GuiButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.format("menu.multiplayer", new Object[0])));
          this.buttonList.add(this.realmsButton = new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online", new Object[0])));
@@ -12,7 +12,7 @@
      }
  
      private void addDemoButtons(int p_73972_1_, int p_73972_2_)
-@@ -245,6 +250,11 @@
+@@ -244,6 +249,11 @@
              this.mc.shutdown();
          }
  
@@ -24,7 +24,7 @@
          if (button.id == 11)
          {
              this.mc.launchIntegratedServer("Demo_World", "Demo_World", DemoWorldServer.demoWorldSettings);
-@@ -490,7 +500,16 @@
+@@ -489,7 +499,16 @@
              s = s + " Demo";
          }
  

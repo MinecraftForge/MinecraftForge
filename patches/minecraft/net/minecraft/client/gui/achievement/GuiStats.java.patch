@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiStats.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiStats.java
-@@ -759,7 +759,7 @@
+@@ -748,7 +748,7 @@
              super(mcIn, GuiStats.this.width, GuiStats.this.height, 32, GuiStats.this.height - 64, GuiStats.this.fontRendererObj.FONT_HEIGHT * 4);
              this.setShowSelectionBox(false);
  
@@ -9,7 +9,7 @@
              {
                  if (GuiStats.this.field_146546_t.readStat(entitylist$entityegginfo.field_151512_d) > 0 || GuiStats.this.field_146546_t.readStat(entitylist$entityegginfo.field_151513_e) > 0)
                  {
-@@ -795,7 +795,7 @@
+@@ -784,7 +784,7 @@
          protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int p_180791_5_, int p_180791_6_)
          {
              EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)this.field_148222_l.get(entryID);

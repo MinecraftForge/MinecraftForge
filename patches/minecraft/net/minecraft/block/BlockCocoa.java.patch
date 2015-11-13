@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -138,6 +138,13 @@
+@@ -137,6 +137,13 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -14,7 +14,7 @@
          int i = ((Integer)state.getValue(AGE)).intValue();
          int j = 1;
  
-@@ -148,8 +155,9 @@
+@@ -147,8 +154,9 @@
  
          for (int k = 0; k < j; ++k)
          {

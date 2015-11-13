@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
-@@ -204,4 +204,20 @@
+@@ -201,4 +201,20 @@
              };
          }
      }

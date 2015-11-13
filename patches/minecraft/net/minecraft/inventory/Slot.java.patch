@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
-@@ -90,7 +90,7 @@
+@@ -89,7 +89,7 @@
      @SideOnly(Side.CLIENT)
      public String getSlotTexture()
      {
@@ -9,7 +9,7 @@
      }
  
      public ItemStack decrStackSize(int amount)
-@@ -113,4 +113,64 @@
+@@ -112,4 +112,64 @@
      {
          return true;
      }

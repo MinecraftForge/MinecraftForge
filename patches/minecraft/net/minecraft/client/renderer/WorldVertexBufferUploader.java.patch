@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldVertexBufferUploader.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldVertexBufferUploader.java
-@@ -25,32 +25,9 @@
+@@ -23,32 +23,9 @@
  
              for (int j = 0; j < list.size(); ++j)
              {
@@ -35,7 +35,7 @@
              }
  
              GL11.glDrawArrays(p_181679_1_.getDrawMode(), 0, p_181679_1_.getVertexCount());
-@@ -59,26 +36,8 @@
+@@ -57,26 +34,8 @@
              for (int j1 = list.size(); i1 < j1; ++i1)
              {
                  VertexFormatElement vertexformatelement1 = (VertexFormatElement)list.get(i1);

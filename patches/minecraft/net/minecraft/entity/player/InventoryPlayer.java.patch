@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -316,6 +316,14 @@
+@@ -315,6 +315,14 @@
                  this.mainInventory[i].updateAnimation(this.player.worldObj, this.player, i, this.currentItem == i);
              }
          }

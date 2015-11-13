@@ -8,7 +8,7 @@
      private GenLayer genBiomes;
      private GenLayer biomeIndexLayer;
      private BiomeCache biomeCache;
-@@ -28,13 +29,7 @@
+@@ -27,13 +28,7 @@
          this.biomeCache = new BiomeCache(this);
          this.field_180301_f = "";
          this.biomesToSpawnIn = Lists.<BiomeGenBase>newArrayList();
@@ -23,7 +23,7 @@
      }
  
      public WorldChunkManager(long p_i45744_1_, WorldType p_i45744_3_, String p_i45744_4_)
-@@ -42,6 +37,7 @@
+@@ -41,6 +36,7 @@
          this();
          this.field_180301_f = p_i45744_4_;
          GenLayer[] agenlayer = GenLayer.initializeAllBiomeGenerators(p_i45744_1_, p_i45744_3_, p_i45744_4_);
@@ -31,7 +31,7 @@
          this.genBiomes = agenlayer[0];
          this.biomeIndexLayer = agenlayer[1];
      }
-@@ -250,4 +246,11 @@
+@@ -249,4 +245,11 @@
      {
          this.biomeCache.cleanupCache();
      }

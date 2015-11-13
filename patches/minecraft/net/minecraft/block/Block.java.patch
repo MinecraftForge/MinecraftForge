@@ -12,9 +12,9 @@
      private CreativeTabs displayOnCreativeTab;
      public static final Block.SoundType soundTypeStone = new Block.SoundType("stone", 1.0F, 1.0F);
      public static final Block.SoundType soundTypeWood = new Block.SoundType("wood", 1.0F, 1.0F);
-@@ -124,6 +125,9 @@
+@@ -119,6 +120,9 @@
+     private IBlockState defaultBlockState;
      private String unlocalizedName;
-     private static final String __OBFID = "CL_00000199";
  
 +    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Block> delegate =
 +            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)blockRegistry).getDelegate(this, Block.class);
@@ -22,7 +22,7 @@
      public static int getIdFromBlock(Block blockIn)
      {
          return blockRegistry.getIDForObject(blockIn);
-@@ -137,7 +141,8 @@
+@@ -132,7 +136,8 @@
  
      public static Block getBlockById(int id)
      {
@@ -32,7 +32,7 @@
      }
  
      public static IBlockState getStateById(int id)
-@@ -308,7 +313,7 @@
+@@ -303,7 +308,7 @@
  
      public boolean isReplaceable(World worldIn, BlockPos pos)
      {
@@ -41,7 +41,7 @@
      }
  
      public Block setHardness(float hardness)
-@@ -345,9 +350,10 @@
+@@ -340,9 +345,10 @@
          return this.needsRandomTick;
      }
  
@@ -53,7 +53,7 @@
      }
  
      public final void setBlockBounds(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
-@@ -364,13 +370,13 @@
+@@ -359,13 +365,13 @@
      public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos)
      {
          Block block = worldIn.getBlockState(pos).getBlock();
@@ -69,7 +69,7 @@
          }
          else
          {
-@@ -458,6 +464,10 @@
+@@ -453,6 +459,10 @@
  
      public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -80,7 +80,7 @@
      }
  
      public int quantityDropped(Random random)
-@@ -472,8 +482,7 @@
+@@ -467,8 +477,7 @@
  
      public float getPlayerRelativeBlockHardness(EntityPlayer playerIn, World worldIn, BlockPos pos)
      {
@@ -90,7 +90,7 @@
      }
  
      public final void dropBlockAsItem(World worldIn, BlockPos pos, IBlockState state, int forture)
-@@ -483,20 +492,16 @@
+@@ -478,20 +487,16 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -116,7 +116,7 @@
                  }
              }
          }
-@@ -504,8 +509,13 @@
+@@ -499,8 +504,13 @@
  
      public static void spawnAsEntity(World worldIn, BlockPos pos, ItemStack stack)
      {
@@ -131,7 +131,7 @@
              float f = 0.5F;
              double d0 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -692,7 +702,7 @@
+@@ -687,7 +697,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -140,7 +140,7 @@
      }
  
      public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
-@@ -804,25 +814,35 @@
+@@ -799,25 +809,35 @@
          player.triggerAchievement(StatList.mineBlockStatArray[getIdFromBlock(this)]);
          player.addExhaustion(0.025F);
  
@@ -179,7 +179,7 @@
      }
  
      protected ItemStack createStackedBlock(IBlockState state)
-@@ -1015,6 +1035,1029 @@
+@@ -1010,6 +1030,1029 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/vertex/VertexFormatElement.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/vertex/VertexFormatElement.java
-@@ -144,10 +144,17 @@
+@@ -142,10 +142,17 @@
          NORMAL("Normal"),
          COLOR("Vertex Color"),
          UV("UV"),
@@ -17,5 +17,5 @@
 +        public void postDraw(VertexFormat format, int element, int stride, java.nio.ByteBuffer buffer) { net.minecraftforge.client.ForgeHooksClient.postDraw(this, format, element, stride, buffer); }
 +
          private final String displayName;
-         private static final String __OBFID = "CL_00002397";
  
+         private EnumUsage(String p_i46094_3_)

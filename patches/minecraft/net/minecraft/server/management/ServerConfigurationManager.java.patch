@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
-@@ -100,7 +100,7 @@
+@@ -99,7 +99,7 @@
          this.maxPlayers = 8;
      }
  
@@ -9,7 +9,7 @@
      {
          GameProfile gameprofile = playerIn.getGameProfile();
          PlayerProfileCache playerprofilecache = this.mcServer.getPlayerProfileCache();
-@@ -109,6 +109,17 @@
+@@ -108,6 +108,17 @@
          playerprofilecache.func_152649_a(gameprofile);
          NBTTagCompound nbttagcompound = this.readPlayerDataFromFile(playerIn);
          playerIn.setWorld(this.mcServer.worldServerForDimension(playerIn.dimension));
@@ -27,7 +27,7 @@
          playerIn.theItemInWorldManager.setWorld((WorldServer)playerIn.worldObj);
          String s1 = "local";
  
-@@ -122,7 +133,7 @@
+@@ -121,7 +132,7 @@
          WorldInfo worldinfo = worldserver.getWorldInfo();
          BlockPos blockpos = worldserver.getSpawnPoint();
          this.func_72381_a(playerIn, (EntityPlayerMP)null, worldserver);
@@ -36,7 +36,7 @@
          nethandlerplayserver.sendPacket(new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(), worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionId(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(), worldserver.getGameRules().getGameRuleBooleanValue("reducedDebugInfo")));
          nethandlerplayserver.sendPacket(new S3FPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(this.getServerInstance().getServerModName())));
          nethandlerplayserver.sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
-@@ -162,6 +173,7 @@
+@@ -161,6 +172,7 @@
  
          playerIn.addSelfToInternalCraftingInventory();
  
@@ -44,7 +44,7 @@
          if (nbttagcompound != null && nbttagcompound.hasKey("Riding", 10))
          {
              Entity entity = EntityList.createEntityFromNBT(nbttagcompound.getCompoundTag("Riding"), worldserver);
-@@ -264,6 +276,7 @@
+@@ -262,6 +274,7 @@
              playerIn.readFromNBT(nbttagcompound);
              nbttagcompound1 = nbttagcompound;
              logger.debug("loading single player");
@@ -52,7 +52,7 @@
          }
          else
          {
-@@ -273,8 +286,23 @@
+@@ -271,8 +284,23 @@
          return nbttagcompound1;
      }
  
@@ -76,7 +76,7 @@
          this.playerNBTManagerObj.writePlayerData(playerIn);
          StatisticsFile statisticsfile = (StatisticsFile)this.playerStatFiles.get(playerIn.getUniqueID());
  
-@@ -290,6 +318,7 @@
+@@ -288,6 +316,7 @@
          this.uuidToPlayerMap.put(playerIn.getUniqueID(), playerIn);
          this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {playerIn}));
          WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
@@ -84,7 +84,7 @@
          worldserver.spawnEntityInWorld(playerIn);
          this.func_72375_a(playerIn, (WorldServer)null);
  
-@@ -307,6 +336,7 @@
+@@ -305,6 +334,7 @@
  
      public void playerLoggedOut(EntityPlayerMP playerIn)
      {
@@ -92,7 +92,7 @@
          playerIn.triggerAchievement(StatList.leaveGameStat);
          this.writePlayerData(playerIn);
          WorldServer worldserver = playerIn.getServerForPlayer();
-@@ -328,6 +358,7 @@
+@@ -326,6 +356,7 @@
              this.uuidToPlayerMap.remove(uuid);
              this.playerStatFiles.remove(uuid);
          }
@@ -100,7 +100,7 @@
  
          this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {playerIn}));
      }
-@@ -411,13 +442,23 @@
+@@ -409,13 +440,23 @@
  
      public EntityPlayerMP recreatePlayerEntity(EntityPlayerMP playerIn, int dimension, boolean conqueredEnd)
      {
@@ -126,7 +126,7 @@
          playerIn.dimension = dimension;
          ItemInWorldManager iteminworldmanager;
  
-@@ -433,6 +474,7 @@
+@@ -431,6 +472,7 @@
          EntityPlayerMP entityplayermp = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(playerIn.dimension), playerIn.getGameProfile(), iteminworldmanager);
          entityplayermp.playerNetServerHandler = playerIn.playerNetServerHandler;
          entityplayermp.clonePlayer(playerIn, conqueredEnd);
@@ -134,7 +134,7 @@
          entityplayermp.setEntityId(playerIn.getEntityId());
          entityplayermp.func_174817_o(playerIn);
          WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
-@@ -472,19 +514,25 @@
+@@ -470,19 +512,25 @@
          this.uuidToPlayerMap.put(entityplayermp.getUniqueID(), entityplayermp);
          entityplayermp.addSelfToInternalCraftingInventory();
          entityplayermp.setHealth(entityplayermp.getHealth());
@@ -162,7 +162,7 @@
          this.func_72375_a(playerIn, worldserver);
          playerIn.playerNetServerHandler.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
          playerIn.theItemInWorldManager.setWorld(worldserver1);
-@@ -495,17 +543,27 @@
+@@ -493,17 +541,27 @@
          {
              playerIn.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(playerIn.getEntityId(), potioneffect));
          }
@@ -193,7 +193,7 @@
          {
              d0 = MathHelper.clamp_double(d0 / d2, p_82448_4_.getWorldBorder().minX() + 16.0D, p_82448_4_.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp_double(d1 / d2, p_82448_4_.getWorldBorder().minZ() + 16.0D, p_82448_4_.getWorldBorder().maxZ() - 16.0D);
-@@ -516,7 +574,7 @@
+@@ -514,7 +572,7 @@
                  p_82448_3_.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -202,7 +202,7 @@
          {
              d0 = MathHelper.clamp_double(d0 * d2, p_82448_4_.getWorldBorder().minX() + 16.0D, p_82448_4_.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp_double(d1 * d2, p_82448_4_.getWorldBorder().minZ() + 16.0D, p_82448_4_.getWorldBorder().maxZ() - 16.0D);
-@@ -527,7 +585,8 @@
+@@ -525,7 +583,8 @@
                  p_82448_3_.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -212,7 +212,7 @@
          {
              BlockPos blockpos;
  
-@@ -562,7 +621,7 @@
+@@ -560,7 +619,7 @@
              if (entityIn.isEntityAlive())
              {
                  entityIn.setLocationAndAngles(d0, entityIn.posY, d1, entityIn.rotationYaw, entityIn.rotationPitch);

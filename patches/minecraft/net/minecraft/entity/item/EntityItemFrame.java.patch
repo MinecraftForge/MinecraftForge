@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItemFrame.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItemFrame.java
-@@ -123,7 +123,7 @@
+@@ -122,7 +122,7 @@
      {
          if (p_110131_1_ != null)
          {

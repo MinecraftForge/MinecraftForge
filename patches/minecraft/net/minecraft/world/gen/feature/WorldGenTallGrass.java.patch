@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTallGrass.java
-@@ -23,10 +23,12 @@
+@@ -22,10 +22,12 @@
      {
          Block block;
  

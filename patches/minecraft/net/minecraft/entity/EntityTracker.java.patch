@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTracker.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTracker.java
-@@ -57,6 +57,8 @@
+@@ -56,6 +56,8 @@
  
      public void trackEntity(Entity p_72786_1_)
      {
@@ -9,7 +9,7 @@
          if (p_72786_1_ instanceof EntityPlayerMP)
          {
              this.trackEntity(p_72786_1_, 512, 2);
-@@ -333,4 +335,23 @@
+@@ -331,4 +333,23 @@
              }
          }
      }

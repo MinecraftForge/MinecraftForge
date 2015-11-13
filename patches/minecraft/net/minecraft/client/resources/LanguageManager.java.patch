@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/LanguageManager.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/LanguageManager.java
-@@ -74,6 +74,7 @@
+@@ -73,6 +73,7 @@
          }
  
          currentLocale.loadLocaleDataFiles(resourceManager, list);

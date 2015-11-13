@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSetBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSetBlock.java
-@@ -54,6 +54,8 @@
+@@ -52,6 +52,8 @@
                  i = parseInt(args[4], 0, 15);
              }
  
@@ -9,7 +9,7 @@
              World world = sender.getEntityWorld();
  
              if (!world.isBlockLoaded(blockpos))
-@@ -65,7 +67,7 @@
+@@ -63,7 +65,7 @@
                  NBTTagCompound nbttagcompound = new NBTTagCompound();
                  boolean flag = false;
  

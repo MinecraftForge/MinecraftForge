@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
 +++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
-@@ -30,6 +30,7 @@
+@@ -29,6 +29,7 @@
      public void setServerDescription(IChatComponent motd)
      {
          this.serverMotd = motd;
@@ -8,7 +8,7 @@
      }
  
      public ServerStatusResponse.PlayerCountData getPlayerCountData()
-@@ -40,6 +41,7 @@
+@@ -39,6 +40,7 @@
      public void setPlayerCountData(ServerStatusResponse.PlayerCountData countData)
      {
          this.playerCount = countData;
@@ -16,7 +16,7 @@
      }
  
      public ServerStatusResponse.MinecraftProtocolVersionIdentifier getProtocolVersionInfo()
-@@ -50,11 +52,13 @@
+@@ -49,11 +51,13 @@
      public void setProtocolVersionInfo(ServerStatusResponse.MinecraftProtocolVersionIdentifier protocolVersionData)
      {
          this.protocolVersion = protocolVersionData;
@@ -30,7 +30,7 @@
      }
  
      public String getFavicon()
-@@ -224,6 +228,7 @@
+@@ -215,6 +219,7 @@
                      serverstatusresponse.setFavicon(JsonUtils.getJsonObjectStringFieldValue(jsonobject, "favicon"));
                  }
  
@@ -38,7 +38,7 @@
                  return serverstatusresponse;
              }
  
-@@ -251,7 +256,47 @@
+@@ -242,7 +247,47 @@
                      jsonobject.addProperty("favicon", p_serialize_1_.getFavicon());
                  }
  

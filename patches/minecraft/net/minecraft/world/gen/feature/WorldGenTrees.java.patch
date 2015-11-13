@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
-@@ -69,7 +69,7 @@
+@@ -68,7 +68,7 @@
                      {
                          if (j >= 0 && j < 256)
                          {
@@ -9,7 +9,7 @@
                              {
                                  flag = false;
                              }
-@@ -88,11 +88,13 @@
+@@ -87,11 +87,13 @@
              }
              else
              {
@@ -26,7 +26,7 @@
                      int k2 = 3;
                      int l2 = 0;
  
-@@ -114,7 +116,7 @@
+@@ -113,7 +115,7 @@
                                      BlockPos blockpos = new BlockPos(k1, i3, i2);
                                      Block block = worldIn.getBlockState(blockpos).getBlock();
  
@@ -35,7 +35,7 @@
                                      {
                                          this.func_175903_a(worldIn, blockpos, this.metaLeaves);
                                      }
-@@ -125,9 +127,10 @@
+@@ -124,9 +126,10 @@
  
                      for (int j3 = 0; j3 < i; ++j3)
                      {
@@ -48,7 +48,7 @@
                          {
                              this.func_175903_a(worldIn, p_180709_3_.up(j3), this.metaWood);
  
-@@ -170,29 +173,29 @@
+@@ -169,29 +172,29 @@
                                  {
                                      blockpos$mutableblockpos1.func_181079_c(l4, k3, i5);
  
@@ -83,7 +83,7 @@
                                          {
                                              this.func_181650_b(worldIn, blockpos1, BlockVine.NORTH);
                                          }
-@@ -246,7 +249,7 @@
+@@ -245,7 +248,7 @@
          this.func_181651_a(p_181650_1_, p_181650_2_, p_181650_3_);
          int i = 4;
  

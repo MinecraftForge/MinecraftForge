@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -247,7 +247,7 @@
+@@ -246,7 +246,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
          this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
@@ -9,7 +9,7 @@
          this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
          this.gameController.loadWorld(this.clientWorldController);
          this.gameController.thePlayer.dimension = packetIn.getDimension();
-@@ -751,14 +751,16 @@
+@@ -750,14 +750,16 @@
      public void handleChat(S02PacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
@@ -28,7 +28,7 @@
          }
      }
  
-@@ -809,6 +811,11 @@
+@@ -808,6 +810,11 @@
          float f = (float)(packetIn.func_149028_l() * 360) / 256.0F;
          float f1 = (float)(packetIn.func_149030_m() * 360) / 256.0F;
          EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.createEntityByID(packetIn.func_149025_e(), this.gameController.theWorld);
@@ -40,7 +40,7 @@
          entitylivingbase.serverPosX = packetIn.func_149023_f();
          entitylivingbase.serverPosY = packetIn.func_149034_g();
          entitylivingbase.serverPosZ = packetIn.func_149029_h();
-@@ -1134,6 +1141,10 @@
+@@ -1133,6 +1140,10 @@
              {
                  tileentity.readFromNBT(packetIn.getNbtCompound());
              }
@@ -51,7 +51,7 @@
          }
      }
  
-@@ -1342,7 +1353,7 @@
+@@ -1341,7 +1352,7 @@
  
          if (entity instanceof EntityLivingBase)
          {

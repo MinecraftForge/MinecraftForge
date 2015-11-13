@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -38,7 +38,7 @@
+@@ -36,7 +36,7 @@
      public String getItemStackDisplayName(ItemStack stack)
      {
          String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
@@ -9,7 +9,7 @@
  
          if (s1 != null)
          {
-@@ -51,7 +51,7 @@
+@@ -49,7 +49,7 @@
      @SideOnly(Side.CLIENT)
      public int getColorFromItemStack(ItemStack stack, int renderPass)
      {
@@ -18,7 +18,7 @@
          return entitylist$entityegginfo != null ? (renderPass == 0 ? entitylist$entityegginfo.primaryColor : entitylist$entityegginfo.secondaryColor) : 16777215;
      }
  
-@@ -76,7 +76,7 @@
+@@ -74,7 +74,7 @@
                  if (tileentity instanceof TileEntityMobSpawner)
                  {
                      MobSpawnerBaseLogic mobspawnerbaselogic = ((TileEntityMobSpawner)tileentity).getSpawnerBaseLogic();
@@ -27,7 +27,7 @@
                      tileentity.markDirty();
                      worldIn.markBlockForUpdate(pos);
  
-@@ -97,7 +97,7 @@
+@@ -95,7 +95,7 @@
                  d0 = 0.5D;
              }
  
@@ -36,7 +36,7 @@
  
              if (entity != null)
              {
-@@ -148,7 +148,7 @@
+@@ -146,7 +146,7 @@
  
                      if (worldIn.getBlockState(blockpos).getBlock() instanceof BlockLiquid)
                      {
@@ -45,7 +45,7 @@
  
                          if (entity != null)
                          {
-@@ -172,19 +172,29 @@
+@@ -170,19 +170,29 @@
          }
      }
  
@@ -76,7 +76,7 @@
  
                  if (entity instanceof EntityLivingBase)
                  {
-@@ -209,5 +219,28 @@
+@@ -207,5 +217,28 @@
          {
              subItems.add(new ItemStack(itemIn, 1, entitylist$entityegginfo.spawnedID));
          }
