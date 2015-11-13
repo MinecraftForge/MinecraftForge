@@ -49,6 +49,8 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -143,10 +145,8 @@ public class FMLCommonHandler
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
-        FMLLog.log("MinecraftForge", Level.INFO, "Attempting early MinecraftForge initialization");
-        callForgeMethod("initialize");
-        callForgeMethod("registerCrashCallable");
-        FMLLog.log("MinecraftForge", Level.INFO, "Completed early MinecraftForge initialization");
+        MinecraftForge.initialize();
+//        MinecraftForge.registerCrashCallable();
     }
 
     /**
@@ -213,34 +213,6 @@ public class FMLCommonHandler
     }
 
 
-    private Class<?> findMinecraftForge()
-    {
-        if (forge==null && !noForge)
-        {
-            try {
-                forge = Class.forName("net.minecraftforge.common.MinecraftForge");
-            } catch (Exception ex) {
-                noForge = true;
-            }
-        }
-        return forge;
-    }
-
-    private Object callForgeMethod(String method)
-    {
-        if (noForge)
-            return null;
-        try
-        {
-            return findMinecraftForge().getMethod(method).invoke(null);
-        }
-        catch (Exception e)
-        {
-            // No Forge installation
-            return null;
-        }
-    }
-
     public void computeBranding()
     {
         if (brandings == null)
@@ -248,12 +220,7 @@ public class FMLCommonHandler
             Builder<String> brd = ImmutableList.<String>builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
-            brd.add("FML v"+Loader.instance().getFMLVersionString());
-            String forgeBranding = (String) callForgeMethod("getBrandingVersion");
-            if (!Strings.isNullOrEmpty(forgeBranding))
-            {
-                brd.add(forgeBranding);
-            }
+            brd.add("Powered by Forge " + ForgeVersion.getVersion());
             if (sidedDelegate!=null)
             {
                 brd.addAll(sidedDelegate.getAdditionalBrandingInformation());

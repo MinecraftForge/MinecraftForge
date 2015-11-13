@@ -166,9 +166,4 @@ public class MinecraftForge
        // Load before all the mods, so MC owns the MC fluids
        FluidRegistry.validateFluidRegistry();
    }
-
-   public static String getBrandingVersion()
-   {
-       return "Minecraft Forge "+ ForgeVersion.getVersion();
-   }
 }

@@ -30,7 +30,7 @@
  
 -        this.drawString(this.fontRendererObj, s, 2, this.height - 10, -1);
 +        java.util.List<String> brandings = com.google.common.collect.Lists.reverse(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(true));
-+        for (int brdline = 0; i < brandings.size(); i++)
++        for (int brdline = 0; brdline < brandings.size(); brdline++)
 +        {
 +            String brd = brandings.get(brdline);
 +            if (!com.google.common.base.Strings.isNullOrEmpty(brd))

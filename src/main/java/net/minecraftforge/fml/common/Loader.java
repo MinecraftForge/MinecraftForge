@@ -114,7 +114,7 @@ import com.google.gson.JsonParser;
  */
 public class Loader
 {
-    public static final String MC_VERSION = "1.8";
+    public static final String MC_VERSION = "1.8.8";
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**
@@ -833,7 +833,7 @@ public class Loader
 
     public String getMCPVersionString()
     {
-        return String.format("MCP v%s", mcpversion);
+        return String.format("MCP %s", mcpversion);
     }
 
     public void serverStopped()

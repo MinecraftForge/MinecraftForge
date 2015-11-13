@@ -89,14 +89,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         ModMetadata meta = getMetadata();
         meta.modId       = "Forge";
         meta.name        = "Minecraft Forge";
-        meta.version     = String.format("%d.%d.%d.%d", majorVersion, minorVersion, revisionVersion, buildVersion);
+        meta.version     = ForgeVersion.getVersion();
         meta.credits     = "Made possible with help from many people";
-        meta.authorList  = Arrays.asList("LexManos", "Cpw");
+        meta.authorList  = Arrays.asList("LexManos", "cpw");
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
                            "to work cooperatively together. It allows many mods to be created without " +
                            "them editing the main Minecraft code.";
-        meta.url         = "http://MinecraftForge.net";
-        meta.updateUrl   = "http://MinecraftForge.net/forum/index.php/topic,5.0.html";
+        meta.url         = "http://minecraftforge.net";
+        meta.updateUrl   = "http://minecraftforge.net/forum/index.php/topic,5.0.html";
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
         try {
