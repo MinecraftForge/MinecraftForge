@@ -42,7 +42,9 @@ public class ForgeVersion
     public static final String mcVersion = "1.8.8";
     // This is the MCP data version we're using
     public static final String mcpVersion = "9.18";
+    @SuppressWarnings("unused")
     private static Status status = PENDING;
+    @SuppressWarnings("unused")
     private static String target = null;
 
     public static int getMajorVersion()
@@ -150,7 +152,9 @@ public class ForgeVersion
                     FMLLog.log("ForgeVersionCheck", Level.DEBUG, "[%s] Received version check data:\n%s", mod.getModId(), data);
 
 
+                    @SuppressWarnings("unchecked")
                     Map<String, Object> json = new Gson().fromJson(data, Map.class);
+                    @SuppressWarnings("unchecked")
                     Map<String, String> promos = (Map<String, String>)json.get("promos");
                     String display_url = (String)json.get("homepage");
 
@@ -201,6 +205,7 @@ public class ForgeVersion
                     FMLLog.log("ForgeVersionCheck", Level.INFO, "[%s] Found status: %s Target: %s", mod.getModId(), status, target);
 
                     Map<ComparableVersion, String> changes = new LinkedHashMap<ComparableVersion, String>();
+                    @SuppressWarnings("unchecked")
                     Map<String, String> tmp = (Map<String, String>)json.get(MinecraftForge.MC_VERSION);
                     if (tmp != null)
                     {

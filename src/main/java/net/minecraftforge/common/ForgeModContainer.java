@@ -5,10 +5,6 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.common.ForgeVersion.buildVersion;
-import static net.minecraftforge.common.ForgeVersion.majorVersion;
-import static net.minecraftforge.common.ForgeVersion.minorVersion;
-import static net.minecraftforge.common.ForgeVersion.revisionVersion;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
@@ -83,6 +79,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
     private URL updateJSONUrl = null;
 
+    @SuppressWarnings("deprecation")
     public ForgeModContainer()
     {
         super(new ModMetadata());
@@ -91,7 +88,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         meta.name        = "Minecraft Forge";
         meta.version     = ForgeVersion.getVersion();
         meta.credits     = "Made possible with help from many people";
-        meta.authorList  = Arrays.asList("LexManos", "cpw");
+        meta.authorList  = Arrays.asList("LexManos", "cpw", "fry");
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
                            "to work cooperatively together. It allows many mods to be created without " +
                            "them editing the main Minecraft code.";
