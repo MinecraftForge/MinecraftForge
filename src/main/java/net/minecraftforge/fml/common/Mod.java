@@ -202,6 +202,7 @@ public @interface Mod
     /**
      * An optional URL to a JSON file that will be checked once per launch to determine if there is an updated
      * version of this mod and notify the end user. For more information see ForgeVersion.
+     * Format is defined here: https://gist.github.com/LexManos/7aacb9aa991330523884
      * @return URL to update metadata json
      */
     String updateJSON() default "";

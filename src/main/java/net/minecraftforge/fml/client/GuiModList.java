@@ -426,7 +426,7 @@ public class GuiModList extends GuiScreen
             lines.add(WHITE + "Version: " + selectedMod.getVersion());
             lines.add(WHITE + "Mod State: " + Loader.instance().getModState(selectedMod));
             if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+                lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
             lines.add(RED + "No mod information found");
