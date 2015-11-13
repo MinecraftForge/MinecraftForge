@@ -247,7 +247,6 @@ public class GameRegistry
         CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
 
-    @SuppressWarnings("unchecked")
     public static void addRecipe(IRecipe recipe)
     {
         CraftingManager.getInstance().getRecipeList().add(recipe);
