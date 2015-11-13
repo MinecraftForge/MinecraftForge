@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
+@@ -55,7 +55,7 @@
+                         {
+                             Block block = worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(l, j, i1)).getBlock();
+ 
+-                            if (block.getMaterial() != Material.air && block.getMaterial() != Material.leaves)
++                            if (!block.isAir(worldIn,blockpos$mutableblockpos) && !block.isLeaves(worldIn,blockpos$mutableblockpos))
+                             {
+                                 flag = false;
+                             }
+@@ -191,7 +191,7 @@
+                                 {
+                                     BlockPos blockpos = new BlockPos(l1, l2, i2);
+ 
+-                                    if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
++                                    if (!worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
+                                     {
+                                         this.func_175903_a(worldIn, blockpos, this.mushroomType.getDefaultState().withProperty(BlockHugeMushroom.VARIANT, blockhugemushroom$enumtype));
+                                     }
+@@ -202,9 +202,10 @@
+ 
+                     for (int i3 = 0; i3 < i; ++i3)
+                     {
+-                        Block block2 = worldIn.getBlockState(p_180709_3_.up(i3)).getBlock();
++                        BlockPos upN = p_180709_3_.up(i3);
++                        net.minecraft.block.state.IBlockState state = worldIn.getBlockState(upN);
+ 
+-                        if (!block2.isFullBlock())
++                        if (state.getBlock().canBeReplacedByLeaves(worldIn, upN))
+                         {
+                             this.func_175903_a(worldIn, p_180709_3_.up(i3), this.mushroomType.getDefaultState().withProperty(BlockHugeMushroom.VARIANT, BlockHugeMushroom.EnumType.STEM));
+                         }

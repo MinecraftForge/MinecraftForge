@@ -330,7 +330,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         // Reload resources
         client.refreshResources();
-        RenderingRegistry.loadEntityRenderers((Map<Class<? extends Entity>, Render>)Minecraft.getMinecraft().getRenderManager().entityRenderMap);
+        RenderingRegistry.loadEntityRenderers(Minecraft.getMinecraft().getRenderManager().entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
         {
@@ -825,7 +825,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         setupServerList();
         OldServerPinger osp = new OldServerPinger();
-        ServerData serverData = new ServerData("Command Line", host+":"+port);
+        ServerData serverData = new ServerData("Command Line", host+":"+port,false);
         try
         {
             osp.ping(serverData);

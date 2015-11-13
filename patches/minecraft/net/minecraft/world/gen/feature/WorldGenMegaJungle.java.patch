@@ -1,5 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
+@@ -57,7 +57,7 @@
+             {
+                 BlockPos blockpos = p_180709_3_.up(i2);
+ 
+-                if (this.func_150523_a(worldIn.getBlockState(blockpos).getBlock()))
++                if (this.isAirLeaves(worldIn,blockpos))
+                 {
+                     this.func_175903_a(worldIn, blockpos, this.woodMetadata);
+ 
+@@ -72,7 +72,7 @@
+                 {
+                     BlockPos blockpos1 = blockpos.east();
+ 
+-                    if (this.func_150523_a(worldIn.getBlockState(blockpos1).getBlock()))
++                    if (this.isAirLeaves(worldIn,blockpos1))
+                     {
+                         this.func_175903_a(worldIn, blockpos1, this.woodMetadata);
+ 
+@@ -85,7 +85,7 @@
+ 
+                     BlockPos blockpos2 = blockpos.south().east();
+ 
+-                    if (this.func_150523_a(worldIn.getBlockState(blockpos2).getBlock()))
++                    if (this.isAirLeaves(worldIn,blockpos2))
+                     {
+                         this.func_175903_a(worldIn, blockpos2, this.woodMetadata);
+ 
+@@ -98,7 +98,7 @@
+ 
+                     BlockPos blockpos3 = blockpos.south();
+ 
+-                    if (this.func_150523_a(worldIn.getBlockState(blockpos3).getBlock()))
++                    if (this.isAirLeaves(worldIn,blockpos3))
+                     {
+                         this.func_175903_a(worldIn, blockpos3, this.woodMetadata);
+ 
 @@ -132,4 +132,11 @@
              this.func_175925_a(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
          }

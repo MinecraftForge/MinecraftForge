@@ -1,7 +1,9 @@
-++++ REJECTED PATCH 1
-         {
-             BiomeGenBase biomegenbase = abiomegenbase[j];
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
+@@ -29,11 +29,18 @@
  
+         for (BiomeGenBase biomegenbase : BiomeGenBase.getBiomeGenArray())
+         {
 -            if (biomegenbase != null && biomegenbase.minHeight > 0.0F)
 +            if (biomegenbase != null && biomegenbase.minHeight > 0.0F && !net.minecraftforge.common.BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
              {
@@ -17,5 +19,4 @@
 +        }
      }
  
-     public MapGenStronghold(Map p_i2068_1_)
-++++ END PATCH
+     public MapGenStronghold(Map<String, String> p_i2068_1_)

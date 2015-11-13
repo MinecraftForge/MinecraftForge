@@ -1,18 +1,15 @@
-++++ REJECTED PATCH 1
-                     {
-                         if (i1 >= 0 && i1 < 256)
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
+@@ -56,7 +56,7 @@
                          {
--                            Block block = worldIn.getBlockState(new BlockPos(j1, i1, k1)).getBlock();
-+                            BlockPos off = new BlockPos(j1, i1, k1);
-+                            Block block = worldIn.getBlockState(off).getBlock();
+                             Block block = worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(k1, i1, l1)).getBlock();
  
 -                            if (block.getMaterial() != Material.air && block.getMaterial() != Material.leaves)
-+                            if (!block.isAir(worldIn, off) && !block.isLeaves(worldIn, off))
++                            if (block.isAir(worldIn, blockpos$mutableblockpos) && !block.isLeaves(worldIn, blockpos$mutableblockpos))
                              {
                                  flag = false;
                              }
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -75,11 +75,13 @@
              }
              else
              {
@@ -26,31 +23,28 @@
                  {
 -                    this.func_175921_a(worldIn, p_180709_3_.down());
 +                    block1.onPlantGrow(worldIn, down, p_180709_3_);
-                     i3 = p_180709_2_.nextInt(2);
-                     j1 = 1;
-                     byte b0 = 0;
-++++ END PATCH
-++++ REJECTED PATCH 3
+                     int i3 = p_180709_2_.nextInt(2);
+                     int j3 = 1;
+                     int k3 = 0;
+@@ -100,7 +102,7 @@
                                  {
-                                     BlockPos blockpos1 = new BlockPos(i2, l1, k2);
+                                     BlockPos blockpos = new BlockPos(i2, j4, k2);
  
--                                    if (!worldIn.getBlockState(blockpos1).getBlock().isFullBlock())
-+                                    if (worldIn.getBlockState(blockpos1).getBlock().canBeReplacedByLeaves(worldIn, blockpos1))
+-                                    if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
++                                    if (worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
                                      {
-                                         this.func_175905_a(worldIn, blockpos1, Blocks.leaves, BlockPlanks.EnumType.SPRUCE.getMetadata());
+                                         this.func_175903_a(worldIn, blockpos, field_181646_b);
                                      }
-++++ END PATCH
-++++ REJECTED PATCH 4
+@@ -129,9 +131,10 @@
  
-                     for (l1 = 0; l1 < i - j3; ++l1)
+                     for (int k4 = 0; k4 < i - i4; ++k4)
                      {
--                        Block block2 = worldIn.getBlockState(p_180709_3_.up(l1)).getBlock();
-+                        BlockPos upN = p_180709_3_.up(l1);
+-                        Block block2 = worldIn.getBlockState(p_180709_3_.up(k4)).getBlock();
++                        BlockPos upN = p_180709_3_.up(k4);
 +                        Block block2 = worldIn.getBlockState(upN).getBlock();
  
 -                        if (block2.getMaterial() == Material.air || block2.getMaterial() == Material.leaves)
 +                        if (block2.isAir(worldIn, upN) || block2.isLeaves(worldIn, upN))
                          {
-                             this.func_175905_a(worldIn, p_180709_3_.up(l1), Blocks.log, BlockPlanks.EnumType.SPRUCE.getMetadata());
+                             this.func_175903_a(worldIn, p_180709_3_.up(k4), field_181645_a);
                          }
-++++ END PATCH

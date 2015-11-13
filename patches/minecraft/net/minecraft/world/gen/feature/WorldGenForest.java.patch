@@ -1,11 +1,50 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
-@@ -102,7 +102,7 @@
+@@ -59,7 +59,7 @@
+                     {
+                         if (j >= 0 && j < 256)
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(l, j, i1)).getBlock()))
++                            if (!this.isReplaceable(worldIn, blockpos$mutableblockpos.func_181079_c(l, j, i1)))
+                             {
+                                 flag = false;
+                             }
+@@ -78,11 +78,13 @@
+             }
+             else
+             {
+-                Block block1 = worldIn.getBlockState(p_180709_3_.down()).getBlock();
++                BlockPos down = p_180709_3_.down();
++                Block block1 = worldIn.getBlockState(down).getBlock();
++                boolean isSoil = block1.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-                if ((block1 == Blocks.grass || block1 == Blocks.dirt || block1 == Blocks.farmland) && p_180709_3_.getY() < 256 - i - 1)
++                if (isSoil && p_180709_3_.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, p_180709_3_.down());
++                    block1.onPlantGrow(worldIn, down, p_180709_3_);
+ 
+                     for (int i2 = p_180709_3_.getY() - 3 + i; i2 <= p_180709_3_.getY() + i; ++i2)
+                     {
+@@ -102,7 +104,7 @@
                                      BlockPos blockpos = new BlockPos(i3, i2, k1);
                                      Block block = worldIn.getBlockState(blockpos).getBlock();
  
 -                                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
-+                                    if (block.isAir(worldIn, blockpos1) || block.isLeaves(worldIn, blockpos1))
++                                    if (block.isAir(worldIn, blockpos) || block.isLeaves(worldIn, blockpos))
                                      {
                                          this.func_175903_a(worldIn, blockpos, field_181630_b);
                                      }
+@@ -113,9 +115,9 @@
+ 
+                     for (int j2 = 0; j2 < i; ++j2)
+                     {
+-                        Block block2 = worldIn.getBlockState(p_180709_3_.up(j2)).getBlock();
+-
+-                        if (block2.getMaterial() == Material.air || block2.getMaterial() == Material.leaves)
++                        BlockPos upN = p_180709_3_.up(j2);
++                        Block block2 = worldIn.getBlockState(upN).getBlock();
++                        if (block2.isAir(worldIn, upN) || block2.isLeaves(worldIn, upN))
+                         {
+                             this.func_175903_a(worldIn, p_180709_3_.up(j2), field_181629_a);
+                         }

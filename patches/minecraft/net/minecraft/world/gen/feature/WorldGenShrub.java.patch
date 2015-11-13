@@ -20,3 +20,12 @@
          {
              p_180709_3_ = p_180709_3_.up();
              this.func_175903_a(worldIn, p_180709_3_, this.field_150527_b);
+@@ -54,7 +56,7 @@
+                         {
+                             BlockPos blockpos = new BlockPos(l, i, j1);
+ 
+-                            if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
++                            if (worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
+                             {
+                                 this.func_175903_a(worldIn, blockpos, this.field_150528_a);
+                             }
