@@ -62,7 +62,7 @@ public class PacketLoggingHandler
             {
                 String prefix = (direction == EnumPacketDirection.SERVERBOUND ? "SERVER: C->S" : "CLIENT: S->C");
                 @Override
-                protected void decode(ChannelHandlerContext context, ByteBuf input, List output)
+                protected void decode(ChannelHandlerContext context, ByteBuf input, List output) throws Exception
                 {
                     super.decode(context, input, output);
                     for (ByteBuf pkt : (List<ByteBuf>)output)
@@ -77,7 +77,7 @@ public class PacketLoggingHandler
             {
                 String prefix = (direction == EnumPacketDirection.SERVERBOUND ? "SERVER: S->C" : "CLIENT: C->S");
                 @Override
-                protected void encode(ChannelHandlerContext context, ByteBuf input, ByteBuf output)
+                protected void encode(ChannelHandlerContext context, ByteBuf input, ByteBuf output) throws Exception
                 {
                     input.markReaderIndex();
                     FMLLog.log(Level.DEBUG, "%s:\n%s", prefix, ByteBufUtils.getContentDump(input));

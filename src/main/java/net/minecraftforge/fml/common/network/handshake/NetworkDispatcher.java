@@ -306,14 +306,14 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
         else
         {
-            manager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<?>>()
+            manager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<? super Void>>()
             {
                 @Override
-                public void operationComplete(Future<?> result)
+                public void operationComplete(Future<? super Void> result)
                 {
                     manager.closeChannel(chatcomponenttext);
                 }
-            });
+            }, new GenericFutureListener[0]);
         }
         manager.channel().config().setAutoRead(false);
     }

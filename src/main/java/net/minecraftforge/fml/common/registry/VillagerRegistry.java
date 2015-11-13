@@ -38,7 +38,10 @@ import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
+import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
+import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -103,7 +106,7 @@ public class VillagerRegistry
          * @param facing
          * @param p5
          */
-        Object buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random, int p1,
+        Village buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random, int p1,
                 int p2, int p3, EnumFacing facing, int p5);
     }
 
@@ -181,17 +184,16 @@ public class VillagerRegistry
         return Collections.unmodifiableCollection(instance().newVillagerIds);
     }
 
-    public static void addExtraVillageComponents(@SuppressWarnings("rawtypes") ArrayList components, Random random, int i)
+    public static void addExtraVillageComponents(List<PieceWeight> list, Random random, int i)
     {
-        @SuppressWarnings("unchecked")
-        List<StructureVillagePieces.PieceWeight> parts = components;
+        List<StructureVillagePieces.PieceWeight> parts = list;
         for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
         {
             parts.add(handler.getVillagePieceWeight(random, i));
         }
     }
 
-    public static Object getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random,
+    public static Village getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random,
             int p1, int p2, int p3, EnumFacing facing, int p5)
     {
         return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, facing, p5);
