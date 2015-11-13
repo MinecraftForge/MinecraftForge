@@ -8,3 +8,13 @@
          this.smeltingList.put(input, stack);
          this.experienceList.put(stack, Float.valueOf(experience));
      }
+@@ -102,6 +103,9 @@
+ 
+     public float getSmeltingExperience(ItemStack stack)
+     {
++        float ret = stack.getItem().getSmeltingExperience(stack);
++        if (ret != -1) return ret;
++
+         for (Entry<ItemStack, Float> entry : this.experienceList.entrySet())
+         {
+             if (this.compareItemStacks(stack, (ItemStack)entry.getKey()))

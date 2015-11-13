@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -366,6 +366,18 @@
+@@ -200,12 +200,14 @@
+ 
+     protected boolean teleportTo(double p_70825_1_, double p_70825_3_, double p_70825_5_)
+     {
++        net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, p_70825_1_, p_70825_3_, p_70825_5_, 0);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false;
+         double d0 = this.posX;
+         double d1 = this.posY;
+         double d2 = this.posZ;
+-        this.posX = p_70825_1_;
+-        this.posY = p_70825_3_;
+-        this.posZ = p_70825_5_;
++        this.posX = event.targetX;
++        this.posY = event.targetY;
++        this.posZ = event.targetZ;
+         boolean flag = false;
+         BlockPos blockpos = new BlockPos(this.posX, this.posY, this.posZ);
+ 
+@@ -366,6 +368,18 @@
          }
      }
  

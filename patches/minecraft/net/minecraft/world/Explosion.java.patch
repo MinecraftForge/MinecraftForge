@@ -25,7 +25,15 @@
                                  f -= (f2 + 0.3F) * 0.3F;
                              }
  
-@@ -214,8 +216,7 @@
+@@ -127,6 +129,7 @@
+         int j2 = MathHelper.floor_double(this.explosionZ - (double)f3 - 1.0D);
+         int j1 = MathHelper.floor_double(this.explosionZ + (double)f3 + 1.0D);
+         List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, f3);
+         Vec3 vec3 = new Vec3(this.explosionX, this.explosionY, this.explosionZ);
+ 
+         for (int k2 = 0; k2 < list.size(); ++k2)
+@@ -214,8 +217,7 @@
                          block.dropBlockAsItemWithChance(this.worldObj, blockpos, this.worldObj.getBlockState(blockpos), 1.0F / this.explosionSize, 0);
                      }
  
@@ -35,7 +43,7 @@
                  }
              }
          }
-@@ -251,4 +252,6 @@
+@@ -251,4 +253,6 @@
      {
          return this.affectedBlockPositions;
      }

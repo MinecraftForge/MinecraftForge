@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 3
- 
-     private void populateBuyingList()
-     {
-+        //TODO: Hook into VillagerRegistry
-         EntityVillager.ITradeList[][][] aitradelist = DEFAULT_TRADE_LIST_MAP[this.getProfession()];
- 
-         if (this.careerId != 0 && this.careerLevel != 0)
-++++ END PATCH

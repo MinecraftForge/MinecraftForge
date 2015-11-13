@@ -1,6 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -57,6 +57,19 @@
+@@ -37,48 +37,39 @@
+         for (int i = 0; i < p_177630_3_; ++i)
+         {
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(random, p_177630_1_);
+-            int j = weightedrandomchestcontent.theMinimumChanceToGenerateItem + random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(random, p_177630_2_);
+ 
+-            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= j)
++            for (ItemStack itemstack1 : stacks)
+             {
+-                ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
+-                itemstack1.stackSize = j;
+                 p_177630_2_.setInventorySlotContents(random.nextInt(p_177630_2_.getSizeInventory()), itemstack1);
+             }
+-            else
+-            {
+-                for (int k = 0; k < j; ++k)
+-                {
+-                    ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                    itemstack.stackSize = 1;
+-                    p_177630_2_.setInventorySlotContents(random.nextInt(p_177630_2_.getSizeInventory()), itemstack);
+-                }
+-            }
          }
      }
  
@@ -20,3 +42,27 @@
      public static void generateDispenserContents(Random random, List<WeightedRandomChestContent> p_177631_1_, TileEntityDispenser dispenser, int p_177631_3_)
      {
          for (int i = 0; i < p_177631_3_; ++i)
+         {
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(random, p_177631_1_);
+-            int j = weightedrandomchestcontent.theMinimumChanceToGenerateItem + random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = weightedrandomchestcontent.generateChestContent(random, dispenser);
+ 
+-            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= j)
++            for (ItemStack itemstack1 : stacks)
+             {
+-                ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
+-                itemstack1.stackSize = j;
+                 dispenser.setInventorySlotContents(random.nextInt(dispenser.getSizeInventory()), itemstack1);
+             }
+-            else
+-            {
+-                for (int k = 0; k < j; ++k)
+-                {
+-                    ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                    itemstack.stackSize = 1;
+-                    dispenser.setInventorySlotContents(random.nextInt(dispenser.getSizeInventory()), itemstack);
+-                }
+-            }
+         }
+     }
+ 

@@ -9,6 +9,20 @@
                  String s = func_180204_a(item);
  
                  if (s != null)
+@@ -127,11 +127,11 @@
+     {
+         for (Block block : Block.blockRegistry)
+         {
+-            Item item = Item.getItemFromBlock(block);
++            Item item = Item.getItemFromBlock(block); //TODO: Hook FML's stat change event and re-assign these
+ 
+             if (item != null)
+             {
+-                int i = Block.getIdFromBlock(block);
++                int i = Block.getIdFromBlock(block); //TODO: Hook FML's stat change event and re-assign these
+                 String s = func_180204_a(item);
+ 
+                 if (s != null && block.getEnableStats())
 @@ -151,7 +151,7 @@
          {
              if (item != null)

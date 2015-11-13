@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
- 
-     void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException
-     {
-+        sizeTracker.read(32); //Forge: Count the length as well
-         int j = input.readInt();
-         sizeTracker.read((long)(32 * j));
-         this.intArray = new int[j];
-++++ END PATCH

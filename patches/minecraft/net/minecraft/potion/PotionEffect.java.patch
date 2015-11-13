@@ -26,6 +26,15 @@
      }
  
      public void combine(PotionEffect other)
+@@ -191,7 +196,7 @@
+ 
+     public static PotionEffect readCustomPotionEffectFromNBT(NBTTagCompound nbt)
+     {
+-        int i = nbt.getByte("Id");
++        int i = nbt.getByte("Id") & 0xff;
+ 
+         if (i >= 0 && i < Potion.potionTypes.length && Potion.potionTypes[i] != null)
+         {
 @@ -224,4 +229,62 @@
      {
          return this.isPotionDurationMax;

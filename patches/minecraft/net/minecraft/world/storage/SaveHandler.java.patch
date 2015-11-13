@@ -1,15 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -144,6 +144,8 @@
-         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-         nbttagcompound1.setTag("Data", nbttagcompound);
+@@ -105,13 +105,17 @@
+     {
+         File file1 = new File(this.worldDirectory, "level.dat");
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound2);
++        WorldInfo worldInfo = null;
 +
-         try
+         if (file1.exists())
          {
-             File file1 = new File(this.worldDirectory, "level.dat_new");
-@@ -182,6 +184,8 @@
+             try
+             {
+                 NBTTagCompound nbttagcompound2 = CompressedStreamTools.readCompressed(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound3 = nbttagcompound2.getCompoundTag("Data");
+-                return new WorldInfo(nbttagcompound3);
++                worldInfo = new WorldInfo(nbttagcompound3);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound2);
++                return worldInfo;
+             }
+             catch (Exception exception1)
+             {
+@@ -119,6 +123,7 @@
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
+         file1 = new File(this.worldDirectory, "level.dat_old");
+ 
+         if (file1.exists())
+@@ -127,7 +132,13 @@
+             {
+                 NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
+-                return new WorldInfo(nbttagcompound1);
++                worldInfo = new WorldInfo(nbttagcompound1);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                return worldInfo;
++             }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++            {
++                throw e;
+             }
+             catch (Exception exception)
+             {
+@@ -144,6 +155,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.setTag("Data", nbttagcompound);
  
@@ -18,7 +51,16 @@
          try
          {
              File file1 = new File(this.worldDirectory, "level.dat_new");
-@@ -230,6 +234,7 @@
+@@ -182,6 +195,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.setTag("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.worldDirectory, "level.dat_new");
+@@ -230,6 +245,7 @@
              }
  
              file1.renameTo(file2);
@@ -26,7 +68,7 @@
          }
          catch (Exception var5)
          {
-@@ -260,6 +265,7 @@
+@@ -260,6 +276,7 @@
              p_75752_1_.readFromNBT(nbttagcompound);
          }
  
@@ -34,7 +76,7 @@
          return nbttagcompound;
      }
  
-@@ -301,4 +307,22 @@
+@@ -301,4 +318,22 @@
      {
          return this.saveDirectoryName;
      }

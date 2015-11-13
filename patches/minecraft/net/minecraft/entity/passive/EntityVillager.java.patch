@@ -17,7 +17,15 @@
          {
              if (!this.worldObj.isRemote && (this.buyingList == null || this.buyingList.size() > 0))
              {
-@@ -636,6 +637,7 @@
+@@ -523,6 +524,7 @@
+ 
+     private void populateBuyingList()
+     {
++        //TODO: Hook into VillagerRegistry
+         EntityVillager.ITradeList[][][] aentityvillager$itradelist = DEFAULT_TRADE_LIST_MAP[this.getProfession()];
+ 
+         if (this.careerId != 0 && this.careerLevel != 0)
+@@ -636,6 +638,7 @@
                      }
              }
  
@@ -25,7 +33,7 @@
              if (s1 != null)
              {
                  ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("entity.Villager." + s1, new Object[0]);
-@@ -698,7 +700,7 @@
+@@ -698,7 +701,7 @@
      public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, IEntityLivingData p_180482_2_)
      {
          p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);
