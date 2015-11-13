@@ -43,7 +43,6 @@ public class BlockStateLoader
      *
      * @return Model definition including variants for all known combinations.
      */
-    @SuppressWarnings("rawtypes")
     public static ModelBlockDefinition load(Reader reader, final Gson vanillaGSON)
     {
         try
@@ -75,7 +74,7 @@ public class BlockStateLoader
                         variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
                     }
 
-                    return new ModelBlockDefinition((Collection)variants); //Damn lists being collections!
+                    return new ModelBlockDefinition(variants);
 
                 default: //Unknown version.. try loading it as normal.
                     return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);

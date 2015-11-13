@@ -38,11 +38,10 @@ public interface IPerspectiveState extends IModelState
         private static ImmutableMap<TransformType, IModelState> getMap(ItemCameraTransforms transforms)
         {
             Map<TransformType, IModelState> map = Maps.newHashMap();
-            map.put(TransformType.NONE, TRSRTransformation.identity());
-            map.put(TransformType.THIRD_PERSON, transforms.thirdPerson);
-            map.put(TransformType.FIRST_PERSON, transforms.firstPerson);
-            map.put(TransformType.GUI, transforms.gui);
-            map.put(TransformType.HEAD, transforms.head);
+            for(TransformType type : TransformType.values())
+            {
+                map.put(type, transforms.func_181688_b(type));
+            }
             return Maps.immutableEnumMap(map);
         }
 

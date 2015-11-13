@@ -42,6 +42,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
@@ -85,6 +86,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
 
 
 
@@ -510,7 +512,7 @@ public class ForgeHooksClient
     }
     */
 
-    public static void onModelBake(ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery)
+    public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelBakery modelBakery)
     {
         ModelLoader loader = (ModelLoader)modelBakery;
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, loader));

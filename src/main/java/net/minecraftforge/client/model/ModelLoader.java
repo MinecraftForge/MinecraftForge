@@ -38,6 +38,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.BuiltInModel;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
@@ -85,7 +86,7 @@ public class ModelLoader extends ModelBakery
     }
 
     @Override
-    public IRegistry setupModelRegistry()
+    public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
     {
         isLoading = true;
         loadBlocks();
@@ -717,12 +718,12 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    public void onPostBakeEvent(IRegistry modelRegistry)
+    public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
-        Object missingModel = modelRegistry.getObject(MODEL_MISSING);
+        IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
         for(ModelResourceLocation missing : missingVariants)
         {
-            Object model = modelRegistry.getObject(missing);
+            IBakedModel model = modelRegistry.getObject(missing);
             if(model == null || model == missingModel)
             {
                 FMLLog.severe("Model definition for location %s not found", missing);

@@ -1,18 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/model/IBakedModel.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/model/IBakedModel.java
-@@ -8,7 +8,11 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-+/*
-+ * @deprecated use {@link net.minecraftforge.client.model.IFlexibleBakedModel}, {@link net.minecraftforge.client.model.IPerspectiveAwareModel}
-+ */
- @SideOnly(Side.CLIENT)
-+@Deprecated
- public interface IBakedModel
- {
-     List<BakedQuad> getFaceQuads(EnumFacing p_177551_1_);
-@@ -23,5 +27,6 @@
+@@ -23,5 +23,6 @@
  
      TextureAtlasSprite getTexture();
  

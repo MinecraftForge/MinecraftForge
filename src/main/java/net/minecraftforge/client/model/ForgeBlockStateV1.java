@@ -534,17 +534,29 @@ public class ForgeBlockStateV1 extends Marker
                             transform.remove("firstperson");
                             transforms.put(TransformType.FIRST_PERSON, TRSRTransformation.blockCenterToCorner(t));
                         }
+                        if(transform.has("head"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("head"), TRSRTransformation.class);
+                            transform.remove("head");
+                            transforms.put(TransformType.HEAD, TRSRTransformation.blockCenterToCorner(t));
+                        }
                         if(transform.has("gui"))
                         {
                             TRSRTransformation t = context.deserialize(transform.get("gui"), TRSRTransformation.class);
                             transform.remove("gui");
                             transforms.put(TransformType.GUI, TRSRTransformation.blockCenterToCorner(t));
                         }
-                        if(transform.has("head"))
+                        if(transform.has("ground"))
                         {
-                            TRSRTransformation t = context.deserialize(transform.get("head"), TRSRTransformation.class);
-                            transform.remove("head");
-                            transforms.put(TransformType.HEAD, TRSRTransformation.blockCenterToCorner(t));
+                            TRSRTransformation t = context.deserialize(transform.get("ground"), TRSRTransformation.class);
+                            transform.remove("ground");
+                            transforms.put(TransformType.GROUND, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("fixed"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("fixed"), TRSRTransformation.class);
+                            transform.remove("fixed");
+                            transforms.put(TransformType.FIXED, TRSRTransformation.blockCenterToCorner(t));
                         }
                         int k = transform.entrySet().size();
                         if(transform.has("matrix")) k--;
