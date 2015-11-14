@@ -1,43 +1,92 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -109,7 +109,7 @@
-         {
-             if (item != null)
-             {
--                int i = Item.getIdFromItem(item);
-+                int i = Item.getIdFromItem(item); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
+@@ -119,7 +119,7 @@
+             }
+         }
  
-                 if (s != null)
-@@ -126,11 +126,11 @@
+-        replaceAllSimilarBlocks(objectCraftStats);
++        replaceAllSimilarBlocks(objectCraftStats, true);
+     }
+ 
+     private static void initMiningStats()
+@@ -141,7 +141,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(mineBlockStatArray);
++        replaceAllSimilarBlocks(mineBlockStatArray, false);
+     }
+ 
+     private static void initStats()
+@@ -165,7 +165,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(objectUseStats);
++        replaceAllSimilarBlocks(objectUseStats, true);
+     }
+ 
+     private static void initItemDepleteStats()
+@@ -184,7 +184,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(objectBreakStats);
++        replaceAllSimilarBlocks(objectBreakStats, true);
+     }
+ 
+     private static String func_180204_a(Item p_180204_0_)
+@@ -193,28 +193,35 @@
+         return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
+     }
+ 
+-    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_)
++    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_, boolean useItemIds)
      {
-         for (Block block : Block.blockRegistry)
+-        func_151180_a(p_75924_0_, Blocks.water, Blocks.flowing_water);
+-        func_151180_a(p_75924_0_, Blocks.lava, Blocks.flowing_lava);
+-        func_151180_a(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin);
+-        func_151180_a(p_75924_0_, Blocks.lit_furnace, Blocks.furnace);
+-        func_151180_a(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore);
+-        func_151180_a(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater);
+-        func_151180_a(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator);
+-        func_151180_a(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch);
+-        func_151180_a(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp);
+-        func_151180_a(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab);
+-        func_151180_a(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab);
+-        func_151180_a(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2);
+-        func_151180_a(p_75924_0_, Blocks.grass, Blocks.dirt);
+-        func_151180_a(p_75924_0_, Blocks.farmland, Blocks.dirt);
++        func_151180_a(p_75924_0_, Blocks.water, Blocks.flowing_water, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.lava, Blocks.flowing_lava, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.lit_furnace, Blocks.furnace, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.grass, Blocks.dirt, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.farmland, Blocks.dirt, useItemIds);
+     }
+ 
+-    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_)
++    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_, boolean useItemIds)
+     {
+-        int i = Block.getIdFromBlock(p_151180_1_);
+-        int j = Block.getIdFromBlock(p_151180_2_);
++        int i;
++        int j;
++        if (useItemIds) {
++            i = Item.getIdFromItem(Item.getItemFromBlock(p_151180_1_));
++            j = Item.getIdFromItem(Item.getItemFromBlock(p_151180_2_));
++        } else {
++            i = Block.getIdFromBlock(p_151180_1_);
++            j = Block.getIdFromBlock(p_151180_2_);
++        }
+ 
+         if (p_151180_0_[i] != null && p_151180_0_[j] == null)
          {
--            Item item = Item.getItemFromBlock(block);
-+            Item item = Item.getItemFromBlock(block); //TODO: Hook FML's stat change event and re-assign these
- 
-             if (item != null)
-             {
--                int i = Block.getIdFromBlock(block);
-+                int i = Block.getIdFromBlock(block); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
- 
-                 if (s != null && block.getEnableStats())
-@@ -150,7 +150,7 @@
-         {
-             if (item != null)
-             {
--                int i = Item.getIdFromItem(item);
-+                int i = Item.getIdFromItem(item); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
- 
-                 if (s != null)
-@@ -174,7 +174,7 @@
-         {
-             if (item != null)
-             {
--                int i = Item.getIdFromItem(item);
-+                int i = Item.getIdFromItem(item); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
- 
-                 if (s != null && item.isDamageable())
