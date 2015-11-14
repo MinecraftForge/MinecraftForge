@@ -34,6 +34,7 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -199,12 +200,13 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         NBTTagCompound playerNBT = scm.getPlayerNBT(player);
         if (playerNBT!=null)
         {
-            return playerNBT.getInteger("Dimension");
+            int dimension = playerNBT.getInteger("Dimension");
+            if (DimensionManager.isDimensionRegistered(dimension))
+            {
+        	    return dimension;
+            }
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
     void clientListenForServerHandshake()
