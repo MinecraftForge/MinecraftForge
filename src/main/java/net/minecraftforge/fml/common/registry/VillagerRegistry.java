@@ -17,6 +17,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -39,6 +40,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -133,8 +135,7 @@ public class VillagerRegistry
      * @param villagerSkin
      */
     @SideOnly(Side.CLIENT)
-    @Deprecated // Doesn't work at all.
-    public void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin)
+    private void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin)
     {
         if (newVillagers == null)
         {
@@ -160,7 +161,6 @@ public class VillagerRegistry
      * @param defaultSkin
      */
     @SideOnly(Side.CLIENT)
-    @Deprecated // Doesn't work at all.
     public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin)
     {
         if (instance().newVillagers != null && instance().newVillagers.containsKey(villagerType))
@@ -203,7 +203,12 @@ public class VillagerRegistry
     }
     private void register(VillagerProfession prof, int id)
     {
-        professions.register(id, prof.name, prof);
+        prof.id = VillagerProfession.nextId++;
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            registerVillagerSkin(prof.id, prof.texture);
+        }
+        professions.register(prof.id, prof.name, prof);
     }
 
     private boolean hasInit = false;
@@ -250,16 +255,18 @@ public class VillagerRegistry
 
     public static class VillagerProfession
     {
+        public static int nextId = 0;
         private ResourceLocation name;
         private ResourceLocation texture;
+        private int id;
         private List<VillagerCareer> careers = Lists.newArrayList();
-        private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
+//        private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
 
         public VillagerProfession(String name, String texture)
         {
             this.name = new ResourceLocation(name);
             this.texture = new ResourceLocation(texture);
-            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
+//            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
         }
 
         private void register(VillagerCareer career)
@@ -269,6 +276,16 @@ public class VillagerRegistry
             career.id = careers.size();
             careers.add(career);
         }
+        
+        public int getId()
+        {
+            return id;
+        }
+        
+        public int getCareerCount()
+        {
+            return careers.size();
+        }
     }
 
     public static class VillagerCareer
@@ -276,6 +293,8 @@ public class VillagerRegistry
         private VillagerProfession profession;
         private String name;
         private int id;
+        private HashMap<Integer, ArrayList<ITradeList>> levelTrades = new HashMap<Integer, ArrayList<ITradeList>>();
+        
         public VillagerCareer(VillagerProfession parent, String name)
         {
             this.profession = parent;
@@ -285,7 +304,44 @@ public class VillagerRegistry
 
         private VillagerCareer init(EntityVillager.ITradeList[][] traids)
         {
+            for(int i = 0; i<traids.length; i++)
+            {
+                ArrayList<ITradeList> tradesForLevel = new ArrayList<ITradeList>();
+                for(ITradeList trade: traids[i])
+                {
+                    tradesForLevel.add(trade);
+                }
+                levelTrades.put(i, tradesForLevel);
+            }
             return this;
+        }
+        
+        public void addTrade(ITradeList trade, int careerLevel)
+        {
+            ArrayList<ITradeList> tradesForLevel = levelTrades.get(careerLevel);
+            if(tradesForLevel==null)
+            {
+                tradesForLevel = new ArrayList<ITradeList>();
+                levelTrades.put(careerLevel, tradesForLevel);
+            }
+            tradesForLevel.add(trade);
+        }
+        
+        private void populateBuyingList(MerchantRecipeList recipeList, int careerLevel, Random random)
+        {
+            while(careerLevel - 1 >= 0)
+            {
+                ArrayList<ITradeList> tradesForLevel = levelTrades.get(careerLevel - 1);
+                if(tradesForLevel!=null)
+                {
+                    for(ITradeList trade: tradesForLevel)
+                    {
+                        trade.modifyMerchantRecipeList(recipeList, random);
+                    }
+                    return;
+                }
+                careerLevel--;
+            }
         }
 
         @Override
@@ -295,6 +351,16 @@ public class VillagerRegistry
             if (!(o instanceof VillagerCareer)) return false;
             VillagerCareer oc = (VillagerCareer)o;
             return name.equals(oc.name) && profession == oc.profession;
+        }
+        
+        public int getId()
+        {
+            return id + 1;
+        }
+        
+        public String getName()
+        {
+            return name;
         }
     }
 
@@ -309,7 +375,28 @@ public class VillagerRegistry
         Set<String> entries = INSTANCE.professions.getKeys();
         int prof = rand.nextInt(entries.size());
         //TODO: Grab id range from internal registry
-        entity.setProfession(rand.nextInt(5));
+        entity.setProfession(rand.nextInt(VillagerProfession.nextId));
+    }
+    
+    public static void populateBuyingList(MerchantRecipeList recipeList, int professionID, int careerId, int careerLevel, Random random)
+    {
+        VillagerProfession profession = INSTANCE.professions.getObjectById(professionID);
+        //The villagers seem to have career = 0 meaning no career.
+        VillagerCareer career = profession.careers.get(careerId - 1);
+        career.populateBuyingList(recipeList, careerLevel, random);
+    }
+    
+    public static int getNumberOfCareers(int professionID)
+    {
+        VillagerProfession profession = INSTANCE.professions.getObjectById(professionID);
+        return profession.getCareerCount();
+    }
+    
+    public static String getVillagerDisplay(int professionID, int careerId)
+    {
+        VillagerProfession profession = INSTANCE.professions.getObjectById(professionID);
+        VillagerCareer career = profession.careers.get(careerId - 1);
+        return career.name;
     }
 
     //TODO: Figure out a good generic system for this. Put on hold for Patches.
