@@ -135,6 +135,13 @@ public class ForgeEventFactory
         return event.list;
     }
 
+    public static int getFuelBurnTime(ItemStack fuel)
+    {
+        FuelBurnTimeEvent event = new FuelBurnTimeEvent(fuel);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Result.DEFAULT ? -1 : event.burnTime;
+    }
+
     public static int getMaxSpawnPackSize(EntityLiving entity)
     {
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
