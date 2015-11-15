@@ -16,5 +16,17 @@ import net.minecraft.item.ItemStack;
 
 public interface IFuelHandler
 {
+    /**
+     * Returns the fuel value of the item stack if this is a fuel.
+     * Returns a negative integer to disallow consuming this item stack.
+     * By default, you should return 0.
+     * <br>
+     * To override other mods' behavior, register your fuel handler after the other mod did.
+     * To override vanilla behavior just register your fuel handler.
+     * <br>
+     * 
+     * @param fuel the item stack
+     * @return the fuel value of the item stack, other cases see above
+     */
     int getBurnTime(ItemStack fuel);
 }
