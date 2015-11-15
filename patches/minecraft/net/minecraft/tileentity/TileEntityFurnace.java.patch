@@ -32,3 +32,13 @@
              }
  
              --this.field_145957_n[0].field_77994_a;
+@@ -301,6 +304,9 @@
+         }
+         else
+         {
++        	int moddedBurnTime = net.minecraftforge.event.ForgeEventFactory.getFuelBurnTime(p_145952_0_);
++        	if (moddedBurnTime >= 0) return moddedBurnTime;
++        	
+             Item item = p_145952_0_.func_77973_b();
+ 
+             if (item instanceof ItemBlock && Block.func_149634_a(item) != Blocks.field_150350_a)
