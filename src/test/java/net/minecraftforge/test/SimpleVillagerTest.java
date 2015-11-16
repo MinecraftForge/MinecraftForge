@@ -1,5 +1,10 @@
 package net.minecraftforge.test;
 
+import java.io.IOException;
+import java.util.Set;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.EmeraldForItems;
 import net.minecraft.entity.passive.EntityVillager.PriceInfo;
@@ -7,6 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -16,7 +22,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 
-@Mod(modid = "VillagerTest", name = "SimpleVillagerTest", version = "1.0")
+@Mod(modid = "villagertest", name = "SimpleVillagerTest", version = "1.0")
 public class SimpleVillagerTest {
 
     public VillagerRegistry.VillagerProfession PROFESSION;
@@ -27,13 +33,14 @@ public class SimpleVillagerTest {
     public VillagerRegistry.VillagerProfession PROFESSION3;
     @EventHandler
     public void onInit(FMLPostInitializationEvent event) {
-        PROFESSION = new VillagerRegistry.VillagerProfession("Derpington", "minecraft:textures/entity/villager/farmer.png");
-        PROFESSION2 = new VillagerRegistry.VillagerProfession("Herpington", "minecraft:textures/entity/villager/farmer.png");
-        PROFESSION3 = new VillagerRegistry.VillagerProfession("Lerpington", "minecraft:textures/entity/villager/farmer.png");
+        PROFESSION = new VillagerRegistry.VillagerProfession("derpington", "villagertest:textures/entity/villager/derpington.png");
+        PROFESSION2 = new VillagerRegistry.VillagerProfession("herpington", "villagertest:textures/entity/villager/herpington.png");
+        PROFESSION3 = new VillagerRegistry.VillagerProfession("lerpington", "villagertest:textures/entity/villager/lerpington.png");
         CAREER = new VillagerRegistry.VillagerCareer(PROFESSION, "Derpington");
         CAREER2 = new VillagerRegistry.VillagerCareer(PROFESSION2, "Herpington");
         CAREER3 = new VillagerRegistry.VillagerCareer(PROFESSION3, "Lerpington");
 
+        //Comment these in and out for testing removing/adding professions from existing saves
         VillagerRegistry.instance().register(PROFESSION2);
         VillagerRegistry.instance().register(PROFESSION3);
         VillagerRegistry.instance().register(PROFESSION);
@@ -58,8 +65,11 @@ public class SimpleVillagerTest {
                 && event.entityPlayer.getHeldItem().getItem() == Items.stick) {
             EntityVillager villager = (EntityVillager) event.target;
             
-            event.entityPlayer.addChatMessage(new ChatComponentText(villager.getCareer()+" "+villager.getProfession()));
-           
+            event.entityPlayer.addChatMessage(new ChatComponentText(villager.getCareer()
+            		+" "+villager.getProfession()
+            		+" "+ net.minecraftforge.fml.common.registry.VillagerRegistry.getProfession(villager.getProfession()).getName()
+            		+" "+ net.minecraftforge.fml.common.registry.VillagerRegistry.getProfession(villager.getProfession()).getId()));
+           System.out.println(net.minecraftforge.fml.common.registry.VillagerRegistry.getProfessionCount());
             /**
              * Shift right click a villager to set their profession to the one specified here
              */
@@ -69,7 +79,17 @@ public class SimpleVillagerTest {
                  * This VillagerProfession.getId() should probably check a value set while regsitering the profession
                  * with VillagerRegistry.instance().register(PROFESSION);
                  */
-                int toSet = PROFESSION2.getId();
+                int toSet = PROFESSION.getId();
+
+                Set<ResourceLocation> keys = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().professions.getKeys();
+                for(ResourceLocation s: keys)
+                {
+                	VillagerRegistry.VillagerProfession prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getProfession(s.getResourcePath());
+                	int id = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().professions.getId(prof);
+                	System.out.println(prof.getName()+" "+prof.getId()+" "+id+" "+prof.texture);
+                }
+                
+                System.out.println("id of "+toSet);
                 villager.setProfession(toSet);
             }
             
