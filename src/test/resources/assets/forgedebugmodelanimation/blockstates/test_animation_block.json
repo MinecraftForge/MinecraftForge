@@ -1,0 +1,26 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "#chest": "entity/chest/normal"
+        },
+        "model": "forgedebugmodelloaderregistry:chest.b3d",
+        "custom": {
+            "mesh": ["Cube.001"]
+        }
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "facing": {
+            "down":  { "transform": { "rotation": { "x": 90  } } },
+            "up":    { "transform": { "rotation": { "x": 270 } } },
+            "north": { "transform": { "rotation": { "y": 180 } } },
+            "south": { "transform": "identity"                   },
+            "west":  { "transform": { "rotation": { "y": 90  } } },
+            "east":  { "transform": { "rotation": { "y": 270 } } }
+        }
+    }
+}
