@@ -4,6 +4,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerSelector;
 
 /**
  * CommandEvent is fired whenever a command is scheduled to be executed. 
@@ -36,5 +37,56 @@ public class CommandEvent extends Event
         this.command = command;
         this.sender = sender;
         this.parameters = parameters;
+    }
+    
+    /**
+     * Fired after the command has been executed.
+     */
+    public static class Post extends Event
+    {
+        private final ICommand command;
+        private final ICommandSender sender;
+        private final String[] parameters;
+        private final int executionCount;
+        
+        public Post(ICommand command, ICommandSender sender, String[] parameters, int executionCount)
+        {
+            this.command = command;
+            this.sender = sender;
+            this.parameters = parameters;
+            this.executionCount = executionCount;
+        }
+
+        /**
+         * @return The command that was executed
+         */
+        public ICommand getCommand()
+        {
+            return command;
+        }
+
+        /**
+         * @return The person who executed the command
+         */
+        public ICommandSender getSender()
+        {
+            return sender;
+        }
+
+        /**
+         * @return The parameters that were passed when the command was executed
+         */
+        public String[] getParameters()
+        {
+            return parameters;
+        }
+
+        /**
+         * @return The number of times the command was executed. May be greater than {@code 1} if a {@link PlayerSelector} argument is used.
+         */
+        public int getExecutionCount()
+        {
+            return executionCount;
+        }
     }
 }
