@@ -42,6 +42,7 @@ import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -203,17 +204,23 @@ public class VillagerRegistry
     }
     private void register(VillagerProfession prof, int id)
     {
-        prof.id = VillagerProfession.nextId++;
+        prof.setId(id);
+        if(professionsByName.containsKey(prof.getName()))
+        {
+            throw new IllegalArgumentException("Cannot Register the same Profession Name twice");
+        }
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             registerVillagerSkin(prof.id, prof.texture);
         }
-        professions.register(prof.id, prof.name, prof);
+        professionsById.put(prof.id, prof);
+        professionsByName.put(prof.getName(), prof);
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = GameData.createRegistry("villagerprofessions", VillagerProfession.class, 0, 1024);
-
+//    private FMLControlledNamespacedRegistry<VillagerProfession> professions = GameData.createRegistry("villagerprofessions", VillagerProfession.class, 0, 1024);
+    private HashMap<Integer, VillagerProfession> professionsById = new HashMap<Integer, VillagerProfession>();
+    private HashMap<String, VillagerProfession> professionsByName = new HashMap<String, VillagerProfession>();
 
     private void init()
     {
@@ -260,13 +267,11 @@ public class VillagerRegistry
         private ResourceLocation texture;
         private int id;
         private List<VillagerCareer> careers = Lists.newArrayList();
-//        private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
 
         public VillagerProfession(String name, String texture)
         {
             this.name = new ResourceLocation(name);
             this.texture = new ResourceLocation(texture);
-//            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
         }
 
         private void register(VillagerCareer career)
@@ -276,15 +281,30 @@ public class VillagerRegistry
             career.id = careers.size();
             careers.add(career);
         }
-        
+
+        private void setId(int id)
+        {
+            if(id < nextId)
+            {
+                id = nextId;
+            }    
+            this.id = id;
+            nextId++;
+        }
+
         public int getId()
         {
             return id;
         }
-        
+
         public int getCareerCount()
         {
             return careers.size();
+        }
+
+        public String getName()
+        {
+            return name.getResourcePath();
         }
     }
 
@@ -294,7 +314,7 @@ public class VillagerRegistry
         private String name;
         private int id;
         private HashMap<Integer, ArrayList<ITradeList>> levelTrades = new HashMap<Integer, ArrayList<ITradeList>>();
-        
+
         public VillagerCareer(VillagerProfession parent, String name)
         {
             this.profession = parent;
@@ -315,7 +335,7 @@ public class VillagerRegistry
             }
             return this;
         }
-        
+
         public void addTrade(ITradeList trade, int careerLevel)
         {
             ArrayList<ITradeList> tradesForLevel = levelTrades.get(careerLevel);
@@ -326,7 +346,7 @@ public class VillagerRegistry
             }
             tradesForLevel.add(trade);
         }
-        
+
         private void populateBuyingList(MerchantRecipeList recipeList, int careerLevel, Random random)
         {
             while(careerLevel - 1 >= 0)
@@ -352,12 +372,12 @@ public class VillagerRegistry
             VillagerCareer oc = (VillagerCareer)o;
             return name.equals(oc.name) && profession == oc.profession;
         }
-        
+
         public int getId()
         {
             return id + 1;
         }
-        
+
         public String getName()
         {
             return name;
@@ -372,29 +392,52 @@ public class VillagerRegistry
      */
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
-        Set<String> entries = INSTANCE.professions.getKeys();
+        ArrayList<String> entries = new ArrayList(INSTANCE.professionsByName.keySet());
         int prof = rand.nextInt(entries.size());
-        //TODO: Grab id range from internal registry
-        entity.setProfession(rand.nextInt(VillagerProfession.nextId));
+        VillagerProfession profession = INSTANCE.professionsByName.get(entries.get(prof));
+        entity.setProfession(profession.id);
     }
     
     public static void populateBuyingList(MerchantRecipeList recipeList, int professionID, int careerId, int careerLevel, Random random)
     {
-        VillagerProfession profession = INSTANCE.professions.getObjectById(professionID);
+        VillagerProfession profession = INSTANCE.professionsById.get(professionID);
         //The villagers seem to have career = 0 meaning no career.
+        if(careerId > profession.careers.size())
+        {
+            return;
+        }
         VillagerCareer career = profession.careers.get(careerId - 1);
         career.populateBuyingList(recipeList, careerLevel, random);
     }
     
     public static int getNumberOfCareers(int professionID)
     {
-        VillagerProfession profession = INSTANCE.professions.getObjectById(professionID);
-        return profession.getCareerCount();
+        return getProfessionForId(professionID).getCareerCount();
+    }
+    
+    public static VillagerProfession getProfessionForId(int professionID)
+    {
+        VillagerProfession profession = INSTANCE.professionsById.get(professionID);
+        if(profession == null)
+        {
+            return INSTANCE.professionsById.get(0);
+        }
+        return profession;
+    }
+    
+    public static VillagerProfession getProfessionForName(String professionID)
+    {
+        VillagerProfession profession = INSTANCE.professionsByName.get(professionID);
+        if(profession == null)
+        {
+            return INSTANCE.professionsById.get(0);
+        }
+        return profession;
     }
     
     public static String getVillagerDisplay(int professionID, int careerId)
     {
-        VillagerProfession profession = INSTANCE.professions.getObjectById(professionID);
+        VillagerProfession profession = getProfessionForId(professionID);
         VillagerCareer career = profession.careers.get(careerId - 1);
         return career.name;
     }

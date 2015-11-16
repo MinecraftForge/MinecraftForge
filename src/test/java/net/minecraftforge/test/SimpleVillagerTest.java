@@ -19,12 +19,25 @@ import net.minecraftforge.fml.common.registry.VillagerRegistry;
 @Mod(modid = "VillagerTest", name = "SimpleVillagerTest", version = "1.0")
 public class SimpleVillagerTest {
 
-    public static final VillagerRegistry.VillagerProfession PROFESSION = new VillagerRegistry.VillagerProfession("Derpington", "minecraft:textures/entity/villager/farmer.png");
-    public static final VillagerRegistry.VillagerCareer CAREER = new VillagerRegistry.VillagerCareer(PROFESSION, "Derpington");
-
+    public VillagerRegistry.VillagerProfession PROFESSION;
+    public VillagerRegistry.VillagerProfession PROFESSION2;
+    public VillagerRegistry.VillagerCareer CAREER;
+    public VillagerRegistry.VillagerCareer CAREER2;
+    public VillagerRegistry.VillagerCareer CAREER3;
+    public VillagerRegistry.VillagerProfession PROFESSION3;
     @EventHandler
     public void onInit(FMLPostInitializationEvent event) {
+        PROFESSION = new VillagerRegistry.VillagerProfession("Derpington", "minecraft:textures/entity/villager/farmer.png");
+        PROFESSION2 = new VillagerRegistry.VillagerProfession("Herpington", "minecraft:textures/entity/villager/farmer.png");
+        PROFESSION3 = new VillagerRegistry.VillagerProfession("Lerpington", "minecraft:textures/entity/villager/farmer.png");
+        CAREER = new VillagerRegistry.VillagerCareer(PROFESSION, "Derpington");
+        CAREER2 = new VillagerRegistry.VillagerCareer(PROFESSION2, "Herpington");
+        CAREER3 = new VillagerRegistry.VillagerCareer(PROFESSION3, "Lerpington");
+
+        VillagerRegistry.instance().register(PROFESSION2);
+        VillagerRegistry.instance().register(PROFESSION3);
         VillagerRegistry.instance().register(PROFESSION);
+        
         //add a trade for the career, using an addTrade(ITradeList trade, int careerLevel) method in VillagerCareer
         CAREER.addTrade(new EmeraldForItems(Item.getItemFromBlock(Blocks.dirt), new PriceInfo(1, 1)), 0);
         CAREER.addTrade(new EmeraldForItems(Item.getItemFromBlock(Blocks.stone), new PriceInfo(1, 1)), 0);
@@ -32,6 +45,7 @@ public class SimpleVillagerTest {
         CAREER.addTrade(new EmeraldForItems(Item.getItemFromBlock(Blocks.stone), new PriceInfo(5, 5)), 1);
         CAREER.addTrade(new EmeraldForItems(Item.getItemFromBlock(Blocks.dirt), new PriceInfo(10, 10)), 2);
         CAREER.addTrade(new EmeraldForItems(Item.getItemFromBlock(Blocks.stone), new PriceInfo(10, 10)), 2);
+        CAREER2.addTrade(new EmeraldForItems(Item.getItemFromBlock(Blocks.stone), new PriceInfo(10, 10)), 0);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -46,32 +60,20 @@ public class SimpleVillagerTest {
             
             event.entityPlayer.addChatMessage(new ChatComponentText(villager.getCareer()+" "+villager.getProfession()));
            
-        }
-    }
-    
-    @SubscribeEvent
-    public void interact(PlayerInteractEvent event) {
-        //Sneak right click with stick to spawn in the new villager
-        if (event.entityPlayer.getHeldItem() != null && event.entityPlayer.isSneaking() && !event.world.isRemote
-                && event.entityPlayer.getHeldItem().getItem() == Items.stick) {
-            
-            EntityVillager villager = new EntityVillager(event.world, PROFESSION.getId());
-            
-            /*
-             * This VillagerProfession.getId() should probably check a value set while regsitering the profession
-             * with VillagerRegistry.instance().register(PROFESSION);
-             */
-            villager.setProfession(PROFESSION.getId());
-            
             /**
-             * If this Method isn't called, it should randomly select a career from the list of careers for that
-             * profession, every time new VillagerRegistry.VillagerCareer(PROFESSION, "Derpington"); is called,
-             * it should add that new VillageCareer to a list for PROFESSION
+             * Shift right click a villager to set their profession to the one specified here
              */
-            villager.setCareer(CAREER.getId());
+            if(event.entityPlayer.isSneaking())
+            {
+                /*
+                 * This VillagerProfession.getId() should probably check a value set while regsitering the profession
+                 * with VillagerRegistry.instance().register(PROFESSION);
+                 */
+                int toSet = PROFESSION2.getId();
+                villager.setProfession(toSet);
+            }
             
-            villager.setPosition(event.entity.posX + 1, event.entity.posY, event.entity.posZ);
-            event.world.spawnEntityInWorld(villager);
+            
         }
     }
 }
