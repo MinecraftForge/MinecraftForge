@@ -176,23 +176,6 @@ public class VillagerRegistry
     }
 
     /**
-     * Callback to setup new villager types
-     *
-     * @param villagerType
-     * @param defaultSkin
-     */
-    @SideOnly(Side.CLIENT)
-    public static ResourceLocation getVillagerSkin(EntityVillager villager, ResourceLocation defaultSkin)
-    {
-    	VillagerProfession profession = getProfession(villager);
-        if (profession!=null)
-        {
-            return profession.texture;
-        }
-        return defaultSkin;
-    }
-
-    /**
      * Returns a list of all added villager types
      *
      * @return newVillagerIds
