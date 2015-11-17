@@ -74,7 +74,7 @@ public @interface Mod
     /**
      * A user friendly name for the mod
      */
-    String name() default "";
+    String name();
     /**
      * A version string for this mod
      */
