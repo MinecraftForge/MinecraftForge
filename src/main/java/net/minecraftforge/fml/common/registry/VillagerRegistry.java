@@ -123,12 +123,6 @@ public class VillagerRegistry
     @Deprecated // Doesn't work at all.
     public void registerVillagerId(int id)
     {
-        if (newVillagerIds.contains(id))
-        {
-            FMLLog.severe("Attempt to register duplicate villager id %d", id);
-            throw new RuntimeException();
-        }
-        newVillagerIds.add(id);
     }
     /**
      * Register a new skin for a villager type
@@ -137,14 +131,9 @@ public class VillagerRegistry
      * @param villagerSkin
      */
     @SideOnly(Side.CLIENT)
-    @Deprecated 
+    @Deprecated  // Doesn't work at all.
     private void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin)
     {
-        if (newVillagers == null)
-        {
-            newVillagers = Maps.newHashMap();
-        }
-        newVillagers.put(villagerId, villagerSkin);
     }
 
     /**
@@ -164,11 +153,24 @@ public class VillagerRegistry
      * @param defaultSkin
      */
     @SideOnly(Side.CLIENT)
-    @Deprecated 
+    @Deprecated // Doesn't work at all.
     public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin)
     {
-    	VillagerProfession profession = getProfession(villagerType);
-        if (profession!=null)
+        return defaultSkin;
+    }
+
+    /**
+     * Callback to setup new villager types
+     *
+     * @param villagerType
+     * @param defaultSkin
+     */
+    @SideOnly(Side.CLIENT)
+    public static ResourceLocation getVillagerSkin(EntityVillager villager, ResourceLocation defaultSkin)
+    {
+        //Using this instead of getProfession(EntityVillager) as that method will always at least return the farmer.
+        VillagerProfession profession = INSTANCE.professions.getObjectById(villager.getProfession());
+        if(profession!=null)
         {
             return profession.texture;
         }
