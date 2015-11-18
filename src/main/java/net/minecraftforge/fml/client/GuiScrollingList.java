@@ -17,6 +17,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -95,15 +96,27 @@ public abstract class GuiScrollingList
 
     protected abstract void drawBackground();
 
+    /**
+     * Draw anything special on the screen. GL_SCISSOR is enabled for anything that
+     * is rendered outside of the view box. Do not mess with SCISSOR unless you support this.
+     */
     protected abstract void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess);
 
     @Deprecated protected void func_27260_a(int entryRight, int relativeY, Tessellator tess) {}
+    /**
+     * Draw anything special on the screen. GL_SCISSOR is enabled for anything that
+     * is rendered outside of the view box. Do not mess with SCISSOR unless you support this.
+     */
     protected void drawHeader(int entryRight, int relativeY, Tessellator tess) { func_27260_a(entryRight, relativeY, tess); }
 
     @Deprecated protected void func_27255_a(int x, int y) {}
     protected void clickHeader(int x, int y) { func_27255_a(x, y); }
 
     @Deprecated protected void func_27257_b(int mouseX, int mouseY) {}
+    /**
+     * Draw anything special on the screen. GL_SCISSOR is enabled for anything that
+     * is rendered outside of the view box. Do not mess with SCISSOR unless you support this.
+     */
     protected void drawScreen(int mouseX, int mouseY) { func_27257_b(mouseX, mouseY); }
 
     public int func_27256_c(int x, int y)
@@ -251,6 +264,13 @@ public abstract class GuiScrollingList
         Tessellator tess = Tessellator.getInstance();
         WorldRenderer worldr = tess.getWorldRenderer();
 
+        ScaledResolution res = new ScaledResolution(client, client.displayWidth, client.displayHeight);
+        double scaleW = client.displayWidth / res.getScaledWidth_double();
+        double scaleH = client.displayHeight / res.getScaledHeight_double();
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor((int)(left      * scaleW), (int)(client.displayHeight - (bottom * scaleH)),
+                       (int)(listWidth * scaleW), (int)(viewHeight * scaleH));
+
         if (this.client.theWorld != null)
         {
             this.drawGradientRect(this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
@@ -310,34 +330,6 @@ public abstract class GuiScrollingList
         }
 
         GlStateManager.disableDepth();
-        if (this.client.theWorld == null)
-        {
-            this.overlayBackground(0,           this.top,        255, 255);
-            this.overlayBackground(this.bottom, this.listHeight, 255, 255);
-        }
-
-        // Render the entire background over everything but our view
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.disableAlpha();
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableTexture2D();
-        worldr.startDrawingQuads();
-        worldr.setColorRGBA_I(0, 0);
-        worldr.addVertexWithUV(this.left,  this.top + border, 0.0D, 0.0D, 1.0D);
-        worldr.addVertexWithUV(this.right, this.top + border, 0.0D, 1.0D, 1.0D);
-        worldr.setColorRGBA_I(0, 255);
-        worldr.addVertexWithUV(this.right, this.top, 0.0D, 1.0D, 0.0D);
-        worldr.addVertexWithUV(this.left,  this.top, 0.0D, 0.0D, 0.0D);
-        tess.draw();
-        worldr.startDrawingQuads();
-        worldr.setColorRGBA_I(0, 255);
-        worldr.addVertexWithUV(this.left,  this.bottom, 0.0D, 0.0D, 1.0D);
-        worldr.addVertexWithUV(this.right, this.bottom, 0.0D, 1.0D, 1.0D);
-        worldr.setColorRGBA_I(0, 0);
-        worldr.addVertexWithUV(this.right, this.bottom - border, 0.0D, 1.0D, 0.0D);
-        worldr.addVertexWithUV(this.left,  this.bottom - border, 0.0D, 0.0D, 0.0D);
-        tess.draw();
 
         int extraHeight = this.getContentHeight() - viewHeight - border;
         if (extraHeight > 0)
@@ -355,6 +347,7 @@ public abstract class GuiScrollingList
                 barTop = this.top;
             }
 
+            GlStateManager.disableTexture2D();
             worldr.startDrawingQuads();
             worldr.setColorRGBA_I(0, 255);
             worldr.addVertexWithUV(scrollBarLeft,  this.bottom, 0.0D, 0.0D, 1.0D);
@@ -383,24 +376,7 @@ public abstract class GuiScrollingList
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.enableAlpha();
         GlStateManager.disableBlend();
-    }
-
-    private void overlayBackground(int top, int height, int alpha1, int alpah2)
-    {
-        Tessellator tess = Tessellator.getInstance();
-        WorldRenderer worldr = tess.getWorldRenderer();
-        this.client.renderEngine.bindTexture(Gui.optionsBackground);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        float scale = 32.0F;
-        double startUV = (screenWidth / scale) / screenWidth * (left-0);
-        worldr.startDrawingQuads();
-        worldr.setColorRGBA_I(0x404040, alpah2);
-        worldr.addVertexWithUV(left,             height, 0.0D, startUV,                    height / scale);
-        worldr.addVertexWithUV(left+listWidth+8, height, 0.0D, (left+listWidth+8) / scale, height / scale);
-        worldr.setColorRGBA_I(0x404040, alpha1);
-        worldr.addVertexWithUV(left+listWidth+8, top,    0.0D, (left+listWidth+8) / scale, top / scale);
-        worldr.addVertexWithUV(left,             top,    0.0D, startUV,                    top / scale);
-        tess.draw();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     protected void drawGradientRect(int left, int top, int right, int bottom, int color1, int color2)
