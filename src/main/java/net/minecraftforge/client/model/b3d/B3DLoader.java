@@ -313,7 +313,7 @@ public class B3DLoader implements ICustomModelLoader
             TRSRTransformation ret = TRSRTransformation.identity();
             Key key = null;
             if(animation != null) key = animation.getKeys().get(frame, node);
-            else if(key == null && node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
+            else if(node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
             if(key != null)
             {
                 Node<?> parent = node.getParent();
@@ -710,7 +710,7 @@ public class B3DLoader implements ICustomModelLoader
 
         private ImmutableList<BakedQuad> quads;
 
-        public BakedWrapper(Node<?> node, IModelState state, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures)
+        public BakedWrapper(final Node<?> node, final IModelState state, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
             this(node, state, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
@@ -720,15 +720,11 @@ public class B3DLoader implements ICustomModelLoader
                     public BakedWrapper load(Integer frame) throws Exception
                     {
                         IModelState parent = state;
-                        Animation newAnimation = null;
+                        Animation newAnimation = node.getAnimation();
                         if(parent instanceof B3DState)
                         {
                             B3DState ps = (B3DState)parent;
                             parent = ps.getParent();
-                        }
-                        if(newAnimation == null)
-                        {
-                            newAnimation = node.getAnimation();
                         }
                         return new BakedWrapper(node, new B3DState(newAnimation, frame, frame, 0, parent), format, meshes, textures);
                     }
