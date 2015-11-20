@@ -176,7 +176,7 @@
      {
 +        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_175685_1_, this.func_180495_p(p_175685_1_), java.util.EnumSet.allOf(EnumFacing.class)).isCanceled())
 +            return;
-+        
++
          this.func_180496_d(p_175685_1_.func_177976_e(), p_175685_2_);
          this.func_180496_d(p_175685_1_.func_177974_f(), p_175685_2_);
          this.func_180496_d(p_175685_1_.func_177977_b(), p_175685_2_);
@@ -188,7 +188,7 @@
 +        directions.remove(p_175695_3_);
 +        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_175695_1_, this.func_180495_p(p_175695_1_), directions).isCanceled())
 +            return;
-+        
++
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_180496_d(p_175695_1_.func_177976_e(), p_175695_2_);
@@ -590,16 +590,18 @@
          int i;
          EntityPlayer entityplayer;
          int j;
-@@ -2445,7 +2617,7 @@
+@@ -2444,8 +2616,9 @@
+             Block block = p_147467_3_.func_177428_a(blockpos);
              l += p_147467_1_;
              i1 += p_147467_2_;
++            BlockPos worldpos = blockpos.func_177982_a(p_147467_1_, 0, p_147467_2_);
  
 -            if (block.func_149688_o() == Material.field_151579_a && this.func_175699_k(blockpos) <= this.field_73012_v.nextInt(8) && this.func_175642_b(EnumSkyBlock.SKY, blockpos) <= 0)
-+            if (block.isAir(this, blockpos) && this.func_175699_k(blockpos) <= this.field_73012_v.nextInt(8) && this.func_175642_b(EnumSkyBlock.SKY, blockpos) <= 0)
++            if (block.isAir(this, worldpos) && this.func_175699_k(worldpos) <= this.field_73012_v.nextInt(8) && this.func_175642_b(EnumSkyBlock.SKY, worldpos) <= 0) //Forge: isAir, and fix arguments to world positions instead of chunk position
              {
                  EntityPlayer entityplayer = this.func_72977_a((double)l + 0.5D, (double)j1 + 0.5D, (double)i1 + 0.5D, 8.0D);
  
-@@ -2485,6 +2657,11 @@
+@@ -2485,6 +2658,11 @@
  
      public boolean func_175670_e(BlockPos p_175670_1_, boolean p_175670_2_)
      {
@@ -611,7 +613,7 @@
          BiomeGenBase biomegenbase = this.func_180494_b(p_175670_1_);
          float f = biomegenbase.func_180626_a(p_175670_1_);
  
-@@ -2526,6 +2703,11 @@
+@@ -2526,6 +2704,11 @@
  
      public boolean func_175708_f(BlockPos p_175708_1_, boolean p_175708_2_)
      {
@@ -623,7 +625,7 @@
          BiomeGenBase biomegenbase = this.func_180494_b(p_175708_1_);
          float f = biomegenbase.func_180626_a(p_175708_1_);
  
-@@ -2543,7 +2725,7 @@
+@@ -2543,7 +2726,7 @@
              {
                  Block block = this.func_180495_p(p_175708_1_).func_177230_c();
  
@@ -632,7 +634,7 @@
                  {
                      return true;
                  }
-@@ -2575,10 +2757,11 @@
+@@ -2575,10 +2758,11 @@
          else
          {
              Block block = this.func_180495_p(p_175638_1_).func_177230_c();
@@ -647,7 +649,7 @@
              {
                  j = 1;
              }
-@@ -2792,10 +2975,10 @@
+@@ -2792,10 +2976,10 @@
      public List func_175674_a(Entity p_175674_1_, AxisAlignedBB p_175674_2_, Predicate p_175674_3_)
      {
          ArrayList arraylist = Lists.newArrayList();
@@ -662,7 +664,7 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -2854,10 +3037,10 @@
+@@ -2854,10 +3038,10 @@
  
      public List func_175647_a(Class p_175647_1_, AxisAlignedBB p_175647_2_, Predicate p_175647_3_)
      {
@@ -677,7 +679,7 @@
          ArrayList arraylist = Lists.newArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -2938,13 +3121,16 @@
+@@ -2938,13 +3122,16 @@
  
      public void func_175650_b(Collection p_175650_1_)
      {
@@ -696,7 +698,7 @@
          }
      }
  
-@@ -2957,7 +3143,9 @@
+@@ -2957,7 +3144,9 @@
      {
          Block block1 = this.func_180495_p(p_175716_2_).func_177230_c();
          AxisAlignedBB axisalignedbb = p_175716_3_ ? null : p_175716_1_.func_180640_a(this, p_175716_2_, p_175716_1_.func_176223_P());
@@ -707,7 +709,7 @@
      }
  
      public int func_175627_a(BlockPos p_175627_1_, EnumFacing p_175627_2_)
-@@ -3032,7 +3220,7 @@
+@@ -3032,7 +3221,7 @@
      {
          IBlockState iblockstate = this.func_180495_p(p_175651_1_);
          Block block = iblockstate.func_177230_c();
@@ -716,7 +718,7 @@
      }
  
      public boolean func_175640_z(BlockPos p_175640_1_)
-@@ -3160,7 +3348,7 @@
+@@ -3160,7 +3349,7 @@
  
      public long func_72905_C()
      {
@@ -725,7 +727,7 @@
      }
  
      public long func_82737_E()
-@@ -3170,17 +3358,17 @@
+@@ -3170,17 +3359,17 @@
  
      public long func_72820_D()
      {
@@ -746,7 +748,7 @@
  
          if (!this.func_175723_af().func_177746_a(blockpos))
          {
-@@ -3192,7 +3380,7 @@
+@@ -3192,7 +3381,7 @@
  
      public void func_175652_B(BlockPos p_175652_1_)
      {
@@ -755,7 +757,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3212,12 +3400,18 @@
+@@ -3212,12 +3401,18 @@
  
          if (!this.field_72996_f.contains(p_72897_1_))
          {
@@ -774,7 +776,7 @@
          return true;
      }
  
-@@ -3307,8 +3501,7 @@
+@@ -3307,8 +3502,7 @@
  
      public boolean func_180502_D(BlockPos p_180502_1_)
      {
@@ -784,7 +786,7 @@
      }
  
      public MapStorage func_175693_T()
-@@ -3367,12 +3560,12 @@
+@@ -3367,12 +3561,12 @@
  
      public int func_72800_K()
      {
@@ -799,7 +801,7 @@
      }
  
      public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3429,7 +3622,7 @@
+@@ -3429,7 +3623,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -808,7 +810,7 @@
      }
  
      public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_)
-@@ -3461,29 +3654,21 @@
+@@ -3461,29 +3655,21 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -845,7 +847,7 @@
                      }
                  }
              }
-@@ -3553,4 +3738,82 @@
+@@ -3553,4 +3739,82 @@
          short short1 = 128;
          return k >= -short1 && k <= short1 && l >= -short1 && l <= short1;
      }
