@@ -31,6 +31,15 @@
      protected boolean field_72999_e;
      public final List field_72996_f = Lists.newArrayList();
      protected final List field_72997_g = Lists.newArrayList();
+@@ -90,7 +112,7 @@
+     private final Calendar field_83016_L = Calendar.getInstance();
+     protected Scoreboard field_96442_D = new Scoreboard();
+     public final boolean field_72995_K;
+-    protected Set field_72993_I = Sets.newHashSet();
++    protected Set field_72993_I = ForgeChunkManager.packedChunkCoordSet();
+     private int field_72990_M;
+     protected boolean field_72985_G;
+     protected boolean field_72992_H;
 @@ -99,6 +121,10 @@
      int[] field_72994_J;
      private static final String __OBFID = "CL_00000140";
@@ -590,6 +599,15 @@
          int i;
          EntityPlayer entityplayer;
          int j;
+@@ -2400,7 +2572,7 @@
+             {
+                 for (int j1 = -l; j1 <= l; ++j1)
+                 {
+-                    this.field_72993_I.add(new ChunkCoordIntPair(i1 + j, j1 + k));
++                    ForgeChunkManager.addActiveChunk(this.field_72993_I,i1 + j, j1 + k);
+                 }
+             }
+         }
 @@ -2445,7 +2617,7 @@
              l += p_147467_1_;
              i1 += p_147467_2_;
