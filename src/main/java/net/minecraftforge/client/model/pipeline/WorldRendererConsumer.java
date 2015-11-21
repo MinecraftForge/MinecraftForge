@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 /**
@@ -14,6 +15,7 @@ public class WorldRendererConsumer implements IVertexConsumer
     private final WorldRenderer renderer;
     private final int[] quadData;
     private int v = 0;
+    private BlockPos offset = BlockPos.ORIGIN;
 
     public WorldRendererConsumer(WorldRenderer renderer)
     {
@@ -36,11 +38,16 @@ public class WorldRendererConsumer implements IVertexConsumer
             if(v == 4)
             {
                 renderer.addVertexData(quadData);
-                renderer.putPosition(0, 0, 0);
+                renderer.putPosition(offset.getX(), offset.getY(), offset.getZ());
                 Arrays.fill(quadData, 0);
                 v = 0;
             }
         }
+    }
+
+    public void setOffset(BlockPos offset)
+    {
+        this.offset = new BlockPos(offset);
     }
 
     public void setQuadTint(int tint) {}

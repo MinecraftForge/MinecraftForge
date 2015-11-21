@@ -144,12 +144,13 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 switch(parent.getVertexFormat().getElement(e).getUsage())
                 {
                     case POSITION:
-                        float[] pos = new float[4];
+                        // position adding moved to WorldRendererConsumer due to x and z not fitting completely into a float
+                        /*float[] pos = new float[4];
                         System.arraycopy(position[v], 0, pos, 0, position[v].length);
                         pos[0] += blockInfo.getBlockPos().getX();
                         pos[1] += blockInfo.getBlockPos().getY();
-                        pos[2] += blockInfo.getBlockPos().getZ();
-                        parent.put(e, pos);
+                        pos[2] += blockInfo.getBlockPos().getZ();*/
+                        parent.put(e, position[v]);
                         break;
                     case NORMAL: if(normalIndex != -1)
                     {

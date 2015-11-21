@@ -22,6 +22,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             return new VertexLighterFlat();
         }
     };
+
     private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth = new ThreadLocal<VertexLighterSmoothAo>()
     {
         @Override
@@ -31,6 +32,8 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     };
 
+    private final ThreadLocal<WorldRendererConsumer> wrFlat = new ThreadLocal<WorldRendererConsumer>();
+    private final ThreadLocal<WorldRendererConsumer> wrSmooth = new ThreadLocal<WorldRendererConsumer>();
     private final ThreadLocal<WorldRenderer> lastRendererFlat = new ThreadLocal<WorldRenderer>();
     private final ThreadLocal<WorldRenderer> lastRendererSmooth = new ThreadLocal<WorldRenderer>();
 
@@ -42,8 +45,11 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             if(wr != lastRendererFlat.get())
             {
                 lastRendererFlat.set(wr);
-                lighterFlat.get().setParent(new WorldRendererConsumer(wr));
+                WorldRendererConsumer newCons = new WorldRendererConsumer(wr);
+                wrFlat.set(newCons);
+                lighterFlat.get().setParent(newCons);
             }
+            wrFlat.get().setOffset(pos);
             return render(lighterFlat.get(), world, model, block, pos, wr, checkSides);
         }
         else
@@ -60,8 +66,11 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             if(wr != lastRendererSmooth.get())
             {
                 lastRendererSmooth.set(wr);
-                lighterSmooth.get().setParent(new WorldRendererConsumer(wr));
+                WorldRendererConsumer newCons = new WorldRendererConsumer(wr);
+                wrSmooth.set(newCons);
+                lighterSmooth.get().setParent(newCons);
             }
+            wrSmooth.get().setOffset(pos);
             return render(lighterSmooth.get(), world, model, block, pos, wr, checkSides);
         }
         else
