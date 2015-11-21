@@ -214,31 +214,75 @@ public class ItemLayerModel implements IRetexturableModel {
 
     private static BakedQuad buildSideQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v)
     {
+        final float eps0 = 30e-5f;
+        final float eps1 = 45e-5f;
+        final float eps2 = .5f;
+        final float eps3 = .5f;
         float x0 = (float)u / sprite.getIconWidth();
         float y0 = (float)v / sprite.getIconHeight();
         float x1 = x0, y1 = y0;
-        float z1 = 7.5f / 16f, z2 = 8.5f / 16f;
+        float z1 = 7.5f / 16f - eps1, z2 = 8.5f / 16f + eps1;
         switch(side)
         {
         case WEST:
-            z1 = 8.5f / 16f;
-            z2 = 7.5f / 16f;
+            z1 = 8.5f / 16f + eps1;
+            z2 = 7.5f / 16f - eps1;
         case EAST:
             y1 = (v + 1f) / sprite.getIconHeight();
             break;
         case DOWN:
-            z1 = 8.5f / 16f;
-            z2 = 7.5f / 16f;
+            z1 = 8.5f / 16f + eps1;
+            z2 = 7.5f / 16f - eps1;
         case UP:
             x1 = (u + 1f) / sprite.getIconWidth();
             break;
         default:
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
-        float u0 = 16f * (x0 - side.getDirectionVec().getX() * 1e-2f / sprite.getIconWidth());
-        float u1 = 16f * (x1 - side.getDirectionVec().getX() * 1e-2f / sprite.getIconWidth());
-        float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * 1e-2f / sprite.getIconHeight());
-        float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * 1e-2f / sprite.getIconHeight());
+        float u0 = 16f * (x0 - side.getDirectionVec().getX() * eps3 / sprite.getIconWidth());
+        float u1 = 16f * (x1 - side.getDirectionVec().getX() * eps3 / sprite.getIconWidth());
+        float v0 = 16f * (1f - y0 - side.getDirectionVec().getY() * eps3 / sprite.getIconHeight());
+        float v1 = 16f * (1f - y1 - side.getDirectionVec().getY() * eps3 / sprite.getIconHeight());
+        switch(side)
+        {
+        case WEST:
+        case EAST:
+            y0 -= eps1;
+            y1 += eps1;
+            v0 -= eps2 / sprite.getIconHeight();
+            v1 += eps2 / sprite.getIconHeight();
+            break;
+        case DOWN:
+        case UP:
+            x0 -= eps1;
+            x1 += eps1;
+            u0 += eps2 / sprite.getIconWidth();
+            u1 -= eps2 / sprite.getIconWidth();
+            break;
+        default:
+            throw new IllegalArgumentException("can't handle z-oriented side");
+        }
+        switch(side)
+        {
+        case WEST:
+            x0 += eps0;
+            x1 += eps0;
+            break;
+        case EAST:
+            x0 -= eps0;
+            x1 -= eps0;
+            break;
+        case DOWN:
+            y0 -= eps0;
+            y1 -= eps0;
+            break;
+        case UP:
+            y0 += eps0;
+            y1 += eps0;
+            break;
+        default:
+            throw new IllegalArgumentException("can't handle z-oriented side");
+        }
         return buildQuad(
             format, transform, side.getOpposite(), tint, // getOpposite is related either to the swapping of V direction, or something else
             x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
