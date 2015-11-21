@@ -22,7 +22,7 @@
 +     * @param entity the Entity
 +     * @return all players tracking the Entity
 +     */
-+    public Set<net.minecraft.entity.player.EntityPlayer> getTrackingPlayers(Entity entity)
++    public Set<? extends net.minecraft.entity.player.EntityPlayer> getTrackingPlayers(Entity entity)
 +    {
 +        EntityTrackerEntry entry = (EntityTrackerEntry) trackedEntityHashTable.lookup(entity.getEntityId());
 +        if (entry == null)
