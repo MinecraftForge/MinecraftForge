@@ -20,7 +20,7 @@
   "minimumLauncherVersion": 14,
   "assets": "1.8",
   "inheritsFrom": "1.8.8",
-  "jar": "1.8",
+  "jar": "1.8.8",
   "libraries": [
     {
       "name": "@artifact@",
@@ -122,6 +122,16 @@
     },
     {
       "name": "net.sf.jopt-simple:jopt-simple:4.6",
+      "serverreq":true
+    },
+    {
+      "name": "java3d:vecmath:1.5.2",
+      "clientreq":true,
+      "serverreq":true
+    },
+    {
+      "name": "net.sf.trove4j:trove4j:3.0.3",
+      "clientreq":true,
       "serverreq":true
     }
   ]
