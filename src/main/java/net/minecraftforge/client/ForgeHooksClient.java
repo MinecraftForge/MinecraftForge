@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.vecmath.Matrix4f;
@@ -92,6 +93,8 @@ import com.google.common.collect.Maps;
 public class ForgeHooksClient
 {
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+    public static ArrayList<String> extraSplashes=new ArrayList<String>();
 
     static TextureManager engine()
     {
@@ -738,5 +741,10 @@ public class ForgeHooksClient
         {
             faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
         }
+    }
+
+    public void addSplashMessage(String msg){
+        extraSplashes.add(msg);
+
     }
 }
