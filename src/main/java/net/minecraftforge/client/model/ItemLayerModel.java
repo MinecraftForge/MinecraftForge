@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 
@@ -145,6 +146,7 @@ public class ItemLayerModel implements IRetexturableModel {
         int uMax = sprite.getIconWidth();
         int vMax = sprite.getIconHeight();
 
+        BitSet faces = new BitSet((uMax + 1) * (vMax + 1) * 4);
         for(int f = 0; f < sprite.getFrameCount(); f++)
         {
             int[] pixels = sprite.getFrameTextureData(f)[0];
@@ -159,26 +161,26 @@ public class ItemLayerModel implements IRetexturableModel {
                     boolean t = isTransparent(pixels, uMax, vMax, u, v);
                     if(ptu && !t) // left - transparent, right - opaque
                     {
-                        builder.add(buildSideQuad(format, transform, EnumFacing.WEST, tint, sprite, u, v));
+                        addSideQuad(builder, faces, format, transform, EnumFacing.WEST, tint, sprite, uMax, vMax, u, v);
                     }
                     if(!ptu && t) // left - opaque, right - transparent
                     {
-                        builder.add(buildSideQuad(format, transform, EnumFacing.EAST, tint, sprite, u, v));
+                        addSideQuad(builder, faces, format, transform, EnumFacing.EAST, tint, sprite, uMax, vMax, u, v);
                     }
                     if(ptv[u] && !t) // up - transparent, down - opaque
                     {
-                        builder.add(buildSideQuad(format, transform, EnumFacing.UP, tint, sprite, u, v));
+                        addSideQuad(builder, faces, format, transform, EnumFacing.UP, tint, sprite, uMax, vMax, u, v);
                     }
                     if(!ptv[u] && t) // up - opaque, down - transparent
                     {
-                        builder.add(buildSideQuad(format, transform, EnumFacing.DOWN, tint, sprite, u, v));
+                        addSideQuad(builder, faces, format, transform, EnumFacing.DOWN, tint, sprite, uMax, vMax, u, v);
                     }
                     ptu = t;
                     ptv[u] = t;
                 }
                 if(!ptu) // last - opaque
                 {
-                    builder.add(buildSideQuad(format, transform, EnumFacing.EAST, tint, sprite, uMax, v));
+                    addSideQuad(builder, faces, format, transform, EnumFacing.EAST, tint, sprite, uMax, vMax, uMax, v);
                 }
             }
             // last line
@@ -186,7 +188,7 @@ public class ItemLayerModel implements IRetexturableModel {
             {
                 if(!ptv[u])
                 {
-                    builder.add(buildSideQuad(format, transform, EnumFacing.DOWN, tint, sprite, u, vMax));
+                    addSideQuad(builder, faces, format, transform, EnumFacing.DOWN, tint, sprite, uMax, vMax, u, vMax);
                 }
             }
         }
@@ -210,6 +212,18 @@ public class ItemLayerModel implements IRetexturableModel {
     protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
     {
         return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
+    }
+
+    private static void addSideQuad(ImmutableList.Builder<BakedQuad> builder, BitSet faces, VertexFormat format, TRSRTransformation transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int uMax, int vMax, int u, int v)
+    {
+        int si = side.ordinal();
+        if(si > 4) si -= 2;
+        int index = (vMax + 1) * ((uMax + 1) * si + u) + v;
+        if(!faces.get(index))
+        {
+            faces.set(index);
+            builder.add(buildSideQuad(format, transform, side, tint, sprite, u, v));
+        }
     }
 
     private static BakedQuad buildSideQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v)
