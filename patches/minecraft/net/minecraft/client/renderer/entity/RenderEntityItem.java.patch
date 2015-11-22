@@ -1,17 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
 @@ -41,7 +41,7 @@
-             boolean flag = p_177077_9_.isGui3d();
+             boolean flag = p_177077_9_.func_177556_c();
              int i = this.func_177078_a(itemstack);
              float f = 0.25F;
--            float f1 = MathHelper.sin(((float)p_177077_1_.getAge() + p_177077_8_) / 10.0F + p_177077_1_.hoverStart) * 0.1F + 0.1F;
-+            float f1 = shouldBob() ? MathHelper.sin(((float)p_177077_1_.getAge() + p_177077_8_) / 10.0F + p_177077_1_.hoverStart) * 0.1F + 0.1F : 0;
-             float f2 = p_177077_9_.getItemCameraTransforms().func_181688_b(ItemCameraTransforms.TransformType.GROUND).scale.y;
-             GlStateManager.translate((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
+-            float f1 = MathHelper.func_76126_a(((float)p_177077_1_.func_174872_o() + p_177077_8_) / 10.0F + p_177077_1_.field_70290_d) * 0.1F + 0.1F;
++            float f1 = shouldBob() ? MathHelper.func_76126_a(((float)p_177077_1_.func_174872_o() + p_177077_8_) / 10.0F + p_177077_1_.field_70290_d) * 0.1F + 0.1F : 0;
+             float f2 = p_177077_9_.func_177552_f().func_181688_b(ItemCameraTransforms.TransformType.GROUND).field_178363_d.y;
+             GlStateManager.func_179109_b((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
  
 @@ -157,4 +157,25 @@
      {
-         return TextureMap.locationBlocksTexture;
+         return TextureMap.field_110575_b;
      }
 +
 +    /*==================================== FORGE START ===========================================*/

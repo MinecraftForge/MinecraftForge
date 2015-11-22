@@ -2,35 +2,35 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
 @@ -109,16 +109,7 @@
  
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
--        if (!worldIn.isRemote)
+-        if (!p_180653_1_.field_72995_K)
 -        {
--            TileEntityPiston tileentitypiston = this.getTileEntity(worldIn, pos);
+-            TileEntityPiston tileentitypiston = this.func_176422_e(p_180653_1_, p_180653_2_);
 -
 -            if (tileentitypiston != null)
 -            {
--                IBlockState iblockstate = tileentitypiston.getPistonState();
--                iblockstate.getBlock().dropBlockAsItem(worldIn, pos, iblockstate, 0);
+-                IBlockState iblockstate = tileentitypiston.func_174927_b();
+-                iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
 -            }
 -        }
-+        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
      }
  
-     public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end)
+     public MovingObjectPosition func_180636_a(World p_180636_1_, BlockPos p_180636_2_, Vec3 p_180636_3_, Vec3 p_180636_4_)
 @@ -282,4 +273,16 @@
      {
-         return new BlockState(this, new IProperty[] {FACING, TYPE});
+         return new BlockState(this, new IProperty[] {field_176426_a, field_176425_b});
      }
 +
 +    @Override
 +    public java.util.List<net.minecraft.item.ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        TileEntityPiston tileentitypiston = this.getTileEntity(world, pos);
++        TileEntityPiston tileentitypiston = this.func_176422_e(world, pos);
 +        if (tileentitypiston != null)
 +        {
-+            IBlockState pushed = tileentitypiston.getPistonState();
-+            return pushed.getBlock().getDrops(world, pos, pushed, fortune);
++            IBlockState pushed = tileentitypiston.func_174927_b();
++            return pushed.func_177230_c().getDrops(world, pos, pushed, fortune);
 +        }
 +        return new java.util.ArrayList();
 +    }

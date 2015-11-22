@@ -7,20 +7,20 @@
 -public class BlockCactus extends Block
 +public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
  {
-     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
+     public static final PropertyInteger field_176587_a = PropertyInteger.func_177719_a("age", 0, 15);
  
 @@ -109,7 +109,7 @@
          }
  
-         Block block = worldIn.getBlockState(pos.down()).getBlock();
--        return block == Blocks.cactus || block == Blocks.sand;
-+        return block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this);
+         Block block = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b()).func_177230_c();
+-        return block == Blocks.field_150434_aF || block == Blocks.field_150354_m;
++        return block.canSustainPlant(p_176586_1_, p_176586_2_.func_177977_b(), EnumFacing.UP, this);
      }
  
-     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+     public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
 @@ -137,4 +137,16 @@
      {
-         return new BlockState(this, new IProperty[] {AGE});
+         return new BlockState(this, new IProperty[] {field_176587_a});
      }
 +
 +    @Override
@@ -32,6 +32,6 @@
 +    @Override
 +    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return getDefaultState();
++        return func_176223_P();
 +    }
  }

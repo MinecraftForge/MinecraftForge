@@ -1,51 +1,51 @@
 --- ../src-base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src-work/minecraft/net/minecraft/world/Explosion.java
 @@ -38,6 +38,7 @@
-     private final float explosionSize;
-     private final List<BlockPos> affectedBlockPositions;
+     private final float field_77280_f;
+     private final List<BlockPos> field_77281_g;
      private final Map<EntityPlayer, Vec3> field_77288_k;
 +    private final Vec3 position;
  
      @SideOnly(Side.CLIENT)
-     public Explosion(World worldIn, Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_)
+     public Explosion(World p_i45752_1_, Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_)
 @@ -65,6 +66,7 @@
-         this.explosionZ = p_i45754_7_;
-         this.isFlaming = p_i45754_10_;
-         this.isSmoking = p_i45754_11_;
-+        this.position = new Vec3(explosionX, explosionY, explosionZ);
+         this.field_77282_d = p_i45754_7_;
+         this.field_77286_a = p_i45754_10_;
+         this.field_82755_b = p_i45754_11_;
++        this.position = new Vec3(field_77284_b, field_77285_c, field_77282_d);
      }
  
-     public void doExplosionA()
+     public void func_77278_a()
 @@ -99,7 +101,7 @@
  
-                             if (iblockstate.getBlock().getMaterial() != Material.air)
+                             if (iblockstate.func_177230_c().func_149688_o() != Material.field_151579_a)
                              {
--                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance((Entity)null);
-+                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(worldObj, blockpos, (Entity)null, this);
+-                                float f2 = this.field_77283_e != null ? this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, iblockstate) : iblockstate.func_177230_c().func_149638_a((Entity)null);
++                                float f2 = this.field_77283_e != null ? this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, iblockstate) : iblockstate.func_177230_c().getExplosionResistance(field_77287_j, blockpos, (Entity)null, this);
                                  f -= (f2 + 0.3F) * 0.3F;
                              }
  
 @@ -126,6 +128,7 @@
-         int j2 = MathHelper.floor_double(this.explosionZ - (double)f3 - 1.0D);
-         int j1 = MathHelper.floor_double(this.explosionZ + (double)f3 + 1.0D);
-         List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
-+        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, f3);
-         Vec3 vec3 = new Vec3(this.explosionX, this.explosionY, this.explosionZ);
+         int j2 = MathHelper.func_76128_c(this.field_77282_d - (double)f3 - 1.0D);
+         int j1 = MathHelper.func_76128_c(this.field_77282_d + (double)f3 + 1.0D);
+         List<Entity> list = this.field_77287_j.func_72839_b(this.field_77283_e, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.field_77287_j, this, list, f3);
+         Vec3 vec3 = new Vec3(this.field_77284_b, this.field_77285_c, this.field_77282_d);
  
          for (int k2 = 0; k2 < list.size(); ++k2)
 @@ -213,8 +216,7 @@
-                         block.dropBlockAsItemWithChance(this.worldObj, blockpos, this.worldObj.getBlockState(blockpos), 1.0F / this.explosionSize, 0);
+                         block.func_180653_a(this.field_77287_j, blockpos, this.field_77287_j.func_180495_p(blockpos), 1.0F / this.field_77280_f, 0);
                      }
  
--                    this.worldObj.setBlockState(blockpos, Blocks.air.getDefaultState(), 3);
--                    block.onBlockDestroyedByExplosion(this.worldObj, blockpos, this);
-+                    block.onBlockExploded(this.worldObj, blockpos, this);
+-                    this.field_77287_j.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 3);
+-                    block.func_180652_a(this.field_77287_j, blockpos, this);
++                    block.onBlockExploded(this.field_77287_j, blockpos, this);
                  }
              }
          }
 @@ -250,4 +252,6 @@
      {
-         return this.affectedBlockPositions;
+         return this.field_77281_g;
      }
 +
 +    public Vec3 getPosition(){ return this.position; }

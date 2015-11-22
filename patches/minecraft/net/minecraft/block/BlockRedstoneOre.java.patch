@@ -1,19 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
 @@ -91,12 +91,16 @@
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 +    }
  
--        if (this.getItemDropped(state, worldIn.rand, fortune) != Item.getItemFromBlock(this))
+-        if (this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_) != Item.func_150898_a(this))
 +    @Override
 +    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        if (this.getItemDropped(world.getBlockState(pos), RANDOM, fortune) != Item.getItemFromBlock(this))
++        if (this.func_180660_a(world.func_180495_p(pos), RANDOM, fortune) != Item.func_150898_a(this))
          {
--            int i = 1 + worldIn.rand.nextInt(5);
--            this.dropXpOnBlockBreak(worldIn, pos, i);
+-            int i = 1 + p_180653_1_.field_73012_v.nextInt(5);
+-            this.func_180637_b(p_180653_1_, p_180653_2_, i);
 +            return 1 + RANDOM.nextInt(5);
          }
 +        return 0;

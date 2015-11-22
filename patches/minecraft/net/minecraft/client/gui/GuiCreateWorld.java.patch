@@ -4,33 +4,33 @@
                      }
                  }
  
-+                WorldType.worldTypes[this.selectedIndex].onGUICreateWorldPress();
++                WorldType.field_77139_a[this.field_146331_K].onGUICreateWorldPress();
 +
-                 WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.getByName(this.field_146342_r);
-                 WorldSettings worldsettings = new WorldSettings(i, worldsettings$gametype, this.field_146341_s, this.field_146337_w, WorldType.worldTypes[this.selectedIndex]);
-                 worldsettings.setWorldName(this.chunkProviderSettingsJson);
+                 WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.func_77142_a(this.field_146342_r);
+                 WorldSettings worldsettings = new WorldSettings(i, worldsettings$gametype, this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
+                 worldsettings.func_82750_a(this.field_146334_a);
 @@ -312,14 +314,7 @@
              }
-             else if (button.id == 8)
+             else if (p_146284_1_.field_146127_k == 8)
              {
--                if (WorldType.worldTypes[this.selectedIndex] == WorldType.FLAT)
+-                if (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_77138_c)
 -                {
--                    this.mc.displayGuiScreen(new GuiCreateFlatWorld(this, this.chunkProviderSettingsJson));
+-                    this.field_146297_k.func_147108_a(new GuiCreateFlatWorld(this, this.field_146334_a));
 -                }
 -                else
 -                {
--                    this.mc.displayGuiScreen(new GuiCustomizeWorldScreen(this, this.chunkProviderSettingsJson));
+-                    this.field_146297_k.func_147108_a(new GuiCustomizeWorldScreen(this, this.field_146334_a));
 -                }
-+                WorldType.worldTypes[this.selectedIndex].onCustomizeButton(mc, this);
++                WorldType.field_77139_a[this.field_146331_K].onCustomizeButton(field_146297_k, this);
              }
          }
      }
 @@ -371,7 +366,7 @@
-             this.btnBonusItems.visible = this.field_146344_y;
-             this.btnMapType.visible = this.field_146344_y;
-             this.btnAllowCommands.visible = this.field_146344_y;
--            this.btnCustomizeType.visible = this.field_146344_y && (WorldType.worldTypes[this.selectedIndex] == WorldType.FLAT || WorldType.worldTypes[this.selectedIndex] == WorldType.CUSTOMIZED);
-+            this.btnCustomizeType.visible = this.field_146344_y && WorldType.worldTypes[this.selectedIndex].isCustomizable();
+             this.field_146326_C.field_146125_m = this.field_146344_y;
+             this.field_146320_D.field_146125_m = this.field_146344_y;
+             this.field_146321_E.field_146125_m = this.field_146344_y;
+-            this.field_146322_F.field_146125_m = this.field_146344_y && (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_77138_c || WorldType.field_77139_a[this.field_146331_K] == WorldType.field_180271_f);
++            this.field_146322_F.field_146125_m = this.field_146344_y && WorldType.field_77139_a[this.field_146331_K].isCustomizable();
          }
  
          this.func_146319_h();

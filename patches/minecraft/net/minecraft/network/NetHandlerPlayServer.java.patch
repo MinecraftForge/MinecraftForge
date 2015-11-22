@@ -1,56 +1,56 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 @@ -254,6 +254,8 @@
-                             this.playerEntity.ridingEntity.updateRiderPosition();
+                             this.field_147369_b.field_70154_o.func_70043_V();
                          }
  
-+                        if (!this.hasMoved) return; //Fixes teleportation kick while riding entities
++                        if (!this.field_147380_r) return; //Fixes teleportation kick while riding entities
 +
-                         this.serverController.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
+                         this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
  
-                         if (this.playerEntity.ridingEntity != null)
+                         if (this.field_147369_b.field_70154_o != null)
 @@ -350,6 +352,8 @@
-                         this.playerEntity.jump();
+                         this.field_147369_b.func_70664_aZ();
                      }
  
-+                    if (!this.hasMoved) return; //Fixes "Moved Too Fast" kick when being teleported while moving
++                    if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
 +
-                     this.playerEntity.moveEntity(d11, d12, d13);
-                     this.playerEntity.onGround = packetIn.isOnGround();
-                     d11 = d8 - this.playerEntity.posX;
+                     this.field_147369_b.func_70091_d(d11, d12, d13);
+                     this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
+                     d11 = d8 - this.field_147369_b.field_70165_t;
 @@ -370,6 +374,8 @@
-                         logger.warn(this.playerEntity.getName() + " moved wrongly!");
+                         field_147370_c.warn(this.field_147369_b.func_70005_c_() + " moved wrongly!");
                      }
  
-+                    if (!this.hasMoved) return; //Fixes "Moved Too Fast" kick when being teleported while moving
++                    if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
 +
-                     this.playerEntity.setPositionAndRotation(d8, d9, d10, f1, f2);
-                     this.playerEntity.addMovementStat(this.playerEntity.posX - d0, this.playerEntity.posY - d1, this.playerEntity.posZ - d2);
+                     this.field_147369_b.func_70080_a(d8, d9, d10, f1, f2);
+                     this.field_147369_b.func_71000_j(this.field_147369_b.field_70165_t - d0, this.field_147369_b.field_70163_u - d1, this.field_147369_b.field_70161_v - d2);
  
 @@ -377,7 +383,7 @@
                      {
-                         boolean flag2 = worldserver.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.getEntityBoundingBox().contract((double)f3, (double)f3, (double)f3)).isEmpty();
+                         boolean flag2 = worldserver.func_72945_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_72331_e((double)f3, (double)f3, (double)f3)).isEmpty();
  
--                        if (flag && (flag1 || !flag2) && !this.playerEntity.isPlayerSleeping())
-+                        if (flag && (flag1 || !flag2) && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.noClip)
+-                        if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn())
++                        if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_70145_X)
                          {
-                             this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f1, f2);
+                             this.func_147364_a(this.field_147373_o, this.field_147382_p, this.field_147381_q, f1, f2);
                              return;
 @@ -405,6 +411,8 @@
-                         this.floatingTickCount = 0;
+                         this.field_147365_f = 0;
                      }
  
-+                    if (!this.hasMoved) return; //Fixes "Moved Too Fast" kick when being teleported while moving
++                    if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
 +
-                     this.playerEntity.onGround = packetIn.isOnGround();
-                     this.serverController.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-                     this.playerEntity.handleFalling(this.playerEntity.posY - d7, packetIn.isOnGround());
+                     this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
+                     this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
+                     this.field_147369_b.func_71122_b(this.field_147369_b.field_70163_u - d7, p_147347_1_.func_149465_i());
 @@ -497,7 +505,10 @@
-                 double d2 = this.playerEntity.posZ - ((double)blockpos.getZ() + 0.5D);
+                 double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
 -                if (d3 > 36.0D)
-+                double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
++                double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 1;
 +                dist *= dist;
 +
 +                if (d3 > dist)
@@ -58,64 +58,64 @@
                      return;
                  }
 @@ -549,6 +560,7 @@
-         WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
-         ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
+         WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+         ItemStack itemstack = this.field_147369_b.field_71071_by.func_70448_g();
          boolean flag = false;
 +        boolean placeResult = true;
-         BlockPos blockpos = packetIn.getPosition();
-         EnumFacing enumfacing = EnumFacing.getFront(packetIn.getPlacedBlockDirection());
-         this.playerEntity.markPlayerActive();
+         BlockPos blockpos = p_147346_1_.func_179724_a();
+         EnumFacing enumfacing = EnumFacing.func_82600_a(p_147346_1_.func_149568_f());
+         this.field_147369_b.func_143004_u();
 @@ -560,13 +572,20 @@
                  return;
              }
  
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(playerEntity, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, worldserver, new BlockPos(0, 0, 0), null);
++            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_147369_b, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, worldserver, new BlockPos(0, 0, 0), null);
 +            if (event.useItem != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +            {
-             this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, worldserver, itemstack);
+             this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
 +            }
          }
-         else if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
+         else if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
--            if (this.hasMoved && this.playerEntity.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && !this.serverController.isBlockProtected(worldserver, blockpos, this.playerEntity) && worldserver.getWorldBorder().contains(blockpos))
-+            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 3;
+-            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
++            double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 3;
 +            dist *= dist;
-+            if (this.hasMoved && this.playerEntity.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, blockpos, this.playerEntity) && worldserver.getWorldBorder().contains(blockpos))
++            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
--                this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, blockpos, enumfacing, packetIn.getPlacedBlockOffsetX(), packetIn.getPlacedBlockOffsetY(), packetIn.getPlacedBlockOffsetZ());
+-                this.field_147369_b.field_71134_c.func_180236_a(this.field_147369_b, worldserver, itemstack, blockpos, enumfacing, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
 +                // record block place result so we can update client itemstack size if place event was cancelled.
-+                placeResult = this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, blockpos, enumfacing, packetIn.getPlacedBlockOffsetX(), packetIn.getPlacedBlockOffsetY(), packetIn.getPlacedBlockOffsetZ());
++                placeResult = this.field_147369_b.field_71134_c.func_180236_a(this.field_147369_b, worldserver, itemstack, blockpos, enumfacing, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
              }
  
              flag = true;
 @@ -601,7 +620,7 @@
-             this.playerEntity.openContainer.detectAndSendChanges();
-             this.playerEntity.isChangingQuantityOnly = false;
+             this.field_147369_b.field_71070_bA.func_75142_b();
+             this.field_147369_b.field_71137_h = false;
  
--            if (!ItemStack.areItemStacksEqual(this.playerEntity.inventory.getCurrentItem(), packetIn.getStack()))
-+            if (!ItemStack.areItemStacksEqual(this.playerEntity.inventory.getCurrentItem(), packetIn.getStack()) || !placeResult) // force client itemstack update if place event was cancelled
+-            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()))
++            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()) || !placeResult) // force client itemstack update if place event was cancelled
              {
-                 this.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, slot.slotNumber, this.playerEntity.inventory.getCurrentItem()));
+                 this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
 @@ -770,8 +789,10 @@
              }
              else
              {
--                IChatComponent ichatcomponent = new ChatComponentTranslation("chat.type.text", new Object[] {this.playerEntity.getDisplayName(), s});
--                this.serverController.getConfigurationManager().sendChatMsgImpl(ichatcomponent, false);
-+                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.playerEntity.getDisplayName(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
+-                IChatComponent ichatcomponent = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
+-                this.field_147367_d.func_71203_ab().func_148544_a(ichatcomponent, false);
++                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
 +                IChatComponent chat = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
 +                if (chat == null) return;
-+                this.serverController.getConfigurationManager().sendChatMsgImpl(chat, false);
++                this.field_147367_d.func_71203_ab().func_148544_a(chat, false);
              }
  
-             this.chatSpamThresholdCount += 20;
+             this.field_147374_l += 20;
 @@ -916,7 +937,7 @@
                          return;
                      }
  
--                    this.playerEntity = this.serverController.getConfigurationManager().recreatePlayerEntity(this.playerEntity, 0, false);
-+                    this.playerEntity = this.serverController.getConfigurationManager().recreatePlayerEntity(this.playerEntity, playerEntity.dimension, false);
+-                    this.field_147369_b = this.field_147367_d.func_71203_ab().func_72368_a(this.field_147369_b, 0, false);
++                    this.field_147369_b = this.field_147367_d.func_71203_ab().func_72368_a(this.field_147369_b, field_147369_b.field_71093_bK, false);
                  }
  
                  break;

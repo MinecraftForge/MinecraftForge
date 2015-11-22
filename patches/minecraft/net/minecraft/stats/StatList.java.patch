@@ -4,35 +4,35 @@
              }
          }
  
--        replaceAllSimilarBlocks(objectCraftStats);
-+        replaceAllSimilarBlocks(objectCraftStats, true);
+-        func_75924_a(field_75928_D);
++        replaceAllSimilarBlocks(field_75928_D, true);
      }
  
-     private static void initMiningStats()
+     private static void func_151181_c()
 @@ -141,7 +141,7 @@
              }
          }
  
--        replaceAllSimilarBlocks(mineBlockStatArray);
-+        replaceAllSimilarBlocks(mineBlockStatArray, false);
+-        func_75924_a(field_75934_C);
++        replaceAllSimilarBlocks(field_75934_C, false);
      }
  
-     private static void initStats()
+     private static void func_75925_c()
 @@ -165,7 +165,7 @@
              }
          }
  
--        replaceAllSimilarBlocks(objectUseStats);
-+        replaceAllSimilarBlocks(objectUseStats, true);
+-        func_75924_a(field_75929_E);
++        replaceAllSimilarBlocks(field_75929_E, true);
      }
  
-     private static void initItemDepleteStats()
+     private static void func_151179_e()
 @@ -184,7 +184,7 @@
              }
          }
  
--        replaceAllSimilarBlocks(objectBreakStats);
-+        replaceAllSimilarBlocks(objectBreakStats, true);
+-        func_75924_a(field_75930_F);
++        replaceAllSimilarBlocks(field_75930_F, true);
      }
  
      private static String func_180204_a(Item p_180204_0_)
@@ -40,52 +40,52 @@
          return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
      }
  
--    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_)
+-    private static void func_75924_a(StatBase[] p_75924_0_)
 +    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_, boolean useItemIds)
      {
--        func_151180_a(p_75924_0_, Blocks.water, Blocks.flowing_water);
--        func_151180_a(p_75924_0_, Blocks.lava, Blocks.flowing_lava);
--        func_151180_a(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin);
--        func_151180_a(p_75924_0_, Blocks.lit_furnace, Blocks.furnace);
--        func_151180_a(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore);
--        func_151180_a(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater);
--        func_151180_a(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator);
--        func_151180_a(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch);
--        func_151180_a(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp);
--        func_151180_a(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab);
--        func_151180_a(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab);
--        func_151180_a(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2);
--        func_151180_a(p_75924_0_, Blocks.grass, Blocks.dirt);
--        func_151180_a(p_75924_0_, Blocks.farmland, Blocks.dirt);
-+        func_151180_a(p_75924_0_, Blocks.water, Blocks.flowing_water, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.lava, Blocks.flowing_lava, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.lit_furnace, Blocks.furnace, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.grass, Blocks.dirt, useItemIds);
-+        func_151180_a(p_75924_0_, Blocks.farmland, Blocks.dirt, useItemIds);
+-        func_151180_a(p_75924_0_, Blocks.field_150355_j, Blocks.field_150358_i);
+-        func_151180_a(p_75924_0_, Blocks.field_150353_l, Blocks.field_150356_k);
+-        func_151180_a(p_75924_0_, Blocks.field_150428_aP, Blocks.field_150423_aK);
+-        func_151180_a(p_75924_0_, Blocks.field_150470_am, Blocks.field_150460_al);
+-        func_151180_a(p_75924_0_, Blocks.field_150439_ay, Blocks.field_150450_ax);
+-        func_151180_a(p_75924_0_, Blocks.field_150416_aS, Blocks.field_150413_aR);
+-        func_151180_a(p_75924_0_, Blocks.field_150455_bV, Blocks.field_150441_bU);
+-        func_151180_a(p_75924_0_, Blocks.field_150429_aA, Blocks.field_150437_az);
+-        func_151180_a(p_75924_0_, Blocks.field_150374_bv, Blocks.field_150379_bu);
+-        func_151180_a(p_75924_0_, Blocks.field_150334_T, Blocks.field_150333_U);
+-        func_151180_a(p_75924_0_, Blocks.field_150373_bw, Blocks.field_150376_bx);
+-        func_151180_a(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP);
+-        func_151180_a(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d);
+-        func_151180_a(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d);
++        func_151180_a(p_75924_0_, Blocks.field_150355_j, Blocks.field_150358_i, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150353_l, Blocks.field_150356_k, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150428_aP, Blocks.field_150423_aK, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150470_am, Blocks.field_150460_al, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150439_ay, Blocks.field_150450_ax, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150416_aS, Blocks.field_150413_aR, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150455_bV, Blocks.field_150441_bU, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150429_aA, Blocks.field_150437_az, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150374_bv, Blocks.field_150379_bu, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150334_T, Blocks.field_150333_U, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150373_bw, Blocks.field_150376_bx, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d, useItemIds);
++        func_151180_a(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d, useItemIds);
      }
  
 -    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_)
 +    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_, boolean useItemIds)
      {
--        int i = Block.getIdFromBlock(p_151180_1_);
--        int j = Block.getIdFromBlock(p_151180_2_);
+-        int i = Block.func_149682_b(p_151180_1_);
+-        int j = Block.func_149682_b(p_151180_2_);
 +        int i;
 +        int j;
 +        if (useItemIds) {
-+            i = Item.getIdFromItem(Item.getItemFromBlock(p_151180_1_));
-+            j = Item.getIdFromItem(Item.getItemFromBlock(p_151180_2_));
++            i = Item.func_150891_b(Item.func_150898_a(p_151180_1_));
++            j = Item.func_150891_b(Item.func_150898_a(p_151180_2_));
 +        } else {
-+            i = Block.getIdFromBlock(p_151180_1_);
-+            j = Block.getIdFromBlock(p_151180_2_);
++            i = Block.func_149682_b(p_151180_1_);
++            j = Block.func_149682_b(p_151180_2_);
 +        }
  
          if (p_151180_0_[i] != null && p_151180_0_[j] == null)

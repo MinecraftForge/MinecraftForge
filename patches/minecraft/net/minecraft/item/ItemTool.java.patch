@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemTool.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemTool.java
 @@ -28,6 +28,18 @@
-         this.efficiencyOnProperMaterial = material.getEfficiencyOnProperMaterial();
-         this.damageVsEntity = attackDamage + material.getDamageVsEntity();
-         this.setCreativeTab(CreativeTabs.tabTools);
+         this.field_77864_a = p_i45333_2_.func_77998_b();
+         this.field_77865_bY = p_i45333_1_ + p_i45333_2_.func_78000_c();
+         this.func_77637_a(CreativeTabs.field_78040_i);
 +        if (this instanceof ItemPickaxe)
 +        {
 +            toolClass = "pickaxe";
@@ -18,20 +18,20 @@
 +        }
      }
  
-     public float getStrVsBlock(ItemStack stack, Block block)
+     public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
 @@ -74,7 +86,9 @@
  
-     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+     public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {
--        return this.toolMaterial.getRepairItem() == repair.getItem() ? true : super.getIsRepairable(toRepair, repair);
-+        ItemStack mat = this.toolMaterial.getRepairItemStack();
-+        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, repair, false)) return true;
-+        return super.getIsRepairable(toRepair, repair);
+-        return this.field_77862_b.func_150995_f() == p_82789_2_.func_77973_b() ? true : super.func_82789_a(p_82789_1_, p_82789_2_);
++        ItemStack mat = this.field_77862_b.getRepairItemStack();
++        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, p_82789_2_, false)) return true;
++        return super.func_82789_a(p_82789_1_, p_82789_2_);
      }
  
-     public Multimap<String, AttributeModifier> getItemAttributeModifiers()
+     public Multimap<String, AttributeModifier> func_111205_h()
 @@ -83,4 +97,38 @@
-         multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Tool modifier", (double)this.damageVsEntity, 0));
+         multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.field_77865_bY, 0));
          return multimap;
      }
 +
@@ -43,7 +43,7 @@
 +        int level = super.getHarvestLevel(stack, toolClass);
 +        if (level == -1 && toolClass != null && toolClass.equals(this.toolClass))
 +        {
-+            return this.toolMaterial.getHarvestLevel();
++            return this.field_77862_b.func_77996_d();
 +        }
 +        else
 +        {
@@ -62,8 +62,8 @@
 +    {
 +        for (String type : getToolClasses(stack))
 +        {
-+            if (state.getBlock().isToolEffective(type, state))
-+                return efficiencyOnProperMaterial;
++            if (state.func_177230_c().isToolEffective(type, state))
++                return field_77864_a;
 +        }
 +        return super.getDigSpeed(stack, state);
 +    }

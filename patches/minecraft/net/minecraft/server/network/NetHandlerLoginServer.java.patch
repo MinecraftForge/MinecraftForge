@@ -3,24 +3,24 @@
 @@ -66,12 +66,12 @@
              if (entityplayermp == null)
              {
-                 this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
--                this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.field_181025_l);
-+                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getConfigurationManager(), this.networkManager, this.field_181025_l);
+                 this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                this.field_147327_f.func_71203_ab().func_72355_a(this.field_147333_a, this.field_181025_l);
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_71203_ab(), this.field_147333_a, this.field_181025_l);
                  this.field_181025_l = null;
              }
          }
  
--        if (this.connectionTimer++ == 600)
-+        if (this.connectionTimer++ == net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.LOGIN_TIMEOUT)
+-        if (this.field_147336_h++ == 600)
++        if (this.field_147336_h++ == net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.LOGIN_TIMEOUT)
          {
-             this.closeConnection("Took too long to log in");
+             this.func_147322_a("Took too long to log in");
          }
 @@ -130,7 +130,7 @@
              }
              else
              {
--                this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
-+                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getConfigurationManager(), this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
+-                this.field_147327_f.func_71203_ab().func_72355_a(this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_71203_ab(), this.field_147333_a, this.field_147327_f.func_71203_ab().func_148545_a(this.field_147337_i));
              }
          }
      }

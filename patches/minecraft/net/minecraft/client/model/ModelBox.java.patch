@@ -7,12 +7,12 @@
 -@SideOnly(Side.CLIENT)
  public class ModelBox
  {
-     private PositionTextureVertex[] vertexPositions;
+     private PositionTextureVertex[] field_78253_h;
 @@ -81,6 +80,7 @@
          }
      }
  
 +    @SideOnly(Side.CLIENT)
-     public void render(WorldRenderer p_178780_1_, float p_178780_2_)
+     public void func_178780_a(WorldRenderer p_178780_1_, float p_178780_2_)
      {
-         for (int i = 0; i < this.quadList.length; ++i)
+         for (int i = 0; i < this.field_78254_i.length; ++i)

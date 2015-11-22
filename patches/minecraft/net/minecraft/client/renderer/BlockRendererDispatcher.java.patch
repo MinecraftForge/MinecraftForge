@@ -2,17 +2,17 @@
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
 @@ -24,7 +24,7 @@
  {
-     private BlockModelShapes blockModelShapes;
-     private final GameSettings gameSettings;
--    private final BlockModelRenderer blockModelRenderer = new BlockModelRenderer();
-+    private final BlockModelRenderer blockModelRenderer = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer();
-     private final ChestRenderer chestRenderer = new ChestRenderer();
-     private final BlockFluidRenderer fluidRenderer = new BlockFluidRenderer();
+     private BlockModelShapes field_175028_a;
+     private final GameSettings field_175026_b;
+-    private final BlockModelRenderer field_175027_c = new BlockModelRenderer();
++    private final BlockModelRenderer field_175027_c = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer();
+     private final ChestRenderer field_175024_d = new ChestRenderer();
+     private final BlockFluidRenderer field_175025_e = new BlockFluidRenderer();
  
 @@ -48,6 +48,24 @@
          {
-             p_175020_1_ = block.getActualState(p_175020_1_, p_175020_4_, p_175020_2_);
-             IBakedModel ibakedmodel = this.blockModelShapes.getModelForState(p_175020_1_);
+             p_175020_1_ = block.func_176221_a(p_175020_1_, p_175020_4_, p_175020_2_);
+             IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_175020_1_);
 +
 +            if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartBlockModel)
 +            {
@@ -24,18 +24,18 @@
 +                        net.minecraftforge.client.ForgeHooksClient.setRenderLayer(layer);
 +
 +                        IBakedModel targetLayer = ((net.minecraftforge.client.model.ISmartBlockModel)ibakedmodel).handleBlockState(extendedState);
-+                        IBakedModel damageModel = (new SimpleBakedModel.Builder(targetLayer, p_175020_3_)).makeBakedModel();
-+                        this.blockModelRenderer.renderModel(p_175020_4_, damageModel, p_175020_1_, p_175020_2_, Tessellator.getInstance().getWorldRenderer());
++                        IBakedModel damageModel = (new SimpleBakedModel.Builder(targetLayer, p_175020_3_)).func_177645_b();
++                        this.field_175027_c.func_178259_a(p_175020_4_, damageModel, p_175020_1_, p_175020_2_, Tessellator.func_178181_a().func_178180_c());
 +                    }
 +                }
 +                return;
 +            }
 +
-             IBakedModel ibakedmodel1 = (new SimpleBakedModel.Builder(ibakedmodel, p_175020_3_)).makeBakedModel();
-             this.blockModelRenderer.renderModel(p_175020_4_, ibakedmodel1, p_175020_1_, p_175020_2_, Tessellator.getInstance().getWorldRenderer());
+             IBakedModel ibakedmodel1 = (new SimpleBakedModel.Builder(ibakedmodel, p_175020_3_)).func_177645_b();
+             this.field_175027_c.func_178259_a(p_175020_4_, ibakedmodel1, p_175020_1_, p_175020_2_, Tessellator.func_178181_a().func_178180_c());
          }
 @@ -128,6 +146,12 @@
-             ibakedmodel = ((WeightedBakedModel)ibakedmodel).getAlternativeModel(MathHelper.getPositionRandom(p_175022_3_));
+             ibakedmodel = ((WeightedBakedModel)ibakedmodel).func_177564_a(MathHelper.func_180186_a(p_175022_3_));
          }
  
 +        if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartBlockModel)

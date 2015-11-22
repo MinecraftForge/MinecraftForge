@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
 @@ -115,6 +115,7 @@
-                 return IntCache.getCacheSizes();
+                 return IntCache.func_85144_b();
              }
          });
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.theReportCategory);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
      }
  
-     public String getDescription()
+     public String func_71501_a()
 @@ -203,6 +204,8 @@
      {
          StringBuilder stringbuilder = new StringBuilder();
@@ -15,5 +15,5 @@
 +        net.minecraftforge.fml.common.asm.transformers.BlamingTransformer.onCrash(stringbuilder);
 +        net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
          stringbuilder.append("// ");
-         stringbuilder.append(getWittyComment());
+         stringbuilder.append(func_71503_h());
          stringbuilder.append("\n\n");

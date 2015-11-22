@@ -2,28 +2,28 @@
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
 @@ -29,7 +29,7 @@
  
-     public static ModelBlockDefinition parseFromReader(Reader p_178331_0_)
+     public static ModelBlockDefinition func_178331_a(Reader p_178331_0_)
      {
--        return (ModelBlockDefinition)GSON.fromJson(p_178331_0_, ModelBlockDefinition.class);
-+        return net.minecraftforge.client.model.BlockStateLoader.load(p_178331_0_, GSON);
+-        return (ModelBlockDefinition)field_178333_a.fromJson(p_178331_0_, ModelBlockDefinition.class);
++        return net.minecraftforge.client.model.BlockStateLoader.load(p_178331_0_, field_178333_a);
      }
  
      public ModelBlockDefinition(Collection<ModelBlockDefinition.Variants> p_i46221_1_)
 @@ -155,11 +155,17 @@
-                 return this.modelLocation;
+                 return this.field_178437_a;
              }
  
 +            @Deprecated
-             public ModelRotation getRotation()
+             public ModelRotation func_178432_b()
              {
-                 return this.modelRotation;
+                 return this.field_178435_b;
              }
  
 +            public net.minecraftforge.client.model.IModelState getState()
 +            {
-+                return this.modelRotation;
++                return this.field_178435_b;
 +            }
 +
-             public boolean isUvLocked()
+             public boolean func_178433_c()
              {
-                 return this.uvLock;
+                 return this.field_178436_c;

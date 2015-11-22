@@ -5,6 +5,6 @@
      }
  
 +    @SuppressWarnings("resource")
-     protected InputStream getInputStream(ResourceLocation p_177245_1_, IResourcePack p_177245_2_) throws IOException
+     protected InputStream func_177245_a(ResourceLocation p_177245_1_, IResourcePack p_177245_2_) throws IOException
      {
-         InputStream inputstream = p_177245_2_.getInputStream(p_177245_1_);
+         InputStream inputstream = p_177245_2_.func_110590_a(p_177245_1_);

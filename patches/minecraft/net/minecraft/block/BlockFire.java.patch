@@ -1,81 +1,81 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFire.java
 @@ -41,18 +41,24 @@
-         int j = pos.getY();
-         int k = pos.getZ();
+         int j = p_176221_3_.func_177956_o();
+         int k = p_176221_3_.func_177952_p();
  
--        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down()))
-+        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down(), EnumFacing.UP))
+-        if (!World.func_175683_a(p_176221_2_, p_176221_3_.func_177977_b()) && !Blocks.field_150480_ab.func_176535_e(p_176221_2_, p_176221_3_.func_177977_b()))
++        if (!World.func_175683_a(p_176221_2_, p_176221_3_.func_177977_b()) && !Blocks.field_150480_ab.canCatchFire(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP))
          {
              boolean flag = (i + j + k & 1) == 1;
              boolean flag1 = (i / 2 + j / 2 + k / 2 & 1) == 1;
              int l = 0;
  
--            if (this.canCatchFire(worldIn, pos.up()))
-+            if (this.canCatchFire(worldIn, pos.up(), EnumFacing.DOWN))
+-            if (this.func_176535_e(p_176221_2_, p_176221_3_.func_177984_a()))
++            if (this.canCatchFire(p_176221_2_, p_176221_3_.func_177984_a(), EnumFacing.DOWN))
              {
                  l = flag ? 1 : 2;
              }
  
--            return state.withProperty(NORTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.north()))).withProperty(EAST, Boolean.valueOf(this.canCatchFire(worldIn, pos.east()))).withProperty(SOUTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.south()))).withProperty(WEST, Boolean.valueOf(this.canCatchFire(worldIn, pos.west()))).withProperty(UPPER, Integer.valueOf(l)).withProperty(FLIP, Boolean.valueOf(flag1)).withProperty(ALT, Boolean.valueOf(flag));
-+            return state.withProperty(NORTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.north(), EnumFacing.SOUTH)))
-+                        .withProperty(EAST, Boolean.valueOf(this.canCatchFire(worldIn, pos.east(),  EnumFacing.EAST )))
-+                        .withProperty(SOUTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.south(), EnumFacing.NORTH)))
-+                        .withProperty(WEST, Boolean.valueOf(this.canCatchFire(worldIn, pos.west(),  EnumFacing.EAST )))
-+                        .withProperty(UPPER, Integer.valueOf(l))
-+                        .withProperty(FLIP, Boolean.valueOf(flag1))
-+                        .withProperty(ALT, Boolean.valueOf(flag));
+-            return p_176221_1_.func_177226_a(field_176545_N, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177978_c()))).func_177226_a(field_176546_O, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177974_f()))).func_177226_a(field_176541_P, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177968_d()))).func_177226_a(field_176539_Q, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177976_e()))).func_177226_a(field_176542_R, Integer.valueOf(l)).func_177226_a(field_176540_b, Boolean.valueOf(flag1)).func_177226_a(field_176544_M, Boolean.valueOf(flag));
++            return p_176221_1_.func_177226_a(field_176545_N, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177978_c(), EnumFacing.SOUTH)))
++                        .func_177226_a(field_176546_O, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177974_f(),  EnumFacing.EAST )))
++                        .func_177226_a(field_176541_P, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177968_d(), EnumFacing.NORTH)))
++                        .func_177226_a(field_176539_Q, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177976_e(),  EnumFacing.EAST )))
++                        .func_177226_a(field_176542_R, Integer.valueOf(l))
++                        .func_177226_a(field_176540_b, Boolean.valueOf(flag1))
++                        .func_177226_a(field_176544_M, Boolean.valueOf(flag));
          }
          else
          {
 @@ -108,6 +114,7 @@
  
-     public void setFireInfo(Block blockIn, int encouragement, int flammability)
+     public void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_)
      {
-+        if (blockIn == Blocks.air) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
-         this.encouragements.put(blockIn, Integer.valueOf(encouragement));
-         this.flammabilities.put(blockIn, Integer.valueOf(flammability));
++        if (p_180686_1_ == Blocks.field_150350_a) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
+         this.field_149849_a.put(p_180686_1_, Integer.valueOf(p_180686_2_));
+         this.field_149848_b.put(p_180686_1_, Integer.valueOf(p_180686_3_));
      }
 @@ -147,13 +154,8 @@
              }
  
-             Block block = worldIn.getBlockState(pos.down()).getBlock();
--            boolean flag = block == Blocks.netherrack;
-+            boolean flag = block.isFireSource(worldIn, pos.down(), EnumFacing.UP);
+             Block block = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_177230_c();
+-            boolean flag = block == Blocks.field_150424_aL;
++            boolean flag = block.isFireSource(p_180650_1_, p_180650_2_.func_177977_b(), EnumFacing.UP);
  
--            if (worldIn.provider instanceof WorldProviderEnd && block == Blocks.bedrock)
+-            if (p_180650_1_.field_73011_w instanceof WorldProviderEnd && block == Blocks.field_150357_h)
 -            {
 -                flag = true;
 -            }
 -
-             if (!flag && worldIn.isRaining() && this.canDie(worldIn, pos))
+             if (!flag && p_180650_1_.func_72896_J() && this.func_176537_d(p_180650_1_, p_180650_2_))
              {
-                 worldIn.setBlockToAir(pos);
+                 p_180650_1_.func_175698_g(p_180650_2_);
 @@ -182,7 +184,7 @@
                          return;
                      }
  
--                    if (!this.canCatchFire(worldIn, pos.down()) && i == 15 && rand.nextInt(4) == 0)
-+                    if (!this.canCatchFire(worldIn, pos.down(), EnumFacing.UP) && i == 15 && rand.nextInt(4) == 0)
+-                    if (!this.func_176535_e(p_180650_1_, p_180650_2_.func_177977_b()) && i == 15 && p_180650_4_.nextInt(4) == 0)
++                    if (!this.canCatchFire(p_180650_1_, p_180650_2_.func_177977_b(), EnumFacing.UP) && i == 15 && p_180650_4_.nextInt(4) == 0)
                      {
-                         worldIn.setBlockToAir(pos);
+                         p_180650_1_.func_175698_g(p_180650_2_);
                          return;
 @@ -197,12 +199,12 @@
                      j = -50;
                  }
  
--                this.catchOnFire(worldIn, pos.east(), 300 + j, rand, i);
--                this.catchOnFire(worldIn, pos.west(), 300 + j, rand, i);
--                this.catchOnFire(worldIn, pos.down(), 250 + j, rand, i);
--                this.catchOnFire(worldIn, pos.up(), 250 + j, rand, i);
--                this.catchOnFire(worldIn, pos.north(), 300 + j, rand, i);
--                this.catchOnFire(worldIn, pos.south(), 300 + j, rand, i);
-+                this.tryCatchFire(worldIn, pos.east(), 300 + j, rand, i, EnumFacing.WEST);
-+                this.tryCatchFire(worldIn, pos.west(), 300 + j, rand, i, EnumFacing.EAST);
-+                this.tryCatchFire(worldIn, pos.down(), 250 + j, rand, i, EnumFacing.UP);
-+                this.tryCatchFire(worldIn, pos.up(), 250 + j, rand, i, EnumFacing.DOWN);
-+                this.tryCatchFire(worldIn, pos.north(), 300 + j, rand, i, EnumFacing.SOUTH);
-+                this.tryCatchFire(worldIn, pos.south(), 300 + j, rand, i, EnumFacing.NORTH);
+-                this.func_176536_a(p_180650_1_, p_180650_2_.func_177974_f(), 300 + j, p_180650_4_, i);
+-                this.func_176536_a(p_180650_1_, p_180650_2_.func_177976_e(), 300 + j, p_180650_4_, i);
+-                this.func_176536_a(p_180650_1_, p_180650_2_.func_177977_b(), 250 + j, p_180650_4_, i);
+-                this.func_176536_a(p_180650_1_, p_180650_2_.func_177984_a(), 250 + j, p_180650_4_, i);
+-                this.func_176536_a(p_180650_1_, p_180650_2_.func_177978_c(), 300 + j, p_180650_4_, i);
+-                this.func_176536_a(p_180650_1_, p_180650_2_.func_177968_d(), 300 + j, p_180650_4_, i);
++                this.tryCatchFire(p_180650_1_, p_180650_2_.func_177974_f(), 300 + j, p_180650_4_, i, EnumFacing.WEST);
++                this.tryCatchFire(p_180650_1_, p_180650_2_.func_177976_e(), 300 + j, p_180650_4_, i, EnumFacing.EAST);
++                this.tryCatchFire(p_180650_1_, p_180650_2_.func_177977_b(), 250 + j, p_180650_4_, i, EnumFacing.UP);
++                this.tryCatchFire(p_180650_1_, p_180650_2_.func_177984_a(), 250 + j, p_180650_4_, i, EnumFacing.DOWN);
++                this.tryCatchFire(p_180650_1_, p_180650_2_.func_177978_c(), 300 + j, p_180650_4_, i, EnumFacing.SOUTH);
++                this.tryCatchFire(p_180650_1_, p_180650_2_.func_177968_d(), 300 + j, p_180650_4_, i, EnumFacing.NORTH);
  
                  for (int k = -1; k <= 1; ++k)
                  {
@@ -84,39 +84,39 @@
      }
  
 +    @Deprecated // Use Block.getFlammability
-     public int getFlammability(Block blockIn)
+     public int func_176532_c(Block p_176532_1_)
      {
-         Integer integer = (Integer)this.flammabilities.get(blockIn);
+         Integer integer = (Integer)this.field_149848_b.get(p_176532_1_);
          return integer == null ? 0 : integer.intValue();
      }
  
 +    @Deprecated // Use Block.getFlammability
-     public int getEncouragement(Block blockIn)
+     public int func_176534_d(Block p_176534_1_)
      {
-         Integer integer = (Integer)this.encouragements.get(blockIn);
+         Integer integer = (Integer)this.field_149849_a.get(p_176534_1_);
          return integer == null ? 0 : integer.intValue();
      }
  
 +    @Deprecated // Use tryCatchFire with face below
-     private void catchOnFire(World worldIn, BlockPos pos, int chance, Random random, int age)
+     private void func_176536_a(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_)
      {
--        int i = this.getFlammability(worldIn.getBlockState(pos).getBlock());
-+        this.tryCatchFire(worldIn, pos, chance, random, age, EnumFacing.UP);
+-        int i = this.func_176532_c(p_176536_1_.func_180495_p(p_176536_2_).func_177230_c());
++        this.tryCatchFire(p_176536_1_, p_176536_2_, p_176536_3_, p_176536_4_, p_176536_5_, EnumFacing.UP);
 +    }
  
-+    private void tryCatchFire(World worldIn, BlockPos pos, int chance, Random random, int age, EnumFacing face)
++    private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, EnumFacing face)
 +    {
-+        int i = worldIn.getBlockState(pos).getBlock().getFlammability(worldIn, pos, face);
++        int i = p_176536_1_.func_180495_p(p_176536_2_).func_177230_c().getFlammability(p_176536_1_, p_176536_2_, face);
 +
-         if (random.nextInt(chance) < i)
+         if (p_176536_4_.nextInt(p_176536_3_) < i)
          {
-             IBlockState iblockstate = worldIn.getBlockState(pos);
+             IBlockState iblockstate = p_176536_1_.func_180495_p(p_176536_2_);
 @@ -308,7 +318,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
--            if (this.canCatchFire(worldIn, pos.offset(enumfacing)))
-+            if (this.canCatchFire(worldIn, pos.offset(enumfacing), enumfacing.getOpposite()))
+-            if (this.func_176535_e(p_176533_1_, p_176533_2_.func_177972_a(enumfacing)))
++            if (this.canCatchFire(p_176533_1_, p_176533_2_.func_177972_a(enumfacing), enumfacing.func_176734_d()))
              {
                  return true;
              }
@@ -124,8 +124,8 @@
  
              for (EnumFacing enumfacing : EnumFacing.values())
              {
--                i = Math.max(this.getEncouragement(worldIn.getBlockState(pos.offset(enumfacing)).getBlock()), i);
-+                i = Math.max(worldIn.getBlockState(pos.offset(enumfacing)).getBlock().getFlammability(worldIn, pos.offset(enumfacing), enumfacing.getOpposite()), i);
+-                i = Math.max(this.func_176534_d(p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(enumfacing)).func_177230_c()), i);
++                i = Math.max(p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(enumfacing)).func_177230_c().getFlammability(p_176538_1_, p_176538_2_.func_177972_a(enumfacing), enumfacing.func_176734_d()), i);
              }
  
              return i;
@@ -134,22 +134,22 @@
      }
  
 +    @Deprecated // Use canCatchFire with face sensitive version below
-     public boolean canCatchFire(IBlockAccess worldIn, BlockPos pos)
+     public boolean func_176535_e(IBlockAccess p_176535_1_, BlockPos p_176535_2_)
      {
--        return this.getEncouragement(worldIn.getBlockState(pos).getBlock()) > 0;
-+        return canCatchFire(worldIn, pos, EnumFacing.UP);
+-        return this.func_176534_d(p_176535_1_.func_180495_p(p_176535_2_).func_177230_c()) > 0;
++        return canCatchFire(p_176535_1_, p_176535_2_, EnumFacing.UP);
      }
  
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
 @@ -382,9 +393,9 @@
-             worldIn.playSound((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F), "fire.fire", 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F, false);
+             p_180655_1_.func_72980_b((double)((float)p_180655_2_.func_177958_n() + 0.5F), (double)((float)p_180655_2_.func_177956_o() + 0.5F), (double)((float)p_180655_2_.func_177952_p() + 0.5F), "fire.fire", 1.0F + p_180655_4_.nextFloat(), p_180655_4_.nextFloat() * 0.7F + 0.3F, false);
          }
  
--        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down()))
-+        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down(), EnumFacing.UP))
+-        if (!World.func_175683_a(p_180655_1_, p_180655_2_.func_177977_b()) && !Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177977_b()))
++        if (!World.func_175683_a(p_180655_1_, p_180655_2_.func_177977_b()) && !Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177977_b(), EnumFacing.UP))
          {
--            if (Blocks.fire.canCatchFire(worldIn, pos.west()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.west(), EnumFacing.EAST))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177976_e()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177976_e(), EnumFacing.EAST))
              {
                  for (int j = 0; j < 2; ++j)
                  {
@@ -157,8 +157,8 @@
                  }
              }
  
--            if (Blocks.fire.canCatchFire(worldIn, pos.east()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.east(), EnumFacing.WEST))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177974_f()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177974_f(), EnumFacing.WEST))
              {
                  for (int k = 0; k < 2; ++k)
                  {
@@ -166,8 +166,8 @@
                  }
              }
  
--            if (Blocks.fire.canCatchFire(worldIn, pos.north()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.north(), EnumFacing.SOUTH))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177978_c()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177978_c(), EnumFacing.SOUTH))
              {
                  for (int l = 0; l < 2; ++l)
                  {
@@ -175,8 +175,8 @@
                  }
              }
  
--            if (Blocks.fire.canCatchFire(worldIn, pos.south()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.south(), EnumFacing.NORTH))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177968_d()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177968_d(), EnumFacing.NORTH))
              {
                  for (int i1 = 0; i1 < 2; ++i1)
                  {
@@ -184,14 +184,14 @@
                  }
              }
  
--            if (Blocks.fire.canCatchFire(worldIn, pos.up()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.up(), EnumFacing.DOWN))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177984_a()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177984_a(), EnumFacing.DOWN))
              {
                  for (int j1 = 0; j1 < 2; ++j1)
                  {
 @@ -476,4 +487,19 @@
      {
-         return new BlockState(this, new IProperty[] {AGE, NORTH, EAST, SOUTH, WEST, UPPER, FLIP, ALT});
+         return new BlockState(this, new IProperty[] {field_176543_a, field_176545_N, field_176546_O, field_176541_P, field_176539_Q, field_176542_R, field_176540_b, field_176544_M});
      }
 +
 +    /*================================= Forge Start ======================================*/
@@ -205,7 +205,7 @@
 +     */
 +    public boolean canCatchFire(IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
-+        return world.getBlockState(pos).getBlock().isFlammable(world, pos, face);
++        return world.func_180495_p(pos).func_177230_c().isFlammable(world, pos, face);
 +    }
 +    /*================================= Forge Start ======================================*/
  }

@@ -3,45 +3,45 @@
 @@ -11,12 +11,13 @@
  public class WorldServerMulti extends WorldServer
  {
-     private WorldServer delegate;
+     private WorldServer field_175743_a;
 +    private IBorderListener borderListener;
  
-     public WorldServerMulti(MinecraftServer server, ISaveHandler saveHandlerIn, int dimensionId, WorldServer delegate, Profiler profilerIn)
+     public WorldServerMulti(MinecraftServer p_i45923_1_, ISaveHandler p_i45923_2_, int p_i45923_3_, WorldServer p_i45923_4_, Profiler p_i45923_5_)
      {
-         super(server, saveHandlerIn, new DerivedWorldInfo(delegate.getWorldInfo()), dimensionId, profilerIn);
-         this.delegate = delegate;
--        delegate.getWorldBorder().addListener(new IBorderListener()
+         super(p_i45923_1_, p_i45923_2_, new DerivedWorldInfo(p_i45923_4_.func_72912_H()), p_i45923_3_, p_i45923_5_);
+         this.field_175743_a = p_i45923_4_;
+-        p_i45923_4_.func_175723_af().func_177737_a(new IBorderListener()
 +        this.borderListener = new IBorderListener()
          {
-             public void onSizeChanged(WorldBorder border, double newSize)
+             public void func_177694_a(WorldBorder p_177694_1_, double p_177694_2_)
              {
 @@ -46,11 +47,13 @@
              {
-                 WorldServerMulti.this.getWorldBorder().setDamageBuffer(newSize);
+                 WorldServerMulti.this.func_175723_af().func_177724_b(p_177695_2_);
              }
 -        });
 +        };
-+        this.delegate.getWorldBorder().addListener(this.borderListener);
++        this.field_175743_a.func_175723_af().func_177737_a(this.borderListener);
      }
  
-     protected void saveLevel() throws MinecraftException
+     protected void func_73042_a() throws MinecraftException
      {
-+        this.perWorldStorage.saveAllData();
++        this.perWorldStorage.func_75744_a();
      }
  
-     public World init()
+     public World func_175643_b()
 @@ -58,12 +61,12 @@
-         this.mapStorage = this.delegate.getMapStorage();
-         this.worldScoreboard = this.delegate.getScoreboard();
-         String s = VillageCollection.fileNameForProvider(this.provider);
--        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, s);
-+        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.loadData(VillageCollection.class, s);
+         this.field_72988_C = this.field_175743_a.func_175693_T();
+         this.field_96442_D = this.field_175743_a.func_96441_U();
+         String s = VillageCollection.func_176062_a(this.field_73011_w);
+-        VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, s);
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_75742_a(VillageCollection.class, s);
  
          if (villagecollection == null)
          {
-             this.villageCollectionObj = new VillageCollection(this);
--            this.mapStorage.setData(s, this.villageCollectionObj);
-+            this.perWorldStorage.setData(s, this.villageCollectionObj);
+             this.field_72982_D = new VillageCollection(this);
+-            this.field_72988_C.func_75745_a(s, this.field_72982_D);
++            this.perWorldStorage.func_75745_a(s, this.field_72982_D);
          }
          else
          {
@@ -52,9 +52,9 @@
 +
 +
 +    @Override
-+    public void flush()
++    public void func_73041_k()
 +    {
-+        super.flush();
-+        this.delegate.getWorldBorder().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
++        super.func_73041_k();
++        this.field_175743_a.func_175723_af().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
 +    }
  }

@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
 @@ -80,6 +80,8 @@
-                     this.drawTexturedModalRect(i + 6, j + 7, 0 + i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
+                     this.func_73729_b(i + 6, j + 7, 0 + i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
                  }
  
-+                potion.renderInventoryEffect(i, j, potioneffect, mc);
++                potion.renderInventoryEffect(i, j, potioneffect, field_146297_k);
 +                if (!potion.shouldRenderInvText(potioneffect)) continue;
-                 String s1 = I18n.format(potion.getName(), new Object[0]);
+                 String s1 = I18n.func_135052_a(potion.func_76393_a(), new Object[0]);
  
-                 if (potioneffect.getAmplifier() == 1)
+                 if (potioneffect.func_76458_c() == 1)

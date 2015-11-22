@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
 @@ -78,6 +78,7 @@
              {
-                 TileEntityRendererDispatcher.instance.renderTileEntityAt(this.field_147718_c, 0.0D, 0.0D, 0.0D, 0.0F);
+                 TileEntityRendererDispatcher.field_147556_a.func_147549_a(this.field_147718_c, 0.0D, 0.0D, 0.0D, 0.0F);
              }
-+            else if (block != Blocks.chest) net.minecraftforge.client.ForgeHooksClient.renderTileItem(p_179022_1_.getItem(), p_179022_1_.getMetadata());
++            else if (block != Blocks.field_150486_ae) net.minecraftforge.client.ForgeHooksClient.renderTileItem(p_179022_1_.func_77973_b(), p_179022_1_.func_77960_j());
              else
              {
-                 TileEntityRendererDispatcher.instance.renderTileEntityAt(this.field_147717_b, 0.0D, 0.0D, 0.0D, 0.0F);
+                 TileEntityRendererDispatcher.field_147556_a.func_147549_a(this.field_147717_b, 0.0D, 0.0D, 0.0D, 0.0F);

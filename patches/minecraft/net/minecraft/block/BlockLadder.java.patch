@@ -2,28 +2,28 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockLadder.java
 @@ -78,7 +78,10 @@
  
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return worldIn.getBlockState(pos.west()).getBlock().isNormalCube() ? true : (worldIn.getBlockState(pos.east()).getBlock().isNormalCube() ? true : (worldIn.getBlockState(pos.north()).getBlock().isNormalCube() ? true : worldIn.getBlockState(pos.south()).getBlock().isNormalCube()));
-+        return worldIn.isSideSolid(pos.west(), EnumFacing.EAST, true) ||
-+               worldIn.isSideSolid(pos.east(), EnumFacing.WEST, true) ||
-+               worldIn.isSideSolid(pos.north(), EnumFacing.SOUTH, true) ||
-+               worldIn.isSideSolid(pos.south(), EnumFacing.NORTH, true);
+-        return p_176196_1_.func_180495_p(p_176196_2_.func_177976_e()).func_177230_c().func_149721_r() ? true : (p_176196_1_.func_180495_p(p_176196_2_.func_177974_f()).func_177230_c().func_149721_r() ? true : (p_176196_1_.func_180495_p(p_176196_2_.func_177978_c()).func_177230_c().func_149721_r() ? true : p_176196_1_.func_180495_p(p_176196_2_.func_177968_d()).func_177230_c().func_149721_r()));
++        return p_176196_1_.isSideSolid(p_176196_2_.func_177976_e(), EnumFacing.EAST, true) ||
++               p_176196_1_.isSideSolid(p_176196_2_.func_177974_f(), EnumFacing.WEST, true) ||
++               p_176196_1_.isSideSolid(p_176196_2_.func_177978_c(), EnumFacing.SOUTH, true) ||
++               p_176196_1_.isSideSolid(p_176196_2_.func_177968_d(), EnumFacing.NORTH, true);
      }
  
-     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
 @@ -116,7 +119,7 @@
  
-     protected boolean canBlockStay(World worldIn, BlockPos pos, EnumFacing facing)
+     protected boolean func_176381_b(World p_176381_1_, BlockPos p_176381_2_, EnumFacing p_176381_3_)
      {
--        return worldIn.getBlockState(pos.offset(facing.getOpposite())).getBlock().isNormalCube();
-+        return worldIn.isSideSolid(pos.offset(facing.getOpposite()), facing, true);
+-        return p_176381_1_.func_180495_p(p_176381_2_.func_177972_a(p_176381_3_.func_176734_d())).func_177230_c().func_149721_r();
++        return p_176381_1_.isSideSolid(p_176381_2_.func_177972_a(p_176381_3_.func_176734_d()), p_176381_3_, true);
      }
  
-     public IBlockState getStateFromMeta(int meta)
+     public IBlockState func_176203_a(int p_176203_1_)
 @@ -146,4 +149,6 @@
      {
-         return new BlockState(this, new IProperty[] {FACING});
+         return new BlockState(this, new IProperty[] {field_176382_a});
      }
 +
 +    @Override public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return true; }

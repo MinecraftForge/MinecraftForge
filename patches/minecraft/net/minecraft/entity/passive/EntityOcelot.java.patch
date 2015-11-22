@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 @@ -279,7 +279,7 @@
  
-             Block block = this.worldObj.getBlockState(blockpos.down()).getBlock();
+             Block block = this.field_70170_p.func_180495_p(blockpos.func_177977_b()).func_177230_c();
  
--            if (block == Blocks.grass || block.getMaterial() == Material.leaves)
-+            if (block == Blocks.grass || block.isLeaves(worldObj, blockpos.down()))
+-            if (block == Blocks.field_150349_c || block.func_149688_o() == Material.field_151584_j)
++            if (block == Blocks.field_150349_c || block.isLeaves(field_70170_p, blockpos.func_177977_b()))
              {
                  return true;
              }

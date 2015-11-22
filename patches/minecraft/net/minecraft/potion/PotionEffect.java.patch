@@ -2,42 +2,42 @@
 +++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
 @@ -18,6 +18,8 @@
      @SideOnly(Side.CLIENT)
-     private boolean isPotionDurationMax;
-     private boolean showParticles;
+     private boolean field_100013_f;
+     private boolean field_180156_h;
 +    /** List of ItemStack that can cure the potion effect **/
 +    private java.util.List<net.minecraft.item.ItemStack> curativeItems;
  
-     public PotionEffect(int id, int effectDuration)
+     public PotionEffect(int p_i1574_1_, int p_i1574_2_)
      {
 @@ -36,6 +38,8 @@
-         this.amplifier = effectAmplifier;
-         this.isAmbient = ambient;
-         this.showParticles = showParticles;
+         this.field_76461_c = p_i45896_3_;
+         this.field_82724_e = p_i45896_4_;
+         this.field_180156_h = p_i45896_5_;
 +        this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
-+        this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.milk_bucket));
++        this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.field_151117_aB));
      }
  
-     public PotionEffect(PotionEffect other)
+     public PotionEffect(PotionEffect p_i1577_1_)
 @@ -45,6 +49,7 @@
-         this.amplifier = other.amplifier;
-         this.isAmbient = other.isAmbient;
-         this.showParticles = other.showParticles;
-+        this.curativeItems = other.curativeItems;
+         this.field_76461_c = p_i1577_1_.field_76461_c;
+         this.field_82724_e = p_i1577_1_.field_82724_e;
+         this.field_180156_h = p_i1577_1_.field_180156_h;
++        this.curativeItems = p_i1577_1_.curativeItems;
      }
  
-     public void combine(PotionEffect other)
+     public void func_76452_a(PotionEffect p_76452_1_)
 @@ -190,7 +195,7 @@
  
-     public static PotionEffect readCustomPotionEffectFromNBT(NBTTagCompound nbt)
+     public static PotionEffect func_82722_b(NBTTagCompound p_82722_0_)
      {
--        int i = nbt.getByte("Id");
-+        int i = nbt.getByte("Id") & 0xff;
+-        int i = p_82722_0_.func_74771_c("Id");
++        int i = p_82722_0_.func_74771_c("Id") & 0xff;
  
-         if (i >= 0 && i < Potion.potionTypes.length && Potion.potionTypes[i] != null)
+         if (i >= 0 && i < Potion.field_76425_a.length && Potion.field_76425_a[i] != null)
          {
 @@ -223,4 +228,62 @@
      {
-         return this.isPotionDurationMax;
+         return this.field_100013_f;
      }
 +
 +    /* ======================================== FORGE START =====================================*/
@@ -60,7 +60,7 @@
 +        boolean found = false;
 +        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
 +        {
-+            if (curativeItem.isItemEqual(stack))
++            if (curativeItem.func_77969_a(stack))
 +            {
 +                found = true;
 +            }
@@ -87,7 +87,7 @@
 +        boolean found = false;
 +        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
 +        {
-+            if (curativeItem.isItemEqual(stack))
++            if (curativeItem.func_77969_a(stack))
 +            {
 +                found = true;
 +            }

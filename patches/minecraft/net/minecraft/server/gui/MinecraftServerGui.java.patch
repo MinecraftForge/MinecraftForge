@@ -7,7 +7,7 @@
 +        minecraftservergui.latch.countDown();
      }
  
-     public MinecraftServerGui(DedicatedServer serverIn)
+     public MinecraftServerGui(DedicatedServer p_i2362_1_)
 @@ -162,8 +163,13 @@
          return jpanel;
      }

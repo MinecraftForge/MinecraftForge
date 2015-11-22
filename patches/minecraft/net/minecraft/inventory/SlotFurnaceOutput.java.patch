@@ -4,8 +4,8 @@
  
          this.field_75228_b = 0;
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerSmeltedEvent(thePlayer, stack);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerSmeltedEvent(field_75229_a, p_75208_1_);
 +
-         if (stack.getItem() == Items.iron_ingot)
+         if (p_75208_1_.func_77973_b() == Items.field_151042_j)
          {
-             this.thePlayer.triggerAchievement(AchievementList.acquireIron);
+             this.field_75229_a.func_71029_a(AchievementList.field_76016_k);

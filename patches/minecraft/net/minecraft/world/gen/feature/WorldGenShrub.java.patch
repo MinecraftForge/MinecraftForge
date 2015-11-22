@@ -4,28 +4,28 @@
      {
          Block block;
  
--        while (((block = worldIn.getBlockState(p_180709_3_).getBlock()).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && p_180709_3_.getY() > 0)
+-        while (((block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c()).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_180709_3_.func_177956_o() > 0)
 +        do
          {
-+            block = worldIn.getBlockState(p_180709_3_).getBlock();
-+            if (!block.isAir(worldIn, p_180709_3_) && !block.isLeaves(worldIn, p_180709_3_)) break;
-             p_180709_3_ = p_180709_3_.down();
++            block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c();
++            if (!block.isAir(p_180709_1_, p_180709_3_) && !block.isLeaves(p_180709_1_, p_180709_3_)) break;
+             p_180709_3_ = p_180709_3_.func_177977_b();
 -        }
-+        } while (p_180709_3_.getY() > 0);
++        } while (p_180709_3_.func_177956_o() > 0);
  
-         Block block1 = worldIn.getBlockState(p_180709_3_).getBlock();
+         Block block1 = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c();
  
--        if (block1 == Blocks.dirt || block1 == Blocks.grass)
-+        if (block1.canSustainPlant(worldIn, p_180709_3_, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling)))
+-        if (block1 == Blocks.field_150346_d || block1 == Blocks.field_150349_c)
++        if (block1.canSustainPlant(p_180709_1_, p_180709_3_, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g)))
          {
-             p_180709_3_ = p_180709_3_.up();
-             this.func_175903_a(worldIn, p_180709_3_, this.field_150527_b);
+             p_180709_3_ = p_180709_3_.func_177984_a();
+             this.func_175903_a(p_180709_1_, p_180709_3_, this.field_150527_b);
 @@ -53,7 +55,7 @@
                          {
                              BlockPos blockpos = new BlockPos(l, i, j1);
  
--                            if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
-+                            if (worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
+-                            if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().func_149730_j())
++                            if (p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
                              {
-                                 this.func_175903_a(worldIn, blockpos, this.field_150528_a);
+                                 this.func_175903_a(p_180709_1_, blockpos, this.field_150528_a);
                              }

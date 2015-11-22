@@ -2,28 +2,28 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
 @@ -58,7 +58,7 @@
      {
-         if (!worldIn.isRemote)
+         if (!p_180650_1_.field_72995_K)
          {
--            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity() > 2)
-+            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity(worldIn, pos.up()) > 2)
+-            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_177230_c().func_149717_k() > 2)
++            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_177230_c().getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
              {
-                 worldIn.setBlockState(pos, Blocks.dirt.getDefaultState());
+                 p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
              }
 @@ -72,7 +72,7 @@
-                         Block block = worldIn.getBlockState(blockpos.up()).getBlock();
-                         IBlockState iblockstate = worldIn.getBlockState(blockpos);
+                         Block block = p_180650_1_.func_180495_p(blockpos.func_177984_a()).func_177230_c();
+                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos);
  
--                        if (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && block.getLightOpacity() <= 2)
-+                        if (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && block.getLightOpacity(worldIn, blockpos.up()) <= 2)
+-                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && block.func_149717_k() <= 2)
++                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && block.getLightOpacity(p_180650_1_, blockpos.func_177984_a()) <= 2)
                          {
-                             worldIn.setBlockState(blockpos, Blocks.grass.getDefaultState());
+                             p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
                          }
 @@ -110,7 +110,7 @@
              {
                  if (j >= i / 16)
                  {
--                    if (worldIn.getBlockState(blockpos1).getBlock().blockMaterial == Material.air)
-+                    if (worldIn.isAirBlock(blockpos1))
+-                    if (p_176474_1_.func_180495_p(blockpos1).func_177230_c().field_149764_J == Material.field_151579_a)
++                    if (p_176474_1_.func_175623_d(blockpos1))
                      {
-                         if (rand.nextInt(8) == 0)
+                         if (p_176474_2_.nextInt(8) == 0)
                          {

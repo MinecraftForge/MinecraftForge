@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
 @@ -51,6 +51,7 @@
-     private int borderWarningDistance = 5;
-     private int borderWarningTime = 15;
-     private GameRules theGameRules = new GameRules();
+     private int field_176154_I = 5;
+     private int field_176155_J = 15;
+     private GameRules field_82577_x = new GameRules();
 +    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
  
      protected WorldInfo()

@@ -1,131 +1,131 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
 @@ -49,6 +49,7 @@
-     private Block canPlaceOnCacheBlock;
-     private boolean canPlaceOnCacheResult;
+     private Block field_179550_j;
+     private boolean field_179551_k;
  
 +    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
-     public ItemStack(Block blockIn)
+     public ItemStack(Block p_i1876_1_)
      {
-         this((Block)blockIn, 1);
+         this((Block)p_i1876_1_, 1);
 @@ -80,7 +81,7 @@
-         this.canDestroyCacheResult = false;
-         this.canPlaceOnCacheBlock = null;
-         this.canPlaceOnCacheResult = false;
--        this.item = itemIn;
-+        this.setItem(itemIn);
-         this.stackSize = amount;
-         this.itemDamage = meta;
+         this.field_179553_i = false;
+         this.field_179550_j = null;
+         this.field_179551_k = false;
+-        this.field_151002_e = p_i1881_1_;
++        this.func_150996_a(p_i1881_1_);
+         this.field_77994_a = p_i1881_2_;
+         this.field_77991_e = p_i1881_3_;
  
 @@ -120,11 +121,12 @@
  
-     public Item getItem()
+     public Item func_77973_b()
      {
--        return this.item;
+-        return this.field_151002_e;
 +        return this.delegate != null ? this.delegate.get() : null;
      }
  
-     public boolean onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+     public boolean func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumFacing p_179546_4_, float p_179546_5_, float p_179546_6_, float p_179546_7_)
      {
-+        if (!worldIn.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
-         boolean flag = this.getItem().onItemUse(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
++        if (!p_179546_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
+         boolean flag = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
  
          if (flag)
 @@ -169,11 +171,11 @@
      {
-         if (nbt.hasKey("id", 8))
+         if (p_77963_1_.func_150297_b("id", 8))
          {
--            this.item = Item.getByNameOrId(nbt.getString("id"));
-+            this.setItem(Item.getByNameOrId(nbt.getString("id")));
+-            this.field_151002_e = Item.func_111206_d(p_77963_1_.func_74779_i("id"));
++            this.func_150996_a(Item.func_111206_d(p_77963_1_.func_74779_i("id")));
          }
          else
          {
--            this.item = Item.getItemById(nbt.getShort("id"));
-+            this.setItem(Item.getItemById(nbt.getShort("id")));
+-            this.field_151002_e = Item.func_150899_d(p_77963_1_.func_74765_d("id"));
++            this.func_150996_a(Item.func_150899_d(p_77963_1_.func_74765_d("id")));
          }
  
-         this.stackSize = nbt.getByte("Count");
+         this.field_77994_a = p_77963_1_.func_74771_c("Count");
 @@ -197,7 +199,7 @@
  
-     public int getMaxStackSize()
+     public int func_77976_d()
      {
--        return this.getItem().getItemStackLimit();
-+        return this.getItem().getItemStackLimit(this);
+-        return this.func_77973_b().func_77639_j();
++        return this.func_77973_b().getItemStackLimit(this);
      }
  
-     public boolean isStackable()
+     public boolean func_77985_e()
 @@ -207,7 +209,7 @@
  
-     public boolean isItemStackDamageable()
+     public boolean func_77984_f()
      {
--        return this.item == null ? false : (this.item.getMaxDamage() <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable"));
-+        return this.item == null ? false : (this.item.getMaxDamage(this) <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable"));
+-        return this.field_151002_e == null ? false : (this.field_151002_e.func_77612_l() <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable"));
++        return this.field_151002_e == null ? false : (this.field_151002_e.getMaxDamage(this) <= 0 ? false : !this.func_77942_o() || !this.func_77978_p().func_74767_n("Unbreakable"));
      }
  
-     public boolean getHasSubtypes()
+     public boolean func_77981_g()
 @@ -217,32 +219,27 @@
  
-     public boolean isItemDamaged()
+     public boolean func_77951_h()
      {
--        return this.isItemStackDamageable() && this.itemDamage > 0;
-+        return this.isItemStackDamageable() && getItem().isDamaged(this);
+-        return this.func_77984_f() && this.field_77991_e > 0;
++        return this.func_77984_f() && func_77973_b().isDamaged(this);
      }
  
-     public int getItemDamage()
+     public int func_77952_i()
      {
--        return this.itemDamage;
-+        return getItem().getDamage(this);
+-        return this.field_77991_e;
++        return func_77973_b().getDamage(this);
      }
  
-     public int getMetadata()
+     public int func_77960_j()
      {
--        return this.itemDamage;
-+        return getItem().getMetadata(this);
+-        return this.field_77991_e;
++        return func_77973_b().getMetadata(this);
      }
  
-     public void setItemDamage(int meta)
+     public void func_77964_b(int p_77964_1_)
      {
--        this.itemDamage = meta;
+-        this.field_77991_e = p_77964_1_;
 -
--        if (this.itemDamage < 0)
+-        if (this.field_77991_e < 0)
 -        {
--            this.itemDamage = 0;
+-            this.field_77991_e = 0;
 -        }
-+        getItem().setDamage(this, meta);
++        func_77973_b().setDamage(this, p_77964_1_);
      }
  
-     public int getMaxDamage()
+     public int func_77958_k()
      {
--        return this.item.getMaxDamage();
-+        return this.item.getMaxDamage(this);
+-        return this.field_151002_e.func_77612_l();
++        return this.field_151002_e.getMaxDamage(this);
      }
  
-     public boolean attemptDamageItem(int amount, Random rand)
+     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
 @@ -274,8 +271,8 @@
                  }
              }
  
--            this.itemDamage += amount;
--            return this.itemDamage > this.getMaxDamage();
-+            setItemDamage(getItemDamage() + amount); //Redirect through Item's callback if applicable.
-+            return getItemDamage() > getMaxDamage();
+-            this.field_77991_e += p_96631_1_;
+-            return this.field_77991_e > this.func_77958_k();
++            func_77964_b(func_77952_i() + p_96631_1_); //Redirect through Item's callback if applicable.
++            return func_77952_i() > func_77958_k();
          }
      }
  
 @@ -334,7 +331,7 @@
  
-     public boolean canHarvestBlock(Block blockIn)
+     public boolean func_150998_b(Block p_150998_1_)
      {
--        return this.item.canHarvestBlock(blockIn);
-+        return getItem().canHarvestBlock(blockIn, this);
+-        return this.field_151002_e.func_150897_b(p_150998_1_);
++        return func_77973_b().canHarvestBlock(p_150998_1_, this);
      }
  
-     public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn)
+     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
 @@ -742,6 +739,7 @@
              }
          }
  
-+        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, playerIn, list, advanced);
++        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
          return list;
      }
  
@@ -133,16 +133,16 @@
          }
          else
          {
--            multimap = this.getItem().getItemAttributeModifiers();
-+            multimap = this.getItem().getAttributeModifiers(this);
+-            multimap = this.func_77973_b().func_111205_h();
++            multimap = this.func_77973_b().getAttributeModifiers(this);
          }
  
          return multimap;
 @@ -860,6 +858,7 @@
  
-     public void setItem(Item newItem)
+     public void func_150996_a(Item p_150996_1_)
      {
-+        this.delegate = newItem != null ? newItem.delegate : null;
-         this.item = newItem;
++        this.delegate = p_150996_1_ != null ? p_150996_1_.delegate : null;
+         this.field_151002_e = p_150996_1_;
      }
  

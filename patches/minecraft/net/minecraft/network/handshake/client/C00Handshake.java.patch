@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
 +++ ../src-work/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
 @@ -14,6 +14,7 @@
-     private String ip;
-     private int port;
-     private EnumConnectionState requestedState;
+     private String field_149598_b;
+     private int field_149599_c;
+     private EnumConnectionState field_149597_d;
 +    private boolean hasFMLMarker = false;
  
      public C00Handshake()
      {
 @@ -28,18 +29,26 @@
-         this.requestedState = requestedState;
+         this.field_149597_d = p_i45266_4_;
      }
  
 +    public C00Handshake(int protocol, String address, int port, EnumConnectionState state, boolean addFMLMarker)
@@ -18,27 +18,27 @@
 +        this.hasFMLMarker = addFMLMarker;
 +    }
 +
-     public void readPacketData(PacketBuffer buf) throws IOException
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
      {
-         this.protocolVersion = buf.readVarIntFromBuffer();
-         this.ip = buf.readStringFromBuffer(255);
-         this.port = buf.readUnsignedShort();
-         this.requestedState = EnumConnectionState.getById(buf.readVarIntFromBuffer());
-+        this.hasFMLMarker = this.ip.contains("\0FML\0");
-+        this.ip = this.ip.split("\0")[0];
+         this.field_149600_a = p_148837_1_.func_150792_a();
+         this.field_149598_b = p_148837_1_.func_150789_c(255);
+         this.field_149599_c = p_148837_1_.readUnsignedShort();
+         this.field_149597_d = EnumConnectionState.func_150760_a(p_148837_1_.func_150792_a());
++        this.hasFMLMarker = this.field_149598_b.contains("\0FML\0");
++        this.field_149598_b = this.field_149598_b.split("\0")[0];
      }
  
-     public void writePacketData(PacketBuffer buf) throws IOException
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
-         buf.writeVarIntToBuffer(this.protocolVersion);
--        buf.writeString(this.ip);
-+        buf.writeString(this.ip + "\0FML\0");
-         buf.writeShort(this.port);
-         buf.writeVarIntToBuffer(this.requestedState.getId());
+         p_148840_1_.func_150787_b(this.field_149600_a);
+-        p_148840_1_.func_180714_a(this.field_149598_b);
++        p_148840_1_.func_180714_a(this.field_149598_b + "\0FML\0");
+         p_148840_1_.writeShort(this.field_149599_c);
+         p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
      }
 @@ -58,4 +67,9 @@
      {
-         return this.protocolVersion;
+         return this.field_149600_a;
      }
 +
 +    public boolean hasFMLMarker()

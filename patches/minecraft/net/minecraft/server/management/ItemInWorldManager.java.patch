@@ -6,141 +6,141 @@
  {
 +    /** Forge reach distance */
 +    private double blockReachDistance = 5.0d;
-     public World theWorld;
-     public EntityPlayerMP thisPlayerMP;
-     private WorldSettings.GameType gameType = WorldSettings.GameType.NOT_SET;
+     public World field_73092_a;
+     public EntityPlayerMP field_73090_b;
+     private WorldSettings.GameType field_73091_c = WorldSettings.GameType.NOT_SET;
 @@ -130,6 +132,14 @@
  
-     public void onBlockClicked(BlockPos pos, EnumFacing side)
+     public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
-+        net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(thisPlayerMP,
-+                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, theWorld, pos, side);
++        net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_73090_b,
++                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, field_73092_a, p_180784_1_, p_180784_2_);
 +        if (event.isCanceled())
 +        {
-+            thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(theWorld, pos));
++            field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180784_1_));
 +            return;
 +        }
 +
-         if (this.isCreative())
+         if (this.func_73083_d())
          {
-             if (!this.theWorld.extinguishFire((EntityPlayer)null, pos, side))
+             if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
 @@ -164,18 +174,35 @@
                  }
              }
  
--            this.theWorld.extinguishFire((EntityPlayer)null, pos, side);
+-            this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_);
 +            //
-             this.initialDamage = this.curblockDamage;
+             this.field_73089_e = this.field_73100_i;
              float f = 1.0F;
  
--            if (block.getMaterial() != Material.air)
-+            if (!block.isAir(theWorld, pos))
+-            if (block.func_149688_o() != Material.field_151579_a)
++            if (!block.isAir(field_73092_a, p_180784_1_))
              {
--                block.onBlockClicked(this.theWorld, pos, this.thisPlayerMP);
+-                block.func_180649_a(this.field_73092_a, p_180784_1_, this.field_73090_b);
 +                if (event.useBlock != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +                {
-+                    block.onBlockClicked(this.theWorld, pos, this.thisPlayerMP);
-+                    this.theWorld.extinguishFire((EntityPlayer)null, pos, side);
++                    block.func_180649_a(this.field_73092_a, p_180784_1_, this.field_73090_b);
++                    this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_);
 +                }
 +                else
 +                {
-+                    thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(theWorld, pos));
++                    field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180784_1_));
 +                }
-                 f = block.getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, pos);
+                 f = block.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180784_1_);
              }
  
--            if (block.getMaterial() != Material.air && f >= 1.0F)
+-            if (block.func_149688_o() != Material.field_151579_a && f >= 1.0F)
 +            if (event.useItem == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
              {
 +                if (f >= 1.0F)
 +                {
-+                    thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(theWorld, pos));
++                    field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180784_1_));
 +                }
 +                return;
 +            }
 +
-+            if (!block.isAir(theWorld, pos) && f >= 1.0F)
++            if (!block.isAir(field_73092_a, p_180784_1_) && f >= 1.0F)
 +            {
-                 this.tryHarvestBlock(pos);
+                 this.func_180237_b(p_180784_1_);
              }
              else
 @@ -196,7 +223,7 @@
-             int i = this.curblockDamage - this.initialDamage;
-             Block block = this.theWorld.getBlockState(pos).getBlock();
+             int i = this.field_73100_i - this.field_73089_e;
+             Block block = this.field_73092_a.func_180495_p(p_180785_1_).func_177230_c();
  
--            if (block.getMaterial() != Material.air)
-+            if (!block.isAir(theWorld, pos))
+-            if (block.func_149688_o() != Material.field_151579_a)
++            if (!block.isAir(field_73092_a, p_180785_1_))
              {
-                 float f = block.getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, pos) * (float)(i + 1);
+                 float f = block.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
 @@ -225,9 +252,13 @@
  
-     private boolean removeBlock(BlockPos pos)
+     private boolean func_180235_c(BlockPos p_180235_1_)
      {
-+        return removeBlock(pos, false);
++        return removeBlock(p_180235_1_, false);
 +    }
-+    private boolean removeBlock(BlockPos pos, boolean canHarvest)
++    private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest)
 +    {
-         IBlockState iblockstate = this.theWorld.getBlockState(pos);
-         iblockstate.getBlock().onBlockHarvested(this.theWorld, pos, iblockstate, this.thisPlayerMP);
--        boolean flag = this.theWorld.setBlockToAir(pos);
-+        boolean flag = iblockstate.getBlock().removedByPlayer(theWorld, pos, thisPlayerMP, canHarvest);
+         IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180235_1_);
+         iblockstate.func_177230_c().func_176208_a(this.field_73092_a, p_180235_1_, iblockstate, this.field_73090_b);
+-        boolean flag = this.field_73092_a.func_175698_g(p_180235_1_);
++        boolean flag = iblockstate.func_177230_c().removedByPlayer(field_73092_a, p_180235_1_, field_73090_b, canHarvest);
  
          if (flag)
          {
 @@ -239,7 +270,8 @@
  
-     public boolean tryHarvestBlock(BlockPos pos)
+     public boolean func_180237_b(BlockPos p_180237_1_)
      {
--        if (this.gameType.isCreative() && this.thisPlayerMP.getHeldItem() != null && this.thisPlayerMP.getHeldItem().getItem() instanceof ItemSword)
-+        int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(theWorld, gameType, thisPlayerMP, pos);
+-        if (this.field_73091_c.func_77145_d() && this.field_73090_b.func_70694_bm() != null && this.field_73090_b.func_70694_bm().func_77973_b() instanceof ItemSword)
++        int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(field_73092_a, field_73091_c, field_73090_b, p_180237_1_);
 +        if (exp == -1)
          {
              return false;
          }
 @@ -248,40 +280,21 @@
-             IBlockState iblockstate = this.theWorld.getBlockState(pos);
-             TileEntity tileentity = this.theWorld.getTileEntity(pos);
+             IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180237_1_);
+             TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
  
--            if (this.gameType.isAdventure())
+-            if (this.field_73091_c.func_82752_c())
 -            {
--                if (this.gameType == WorldSettings.GameType.SPECTATOR)
+-                if (this.field_73091_c == WorldSettings.GameType.SPECTATOR)
 -                {
 -                    return false;
 -                }
-+            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
-+            if (stack != null && stack.getItem().onBlockStartBreak(stack, pos, thisPlayerMP)) return false;
++            ItemStack stack = field_73090_b.func_71045_bC();
++            if (stack != null && stack.func_77973_b().onBlockStartBreak(stack, p_180237_1_, field_73090_b)) return false;
  
--                if (!this.thisPlayerMP.isAllowEdit())
+-                if (!this.field_73090_b.func_175142_cm())
 -                {
--                    ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
+-                    ItemStack itemstack = this.field_73090_b.func_71045_bC();
 -
 -                    if (itemstack == null)
 -                    {
 -                        return false;
 -                    }
 -
--                    if (!itemstack.canDestroy(iblockstate.getBlock()))
+-                    if (!itemstack.func_179544_c(iblockstate.func_177230_c()))
 -                    {
 -                        return false;
 -                    }
 -                }
 -            }
 -
-             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, pos, Block.getStateId(iblockstate));
--            boolean flag1 = this.removeBlock(pos);
+             this.field_73092_a.func_180498_a(this.field_73090_b, 2001, p_180237_1_, Block.func_176210_f(iblockstate));
+-            boolean flag1 = this.func_180235_c(p_180237_1_);
 +            boolean flag1 = false;
  
-             if (this.isCreative())
+             if (this.func_73083_d())
              {
-+                flag1 = this.removeBlock(pos);
-                 this.thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(this.theWorld, pos));
++                flag1 = this.func_180235_c(p_180237_1_);
+                 this.field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(this.field_73092_a, p_180237_1_));
              }
              else
              {
-                 ItemStack itemstack1 = this.thisPlayerMP.getCurrentEquippedItem();
--                boolean flag = this.thisPlayerMP.canHarvestBlock(iblockstate.getBlock());
-+                boolean flag = iblockstate.getBlock().canHarvestBlock(theWorld, pos, thisPlayerMP);
+                 ItemStack itemstack1 = this.field_73090_b.func_71045_bC();
+-                boolean flag = this.field_73090_b.func_146099_a(iblockstate.func_177230_c());
++                boolean flag = iblockstate.func_177230_c().canHarvestBlock(field_73092_a, p_180237_1_, field_73090_b);
  
                  if (itemstack1 != null)
                  {
@@ -148,94 +148,94 @@
                      }
                  }
  
-+                flag1 = this.removeBlock(pos, flag);
++                flag1 = this.removeBlock(p_180237_1_, flag);
                  if (flag1 && flag)
                  {
-                     iblockstate.getBlock().harvestBlock(this.theWorld, this.thisPlayerMP, pos, iblockstate, tileentity);
+                     iblockstate.func_177230_c().func_180657_a(this.field_73092_a, this.field_73090_b, p_180237_1_, iblockstate, tileentity);
                  }
              }
  
 +            // Drop experiance
-+            if (!this.isCreative() && flag1 && exp > 0)
++            if (!this.func_73083_d() && flag1 && exp > 0)
 +            {
-+                iblockstate.getBlock().dropXpOnBlockBreak(theWorld, pos, exp);
++                iblockstate.func_177230_c().func_180637_b(field_73092_a, p_180237_1_, exp);
 +            }
              return flag1;
          }
      }
 @@ -332,6 +351,7 @@
-                 if (itemstack.stackSize == 0)
+                 if (itemstack.field_77994_a == 0)
                  {
-                     player.inventory.mainInventory[player.inventory.currentItem] = null;
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, itemstack);
+                     p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_73085_1_, itemstack);
                  }
  
-                 if (!player.isUsingItem())
+                 if (!p_73085_1_.func_71039_bw())
 @@ -380,33 +400,51 @@
          }
          else
          {
--            if (!player.isSneaking() || player.getHeldItem() == null)
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(player,
-+                    net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, worldIn, pos, side);
+-            if (!p_180236_1_.func_70093_af() || p_180236_1_.func_70694_bm() == null)
++            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(p_180236_1_,
++                    net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, p_180236_2_, p_180236_4_, p_180236_5_);
 +            if (event.isCanceled())
              {
--                IBlockState iblockstate = worldIn.getBlockState(pos);
+-                IBlockState iblockstate = p_180236_2_.func_180495_p(p_180236_4_);
 -
--                if (iblockstate.getBlock().onBlockActivated(worldIn, pos, iblockstate, player, side, p_180236_6_, p_180236_7_, p_180236_8_))
+-                if (iblockstate.func_177230_c().func_180639_a(p_180236_2_, p_180236_4_, iblockstate, p_180236_1_, p_180236_5_, p_180236_6_, p_180236_7_, p_180236_8_))
 -                {
 -                    return true;
 -                }
-+                thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(theWorld, pos));
++                field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180236_4_));
 +                return false;
              }
  
--            if (stack == null)
-+            if (stack != null && stack.getItem().onItemUseFirst(stack, player, worldIn, pos, side, p_180236_6_, p_180236_7_, p_180236_8_))
+-            if (p_180236_3_ == null)
++            if (p_180236_3_ != null && p_180236_3_.func_77973_b().onItemUseFirst(p_180236_3_, p_180236_1_, p_180236_2_, p_180236_4_, p_180236_5_, p_180236_6_, p_180236_7_, p_180236_8_))
              {
 -                return false;
-+                if (stack.stackSize <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, stack);
++                if (p_180236_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(field_73090_b, p_180236_3_);
 +                return true;
              }
--            else if (this.isCreative())
+-            else if (this.func_73083_d())
 +
-+            IBlockState iblockstate = worldIn.getBlockState(pos);
-+            boolean isAir = worldIn.isAirBlock(pos);
-+            boolean useBlock = !player.isSneaking() || player.getHeldItem() == null;
-+            if (!useBlock) useBlock = player.getHeldItem().getItem().doesSneakBypassUse(worldIn, pos, player);
++            IBlockState iblockstate = p_180236_2_.func_180495_p(p_180236_4_);
++            boolean isAir = p_180236_2_.func_175623_d(p_180236_4_);
++            boolean useBlock = !p_180236_1_.func_70093_af() || p_180236_1_.func_70694_bm() == null;
++            if (!useBlock) useBlock = p_180236_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_180236_2_, p_180236_4_, p_180236_1_);
 +            boolean result = false;
 +
 +            if (useBlock)
              {
--                int j = stack.getMetadata();
--                int i = stack.stackSize;
--                boolean flag = stack.onItemUse(player, worldIn, pos, side, p_180236_6_, p_180236_7_, p_180236_8_);
--                stack.setItemDamage(j);
--                stack.stackSize = i;
+-                int j = p_180236_3_.func_77960_j();
+-                int i = p_180236_3_.field_77994_a;
+-                boolean flag = p_180236_3_.func_179546_a(p_180236_1_, p_180236_2_, p_180236_4_, p_180236_5_, p_180236_6_, p_180236_7_, p_180236_8_);
+-                p_180236_3_.func_77964_b(j);
+-                p_180236_3_.field_77994_a = i;
 -                return flag;
 +                if (event.useBlock != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +                {
-+                    result = iblockstate.getBlock().onBlockActivated(worldIn, pos, iblockstate, player, side, p_180236_6_, p_180236_7_, p_180236_8_);
++                    result = iblockstate.func_177230_c().func_180639_a(p_180236_2_, p_180236_4_, iblockstate, p_180236_1_, p_180236_5_, p_180236_6_, p_180236_7_, p_180236_8_);
 +                }
 +                else
 +                {
-+                    thisPlayerMP.playerNetServerHandler.sendPacket(new S23PacketBlockChange(theWorld, pos));
++                    field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180236_4_));
 +                    result = event.useItem != net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW;
 +                }
              }
 -            else
-+            if (stack != null && !result && event.useItem != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++            if (p_180236_3_ != null && !result && event.useItem != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
              {
--                return stack.onItemUse(player, worldIn, pos, side, p_180236_6_, p_180236_7_, p_180236_8_);
-+                int meta = stack.getMetadata();
-+                int size = stack.stackSize;
-+                result = stack.onItemUse(player, worldIn, pos, side, p_180236_6_, p_180236_7_, p_180236_8_);
-+                if (isCreative())
+-                return p_180236_3_.func_179546_a(p_180236_1_, p_180236_2_, p_180236_4_, p_180236_5_, p_180236_6_, p_180236_7_, p_180236_8_);
++                int meta = p_180236_3_.func_77960_j();
++                int size = p_180236_3_.field_77994_a;
++                result = p_180236_3_.func_179546_a(p_180236_1_, p_180236_2_, p_180236_4_, p_180236_5_, p_180236_6_, p_180236_7_, p_180236_8_);
++                if (func_73083_d())
 +                {
-+                    stack.setItemDamage(meta);
-+                    stack.stackSize = size;
++                    p_180236_3_.func_77964_b(meta);
++                    p_180236_3_.field_77994_a = size;
 +                }
-+                if (stack.stackSize <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, stack);
++                if (p_180236_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(field_73090_b, p_180236_3_);
              }
 +            return result;
          }
@@ -243,7 +243,7 @@
  
 @@ -414,4 +452,13 @@
      {
-         this.theWorld = serverWorld;
+         this.field_73092_a = p_73080_1_;
      }
 +
 +    public double getBlockReachDistance()

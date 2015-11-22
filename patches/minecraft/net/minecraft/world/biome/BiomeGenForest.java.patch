@@ -1,5 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
+@@ -188,9 +188,9 @@
+         {
+             return this.field_76756_M != BiomeGenBase.field_150583_P.field_76756_M && this.field_76756_M != BiomeGenBase.field_150582_Q.field_76756_M ? new BiomeGenMutated(p_180277_1_, this)
+             {
+-                public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
++                public void func_180624_a(World worldIn, Random p_180624_2_, BlockPos p_180624_3_)
+                 {
+-                    this.field_150611_aD.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
++                    this.field_150611_aD.func_180624_a(worldIn, p_180624_2_, p_180624_3_);
+                 }
+             }: new BiomeGenMutated(p_180277_1_, this)
+             {
 @@ -201,4 +201,20 @@
              };
          }
@@ -15,9 +27,9 @@
 +        }
 +        for (BlockFlower.EnumFlowerType type : BlockFlower.EnumFlowerType.values())
 +        {
-+            if (type.getBlockType() == BlockFlower.EnumFlowerColor.YELLOW) continue;
++            if (type.func_176964_a() == BlockFlower.EnumFlowerColor.YELLOW) continue;
 +            if (type == BlockFlower.EnumFlowerType.BLUE_ORCHID) type = BlockFlower.EnumFlowerType.POPPY;
-+            addFlower(net.minecraft.init.Blocks.red_flower.getDefaultState().withProperty(net.minecraft.init.Blocks.red_flower.getTypeProperty(), type), 10);
++            addFlower(net.minecraft.init.Blocks.field_150328_O.func_176223_P().func_177226_a(net.minecraft.init.Blocks.field_150328_O.func_176494_l(), type), 10);
 +        }
 +    }
  }

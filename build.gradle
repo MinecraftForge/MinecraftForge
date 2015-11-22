@@ -50,8 +50,8 @@ minecraft {
             patchDir "patches/minecraft"
             patchAfter "clean"
             genPatchesFrom "clean"
-            genMcpPatches = true
-            applyMcpPatches = true
+            genMcpPatches = false
+            applyMcpPatches = false
             with common
         }
     }

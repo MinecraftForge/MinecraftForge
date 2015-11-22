@@ -7,4 +7,4 @@
 -@SideOnly(Side.CLIENT)
  public abstract class ModelBase
  {
-     public float swingProgress;
+     public float field_78095_p;

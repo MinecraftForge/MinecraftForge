@@ -2,62 +2,62 @@
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
 @@ -51,26 +51,12 @@
  
-     protected void registerWorldChunkManager()
+     protected void func_76572_b()
      {
--        WorldType worldtype = this.worldObj.getWorldInfo().getTerrainType();
+-        WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
 -
--        if (worldtype == WorldType.FLAT)
+-        if (worldtype == WorldType.field_77138_c)
 -        {
--            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.createFlatGeneratorFromString(this.worldObj.getWorldInfo().getGeneratorOptions());
--            this.worldChunkMgr = new WorldChunkManagerHell(BiomeGenBase.getBiomeFromBiomeList(flatgeneratorinfo.getBiome(), BiomeGenBase.field_180279_ad), 0.5F);
+-            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.func_180276_a(flatgeneratorinfo.func_82648_a(), BiomeGenBase.field_180279_ad), 0.5F);
 -        }
--        else if (worldtype == WorldType.DEBUG_WORLD)
+-        else if (worldtype == WorldType.field_180272_g)
 -        {
--            this.worldChunkMgr = new WorldChunkManagerHell(BiomeGenBase.plains, 0.0F);
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76772_c, 0.0F);
 -        }
 -        else
 -        {
--            this.worldChunkMgr = new WorldChunkManager(this.worldObj);
+-            this.field_76578_c = new WorldChunkManager(this.field_76579_a);
 -        }
-+        this.worldChunkMgr = terrainType.getChunkManager(worldObj);
++        this.field_76578_c = field_76577_b.getChunkManager(field_76579_a);
      }
  
-     public IChunkProvider createChunkGenerator()
+     public IChunkProvider func_76555_c()
      {
--        return (IChunkProvider)(this.terrainType == WorldType.FLAT ? new ChunkProviderFlat(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled(), this.generatorSettings) : (this.terrainType == WorldType.DEBUG_WORLD ? new ChunkProviderDebug(this.worldObj) : (this.terrainType == WorldType.CUSTOMIZED ? new ChunkProviderGenerate(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled(), this.generatorSettings) : new ChunkProviderGenerate(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled(), this.generatorSettings))));
-+        return terrainType.getChunkGenerator(worldObj, generatorSettings);
+-        return (IChunkProvider)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
++        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
      }
  
-     public boolean canCoordinateBeSpawn(int x, int z)
+     public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
 @@ -153,13 +139,13 @@
  
-     public static WorldProvider getProviderForDimension(int dimension)
+     public static WorldProvider func_76570_a(int p_76570_0_)
      {
--        return (WorldProvider)(dimension == -1 ? new WorldProviderHell() : (dimension == 0 ? new WorldProviderSurface() : (dimension == 1 ? new WorldProviderEnd() : null)));
-+        return net.minecraftforge.common.DimensionManager.createProviderFor(dimension);
+-        return (WorldProvider)(p_76570_0_ == -1 ? new WorldProviderHell() : (p_76570_0_ == 0 ? new WorldProviderSurface() : (p_76570_0_ == 1 ? new WorldProviderEnd() : null)));
++        return net.minecraftforge.common.DimensionManager.createProviderFor(p_76570_0_);
      }
  
      @SideOnly(Side.CLIENT)
-     public float getCloudHeight()
+     public float func_76571_f()
      {
 -        return 128.0F;
-+        return this.terrainType.getCloudHeight();
++        return this.field_76577_b.getCloudHeight();
      }
  
      @SideOnly(Side.CLIENT)
 @@ -175,13 +161,13 @@
  
-     public int getAverageGroundLevel()
+     public int func_76557_i()
      {
--        return this.terrainType == WorldType.FLAT ? 4 : this.worldObj.func_181545_F() + 1;
-+        return this.terrainType.getMinimumSpawnHeight(this.worldObj);
+-        return this.field_76577_b == WorldType.field_77138_c ? 4 : this.field_76579_a.func_181545_F() + 1;
++        return this.field_76577_b.getMinimumSpawnHeight(this.field_76579_a);
      }
  
      @SideOnly(Side.CLIENT)
-     public double getVoidFogYFactor()
+     public double func_76565_k()
      {
--        return this.terrainType == WorldType.FLAT ? 1.0D : 0.03125D;
-+        return this.terrainType.voidFadeMagnitude();
+-        return this.field_76577_b == WorldType.field_77138_c ? 1.0D : 0.03125D;
++        return this.field_76577_b.voidFadeMagnitude();
      }
  
      @SideOnly(Side.CLIENT)
@@ -79,7 +79,7 @@
 +     */
 +    public void setDimension(int dim)
 +    {
-+        this.dimensionId = dim;
++        this.field_76574_g = dim;
 +    }
 +
 +    /**
@@ -89,7 +89,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (dimensionId == 0 ? null : "DIM" + dimensionId);
++        return (field_76574_g == 0 ? null : "DIM" + field_76574_g);
 +    }
 +
 +    /**
@@ -181,18 +181,18 @@
 +
 +    public BlockPos getRandomizedSpawnPoint()
 +    {
-+        BlockPos ret = this.worldObj.getSpawnPoint();
++        BlockPos ret = this.field_76579_a.func_175694_M();
 +
-+        boolean isAdventure = worldObj.getWorldInfo().getGameType() == WorldSettings.GameType.ADVENTURE;
-+        int spawnFuzz = terrainType.getSpawnFuzz();
-+        int border = MathHelper.floor_double(worldObj.getWorldBorder().getClosestDistance(ret.getX(), ret.getZ()));
++        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == WorldSettings.GameType.ADVENTURE;
++        int spawnFuzz = field_76577_b.getSpawnFuzz();
++        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
 +        if (border < spawnFuzz) spawnFuzz = border;
 +        if (spawnFuzz < 1) spawnFuzz = 1;
 +        int spawnFuzzHalf = spawnFuzz / 2;
 +
-+        if (!getHasNoSky() && !isAdventure)
++        if (!func_177495_o() && !isAdventure)
 +        {
-+            ret = worldObj.getTopSolidOrLiquidBlock(ret.add(worldObj.rand.nextInt(spawnFuzzHalf) - spawnFuzz, 0, worldObj.rand.nextInt(spawnFuzzHalf) - spawnFuzz));
++            ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz));
 +        }
 +
 +        return ret;
@@ -208,7 +208,7 @@
 +     */
 +    public boolean shouldMapSpin(String entity, double x, double y, double z)
 +    {
-+        return dimensionId < 0;
++        return field_76574_g < 0;
 +    }
 +
 +    /**
@@ -226,12 +226,12 @@
 +
 +    public BiomeGenBase getBiomeGenForCoords(BlockPos pos)
 +    {
-+        return worldObj.getBiomeGenForCoordsBody(pos);
++        return field_76579_a.getBiomeGenForCoordsBody(pos);
 +    }
 +
 +    public boolean isDaytime()
 +    {
-+        return worldObj.getSkylightSubtracted() < 4;
++        return field_76579_a.func_175657_ab() < 4;
 +    }
 +
 +    /**
@@ -244,7 +244,7 @@
 +     * */
 +    public float getSunBrightnessFactor(float par1)
 +    {
-+        return worldObj.getSunBrightnessFactor(par1);
++        return field_76579_a.getSunBrightnessFactor(par1);
 +    }
 +
 +    /**
@@ -254,19 +254,19 @@
 +     * */
 +    public float getCurrentMoonPhaseFactor()
 +    {
-+        return worldObj.getCurrentMoonPhaseFactorBody();
++        return field_76579_a.getCurrentMoonPhaseFactorBody();
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
 +    {
-+        return worldObj.getSkyColorBody(cameraEntity, partialTicks);
++        return field_76579_a.getSkyColorBody(cameraEntity, partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 drawClouds(float partialTicks)
 +    {
-+        return worldObj.drawCloudsBody(partialTicks);
++        return field_76579_a.drawCloudsBody(partialTicks);
 +    }
 +
 +    /**
@@ -275,7 +275,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public float getSunBrightness(float par1)
 +    {
-+        return worldObj.getSunBrightnessBody(par1);
++        return field_76579_a.getSunBrightnessBody(par1);
 +    }
 +
 +    /**
@@ -284,68 +284,68 @@
 +    @SideOnly(Side.CLIENT)
 +    public float getStarBrightness(float par1)
 +    {
-+        return worldObj.getStarBrightnessBody(par1);
++        return field_76579_a.getStarBrightnessBody(par1);
 +    }
 +
 +    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
 +    {
-+        worldObj.spawnHostileMobs = allowHostile;
-+        worldObj.spawnPeacefulMobs = allowPeaceful;
++        field_76579_a.field_72985_G = allowHostile;
++        field_76579_a.field_72992_H = allowPeaceful;
 +    }
 +
 +    public void calculateInitialWeather()
 +    {
-+        worldObj.calculateInitialWeatherBody();
++        field_76579_a.calculateInitialWeatherBody();
 +    }
 +
 +    public void updateWeather()
 +    {
-+        worldObj.updateWeatherBody();
++        field_76579_a.updateWeatherBody();
 +    }
 +
 +    public boolean canBlockFreeze(BlockPos pos, boolean byWater)
 +    {
-+        return worldObj.canBlockFreezeBody(pos, byWater);
++        return field_76579_a.canBlockFreezeBody(pos, byWater);
 +    }
 +
 +    public boolean canSnowAt(BlockPos pos, boolean checkLight)
 +    {
-+        return worldObj.canSnowAtBody(pos, checkLight);
++        return field_76579_a.canSnowAtBody(pos, checkLight);
 +    }
 +    public void setWorldTime(long time)
 +    {
-+        worldObj.worldInfo.setWorldTime(time);
++        field_76579_a.field_72986_A.func_76068_b(time);
 +    }
 +
 +    public long getSeed()
 +    {
-+        return worldObj.worldInfo.getSeed();
++        return field_76579_a.field_72986_A.func_76063_b();
 +    }
 +
 +    public long getWorldTime()
 +    {
-+        return worldObj.worldInfo.getWorldTime();
++        return field_76579_a.field_72986_A.func_76073_f();
 +    }
 +
 +    public BlockPos getSpawnPoint()
 +    {
-+        net.minecraft.world.storage.WorldInfo info = worldObj.worldInfo;
-+        return new BlockPos(info.getSpawnX(), info.getSpawnY(), info.getSpawnZ());
++        net.minecraft.world.storage.WorldInfo info = field_76579_a.field_72986_A;
++        return new BlockPos(info.func_76079_c(), info.func_76075_d(), info.func_76074_e());
 +    }
 +
 +    public void setSpawnPoint(BlockPos pos)
 +    {
-+        worldObj.worldInfo.setSpawn(pos);
++        field_76579_a.field_72986_A.func_176143_a(pos);
 +    }
 +
 +    public boolean canMineBlock(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
 +    {
-+        return worldObj.canMineBlockBody(player, pos);
++        return field_76579_a.canMineBlockBody(player, pos);
 +    }
 +
 +    public boolean isBlockHighHumidity(BlockPos pos)
 +    {
-+        return worldObj.getBiomeGenForCoords(pos).isHighHumidity();
++        return field_76579_a.func_180494_b(pos).func_76736_e();
 +    }
 +
 +    public int getHeight()
@@ -355,20 +355,20 @@
 +
 +    public int getActualHeight()
 +    {
-+        return hasNoSky ? 128 : 256;
++        return field_76576_e ? 128 : 256;
 +    }
 +
 +    public double getHorizon()
 +    {
-+        return worldObj.worldInfo.getTerrainType().getHorizon(worldObj);
++        return field_76579_a.field_72986_A.func_76067_t().getHorizon(field_76579_a);
 +    }
 +
 +    public void resetRainAndThunder()
 +    {
-+        worldObj.worldInfo.setRainTime(0);
-+        worldObj.worldInfo.setRaining(false);
-+        worldObj.worldInfo.setThunderTime(0);
-+        worldObj.worldInfo.setThundering(false);
++        field_76579_a.field_72986_A.func_76080_g(0);
++        field_76579_a.field_72986_A.func_76084_b(false);
++        field_76579_a.field_72986_A.func_76090_f(0);
++        field_76579_a.field_72986_A.func_76069_a(false);
 +    }
 +
 +    public boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)

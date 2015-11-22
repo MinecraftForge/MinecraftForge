@@ -10,19 +10,19 @@
  public enum EnumFacing implements IStringSerializable
  {
 @@ -60,7 +58,6 @@
-         return getFront(this.opposite);
+         return func_82600_a(this.field_176759_h);
      }
  
 -    @SideOnly(Side.CLIENT)
-     public EnumFacing rotateAround(EnumFacing.Axis axis)
+     public EnumFacing func_176732_a(EnumFacing.Axis p_176732_1_)
      {
-         switch (axis)
+         switch (p_176732_1_)
 @@ -111,7 +108,6 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
-     private EnumFacing rotateX()
+     private EnumFacing func_176744_n()
      {
          switch (this)
 @@ -131,7 +127,6 @@
@@ -30,23 +30,23 @@
      }
  
 -    @SideOnly(Side.CLIENT)
-     private EnumFacing rotateZ()
+     private EnumFacing func_176738_p()
      {
          switch (this)
 @@ -192,7 +187,6 @@
-         return this.axis;
+         return this.field_176758_k;
      }
  
 -    @SideOnly(Side.CLIENT)
-     public static EnumFacing byName(String name)
+     public static EnumFacing func_176739_a(String p_176739_0_)
      {
-         return name == null ? null : (EnumFacing)NAME_LOOKUP.get(name.toLowerCase());
+         return p_176739_0_ == null ? null : (EnumFacing)field_176761_p.get(p_176739_0_.toLowerCase());
 @@ -218,7 +212,6 @@
-         return values()[rand.nextInt(values().length)];
+         return values()[p_176741_0_.nextInt(values().length)];
      }
  
 -    @SideOnly(Side.CLIENT)
-     public static EnumFacing getFacingFromVector(float p_176737_0_, float p_176737_1_, float p_176737_2_)
+     public static EnumFacing func_176737_a(float p_176737_0_, float p_176737_1_, float p_176737_2_)
      {
          EnumFacing enumfacing = NORTH;
 @@ -261,7 +254,6 @@
@@ -54,14 +54,14 @@
      }
  
 -    @SideOnly(Side.CLIENT)
-     public Vec3i getDirectionVec()
+     public Vec3i func_176730_m()
      {
-         return this.directionVec;
+         return this.field_176756_m;
 @@ -297,7 +289,6 @@
-             this.plane = plane;
+             this.field_176723_f = p_i46015_4_;
          }
  
 -        @SideOnly(Side.CLIENT)
-         public static EnumFacing.Axis byName(String name)
+         public static EnumFacing.Axis func_176717_a(String p_176717_0_)
          {
-             return name == null ? null : (EnumFacing.Axis)NAME_LOOKUP.get(name.toLowerCase());
+             return p_176717_0_ == null ? null : (EnumFacing.Axis)field_176725_d.get(p_176717_0_.toLowerCase());

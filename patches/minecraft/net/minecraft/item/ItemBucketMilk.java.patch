@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
 @@ -23,7 +23,7 @@
  
-         if (!worldIn.isRemote)
+         if (!p_77654_2_.field_72995_K)
          {
--            playerIn.clearActivePotions();
-+            playerIn.curePotionEffects(stack);
+-            p_77654_3_.func_70674_bp();
++            p_77654_3_.curePotionEffects(p_77654_1_);
          }
  
-         playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
+         p_77654_3_.func_71029_a(StatList.field_75929_E[Item.func_150891_b(this)]);

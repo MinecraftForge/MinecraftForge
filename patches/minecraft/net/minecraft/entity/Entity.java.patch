@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
 @@ -129,6 +129,14 @@
-     protected UUID entityUniqueID;
-     private final CommandResultStats cmdResultStats;
+     protected UUID field_96093_i;
+     private final CommandResultStats field_174837_as;
  
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -12,41 +12,41 @@
 +
 +    protected java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties> extendedProperties = new java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties>();
 +
-     public int getEntityId()
+     public int func_145782_y()
      {
-         return this.entityId;
+         return this.field_145783_c;
 @@ -172,6 +180,8 @@
-         this.dataWatcher.addObject(2, "");
-         this.dataWatcher.addObject(4, Byte.valueOf((byte)0));
-         this.entityInit();
+         this.field_70180_af.func_75682_a(2, "");
+         this.field_70180_af.func_75682_a(4, Byte.valueOf((byte)0));
+         this.func_70088_a();
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, worldIn);
++        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, p_i1582_1_);
      }
  
-     protected abstract void entityInit();
+     protected abstract void func_70088_a();
 @@ -998,10 +1008,7 @@
  
-         if (block.getMaterial() == materialIn)
+         if (block.func_149688_o() == p_70055_1_)
          {
--            float f = BlockLiquid.getLiquidHeightPercent(iblockstate.getBlock().getMetaFromState(iblockstate)) - 0.11111111F;
--            float f1 = (float)(blockpos.getY() + 1) - f;
+-            float f = BlockLiquid.func_149801_b(iblockstate.func_177230_c().func_176201_c(iblockstate)) - 0.11111111F;
+-            float f1 = (float)(blockpos.func_177956_o() + 1) - f;
 -            boolean flag = d0 < (double)f1;
 -            return !flag && this instanceof EntityPlayer ? false : flag;
-+            return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(materialIn, this, blockpos);
++            return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(p_70055_1_, this, blockpos);
          }
          else
          {
 @@ -1356,6 +1363,21 @@
-                 tagCompund.setBoolean("Silent", this.isSilent());
+                 p_70109_1_.func_74757_a("Silent", this.func_174814_R());
              }
  
-+            if (customEntityData != null) tagCompund.setTag("ForgeData", customEntityData);
++            if (customEntityData != null) p_70109_1_.func_74782_a("ForgeData", customEntityData);
 +            for (String identifier : this.extendedProperties.keySet())
 +            {
 +                try
 +                {
 +                    net.minecraftforge.common.IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.saveNBTData(tagCompund);
++                    props.saveNBTData(p_70109_1_);
 +                }
 +                catch (Throwable t)
 +                {
@@ -55,21 +55,21 @@
 +                }
 +            }
 +
-             this.writeEntityToNBT(tagCompund);
+             this.func_70014_b(p_70109_1_);
  
-             if (this.ridingEntity != null)
+             if (this.field_70154_o != null)
 @@ -1438,6 +1460,28 @@
-             this.setAlwaysRenderNameTag(tagCompund.getBoolean("CustomNameVisible"));
-             this.cmdResultStats.func_179668_a(tagCompund);
-             this.setSilent(tagCompund.getBoolean("Silent"));
+             this.func_174805_g(p_70020_1_.func_74767_n("CustomNameVisible"));
+             this.field_174837_as.func_179668_a(p_70020_1_);
+             this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
 +
-+            if (tagCompund.hasKey("ForgeData")) customEntityData = tagCompund.getCompoundTag("ForgeData");
++            if (p_70020_1_.func_74764_b("ForgeData")) customEntityData = p_70020_1_.func_74775_l("ForgeData");
 +            for (String identifier : this.extendedProperties.keySet())
 +            {
 +                try
 +                {
 +                    net.minecraftforge.common.IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.loadNBTData(tagCompund);
++                    props.loadNBTData(p_70020_1_);
 +                }
 +                catch (Throwable t)
 +                {
@@ -79,52 +79,52 @@
 +            }
 +
 +            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
-+            if (tagCompund.hasKey("PersistentIDMSB") && tagCompund.hasKey("PersistentIDLSB"))
++            if (p_70020_1_.func_74764_b("PersistentIDMSB") && p_70020_1_.func_74764_b("PersistentIDLSB"))
 +            {
-+                this.entityUniqueID = new UUID(tagCompund.getLong("PersistentIDMSB"), tagCompund.getLong("PersistentIDLSB"));
++                this.field_96093_i = new UUID(p_70020_1_.func_74763_f("PersistentIDMSB"), p_70020_1_.func_74763_f("PersistentIDLSB"));
 +            }
 +
-             this.readEntityFromNBT(tagCompund);
+             this.func_70037_a(p_70020_1_);
  
-             if (this.shouldSetPosAfterLoading())
+             if (this.func_142008_O())
 @@ -1512,7 +1556,10 @@
          {
-             EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)offsetY, this.posZ, itemStackIn);
-             entityitem.setDefaultPickupDelay();
--            this.worldObj.spawnEntityInWorld(entityitem);
+             EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
+             entityitem.func_174869_p();
+-            this.field_70170_p.func_72838_d(entityitem);
 +            if (captureDrops)
 +                this.capturedDrops.add(entityitem);
 +            else
-+                this.worldObj.spawnEntityInWorld(entityitem);
++                this.field_70170_p.func_72838_d(entityitem);
              return entityitem;
          }
          else
 @@ -1655,6 +1702,7 @@
  
-     public void mountEntity(Entity entityIn)
+     public void func_70078_a(Entity p_70078_1_)
      {
-+        if(!(this instanceof EntityLivingBase) && !net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entityIn, true)){ return; }
-         this.entityRiderPitchDelta = 0.0D;
-         this.entityRiderYawDelta = 0.0D;
++        if(!(this instanceof EntityLivingBase) && !net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_70078_1_, true)){ return; }
+         this.field_70149_e = 0.0D;
+         this.field_70147_f = 0.0D;
  
 @@ -1789,7 +1837,7 @@
  
-     public boolean isRiding()
+     public boolean func_70115_ae()
      {
--        return this.ridingEntity != null;
-+        return this.ridingEntity != null && ridingEntity.shouldRiderSit();
+-        return this.field_70154_o != null;
++        return this.field_70154_o != null && field_70154_o.shouldRiderSit();
      }
  
-     public boolean isSneaking()
+     public boolean func_70093_af()
 @@ -2092,7 +2140,7 @@
  
-     public float getExplosionResistance(Explosion p_180428_1_, World worldIn, BlockPos p_180428_3_, IBlockState p_180428_4_)
+     public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
--        return p_180428_4_.getBlock().getExplosionResistance(this);
-+        return p_180428_4_.getBlock().getExplosionResistance(worldIn, p_180428_3_.add(0, getEyeHeight(), 0), this, p_180428_1_);
+-        return p_180428_4_.func_177230_c().func_149638_a(this);
++        return p_180428_4_.func_177230_c().getExplosionResistance(p_180428_2_, p_180428_3_.func_177963_a(0, func_70047_e(), 0), this, p_180428_1_);
      }
  
-     public boolean func_174816_a(Explosion p_174816_1_, World worldIn, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
+     public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
 @@ -2353,4 +2401,184 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
@@ -164,22 +164,22 @@
 +    {
 +        if (this instanceof net.minecraft.entity.item.EntityPainting)
 +        {
-+            return new ItemStack(net.minecraft.init.Items.painting);
++            return new ItemStack(net.minecraft.init.Items.field_151159_an);
 +        }
 +        else if (this instanceof EntityLeashKnot)
 +        {
-+            return new ItemStack(net.minecraft.init.Items.lead);
++            return new ItemStack(net.minecraft.init.Items.field_151058_ca);
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityItemFrame)
 +        {
-+            ItemStack held = ((net.minecraft.entity.item.EntityItemFrame)this).getDisplayedItem();
++            ItemStack held = ((net.minecraft.entity.item.EntityItemFrame)this).func_82335_i();
 +            if (held == null)
 +            {
-+                return new ItemStack(net.minecraft.init.Items.item_frame);
++                return new ItemStack(net.minecraft.init.Items.field_151160_bD);
 +            }
 +            else
 +            {
-+                return held.copy();
++                return held.func_77946_l();
 +            }
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityMinecart)
@@ -188,24 +188,24 @@
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityBoat)
 +        {
-+            return new ItemStack(net.minecraft.init.Items.boat);
++            return new ItemStack(net.minecraft.init.Items.field_151124_az);
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityArmorStand)
 +        {
-+            return new ItemStack(net.minecraft.init.Items.armor_stand);
++            return new ItemStack(net.minecraft.init.Items.field_179565_cj);
 +        }
 +        else
 +        {
-+            int id = EntityList.getEntityID(this);
-+            if (id > 0 && EntityList.entityEggs.containsKey(id))
++            int id = EntityList.func_75619_a(this);
++            if (id > 0 && EntityList.field_75627_a.containsKey(id))
 +            {
-+                return new ItemStack(net.minecraft.init.Items.spawn_egg, 1, id);
++                return new ItemStack(net.minecraft.init.Items.field_151063_bx, 1, id);
 +            }
-+            String name = EntityList.getEntityString(this);
++            String name = EntityList.func_75621_b(this);
 +            if (name != null && net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().containsKey(name))
 +            {
-+                ItemStack stack = new ItemStack(net.minecraft.init.Items.spawn_egg);
-+                stack.setTagInfo("entity_name", new net.minecraft.nbt.NBTTagString(name));
++                ItemStack stack = new ItemStack(net.minecraft.init.Items.field_151063_bx);
++                stack.func_77983_a("entity_name", new net.minecraft.nbt.NBTTagString(name));
 +                return stack;
 +            }
 +        }
@@ -214,7 +214,7 @@
 +
 +    public UUID getPersistentID()
 +    {
-+        return entityUniqueID;
++        return field_96093_i;
 +    }
 +
 +    /**
@@ -222,7 +222,7 @@
 +     */
 +    public final void resetEntityId()
 +    {
-+        this.entityId = nextEntityID++;
++        this.field_145783_c = field_70152_a++;
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
@@ -238,8 +238,8 @@
 +     */
 +    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
 +    {
-+        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).isNoDespawnRequired()) return false;
-+        return type.getCreatureClass().isAssignableFrom(this.getClass());
++        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).func_104002_bU()) return false;
++        return type.func_75598_a().isAssignableFrom(this.getClass());
 +    }
 +
 +    /**

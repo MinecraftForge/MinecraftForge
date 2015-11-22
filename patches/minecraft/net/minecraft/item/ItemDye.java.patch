@@ -4,53 +4,53 @@
  
              if (enumdyecolor == EnumDyeColor.WHITE)
              {
--                if (applyBonemeal(stack, worldIn, pos))
-+                if (applyBonemeal(stack, worldIn, pos, playerIn))
+-                if (func_179234_a(p_180614_1_, p_180614_3_, p_180614_4_))
++                if (applyBonemeal(p_180614_1_, p_180614_3_, p_180614_4_, p_180614_2_))
                  {
-                     if (!worldIn.isRemote)
+                     if (!p_180614_3_.field_72995_K)
                      {
 @@ -97,8 +97,18 @@
  
-     public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target)
+     public static boolean func_179234_a(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_)
      {
-+        if (worldIn instanceof net.minecraft.world.WorldServer)
-+            return applyBonemeal(stack, worldIn, target, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.world.WorldServer)worldIn));
++        if (p_179234_1_ instanceof net.minecraft.world.WorldServer)
++            return applyBonemeal(p_179234_0_, p_179234_1_, p_179234_2_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.world.WorldServer)p_179234_1_));
 +        return false;
 +    }
 +
-+    public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target, EntityPlayer player)
++    public static boolean applyBonemeal(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_, EntityPlayer player)
 +    {
-         IBlockState iblockstate = worldIn.getBlockState(target);
+         IBlockState iblockstate = p_179234_1_.func_180495_p(p_179234_2_);
  
-+        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, worldIn, target, iblockstate, stack);
++        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_179234_1_, p_179234_2_, iblockstate, p_179234_0_);
 +        if (hook != 0) return hook > 0;
 +
-         if (iblockstate.getBlock() instanceof IGrowable)
+         if (iblockstate.func_177230_c() instanceof IGrowable)
          {
-             IGrowable igrowable = (IGrowable)iblockstate.getBlock();
+             IGrowable igrowable = (IGrowable)iblockstate.func_177230_c();
 @@ -132,7 +142,7 @@
  
-         Block block = worldIn.getBlockState(pos).getBlock();
+         Block block = p_180617_0_.func_180495_p(p_180617_1_).func_177230_c();
  
--        if (block.getMaterial() != Material.air)
-+        if (block.isAir(worldIn, pos))
+-        if (block.func_149688_o() != Material.field_151579_a)
++        if (block.isAir(p_180617_0_, p_180617_1_))
          {
-             block.setBlockBoundsBasedOnState(worldIn, pos);
+             block.func_180654_a(p_180617_0_, p_180617_1_);
  
 @@ -144,6 +154,16 @@
-                 worldIn.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)pos.getX() + itemRand.nextFloat()), (double)pos.getY() + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)pos.getZ() + itemRand.nextFloat()), d0, d1, d2, new int[0]);
+                 p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * block.func_149669_A(), (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
              }
          }
 +        else
 +        {
-+            for (int i1 = 0; i1 < amount; ++i1)
++            for (int i1 = 0; i1 < p_180617_2_; ++i1)
 +            {
-+                double d0 = itemRand.nextGaussian() * 0.02D;
-+                double d1 = itemRand.nextGaussian() * 0.02D;
-+                double d2 = itemRand.nextGaussian() * 0.02D;
-+                worldIn.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)pos.getX() + itemRand.nextFloat()), (double)pos.getY() + (double)itemRand.nextFloat() * 1.0f, (double)((float)pos.getZ() + itemRand.nextFloat()), d0, d1, d2, new int[0]);
++                double d0 = field_77697_d.nextGaussian() * 0.02D;
++                double d1 = field_77697_d.nextGaussian() * 0.02D;
++                double d2 = field_77697_d.nextGaussian() * 0.02D;
++                p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * 1.0f, (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
 +            }
 +        }
      }
  
-     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target)
+     public boolean func_111207_a(ItemStack p_111207_1_, EntityPlayer p_111207_2_, EntityLivingBase p_111207_3_)

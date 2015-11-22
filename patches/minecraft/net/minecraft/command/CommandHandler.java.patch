@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
 @@ -44,6 +44,16 @@
          }
-         else if (icommand.canCommandSenderUse(sender))
+         else if (icommand.func_71519_b(p_71556_1_))
          {
-+            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(icommand, sender, astring);
++            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(icommand, p_71556_1_, astring);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                if (event.exception != null)
@@ -16,4 +16,4 @@
 +
              if (i > -1)
              {
-                 List<Entity> list = PlayerSelector.<Entity>matchEntities(sender, astring[i], Entity.class);
+                 List<Entity> list = PlayerSelector.<Entity>func_179656_b(p_71556_1_, astring[i], Entity.class);

@@ -1,26 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
 +++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
 @@ -119,8 +119,17 @@
-             if (this.useDepth)
+             if (this.field_147619_e)
              {
-                 OpenGlHelper.glBindRenderbuffer(OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
+                 OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, this.field_147624_h);
 +                if (!this.stencilEnabled)
 +                {
-                 OpenGlHelper.glRenderbufferStorage(OpenGlHelper.GL_RENDERBUFFER, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
-                 OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
+                 OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, this.field_147622_a, this.field_147620_b);
+                 OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, this.field_147624_h);
 +                }
 +                else
 +                {
-+                    OpenGlHelper.glRenderbufferStorage(OpenGlHelper.GL_RENDERBUFFER, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.framebufferTextureWidth, this.framebufferTextureHeight);
-+                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
-+                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
++                    OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++                    OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, this.field_147624_h);
++                    OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, this.field_147624_h);
 +                }
              }
  
-             this.framebufferClear();
+             this.func_147614_f();
 @@ -280,4 +289,36 @@
-         GlStateManager.clear(i);
-         this.unbindFramebuffer();
+         GlStateManager.func_179086_m(i);
+         this.func_147609_e();
      }
 +
 +    /*================================ FORGE START ================================================*/
@@ -39,9 +39,9 @@
 +     */
 +    public boolean enableStencil()
 +    {
-+        if (!OpenGlHelper.isFramebufferEnabled()) return false;
++        if (!OpenGlHelper.func_148822_b()) return false;
 +        stencilEnabled = true;
-+        this.createBindFramebuffer(framebufferWidth, framebufferHeight);
++        this.func_147613_a(field_147621_c, field_147618_d);
 +        return true; //TODO: Find a way to detect if this failed?
 +    }
 +

@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 @@ -42,8 +42,41 @@
-         this.chunkSaveLocation = chunkSaveLocationIn;
+         this.field_75825_d = p_i2003_1_;
      }
  
 +    public boolean chunkExists(World world, int x, int z)
 +    {
 +        ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
 +
-+        if (this.pendingAnvilChunksCoordinates.contains(chunkcoordintpair))
++        if (this.field_75826_b.contains(chunkcoordintpair))
 +        {
-+            for(ChunkCoordIntPair pendingChunkCoord : this.chunksToRemove.keySet())
++            for(ChunkCoordIntPair pendingChunkCoord : this.field_75828_a.keySet())
 +            {
 +                if (pendingChunkCoord.equals(chunkcoordintpair))
 +                {
@@ -19,67 +19,67 @@
 +            }
 +        }
 +
-+        return RegionFileCache.createOrLoadRegionFile(this.chunkSaveLocation, x, z).chunkExists(x & 31, z & 31);
++        return RegionFileCache.func_76550_a(this.field_75825_d, x, z).chunkExists(x & 31, z & 31);
 +    }
 +
-     public Chunk loadChunk(World worldIn, int x, int z) throws IOException
+     public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
-+        Object[] data = this.loadChunk__Async(worldIn, x, z);
++        Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
 +
 +        if (data != null)
 +        {
 +            Chunk chunk = (Chunk) data[0];
 +            NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
-+            this.loadEntities(worldIn, nbttagcompound.getCompoundTag("Level"), chunk);
++            this.loadEntities(p_75815_1_, nbttagcompound.func_74775_l("Level"), chunk);
 +            return chunk;
 +        }
 +
 +        return null;
 +    }
 +
-+    public Object[] loadChunk__Async(World worldIn, int x, int z) throws IOException
++    public Object[] loadChunk__Async(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
 +    {
-         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
-         NBTTagCompound nbttagcompound = (NBTTagCompound)this.chunksToRemove.get(chunkcoordintpair);
+         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_75815_2_, p_75815_3_);
+         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkcoordintpair);
  
 @@ -59,11 +92,17 @@
-             nbttagcompound = CompressedStreamTools.read(datainputstream);
+             nbttagcompound = CompressedStreamTools.func_74794_a(datainputstream);
          }
  
--        return this.checkedReadChunkFromNBT(worldIn, x, z, nbttagcompound);
-+        return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
+-        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
++        return this.checkedReadChunkFromNBT__Async(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
      }
  
-     protected Chunk checkedReadChunkFromNBT(World worldIn, int x, int z, NBTTagCompound p_75822_4_)
+     protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
      {
-+        Object[] data = this.checkedReadChunkFromNBT__Async(worldIn, x, z, p_75822_4_);
++        Object[] data = this.checkedReadChunkFromNBT__Async(p_75822_1_, p_75822_2_, p_75822_3_, p_75822_4_);
 +        return data != null ? (Chunk)data[0] : null;
 +    }
 +
-+    protected Object[] checkedReadChunkFromNBT__Async(World worldIn, int x, int z, NBTTagCompound p_75822_4_)
++    protected Object[] checkedReadChunkFromNBT__Async(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
 +    {
-         if (!p_75822_4_.hasKey("Level", 10))
+         if (!p_75822_4_.func_150297_b("Level", 10))
          {
-             logger.error("Chunk file at " + x + "," + z + " is missing level data, skipping");
+             field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is missing level data, skipping");
 @@ -87,10 +126,29 @@
-                     logger.error("Chunk file at " + x + "," + z + " is in the wrong location; relocating. (Expected " + x + ", " + z + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
-                     nbttagcompound.setInteger("xPos", x);
-                     nbttagcompound.setInteger("zPos", z);
+                     field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.field_76635_g + ", " + chunk.field_76647_h + ")");
+                     nbttagcompound.func_74768_a("xPos", p_75822_2_);
+                     nbttagcompound.func_74768_a("zPos", p_75822_3_);
 +                    
 +                    // Have to move tile entities since we don't load them at this stage
-+                    NBTTagList _tileEntities = nbttagcompound.getTagList("TileEntities", 10);
++                    NBTTagList _tileEntities = nbttagcompound.func_150295_c("TileEntities", 10);
 +
 +                    if (_tileEntities != null)
 +                    {
-+                        for (int te = 0; te < _tileEntities.tagCount(); te++)
++                        for (int te = 0; te < _tileEntities.func_74745_c(); te++)
 +                        {
-+                            NBTTagCompound _nbt = (NBTTagCompound) _tileEntities.getCompoundTagAt(te);
-+                            _nbt.setInteger("x", x * 16 + (_nbt.getInteger("x") - chunk.xPosition * 16));
-+                            _nbt.setInteger("z", z * 16 + (_nbt.getInteger("z") - chunk.zPosition * 16));
++                            NBTTagCompound _nbt = (NBTTagCompound) _tileEntities.func_150305_b(te);
++                            _nbt.func_74768_a("x", p_75822_2_ * 16 + (_nbt.func_74762_e("x") - chunk.field_76635_g * 16));
++                            _nbt.func_74768_a("z", p_75822_3_ * 16 + (_nbt.func_74762_e("z") - chunk.field_76647_h * 16));
 +                        }
 +                    }
 +
-                     chunk = this.readChunkFromNBT(worldIn, nbttagcompound);
+                     chunk = this.func_75823_a(p_75822_1_, nbttagcompound);
                  }
  
 -                return chunk;
@@ -94,10 +94,10 @@
      }
 @@ -105,6 +163,7 @@
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-             nbttagcompound.setTag("Level", nbttagcompound1);
-             this.writeChunkToNBT(chunkIn, worldIn, nbttagcompound1);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(chunkIn, nbttagcompound));
-             this.addChunkToPending(chunkIn.getChunkCoordIntPair(), nbttagcompound);
+             nbttagcompound.func_74782_a("Level", nbttagcompound1);
+             this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
+             this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
 @@ -281,11 +340,20 @@
@@ -106,10 +106,10 @@
  
 +                try
 +                {
-                 if (entity.writeToNBTOptional(nbttagcompound1))
+                 if (entity.func_70039_c(nbttagcompound1))
                  {
-                     chunkIn.setHasEntities(true);
-                     nbttaglist1.appendTag(nbttagcompound1);
+                     p_75820_1_.func_177409_g(true);
+                     nbttaglist1.func_74742_a(nbttagcompound1);
                  }
 +                }
 +                catch (Exception e)
@@ -122,13 +122,13 @@
          }
  
 @@ -295,8 +363,17 @@
-         for (TileEntity tileentity : chunkIn.getTileEntityMap().values())
+         for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
              NBTTagCompound nbttagcompound2 = new NBTTagCompound();
 +            try
 +            {
-             tileentity.writeToNBT(nbttagcompound2);
-             nbttaglist2.appendTag(nbttagcompound2);
+             tileentity.func_145841_b(nbttagcompound2);
+             nbttaglist2.func_74742_a(nbttagcompound2);
 +            }
 +            catch (Exception e)
 +            {
@@ -138,18 +138,18 @@
 +            }
          }
  
-         p_75820_3_.setTag("TileEntities", nbttaglist2);
+         p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
 @@ -376,6 +453,12 @@
-             chunk.setBiomeArray(p_75823_2_.getByteArray("Biomes"));
+             chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
 +        // End this method here and split off entity loading to another method
 +        return chunk;
 +    }
 +
-+    public void loadEntities(World worldIn, NBTTagCompound p_75823_2_, Chunk chunk)
++    public void loadEntities(World p_75823_1_, NBTTagCompound p_75823_2_, Chunk chunk)
 +    {
-         NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
+         NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
 @@ -447,7 +530,5 @@

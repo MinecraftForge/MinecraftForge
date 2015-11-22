@@ -1,37 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
 +++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
 @@ -29,6 +29,7 @@
-     public void setServerDescription(IChatComponent motd)
+     public void func_151315_a(IChatComponent p_151315_1_)
      {
-         this.serverMotd = motd;
+         this.field_151326_a = p_151315_1_;
 +        invalidateJson();
      }
  
-     public ServerStatusResponse.PlayerCountData getPlayerCountData()
+     public ServerStatusResponse.PlayerCountData func_151318_b()
 @@ -39,6 +40,7 @@
-     public void setPlayerCountData(ServerStatusResponse.PlayerCountData countData)
+     public void func_151319_a(ServerStatusResponse.PlayerCountData p_151319_1_)
      {
-         this.playerCount = countData;
+         this.field_151324_b = p_151319_1_;
 +        invalidateJson();
      }
  
-     public ServerStatusResponse.MinecraftProtocolVersionIdentifier getProtocolVersionInfo()
+     public ServerStatusResponse.MinecraftProtocolVersionIdentifier func_151322_c()
 @@ -49,11 +51,13 @@
-     public void setProtocolVersionInfo(ServerStatusResponse.MinecraftProtocolVersionIdentifier protocolVersionData)
+     public void func_151321_a(ServerStatusResponse.MinecraftProtocolVersionIdentifier p_151321_1_)
      {
-         this.protocolVersion = protocolVersionData;
+         this.field_151325_c = p_151321_1_;
 +        invalidateJson();
      }
  
-     public void setFavicon(String faviconBlob)
+     public void func_151320_a(String p_151320_1_)
      {
-         this.favicon = faviconBlob;
+         this.field_151323_d = p_151320_1_;
 +        invalidateJson();
      }
  
-     public String getFavicon()
+     public String func_151316_d()
 @@ -215,6 +219,7 @@
-                     serverstatusresponse.setFavicon(JsonUtils.getJsonObjectStringFieldValue(jsonobject, "favicon"));
+                     serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
                  }
  
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().captureAdditionalData(serverstatusresponse, jsonobject);
@@ -39,7 +39,7 @@
              }
  
 @@ -242,7 +247,47 @@
-                     jsonobject.addProperty("favicon", p_serialize_1_.getFavicon());
+                     jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
                  }
  
 +                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.enhanceStatusQuery(jsonobject);
@@ -69,7 +69,7 @@
 +            ret = this.json;
 +            if (ret == null)
 +            {
-+                ret = net.minecraft.network.status.server.S00PacketServerInfo.GSON.toJson(this);
++                ret = net.minecraft.network.status.server.S00PacketServerInfo.field_149297_a.toJson(this);
 +                this.json = ret;
 +            }
 +            mutex.release();

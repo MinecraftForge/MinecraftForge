@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMobSpawner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMobSpawner.java
 @@ -37,10 +37,14 @@
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
--        int i = 15 + worldIn.rand.nextInt(15) + worldIn.rand.nextInt(15);
--        this.dropXpOnBlockBreak(worldIn, pos, i);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
+-        int i = 15 + p_180653_1_.field_73012_v.nextInt(15) + p_180653_1_.field_73012_v.nextInt(15);
+-        this.func_180637_b(p_180653_1_, p_180653_2_, i);
      }
  
 +    @Override
@@ -14,6 +14,6 @@
 +        return 15 + RANDOM.nextInt(15) + RANDOM.nextInt(15);
 +    }
 +
-     public boolean isOpaqueCube()
+     public boolean func_149662_c()
      {
          return false;

@@ -3,8 +3,8 @@
 @@ -1247,6 +1247,7 @@
                  }
  
-                 this.jumpPower = 0.0F;
+                 this.field_110277_bt = 0.0F;
 +                net.minecraftforge.common.ForgeHooks.onLivingJump(this);
              }
  
-             this.stepHeight = 1.0F;
+             this.field_70138_W = 1.0F;

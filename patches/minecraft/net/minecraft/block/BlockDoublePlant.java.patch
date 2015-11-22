@@ -7,50 +7,50 @@
 -public class BlockDoublePlant extends BlockBush implements IGrowable
 +public class BlockDoublePlant extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
  {
-     public static final PropertyEnum<BlockDoublePlant.EnumPlantType> VARIANT = PropertyEnum.<BlockDoublePlant.EnumPlantType>create("variant", BlockDoublePlant.EnumPlantType.class);
-     public static final PropertyEnum<BlockDoublePlant.EnumBlockHalf> HALF = PropertyEnum.<BlockDoublePlant.EnumBlockHalf>create("half", BlockDoublePlant.EnumBlockHalf.class);
+     public static final PropertyEnum<BlockDoublePlant.EnumPlantType> field_176493_a = PropertyEnum.<BlockDoublePlant.EnumPlantType>func_177709_a("variant", BlockDoublePlant.EnumPlantType.class);
+     public static final PropertyEnum<BlockDoublePlant.EnumBlockHalf> field_176492_b = PropertyEnum.<BlockDoublePlant.EnumBlockHalf>func_177709_a("half", BlockDoublePlant.EnumBlockHalf.class);
 @@ -90,6 +90,8 @@
-             Block block = (Block)(flag ? this : worldIn.getBlockState(blockpos).getBlock());
-             Block block1 = (Block)(flag ? worldIn.getBlockState(blockpos1).getBlock() : this);
+             Block block = (Block)(flag ? this : p_176475_1_.func_180495_p(blockpos).func_177230_c());
+             Block block1 = (Block)(flag ? p_176475_1_.func_180495_p(blockpos1).func_177230_c() : this);
  
-+            if (!flag) this.dropBlockAsItem(worldIn, pos, state, 0); //Forge move above the setting to air.
++            if (!flag) this.func_176226_b(p_176475_1_, p_176475_2_, p_176475_3_, 0); //Forge move above the setting to air.
 +
              if (block == this)
              {
-                 worldIn.setBlockState(blockpos, Blocks.air.getDefaultState(), 2);
+                 p_176475_1_.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 2);
 @@ -98,17 +100,13 @@
              if (block1 == this)
              {
-                 worldIn.setBlockState(blockpos1, Blocks.air.getDefaultState(), 3);
+                 p_176475_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 3);
 -
 -                if (!flag)
 -                {
--                    this.dropBlockAsItem(worldIn, blockpos1, state, 0);
+-                    this.func_176226_b(p_176475_1_, blockpos1, p_176475_3_, 0);
 -                }
              }
          }
      }
  
-     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
-+        if (state.getBlock() != this) return super.canBlockStay(worldIn, pos, state); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-         if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER)
++        if (p_180671_3_.func_177230_c() != this) return super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
+         if (p_180671_3_.func_177229_b(field_176492_b) == BlockDoublePlant.EnumBlockHalf.UPPER)
          {
-             return worldIn.getBlockState(pos.down()).getBlock() == this;
+             return p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c() == this;
 @@ -158,7 +156,6 @@
  
-     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {
--        if (worldIn.isRemote || player.getCurrentEquippedItem() == null || player.getCurrentEquippedItem().getItem() != Items.shears || state.getValue(HALF) != BlockDoublePlant.EnumBlockHalf.LOWER || !this.onHarvest(worldIn, pos, state, player))
+-        if (p_180657_1_.field_72995_K || p_180657_2_.func_71045_bC() == null || p_180657_2_.func_71045_bC().func_77973_b() != Items.field_151097_aZ || p_180657_4_.func_177229_b(field_176492_b) != BlockDoublePlant.EnumBlockHalf.LOWER || !this.func_176489_b(p_180657_1_, p_180657_3_, p_180657_4_, p_180657_2_))
          {
-             super.harvestBlock(worldIn, player, pos, state, te);
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
          }
 @@ -221,8 +218,6 @@
          else
          {
-             player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
--            int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).getMeta();
--            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 2, i));
+             p_176489_4_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
+-            int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).func_177044_a();
+-            func_180635_a(p_176489_1_, p_176489_2_, new ItemStack(Blocks.field_150329_H, 2, i));
              return true;
          }
      }
@@ -61,27 +61,27 @@
 +    @Override
 +    public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        EnumPlantType type = (EnumPlantType)state.getValue(VARIANT);
-+        return state.getValue(HALF) == EnumBlockHalf.LOWER && (type == EnumPlantType.FERN || type == EnumPlantType.GRASS);
++        IBlockState state = world.func_180495_p(pos);
++        EnumPlantType type = (EnumPlantType)state.func_177229_b(field_176493_a);
++        return state.func_177229_b(field_176492_b) == EnumBlockHalf.LOWER && (type == EnumPlantType.FERN || type == EnumPlantType.GRASS);
 +    }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
-+        EnumPlantType type = (EnumPlantType)world.getBlockState(pos).getValue(VARIANT);
-+        if (type == EnumPlantType.FERN) ret.add(new ItemStack(Blocks.tallgrass, 2, BlockTallGrass.EnumType.FERN.getMeta()));
-+        if (type == EnumPlantType.GRASS) ret.add(new ItemStack(Blocks.tallgrass, 2, BlockTallGrass.EnumType.GRASS.getMeta()));
++        EnumPlantType type = (EnumPlantType)world.func_180495_p(pos).func_177229_b(field_176493_a);
++        if (type == EnumPlantType.FERN) ret.add(new ItemStack(Blocks.field_150329_H, 2, BlockTallGrass.EnumType.FERN.func_177044_a()));
++        if (type == EnumPlantType.GRASS) ret.add(new ItemStack(Blocks.field_150329_H, 2, BlockTallGrass.EnumType.GRASS.func_177044_a()));
 +        return ret;
 +    }
 +    @Override
 +    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
 +        //Forge: Break both parts on the client to prevent the top part flickering as default type for a few frames.
-+        IBlockState state = world.getBlockState(pos);
-+        if (state.getBlock() ==  this && state.getValue(HALF) == EnumBlockHalf.LOWER && world.getBlockState(pos.up()).getBlock() == this)
-+            world.setBlockToAir(pos.up());
-+        return world.setBlockToAir(pos);
++        IBlockState state = world.func_180495_p(pos);
++        if (state.func_177230_c() ==  this && state.func_177229_b(field_176492_b) == EnumBlockHalf.LOWER && world.func_180495_p(pos.func_177984_a()).func_177230_c() == this)
++            world.func_175698_g(pos.func_177984_a());
++        return world.func_175698_g(pos);
 +    }
 +
      public static enum EnumBlockHalf implements IStringSerializable

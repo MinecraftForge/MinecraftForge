@@ -2,8 +2,8 @@
 +++ ../src-work/minecraft/net/minecraft/client/resources/model/IBakedModel.java
 @@ -23,5 +23,6 @@
  
-     TextureAtlasSprite getTexture();
+     TextureAtlasSprite func_177554_e();
  
 +    @Deprecated
-     ItemCameraTransforms getItemCameraTransforms();
+     ItemCameraTransforms func_177552_f();
  }

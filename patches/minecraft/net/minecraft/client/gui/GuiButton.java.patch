@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiButton.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiButton.java
 @@ -21,6 +21,7 @@
-     public boolean enabled;
-     public boolean visible;
-     protected boolean hovered;
+     public boolean field_146124_l;
+     public boolean field_146125_m;
+     protected boolean field_146123_n;
 +    public int packedFGColour; //FML
  
-     public GuiButton(int buttonId, int x, int y, String buttonText)
+     public GuiButton(int p_i1020_1_, int p_i1020_2_, int p_i1020_3_, String p_i1020_4_)
      {
 @@ -74,6 +75,11 @@
-             this.mouseDragged(mc, mouseX, mouseY);
+             this.func_146119_b(p_146112_1_, p_146112_2_, p_146112_3_);
              int j = 14737632;
  
 +            if (packedFGColour != 0)
@@ -17,6 +17,6 @@
 +                j = packedFGColour;
 +            }
 +            else
-             if (!this.enabled)
+             if (!this.field_146124_l)
              {
                  j = 10526880;

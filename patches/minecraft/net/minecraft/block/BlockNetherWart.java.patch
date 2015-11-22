@@ -2,46 +2,46 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
 @@ -38,7 +38,7 @@
  
-     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
--        return this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
-+        return super.canBlockStay(worldIn, pos, state);
+-        return this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
++        return super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_);
      }
  
-     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
 @@ -54,9 +54,11 @@
-         super.updateTick(worldIn, pos, state, rand);
+         super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
      }
  
 +    @SuppressWarnings("unused")
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
--        if (!worldIn.isRemote)
-+        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
-+        if (false && !worldIn.isRemote)
+-        if (!p_180653_1_.field_72995_K)
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
++        if (false && !p_180653_1_.field_72995_K)
          {
              int i = 1;
  
 @@ -107,4 +109,24 @@
      {
-         return new BlockState(this, new IProperty[] {AGE});
+         return new BlockState(this, new IProperty[] {field_176486_a});
      }
 +
 +    @Override
 +    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
-+        Random rand = world instanceof World ? ((World)world).rand : new Random();
++        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +        int count = 1;
 +
-+        if (((Integer)state.getValue(AGE)) >= 3)
++        if (((Integer)state.func_177229_b(field_176486_a)) >= 3)
 +        {
 +            count = 2 + rand.nextInt(3) + (fortune > 0 ? rand.nextInt(fortune + 1) : 0);
 +        }
 +
 +        for (int i = 0; i < count; i++)
 +        {
-+            ret.add(new ItemStack(Items.nether_wart));
++            ret.add(new ItemStack(Items.field_151075_bm));
 +        }
 +
 +        return ret;

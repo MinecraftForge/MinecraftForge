@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
 @@ -527,7 +527,7 @@
  
-     private boolean isBelowSolidBlock(World worldIn, BlockPos pos)
+     private boolean func_176456_n(World p_176456_1_, BlockPos p_176456_2_)
      {
--        return worldIn.getBlockState(pos.up()).getBlock().isNormalCube();
-+        return worldIn.isSideSolid(pos.up(), EnumFacing.DOWN, false);
+-        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).func_177230_c().func_149721_r();
++        return p_176456_1_.isSideSolid(p_176456_2_.func_177984_a(), EnumFacing.DOWN, false);
      }
  
-     private boolean isOcelotSittingOnChest(World worldIn, BlockPos pos)
+     private boolean func_176453_o(World p_176453_1_, BlockPos p_176453_2_)

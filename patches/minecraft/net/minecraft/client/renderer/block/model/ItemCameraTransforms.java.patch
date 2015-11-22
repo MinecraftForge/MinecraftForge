@@ -11,4 +11,4 @@
 +@Deprecated
  public class ItemCameraTransforms
  {
-     public static final ItemCameraTransforms DEFAULT = new ItemCameraTransforms();
+     public static final ItemCameraTransforms field_178357_a = new ItemCameraTransforms();

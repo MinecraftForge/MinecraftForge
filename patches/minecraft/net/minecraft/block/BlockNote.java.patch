@@ -4,20 +4,20 @@
              if (tileentity instanceof TileEntityNote)
              {
                  TileEntityNote tileentitynote = (TileEntityNote)tileentity;
-+                int old = tileentitynote.note;
-                 tileentitynote.changePitch();
-+                if (old == tileentitynote.note) return false;
-                 tileentitynote.triggerNote(worldIn, pos);
-                 playerIn.triggerAchievement(StatList.field_181735_S);
++                int old = tileentitynote.field_145879_a;
+                 tileentitynote.func_145877_a();
++                if (old == tileentitynote.field_145879_a) return false;
+                 tileentitynote.func_175108_a(p_180639_1_, p_180639_2_);
+                 p_180639_4_.func_71029_a(StatList.field_181735_S);
              }
 @@ -98,6 +100,10 @@
  
-     public boolean onBlockEventReceived(World worldIn, BlockPos pos, IBlockState state, int eventID, int eventParam)
+     public boolean func_180648_a(World p_180648_1_, BlockPos p_180648_2_, IBlockState p_180648_3_, int p_180648_4_, int p_180648_5_)
      {
-+        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(worldIn, pos, state, eventParam, eventID);
++        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_180648_1_, p_180648_2_, p_180648_3_, p_180648_5_, p_180648_4_);
 +        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
-+        eventID = e.instrument.ordinal();
-+        eventParam = e.getVanillaNoteId();
-         float f = (float)Math.pow(2.0D, (double)(eventParam - 12) / 12.0D);
-         worldIn.playSoundEffect((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, "note." + this.getInstrument(eventID), 3.0F, f);
-         worldIn.spawnParticle(EnumParticleTypes.NOTE, (double)pos.getX() + 0.5D, (double)pos.getY() + 1.2D, (double)pos.getZ() + 0.5D, (double)eventParam / 24.0D, 0.0D, 0.0D, new int[0]);
++        p_180648_4_ = e.instrument.ordinal();
++        p_180648_5_ = e.getVanillaNoteId();
+         float f = (float)Math.pow(2.0D, (double)(p_180648_5_ - 12) / 12.0D);
+         p_180648_1_.func_72908_a((double)p_180648_2_.func_177958_n() + 0.5D, (double)p_180648_2_.func_177956_o() + 0.5D, (double)p_180648_2_.func_177952_p() + 0.5D, "note." + this.func_176433_b(p_180648_4_), 3.0F, f);
+         p_180648_1_.func_175688_a(EnumParticleTypes.NOTE, (double)p_180648_2_.func_177958_n() + 0.5D, (double)p_180648_2_.func_177956_o() + 1.2D, (double)p_180648_2_.func_177952_p() + 0.5D, (double)p_180648_5_ / 24.0D, 0.0D, 0.0D, new int[0]);

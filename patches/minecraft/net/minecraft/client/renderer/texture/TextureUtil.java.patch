@@ -2,12 +2,12 @@
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
 @@ -197,9 +197,11 @@
  
-     public static void allocateTextureImpl(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
+     public static void func_180600_a(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
      {
 +        synchronized (net.minecraftforge.fml.client.SplashProgress.class)
 +        {
-         deleteTexture(p_180600_0_);
-         bindTexture(p_180600_0_);
+         func_147942_a(p_180600_0_);
+         func_94277_a(p_180600_0_);
 -
 +        }
          if (p_180600_1_ >= 0)

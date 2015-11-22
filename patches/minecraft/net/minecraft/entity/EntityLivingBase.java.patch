@@ -4,56 +4,56 @@
                      }
                  }
  
--                if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity instanceof EntityLivingBase)
-+                if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity != null && ridingEntity.shouldDismountInWater(this))
+-                if (!this.field_70170_p.field_72995_K && this.func_70115_ae() && this.field_70154_o instanceof EntityLivingBase)
++                if (!this.field_70170_p.field_72995_K && this.func_70115_ae() && this.field_70154_o != null && field_70154_o.shouldDismountInWater(this))
                  {
-                     this.mountEntity((Entity)null);
+                     this.func_70078_a((Entity)null);
                  }
 @@ -319,7 +319,7 @@
-             if (!this.worldObj.isRemote && (this.recentlyHit > 0 || this.isPlayer()) && this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+             if (!this.field_70170_p.field_72995_K && (this.field_70718_bc > 0 || this.func_70684_aJ()) && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
              {
-                 int i = this.getExperiencePoints(this.attackingPlayer);
+                 int i = this.func_70693_a(this.field_70717_bb);
 -
-+                i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.attackingPlayer, i);
++                i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.field_70717_bb, i);
                  while (i > 0)
                  {
-                     int j = EntityXPOrb.getXPSplit(i);
+                     int j = EntityXPOrb.func_70527_a(i);
 @@ -380,6 +380,7 @@
      {
-         this.entityLivingToAttack = livingBase;
-         this.revengeTimer = this.ticksExisted;
-+        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, livingBase);
+         this.field_70755_b = p_70604_1_;
+         this.field_70756_c = this.field_70173_aa;
++        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70604_1_);
      }
  
-     public EntityLivingBase getLastAttacker()
+     public EntityLivingBase func_110144_aD()
 @@ -663,7 +664,6 @@
-         return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
+         return this.func_70668_bt() == EnumCreatureAttribute.UNDEAD;
      }
  
 -    @SideOnly(Side.CLIENT)
-     public void removePotionEffectClient(int p_70618_1_)
+     public void func_70618_n(int p_70618_1_)
      {
-         this.activePotionsMap.remove(Integer.valueOf(p_70618_1_));
+         this.field_70713_bf.remove(Integer.valueOf(p_70618_1_));
 @@ -712,6 +712,8 @@
  
-     public void heal(float healAmount)
+     public void func_70691_i(float p_70691_1_)
      {
-+        healAmount = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, healAmount);
-+        if (healAmount <= 0) return;
-         float f = this.getHealth();
++        p_70691_1_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_70691_1_);
++        if (p_70691_1_ <= 0) return;
+         float f = this.func_110143_aJ();
  
          if (f > 0.0F)
 @@ -732,6 +734,7 @@
  
-     public boolean attackEntityFrom(DamageSource source, float amount)
+     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
-+        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
-         if (this.isEntityInvulnerable(source))
++        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
+         if (this.func_180431_b(p_70097_1_))
          {
              return false;
 @@ -797,9 +800,9 @@
-                         this.recentlyHit = 100;
-                         this.attackingPlayer = (EntityPlayer)entity;
+                         this.field_70718_bc = 100;
+                         this.field_70717_bb = (EntityPlayer)entity;
                      }
 -                    else if (entity instanceof EntityWolf)
 +                    else if (entity instanceof net.minecraft.entity.passive.EntityTameable)
@@ -61,118 +61,118 @@
 -                        EntityWolf entitywolf = (EntityWolf)entity;
 +                        net.minecraft.entity.passive.EntityTameable entitywolf = (net.minecraft.entity.passive.EntityTameable)entity;
  
-                         if (entitywolf.isTamed())
+                         if (entitywolf.func_70909_n())
                          {
 @@ -883,6 +886,7 @@
  
-     public void onDeath(DamageSource cause)
+     public void func_70645_a(DamageSource p_70645_1_)
      {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
-         Entity entity = cause.getEntity();
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+         Entity entity = p_70645_1_.func_76346_g();
          EntityLivingBase entitylivingbase = this.func_94060_bK();
  
 @@ -908,6 +912,9 @@
-                 i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
+                 i = EnchantmentHelper.func_77519_f((EntityLivingBase)entity);
              }
  
 +            captureDrops = true;
 +            capturedDrops.clear();
 +
-             if (this.func_146066_aG() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+             if (this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot"))
              {
-                 this.dropFewItems(this.recentlyHit > 0, i);
+                 this.func_70628_a(this.field_70718_bc > 0, i);
 @@ -918,6 +925,16 @@
-                     this.addRandomArmor();
+                     this.func_82164_bB();
                  }
              }
 +
 +            captureDrops = false;
 +
-+            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, cause, capturedDrops, i, recentlyHit > 0))
++            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, capturedDrops, i, field_70718_bc > 0))
 +            {
 +                for (EntityItem item : capturedDrops)
 +                {
-+                    worldObj.spawnEntityInWorld(item);
++                    field_70170_p.func_72838_d(item);
 +                }
 +            }
          }
  
-         this.worldObj.setEntityState(this, (byte)3);
+         this.field_70170_p.func_72960_a(this, (byte)3);
 @@ -972,7 +989,7 @@
-         int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
-         int k = MathHelper.floor_double(this.posZ);
-         Block block = this.worldObj.getBlockState(new BlockPos(i, j, k)).getBlock();
--        return (block == Blocks.ladder || block == Blocks.vine) && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).isSpectator());
-+        return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(block, worldObj, new BlockPos(i, j, k), this);
+         int j = MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b);
+         int k = MathHelper.func_76128_c(this.field_70161_v);
+         Block block = this.field_70170_p.func_180495_p(new BlockPos(i, j, k)).func_177230_c();
+-        return (block == Blocks.field_150468_ap || block == Blocks.field_150395_bd) && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).func_175149_v());
++        return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(block, field_70170_p, new BlockPos(i, j, k), this);
      }
  
-     public boolean isEntityAlive()
+     public boolean func_70089_S()
 @@ -982,6 +999,9 @@
  
-     public void fall(float distance, float damageMultiplier)
+     public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
-+        float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, distance, damageMultiplier);
++        float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, p_180430_1_, p_180430_2_);
 +        if (ret == null) return;
-+        distance = ret[0]; damageMultiplier = ret[1];
-         super.fall(distance, damageMultiplier);
-         PotionEffect potioneffect = this.getActivePotionEffect(Potion.jump);
-         float f = potioneffect != null ? (float)(potioneffect.getAmplifier() + 1) : 0.0F;
++        p_180430_1_ = ret[0]; p_180430_2_ = ret[1];
+         super.func_180430_e(p_180430_1_, p_180430_2_);
+         PotionEffect potioneffect = this.func_70660_b(Potion.field_76430_j);
+         float f = potioneffect != null ? (float)(potioneffect.func_76458_c() + 1) : 0.0F;
 @@ -1094,6 +1114,8 @@
      {
-         if (!this.isEntityInvulnerable(damageSrc))
+         if (!this.func_180431_b(p_70665_1_))
          {
-+            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
-+            if (damageAmount <= 0) return;
-             damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
-             damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
-             float f = damageAmount;
++            p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++            if (p_70665_2_ <= 0) return;
+             p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
+             p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
+             float f = p_70665_2_;
 @@ -1142,6 +1164,11 @@
  
-     public void swingItem()
+     public void func_71038_i()
      {
-+        ItemStack stack = this.getHeldItem();
-+        if (stack != null && stack.getItem() != null)
++        ItemStack stack = this.func_70694_bm();
++        if (stack != null && stack.func_77973_b() != null)
 +        {
-+            if (stack.getItem().onEntitySwing(this, stack)) return;
++            if (stack.func_77973_b().onEntitySwing(this, stack)) return;
 +        }
-         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
+         if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
-             this.swingProgressInt = -1;
+             this.field_110158_av = -1;
 @@ -1281,6 +1308,7 @@
  
-     public void dismountEntity(Entity p_110145_1_)
+     public void func_110145_l(Entity p_110145_1_)
      {
 +        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_110145_1_, false)){ return; }
-         double d0 = p_110145_1_.posX;
-         double d1 = p_110145_1_.getEntityBoundingBox().minY + (double)p_110145_1_.height;
-         double d2 = p_110145_1_.posZ;
+         double d0 = p_110145_1_.field_70165_t;
+         double d1 = p_110145_1_.func_174813_aQ().field_72338_b + (double)p_110145_1_.field_70131_O;
+         double d2 = p_110145_1_.field_70161_v;
 @@ -1346,6 +1374,7 @@
          }
  
-         this.isAirBorne = true;
+         this.field_70160_al = true;
 +        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
      }
  
-     protected void updateAITick()
+     protected void func_70629_bd()
 @@ -1530,6 +1559,7 @@
  
-     public void onUpdate()
+     public void func_70071_h_()
      {
 +        if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
-         super.onUpdate();
+         super.func_70071_h_();
  
-         if (!this.worldObj.isRemote)
+         if (!this.field_70170_p.field_72995_K)
 @@ -1817,6 +1847,7 @@
  
-     public void mountEntity(Entity entityIn)
+     public void func_70078_a(Entity p_70078_1_)
      {
-+        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entityIn, true)){ return; }
-         if (this.ridingEntity != null && entityIn == null)
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_70078_1_, true)){ return; }
+         if (this.field_70154_o != null && p_70078_1_ == null)
          {
-             if (!this.worldObj.isRemote)
+             if (!this.field_70170_p.field_72995_K)
 @@ -1998,4 +2029,39 @@
      {
-         this.potionsNeedUpdate = true;
+         this.field_70752_e = true;
      }
 +
 +    /***
@@ -181,19 +181,19 @@
 +     */
 +    public void curePotionEffects(ItemStack curativeItem)
 +    {
-+        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
-+        if (worldObj.isRemote) return;
++        Iterator<Integer> potionKey = field_70713_bf.keySet().iterator();
++        if (field_70170_p.field_72995_K) return;
 +
 +        while (potionKey.hasNext())
 +        {
 +            Integer key = potionKey.next();
-+            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++            PotionEffect effect = (PotionEffect)field_70713_bf.get(key);
 +
 +            if (effect.isCurativeItem(curativeItem))
 +            {
 +                potionKey.remove();
-+                onFinishedPotionEffect(effect);
-+                this.potionsNeedUpdate = true;
++                func_70688_c(effect);
++                this.field_70752_e = true;
 +            }
 +        }
 +    }

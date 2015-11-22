@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
 @@ -271,7 +271,7 @@
-         BlockPos blockpos = new BlockPos(MathHelper.floor_double(this.posX), 0, MathHelper.floor_double(this.posZ));
-         Chunk chunk = this.worldObj.getChunkFromBlockCoords(blockpos);
+         BlockPos blockpos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), 0, MathHelper.func_76128_c(this.field_70161_v));
+         Chunk chunk = this.field_70170_p.func_175726_f(blockpos);
  
--        if (this.worldObj.getWorldInfo().getTerrainType() == WorldType.FLAT && this.rand.nextInt(4) != 1)
-+        if (this.worldObj.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, worldObj))
+-        if (this.field_70170_p.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1)
++        if (this.field_70170_p.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p))
          {
              return false;
          }

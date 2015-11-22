@@ -7,17 +7,17 @@
 -public class ItemSeeds extends Item
 +public class ItemSeeds extends Item implements net.minecraftforge.common.IPlantable
  {
-     private Block crops;
-     private Block soilBlockID;
+     private Block field_150925_a;
+     private Block field_77838_b;
 @@ -29,7 +29,7 @@
          {
              return false;
          }
--        else if (worldIn.getBlockState(pos).getBlock() == this.soilBlockID && worldIn.isAirBlock(pos.up()))
-+        else if (worldIn.getBlockState(pos).getBlock().canSustainPlant(worldIn, pos, EnumFacing.UP, this) && worldIn.isAirBlock(pos.up()))
+-        else if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c() == this.field_77838_b && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
++        else if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().canSustainPlant(p_180614_3_, p_180614_4_, EnumFacing.UP, this) && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
          {
-             worldIn.setBlockState(pos.up(), this.crops.getDefaultState());
-             --stack.stackSize;
+             p_180614_3_.func_175656_a(p_180614_4_.func_177984_a(), this.field_150925_a.func_176223_P());
+             --p_180614_1_.field_77994_a;
 @@ -40,4 +40,16 @@
              return false;
          }
@@ -26,12 +26,12 @@
 +    @Override
 +    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return this.crops == net.minecraft.init.Blocks.nether_wart ? net.minecraftforge.common.EnumPlantType.Nether : net.minecraftforge.common.EnumPlantType.Crop;
++        return this.field_150925_a == net.minecraft.init.Blocks.field_150388_bm ? net.minecraftforge.common.EnumPlantType.Nether : net.minecraftforge.common.EnumPlantType.Crop;
 +    }
 +
 +    @Override
 +    public net.minecraft.block.state.IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
-+        return this.crops.getDefaultState();
++        return this.field_150925_a.func_176223_P();
 +    }
  }

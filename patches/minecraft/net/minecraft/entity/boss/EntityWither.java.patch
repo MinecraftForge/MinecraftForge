@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
 @@ -343,7 +343,7 @@
                                  BlockPos blockpos = new BlockPos(i3, k, l);
-                                 Block block = this.worldObj.getBlockState(blockpos).getBlock();
+                                 Block block = this.field_70170_p.func_180495_p(blockpos).func_177230_c();
  
--                                if (block.getMaterial() != Material.air && func_181033_a(block))
-+                                if (!block.isAir(worldObj,blockpos) && func_181033_a(block) && block.canEntityDestroy(worldObj, blockpos, this))
+-                                if (block.func_149688_o() != Material.field_151579_a && func_181033_a(block))
++                                if (!block.isAir(field_70170_p,blockpos) && func_181033_a(block) && block.canEntityDestroy(field_70170_p, blockpos, this))
                                  {
-                                     flag = this.worldObj.destroyBlock(blockpos, true) || flag;
+                                     flag = this.field_70170_p.func_175655_b(blockpos, true) || flag;
                                  }

@@ -1,34 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 @@ -71,8 +71,6 @@
-     protected void loadAllWorlds(String p_71247_1_, String p_71247_2_, long seed, WorldType type, String p_71247_6_)
+     protected void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
      {
-         this.convertMapIfNeeded(p_71247_1_);
--        this.worldServers = new WorldServer[3];
--        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-         ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(p_71247_1_, true);
-         this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
-         WorldInfo worldinfo = isavehandler.loadWorldInfo();
+         this.func_71237_c(p_71247_1_);
+-        this.field_71305_c = new WorldServer[3];
+-        this.field_71312_k = new long[this.field_71305_c.length][100];
+         ISaveHandler isavehandler = this.func_71254_M().func_75804_a(p_71247_1_, true);
+         this.func_175584_a(this.func_71270_I(), isavehandler);
+         WorldInfo worldinfo = isavehandler.func_75757_d();
 @@ -86,44 +84,24 @@
-             worldinfo.setWorldName(p_71247_2_);
+             worldinfo.func_76062_a(p_71247_2_);
          }
  
--        for (int i = 0; i < this.worldServers.length; ++i)
+-        for (int i = 0; i < this.field_71305_c.length; ++i)
 -        {
 -            int j = 0;
-+        WorldServer overWorld = (isDemo() ? (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init() :
-+                                            (WorldServer)(new WorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init());
-+        overWorld.initialize(this.theWorldSettings);
++        WorldServer overWorld = (func_71242_L() ? (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, 0, this.field_71304_b)).func_175643_b() :
++                                            (WorldServer)(new WorldServer(this, isavehandler, worldinfo, 0, this.field_71304_b)).func_175643_b());
++        overWorld.func_72963_a(this.field_71350_m);
  
 -            if (i == 1)
 +        for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : (WorldServer)(new WorldServerMulti(this, isavehandler, dim, overWorld, this.theProfiler)).init());
-+            world.addWorldAccess(new WorldManager(this, world));
-+            if (!this.isSinglePlayer())
++            WorldServer world = (dim == 0 ? overWorld : (WorldServer)(new WorldServerMulti(this, isavehandler, dim, overWorld, this.field_71304_b)).func_175643_b());
++            world.func_72954_a(new WorldManager(this, world));
++            if (!this.func_71264_H())
              {
 -                j = -1;
-+                world.getWorldInfo().setGameType(getGameType());
++                world.func_72912_H().func_76060_a(func_71265_f());
              }
 -
 -            if (i == 2)
@@ -38,51 +38,51 @@
 -
 -            if (i == 0)
 -            {
--                if (this.isDemo())
+-                if (this.func_71242_L())
 -                {
--                    this.worldServers[i] = (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                    this.field_71305_c[i] = (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, j, this.field_71304_b)).func_175643_b();
 -                }
 -                else
 -                {
--                    this.worldServers[i] = (WorldServer)(new WorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                    this.field_71305_c[i] = (WorldServer)(new WorldServer(this, isavehandler, worldinfo, j, this.field_71304_b)).func_175643_b();
 -                }
 -
--                this.worldServers[i].initialize(this.theWorldSettings);
+-                this.field_71305_c[i].func_72963_a(this.field_71350_m);
 -            }
 -            else
 -            {
--                this.worldServers[i] = (WorldServer)(new WorldServerMulti(this, isavehandler, j, this.worldServers[0], this.theProfiler)).init();
+-                this.field_71305_c[i] = (WorldServer)(new WorldServerMulti(this, isavehandler, j, this.field_71305_c[0], this.field_71304_b)).func_175643_b();
 -            }
 -
--            this.worldServers[i].addWorldAccess(new WorldManager(this, this.worldServers[i]));
+-            this.field_71305_c[i].func_72954_a(new WorldManager(this, this.field_71305_c[i]));
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
          }
  
--        this.getConfigurationManager().setPlayerManager(this.worldServers);
-+        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
+-        this.func_71203_ab().func_72364_a(this.field_71305_c);
++        this.func_71203_ab().func_72364_a(new WorldServer[]{ overWorld });
  
--        if (this.worldServers[0].getWorldInfo().getDifficulty() == null)
-+        if (overWorld.getWorldInfo().getDifficulty() == null)
+-        if (this.field_71305_c[0].func_72912_H().func_176130_y() == null)
++        if (overWorld.func_72912_H().func_176130_y() == null)
          {
-             this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
+             this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M);
          }
 @@ -141,9 +119,10 @@
-         this.setAllowFlight(true);
-         logger.info("Generating keypair");
-         this.setKeyPair(CryptManager.generateKeyPair());
+         this.func_71245_h(true);
+         field_147148_h.info("Generating keypair");
+         this.func_71253_a(CryptManager.func_75891_b());
 +        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
-         this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType(), this.theWorldSettings.getWorldName());
-         this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
+         this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());
+         this.func_71205_p(this.func_71214_G() + " - " + this.field_71305_c[0].func_72912_H().func_76065_j());
 -        return true;
 +        return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
      }
  
-     public void tick()
+     public void func_71217_p()
 @@ -216,6 +195,7 @@
  
-     public EnumDifficulty getDifficulty()
+     public EnumDifficulty func_147135_j()
      {
-+        if (this.mc.theWorld == null) return this.mc.gameSettings.difficulty; // Fix NPE just in case.
-         return this.mc.theWorld.getWorldInfo().getDifficulty();
++        if (this.field_71349_l.field_71441_e == null) return this.field_71349_l.field_71474_y.field_74318_M; // Fix NPE just in case.
+         return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
      }
  

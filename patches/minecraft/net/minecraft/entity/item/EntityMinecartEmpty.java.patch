@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
 @@ -18,6 +18,7 @@
  
-     public boolean interactFirst(EntityPlayer playerIn)
+     public boolean func_130002_c(EntityPlayer p_130002_1_)
      {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, playerIn))) return true;
-         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != playerIn)
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_130002_1_))) return true;
+         if (this.field_70153_n != null && this.field_70153_n instanceof EntityPlayer && this.field_70153_n != p_130002_1_)
          {
              return true;

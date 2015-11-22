@@ -10,4 +10,4 @@
 -@SideOnly(Side.CLIENT)
  public class PositionTextureVertex
  {
-     public Vec3 vector3D;
+     public Vec3 field_78243_a;

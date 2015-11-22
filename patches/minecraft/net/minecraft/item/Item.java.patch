@@ -4,65 +4,65 @@
  
  public class Item
  {
--    public static final RegistryNamespaced<ResourceLocation, Item> itemRegistry = new RegistryNamespaced();
--    private static final Map<Block, Item> BLOCK_TO_ITEM = Maps.<Block, Item>newHashMap();
-+    public static final RegistryNamespaced<ResourceLocation, Item> itemRegistry = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
-+    private static final Map<Block, Item> BLOCK_TO_ITEM = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
-     protected static final UUID itemModifierUUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-     private CreativeTabs tabToDisplayOn;
-     protected static Random itemRand = new Random();
+-    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced();
+-    private static final Map<Block, Item> field_179220_a = Maps.<Block, Item>newHashMap();
++    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
++    private static final Map<Block, Item> field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
+     protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+     private CreativeTabs field_77701_a;
+     protected static Random field_77697_d = new Random();
 @@ -61,6 +61,9 @@
-     private String potionEffect;
-     private String unlocalizedName;
+     private String field_77785_bY;
+     private String field_77774_bZ;
  
 +    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate =
-+            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)itemRegistry).getDelegate(this, Item.class);
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_150901_e).getDelegate(this, Item.class);
 +
-     public static int getIdFromItem(Item itemIn)
+     public static int func_150891_b(Item p_150891_0_)
      {
-         return itemIn == null ? 0 : itemRegistry.getIDForObject(itemIn);
+         return p_150891_0_ == null ? 0 : field_150901_e.func_148757_b(p_150891_0_);
 @@ -126,6 +129,7 @@
-         return stack;
+         return p_77654_1_;
      }
  
 +    @Deprecated // Use ItemStack sensitive version below.
-     public int getItemStackLimit()
+     public int func_77639_j()
      {
-         return this.maxStackSize;
+         return this.field_77777_bU;
 @@ -239,6 +243,7 @@
-         return this.containerItem;
+         return this.field_77700_c;
      }
  
 +    @Deprecated // Use ItemStack sensitive version below.
-     public boolean hasContainerItem()
+     public boolean func_77634_r()
      {
-         return this.containerItem != null;
+         return this.field_77700_c != null;
 @@ -316,7 +321,7 @@
  
-     public boolean isItemTool(ItemStack stack)
+     public boolean func_77616_k(ItemStack p_77616_1_)
      {
--        return this.getItemStackLimit() == 1 && this.isDamageable();
-+        return this.getItemStackLimit(stack) == 1 && this.isDamageable();
+-        return this.func_77639_j() == 1 && this.func_77645_m();
++        return this.getItemStackLimit(p_77616_1_) == 1 && this.func_77645_m();
      }
  
-     protected MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+     protected MovingObjectPosition func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
 @@ -334,6 +339,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
-+        if (playerIn instanceof net.minecraft.entity.player.EntityPlayerMP)
++        if (p_77621_2_ instanceof net.minecraft.entity.player.EntityPlayerMP)
 +        {
-+            d3 = ((net.minecraft.entity.player.EntityPlayerMP)playerIn).theItemInWorldManager.getBlockReachDistance();
++            d3 = ((net.minecraft.entity.player.EntityPlayerMP)p_77621_2_).field_71134_c.getBlockReachDistance();
 +        }
-         Vec3 vec31 = vec3.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
-         return worldIn.rayTraceBlocks(vec3, vec31, useLiquids, !useLiquids, false);
+         Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
+         return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
 @@ -371,11 +380,578 @@
          return false;
      }
  
 +    @Deprecated // Use ItemStack sensitive version below.
-     public Multimap<String, AttributeModifier> getItemAttributeModifiers()
+     public Multimap<String, AttributeModifier> func_111205_h()
      {
          return HashMultimap.<String, AttributeModifier>create();
      }
@@ -73,7 +73,7 @@
 +     */
 +    public Multimap<String, AttributeModifier> getAttributeModifiers(ItemStack stack)
 +    {
-+        return this.getItemAttributeModifiers();
++        return this.func_111205_h();
 +    }
 +
 +    /**
@@ -112,7 +112,7 @@
 +     */
 +    public float getDigSpeed(ItemStack itemstack, net.minecraft.block.state.IBlockState state)
 +    {
-+        return getStrVsBlock(itemstack, state.getBlock());
++        return func_150893_a(itemstack, state.func_177230_c());
 +    }
 +
 +
@@ -123,7 +123,7 @@
 +     */
 +    public boolean isRepairable()
 +    {
-+        return canRepair && isDamageable();
++        return canRepair && func_77645_m();
 +    }
 +
 +    /**
@@ -203,7 +203,7 @@
 +        {
 +            return null;
 +        }
-+        return new ItemStack(getContainerItem());
++        return new ItemStack(func_77668_q());
 +    }
 +
 +    /**
@@ -213,7 +213,7 @@
 +     */
 +    public boolean hasContainerItem(ItemStack stack)
 +    {
-+        return hasContainerItem();
++        return func_77634_r();
 +    }
 +
 +    /**
@@ -278,7 +278,7 @@
 +     */
 +    public CreativeTabs[] getCreativeTabs()
 +    {
-+        return new CreativeTabs[]{ getCreativeTab() };
++        return new CreativeTabs[]{ func_77640_w() };
 +    }
 +
 +    /**
@@ -321,9 +321,9 @@
 +    {
 +        if (this instanceof ItemEnchantedBook)
 +        {
-+            return ((ItemEnchantedBook)this).getRandom(rnd,
-+                    original.theMinimumChanceToGenerateItem,
-+                    original.theMaximumChanceToGenerateItem, original.itemWeight);
++            return ((ItemEnchantedBook)this).func_92112_a(rnd,
++                    original.field_76295_d,
++                    original.field_76296_e, original.field_76292_a);
 +        }
 +        return original;
 +    }
@@ -359,12 +359,12 @@
 +    {
 +        if (this instanceof ItemArmor)
 +        {
-+            return ((ItemArmor)this).armorType == armorType;
++            return ((ItemArmor)this).field_77881_a == armorType;
 +        }
 +
 +        if (armorType == 0)
 +        {
-+            return this == Item.getItemFromBlock(Blocks.pumpkin) || this == Items.skull;
++            return this == Item.func_150898_a(Blocks.field_150423_aK) || this == Items.field_151144_bL;
 +        }
 +
 +        return false;
@@ -460,7 +460,7 @@
 +     */
 +    public int getDamage(ItemStack stack)
 +    {
-+        return stack.itemDamage;
++        return stack.field_77991_e;
 +    }
 +
 +    /**
@@ -470,7 +470,7 @@
 +     */
 +    public int getMetadata(ItemStack stack)
 +    {
-+        return stack.itemDamage;
++        return stack.field_77991_e;
 +    }
 +
 +    /**
@@ -483,7 +483,7 @@
 +     */
 +    public boolean showDurabilityBar(ItemStack stack)
 +    {
-+        return stack.isItemDamaged();
++        return stack.func_77951_h();
 +    }
 +
 +    /**
@@ -494,7 +494,7 @@
 +     */
 +    public double getDurabilityForDisplay(ItemStack stack)
 +    {
-+        return (double)stack.getItemDamage() / (double)stack.getMaxDamage();
++        return (double)stack.func_77952_i() / (double)stack.func_77958_k();
 +    }
 +
 +    /**
@@ -506,7 +506,7 @@
 +     */
 +    public int getMaxDamage(ItemStack stack)
 +    {
-+        return getMaxDamage();
++        return func_77612_l();
 +    }
 +
 +    /**
@@ -516,7 +516,7 @@
 +     */
 +    public boolean isDamaged(ItemStack stack)
 +    {
-+        return stack.itemDamage > 0;
++        return stack.field_77991_e > 0;
 +    }
 +
 +    /**
@@ -526,11 +526,11 @@
 +     */
 +    public void setDamage(ItemStack stack, int damage)
 +    {
-+        stack.itemDamage = damage;
++        stack.field_77991_e = damage;
 +
-+        if (stack.itemDamage < 0)
++        if (stack.field_77991_e < 0)
 +        {
-+            stack.itemDamage = 0;
++            stack.field_77991_e = 0;
 +        }
 +    }
 +
@@ -542,7 +542,7 @@
 +     */
 +    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
 +    {
-+        return canHarvestBlock(par1Block);
++        return func_150897_b(par1Block);
 +    }
 +
 +    /**
@@ -554,7 +554,7 @@
 +     */
 +    public int getItemStackLimit(ItemStack stack)
 +    {
-+        return this.getItemStackLimit();
++        return this.func_77639_j();
 +    }
 +
 +    private java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
@@ -604,7 +604,7 @@
 +     */
 +    public int getItemEnchantability(ItemStack stack)
 +    {
-+        return getItemEnchantability();
++        return func_77619_b();
 +    }
 +
 +    /**
@@ -614,7 +614,7 @@
 +     */
 +    public boolean isBeaconPayment(ItemStack stack)
 +    {
-+        return this == Items.emerald || this == Items.diamond || this == Items.gold_ingot || this == Items.iron_ingot;
++        return this == Items.field_151166_bC || this == Items.field_151045_i || this == Items.field_151043_k || this == Items.field_151042_j;
 +    }
 +
 +
@@ -629,39 +629,39 @@
 +     */
 +    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
 +    {
-+        return !ItemStack.areItemStacksEqual(oldStack, newStack);
++        return !ItemStack.func_77989_b(oldStack, newStack);
 +    }
 +    /* ======================================== FORGE END   =====================================*/
 +
-     public static void registerItems()
+     public static void func_150900_l()
      {
-         registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
+         func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
 @@ -855,6 +1431,10 @@
-         private final float damageVsEntity;
-         private final int enchantability;
+         private final float field_78011_i;
+         private final int field_78008_j;
  
 +        //Added by forge for custom Tool materials.
 +        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
 +        private ItemStack repairMaterial = null;
 +
-         private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
+         private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-             this.harvestLevel = harvestLevel;
+             this.field_78001_f = p_i1874_3_;
 @@ -889,9 +1469,36 @@
-             return this.enchantability;
+             return this.field_78008_j;
          }
  
 +        @Deprecated // Use getRepairItemStack below
-         public Item getRepairItem()
+         public Item func_150995_f()
          {
--            return this == WOOD ? Item.getItemFromBlock(Blocks.planks) : (this == STONE ? Item.getItemFromBlock(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
+-            return this == WOOD ? Item.func_150898_a(Blocks.field_150344_f) : (this == STONE ? Item.func_150898_a(Blocks.field_150347_e) : (this == GOLD ? Items.field_151043_k : (this == IRON ? Items.field_151042_j : (this == EMERALD ? Items.field_151045_i : null))));
 +            switch (this)
 +            {
-+                case WOOD:    return Item.getItemFromBlock(Blocks.planks);
-+                case STONE:   return Item.getItemFromBlock(Blocks.cobblestone);
-+                case GOLD:    return Items.gold_ingot;
-+                case IRON:    return Items.iron_ingot;
-+                case EMERALD: return Items.diamond;
++                case WOOD:    return Item.func_150898_a(Blocks.field_150344_f);
++                case STONE:   return Item.func_150898_a(Blocks.field_150347_e);
++                case GOLD:    return Items.field_151043_k;
++                case IRON:    return Items.field_151042_j;
++                case EMERALD: return Items.field_151045_i;
 +                default:      return customCraftingMaterial;
 +            }
          }
@@ -671,14 +671,14 @@
 +            if (this.repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
 +            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == EMERALD) throw new RuntimeException("Can not change vanilla tool repair materials");
 +            this.repairMaterial = stack;
-+            this.customCraftingMaterial = stack.getItem();
++            this.customCraftingMaterial = stack.func_77973_b();
 +            return this;
 +        }
 +
 +        public ItemStack getRepairItemStack()
 +        {
 +            if (repairMaterial != null) return repairMaterial;
-+            Item ret = this.getRepairItem();
++            Item ret = this.func_150995_f();
 +            if (ret == null) return null;
 +            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
 +            return repairMaterial;

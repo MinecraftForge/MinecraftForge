@@ -6,7 +6,7 @@
  
 +    public void checkAndGrow()
 +    {
-+        this.func_181670_b(vertexFormat.getNextOffset()/* / 4 * 4 */);
++        this.func_181670_b(field_179011_q.func_177338_f()/* / 4 * 4 */);
 +    }
 +
      @SideOnly(Side.CLIENT)

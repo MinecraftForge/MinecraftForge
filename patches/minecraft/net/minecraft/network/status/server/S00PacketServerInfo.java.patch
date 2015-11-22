@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/network/status/server/S00PacketServerInfo.java
 @@ -34,7 +34,7 @@
  
-     public void writePacketData(PacketBuffer buf) throws IOException
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
--        buf.writeString(GSON.toJson((Object)this.response));
-+        buf.writeString(this.response.getJson());
+-        p_148840_1_.func_180714_a(field_149297_a.toJson((Object)this.field_149296_b));
++        p_148840_1_.func_180714_a(this.field_149296_b.getJson());
      }
  
-     public void processPacket(INetHandlerStatusClient handler)
+     public void func_148833_a(INetHandlerStatusClient p_148833_1_)

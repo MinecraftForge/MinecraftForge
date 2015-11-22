@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/util/MouseHelper.java
 @@ -13,6 +13,7 @@
  
-     public void grabMouseCursor()
+     public void func_74372_a()
      {
 +        if (Boolean.parseBoolean(System.getProperty("fml.noGrab","false"))) return;
          Mouse.setGrabbed(true);
-         this.deltaX = 0;
-         this.deltaY = 0;
+         this.field_74377_a = 0;
+         this.field_74375_b = 0;

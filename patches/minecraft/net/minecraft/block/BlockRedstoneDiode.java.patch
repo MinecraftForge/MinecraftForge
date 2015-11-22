@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
 @@ -198,6 +198,8 @@
      {
-         EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
-         BlockPos blockpos = pos.offset(enumfacing.getOpposite());
-+        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(worldIn, pos, worldIn.getBlockState(pos), java.util.EnumSet.of(enumfacing.getOpposite())).isCanceled())
+         EnumFacing enumfacing = (EnumFacing)p_176400_3_.func_177229_b(field_176387_N);
+         BlockPos blockpos = p_176400_2_.func_177972_a(enumfacing.func_176734_d());
++        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_176400_1_, p_176400_2_, p_176400_1_.func_180495_p(p_176400_2_), java.util.EnumSet.of(enumfacing.func_176734_d())).isCanceled())
 +            return;
-         worldIn.notifyBlockOfStateChange(blockpos, this);
-         worldIn.notifyNeighborsOfStateExcept(blockpos, this, enumfacing);
+         p_176400_1_.func_180496_d(blockpos, this);
+         p_176400_1_.func_175695_a(blockpos, this, enumfacing);
      }

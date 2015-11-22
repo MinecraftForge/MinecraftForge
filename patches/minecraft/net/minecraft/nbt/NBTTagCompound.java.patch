@@ -2,17 +2,17 @@
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
 @@ -395,6 +395,7 @@
  
-     private static byte readType(DataInput input, NBTSizeTracker sizeTracker) throws IOException
+     private static byte func_152447_a(DataInput p_152447_0_, NBTSizeTracker p_152447_1_) throws IOException
      {
-+        sizeTracker.read(8);
-         return input.readByte();
++        p_152447_1_.func_152450_a(8);
+         return p_152447_0_.readByte();
      }
  
 @@ -405,6 +406,7 @@
  
-     static NBTBase readNBT(byte id, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException
+     static NBTBase func_152449_a(byte p_152449_0_, String p_152449_1_, DataInput p_152449_2_, int p_152449_3_, NBTSizeTracker p_152449_4_) throws IOException
      {
-+        sizeTracker.read(32); //Forge: 4 extra bytes for the object allocation.
-         NBTBase nbtbase = NBTBase.createNewByType(id);
++        p_152449_4_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
+         NBTBase nbtbase = NBTBase.func_150284_a(p_152449_0_);
  
          try

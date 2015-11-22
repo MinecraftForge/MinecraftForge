@@ -17,29 +17,29 @@
 +            {
 +                if (--this.field_75445_i <= 0)
 +                {
-+                    this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
-+                    this.field_151497_i = 4 + this.attacker.getRNG().nextInt(7);
-+                    return this.entityPathEntity != null;
++                    this.field_75438_g = this.field_75441_b.func_70661_as().func_75494_a(entitylivingbase);
++                    this.field_151497_i = 4 + this.field_75441_b.func_70681_au().nextInt(7);
++                    return this.field_75438_g != null;
 +                }
 +                else
 +                {
 +                    return true;
 +                }
 +            }
-             this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
-             return this.entityPathEntity != null;
+             this.field_75438_g = this.field_75441_b.func_70661_as().func_75494_a(entitylivingbase);
+             return this.field_75438_g != null;
          }
 @@ -91,6 +106,23 @@
-             this.field_151496_k = entitylivingbase.posZ;
-             this.field_75445_i = 4 + this.attacker.getRNG().nextInt(7);
+             this.field_151496_k = entitylivingbase.field_70161_v;
+             this.field_75445_i = 4 + this.field_75441_b.func_70681_au().nextInt(7);
  
 +            if (this.canPenalize)
 +            {
 +                this.field_151497_i += failedPathFindingPenalty;
-+                if (this.attacker.getNavigator().getPath() != null)
++                if (this.field_75441_b.func_70661_as().func_75505_d() != null)
 +                {
-+                    net.minecraft.pathfinding.PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
-+                    if (finalPathPoint != null && entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1)
++                    net.minecraft.pathfinding.PathPoint finalPathPoint = this.field_75441_b.func_70661_as().func_75505_d().func_75870_c();
++                    if (finalPathPoint != null && entitylivingbase.func_70092_e(finalPathPoint.field_75839_a, finalPathPoint.field_75837_b, finalPathPoint.field_75838_c) < 1)
 +                        failedPathFindingPenalty = 0;
 +                    else
 +                        failedPathFindingPenalty += 10;

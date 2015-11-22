@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
 @@ -76,4 +76,15 @@
      {
-         return (ItemRecord)RECORDS.get(name);
+         return (ItemRecord)field_150928_b.get(p_150926_0_);
      }
 +
 +    /**

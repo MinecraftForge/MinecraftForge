@@ -1,43 +1,43 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
 @@ -93,6 +93,11 @@
-         this.direction = packetDirection;
+         this.field_179294_g = p_i46004_1_;
      }
  
 +    public EnumPacketDirection getDirection()
 +    {
-+        return this.direction;
++        return this.field_179294_g;
 +    }
 +
      public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
      {
          super.channelActive(p_channelActive_1_);
 @@ -208,7 +213,7 @@
-         final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
-         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.channel.attr(attrKeyConnectionState).get();
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
  
 -        if (enumconnectionstate1 != enumconnectionstate)
-+        if (enumconnectionstate1 != enumconnectionstate && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
++        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
          {
-             logger.debug("Disabled auto read");
-             this.channel.config().setAutoRead(false);
+             field_150735_g.debug("Disabled auto read");
+             this.field_150746_k.config().setAutoRead(false);
 @@ -216,7 +221,7 @@
  
-         if (this.channel.eventLoop().inEventLoop())
+         if (this.field_150746_k.eventLoop().inEventLoop())
          {
 -            if (enumconnectionstate != enumconnectionstate1)
-+            if (enumconnectionstate != enumconnectionstate1 && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
++            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
              {
-                 this.setConnectionState(enumconnectionstate);
+                 this.func_150723_a(enumconnectionstate);
              }
 @@ -236,7 +241,7 @@
              {
                  public void run()
                  {
 -                    if (enumconnectionstate != enumconnectionstate1)
-+                    if (enumconnectionstate != enumconnectionstate1  && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
++                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
                      {
-                         NetworkManager.this.setConnectionState(enumconnectionstate);
+                         NetworkManager.this.func_150723_a(enumconnectionstate);
                      }
 @@ -455,6 +460,11 @@
          }
@@ -45,9 +45,9 @@
  
 +    public Channel channel()
 +    {
-+        return channel;
++        return field_150746_k;
 +    }
 +
      static class InboundHandlerTuplePacketListener
          {
-             private final Packet packet;
+             private final Packet field_150774_a;

@@ -4,54 +4,54 @@
                  {
                      for (int l = -j; l <= j && flag; ++l)
                      {
--                        if (p_175926_2_.getY() + i < 0 || p_175926_2_.getY() + i >= 256 || !this.func_150523_a(worldIn.getBlockState(p_175926_2_.add(k, i, l)).getBlock()))
-+                        if (p_175926_2_.getY() + i < 0 || p_175926_2_.getY() + i >= 256 || !this.isReplaceable(worldIn,p_175926_2_.add(k, i, l)))
+-                        if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= 256 || !this.func_150523_a(p_175926_1_.func_180495_p(p_175926_2_.func_177982_a(k, i, l)).func_177230_c()))
++                        if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= 256 || !this.isReplaceable(p_175926_1_,p_175926_2_.func_177982_a(k, i, l)))
                          {
                              flag = false;
                          }
 @@ -79,13 +79,14 @@
      {
-         BlockPos blockpos = p_175927_1_.down();
-         Block block = worldIn.getBlockState(blockpos).getBlock();
-+        boolean isSoil = block.canSustainPlant(worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+         BlockPos blockpos = p_175927_1_.func_177977_b();
+         Block block = p_175927_2_.func_180495_p(blockpos).func_177230_c();
++        boolean isSoil = block.canSustainPlant(p_175927_2_, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
  
--        if ((block == Blocks.grass || block == Blocks.dirt) && p_175927_1_.getY() >= 2)
-+        if (isSoil && p_175927_1_.getY() >= 2)
+-        if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d) && p_175927_1_.func_177956_o() >= 2)
++        if (isSoil && p_175927_1_.func_177956_o() >= 2)
          {
--            this.func_175921_a(worldIn, blockpos);
--            this.func_175921_a(worldIn, blockpos.east());
--            this.func_175921_a(worldIn, blockpos.south());
--            this.func_175921_a(worldIn, blockpos.south().east());
-+            this.onPlantGrow(worldIn, blockpos, p_175927_1_);
-+            this.onPlantGrow(worldIn, blockpos.east(), p_175927_1_);
-+            this.onPlantGrow(worldIn, blockpos.south(), p_175927_1_);
-+            this.onPlantGrow(worldIn, blockpos.south().east(), p_175927_1_);
+-            this.func_175921_a(p_175927_2_, blockpos);
+-            this.func_175921_a(p_175927_2_, blockpos.func_177974_f());
+-            this.func_175921_a(p_175927_2_, blockpos.func_177968_d());
+-            this.func_175921_a(p_175927_2_, blockpos.func_177968_d().func_177974_f());
++            this.onPlantGrow(p_175927_2_, blockpos, p_175927_1_);
++            this.onPlantGrow(p_175927_2_, blockpos.func_177974_f(), p_175927_1_);
++            this.onPlantGrow(p_175927_2_, blockpos.func_177968_d(), p_175927_1_);
++            this.onPlantGrow(p_175927_2_, blockpos.func_177968_d().func_177974_f(), p_175927_1_);
              return true;
          }
          else
 @@ -113,9 +114,9 @@
                  if (j * j + k * k <= i || l * l + i1 * i1 <= i || j * j + i1 * i1 <= i || l * l + k * k <= i)
                  {
-                     BlockPos blockpos = p_175925_2_.add(j, 0, k);
--                    Material material = worldIn.getBlockState(blockpos).getBlock().getMaterial();
-+                    net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
+                     BlockPos blockpos = p_175925_2_.func_177982_a(j, 0, k);
+-                    Material material = p_175925_1_.func_180495_p(blockpos).func_177230_c().func_149688_o();
++                    net.minecraft.block.state.IBlockState state = p_175925_1_.func_180495_p(blockpos);
  
--                    if (material == Material.air || material == Material.leaves)
-+                    if (state.getBlock().isAir(worldIn, blockpos) || state.getBlock().isLeaves(worldIn, blockpos))
+-                    if (material == Material.field_151579_a || material == Material.field_151584_j)
++                    if (state.func_177230_c().isAir(p_175925_1_, blockpos) || state.func_177230_c().isLeaves(p_175925_1_, blockpos))
                      {
-                         this.func_175903_a(worldIn, blockpos, this.leavesMetadata);
+                         this.func_175903_a(p_175925_1_, blockpos, this.field_76521_c);
                      }
 @@ -135,9 +136,9 @@
                  if (j * j + k * k <= i)
                  {
-                     BlockPos blockpos = p_175928_2_.add(j, 0, k);
--                    Material material = worldIn.getBlockState(blockpos).getBlock().getMaterial();
-+                    Block block = worldIn.getBlockState(blockpos).getBlock();
+                     BlockPos blockpos = p_175928_2_.func_177982_a(j, 0, k);
+-                    Material material = p_175928_1_.func_180495_p(blockpos).func_177230_c().func_149688_o();
++                    Block block = p_175928_1_.func_180495_p(blockpos).func_177230_c();
  
--                    if (material == Material.air || material == Material.leaves)
-+                    if (block.isAir(worldIn, blockpos) || block.isLeaves(worldIn, blockpos))
+-                    if (material == Material.field_151579_a || material == Material.field_151584_j)
++                    if (block.isAir(p_175928_1_, blockpos) || block.isLeaves(p_175928_1_, blockpos))
                      {
-                         this.func_175903_a(worldIn, blockpos, this.leavesMetadata);
+                         this.func_175903_a(p_175928_1_, blockpos, this.field_76521_c);
                      }
 @@ -145,4 +146,10 @@
              }
@@ -61,6 +61,6 @@
 +    //Just a helper macro
 +    private void onPlantGrow(World world, BlockPos pos, BlockPos source)
 +    {
-+        world.getBlockState(pos).getBlock().onPlantGrow(world, pos, source);
++        world.func_180495_p(pos).func_177230_c().onPlantGrow(world, pos, source);
 +    }
  }

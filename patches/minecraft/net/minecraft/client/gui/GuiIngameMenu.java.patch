@@ -2,28 +2,28 @@
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
 @@ -30,8 +30,9 @@
  
-         this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 24 + i, I18n.format("menu.returnToGame", new Object[0])));
-         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + i, 98, 20, I18n.format("menu.options", new Object[0])));
-+        this.buttonList.add(new GuiButton(12, this.width / 2 + 2, this.height / 4 + 96 + i, 98, 20, I18n.format("fml.menu.modoptions")));
+         this.field_146292_n.add(new GuiButton(4, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 24 + i, I18n.func_135052_a("menu.returnToGame", new Object[0])));
+         this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 96 + i, 98, 20, I18n.func_135052_a("menu.options", new Object[0])));
++        this.field_146292_n.add(new GuiButton(12, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + i, 98, 20, I18n.func_135052_a("fml.menu.modoptions")));
          GuiButton guibutton;
--        this.buttonList.add(guibutton = new GuiButton(7, this.width / 2 + 2, this.height / 4 + 96 + i, 98, 20, I18n.format("menu.shareToLan", new Object[0])));
-+        this.buttonList.add(guibutton = new GuiButton(7, this.width / 2 - 100, this.height / 4 + 72 + i, 200, 20, I18n.format("menu.shareToLan", new Object[0])));
-         this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, I18n.format("gui.achievements", new Object[0])));
-         this.buttonList.add(new GuiButton(6, this.width / 2 + 2, this.height / 4 + 48 + i, 98, 20, I18n.format("gui.stats", new Object[0])));
-         guibutton.enabled = this.mc.isSingleplayer() && !this.mc.getIntegratedServer().getPublic();
+-        this.field_146292_n.add(guibutton = new GuiButton(7, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + i, 98, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
++        this.field_146292_n.add(guibutton = new GuiButton(7, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 72 + i, 200, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
+         this.field_146292_n.add(new GuiButton(5, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 48 + i, 98, 20, I18n.func_135052_a("gui.achievements", new Object[0])));
+         this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 48 + i, 98, 20, I18n.func_135052_a("gui.stats", new Object[0])));
+         guibutton.field_146124_l = this.field_146297_k.func_71356_B() && !this.field_146297_k.func_71401_C().func_71344_c();
 @@ -74,13 +75,19 @@
-                 this.mc.setIngameFocus();
+                 this.field_146297_k.func_71381_h();
                  break;
              case 5:
-+                if (this.mc.thePlayer != null)
-                 this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.thePlayer.getStatFileWriter()));
++                if (this.field_146297_k.field_71439_g != null)
+                 this.field_146297_k.func_147108_a(new GuiAchievements(this, this.field_146297_k.field_71439_g.func_146107_m()));
                  break;
              case 6:
-+                if (this.mc.thePlayer != null)
-                 this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
++                if (this.field_146297_k.field_71439_g != null)
+                 this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
                  break;
              case 7:
-                 this.mc.displayGuiScreen(new GuiShareToLan(this));
+                 this.field_146297_k.func_147108_a(new GuiShareToLan(this));
 +                break;
 +            case 12:
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().showInGameModOptions(this);

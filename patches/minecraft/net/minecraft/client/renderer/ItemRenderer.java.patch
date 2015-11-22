@@ -2,57 +2,57 @@
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 @@ -313,7 +313,7 @@
  
-         if (this.itemToRender != null)
+         if (this.field_78453_b != null)
          {
--            if (this.itemToRender.getItem() == Items.filled_map)
-+            if (this.itemToRender.getItem() instanceof net.minecraft.item.ItemMap)
+-            if (this.field_78453_b.func_77973_b() == Items.field_151098_aY)
++            if (this.field_78453_b.func_77973_b() instanceof net.minecraft.item.ItemMap)
              {
                  this.func_178097_a(abstractclientplayer, f2, f, f1);
              }
 @@ -365,6 +365,7 @@
-         if (this.mc.thePlayer.isEntityInsideOpaqueBlock())
+         if (this.field_78455_a.field_71439_g.func_70094_T())
          {
-             IBlockState iblockstate = this.mc.theWorld.getBlockState(new BlockPos(this.mc.thePlayer));
-+            BlockPos overlayPos = new BlockPos(this.mc.thePlayer);
-             EntityPlayer entityplayer = this.mc.thePlayer;
+             IBlockState iblockstate = this.field_78455_a.field_71441_e.func_180495_p(new BlockPos(this.field_78455_a.field_71439_g));
++            BlockPos overlayPos = new BlockPos(this.field_78455_a.field_71439_g);
+             EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
 @@ -378,11 +379,13 @@
-                 if (iblockstate1.getBlock().isVisuallyOpaque())
+                 if (iblockstate1.func_177230_c().func_176214_u())
                  {
                      iblockstate = iblockstate1;
 +                    overlayPos = blockpos;
                  }
              }
  
-             if (iblockstate.getBlock().getRenderType() != -1)
+             if (iblockstate.func_177230_c().func_149645_b() != -1)
              {
-+                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
-                 this.func_178108_a(p_78447_1_, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
+                 this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
 @@ -391,11 +394,13 @@
          {
-             if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
+             if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
-+                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(mc.thePlayer, p_78447_1_))
-                 this.renderWaterOverlayTexture(p_78447_1_);
++                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
+                 this.func_78448_c(p_78447_1_);
              }
  
-             if (this.mc.thePlayer.isBurning())
+             if (this.field_78455_a.field_71439_g.func_70027_ad())
              {
-+                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(mc.thePlayer, p_78447_1_))
-                 this.renderFireInFirstPerson(p_78447_1_);
++                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(field_78455_a.field_71439_g, p_78447_1_))
+                 this.func_78442_d(p_78447_1_);
              }
          }
 @@ -512,6 +517,12 @@
          {
-             if (!this.itemToRender.getIsItemStackEqual(itemstack))
+             if (!this.field_78453_b.func_179549_c(itemstack))
              {
-+                if (!this.itemToRender.getItem().shouldCauseReequipAnimation(this.itemToRender, itemstack, equippedItemSlot != entityplayer.inventory.currentItem))
++                if (!this.field_78453_b.func_77973_b().shouldCauseReequipAnimation(this.field_78453_b, itemstack, field_78450_g != entityplayer.field_71071_by.field_70461_c))
 +                {
-+                    this.itemToRender = itemstack;
-+                    this.equippedItemSlot = entityplayer.inventory.currentItem;
++                    this.field_78453_b = itemstack;
++                    this.field_78450_g = entityplayer.field_71071_by.field_70461_c;
 +                    return;
 +                }
                  flag = true;

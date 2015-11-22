@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
 @@ -154,7 +154,7 @@
      {
-         if (this.blockMaterial == Material.iron)
+         if (this.field_149764_J == Material.field_151573_f)
          {
 -            return true;
 +            return false; //Allow items to interact with the door
@@ -11,10 +11,10 @@
          {
 @@ -272,7 +272,7 @@
  
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return pos.getY() >= 255 ? false : World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
-+        return pos.getY() >= worldIn.getHeight() - 1 ? false : World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
+-        return p_176196_2_.func_177956_o() >= 255 ? false : World.func_175683_a(p_176196_1_, p_176196_2_.func_177977_b()) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
++        return p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1 ? false : World.func_175683_a(p_176196_1_, p_176196_2_.func_177977_b()) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
      }
  
-     public int getMobilityFlag()
+     public int func_149656_h()

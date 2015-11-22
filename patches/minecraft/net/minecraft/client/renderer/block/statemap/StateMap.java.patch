@@ -4,8 +4,8 @@
          }
          else
          {
--            s = ((IProperty)this.property).getName((Comparable)map.remove(this.property));
-+            s = String.format("%s:%s", ((ResourceLocation)Block.blockRegistry.getNameForObject(p_178132_1_.getBlock())).getResourceDomain(), ((IProperty)this.property).getName((Comparable)map.remove(this.property)));
+-            s = ((IProperty)this.field_178142_a).func_177702_a((Comparable)map.remove(this.field_178142_a));
++            s = String.format("%s:%s", ((ResourceLocation)Block.field_149771_c.func_177774_c(p_178132_1_.func_177230_c())).func_110624_b(), ((IProperty)this.field_178142_a).func_177702_a((Comparable)map.remove(this.field_178142_a)));
          }
  
-         if (this.suffix != null)
+         if (this.field_178141_c != null)

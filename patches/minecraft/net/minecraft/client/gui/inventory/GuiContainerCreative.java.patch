@@ -13,20 +13,20 @@
                  return;
              }
  
--            if (itemstack1 != null && itemstack2 != null && itemstack1.isItemEqual(itemstack2))
-+            if (itemstack1 != null && itemstack2 != null && itemstack1.isItemEqual(itemstack2) && ItemStack.areItemStackTagsEqual(itemstack1, itemstack2)) //Forge: Bugfix, Compare NBT data, allow for deletion of enchanted books, MC-12770
+-            if (itemstack1 != null && itemstack2 != null && itemstack1.func_77969_a(itemstack2))
++            if (itemstack1 != null && itemstack2 != null && itemstack1.func_77969_a(itemstack2) && ItemStack.func_77970_a(itemstack1, itemstack2)) //Forge: Bugfix, Compare NBT data, allow for deletion of enchanted books, MC-12770
              {
-                 if (clickedButton == 0)
+                 if (p_146984_3_ == 0)
                  {
 @@ -259,6 +261,13 @@
-             this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[i]);
-             this.field_147059_E = new CreativeCrafting(this.mc);
-             this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_147059_E);
-+            int tabCount = CreativeTabs.creativeTabArray.length;
+             this.func_147050_b(CreativeTabs.field_78032_a[i]);
+             this.field_147059_E = new CreativeCrafting(this.field_146297_k);
+             this.field_146297_k.field_71439_g.field_71069_bz.func_75132_a(this.field_147059_E);
++            int tabCount = CreativeTabs.field_78032_a.length;
 +            if (tabCount > 12)
 +            {
-+                buttonList.add(new GuiButton(101, guiLeft,              guiTop - 50, 20, 20, "<"));
-+                buttonList.add(new GuiButton(102, guiLeft + xSize - 20, guiTop - 50, 20, 20, ">"));
++                field_146292_n.add(new GuiButton(101, field_147003_i,              field_147009_r - 50, 20, 20, "<"));
++                field_146292_n.add(new GuiButton(102, field_147003_i + field_146999_f - 20, field_147009_r - 50, 20, 20, ">"));
 +                maxPages = ((tabCount - 12) / 10) + 1;
 +            }
          }
@@ -34,30 +34,30 @@
          {
 @@ -280,7 +289,7 @@
  
-     protected void keyTyped(char typedChar, int keyCode) throws IOException
+     protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
      {
--        if (selectedTabIndex != CreativeTabs.tabAllSearch.getTabIndex())
-+        if (!CreativeTabs.creativeTabArray[selectedTabIndex].hasSearchBar())
+-        if (field_147058_w != CreativeTabs.field_78027_g.func_78021_a())
++        if (!CreativeTabs.field_78032_a[field_147058_w].hasSearchBar())
          {
-             if (GameSettings.isKeyDown(this.mc.gameSettings.keyBindChat))
+             if (GameSettings.func_100015_a(this.field_146297_k.field_71474_y.field_74310_D))
              {
 @@ -318,6 +327,14 @@
-         GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
-         guicontainercreative$containercreative.itemList.clear();
+         GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
+         guicontainercreative$containercreative.field_148330_a.clear();
  
-+        CreativeTabs tab = CreativeTabs.creativeTabArray[selectedTabIndex];
-+        if (tab.hasSearchBar() && tab != CreativeTabs.tabAllSearch)
++        CreativeTabs tab = CreativeTabs.field_78032_a[field_147058_w];
++        if (tab.hasSearchBar() && tab != CreativeTabs.field_78027_g)
 +        {
-+            tab.displayAllReleventItems(guicontainercreative$containercreative.itemList);
++            tab.func_78018_a(guicontainercreative$containercreative.field_148330_a);
 +            updateFilteredItems(guicontainercreative$containercreative);
 +            return;
 +        }
 +
-         for (Item item : Item.itemRegistry)
+         for (Item item : Item.field_150901_e)
          {
-             if (item != null && item.getCreativeTab() != null)
+             if (item != null && item.func_77640_w() != null)
 @@ -325,7 +342,13 @@
-                 item.getSubItems(item, (CreativeTabs)null, guicontainercreative$containercreative.itemList);
+                 item.func_150895_a(item, (CreativeTabs)null, guicontainercreative$containercreative.field_148330_a);
              }
          }
 +        updateFilteredItems(guicontainercreative$containercreative);
@@ -66,126 +66,126 @@
 +    //split from above for custom search tabs
 +    private void updateFilteredItems(GuiContainerCreative.ContainerCreative guicontainercreative$containercreative)
 +    {
-+        if (CreativeTabs.creativeTabArray[selectedTabIndex] == CreativeTabs.tabAllSearch) // FORGE: Only add enchanted books to the regular search
-         for (Enchantment enchantment : Enchantment.enchantmentsBookList)
++        if (CreativeTabs.field_78032_a[field_147058_w] == CreativeTabs.field_78027_g) // FORGE: Only add enchanted books to the regular search
+         for (Enchantment enchantment : Enchantment.field_77331_b)
          {
-             if (enchantment != null && enchantment.type != null)
+             if (enchantment != null && enchantment.field_77351_y != null)
 @@ -333,7 +356,6 @@
-                 Items.enchanted_book.getAll(enchantment, guicontainercreative$containercreative.itemList);
+                 Items.field_151134_bR.func_92113_a(enchantment, guicontainercreative$containercreative.field_148330_a);
              }
          }
 -
-         Iterator<ItemStack> iterator = guicontainercreative$containercreative.itemList.iterator();
-         String s1 = this.searchField.getText().toLowerCase();
+         Iterator<ItemStack> iterator = guicontainercreative$containercreative.field_148330_a.iterator();
+         String s1 = this.field_147062_A.func_146179_b().toLowerCase();
  
 @@ -365,7 +387,7 @@
      {
-         CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
+         CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
--        if (creativetabs.drawInForegroundOfTab())
-+        if (creativetabs != null && creativetabs.drawInForegroundOfTab())
+-        if (creativetabs.func_78019_g())
++        if (creativetabs != null && creativetabs.func_78019_g())
          {
-             GlStateManager.disableBlend();
-             this.fontRendererObj.drawString(I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]), 8, 6, 4210752);
+             GlStateManager.func_179084_k();
+             this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c(), new Object[0]), 8, 6, 4210752);
 @@ -400,7 +422,7 @@
  
-             for (CreativeTabs creativetabs : CreativeTabs.creativeTabArray)
+             for (CreativeTabs creativetabs : CreativeTabs.field_78032_a)
              {
 -                if (this.func_147049_a(creativetabs, i, j))
 +                if (creativetabs != null && this.func_147049_a(creativetabs, i, j))
                  {
-                     this.setCurrentCreativeTab(creativetabs);
+                     this.func_147050_b(creativetabs);
                      return;
 @@ -413,11 +435,13 @@
  
-     private boolean needsScrollBars()
+     private boolean func_147055_p()
      {
-+        if (CreativeTabs.creativeTabArray[selectedTabIndex] == null) return false;
-         return selectedTabIndex != CreativeTabs.tabInventory.getTabIndex() && CreativeTabs.creativeTabArray[selectedTabIndex].shouldHidePlayerInventory() && ((GuiContainerCreative.ContainerCreative)this.inventorySlots).func_148328_e();
++        if (CreativeTabs.field_78032_a[field_147058_w] == null) return false;
+         return field_147058_w != CreativeTabs.field_78036_m.func_78021_a() && CreativeTabs.field_78032_a[field_147058_w].func_78017_i() && ((GuiContainerCreative.ContainerCreative)this.field_147002_h).func_148328_e();
      }
  
-     private void setCurrentCreativeTab(CreativeTabs p_147050_1_)
+     private void func_147050_b(CreativeTabs p_147050_1_)
      {
 +        if (p_147050_1_ == null) return;
-         int i = selectedTabIndex;
-         selectedTabIndex = p_147050_1_.getTabIndex();
-         GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
+         int i = field_147058_w;
+         field_147058_w = p_147050_1_.func_78021_a();
+         GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
 @@ -483,12 +507,14 @@
  
-         if (this.searchField != null)
+         if (this.field_147062_A != null)
          {
--            if (p_147050_1_ == CreativeTabs.tabAllSearch)
+-            if (p_147050_1_ == CreativeTabs.field_78027_g)
 +            if (p_147050_1_.hasSearchBar())
              {
-                 this.searchField.setVisible(true);
-                 this.searchField.setCanLoseFocus(false);
-                 this.searchField.setFocused(true);
-                 this.searchField.setText("");
-+                this.searchField.width = p_147050_1_.getSearchbarWidth();
-+                this.searchField.xPosition = this.guiLeft + (82 /*default left*/ + 89 /*default width*/) - this.searchField.width;
-                 this.updateCreativeSearch();
+                 this.field_147062_A.func_146189_e(true);
+                 this.field_147062_A.func_146205_d(false);
+                 this.field_147062_A.func_146195_b(true);
+                 this.field_147062_A.func_146180_a("");
++                this.field_147062_A.field_146218_h = p_147050_1_.getSearchbarWidth();
++                this.field_147062_A.field_146209_f = this.field_147003_i + (82 /*default left*/ + 89 /*default width*/) - this.field_147062_A.field_146218_h;
+                 this.func_147053_i();
              }
              else
 @@ -558,20 +584,43 @@
          }
  
-         super.drawScreen(mouseX, mouseY, partialTicks);
+         super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
 +        int start = tabPage * 10;
-+        int end = Math.min(CreativeTabs.creativeTabArray.length, ((tabPage + 1) * 10) + 2);
++        int end = Math.min(CreativeTabs.field_78032_a.length, ((tabPage + 1) * 10) + 2);
 +        if (tabPage != 0) start += 2;
 +        boolean rendered = false;
  
--        for (CreativeTabs creativetabs : CreativeTabs.creativeTabArray)
-+        for (CreativeTabs creativetabs : java.util.Arrays.copyOfRange(CreativeTabs.creativeTabArray,start,end))
+-        for (CreativeTabs creativetabs : CreativeTabs.field_78032_a)
++        for (CreativeTabs creativetabs : java.util.Arrays.copyOfRange(CreativeTabs.field_78032_a,start,end))
          {
 +            if (creativetabs == null) continue;
-             if (this.renderCreativeInventoryHoveringText(creativetabs, mouseX, mouseY))
+             if (this.func_147052_b(creativetabs, p_73863_1_, p_73863_2_))
              {
 +                rendered = true;
                  break;
              }
          }
  
-+        if (!rendered && renderCreativeInventoryHoveringText(CreativeTabs.tabAllSearch, mouseX, mouseY))
++        if (!rendered && func_147052_b(CreativeTabs.field_78027_g, p_73863_1_, p_73863_2_))
 +        {
-+            renderCreativeInventoryHoveringText(CreativeTabs.tabInventory, mouseX, mouseY);
++            func_147052_b(CreativeTabs.field_78036_m, p_73863_1_, p_73863_2_);
 +        }
 +
-         if (this.field_147064_C != null && selectedTabIndex == CreativeTabs.tabInventory.getTabIndex() && this.isPointInRegion(this.field_147064_C.xDisplayPosition, this.field_147064_C.yDisplayPosition, 16, 16, mouseX, mouseY))
+         if (this.field_147064_C != null && field_147058_w == CreativeTabs.field_78036_m.func_78021_a() && this.func_146978_c(this.field_147064_C.field_75223_e, this.field_147064_C.field_75221_f, 16, 16, p_73863_1_, p_73863_2_))
          {
-             this.drawCreativeTabHoveringText(I18n.format("inventory.binSlot", new Object[0]), mouseX, mouseY);
+             this.func_146279_a(I18n.func_135052_a("inventory.binSlot", new Object[0]), p_73863_1_, p_73863_2_);
          }
  
 +        if (maxPages != 0)
 +        {
 +            String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
-+            int width = fontRendererObj.getStringWidth(page);
-+            GlStateManager.disableLighting();
-+            this.zLevel = 300.0F;
-+            itemRender.zLevel = 300.0F;
-+            fontRendererObj.drawString(page, guiLeft + (xSize / 2) - (width / 2), guiTop - 44, -1);
-+            this.zLevel = 0.0F;
-+            itemRender.zLevel = 0.0F;
++            int width = field_146289_q.func_78256_a(page);
++            GlStateManager.func_179140_f();
++            this.field_73735_i = 300.0F;
++            field_146296_j.field_77023_b = 300.0F;
++            field_146289_q.func_78276_b(page, field_147003_i + (field_146999_f / 2) - (width / 2), field_147009_r - 44, -1);
++            this.field_73735_i = 0.0F;
++            field_146296_j.field_77023_b = 0.0F;
 +        }
 +
-         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-         GlStateManager.disableLighting();
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+         GlStateManager.func_179140_f();
      }
 @@ -633,16 +682,35 @@
-         RenderHelper.enableGUIStandardItemLighting();
-         CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
+         RenderHelper.func_74520_c();
+         CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
--        for (CreativeTabs creativetabs1 : CreativeTabs.creativeTabArray)
+-        for (CreativeTabs creativetabs1 : CreativeTabs.field_78032_a)
 +        int start = tabPage * 10;
-+        int end = Math.min(CreativeTabs.creativeTabArray.length, ((tabPage + 1) * 10 + 2));
++        int end = Math.min(CreativeTabs.field_78032_a.length, ((tabPage + 1) * 10 + 2));
 +        if (tabPage != 0) start += 2;
 +
-+        for (CreativeTabs creativetabs1 : java.util.Arrays.copyOfRange(CreativeTabs.creativeTabArray,start,end))
++        for (CreativeTabs creativetabs1 : java.util.Arrays.copyOfRange(CreativeTabs.field_78032_a,start,end))
          {
-             this.mc.getTextureManager().bindTexture(creativeInventoryTabs);
+             this.field_146297_k.func_110434_K().func_110577_a(field_147061_u);
  
 +            if (creativetabs1 == null) continue;
-             if (creativetabs1.getTabIndex() != selectedTabIndex)
+             if (creativetabs1.func_78021_a() != field_147058_w)
              {
                  this.func_147051_a(creativetabs1);
              }
@@ -193,28 +193,28 @@
  
 +        if (tabPage != 0)
 +        {
-+            if (creativetabs != CreativeTabs.tabAllSearch)
++            if (creativetabs != CreativeTabs.field_78027_g)
 +            {
-+                this.mc.getTextureManager().bindTexture(creativeInventoryTabs);
-+                func_147051_a(CreativeTabs.tabAllSearch);
++                this.field_146297_k.func_110434_K().func_110577_a(field_147061_u);
++                func_147051_a(CreativeTabs.field_78027_g);
 +            }
-+            if (creativetabs != CreativeTabs.tabInventory)
++            if (creativetabs != CreativeTabs.field_78036_m)
 +            {
-+                this.mc.getTextureManager().bindTexture(creativeInventoryTabs);
-+                func_147051_a(CreativeTabs.tabInventory);
++                this.field_146297_k.func_110434_K().func_110577_a(field_147061_u);
++                func_147051_a(CreativeTabs.field_78036_m);
 +            }
 +        }
 +
-         this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.getBackgroundImageName()));
-         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-         this.searchField.drawTextBox();
+         this.field_146297_k.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.func_78015_f()));
+         this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
+         this.field_147062_A.func_146194_f();
 @@ -657,6 +725,14 @@
-             this.drawTexturedModalRect(i, j + (int)((float)(k - j - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+             this.func_73729_b(i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
          }
  
 +        if (creativetabs == null || creativetabs.getTabPage() != tabPage)
 +        {
-+            if (creativetabs != CreativeTabs.tabAllSearch && creativetabs != CreativeTabs.tabInventory)
++            if (creativetabs != CreativeTabs.field_78027_g && creativetabs != CreativeTabs.field_78036_m)
 +            {
 +                return;
 +            }
@@ -222,44 +222,44 @@
 +
          this.func_147051_a(creativetabs);
  
-         if (creativetabs == CreativeTabs.tabInventory)
+         if (creativetabs == CreativeTabs.field_78036_m)
 @@ -667,6 +743,14 @@
  
      protected boolean func_147049_a(CreativeTabs p_147049_1_, int p_147049_2_, int p_147049_3_)
      {
 +        if (p_147049_1_.getTabPage() != tabPage)
 +        {
-+            if (p_147049_1_ != CreativeTabs.tabAllSearch && p_147049_1_ != CreativeTabs.tabInventory)
++            if (p_147049_1_ != CreativeTabs.field_78027_g && p_147049_1_ != CreativeTabs.field_78036_m)
 +            {
 +                return false;
 +            }
 +        }
 +
-         int i = p_147049_1_.getTabColumn();
+         int i = p_147049_1_.func_78020_k();
          int j = 28 * i;
          int k = 0;
 @@ -763,6 +847,8 @@
          }
  
-         GlStateManager.disableLighting();
-+        GlStateManager.color(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-+        GlStateManager.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-         this.drawTexturedModalRect(l, i1, j, k, 28, j1);
-         this.zLevel = 100.0F;
-         this.itemRender.zLevel = 100.0F;
+         GlStateManager.func_179140_f();
++        GlStateManager.func_179124_c(1F, 1F, 1F); //Forge: Reset color in case Items change it.
++        GlStateManager.func_179147_l(); //Forge: Make sure blend is enabled else tabs show a white border.
+         this.func_73729_b(l, i1, j, k, 28, j1);
+         this.field_73735_i = 100.0F;
+         this.field_146296_j.field_77023_b = 100.0F;
 @@ -789,6 +875,15 @@
          {
-             this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
+             this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
          }
 +
-+        if (button.id == 101)
++        if (p_146284_1_.field_146127_k == 101)
 +        {
 +            tabPage = Math.max(tabPage - 1, 0);
 +        }
-+        else if (button.id == 102)
++        else if (p_146284_1_.field_146127_k == 102)
 +        {
 +            tabPage = Math.min(tabPage + 1, maxPages);
 +        }
      }
  
-     public int getSelectedTabIndex()
+     public int func_147056_g()

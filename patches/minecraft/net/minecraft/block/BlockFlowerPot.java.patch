@@ -2,16 +2,16 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
 @@ -169,13 +169,6 @@
  
-     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
--        TileEntityFlowerPot tileentityflowerpot = this.getTileEntity(worldIn, pos);
+-        TileEntityFlowerPot tileentityflowerpot = this.func_176442_d(p_180663_1_, p_180663_2_);
 -
--        if (tileentityflowerpot != null && tileentityflowerpot.getFlowerPotItem() != null)
+-        if (tileentityflowerpot != null && tileentityflowerpot.func_145965_a() != null)
 -        {
--            spawnAsEntity(worldIn, pos, new ItemStack(tileentityflowerpot.getFlowerPotItem(), 1, tileentityflowerpot.getFlowerPotData()));
+-            func_180635_a(p_180663_1_, p_180663_2_, new ItemStack(tileentityflowerpot.func_145965_a(), 1, tileentityflowerpot.func_145966_b()));
 -        }
 -
-         super.breakBlock(worldIn, pos, state);
+         super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
 @@ -395,6 +388,31 @@
@@ -24,9 +24,9 @@
 +    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
-+        TileEntityFlowerPot te = world.getTileEntity(pos) instanceof TileEntityFlowerPot ? (TileEntityFlowerPot)world.getTileEntity(pos) : null;
-+        if (te != null && te.getFlowerPotItem() != null)
-+            ret.add(new ItemStack(te.getFlowerPotItem(), 1, te.getFlowerPotData()));
++        TileEntityFlowerPot te = world.func_175625_s(pos) instanceof TileEntityFlowerPot ? (TileEntityFlowerPot)world.func_175625_s(pos) : null;
++        if (te != null && te.func_145965_a() != null)
++            ret.add(new ItemStack(te.func_145965_a(), 1, te.func_145966_b()));
 +        return ret;
 +    }
 +    @Override
@@ -36,10 +36,10 @@
 +        return super.removedByPlayer(world, pos, player, willHarvest);
 +    }
 +    @Override
-+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
++    public void func_180657_a(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
 +    {
-+        super.harvestBlock(world, player, pos, state, te);
-+        world.setBlockToAir(pos);
++        super.func_180657_a(world, player, pos, state, te);
++        world.func_175698_g(pos);
 +    }
 +    /*===========================FORGE END==========================================*/
 +

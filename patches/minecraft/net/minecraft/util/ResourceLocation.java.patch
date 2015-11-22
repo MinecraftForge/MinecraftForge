@@ -17,10 +17,10 @@
      {
          this(0, new String[] {p_i1292_1_, p_i1292_2_});
 @@ -50,7 +47,6 @@
-         return this.resourcePath;
+         return this.field_110625_b;
      }
  
 -    @SideOnly(Side.CLIENT)
-     public String getResourceDomain()
+     public String func_110624_b()
      {
-         return this.resourceDomain;
+         return this.field_110626_a;

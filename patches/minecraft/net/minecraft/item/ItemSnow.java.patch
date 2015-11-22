@@ -2,12 +2,12 @@
 +++ ../src-work/minecraft/net/minecraft/item/ItemSnow.java
 @@ -67,4 +67,10 @@
      {
-         return damage;
+         return p_77647_1_;
      }
 +
-+    public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
++    public boolean func_179222_a(World world, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        return (state.getBlock() != net.minecraft.init.Blocks.snow_layer || ((Integer)state.getValue(BlockSnow.LAYERS)) > 7) ? super.canPlaceBlockOnSide(world, pos, side, player, stack) : true;
++        IBlockState state = world.func_180495_p(pos);
++        return (state.func_177230_c() != net.minecraft.init.Blocks.field_150431_aC || ((Integer)state.func_177229_b(BlockSnow.field_176315_a)) > 7) ? super.func_179222_a(world, pos, side, player, stack) : true;
 +    }
  }

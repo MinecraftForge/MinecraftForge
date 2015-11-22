@@ -8,28 +8,28 @@
 -
  public class Vec3
  {
-     public final double xCoord;
+     public final double field_72450_a;
 @@ -36,7 +33,6 @@
-         this((double)p_i46377_1_.getX(), (double)p_i46377_1_.getY(), (double)p_i46377_1_.getZ());
+         this((double)p_i46377_1_.func_177958_n(), (double)p_i46377_1_.func_177956_o(), (double)p_i46377_1_.func_177952_p());
      }
  
 -    @SideOnly(Side.CLIENT)
-     public Vec3 subtractReverse(Vec3 vec)
+     public Vec3 func_72444_a(Vec3 p_72444_1_)
      {
-         return new Vec3(vec.xCoord - this.xCoord, vec.yCoord - this.yCoord, vec.zCoord - this.zCoord);
+         return new Vec3(p_72444_1_.field_72450_a - this.field_72450_a, p_72444_1_.field_72448_b - this.field_72448_b, p_72444_1_.field_72449_c - this.field_72449_c);
 @@ -53,7 +49,6 @@
-         return this.xCoord * vec.xCoord + this.yCoord * vec.yCoord + this.zCoord * vec.zCoord;
+         return this.field_72450_a * p_72430_1_.field_72450_a + this.field_72448_b * p_72430_1_.field_72448_b + this.field_72449_c * p_72430_1_.field_72449_c;
      }
  
 -    @SideOnly(Side.CLIENT)
-     public Vec3 crossProduct(Vec3 vec)
+     public Vec3 func_72431_c(Vec3 p_72431_1_)
      {
-         return new Vec3(this.yCoord * vec.zCoord - this.zCoord * vec.yCoord, this.zCoord * vec.xCoord - this.xCoord * vec.zCoord, this.xCoord * vec.yCoord - this.yCoord * vec.xCoord);
+         return new Vec3(this.field_72448_b * p_72431_1_.field_72449_c - this.field_72449_c * p_72431_1_.field_72448_b, this.field_72449_c * p_72431_1_.field_72450_a - this.field_72450_a * p_72431_1_.field_72449_c, this.field_72450_a * p_72431_1_.field_72448_b - this.field_72448_b * p_72431_1_.field_72450_a);
 @@ -79,7 +74,6 @@
-         return new Vec3(this.xCoord + x, this.yCoord + y, this.zCoord + z);
+         return new Vec3(this.field_72450_a + p_72441_1_, this.field_72448_b + p_72441_3_, this.field_72449_c + p_72441_5_);
      }
  
 -    @SideOnly(Side.CLIENT)
-     public double distanceTo(Vec3 vec)
+     public double func_72438_d(Vec3 p_72438_1_)
      {
-         double d0 = vec.xCoord - this.xCoord;
+         double d0 = p_72438_1_.field_72450_a - this.field_72450_a;

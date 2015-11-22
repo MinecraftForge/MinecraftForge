@@ -2,27 +2,27 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
 @@ -58,14 +58,14 @@
  
-     public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side)
+     public boolean func_176198_a(World p_176198_1_, BlockPos p_176198_2_, EnumFacing p_176198_3_)
      {
--        return side.getAxis().isHorizontal() && worldIn.getBlockState(pos.offset(side.getOpposite())).getBlock().isNormalCube();
-+        return side.getAxis().isHorizontal() && worldIn.isSideSolid(pos.offset(side.getOpposite()), side, true);
+-        return p_176198_3_.func_176740_k().func_176722_c() && p_176198_1_.func_180495_p(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d())).func_177230_c().func_149721_r();
++        return p_176198_3_.func_176740_k().func_176722_c() && p_176198_1_.isSideSolid(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d()), p_176198_3_, true);
      }
  
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
          for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
          {
--            if (worldIn.getBlockState(pos.offset(enumfacing)).getBlock().isNormalCube())
-+            if (worldIn.isSideSolid(pos.offset(enumfacing), enumfacing.getOpposite(), true))
+-            if (p_176196_1_.func_180495_p(p_176196_2_.func_177972_a(enumfacing)).func_177230_c().func_149721_r())
++            if (p_176196_1_.isSideSolid(p_176196_2_.func_177972_a(enumfacing), enumfacing.func_176734_d(), true))
              {
                  return true;
              }
 @@ -99,7 +99,7 @@
              {
-                 EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
+                 EnumFacing enumfacing = (EnumFacing)p_176204_3_.func_177229_b(field_176264_a);
  
--                if (!worldIn.getBlockState(pos.offset(enumfacing.getOpposite())).getBlock().isNormalCube())
-+                if (!worldIn.isSideSolid(pos.offset(enumfacing.getOpposite()), enumfacing, true))
+-                if (!p_176204_1_.func_180495_p(p_176204_2_.func_177972_a(enumfacing.func_176734_d())).func_177230_c().func_149721_r())
++                if (!p_176204_1_.isSideSolid(p_176204_2_.func_177972_a(enumfacing.func_176734_d()), enumfacing, true))
                  {
-                     this.dropBlockAsItem(worldIn, pos, state, 0);
-                     worldIn.setBlockToAir(pos);
+                     this.func_176226_b(p_176204_1_, p_176204_2_, p_176204_3_, 0);
+                     p_176204_1_.func_175698_g(p_176204_2_);

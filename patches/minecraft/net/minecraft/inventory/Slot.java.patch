@@ -2,13 +2,13 @@
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
 @@ -89,7 +89,7 @@
      @SideOnly(Side.CLIENT)
-     public String getSlotTexture()
+     public String func_178171_c()
      {
 -        return null;
 +        return backgroundName;
      }
  
-     public ItemStack decrStackSize(int amount)
+     public ItemStack func_75209_a(int p_75209_1_)
 @@ -112,4 +112,64 @@
      {
          return true;
@@ -25,7 +25,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.util.ResourceLocation getBackgroundLocation()
 +    {
-+        return (backgroundLocation == null ? net.minecraft.client.renderer.texture.TextureMap.locationBlocksTexture : backgroundLocation);
++        return (backgroundLocation == null ? net.minecraft.client.renderer.texture.TextureMap.field_110575_b : backgroundLocation);
 +    }
 +
 +    /**
@@ -51,14 +51,14 @@
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.client.renderer.texture.TextureAtlasSprite getBackgroundSprite()
 +    {
-+        String name = getSlotTexture();
-+        return name == null ? null : getBackgroundMap().getAtlasSprite(name);
++        String name = func_178171_c();
++        return name == null ? null : getBackgroundMap().func_110572_b(name);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    protected net.minecraft.client.renderer.texture.TextureMap getBackgroundMap()
 +    {
-+        if (backgroundMap == null) backgroundMap = net.minecraft.client.Minecraft.getMinecraft().getTextureMapBlocks();
++        if (backgroundMap == null) backgroundMap = net.minecraft.client.Minecraft.func_71410_x().func_147117_R();
 +        return (net.minecraft.client.renderer.texture.TextureMap)backgroundMap;
 +    }
 +
@@ -70,7 +70,7 @@
 +     */
 +    public int getSlotIndex()
 +    {
-+        return slotIndex;
++        return field_75225_a;
 +    }
 +    /*========================================= FORGE END =====================================*/
  }

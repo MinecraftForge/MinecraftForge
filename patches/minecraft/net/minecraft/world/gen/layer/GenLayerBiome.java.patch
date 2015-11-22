@@ -4,10 +4,10 @@
  
  public class GenLayerBiome extends GenLayer
  {
--    private BiomeGenBase[] field_151623_c = new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.desert, BiomeGenBase.desert, BiomeGenBase.savanna, BiomeGenBase.savanna, BiomeGenBase.plains};
--    private BiomeGenBase[] field_151621_d = new BiomeGenBase[] {BiomeGenBase.forest, BiomeGenBase.roofedForest, BiomeGenBase.extremeHills, BiomeGenBase.plains, BiomeGenBase.birchForest, BiomeGenBase.swampland};
--    private BiomeGenBase[] field_151622_e = new BiomeGenBase[] {BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.taiga, BiomeGenBase.plains};
--    private BiomeGenBase[] field_151620_f = new BiomeGenBase[] {BiomeGenBase.icePlains, BiomeGenBase.icePlains, BiomeGenBase.icePlains, BiomeGenBase.coldTaiga};
+-    private BiomeGenBase[] field_151623_c = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76769_d, BiomeGenBase.field_76769_d, BiomeGenBase.field_150588_X, BiomeGenBase.field_150588_X, BiomeGenBase.field_76772_c};
+-    private BiomeGenBase[] field_151621_d = new BiomeGenBase[] {BiomeGenBase.field_76767_f, BiomeGenBase.field_150585_R, BiomeGenBase.field_76770_e, BiomeGenBase.field_76772_c, BiomeGenBase.field_150583_P, BiomeGenBase.field_76780_h};
+-    private BiomeGenBase[] field_151622_e = new BiomeGenBase[] {BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76768_g, BiomeGenBase.field_76772_c};
+-    private BiomeGenBase[] field_151620_f = new BiomeGenBase[] {BiomeGenBase.field_76774_n, BiomeGenBase.field_76774_n, BiomeGenBase.field_76774_n, BiomeGenBase.field_150584_S};
 +    @SuppressWarnings("unchecked")
 +    private java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry>[] biomes = new java.util.ArrayList[net.minecraftforge.common.BiomeManager.BiomeType.values().length];
 +
@@ -16,7 +16,7 @@
      public GenLayerBiome(long p_i45560_1_, GenLayer p_i45560_3_, WorldType p_i45560_4_, String p_i45560_5_)
 @@ -17,9 +16,30 @@
          super(p_i45560_1_);
-         this.parent = p_i45560_3_;
+         this.field_75909_a = p_i45560_3_;
  
 +        for (net.minecraftforge.common.BiomeManager.BiomeType type : net.minecraftforge.common.BiomeManager.BiomeType.values())
 +        {
@@ -29,29 +29,29 @@
 +
 +        int desertIdx = net.minecraftforge.common.BiomeManager.BiomeType.DESERT.ordinal();
 +
-+        biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.desert, 30));
-+        biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.savanna, 20));
-+        biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.plains, 10));
++        biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76769_d, 30));
++        biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_150588_X, 20));
++        biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76772_c, 10));
 +
-         if (p_i45560_4_ == WorldType.DEFAULT_1_1)
+         if (p_i45560_4_ == WorldType.field_77136_e)
          {
--            this.field_151623_c = new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.plains, BiomeGenBase.taiga};
+-            this.field_151623_c = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
 +            biomes[desertIdx].clear();
-+            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.desert, 10));
-+            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.forest, 10));
-+            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.extremeHills, 10));
-+            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.swampland, 10));
-+            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.plains, 10));
-+            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.taiga, 10));
++            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76769_d, 10));
++            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76767_f, 10));
++            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76770_e, 10));
++            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76780_h, 10));
++            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76772_c, 10));
++            biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(BiomeGenBase.field_76768_g, 10));
              this.field_175973_g = null;
          }
-         else if (p_i45560_4_ == WorldType.CUSTOMIZED)
+         else if (p_i45560_4_ == WorldType.field_180271_f)
 @@ -73,7 +93,7 @@
                      }
                      else
                      {
--                        aint1[j + i * areaWidth] = this.field_151623_c[this.nextInt(this.field_151623_c.length)].biomeID;
-+                        aint1[j + i * areaWidth] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT).biome.biomeID;
+-                        aint1[j + i * p_75904_3_] = this.field_151623_c[this.func_75902_a(this.field_151623_c.length)].field_76756_M;
++                        aint1[j + i * p_75904_3_] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT).biome.field_76756_M;
                      }
                  }
                  else if (k == 2)
@@ -59,8 +59,8 @@
                      }
                      else
                      {
--                        aint1[j + i * areaWidth] = this.field_151621_d[this.nextInt(this.field_151621_d.length)].biomeID;
-+                        aint1[j + i * areaWidth] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.WARM).biome.biomeID;
+-                        aint1[j + i * p_75904_3_] = this.field_151621_d[this.func_75902_a(this.field_151621_d.length)].field_76756_M;
++                        aint1[j + i * p_75904_3_] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.WARM).biome.field_76756_M;
                      }
                  }
                  else if (k == 3)
@@ -68,14 +68,14 @@
                      }
                      else
                      {
--                        aint1[j + i * areaWidth] = this.field_151622_e[this.nextInt(this.field_151622_e.length)].biomeID;
-+                        aint1[j + i * areaWidth] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.COOL).biome.biomeID;
+-                        aint1[j + i * p_75904_3_] = this.field_151622_e[this.func_75902_a(this.field_151622_e.length)].field_76756_M;
++                        aint1[j + i * p_75904_3_] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.COOL).biome.field_76756_M;
                      }
                  }
                  else if (k == 4)
                  {
--                    aint1[j + i * areaWidth] = this.field_151620_f[this.nextInt(this.field_151620_f.length)].biomeID;
-+                    aint1[j + i * areaWidth] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.ICY).biome.biomeID;
+-                    aint1[j + i * p_75904_3_] = this.field_151620_f[this.func_75902_a(this.field_151620_f.length)].field_76756_M;
++                    aint1[j + i * p_75904_3_] = getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.ICY).biome.field_76756_M;
                  }
                  else
                  {
@@ -87,8 +87,8 @@
 +    protected net.minecraftforge.common.BiomeManager.BiomeEntry getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType type)
 +    {
 +        java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry> biomeList = biomes[type.ordinal()];
-+        int totalWeight = net.minecraft.util.WeightedRandom.getTotalWeight(biomeList);
-+        int weight = net.minecraftforge.common.BiomeManager.isTypeListModded(type)?nextInt(totalWeight):nextInt(totalWeight / 10) * 10;
-+        return (net.minecraftforge.common.BiomeManager.BiomeEntry)net.minecraft.util.WeightedRandom.getRandomItem(biomeList, weight);
++        int totalWeight = net.minecraft.util.WeightedRandom.func_76272_a(biomeList);
++        int weight = net.minecraftforge.common.BiomeManager.isTypeListModded(type)?func_75902_a(totalWeight):func_75902_a(totalWeight / 10) * 10;
++        return (net.minecraftforge.common.BiomeManager.BiomeEntry)net.minecraft.util.WeightedRandom.func_180166_a(biomeList, weight);
 +    }
  }

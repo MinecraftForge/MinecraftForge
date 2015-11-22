@@ -1,18 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
 @@ -59,6 +59,7 @@
-     public void readFromNBT(NBTTagCompound compound)
+     public void func_145839_a(NBTTagCompound p_145839_1_)
      {
-         this.pos = new BlockPos(compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z"));
-+        if (compound.hasKey("ForgeData")) this.customTileData = compound.getCompoundTag("ForgeData");
+         this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
++        if (p_145839_1_.func_74764_b("ForgeData")) this.customTileData = p_145839_1_.func_74775_l("ForgeData");
      }
  
-     public void writeToNBT(NBTTagCompound compound)
+     public void func_145841_b(NBTTagCompound p_145841_1_)
 @@ -75,6 +76,7 @@
-             compound.setInteger("x", this.pos.getX());
-             compound.setInteger("y", this.pos.getY());
-             compound.setInteger("z", this.pos.getZ());
-+            if (this.customTileData != null) compound.setTag("ForgeData", this.customTileData);
+             p_145841_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
+             p_145841_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
+             p_145841_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
++            if (this.customTileData != null) p_145841_1_.func_74782_a("ForgeData", this.customTileData);
          }
      }
  
@@ -23,8 +23,8 @@
 +        Class <? extends TileEntity > oclass = null;
          try
          {
--            Class <? extends TileEntity > oclass = (Class)nameToClassMap.get(nbt.getString("id"));
-+            oclass = (Class)nameToClassMap.get(nbt.getString("id"));
+-            Class <? extends TileEntity > oclass = (Class)field_145855_i.get(p_145827_0_.func_74779_i("id"));
++            oclass = (Class)field_145855_i.get(p_145827_0_.func_74779_i("id"));
  
              if (oclass != null)
              {
@@ -34,13 +34,13 @@
          {
 +            try
 +            {
-             logger.warn("Skipping BlockEntity with id " + nbt.getString("id"));
+             field_145852_a.warn("Skipping BlockEntity with id " + p_145827_0_.func_74779_i("id"));
 +            }
 +            catch (Exception ex)
 +            {
 +                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, ex,
 +                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        nbt.getString("id"), oclass.getName());
++                        p_145827_0_.func_74779_i("id"), oclass.getName());
 +                tileentity = null;
 +            }
          }
@@ -51,12 +51,12 @@
      }
  
 -    @SideOnly(Side.CLIENT)
-     public double getDistanceSq(double x, double y, double z)
+     public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
-         double d0 = (double)this.pos.getX() + 0.5D - x;
+         double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
 @@ -279,4 +291,135 @@
-         addMapping(TileEntityFlowerPot.class, "FlowerPot");
-         addMapping(TileEntityBanner.class, "Banner");
+         func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
+         func_145826_a(TileEntityBanner.class, "Banner");
      }
 +
 +    // -- BEGIN FORGE PATCHES --
@@ -93,7 +93,7 @@
 +     */
 +    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 +    {
-+        return !isVanilla || (oldState.getBlock() != newSate.getBlock());
++        return !isVanilla || (oldState.func_177230_c() != newSate.func_177230_c());
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
@@ -116,21 +116,21 @@
 +    public net.minecraft.util.AxisAlignedBB getRenderBoundingBox()
 +    {
 +        net.minecraft.util.AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-+        Block type = getBlockType();
-+        if (type == Blocks.enchanting_table)
++        Block type = func_145838_q();
++        if (type == Blocks.field_150381_bn)
 +        {
-+            bb = new net.minecraft.util.AxisAlignedBB(getPos(), getPos().add(1, 1, 1));
++            bb = new net.minecraft.util.AxisAlignedBB(func_174877_v(), func_174877_v().func_177982_a(1, 1, 1));
 +        }
-+        else if (type == Blocks.chest || type == Blocks.trapped_chest)
++        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
-+            bb = new net.minecraft.util.AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
++            bb = new net.minecraft.util.AxisAlignedBB(func_174877_v().func_177982_a(-1, 0, -1), func_174877_v().func_177982_a(2, 2, 2));
 +        }
-+        else if (type != null && type != Blocks.beacon)
++        else if (type != null && type != Blocks.field_150461_bJ)
 +        {
 +            net.minecraft.util.AxisAlignedBB cbb = null;
 +            try
 +            {
-+                cbb = type.getCollisionBoundingBox(worldObj, getPos(), worldObj.getBlockState(getPos()));
++                cbb = type.func_180640_a(field_145850_b, func_174877_v(), field_145850_b.func_180495_p(func_174877_v()));
 +            }
 +            catch (Exception e)
 +            {
@@ -140,7 +140,7 @@
 +                // So, once again in the long line of US having to accommodate BUKKIT breaking things,
 +                // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
 +                // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
-+                cbb = new net.minecraft.util.AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(1, 1, 1));
++                cbb = new net.minecraft.util.AxisAlignedBB(func_174877_v().func_177982_a(-1, 0, -1), func_174877_v().func_177982_a(1, 1, 1));
 +            }
 +            if (cbb != null) bb = cbb;
 +        }
@@ -154,7 +154,7 @@
 +     */
 +    public boolean canRenderBreaking()
 +    {
-+        Block block = this.getBlockType();
++        Block block = this.func_145838_q();
 +        return (block instanceof net.minecraft.block.BlockChest ||
 +                block instanceof net.minecraft.block.BlockEnderChest ||
 +                block instanceof net.minecraft.block.BlockSign ||

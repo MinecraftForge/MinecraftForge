@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
 @@ -310,4 +310,27 @@
      {
-         return p_111183_2_.getAmount() * (double)(p_111183_1_ + 1);
+         return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
 +
 +    /* ======================================== FORGE START =====================================*/

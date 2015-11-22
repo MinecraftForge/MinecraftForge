@@ -3,11 +3,11 @@
 @@ -135,11 +135,7 @@
                  for (int i = 0; i < aitemstack.length; ++i)
                  {
-                     ItemStack itemstack = p_179532_1_.getStackInSlot(i);
+                     ItemStack itemstack = p_179532_1_.func_70301_a(i);
 -
--                    if (itemstack != null && itemstack.getItem().hasContainerItem())
+-                    if (itemstack != null && itemstack.func_77973_b().func_77634_r())
 -                    {
--                        aitemstack[i] = new ItemStack(itemstack.getItem().getContainerItem());
+-                        aitemstack[i] = new ItemStack(itemstack.func_77973_b().func_77668_q());
 -                    }
 +                    aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
                  }
@@ -17,11 +17,11 @@
  
                      if (itemstack != null)
                      {
--                        if (itemstack.getItem().hasContainerItem())
-+                        if (itemstack.getItem().hasContainerItem(itemstack))
+-                        if (itemstack.func_77973_b().func_77634_r())
++                        if (itemstack.func_77973_b().hasContainerItem(itemstack))
                          {
--                            aitemstack[i] = new ItemStack(itemstack.getItem().getContainerItem());
+-                            aitemstack[i] = new ItemStack(itemstack.func_77973_b().func_77668_q());
 +                            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
                          }
-                         else if (itemstack.hasTagCompound() && TileEntityBanner.getPatterns(itemstack) > 0)
+                         else if (itemstack.func_77942_o() && TileEntityBanner.func_175113_c(itemstack) > 0)
                          {

@@ -1,38 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
 @@ -70,6 +70,8 @@
-                     playerIn.addExperienceLevel(-ContainerRepair.this.maximumCost);
+                     p_82870_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
                  }
  
-+                float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(playerIn, stack, ContainerRepair.this.inputSlots.getStackInSlot(0), ContainerRepair.this.inputSlots.getStackInSlot(1));
++                float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_82870_1_, p_82870_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
 +
-                 ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
+                 ContainerRepair.this.field_82853_g.func_70299_a(0, (ItemStack)null);
  
-                 if (ContainerRepair.this.materialCost > 0)
+                 if (ContainerRepair.this.field_82856_l > 0)
 @@ -94,7 +96,7 @@
-                 ContainerRepair.this.maximumCost = 0;
-                 IBlockState iblockstate = worldIn.getBlockState(blockPosIn);
+                 ContainerRepair.this.field_82854_e = 0;
+                 IBlockState iblockstate = p_i45807_2_.func_180495_p(p_i45807_3_);
  
--                if (!playerIn.capabilities.isCreativeMode && !worldIn.isRemote && iblockstate.getBlock() == Blocks.anvil && playerIn.getRNG().nextFloat() < 0.12F)
-+                if (!playerIn.capabilities.isCreativeMode && !worldIn.isRemote && iblockstate.getBlock() == Blocks.anvil && playerIn.getRNG().nextFloat() < breakChance)
+-                if (!p_82870_1_.field_71075_bZ.field_75098_d && !p_i45807_2_.field_72995_K && iblockstate.func_177230_c() == Blocks.field_150467_bQ && p_82870_1_.func_70681_au().nextFloat() < 0.12F)
++                if (!p_82870_1_.field_71075_bZ.field_75098_d && !p_i45807_2_.field_72995_K && iblockstate.func_177230_c() == Blocks.field_150467_bQ && p_82870_1_.func_70681_au().nextFloat() < breakChance)
                  {
-                     int l = ((Integer)iblockstate.getValue(BlockAnvil.DAMAGE)).intValue();
+                     int l = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++l;
 @@ -172,6 +174,7 @@
  
              if (itemstack2 != null)
              {
-+                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, i2)) return;
-                 flag = itemstack2.getItem() == Items.enchanted_book && Items.enchanted_book.getEnchantments(itemstack2).tagCount() > 0;
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, i2)) return;
+                 flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
  
-                 if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2))
+                 if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
 @@ -264,7 +267,8 @@
                              {
                                  int i4 = ((Integer)iterator.next()).intValue();
  
--                                if (i4 != i5 && !enchantment.canApplyTogether(Enchantment.getEnchantmentById(i4)))
-+                                Enchantment e2 = Enchantment.getEnchantmentById(i4);
-+                                if (i4 != i5 && !(enchantment.canApplyTogether(e2) && e2.canApplyTogether(enchantment))) //Forge BugFix: Let Both enchantments veto being together
+-                                if (i4 != i5 && !enchantment.func_77326_a(Enchantment.func_180306_c(i4)))
++                                Enchantment e2 = Enchantment.func_180306_c(i4);
++                                if (i4 != i5 && !(enchantment.func_77326_a(e2) && e2.func_77326_a(enchantment))) //Forge BugFix: Let Both enchantments veto being together
                                  {
                                      flag1 = false;
                                      ++l1;
@@ -40,8 +40,8 @@
                  }
              }
  
-+            if (flag && !itemstack1.getItem().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = null;
++            if (flag && !itemstack1.func_77973_b().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = null;
 +
-             if (StringUtils.isBlank(this.repairedItemName))
+             if (StringUtils.isBlank(this.field_82857_m))
              {
-                 if (itemstack.hasDisplayName())
+                 if (itemstack.func_82837_s())

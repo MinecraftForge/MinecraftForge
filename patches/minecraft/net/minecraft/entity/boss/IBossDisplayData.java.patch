@@ -7,4 +7,4 @@
 -@SideOnly(Side.CLIENT)
  public interface IBossDisplayData
  {
-     float getMaxHealth();
+     float func_110138_aP();

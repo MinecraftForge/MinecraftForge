@@ -8,6 +8,6 @@
 +public class BakedQuad implements net.minecraftforge.client.model.pipeline.IVertexProducer
  {
 +    @Override public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer) { net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this); }
-     protected final int[] vertexData;
-     protected final int tintIndex;
-     protected final EnumFacing face;
+     protected final int[] field_178215_a;
+     protected final int field_178213_b;
+     protected final EnumFacing field_178214_c;

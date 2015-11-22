@@ -10,14 +10,14 @@
 +
 +    public static void inject(InputStream inputstream)
 +    {
-+        inject(instance, inputstream);
++        inject(field_74817_a, inputstream);
 +    }
 +
 +    private static void inject(StringTranslate inst, InputStream inputstream)
 +    {
 +        java.util.HashMap<String, String> map = parseLangFile(inputstream);
-+        inst.languageList.putAll(map);
-+        inst.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
++        inst.field_74816_c.putAll(map);
++        inst.field_150511_e = System.currentTimeMillis();
 +    }
 +
 +    public static java.util.HashMap<String,String> parseLangFile(InputStream inputstream)
@@ -34,14 +34,14 @@
 @@ -37,17 +57,17 @@
                      {
                          String s1 = astring[0];
-                         String s2 = numericVariablePattern.matcher(astring[1]).replaceAll("%$1s");
--                        this.languageList.put(s1, s2);
+                         String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");
+-                        this.field_74816_c.put(s1, s2);
 +                        table.put(s1, s2);
                      }
                  }
              }
  
--            this.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
+-            this.field_150511_e = System.currentTimeMillis();
          }
 -        catch (IOException var7)
 +        catch (Exception var7)
@@ -51,4 +51,4 @@
 +        return table;
      }
  
-     static StringTranslate getInstance()
+     static StringTranslate func_74808_a()

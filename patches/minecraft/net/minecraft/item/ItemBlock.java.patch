@@ -1,26 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
 @@ -54,16 +54,8 @@
-             int i = this.getMetadata(stack.getMetadata());
-             IBlockState iblockstate1 = this.block.onBlockPlaced(worldIn, pos, side, hitX, hitY, hitZ, i, playerIn);
+             int i = this.func_77647_b(p_180614_1_.func_77960_j());
+             IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_2_);
  
--            if (worldIn.setBlockState(pos, iblockstate1, 3))
-+            if (placeBlockAt(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ, iblockstate1))
+-            if (p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 3))
++            if (placeBlockAt(p_180614_1_, p_180614_2_, p_180614_3_, p_180614_4_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, iblockstate1))
              {
--                iblockstate1 = worldIn.getBlockState(pos);
+-                iblockstate1 = p_180614_3_.func_180495_p(p_180614_4_);
 -
--                if (iblockstate1.getBlock() == this.block)
+-                if (iblockstate1.func_177230_c() == this.field_150939_a)
 -                {
--                    setTileEntityNBT(worldIn, playerIn, pos, stack);
--                    this.block.onBlockPlacedBy(worldIn, pos, iblockstate1, playerIn, stack);
+-                    func_179224_a(p_180614_3_, p_180614_2_, p_180614_4_, p_180614_1_);
+-                    this.field_150939_a.func_180633_a(p_180614_3_, p_180614_4_, iblockstate1, p_180614_2_, p_180614_1_);
 -                }
 -
-                 worldIn.playSoundEffect((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F), this.block.stepSound.getPlaceSound(), (this.block.stepSound.getVolume() + 1.0F) / 2.0F, this.block.stepSound.getFrequency() * 0.8F);
-                 --stack.stackSize;
+                 p_180614_3_.func_72908_a((double)((float)p_180614_4_.func_177958_n() + 0.5F), (double)((float)p_180614_4_.func_177956_o() + 0.5F), (double)((float)p_180614_4_.func_177952_p() + 0.5F), this.field_150939_a.field_149762_H.func_150496_b(), (this.field_150939_a.field_149762_H.func_150497_c() + 1.0F) / 2.0F, this.field_150939_a.field_149762_H.func_150494_d() * 0.8F);
+                 --p_180614_1_.field_77994_a;
              }
 @@ -162,4 +154,26 @@
      {
-         return this.block;
+         return this.field_150939_a;
      }
 +
 +    /**
@@ -33,13 +33,13 @@
 +     */
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState)
 +    {
-+        if (!world.setBlockState(pos, newState, 3)) return false;
++        if (!world.func_180501_a(pos, newState, 3)) return false;
 +
-+        IBlockState state = world.getBlockState(pos);
-+        if (state.getBlock() == this.block)
++        IBlockState state = world.func_180495_p(pos);
++        if (state.func_177230_c() == this.field_150939_a)
 +        {
-+            setTileEntityNBT(world, player, pos, stack);
-+            this.block.onBlockPlacedBy(world, pos, state, player, stack);
++            func_179224_a(world, player, pos, stack);
++            this.field_150939_a.func_180633_a(world, pos, state, player, stack);
 +        }
 +
 +        return true;

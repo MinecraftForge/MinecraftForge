@@ -2,28 +2,28 @@
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
 @@ -78,7 +78,7 @@
      {
-         Block block = this.world.getBlockState(origin).getBlock();
+         Block block = this.field_177261_a.func_180495_p(p_177251_1_).func_177230_c();
  
--        if (block.getMaterial() == Material.air)
-+        if (block.isAir(world, origin))
+-        if (block.func_149688_o() == Material.field_151579_a)
++        if (block.isAir(field_177261_a, p_177251_1_))
          {
              return true;
          }
 @@ -109,7 +109,7 @@
-                     BlockPos blockpos = origin.offset(this.moveDirection.getOpposite(), i);
-                     block = this.world.getBlockState(blockpos).getBlock();
+                     BlockPos blockpos = p_177251_1_.func_177967_a(this.field_177257_d.func_176734_d(), i);
+                     block = this.field_177261_a.func_180495_p(blockpos).func_177230_c();
  
--                    if (block.getMaterial() == Material.air || !BlockPistonBase.canPush(block, this.world, blockpos, this.moveDirection, false) || blockpos.equals(this.pistonPos))
-+                    if (block.isAir(world, blockpos)|| !BlockPistonBase.canPush(block, this.world, blockpos, this.moveDirection, false) || blockpos.equals(this.pistonPos))
+-                    if (block.func_149688_o() == Material.field_151579_a || !BlockPistonBase.func_180696_a(block, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
++                    if (block.isAir(field_177261_a, blockpos)|| !BlockPistonBase.func_180696_a(block, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
                      {
                          break;
                      }
 @@ -156,7 +156,7 @@
  
-                     block = this.world.getBlockState(blockpos1).getBlock();
+                     block = this.field_177261_a.func_180495_p(blockpos1).func_177230_c();
  
--                    if (block.getMaterial() == Material.air)
-+                    if (block.isAir(world, blockpos1))
+-                    if (block.func_149688_o() == Material.field_151579_a)
++                    if (block.isAir(field_177261_a, blockpos1))
                      {
                          return true;
                      }

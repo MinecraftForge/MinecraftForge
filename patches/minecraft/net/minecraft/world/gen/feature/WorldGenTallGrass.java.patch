@@ -4,14 +4,14 @@
      {
          Block block;
  
--        while (((block = worldIn.getBlockState(p_180709_3_).getBlock()).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && p_180709_3_.getY() > 0)
+-        while (((block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c()).func_149688_o() == Material.field_151579_a || block.func_149688_o() == Material.field_151584_j) && p_180709_3_.func_177956_o() > 0)
 +        do
          {
-+            block = worldIn.getBlockState(p_180709_3_).getBlock();
-+            if (!block.isAir(worldIn, p_180709_3_) && !block.isLeaves(worldIn, p_180709_3_)) break;
-             p_180709_3_ = p_180709_3_.down();
++            block = p_180709_1_.func_180495_p(p_180709_3_).func_177230_c();
++            if (!block.isAir(p_180709_1_, p_180709_3_) && !block.isLeaves(p_180709_1_, p_180709_3_)) break;
+             p_180709_3_ = p_180709_3_.func_177977_b();
 -        }
-+        } while (p_180709_3_.getY() > 0);
++        } while (p_180709_3_.func_177956_o() > 0);
  
          for (int i = 0; i < 128; ++i)
          {

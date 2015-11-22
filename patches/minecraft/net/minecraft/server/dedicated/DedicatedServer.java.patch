@@ -1,37 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -49,6 +49,7 @@
-     private boolean canSpawnStructures;
-     private WorldSettings.GameType gameType;
-     private boolean guiIsEnabled;
+     private boolean field_71338_p;
+     private WorldSettings.GameType field_71337_q;
+     private boolean field_71335_s;
 +    public static boolean allowPlayerLogins = false;
  
-     public DedicatedServer(File workDir)
+     public DedicatedServer(File p_i1508_1_)
      {
 @@ -107,6 +108,8 @@
-             logger.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
 +
-         logger.info("Loading properties");
-         this.settings = new PropertyManager(new File("server.properties"));
-         this.eula = new ServerEula(new File("eula.txt"));
+         field_155771_h.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
+         this.field_154332_n = new ServerEula(new File("eula.txt"));
 @@ -198,6 +201,7 @@
              }
              else
              {
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
-                 this.setConfigManager(new DedicatedPlayerList(this));
+                 this.func_152361_a(new DedicatedPlayerList(this));
                  long j = System.nanoTime();
  
 @@ -244,6 +248,7 @@
-                 this.setBuildLimit((this.getBuildLimit() + 8) / 16 * 16);
-                 this.setBuildLimit(MathHelper.clamp_int(this.getBuildLimit(), 64, 256));
-                 this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
+                 this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
+                 this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
+                 this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
 +                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
-                 logger.info("Preparing level \"" + this.getFolderName() + "\"");
-                 this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
+                 field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
+                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
 @@ -272,7 +277,7 @@
                      thread1.start();

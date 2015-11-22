@@ -1,36 +1,39 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
 @@ -94,7 +94,7 @@
-                     pos = pos.offset(EnumFacing.Plane.HORIZONTAL.random(rand));
-                     Block block = worldIn.getBlockState(pos.down()).getBlock();
+                     p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
+                     Block block = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_177230_c();
  
--                    if (worldIn.getBlockState(pos).getBlock().blockMaterial == Material.air && (block == Blocks.farmland || block == Blocks.dirt || block == Blocks.grass))
-+                    if (worldIn.isAirBlock(pos) && (block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this) || block == Blocks.dirt || block == Blocks.grass))
+-                    if (p_180650_1_.func_180495_p(p_180650_2_).func_177230_c().field_149764_J == Material.field_151579_a && (block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
++                    if (p_180650_1_.func_175623_d(p_180650_2_) && (block.canSustainPlant(p_180650_1_, p_180650_2_.func_177977_b(), EnumFacing.UP, this) || block == Blocks.field_150346_d || block == Blocks.field_150349_c))
                      {
-                         worldIn.setBlockState(pos, this.crop.getDefaultState());
+                         p_180650_1_.func_175656_a(p_180650_2_, this.field_149877_a.func_176223_P());
                      }
-@@ -148,8 +148,12 @@
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+@@ -148,24 +148,29 @@
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 +    }
  
--        if (!worldIn.isRemote)
+-        if (!p_180653_1_.field_72995_K)
 +    @Override
 +    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
          {
-             Item item = this.getSeedItem();
+             Item item = this.func_176481_j();
  
-@@ -159,13 +163,14 @@
+             if (item != null)
+             {
+-                int i = ((Integer)p_180653_3_.func_177229_b(field_176484_a)).intValue();
++                int i = ((Integer)state.func_177229_b(field_176484_a)).intValue();
  
                  for (int j = 0; j < 3; ++j)
                  {
--                    if (worldIn.rand.nextInt(15) <= i)
+-                    if (p_180653_1_.field_73012_v.nextInt(15) <= i)
 +                    if (RANDOM.nextInt(15) <= i)
                      {
--                        spawnAsEntity(worldIn, pos, new ItemStack(item));
+-                        func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item));
 +                        ret.add(new ItemStack(item));
                      }
                  }
@@ -39,4 +42,4 @@
 +        return ret;
      }
  
-     protected Item getSeedItem()
+     protected Item func_176481_j()

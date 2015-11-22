@@ -7,19 +7,19 @@
 -public class BlockReed extends Block
 +public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
  {
-     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
+     public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
  
 @@ -65,6 +65,7 @@
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
-         Block block = worldIn.getBlockState(pos.down()).getBlock();
-+        if (block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this)) return true;
+         Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
++        if (block.canSustainPlant(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP, this)) return true;
  
          if (block == this)
          {
 @@ -164,4 +165,15 @@
      {
-         return new BlockState(this, new IProperty[] {AGE});
+         return new BlockState(this, new IProperty[] {field_176355_a});
      }
 +
 +    @Override
@@ -30,6 +30,6 @@
 +    @Override
 +    public IBlockState getPlant(IBlockAccess world, BlockPos pos)
 +    {
-+        return this.getDefaultState();
++        return this.func_176223_P();
 +    }
  }

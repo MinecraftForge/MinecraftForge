@@ -3,36 +3,36 @@
 @@ -63,7 +63,7 @@
          else
          {
-             Block block = worldIn.getBlockState(pos).getBlock();
--            return block instanceof BlockFence || block == Blocks.glass || block == Blocks.cobblestone_wall || block == Blocks.stained_glass;
-+            return block.canPlaceTorchOnTop(worldIn, pos);
+             Block block = p_176594_1_.func_180495_p(p_176594_2_).func_177230_c();
+-            return block instanceof BlockFence || block == Blocks.field_150359_w || block == Blocks.field_150463_bK || block == Blocks.field_150399_cn;
++            return block.canPlaceTorchOnTop(p_176594_1_, p_176594_2_);
          }
      }
  
 @@ -84,7 +84,7 @@
      {
-         BlockPos blockpos = pos.offset(facing.getOpposite());
-         boolean flag = facing.getAxis().isHorizontal();
--        return flag && worldIn.isBlockNormalCube(blockpos, true) || facing.equals(EnumFacing.UP) && this.canPlaceOn(worldIn, blockpos);
-+        return flag && worldIn.isSideSolid(blockpos, facing, true) || facing.equals(EnumFacing.UP) && this.canPlaceOn(worldIn, blockpos);
+         BlockPos blockpos = p_176595_2_.func_177972_a(p_176595_3_.func_176734_d());
+         boolean flag = p_176595_3_.func_176740_k().func_176722_c();
+-        return flag && p_176595_1_.func_175677_d(blockpos, true) || p_176595_3_.equals(EnumFacing.UP) && this.func_176594_d(p_176595_1_, blockpos);
++        return flag && p_176595_1_.isSideSolid(blockpos, p_176595_3_, true) || p_176595_3_.equals(EnumFacing.UP) && this.func_176594_d(p_176595_1_, blockpos);
      }
  
-     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
 @@ -97,7 +97,7 @@
          {
              for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
              {
--                if (worldIn.isBlockNormalCube(pos.offset(enumfacing.getOpposite()), true))
-+                if (worldIn.isSideSolid(pos.offset(enumfacing.getOpposite()), enumfacing, true))
+-                if (p_180642_1_.func_175677_d(p_180642_2_.func_177972_a(enumfacing.func_176734_d()), true))
++                if (p_180642_1_.isSideSolid(p_180642_2_.func_177972_a(enumfacing.func_176734_d()), enumfacing, true))
                  {
-                     return this.getDefaultState().withProperty(FACING, enumfacing);
+                     return this.func_176223_P().func_177226_a(field_176596_a, enumfacing);
                  }
 @@ -130,7 +130,7 @@
-             EnumFacing enumfacing1 = enumfacing.getOpposite();
+             EnumFacing enumfacing1 = enumfacing.func_176734_d();
              boolean flag = false;
  
--            if (enumfacing$axis.isHorizontal() && !worldIn.isBlockNormalCube(pos.offset(enumfacing1), true))
-+            if (enumfacing$axis.isHorizontal() && !worldIn.isSideSolid(pos.offset(enumfacing1), enumfacing1, true))
+-            if (enumfacing$axis.func_176722_c() && !p_176592_1_.func_175677_d(p_176592_2_.func_177972_a(enumfacing1), true))
++            if (enumfacing$axis.func_176722_c() && !p_176592_1_.isSideSolid(p_176592_2_.func_177972_a(enumfacing1), enumfacing1, true))
              {
                  flag = true;
              }

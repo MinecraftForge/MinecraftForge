@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 @@ -295,6 +295,21 @@
-         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()).withProperty(POWERED, Boolean.valueOf(false)).withProperty(MODE, BlockRedstoneComparator.Mode.COMPARE);
+         return this.func_176223_P().func_177226_a(field_176387_N, p_180642_8_.func_174811_aO().func_176734_d()).func_177226_a(field_176464_a, Boolean.valueOf(false)).func_177226_a(field_176463_b, BlockRedstoneComparator.Mode.COMPARE);
      }
  
 +    @Override
 +    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
 +    {
-+        if (pos.getY() == neighbor.getY() && world instanceof World)
++        if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World)
 +        {
-+            onNeighborBlockChange((World)world, pos, world.getBlockState(pos), world.getBlockState(neighbor).getBlock());
++            func_176204_a((World)world, pos, world.func_180495_p(pos), world.func_180495_p(neighbor).func_177230_c());
 +        }
 +    }
 +

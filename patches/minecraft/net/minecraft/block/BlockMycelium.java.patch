@@ -2,19 +2,19 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockMycelium.java
 @@ -39,7 +39,7 @@
      {
-         if (!worldIn.isRemote)
+         if (!p_180650_1_.field_72995_K)
          {
--            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity() > 2)
-+            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity(worldIn, pos.up()) > 2)
+-            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_177230_c().func_149717_k() > 2)
++            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_177230_c().getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
              {
-                 worldIn.setBlockState(pos, Blocks.dirt.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
+                 p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P().func_177226_a(BlockDirt.field_176386_a, BlockDirt.DirtType.DIRT));
              }
 @@ -53,7 +53,7 @@
-                         IBlockState iblockstate = worldIn.getBlockState(blockpos);
-                         Block block = worldIn.getBlockState(blockpos.up()).getBlock();
+                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos);
+                         Block block = p_180650_1_.func_180495_p(blockpos.func_177984_a()).func_177230_c();
  
--                        if (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && block.getLightOpacity() <= 2)
-+                        if (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && block.getLightOpacity(worldIn, blockpos.up()) <= 2)
+-                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && block.func_149717_k() <= 2)
++                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && block.getLightOpacity(p_180650_1_, blockpos.func_177984_a()) <= 2)
                          {
-                             worldIn.setBlockState(blockpos, this.getDefaultState());
+                             p_180650_1_.func_175656_a(blockpos, this.func_176223_P());
                          }

@@ -1,52 +1,52 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 @@ -36,6 +36,7 @@
-     public LongHashMap<Chunk> id2ChunkMap = new LongHashMap();
-     public List<Chunk> loadedChunks = Lists.<Chunk>newArrayList();
-     public WorldServer worldObj;
+     public LongHashMap<Chunk> field_73244_f = new LongHashMap();
+     public List<Chunk> field_73245_g = Lists.<Chunk>newArrayList();
+     public WorldServer field_73251_h;
 +    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
  
      public ChunkProviderServer(WorldServer p_i1520_1_, IChunkLoader p_i1520_2_, IChunkProvider p_i1520_3_)
      {
 @@ -57,7 +58,7 @@
  
-     public void dropChunk(int p_73241_1_, int p_73241_2_)
+     public void func_73241_b(int p_73241_1_, int p_73241_2_)
      {
--        if (this.worldObj.provider.canRespawnHere())
-+        if (this.worldObj.provider.canRespawnHere() && net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.worldObj.provider.getDimensionId()))
+-        if (this.field_73251_h.field_73011_w.func_76567_e())
++        if (this.field_73251_h.field_73011_w.func_76567_e() && net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.func_177502_q()))
          {
-             if (!this.worldObj.isSpawnChunk(p_73241_1_, p_73241_2_))
+             if (!this.field_73251_h.func_72916_c(p_73241_1_, p_73241_2_))
              {
 @@ -80,12 +81,64 @@
  
-     public Chunk loadChunk(int p_73158_1_, int p_73158_2_)
+     public Chunk func_73158_c(int p_73158_1_, int p_73158_2_)
      {
 +        return loadChunk(p_73158_1_, p_73158_2_, null);
 +    }
 +
 +    public Chunk loadChunk(int par1, int par2, Runnable runnable)
 +    {
-+        long k = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
-+        this.droppedChunksSet.remove(Long.valueOf(k));
-+        Chunk chunk = (Chunk)this.id2ChunkMap.getValueByKey(k);
++        long k = ChunkCoordIntPair.func_77272_a(par1, par2);
++        this.field_73248_b.remove(Long.valueOf(k));
++        Chunk chunk = (Chunk)this.field_73244_f.func_76164_a(k);
 +        net.minecraft.world.chunk.storage.AnvilChunkLoader loader = null;
 +
-+        if (this.chunkLoader instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader)
++        if (this.field_73247_e instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader)
 +        {
-+            loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.chunkLoader;
++            loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.field_73247_e;
 +        }
 +
 +        // We can only use the queue for already generated chunks
-+        if (chunk == null && loader != null && loader.chunkExists(this.worldObj, par1, par2))
++        if (chunk == null && loader != null && loader.chunkExists(this.field_73251_h, par1, par2))
 +        {
 +            if (runnable != null)
 +            {
-+                net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, this, par1, par2, runnable);
++                net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.field_73251_h, loader, this, par1, par2, runnable);
 +                return null;
 +            }
 +            else
 +            {
-+                chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.worldObj, loader, this, par1, par2);
++                chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.field_73251_h, loader, this, par1, par2);
 +            }
 +        }
 +        else if (chunk == null)
@@ -65,61 +65,61 @@
 +
 +    public Chunk originalLoadChunk(int p_73158_1_, int p_73158_2_)
 +    {
-         long i = ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_);
-         this.droppedChunksSet.remove(Long.valueOf(i));
-         Chunk chunk = (Chunk)this.id2ChunkMap.getValueByKey(i);
+         long i = ChunkCoordIntPair.func_77272_a(p_73158_1_, p_73158_2_);
+         this.field_73248_b.remove(Long.valueOf(i));
+         Chunk chunk = (Chunk)this.field_73244_f.func_76164_a(i);
  
          if (chunk == null)
          {
 +            boolean added = loadingChunks.add(i);
 +            if (!added)
 +            {
-+                net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in di    >mension %d that is already being loaded. This will cause weird chunk breakages.", p_73158_1_, p_73158_2_, worldObj.provider.getDimensionId());
++                net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in di    >mension %d that is already being loaded. This will cause weird chunk breakages.", p_73158_1_, p_73158_2_, field_73251_h.field_73011_w.func_177502_q());
 +            }
-+            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(i, this.worldObj);
++            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(i, this.field_73251_h);
 +
 +            if (chunk == null)
-             chunk = this.loadChunkFromFile(p_73158_1_, p_73158_2_);
+             chunk = this.func_73239_e(p_73158_1_, p_73158_2_);
  
              if (chunk == null)
 @@ -114,6 +167,7 @@
  
-             this.id2ChunkMap.add(i, chunk);
-             this.loadedChunks.add(chunk);
+             this.field_73244_f.func_76163_a(i, chunk);
+             this.field_73245_g.add(chunk);
 +            loadingChunks.remove(i);
-             chunk.onChunkLoad();
-             chunk.populateChunk(this, this, p_73158_1_, p_73158_2_);
+             chunk.func_76631_c();
+             chunk.func_76624_a(this, this, p_73158_1_, p_73158_2_);
          }
 @@ -205,6 +259,7 @@
-             if (this.serverChunkGenerator != null)
+             if (this.field_73246_d != null)
              {
-                 this.serverChunkGenerator.populate(p_73153_1_, p_73153_2_, p_73153_3_);
-+                net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(p_73153_2_, p_73153_3_, worldObj, serverChunkGenerator, p_73153_1_);
-                 chunk.setChunkModified();
+                 this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);
++                net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(p_73153_2_, p_73153_3_, field_73251_h, field_73246_d, p_73153_1_);
+                 chunk.func_76630_e();
              }
          }
 @@ -266,6 +321,11 @@
      {
-         if (!this.worldObj.disableLevelSaving)
+         if (!this.field_73251_h.field_73058_d)
          {
-+            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
++            for (ChunkCoordIntPair forced : this.field_73251_h.getPersistentChunks().keySet())
 +            {
-+                this.droppedChunksSet.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
++                this.field_73248_b.remove(ChunkCoordIntPair.func_77272_a(forced.field_77276_a, forced.field_77275_b));
 +            }
 +
              for (int i = 0; i < 100; ++i)
              {
-                 if (!this.droppedChunksSet.isEmpty())
+                 if (!this.field_73248_b.isEmpty())
 @@ -280,6 +340,12 @@
-                         this.saveChunkExtraData(chunk);
-                         this.id2ChunkMap.remove(olong.longValue());
-                         this.loadedChunks.remove(chunk);
-+                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
-+                        if(loadedChunks.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.worldObj.provider.getDimensionId())){
-+                            net.minecraftforge.common.DimensionManager.unloadWorld(this.worldObj.provider.getDimensionId());
-+                            return serverChunkGenerator.unloadQueuedChunks();
+                         this.func_73243_a(chunk);
+                         this.field_73244_f.func_76159_d(olong.longValue());
+                         this.field_73245_g.remove(chunk);
++                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
++                        if(field_73245_g.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.func_177502_q())){
++                            net.minecraftforge.common.DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.func_177502_q());
++                            return field_73246_d.func_73156_b();
 +                        }
 +
                      }
  
-                     this.droppedChunksSet.remove(olong);
+                     this.field_73248_b.remove(olong);

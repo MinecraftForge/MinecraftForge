@@ -7,38 +7,38 @@
 -public class BlockTallGrass extends BlockBush implements IGrowable
 +public class BlockTallGrass extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
  {
-     public static final PropertyEnum<BlockTallGrass.EnumType> TYPE = PropertyEnum.<BlockTallGrass.EnumType>create("type", BlockTallGrass.EnumType.class);
+     public static final PropertyEnum<BlockTallGrass.EnumType> field_176497_a = PropertyEnum.<BlockTallGrass.EnumType>func_177709_a("type", BlockTallGrass.EnumType.class);
  
 @@ -43,7 +43,7 @@
  
-     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
--        return this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
-+        return super.canBlockStay(worldIn, pos, state);
+-        return this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
++        return super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_);
      }
  
-     public boolean isReplaceable(World worldIn, BlockPos pos)
+     public boolean func_176200_f(World p_176200_1_, BlockPos p_176200_2_)
 @@ -53,7 +53,7 @@
  
-     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
      {
--        return rand.nextInt(8) == 0 ? Items.wheat_seeds : null;
+-        return p_180660_2_.nextInt(8) == 0 ? Items.field_151014_N : null;
 +        return null;
      }
  
-     public int quantityDroppedWithBonus(int fortune, Random random)
+     public int func_149679_a(int p_149679_1_, Random p_149679_2_)
 @@ -63,13 +63,7 @@
  
-     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {
--        if (!worldIn.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.shears)
+-        if (!p_180657_1_.field_72995_K && p_180657_2_.func_71045_bC() != null && p_180657_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
          {
--            player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
--            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 1, ((BlockTallGrass.EnumType)state.getValue(TYPE)).getMeta()));
+-            p_180657_2_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
+-            func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)p_180657_4_.func_177229_b(field_176497_a)).func_177044_a()));
 -        }
 -        else
 -        {
-             super.harvestBlock(worldIn, player, pos, state, te);
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
          }
      }
 @@ -204,4 +198,22 @@
@@ -51,7 +51,7 @@
 +    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
 +    {
 +        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
-+        ret.add(new ItemStack(Blocks.tallgrass, 1, ((BlockTallGrass.EnumType)world.getBlockState(pos).getValue(TYPE)).getMeta()));
++        ret.add(new ItemStack(Blocks.field_150329_H, 1, ((BlockTallGrass.EnumType)world.func_180495_p(pos).func_177229_b(field_176497_a)).func_177044_a()));
 +        return ret;
 +    }
 +    @Override

@@ -2,60 +2,60 @@
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
 @@ -61,6 +61,8 @@
      {
-         int i = (pos.getX() >> 4) - this.chunkX;
-         int j = (pos.getZ() >> 4) - this.chunkZ;
-+        if (i < 0 || i >= chunkArray.length || j < 0 || j >= chunkArray[i].length) return null;
-+        if (chunkArray[i][j] == null) return null;
-         return this.chunkArray[i][j].getTileEntity(pos, Chunk.EnumCreateEntityType.IMMEDIATE);
+         int i = (p_175625_1_.func_177958_n() >> 4) - this.field_72818_a;
+         int j = (p_175625_1_.func_177952_p() >> 4) - this.field_72816_b;
++        if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return null;
++        if (field_72817_c[i][j] == null) return null;
+         return this.field_72817_c[i][j].func_177424_a(p_175625_1_, Chunk.EnumCreateEntityType.IMMEDIATE);
      }
  
 @@ -84,6 +86,7 @@
          {
-             int i = (pos.getX() >> 4) - this.chunkX;
-             int j = (pos.getZ() >> 4) - this.chunkZ;
-+            if (i < 0 || i >= chunkArray.length || j < 0 || i >= chunkArray[i].length) return Blocks.air.getDefaultState();
+             int i = (p_180495_1_.func_177958_n() >> 4) - this.field_72818_a;
+             int j = (p_180495_1_.func_177952_p() >> 4) - this.field_72816_b;
++            if (i < 0 || i >= field_72817_c.length || j < 0 || i >= field_72817_c[i].length) return Blocks.field_150350_a.func_176223_P();
  
-             if (i >= 0 && i < this.chunkArray.length && j >= 0 && j < this.chunkArray[i].length)
+             if (i >= 0 && i < this.field_72817_c.length && j >= 0 && j < this.field_72817_c[i].length)
              {
 @@ -139,6 +142,8 @@
              {
-                 int i = (pos.getX() >> 4) - this.chunkX;
-                 int j = (pos.getZ() >> 4) - this.chunkZ;
-+                if (i < 0 || i >= chunkArray.length || j < 0 || j >= chunkArray[i].length) return p_175629_1_.defaultLightValue;
-+                if (chunkArray[i][j] == null) return p_175629_1_.defaultLightValue;
-                 return this.chunkArray[i][j].getLightFor(p_175629_1_, pos);
+                 int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
+                 int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
++                if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return p_175629_1_.field_77198_c;
++                if (field_72817_c[i][j] == null) return p_175629_1_.field_77198_c;
+                 return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
 @@ -150,7 +155,7 @@
  
-     public boolean isAirBlock(BlockPos pos)
+     public boolean func_175623_d(BlockPos p_175623_1_)
      {
--        return this.getBlockState(pos).getBlock().getMaterial() == Material.air;
-+        return this.getBlockState(pos).getBlock().isAir(this, pos);
+-        return this.func_180495_p(p_175623_1_).func_177230_c().func_149688_o() == Material.field_151579_a;
++        return this.func_180495_p(p_175623_1_).func_177230_c().isAir(this, p_175623_1_);
      }
  
      @SideOnly(Side.CLIENT)
 @@ -160,6 +165,7 @@
          {
-             int i = (pos.getX() >> 4) - this.chunkX;
-             int j = (pos.getZ() >> 4) - this.chunkZ;
-+            if (i < 0 || i >= chunkArray.length || j < 0 || i >= chunkArray[i].length) return p_175628_1_.defaultLightValue;
-             return this.chunkArray[i][j].getLightFor(p_175628_1_, pos);
+             int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
+             int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
++            if (i < 0 || i >= field_72817_c.length || j < 0 || i >= field_72817_c[i].length) return p_175628_1_.field_77198_c;
+             return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
 @@ -179,4 +185,15 @@
      {
-         return this.worldObj.getWorldType();
+         return this.field_72815_e.func_175624_G();
      }
 +
 +    @Override
 +    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
 +    {
-+        int x = (pos.getX() >> 4) - this.chunkX;
-+        int z = (pos.getZ() >> 4) - this.chunkZ;
-+        if (pos.getY() >= 0 && pos.getY() < 256) return _default;
-+        if (x < 0 || x >= chunkArray.length || z < 0 || x >= chunkArray[x].length) return _default;
++        int x = (pos.func_177958_n() >> 4) - this.field_72818_a;
++        int z = (pos.func_177952_p() >> 4) - this.field_72816_b;
++        if (pos.func_177956_o() >= 0 && pos.func_177956_o() < 256) return _default;
++        if (x < 0 || x >= field_72817_c.length || z < 0 || x >= field_72817_c[x].length) return _default;
 +
-+        return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
++        return func_180495_p(pos).func_177230_c().isSideSolid(this, pos, side);
 +    }
  }

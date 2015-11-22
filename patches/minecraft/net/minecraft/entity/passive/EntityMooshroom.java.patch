@@ -7,56 +7,56 @@
 -public class EntityMooshroom extends EntityCow
 +public class EntityMooshroom extends EntityCow implements net.minecraftforge.common.IShearable
  {
-     public EntityMooshroom(World worldIn)
+     public EntityMooshroom(World p_i1687_1_)
      {
 @@ -18,6 +18,7 @@
-         this.field_175506_bl = Blocks.mycelium;
+         this.field_175506_bl = Blocks.field_150391_bh;
      }
  
 +    @SuppressWarnings("unused")
-     public boolean interact(EntityPlayer player)
+     public boolean func_70085_c(EntityPlayer p_70085_1_)
      {
-         ItemStack itemstack = player.inventory.getCurrentItem();
+         ItemStack itemstack = p_70085_1_.field_71071_by.func_70448_g();
 @@ -37,7 +38,7 @@
              }
          }
  
--        if (itemstack != null && itemstack.getItem() == Items.shears && this.getGrowingAge() >= 0)
-+        if (false && itemstack != null && itemstack.getItem() == Items.shears && this.getGrowingAge() >= 0) //Forge Disable, Moved to onSheared
+-        if (itemstack != null && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0)
++        if (false && itemstack != null && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) //Forge Disable, Moved to onSheared
          {
-             this.setDead();
-             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D, new int[0]);
+             this.func_70106_y();
+             this.field_70170_p.func_175688_a(EnumParticleTypes.EXPLOSION_LARGE, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D, new int[0]);
 @@ -77,4 +78,33 @@
      {
-         return new EntityMooshroom(this.worldObj);
+         return new EntityMooshroom(this.field_70170_p);
      }
 +
-+    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos){ return getGrowingAge() >= 0; }
++    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos){ return func_70874_b() >= 0; }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos, int fortune)
 +    {
-+        this.setDead();
-+        this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D, new int[0]);
++        this.func_70106_y();
++        this.field_70170_p.func_175688_a(EnumParticleTypes.EXPLOSION_LARGE, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D, new int[0]);
 +
-+        EntityCow entitycow = new EntityCow(this.worldObj);
-+        entitycow.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
-+        entitycow.setHealth(this.getHealth());
-+        entitycow.renderYawOffset = this.renderYawOffset;
++        EntityCow entitycow = new EntityCow(this.field_70170_p);
++        entitycow.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, this.field_70125_A);
++        entitycow.func_70606_j(this.func_110143_aJ());
++        entitycow.field_70761_aq = this.field_70761_aq;
 +
-+        if (this.hasCustomName())
++        if (this.func_145818_k_())
 +        {
-+            entitycow.setCustomNameTag(this.getCustomNameTag());
++            entitycow.func_96094_a(this.func_95999_t());
 +        }
 +
-+        this.worldObj.spawnEntityInWorld(entitycow);
++        this.field_70170_p.func_72838_d(entitycow);
 +
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        for (int i = 0; i < 5; ++i)
 +        {
-+            ret.add(new ItemStack(Blocks.red_mushroom));
++            ret.add(new ItemStack(Blocks.field_150337_Q));
 +        }
 +
-+        this.playSound("mob.sheep.shear", 1.0F, 1.0F);
++        this.func_85030_a("mob.sheep.shear", 1.0F, 1.0F);
 +        return ret;
 +    }
  }

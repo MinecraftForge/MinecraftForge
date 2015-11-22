@@ -4,14 +4,14 @@
      {
          if (this.field_143029_e == null)
          {
--            this.field_143029_e = (MapGenStructureData)worldIn.loadItemData(MapGenStructureData.class, this.getStructureName());
-+            this.field_143029_e = (MapGenStructureData)worldIn.getPerWorldStorage().loadData(MapGenStructureData.class, this.getStructureName());
+-            this.field_143029_e = (MapGenStructureData)p_143027_1_.func_72943_a(MapGenStructureData.class, this.func_143025_a());
++            this.field_143029_e = (MapGenStructureData)p_143027_1_.getPerWorldStorage().func_75742_a(MapGenStructureData.class, this.func_143025_a());
  
              if (this.field_143029_e == null)
              {
-                 this.field_143029_e = new MapGenStructureData(this.getStructureName());
--                worldIn.setItemData(this.getStructureName(), this.field_143029_e);
-+                worldIn.getPerWorldStorage().setData(this.getStructureName(), this.field_143029_e);
+                 this.field_143029_e = new MapGenStructureData(this.func_143025_a());
+-                p_143027_1_.func_72823_a(this.func_143025_a(), this.field_143029_e);
++                p_143027_1_.getPerWorldStorage().func_75745_a(this.func_143025_a(), this.field_143029_e);
              }
              else
              {

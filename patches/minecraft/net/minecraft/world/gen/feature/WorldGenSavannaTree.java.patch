@@ -4,8 +4,8 @@
                      {
                          if (j >= 0 && j < 256)
                          {
--                            if (!this.func_150523_a(worldIn.getBlockState(blockpos$mutableblockpos.func_181079_c(l, j, i1)).getBlock()))
-+                            if (!this.isReplaceable(worldIn,blockpos$mutableblockpos.func_181079_c(l, j, i1)))
+-                            if (!this.func_150523_a(p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c()))
++                            if (!this.isReplaceable(p_180709_1_,blockpos$mutableblockpos.func_181079_c(l, j, i1)))
                              {
                                  flag = false;
                              }
@@ -13,52 +13,52 @@
              }
              else
              {
--                Block block = worldIn.getBlockState(p_180709_3_.down()).getBlock();
-+                BlockPos down = p_180709_3_.down();
-+                Block block = worldIn.getBlockState(down).getBlock();
-+                boolean isSoil = block.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+-                Block block = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
++                BlockPos down = p_180709_3_.func_177977_b();
++                Block block = p_180709_1_.func_180495_p(down).func_177230_c();
++                boolean isSoil = block.canSustainPlant(p_180709_1_, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
  
--                if ((block == Blocks.grass || block == Blocks.dirt) && p_180709_3_.getY() < 256 - i - 1)
-+                if (isSoil && p_180709_3_.getY() < 256 - i - 1)
+-                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d) && p_180709_3_.func_177956_o() < 256 - i - 1)
++                if (isSoil && p_180709_3_.func_177956_o() < 256 - i - 1)
                  {
--                    this.func_175921_a(worldIn, p_180709_3_.down());
-+                    block.onPlantGrow(worldIn, down, p_180709_3_);
-                     EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(p_180709_2_);
+-                    this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
++                    block.onPlantGrow(p_180709_1_, down, p_180709_3_);
+                     EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180709_2_);
                      int k2 = i - p_180709_2_.nextInt(4) - 1;
                      int l2 = 3 - p_180709_2_.nextInt(3);
 @@ -95,9 +97,9 @@
                          }
  
                          BlockPos blockpos = new BlockPos(i3, i2, j1);
--                        Material material = worldIn.getBlockState(blockpos).getBlock().getMaterial();
-+                        block = worldIn.getBlockState(blockpos).getBlock();
+-                        Material material = p_180709_1_.func_180495_p(blockpos).func_177230_c().func_149688_o();
++                        block = p_180709_1_.func_180495_p(blockpos).func_177230_c();
  
--                        if (material == Material.air || material == Material.leaves)
-+                        if (block.isAir(worldIn, blockpos) || block.isLeaves(worldIn, blockpos))
+-                        if (material == Material.field_151579_a || material == Material.field_151584_j)
++                        if (block.isAir(p_180709_1_, blockpos) || block.isLeaves(p_180709_1_, blockpos))
                          {
-                             this.func_181642_b(worldIn, blockpos);
+                             this.func_181642_b(p_180709_1_, blockpos);
                              k1 = i2;
 @@ -149,9 +151,9 @@
-                                 i3 += enumfacing1.getFrontOffsetX();
-                                 j1 += enumfacing1.getFrontOffsetZ();
+                                 i3 += enumfacing1.func_82601_c();
+                                 j1 += enumfacing1.func_82599_e();
                                  BlockPos blockpos1 = new BlockPos(i3, j2, j1);
--                                Material material1 = worldIn.getBlockState(blockpos1).getBlock().getMaterial();
-+                                block = worldIn.getBlockState(blockpos1).getBlock();
+-                                Material material1 = p_180709_1_.func_180495_p(blockpos1).func_177230_c().func_149688_o();
++                                block = p_180709_1_.func_180495_p(blockpos1).func_177230_c();
  
--                                if (material1 == Material.air || material1 == Material.leaves)
-+                                if (block.isAir(worldIn, blockpos2) || block.isLeaves(worldIn, blockpos2))
+-                                if (material1 == Material.field_151579_a || material1 == Material.field_151584_j)
++                                if (block.isAir(p_180709_1_, blockpos2) || block.isLeaves(p_180709_1_, blockpos2))
                                  {
-                                     this.func_181642_b(worldIn, blockpos1);
+                                     this.func_181642_b(p_180709_1_, blockpos1);
                                      k1 = j2;
 @@ -209,9 +211,9 @@
  
-     private void func_175924_b(World worldIn, BlockPos p_175924_2_)
+     private void func_175924_b(World p_175924_1_, BlockPos p_175924_2_)
      {
--        Material material = worldIn.getBlockState(p_175924_2_).getBlock().getMaterial();
-+        Block block = worldIn.getBlockState(p_175924_2_).getBlock();
+-        Material material = p_175924_1_.func_180495_p(p_175924_2_).func_177230_c().func_149688_o();
++        Block block = p_175924_1_.func_180495_p(p_175924_2_).func_177230_c();
  
--        if (material == Material.air || material == Material.leaves)
-+        if (block.isAir(worldIn, p_175924_2_) || block.isLeaves(worldIn, p_175924_2_))
+-        if (material == Material.field_151579_a || material == Material.field_151584_j)
++        if (block.isAir(p_175924_1_, p_175924_2_) || block.isLeaves(p_175924_1_, p_175924_2_))
          {
-             this.func_175903_a(worldIn, p_175924_2_, field_181644_b);
+             this.func_175903_a(p_175924_1_, p_175924_2_, field_181644_b);
          }

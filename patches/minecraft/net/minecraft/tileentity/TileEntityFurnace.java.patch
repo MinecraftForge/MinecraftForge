@@ -2,49 +2,49 @@
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 @@ -223,8 +223,7 @@
  
-                             if (this.furnaceItemStacks[1].stackSize == 0)
+                             if (this.field_145957_n[1].field_77994_a == 0)
                              {
--                                Item item = this.furnaceItemStacks[1].getItem().getContainerItem();
--                                this.furnaceItemStacks[1] = item != null ? new ItemStack(item) : null;
-+                                this.furnaceItemStacks[1] = furnaceItemStacks[1].getItem().getContainerItem(furnaceItemStacks[1]);
+-                                Item item = this.field_145957_n[1].func_77973_b().func_77668_q();
+-                                this.field_145957_n[1] = item != null ? new ItemStack(item) : null;
++                                this.field_145957_n[1] = field_145957_n[1].func_77973_b().getContainerItem(field_145957_n[1]);
                              }
                          }
                      }
 @@ -279,7 +278,11 @@
          else
          {
-             ItemStack itemstack = FurnaceRecipes.instance().getSmeltingResult(this.furnaceItemStacks[0]);
--            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize())));
+             ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
+-            return itemstack == null ? false : (this.field_145957_n[2] == null ? true : (!this.field_145957_n[2].func_77969_a(itemstack) ? false : (this.field_145957_n[2].field_77994_a < this.func_70297_j_() && this.field_145957_n[2].field_77994_a < this.field_145957_n[2].func_77976_d() ? true : this.field_145957_n[2].field_77994_a < itemstack.func_77976_d())));
 +            if (itemstack == null) return false;
-+            if (this.furnaceItemStacks[2] == null) return true;
-+            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
-+            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
-+            return result <= getInventoryStackLimit() && result <= this.furnaceItemStacks[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
++            if (this.field_145957_n[2] == null) return true;
++            if (!this.field_145957_n[2].func_77969_a(itemstack)) return false;
++            int result = field_145957_n[2].field_77994_a + itemstack.field_77994_a;
++            return result <= func_70297_j_() && result <= this.field_145957_n[2].func_77976_d(); //Forge BugFix: Make it respect stack sizes properly.
          }
      }
  
 @@ -295,7 +298,7 @@
              }
-             else if (this.furnaceItemStacks[2].getItem() == itemstack.getItem())
+             else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())
              {
--                ++this.furnaceItemStacks[2].stackSize;
-+                this.furnaceItemStacks[2].stackSize += itemstack.stackSize; // Forge BugFix: Results may have multiple items
+-                ++this.field_145957_n[2].field_77994_a;
++                this.field_145957_n[2].field_77994_a += itemstack.field_77994_a; // Forge BugFix: Results may have multiple items
              }
  
-             if (this.furnaceItemStacks[0].getItem() == Item.getItemFromBlock(Blocks.sponge) && this.furnaceItemStacks[0].getMetadata() == 1 && this.furnaceItemStacks[1] != null && this.furnaceItemStacks[1].getItem() == Items.bucket)
+             if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
 @@ -342,7 +345,15 @@
                  }
              }
  
--            return item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equals("WOOD") ? 200 : (item instanceof ItemSword && ((ItemSword)item).getToolMaterialName().equals("WOOD") ? 200 : (item instanceof ItemHoe && ((ItemHoe)item).getMaterialName().equals("WOOD") ? 200 : (item == Items.stick ? 100 : (item == Items.coal ? 1600 : (item == Items.lava_bucket ? 20000 : (item == Item.getItemFromBlock(Blocks.sapling) ? 100 : (item == Items.blaze_rod ? 2400 : 0)))))));
-+            if (item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equals("WOOD")) return 200;
-+            if (item instanceof ItemSword && ((ItemSword)item).getToolMaterialName().equals("WOOD")) return 200;
-+            if (item instanceof ItemHoe && ((ItemHoe)item).getMaterialName().equals("WOOD")) return 200;
-+            if (item == Items.stick) return 100;
-+            if (item == Items.coal) return 1600;
-+            if (item == Items.lava_bucket) return 20000;
-+            if (item == Item.getItemFromBlock(Blocks.sapling)) return 100;
-+            if (item == Items.blaze_rod) return 2400;
+-            return item instanceof ItemTool && ((ItemTool)item).func_77861_e().equals("WOOD") ? 200 : (item instanceof ItemSword && ((ItemSword)item).func_150932_j().equals("WOOD") ? 200 : (item instanceof ItemHoe && ((ItemHoe)item).func_77842_f().equals("WOOD") ? 200 : (item == Items.field_151055_y ? 100 : (item == Items.field_151044_h ? 1600 : (item == Items.field_151129_at ? 20000 : (item == Item.func_150898_a(Blocks.field_150345_g) ? 100 : (item == Items.field_151072_bj ? 2400 : 0)))))));
++            if (item instanceof ItemTool && ((ItemTool)item).func_77861_e().equals("WOOD")) return 200;
++            if (item instanceof ItemSword && ((ItemSword)item).func_150932_j().equals("WOOD")) return 200;
++            if (item instanceof ItemHoe && ((ItemHoe)item).func_77842_f().equals("WOOD")) return 200;
++            if (item == Items.field_151055_y) return 100;
++            if (item == Items.field_151044_h) return 1600;
++            if (item == Items.field_151129_at) return 20000;
++            if (item == Item.func_150898_a(Blocks.field_150345_g)) return 100;
++            if (item == Items.field_151072_bj) return 2400;
 +            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
          }
      }

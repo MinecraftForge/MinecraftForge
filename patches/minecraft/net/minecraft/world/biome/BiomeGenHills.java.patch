@@ -2,10 +2,10 @@
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
 @@ -49,7 +49,7 @@
              int i1 = p_180624_2_.nextInt(16);
-             BlockPos blockpos = p_180624_3_.add(k, l, i1);
+             BlockPos blockpos = p_180624_3_.func_177982_a(k, l, i1);
  
--            if (worldIn.getBlockState(blockpos).getBlock() == Blocks.stone)
-+            if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockHelper.forBlock(Blocks.stone)))
+-            if (p_180624_1_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150348_b)
++            if (p_180624_1_.func_180495_p(blockpos).func_177230_c().isReplaceableOreGen(p_180624_1_, blockpos, net.minecraft.block.state.pattern.BlockHelper.func_177642_a(Blocks.field_150348_b)))
              {
-                 worldIn.setBlockState(blockpos, Blocks.emerald_ore.getDefaultState(), 2);
+                 p_180624_1_.func_180501_a(blockpos, Blocks.field_150412_bA.func_176223_P(), 2);
              }

@@ -10,4 +10,4 @@
 -@SideOnly(Side.CLIENT)
  public class TexturedQuad
  {
-     public PositionTextureVertex[] vertexPositions;
+     public PositionTextureVertex[] field_78239_a;

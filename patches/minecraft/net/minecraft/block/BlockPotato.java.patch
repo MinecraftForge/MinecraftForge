@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPotato.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPotato.java
 @@ -22,13 +22,14 @@
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 -
--        if (!worldIn.isRemote)
+-        if (!p_180653_1_.field_72995_K)
 -        {
--            if (((Integer)state.getValue(AGE)).intValue() >= 7 && worldIn.rand.nextInt(50) == 0)
+-            if (((Integer)p_180653_3_.func_177229_b(field_176488_a)).intValue() >= 7 && p_180653_1_.field_73012_v.nextInt(50) == 0)
 -            {
--                spawnAsEntity(worldIn, pos, new ItemStack(Items.poisonous_potato));
+-                func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(Items.field_151170_bI));
 -            }
 -        }
      }
@@ -17,9 +17,9 @@
 +    public java.util.List<net.minecraft.item.ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
-+        java.util.Random rand = world instanceof World ? ((World)world).rand : new java.util.Random();
-+        if (((Integer)state.getValue(AGE)) >= 7 && rand.nextInt(50) == 0)
-+            ret.add(new ItemStack(Items.poisonous_potato));
++        java.util.Random rand = world instanceof World ? ((World)world).field_73012_v : new java.util.Random();
++        if (((Integer)state.func_177229_b(field_176488_a)) >= 7 && rand.nextInt(50) == 0)
++            ret.add(new ItemStack(Items.field_151170_bI));
 +        return ret;
 +    }
  }

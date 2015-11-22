@@ -7,39 +7,39 @@
 -public class EntitySheep extends EntityAnimal
 +public class EntitySheep extends EntityAnimal implements net.minecraftforge.common.IShearable
  {
-     private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new Container()
+     private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
      {
 @@ -140,11 +140,12 @@
          }
      }
  
 +    @SuppressWarnings("unused")
-     public boolean interact(EntityPlayer player)
+     public boolean func_70085_c(EntityPlayer p_70085_1_)
      {
-         ItemStack itemstack = player.inventory.getCurrentItem();
+         ItemStack itemstack = p_70085_1_.field_71071_by.func_70448_g();
  
--        if (itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild())
-+        if (false && itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild()) //Forge: Moved to onSheared
+-        if (itemstack != null && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_())
++        if (false && itemstack != null && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_()) //Forge: Moved to onSheared
          {
-             if (!this.worldObj.isRemote)
+             if (!this.field_70170_p.field_72995_K)
              {
 @@ -327,4 +328,19 @@
          field_175514_bm.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
          field_175514_bm.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
      }
 +
-+    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos){ return !this.getSheared() && !this.isChild(); }
++    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos){ return !this.func_70892_o() && !this.func_70631_g_(); }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        this.setSheared(true);
-+        int i = 1 + this.rand.nextInt(3);
++        this.func_70893_e(true);
++        int i = 1 + this.field_70146_Z.nextInt(3);
 +
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        for (int j = 0; j < i; ++j)
-+            ret.add(new ItemStack(Item.getItemFromBlock(Blocks.wool), 1, this.getFleeceColor().getMetadata()));
++            ret.add(new ItemStack(Item.func_150898_a(Blocks.field_150325_L), 1, this.func_175509_cj().func_176765_a()));
 +
-+        this.playSound("mob.sheep.shear", 1.0F, 1.0F);
++        this.func_85030_a("mob.sheep.shear", 1.0F, 1.0F);
 +        return ret;
 +    }
  }

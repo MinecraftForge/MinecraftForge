@@ -1,51 +1,51 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
 @@ -58,34 +58,40 @@
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
-         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 -
--        if (this.getItemDropped(state, worldIn.rand, fortune) != Item.getItemFromBlock(this))
+-        if (this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_) != Item.func_150898_a(this))
 +    }
 +    @Override
 +    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        Random rand = world instanceof World ? ((World)world).rand : new Random();
-+        if (this.getItemDropped(state, rand, fortune) != Item.getItemFromBlock(this))
++        IBlockState state = world.func_180495_p(pos);
++        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
++        if (this.func_180660_a(state, rand, fortune) != Item.func_150898_a(this))
          {
              int i = 0;
  
-             if (this == Blocks.coal_ore)
+             if (this == Blocks.field_150365_q)
              {
--                i = MathHelper.getRandomIntegerInRange(worldIn.rand, 0, 2);
-+                i = MathHelper.getRandomIntegerInRange(rand, 0, 2);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 0, 2);
++                i = MathHelper.func_76136_a(rand, 0, 2);
              }
-             else if (this == Blocks.diamond_ore)
+             else if (this == Blocks.field_150482_ag)
              {
--                i = MathHelper.getRandomIntegerInRange(worldIn.rand, 3, 7);
-+                i = MathHelper.getRandomIntegerInRange(rand, 3, 7);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 3, 7);
++                i = MathHelper.func_76136_a(rand, 3, 7);
              }
-             else if (this == Blocks.emerald_ore)
+             else if (this == Blocks.field_150412_bA)
              {
--                i = MathHelper.getRandomIntegerInRange(worldIn.rand, 3, 7);
-+                i = MathHelper.getRandomIntegerInRange(rand, 3, 7);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 3, 7);
++                i = MathHelper.func_76136_a(rand, 3, 7);
              }
-             else if (this == Blocks.lapis_ore)
+             else if (this == Blocks.field_150369_x)
              {
--                i = MathHelper.getRandomIntegerInRange(worldIn.rand, 2, 5);
-+                i = MathHelper.getRandomIntegerInRange(rand, 2, 5);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 2, 5);
++                i = MathHelper.func_76136_a(rand, 2, 5);
              }
-             else if (this == Blocks.quartz_ore)
+             else if (this == Blocks.field_150449_bY)
              {
--                i = MathHelper.getRandomIntegerInRange(worldIn.rand, 2, 5);
-+                i = MathHelper.getRandomIntegerInRange(rand, 2, 5);
+-                i = MathHelper.func_76136_a(p_180653_1_.field_73012_v, 2, 5);
++                i = MathHelper.func_76136_a(rand, 2, 5);
              }
  
--            this.dropXpOnBlockBreak(worldIn, pos, i);
+-            this.func_180637_b(p_180653_1_, p_180653_2_, i);
 +            return i;
          }
 +        return 0;
      }
  
-     public int getDamageValue(World worldIn, BlockPos pos)
+     public int func_176222_j(World p_176222_1_, BlockPos p_176222_2_)

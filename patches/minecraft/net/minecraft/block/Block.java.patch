@@ -3,184 +3,184 @@
 @@ -38,8 +38,9 @@
  public class Block
  {
-     private static final ResourceLocation AIR_ID = new ResourceLocation("air");
--    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> blockRegistry = new RegistryNamespacedDefaultedByKey(AIR_ID);
--    public static final ObjectIntIdentityMap<IBlockState> BLOCK_STATE_IDS = new ObjectIntIdentityMap();
-+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation,Block> blockRegistry = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
+     private static final ResourceLocation field_176230_a = new ResourceLocation("air");
+-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey(field_176230_a);
+-    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = new ObjectIntIdentityMap();
++    public static final RegistryNamespacedDefaultedByKey<ResourceLocation,Block> field_149771_c = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
 +    @Deprecated //Modders: DO NOT use this! Use GameRegistry
-+    public static final ObjectIntIdentityMap<IBlockState> BLOCK_STATE_IDS = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
-     private CreativeTabs displayOnCreativeTab;
-     public static final Block.SoundType soundTypeStone = new Block.SoundType("stone", 1.0F, 1.0F);
-     public static final Block.SoundType soundTypeWood = new Block.SoundType("wood", 1.0F, 1.0F);
++    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
+     private CreativeTabs field_149772_a;
+     public static final Block.SoundType field_149769_e = new Block.SoundType("stone", 1.0F, 1.0F);
+     public static final Block.SoundType field_149766_f = new Block.SoundType("wood", 1.0F, 1.0F);
 @@ -119,6 +120,9 @@
-     private IBlockState defaultBlockState;
-     private String unlocalizedName;
+     private IBlockState field_176228_M;
+     private String field_149770_b;
  
 +    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Block> delegate =
-+            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)blockRegistry).getDelegate(this, Block.class);
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
 +
-     public static int getIdFromBlock(Block blockIn)
+     public static int func_149682_b(Block p_149682_0_)
      {
-         return blockRegistry.getIDForObject(blockIn);
+         return field_149771_c.func_148757_b(p_149682_0_);
 @@ -132,7 +136,8 @@
  
-     public static Block getBlockById(int id)
+     public static Block func_149729_e(int p_149729_0_)
      {
--        return (Block)blockRegistry.getObjectById(id);
-+        Block ret = (Block)blockRegistry.getObjectById(id);
-+        return ret == null ? net.minecraft.init.Blocks.air : ret;
+-        return (Block)field_149771_c.func_148754_a(p_149729_0_);
++        Block ret = (Block)field_149771_c.func_148754_a(p_149729_0_);
++        return ret == null ? net.minecraft.init.Blocks.field_150350_a : ret;
      }
  
-     public static IBlockState getStateById(int id)
+     public static IBlockState func_176220_d(int p_176220_0_)
 @@ -303,7 +308,7 @@
  
-     public boolean isReplaceable(World worldIn, BlockPos pos)
+     public boolean func_176200_f(World p_176200_1_, BlockPos p_176200_2_)
      {
 -        return false;
-+        return getMaterial().isReplaceable();
++        return func_149688_o().func_76222_j();
      }
  
-     public Block setHardness(float hardness)
+     public Block func_149711_c(float p_149711_1_)
 @@ -340,9 +345,10 @@
-         return this.needsRandomTick;
+         return this.field_149789_z;
      }
  
 +    @Deprecated //Forge: New State sensitive version.
-     public boolean hasTileEntity()
+     public boolean func_149716_u()
      {
--        return this.isBlockContainer;
-+        return hasTileEntity(getDefaultState());
+-        return this.field_149758_A;
++        return hasTileEntity(func_176223_P());
      }
  
-     public final void setBlockBounds(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
+     public final void func_149676_a(float p_149676_1_, float p_149676_2_, float p_149676_3_, float p_149676_4_, float p_149676_5_, float p_149676_6_)
 @@ -359,13 +365,13 @@
-     public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos)
+     public int func_176207_c(IBlockAccess p_176207_1_, BlockPos p_176207_2_)
      {
-         Block block = worldIn.getBlockState(pos).getBlock();
--        int i = worldIn.getCombinedLight(pos, block.getLightValue());
-+        int i = worldIn.getCombinedLight(pos, block.getLightValue(worldIn, pos));
+         Block block = p_176207_1_.func_180495_p(p_176207_2_).func_177230_c();
+-        int i = p_176207_1_.func_175626_b(p_176207_2_, block.func_149750_m());
++        int i = p_176207_1_.func_175626_b(p_176207_2_, block.getLightValue(p_176207_1_, p_176207_2_));
  
          if (i == 0 && block instanceof BlockSlab)
          {
-             pos = pos.down();
-             block = worldIn.getBlockState(pos).getBlock();
--            return worldIn.getCombinedLight(pos, block.getLightValue());
-+            return worldIn.getCombinedLight(pos, block.getLightValue(worldIn, pos));
+             p_176207_2_ = p_176207_2_.func_177977_b();
+             block = p_176207_1_.func_180495_p(p_176207_2_).func_177230_c();
+-            return p_176207_1_.func_175626_b(p_176207_2_, block.func_149750_m());
++            return p_176207_1_.func_175626_b(p_176207_2_, block.getLightValue(p_176207_1_, p_176207_2_));
          }
          else
          {
 @@ -453,6 +459,10 @@
  
-     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
-+        if (hasTileEntity(state) && !(this instanceof BlockContainer))
++        if (hasTileEntity(p_180663_3_) && !(this instanceof BlockContainer))
 +        {
-+            worldIn.removeTileEntity(pos);
++            p_180663_1_.func_175713_t(p_180663_2_);
 +        }
      }
  
-     public int quantityDropped(Random random)
+     public int func_149745_a(Random p_149745_1_)
 @@ -467,8 +477,7 @@
  
-     public float getPlayerRelativeBlockHardness(EntityPlayer playerIn, World worldIn, BlockPos pos)
+     public float func_180647_a(EntityPlayer p_180647_1_, World p_180647_2_, BlockPos p_180647_3_)
      {
--        float f = this.getBlockHardness(worldIn, pos);
--        return f < 0.0F ? 0.0F : (!playerIn.canHarvestBlock(this) ? playerIn.getToolDigEfficiency(this) / f / 100.0F : playerIn.getToolDigEfficiency(this) / f / 30.0F);
-+        return net.minecraftforge.common.ForgeHooks.blockStrength(worldIn.getBlockState(pos), playerIn, worldIn, pos);
+-        float f = this.func_176195_g(p_180647_2_, p_180647_3_);
+-        return f < 0.0F ? 0.0F : (!p_180647_1_.func_146099_a(this) ? p_180647_1_.func_180471_a(this) / f / 100.0F : p_180647_1_.func_180471_a(this) / f / 30.0F);
++        return net.minecraftforge.common.ForgeHooks.blockStrength(p_180647_2_.func_180495_p(p_180647_3_), p_180647_1_, p_180647_2_, p_180647_3_);
      }
  
-     public final void dropBlockAsItem(World worldIn, BlockPos pos, IBlockState state, int forture)
+     public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
 @@ -478,20 +487,16 @@
  
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
--        if (!worldIn.isRemote)
-+        if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
+-        if (!p_180653_1_.field_72995_K)
++        if (!p_180653_1_.field_72995_K && !p_180653_1_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
--            int i = this.quantityDroppedWithBonus(fortune, worldIn.rand);
-+            java.util.List<ItemStack> items = getDrops(worldIn, pos, state, fortune);
-+            chance = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, fortune, chance, false, harvesters.get());
+-            int i = this.func_149679_a(p_180653_5_, p_180653_1_.field_73012_v);
++            java.util.List<ItemStack> items = getDrops(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_);
++            p_180653_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180653_1_, p_180653_2_, p_180653_3_, p_180653_5_, p_180653_4_, false, harvesters.get());
  
 -            for (int j = 0; j < i; ++j)
 +            for (ItemStack item : items)
              {
-                 if (worldIn.rand.nextFloat() <= chance)
+                 if (p_180653_1_.field_73012_v.nextFloat() <= p_180653_4_)
                  {
--                    Item item = this.getItemDropped(state, worldIn.rand, fortune);
+-                    Item item = this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_);
 -
 -                    if (item != null)
 -                    {
--                        spawnAsEntity(worldIn, pos, new ItemStack(item, 1, this.damageDropped(state)));
+-                        func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item, 1, this.func_180651_a(p_180653_3_)));
 -                    }
-+                    spawnAsEntity(worldIn, pos, item);
++                    func_180635_a(p_180653_1_, p_180653_2_, item);
                  }
              }
          }
 @@ -499,8 +504,13 @@
  
-     public static void spawnAsEntity(World worldIn, BlockPos pos, ItemStack stack)
+     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
--        if (!worldIn.isRemote && worldIn.getGameRules().getGameRuleBooleanValue("doTileDrops"))
-+        if (!worldIn.isRemote && worldIn.getGameRules().getGameRuleBooleanValue("doTileDrops") && !worldIn.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
+-        if (!p_180635_0_.field_72995_K && p_180635_0_.func_82736_K().func_82766_b("doTileDrops"))
++        if (!p_180635_0_.field_72995_K && p_180635_0_.func_82736_K().func_82766_b("doTileDrops") && !p_180635_0_.restoringBlockSnapshots) // do not drop items while restoring blockstates, prevents item dupe
          {
 +            if (captureDrops.get())
 +            {
-+                capturedDrops.get().add(stack);
++                capturedDrops.get().add(p_180635_2_);
 +                return;
 +            }
              float f = 0.5F;
-             double d0 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-             double d1 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+             double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+             double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 @@ -687,7 +697,7 @@
  
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return worldIn.getBlockState(pos).getBlock().blockMaterial.isReplaceable();
-+        return worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos);
+-        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().field_149764_J.func_76222_j();
++        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().func_176200_f(p_176196_1_, p_176196_2_);
      }
  
-     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+     public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumFacing p_180639_5_, float p_180639_6_, float p_180639_7_, float p_180639_8_)
 @@ -799,25 +809,35 @@
-         player.triggerAchievement(StatList.mineBlockStatArray[getIdFromBlock(this)]);
-         player.addExhaustion(0.025F);
+         p_180657_2_.func_71029_a(StatList.field_75934_C[func_149682_b(this)]);
+         p_180657_2_.func_71020_j(0.025F);
  
--        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(player))
-+        if (this.canSilkHarvest(worldIn, pos, worldIn.getBlockState(pos), player) && EnchantmentHelper.getSilkTouchModifier(player))
+-        if (this.func_149700_E() && EnchantmentHelper.func_77502_d(p_180657_2_))
++        if (this.canSilkHarvest(p_180657_1_, p_180657_3_, p_180657_1_.func_180495_p(p_180657_3_), p_180657_2_) && EnchantmentHelper.func_77502_d(p_180657_2_))
          {
 +            java.util.ArrayList<ItemStack> items = new java.util.ArrayList<ItemStack>();
-             ItemStack itemstack = this.createStackedBlock(state);
+             ItemStack itemstack = this.func_180643_i(p_180657_4_);
  
              if (itemstack != null)
              {
--                spawnAsEntity(worldIn, pos, itemstack);
+-                func_180635_a(p_180657_1_, p_180657_3_, itemstack);
 +                items.add(itemstack);
              }
 +
-+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, worldIn.getBlockState(pos), 0, 1.0f, true, player);
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_1_.func_180495_p(p_180657_3_), 0, 1.0f, true, p_180657_2_);
 +            for (ItemStack stack : items)
 +            {
-+                spawnAsEntity(worldIn, pos, stack);
++                func_180635_a(p_180657_1_, p_180657_3_, stack);
 +            }
          }
          else
          {
-+            harvesters.set(player);
-             int i = EnchantmentHelper.getFortuneModifier(player);
-             this.dropBlockAsItem(worldIn, pos, state, i);
++            harvesters.set(p_180657_2_);
+             int i = EnchantmentHelper.func_77517_e(p_180657_2_);
+             this.func_176226_b(p_180657_1_, p_180657_3_, p_180657_4_, i);
 +            harvesters.set(null);
          }
      }
  
 +    @Deprecated //Forge: State sensitive version
-     protected boolean canSilkHarvest()
+     protected boolean func_149700_E()
      {
--        return this.isFullCube() && !this.isBlockContainer;
-+        return this.isFullCube() && !this.hasTileEntity(silk_check_state.get());
+-        return this.func_149686_d() && !this.field_149758_A;
++        return this.func_149686_d() && !this.hasTileEntity(silk_check_state.get());
      }
  
-     protected ItemStack createStackedBlock(IBlockState state)
+     protected ItemStack func_180643_i(IBlockState p_180643_1_)
 @@ -1010,6 +1030,1029 @@
-         return "Block{" + blockRegistry.getNameForObject(this) + "}";
+         return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
 +    /* ======================================== FORGE START =====================================*/
@@ -197,12 +197,12 @@
 +     */
 +    public int getLightValue(IBlockAccess world, BlockPos pos)
 +    {
-+        Block block = world.getBlockState(pos).getBlock();
++        Block block = world.func_180495_p(pos).func_177230_c();
 +        if (block != this)
 +        {
 +            return block.getLightValue(world, pos);
 +        }
-+        return getLightValue();
++        return func_149750_m();
 +    }
 +
 +    /**
@@ -226,7 +226,7 @@
 +     */
 +    public boolean isNormalCube(IBlockAccess world, BlockPos pos)
 +    {
-+        return getMaterial().isOpaque() && isFullCube() && !canProvidePower();
++        return func_149688_o().func_76218_k() && func_149686_d() && !func_149744_f();
 +    }
 +
 +    /**
@@ -239,11 +239,11 @@
 +     */
 +    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        IBlockState state = this.getActualState(world.getBlockState(pos), world, pos);
++        IBlockState state = this.func_176221_a(world.func_180495_p(pos), world, pos);
 +
 +        if (this instanceof BlockSlab)
 +        {
-+            return isFullBlock() || (state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP && side == EnumFacing.UP);
++            return func_149730_j() || (state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.TOP && side == EnumFacing.UP);
 +        }
 +        else if (this instanceof BlockFarmland)
 +        {
@@ -251,26 +251,26 @@
 +        }
 +        else if (this instanceof BlockStairs)
 +        {
-+            boolean flipped = state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
-+            BlockStairs.EnumShape shape = (BlockStairs.EnumShape)state.getValue(BlockStairs.SHAPE);
-+            EnumFacing facing = (EnumFacing)state.getValue(BlockStairs.FACING);
++            boolean flipped = state.func_177229_b(BlockStairs.field_176308_b) == BlockStairs.EnumHalf.TOP;
++            BlockStairs.EnumShape shape = (BlockStairs.EnumShape)state.func_177229_b(BlockStairs.field_176310_M);
++            EnumFacing facing = (EnumFacing)state.func_177229_b(BlockStairs.field_176309_a);
 +            if (side == EnumFacing.UP) return flipped;
 +            if (facing == side) return true;
 +            if (flipped)
 +            {
-+                if (shape == BlockStairs.EnumShape.INNER_LEFT ) return side == facing.rotateYCCW();
-+                if (shape == BlockStairs.EnumShape.INNER_RIGHT) return side == facing.rotateY();
++                if (shape == BlockStairs.EnumShape.INNER_LEFT ) return side == facing.func_176735_f();
++                if (shape == BlockStairs.EnumShape.INNER_RIGHT) return side == facing.func_176746_e();
 +            }
 +            else
 +            {
-+                if (shape == BlockStairs.EnumShape.INNER_LEFT ) return side == facing.rotateY();
-+                if (shape == BlockStairs.EnumShape.INNER_RIGHT) return side == facing.rotateYCCW();
++                if (shape == BlockStairs.EnumShape.INNER_LEFT ) return side == facing.func_176746_e();
++                if (shape == BlockStairs.EnumShape.INNER_RIGHT) return side == facing.func_176735_f();
 +            }
 +            return false;
 +        }
 +        else if (this instanceof BlockSnow)
 +        {
-+            return ((Integer)state.getValue(BlockSnow.LAYERS)) >= 8;
++            return ((Integer)state.func_177229_b(BlockSnow.field_176315_a)) >= 8;
 +        }
 +        else if (this instanceof BlockHopper && side == EnumFacing.UP)
 +        {
@@ -308,7 +308,7 @@
 +     */
 +    public boolean isAir(IBlockAccess world, BlockPos pos)
 +    {
-+        return getMaterial() == Material.air;
++        return func_149688_o() == Material.field_151579_a;
 +    }
 +
 +    /**
@@ -343,7 +343,7 @@
 +     */
 +    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
-+        return world.setBlockToAir(pos);
++        return world.func_175698_g(pos);
 +    }
 +
 +    /**
@@ -357,7 +357,7 @@
 +     */
 +    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
-+        return net.minecraft.init.Blocks.fire.getFlammability(this);
++        return net.minecraft.init.Blocks.field_150480_ab.func_176532_c(this);
 +    }
 +
 +    /**
@@ -385,7 +385,7 @@
 +     */
 +    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
-+        return net.minecraft.init.Blocks.fire.getEncouragement(this);
++        return net.minecraft.init.Blocks.field_150480_ab.func_176534_d(this);
 +    }
 +
 +    /**
@@ -401,11 +401,11 @@
 +     */
 +    public boolean isFireSource(World world, BlockPos pos, EnumFacing side)
 +    {
-+        if (this == net.minecraft.init.Blocks.netherrack && side == EnumFacing.UP)
++        if (this == net.minecraft.init.Blocks.field_150424_aL && side == EnumFacing.UP)
 +        {
 +            return true;
 +        }
-+        if ((world.provider instanceof net.minecraft.world.WorldProviderEnd) && this == net.minecraft.init.Blocks.bedrock && side == EnumFacing.UP)
++        if ((world.field_73011_w instanceof net.minecraft.world.WorldProviderEnd) && this == net.minecraft.init.Blocks.field_150357_h && side == EnumFacing.UP)
 +        {
 +            return true;
 +        }
@@ -440,7 +440,7 @@
 +    {
 +        if (isTileProvider)
 +        {
-+            return ((ITileEntityProvider)this).createNewTileEntity(world, getMetaFromState(state));
++            return ((ITileEntityProvider)this).func_149915_a(world, func_176201_c(state));
 +        }
 +        return null;
 +    }
@@ -456,7 +456,7 @@
 +     */
 +    public int quantityDropped(IBlockState state, int fortune, Random random)
 +    {
-+        return quantityDroppedWithBonus(fortune, random);
++        return func_149679_a(fortune, random);
 +    }
 +
 +    /**
@@ -472,15 +472,15 @@
 +    {
 +        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +
-+        Random rand = world instanceof World ? ((World)world).rand : RANDOM;
++        Random rand = world instanceof World ? ((World)world).field_73012_v : RANDOM;
 +
 +        int count = quantityDropped(state, fortune, rand);
 +        for(int i = 0; i < count; i++)
 +        {
-+            Item item = this.getItemDropped(state, rand, fortune);
++            Item item = this.func_180660_a(state, rand, fortune);
 +            if (item != null)
 +            {
-+                ret.add(new ItemStack(item, 1, this.damageDropped(state)));
++                ret.add(new ItemStack(item, 1, this.func_180651_a(state)));
 +            }
 +        }
 +        return ret;
@@ -498,7 +498,7 @@
 +    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player)
 +    {
 +        silk_check_state.set(state);;
-+        boolean ret = this.canSilkHarvest();
++        boolean ret = this.func_149700_E();
 +        silk_check_state.set(null);
 +        return ret;
 +    }
@@ -514,14 +514,14 @@
 +     */
 +    public boolean canCreatureSpawn(IBlockAccess world, BlockPos pos, net.minecraft.entity.EntityLiving.SpawnPlacementType type)
 +    {
-+        IBlockState state = world.getBlockState(pos);
++        IBlockState state = world.func_180495_p(pos);
 +        if (this instanceof BlockSlab)
 +        {
-+            return (isFullBlock() || state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP);
++            return (func_149730_j() || state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.TOP);
 +        }
 +        else if (this instanceof BlockStairs)
 +        {
-+            return state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
++            return state.func_177229_b(BlockStairs.field_176308_b) == BlockStairs.EnumHalf.TOP;
 +        }
 +        return isSideSolid(world, pos, EnumFacing.UP);
 +    }
@@ -538,7 +538,7 @@
 +     */
 +    public boolean isBed(IBlockAccess world, BlockPos pos, Entity player)
 +    {
-+        return this == net.minecraft.init.Blocks.bed;
++        return this == net.minecraft.init.Blocks.field_150324_C;
 +    }
 +
 +    /**
@@ -553,7 +553,7 @@
 +    public BlockPos getBedSpawnPosition(IBlockAccess world, BlockPos pos, EntityPlayer player)
 +    {
 +        if (world instanceof World)
-+            return BlockBed.getSafeExitLocation((World)world, pos, 0);
++            return BlockBed.func_176468_a((World)world, pos, 0);
 +        return null;
 +    }
 +
@@ -569,10 +569,10 @@
 +    {
 +        if (world instanceof World)
 +        {
-+            IBlockState state = world.getBlockState(pos);
-+            state = state.getBlock().getActualState(state, world, pos);
-+            state = state.withProperty(BlockBed.OCCUPIED, true);
-+            ((World)world).setBlockState(pos, state, 4);
++            IBlockState state = world.func_180495_p(pos);
++            state = state.func_177230_c().func_176221_a(state, world, pos);
++            state = state.func_177226_a(BlockBed.field_176471_b, true);
++            ((World)world).func_180501_a(pos, state, 4);
 +        }
 +    }
 +
@@ -586,7 +586,7 @@
 +     */
 +    public EnumFacing getBedDirection(IBlockAccess world, BlockPos pos)
 +    {
-+        return (EnumFacing)getActualState(world.getBlockState(pos), world, pos).getValue(BlockDirectional.FACING);
++        return (EnumFacing)func_176221_a(world.func_180495_p(pos), world, pos).func_177229_b(BlockDirectional.field_176387_N);
 +    }
 +
 +    /**
@@ -598,7 +598,7 @@
 +     */
 +    public boolean isBedFoot(IBlockAccess world, BlockPos pos)
 +    {
-+        return getActualState(world.getBlockState(pos), world, pos).getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT;
++        return func_176221_a(world.func_180495_p(pos), world, pos).func_177229_b(BlockBed.field_176472_a) == BlockBed.EnumPartType.FOOT;
 +    }
 +
 +    /**
@@ -630,7 +630,7 @@
 +     */
 +    public boolean isLeaves(IBlockAccess world, BlockPos pos)
 +    {
-+        return getMaterial() == Material.leaves;
++        return func_149688_o() == Material.field_151584_j;
 +    }
 +
 +    /**
@@ -642,7 +642,7 @@
 +     */
 +    public boolean canBeReplacedByLeaves(IBlockAccess world, BlockPos pos)
 +    {
-+        return !isFullBlock();
++        return !func_149730_j();
 +    }
 +
 +    /**
@@ -667,7 +667,7 @@
 +     */
 +    public boolean isReplaceableOreGen(World world, BlockPos pos, com.google.common.base.Predicate<IBlockState> target)
 +    {
-+        return target.apply(world.getBlockState(pos));
++        return target.apply(world.func_180495_p(pos));
 +    }
 +
 +    /**
@@ -681,7 +681,7 @@
 +     */
 +    public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion)
 +    {
-+        return getExplosionResistance(exploder);
++        return func_149638_a(exploder);
 +    }
 +
 +    /**
@@ -695,8 +695,8 @@
 +     */
 +    public void onBlockExploded(World world, BlockPos pos, Explosion explosion)
 +    {
-+        world.setBlockToAir(pos);
-+        onBlockDestroyedByExplosion(world, pos, explosion);
++        world.func_175698_g(pos);
++        func_180652_a(world, pos, explosion);
 +    }
 +
 +    /**
@@ -710,7 +710,7 @@
 +     */
 +    public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        return canProvidePower() && side != null;
++        return func_149744_f() && side != null;
 +    }
 +
 +    /**
@@ -729,7 +729,7 @@
 +        }
 +        else
 +        {
-+            return this instanceof BlockFence || this == net.minecraft.init.Blocks.glass || this == net.minecraft.init.Blocks.cobblestone_wall || this == net.minecraft.init.Blocks.stained_glass;
++            return this instanceof BlockFence || this == net.minecraft.init.Blocks.field_150359_w || this == net.minecraft.init.Blocks.field_150463_bK || this == net.minecraft.init.Blocks.field_150399_cn;
 +        }
 +    }
 +
@@ -759,15 +759,15 @@
 +    @Deprecated
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos)
 +    {
-+        Item item = getItem(world, pos);
++        Item item = func_180665_b(world, pos);
 +
 +        if (item == null)
 +        {
 +            return null;
 +        }
 +
-+        Block block = item instanceof ItemBlock && !isFlowerPot() ? Block.getBlockFromItem(item) : this;
-+        return new ItemStack(item, 1, block.getDamageValue(world, pos));
++        Block block = item instanceof ItemBlock && !func_149648_K() ? Block.func_149634_a(item) : this;
++        return new ItemStack(item, 1, block.func_176222_j(world, pos));
 +    }
 +
 +    /**
@@ -834,39 +834,39 @@
 +     */
 +    public boolean canSustainPlant(IBlockAccess world, BlockPos pos, EnumFacing direction, net.minecraftforge.common.IPlantable plantable)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        IBlockState plant = plantable.getPlant(world, pos.offset(direction));
-+        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.offset(direction));
++        IBlockState state = world.func_180495_p(pos);
++        IBlockState plant = plantable.getPlant(world, pos.func_177972_a(direction));
++        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177972_a(direction));
 +
-+        if (plant.getBlock() == net.minecraft.init.Blocks.cactus && this == net.minecraft.init.Blocks.cactus)
++        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF && this == net.minecraft.init.Blocks.field_150434_aF)
 +        {
 +            return true;
 +        }
 +
-+        if (plant.getBlock() == net.minecraft.init.Blocks.reeds && this == net.minecraft.init.Blocks.reeds)
++        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150436_aH && this == net.minecraft.init.Blocks.field_150436_aH)
 +        {
 +            return true;
 +        }
 +
-+        if (plantable instanceof BlockBush && ((BlockBush)plantable).canPlaceBlockOn(this))
++        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_149854_a(this))
 +        {
 +            return true;
 +        }
 +
 +        switch (plantType)
 +        {
-+            case Desert: return this == net.minecraft.init.Blocks.sand || this == net.minecraft.init.Blocks.hardened_clay || this == net.minecraft.init.Blocks.stained_hardened_clay || this == net.minecraft.init.Blocks.dirt;
-+            case Nether: return this == net.minecraft.init.Blocks.soul_sand;
-+            case Crop:   return this == net.minecraft.init.Blocks.farmland;
++            case Desert: return this == net.minecraft.init.Blocks.field_150354_m || this == net.minecraft.init.Blocks.field_150405_ch || this == net.minecraft.init.Blocks.field_150406_ce || this == net.minecraft.init.Blocks.field_150346_d;
++            case Nether: return this == net.minecraft.init.Blocks.field_150425_aM;
++            case Crop:   return this == net.minecraft.init.Blocks.field_150458_ak;
 +            case Cave:   return isSideSolid(world, pos, EnumFacing.UP);
-+            case Plains: return this == net.minecraft.init.Blocks.grass || this == net.minecraft.init.Blocks.dirt || this == net.minecraft.init.Blocks.farmland;
-+            case Water:  return getMaterial() == Material.water && ((Integer)state.getValue(BlockLiquid.LEVEL)) == 0;
++            case Plains: return this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150458_ak;
++            case Water:  return func_149688_o() == Material.field_151586_h && ((Integer)state.func_177229_b(BlockLiquid.field_176367_b)) == 0;
 +            case Beach:
-+                boolean isBeach = this == net.minecraft.init.Blocks.grass || this == net.minecraft.init.Blocks.dirt || this == net.minecraft.init.Blocks.sand;
-+                boolean hasWater = (world.getBlockState(pos.east()).getBlock().getMaterial() == Material.water ||
-+                                    world.getBlockState(pos.west()).getBlock().getMaterial() == Material.water ||
-+                                    world.getBlockState(pos.north()).getBlock().getMaterial() == Material.water ||
-+                                    world.getBlockState(pos.south()).getBlock().getMaterial() == Material.water);
++                boolean isBeach = this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150354_m;
++                boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_177230_c().func_149688_o() == Material.field_151586_h ||
++                                    world.func_180495_p(pos.func_177976_e()).func_177230_c().func_149688_o() == Material.field_151586_h ||
++                                    world.func_180495_p(pos.func_177978_c()).func_177230_c().func_149688_o() == Material.field_151586_h ||
++                                    world.func_180495_p(pos.func_177968_d()).func_177230_c().func_149688_o() == Material.field_151586_h);
 +                return isBeach && hasWater;
 +        }
 +
@@ -888,9 +888,9 @@
 +     */
 +    public void onPlantGrow(World world, BlockPos pos, BlockPos source)
 +    {
-+        if (this == net.minecraft.init.Blocks.grass || this == net.minecraft.init.Blocks.farmland)
++        if (this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150458_ak)
 +        {
-+            world.setBlockState(pos, net.minecraft.init.Blocks.dirt.getDefaultState(), 2);
++            world.func_180501_a(pos, net.minecraft.init.Blocks.field_150346_d.func_176223_P(), 2);
 +        }
 +    }
 +
@@ -905,9 +905,9 @@
 +     */
 +    public boolean isFertile(World world, BlockPos pos)
 +    {
-+        if (this == net.minecraft.init.Blocks.farmland)
++        if (this == net.minecraft.init.Blocks.field_150458_ak)
 +        {
-+            return ((Integer)world.getBlockState(pos).getValue(BlockFarmland.MOISTURE)) > 0;
++            return ((Integer)world.func_180495_p(pos).func_177229_b(BlockFarmland.field_176531_a)) > 0;
 +        }
 +
 +        return false;
@@ -927,7 +927,7 @@
 +     */
 +    public int getLightOpacity(IBlockAccess world, BlockPos pos)
 +    {
-+        return getLightOpacity();
++        return func_149717_k();
 +    }
 +
 +    /**
@@ -941,7 +941,7 @@
 +    {
 +        if (entity instanceof net.minecraft.entity.boss.EntityDragon)
 +        {
-+            return this != net.minecraft.init.Blocks.barrier && this != net.minecraft.init.Blocks.obsidian && this != net.minecraft.init.Blocks.end_stone && this != net.minecraft.init.Blocks.bedrock && this != net.minecraft.init.Blocks.command_block;
++            return this != net.minecraft.init.Blocks.field_180401_cv && this != net.minecraft.init.Blocks.field_150343_Z && this != net.minecraft.init.Blocks.field_150377_bs && this != net.minecraft.init.Blocks.field_150357_h && this != net.minecraft.init.Blocks.field_150483_bI;
 +        }
 +
 +        return true;
@@ -957,7 +957,7 @@
 +     */
 +    public boolean isBeaconBase(IBlockAccess worldObj, BlockPos pos, BlockPos beacon)
 +    {
-+        return this == net.minecraft.init.Blocks.emerald_block || this == net.minecraft.init.Blocks.gold_block || this == net.minecraft.init.Blocks.diamond_block || this == net.minecraft.init.Blocks.iron_block;
++        return this == net.minecraft.init.Blocks.field_150475_bE || this == net.minecraft.init.Blocks.field_150340_R || this == net.minecraft.init.Blocks.field_150484_ah || this == net.minecraft.init.Blocks.field_150339_S;
 +    }
 +
 +    /**
@@ -973,12 +973,12 @@
 +     */
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
 +        {
-+            if (prop.getName().equals("facing") || prop.getName().equals("rotation"))
++            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
 +            {
-+                world.setBlockState(pos, state.cycleProperty(prop));
++                world.func_175656_a(pos, state.func_177231_a(prop));
 +                return true;
 +            }
 +        }
@@ -994,12 +994,12 @@
 +     */
 +    public EnumFacing[] getValidRotations(World world, BlockPos pos)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
 +        {
-+            if (prop.getName().equals("facing") && prop.getValueClass() == EnumFacing.class)
++            if (prop.func_177701_a().equals("facing") && prop.func_177699_b() == EnumFacing.class)
 +            {
-+                java.util.Collection<EnumFacing> values = ((java.util.Collection<EnumFacing>)prop.getAllowedValues());
++                java.util.Collection<EnumFacing> values = ((java.util.Collection<EnumFacing>)prop.func_177700_c());
 +                return values.toArray(new EnumFacing[values.size()]);
 +            }
 +        }
@@ -1014,7 +1014,7 @@
 +     */
 +    public float getEnchantPowerBonus(World world, BlockPos pos)
 +    {
-+        return this == net.minecraft.init.Blocks.bookshelf ? 1 : 0;
++        return this == net.minecraft.init.Blocks.field_150342_X ? 1 : 0;
 +    }
 +
 +    /**
@@ -1027,15 +1027,15 @@
 +     */
 +    public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, net.minecraft.item.EnumDyeColor color)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
 +        {
-+            if (prop.getName().equals("color") && prop.getValueClass() == net.minecraft.item.EnumDyeColor.class)
++            if (prop.func_177701_a().equals("color") && prop.func_177699_b() == net.minecraft.item.EnumDyeColor.class)
 +            {
-+                net.minecraft.item.EnumDyeColor current = (net.minecraft.item.EnumDyeColor)state.getValue(prop);
++                net.minecraft.item.EnumDyeColor current = (net.minecraft.item.EnumDyeColor)state.func_177229_b(prop);
 +                if (current != color)
 +                {
-+                    world.setBlockState(pos, state.withProperty(prop, color));
++                    world.func_175656_a(pos, state.func_177226_a(prop, color));
 +                    return true;
 +                }
 +            }
@@ -1073,7 +1073,7 @@
 +     */
 +    public boolean shouldCheckWeakPower(IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        return isNormalCube();
++        return func_149721_r();
 +    }
 +
 +    /**
@@ -1106,7 +1106,7 @@
 +     */
 +    public void setHarvestLevel(String toolClass, int level)
 +    {
-+        java.util.Iterator<IBlockState> itr = getBlockState().getValidStates().iterator();
++        java.util.Iterator<IBlockState> itr = func_176194_O().func_177619_a().iterator();
 +        while (itr.hasNext())
 +        {
 +            setHarvestLevel(toolClass, level, itr.next());
@@ -1127,7 +1127,7 @@
 +     */
 +    public void setHarvestLevel(String toolClass, int level, IBlockState state)
 +    {
-+        int idx = this.getMetaFromState(state);
++        int idx = this.func_176201_c(state);
 +        this.harvestTool[idx] = toolClass;
 +        this.harvestLevel[idx] = level;
 +    }
@@ -1138,7 +1138,7 @@
 +     */
 +    public String getHarvestTool(IBlockState state)
 +    {
-+        return harvestTool[getMetaFromState(state)];
++        return harvestTool[func_176201_c(state)];
 +    }
 +
 +    /**
@@ -1150,7 +1150,7 @@
 +     */
 +    public int getHarvestLevel(IBlockState state)
 +    {
-+        return harvestLevel[getMetaFromState(state)];
++        return harvestLevel[func_176201_c(state)];
 +    }
 +
 +    /**
@@ -1159,7 +1159,7 @@
 +     */
 +    public boolean isToolEffective(String type, IBlockState state)
 +    {
-+        if ("pickaxe".equals(type) && (this == net.minecraft.init.Blocks.redstone_ore || this == net.minecraft.init.Blocks.lit_redstone_ore || this == net.minecraft.init.Blocks.obsidian))
++        if ("pickaxe".equals(type) && (this == net.minecraft.init.Blocks.field_150450_ax || this == net.minecraft.init.Blocks.field_150439_ay || this == net.minecraft.init.Blocks.field_150343_Z))
 +            return false;
 +        return type != null && type.equals(getHarvestTool(state));
 +    }
@@ -1169,7 +1169,7 @@
 +     */
 +    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return getActualState(state, world, pos);
++        return func_176221_a(state, world, pos);
 +    }
 +
 +    /**
@@ -1178,7 +1178,7 @@
 +     */
 +    public boolean canRenderInLayer(EnumWorldBlockLayer layer)
 +    {
-+        return getBlockLayer() == layer;
++        return func_180664_k() == layer;
 +    }
 +
 +    // For Internal use only to capture droped items inside getDrops
@@ -1206,6 +1206,6 @@
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
-     public static void registerBlocks()
+     public static void func_149671_p()
      {
-         registerBlock(0, AIR_ID, (new BlockAir()).setUnlocalizedName("air"));
+         func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));

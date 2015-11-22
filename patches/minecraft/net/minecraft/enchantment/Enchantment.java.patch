@@ -2,22 +2,22 @@
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
 @@ -61,7 +61,7 @@
  
-         if (enchantmentsList[enchID] != null)
+         if (field_180311_a[p_i45771_1_] != null)
          {
 -            throw new IllegalArgumentException("Duplicate enchantment id!");
-+            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + enchantmentsList[enchID].getClass() + " Enchantment ID:" + enchID);
++            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + field_180311_a[p_i45771_1_].getClass() + " Enchantment ID:" + p_i45771_1_);
          }
          else
          {
 @@ -139,7 +139,7 @@
  
-     public boolean canApply(ItemStack stack)
+     public boolean func_92089_a(ItemStack p_92089_1_)
      {
--        return this.type.canEnchantItem(stack.getItem());
-+        return canApplyAtEnchantingTable(stack);
+-        return this.field_77351_y.func_77557_a(p_92089_1_.func_77973_b());
++        return canApplyAtEnchantingTable(p_92089_1_);
      }
  
-     public void onEntityDamaged(EntityLivingBase user, Entity target, int level)
+     public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
 @@ -150,6 +150,45 @@
      {
      }
@@ -30,7 +30,7 @@
 +     */
 +    public boolean canApplyAtEnchantingTable(ItemStack stack)
 +    {
-+        return this.type.canEnchantItem(stack.getItem());
++        return this.field_77351_y.func_77557_a(stack.func_77973_b());
 +    }
 +
 +    private static final java.lang.reflect.Field bookSetter = Enchantment.class.getDeclaredFields()[1];
@@ -44,7 +44,7 @@
 +        try
 +        {
 +            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
-+                com.google.common.collect.ObjectArrays.concat(enchantmentsBookList, enchantment));
++                com.google.common.collect.ObjectArrays.concat(field_77331_b, enchantment));
 +        }
 +        catch (Exception e)
 +        {

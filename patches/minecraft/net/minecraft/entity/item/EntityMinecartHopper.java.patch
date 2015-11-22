@@ -2,9 +2,9 @@
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
 @@ -54,6 +54,7 @@
  
-     public boolean interactFirst(EntityPlayer playerIn)
+     public boolean func_130002_c(EntityPlayer p_130002_1_)
      {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, playerIn))) return true;
-         if (!this.worldObj.isRemote)
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_130002_1_))) return true;
+         if (!this.field_70170_p.field_72995_K)
          {
-             playerIn.displayGUIChest(this);
+             p_130002_1_.func_71007_a(this);

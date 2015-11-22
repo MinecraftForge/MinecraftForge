@@ -1,44 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 @@ -197,6 +197,11 @@
-         this.buttonList.add(new GuiButton(1, this.width / 2 - 100, p_73969_1_, I18n.format("menu.singleplayer", new Object[0])));
-         this.buttonList.add(new GuiButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.format("menu.multiplayer", new Object[0])));
-         this.buttonList.add(this.realmsButton = new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online", new Object[0])));
-+        GuiButton fmlModButton = new GuiButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("fml.menu.mods"));
-+        fmlModButton.xPosition = this.width / 2 + 2;
-+        realmsButton.width = 98;
-+        fmlModButton.width = 98;
-+        this.buttonList.add(fmlModButton);
+         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer", new Object[0])));
+         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer", new Object[0])));
+         this.field_146292_n.add(this.field_175372_K = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
++        GuiButton fmlModButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("fml.menu.mods"));
++        fmlModButton.field_146128_h = this.field_146294_l / 2 + 2;
++        field_175372_K.field_146120_f = 98;
++        fmlModButton.field_146120_f = 98;
++        this.field_146292_n.add(fmlModButton);
      }
  
-     private void addDemoButtons(int p_73972_1_, int p_73972_2_)
+     private void func_73972_b(int p_73972_1_, int p_73972_2_)
 @@ -244,6 +249,11 @@
-             this.mc.shutdown();
+             this.field_146297_k.func_71400_g();
          }
  
-+        if (button.id == 6)
++        if (p_146284_1_.field_146127_k == 6)
 +        {
-+            this.mc.displayGuiScreen(new net.minecraftforge.fml.client.GuiModList(this));
++            this.field_146297_k.func_147108_a(new net.minecraftforge.fml.client.GuiModList(this));
 +        }
 +
-         if (button.id == 11)
+         if (p_146284_1_.field_146127_k == 11)
          {
-             this.mc.launchIntegratedServer("Demo_World", "Demo_World", DemoWorldServer.demoWorldSettings);
+             this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
 @@ -489,7 +499,16 @@
              s = s + " Demo";
          }
  
--        this.drawString(this.fontRendererObj, s, 2, this.height - 10, -1);
+-        this.func_73731_b(this.field_146289_q, s, 2, this.field_146295_m - 10, -1);
 +        java.util.List<String> brandings = com.google.common.collect.Lists.reverse(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(true));
 +        for (int brdline = 0; brdline < brandings.size(); brdline++)
 +        {
 +            String brd = brandings.get(brdline);
 +            if (!com.google.common.base.Strings.isNullOrEmpty(brd))
 +            {
-+                this.drawString(this.fontRendererObj, brd, 2, this.height - ( 10 + brdline * (this.fontRendererObj.FONT_HEIGHT + 1)), 16777215);
++                this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215);
 +            }
 +        }
-+        net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.fontRendererObj, this.width, this.height);
++        net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m);
          String s1 = "Copyright Mojang AB. Do not distribute!";
-         this.drawString(this.fontRendererObj, s1, this.width - this.fontRendererObj.getStringWidth(s1) - 2, this.height - 10, -1);
+         this.func_73731_b(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.func_78256_a(s1) - 2, this.field_146295_m - 10, -1);
  

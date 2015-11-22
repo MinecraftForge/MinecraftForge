@@ -1,17 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
 @@ -31,7 +31,7 @@
-     public static boolean isRailBlock(IBlockState state)
+     public static boolean func_176563_d(IBlockState p_176563_0_)
      {
-         Block block = state.getBlock();
--        return block == Blocks.rail || block == Blocks.golden_rail || block == Blocks.detector_rail || block == Blocks.activator_rail;
+         Block block = p_176563_0_.func_177230_c();
+-        return block == Blocks.field_150448_aq || block == Blocks.field_150318_D || block == Blocks.field_150319_E || block == Blocks.field_150408_cc;
 +        return block instanceof BlockRailBase;
      }
  
-     protected BlockRailBase(boolean isPowered)
+     protected BlockRailBase(boolean p_i45389_1_)
 @@ -175,6 +175,81 @@
  
-     public abstract IProperty<BlockRailBase.EnumRailDirection> getShapeProperty();
+     public abstract IProperty<BlockRailBase.EnumRailDirection> func_176560_l();
  
 +    /* ======================================== FORGE START =====================================*/
 +    /**
@@ -23,7 +23,7 @@
 +     */
 +    public boolean isFlexibleRail(IBlockAccess world, BlockPos pos)
 +    {
-+        return !this.isPowered;
++        return !this.field_150053_a;
 +    }
 +
 +    /**
@@ -74,12 +74,12 @@
 +     */
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
 +        {
-+            if (prop.getName().equals("shape"))
++            if (prop.func_177701_a().equals("shape"))
 +            {
-+                world.setBlockState(pos, state.cycleProperty(prop));
++                world.func_175656_a(pos, state.func_177231_a(prop));
 +                return true;
 +            }
 +        }
@@ -92,20 +92,20 @@
      {
          NORTH_SOUTH(0, "north_south"),
 @@ -245,6 +320,7 @@
-         private IBlockState state;
-         private final boolean isPowered;
+         private IBlockState field_180366_e;
+         private final boolean field_150656_f;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
 +        private final boolean canMakeSlopes;
  
-         public Rail(World worldIn, BlockPos pos, IBlockState state)
+         public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
 @@ -253,7 +329,8 @@
-             this.state = state;
-             this.block = (BlockRailBase)state.getBlock();
-             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(BlockRailBase.this.getShapeProperty());
--            this.isPowered = this.block.isPowered;
-+            this.isPowered = !this.block.isFlexibleRail(worldIn, pos);
-+            canMakeSlopes = this.block.canMakeSlopes(worldIn, pos);
+             this.field_180366_e = p_i45739_4_;
+             this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
+             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(BlockRailBase.this.func_176560_l());
+-            this.field_150656_f = this.field_180365_d.field_150053_a;
++            this.field_150656_f = !this.field_180365_d.isFlexibleRail(p_i45739_2_, p_i45739_3_);
++            canMakeSlopes = this.field_180365_d.canMakeSlopes(p_i45739_2_, p_i45739_3_);
              this.func_180360_a(blockrailbase$enumraildirection);
          }
  
@@ -116,7 +116,7 @@
 -            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
 +            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
              {
-                 if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
 @@ -452,7 +529,7 @@
                  }
@@ -125,7 +125,7 @@
 -            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
 +            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
              {
-                 if (BlockRailBase.isRailBlock(this.world, blockpos3.up()))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
 @@ -595,7 +672,7 @@
                  }
@@ -134,7 +134,7 @@
 -            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
 +            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
              {
-                 if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
 @@ -608,7 +685,7 @@
                  }
@@ -143,5 +143,5 @@
 -            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
 +            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
              {
-                 if (BlockRailBase.isRailBlock(this.world, blockpos3.up()))
+                 if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
