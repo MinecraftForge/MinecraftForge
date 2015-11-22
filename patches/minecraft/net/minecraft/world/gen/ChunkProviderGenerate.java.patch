@@ -68,8 +68,8 @@
          }
  
 -        if (!flag && this.field_73220_k.nextInt(this.field_177477_r.field_177777_D / 10) == 0 && this.field_177477_r.field_177783_C)
-+        if (!flag && this.field_73220_k.nextInt(this.field_177477_r.field_177777_D / 10) == 0 && this.field_177477_r.field_177783_C
-+                && net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.LAVA))
++        if (!flag && this.field_73220_k.nextInt(this.field_177477_r.field_177777_D / 10) == 0 && this.field_177477_r.field_177783_C &&
++                net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, field_73230_p, field_73220_k, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.LAVA))
          {
              int i2 = this.field_73220_k.nextInt(16) + 8;
              int l2 = this.field_73220_k.nextInt(this.field_73220_k.nextInt(248) + 8);
