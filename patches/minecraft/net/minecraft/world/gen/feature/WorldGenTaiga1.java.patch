@@ -31,7 +31,7 @@
                                      BlockPos blockpos = new BlockPos(j3, l2, i2);
  
 -                                    if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().func_149730_j())
-+                                    if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
++                                    if (p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
                                      {
                                          this.func_175903_a(p_180709_1_, blockpos, field_181637_b);
                                      }
