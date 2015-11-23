@@ -636,13 +636,19 @@ public class B3DModel
             Vector3f rPos = new Vector3f(newPos.x / newPos.w, newPos.y / newPos.w, newPos.z / newPos.w);
 
             // normal
-            Matrix3f tm = new Matrix3f();
-            t.getRotationScale(tm);
-            tm.invert();
-            tm.transpose();
-            Vector3f normal = new Vector3f(this.normal), rNormal = new Vector3f();
-            tm.transform(normal, rNormal);
-            rNormal.normalize();
+            Vector3f rNormal = null;
+
+            if(this.normal != null)
+            {
+                Matrix3f tm = new Matrix3f();
+                t.getRotationScale(tm);
+                tm.invert();
+                tm.transpose();
+                Vector3f normal = new Vector3f(this.normal);
+                rNormal = new Vector3f();
+                tm.transform(normal, rNormal);
+                rNormal.normalize();
+            }
 
             // texCoords TODO
             return new Vertex(rPos, rNormal, color, texCoords);

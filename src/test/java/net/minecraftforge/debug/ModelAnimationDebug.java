@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -52,6 +54,7 @@ public class ModelAnimationDebug
 
     public static String blockName = "test_animation_block";
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    public static final PropertyBool STATIC = PropertyBool.create("static");;
 
     @SidedProxy(serverSide = "net.minecraftforge.debug.ModelAnimationDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelAnimationDebug$ClientProxy")
     public static CommonProxy proxy;
@@ -71,11 +74,8 @@ public class ModelAnimationDebug
                 @Override
                 public ExtendedBlockState createBlockState()
                 {
-                    return new ExtendedBlockState(this, new IProperty[]{ FACING }, new IUnlistedProperty[]{ B3DFrameProperty.instance });
+                    return new ExtendedBlockState(this, new IProperty[]{ FACING, STATIC }, new IUnlistedProperty[]{ B3DFrameProperty.instance });
                 }
-
-                @Override
-                public int getRenderType() { return -1; }
 
                 @Override
                 public boolean isOpaqueCube() { return false; }
@@ -107,6 +107,11 @@ public class ModelAnimationDebug
                 @Override
                 public TileEntity createTileEntity(World world, IBlockState state) {
                     return new Chest(state);
+                }
+
+                @Override
+                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+                    return state.withProperty(STATIC, true);
                 }
 
                 /*@Override
@@ -239,7 +244,8 @@ public class ModelAnimationDebug
         public void renderTileEntityAt(Chest te, double x, double y, double z, float partialTick, int breakStage)
         {
             IBlockState state = te.getWorld().getBlockState(te.getPos());
-            IBakedModel model = this.blockRenderer.getModelFromBlockState(state, te.getWorld(), te.getPos());
+            state = state.withProperty(STATIC, false);
+            IBakedModel model = this.blockRenderer.getBlockModelShapes().getModelForState(state);
             if(state instanceof IExtendedBlockState)
             {
                 IExtendedBlockState exState = (IExtendedBlockState)state;
