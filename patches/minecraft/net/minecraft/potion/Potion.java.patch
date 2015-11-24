@@ -8,6 +8,13 @@
 +    /* ======================================== FORGE START =====================================*/
 +
 +    /**
++     * If the Potion effect should be displayed in the players inventory
++     * @param effect the active PotionEffect
++     * @return true to display it (default), false to hide it.
++     */
++    public boolean shouldRender(PotionEffect effect) { return true; }
++
++    /**
 +     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
 +     * @param effect the active PotionEffect
 +     * @return true to draw the standard text

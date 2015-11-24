@@ -1,6 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
-@@ -83,6 +83,8 @@
+@@ -29,7 +29,13 @@
+ 
+     protected void func_175378_g()
+     {
+-        if (!this.field_146297_k.field_71439_g.func_70651_bq().isEmpty())
++        boolean hasVisibleEffect = false;
++        for(Object o : this.field_146297_k.field_71439_g.func_70651_bq()) {
++            PotionEffect potioneffect = (PotionEffect)o;
++            Potion potion = Potion.field_76425_a[potioneffect.func_76456_a()];
++            if(potion.shouldRender(potioneffect)) { hasVisibleEffect = true; break; }
++        }
++        if (!this.field_146297_k.field_71439_g.func_70651_bq().isEmpty() && hasVisibleEffect)
+         {
+             this.field_147003_i = 160 + (this.field_146294_l - this.field_146999_f - 200) / 2;
+             this.field_147045_u = true;
+@@ -73,6 +79,7 @@
+             {
+                 PotionEffect potioneffect = (PotionEffect)iterator.next();
+                 Potion potion = Potion.field_76425_a[potioneffect.func_76456_a()];
++                if(!potion.shouldRender(potioneffect)) continue;
+                 GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+                 this.field_146297_k.func_110434_K().func_110577_a(field_147001_a);
+                 this.func_73729_b(i, j, 0, 166, 140, 32);
+@@ -83,6 +90,8 @@
                      this.func_73729_b(i + 6, j + 7, 0 + l % 8 * 18, 198 + l / 8 * 18, 18, 18);
                  }
  
