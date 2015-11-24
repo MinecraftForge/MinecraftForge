@@ -135,8 +135,10 @@ public class FMLCommonHandler
     /**
      * The FML event bus. Subscribe here for FML related events
      *
+     * @Deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
      * @return the event bus
      */
+    @Deprecated
     public EventBus bus()
     {
         return eventBus;
