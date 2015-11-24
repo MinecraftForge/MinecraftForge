@@ -20,7 +20,7 @@
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -156,6 +160,11 @@
+@@ -156,8 +160,14 @@
  
      protected void func_146283_a(List p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
@@ -31,8 +31,11 @@
 +    {
          if (!p_146283_1_.isEmpty())
          {
++            if (MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.DrawHoverTextEvent.Pre(this, p_146283_2_, p_146283_3_, p_146283_1_))) return;
              GlStateManager.func_179101_C();
-@@ -168,7 +177,7 @@
+             RenderHelper.func_74518_a();
+             GlStateManager.func_179140_f();
+@@ -168,7 +178,7 @@
              while (iterator.hasNext())
              {
                  String s = (String)iterator.next();
@@ -41,7 +44,7 @@
  
                  if (l > k)
                  {
-@@ -213,7 +222,7 @@
+@@ -213,7 +223,7 @@
              for (int i2 = 0; i2 < p_146283_1_.size(); ++i2)
              {
                  String s1 = (String)p_146283_1_.get(i2);
@@ -50,7 +53,15 @@
  
                  if (i2 == 0)
                  {
-@@ -441,6 +450,7 @@
+@@ -229,6 +239,7 @@
+             GlStateManager.func_179126_j();
+             RenderHelper.func_74519_b();
+             GlStateManager.func_179091_B();
++            MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.DrawHoverTextEvent.Post(this, p_146283_2_, p_146283_3_, p_146283_1_));
+         }
+     }
+ 
+@@ -441,6 +452,7 @@
              this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
          }
  
@@ -58,7 +69,7 @@
          this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
      }
  
-@@ -454,9 +464,14 @@
+@@ -454,9 +466,14 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -76,7 +87,7 @@
                  }
              }
          }
-@@ -482,8 +497,12 @@
+@@ -482,8 +499,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
@@ -91,7 +102,7 @@
      }
  
      public void func_73866_w_() {}
-@@ -494,7 +513,9 @@
+@@ -494,7 +515,9 @@
          {
              while (Mouse.next())
              {
@@ -101,7 +112,7 @@
              }
          }
  
-@@ -502,7 +523,9 @@
+@@ -502,7 +525,9 @@
          {
              while (Keyboard.next())
              {
