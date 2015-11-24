@@ -579,7 +579,6 @@ public class GuiModList extends GuiScreen
                     k += GuiModList.this.fontRendererObj.getStringWidth(((ChatComponentText)part).getChatComponentText_TextValue());
                     if (k >= x)
                     {
-                        System.out.println(part);
                         GuiModList.this.func_175276_a(part);
                         break;
                     }

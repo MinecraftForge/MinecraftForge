@@ -710,7 +710,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
     {
-        showGuiScreen(new GuiIngameModOptions(guiIngameMenu));
+        showGuiScreen(new GuiModList(guiIngameMenu));
     }
 
     public IModGuiFactory getGuiFactoryFor(ModContainer selectedMod)

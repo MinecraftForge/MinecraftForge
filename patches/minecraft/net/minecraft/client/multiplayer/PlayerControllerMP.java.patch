@@ -13,15 +13,33 @@
          if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_70694_bm() != null && this.field_78776_a.field_71439_g.func_70694_bm().func_77973_b() instanceof ItemSword)
          {
              return false;
-@@ -128,7 +134,7 @@
+@@ -128,13 +134,7 @@
              else
              {
                  world.func_175718_b(2001, p_178888_1_, Block.func_176210_f(iblockstate));
 -                boolean flag = world.func_175698_g(p_178888_1_);
-+                boolean flag = block1.removedByPlayer(world, p_178888_1_, field_78776_a.field_71439_g, false);
  
-                 if (flag)
-                 {
+-                if (flag)
+-                {
+-                    block1.func_176206_d(world, p_178888_1_, iblockstate);
+-                }
+-
+                 this.field_178895_c = new BlockPos(this.field_178895_c.func_177958_n(), -1, this.field_178895_c.func_177952_p());
+ 
+                 if (!this.field_78779_k.func_77145_d())
+@@ -152,6 +152,12 @@
+                     }
+                 }
+ 
++                boolean flag = block1.removedByPlayer(world, p_178888_1_, field_78776_a.field_71439_g, false);
++
++                if (flag)
++                {
++                    block1.func_176206_d(world, p_178888_1_, iblockstate);
++                }
+                 return flag;
+             }
+         }
 @@ -356,11 +362,19 @@
          {
              if (this.field_78779_k != WorldSettings.GameType.SPECTATOR)

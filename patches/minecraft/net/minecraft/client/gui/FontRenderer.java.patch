@@ -85,7 +85,7 @@
                  }
  
 -                float f1 = this.field_78293_l ? 0.5F : 1.0F;
-+                float f1 = func_78263_a(c0) / 32f;
++                float f1 = j == -1 || this.field_78293_l ? 0.5f : 1f;
                  boolean flag = (c0 == 0 || j == -1 || this.field_78293_l) && p_78255_2_;
  
                  if (flag)
