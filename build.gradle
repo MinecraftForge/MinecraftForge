@@ -125,7 +125,7 @@ outputJar {
     manifest.attributes([
         "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
         "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-        "Class-Path": getServerClasspath(file("jsons/1.8-rel.json"))
+        "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-rel.json"))
     ])
 }
 
