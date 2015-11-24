@@ -52,19 +52,17 @@ public abstract class FluidRegistry
 
     public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
-        public String getLocalizedName() {
+        public String getLocalizedName(FluidStack fs) {
             return StatCollector.translateToLocal("tile.water.name");
         }
     }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
 
     public static final Fluid LAVA = new Fluid("lava", new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow")) {
         @Override
-        public String getLocalizedName() {
+        public String getLocalizedName(FluidStack fs) {
             return StatCollector.translateToLocal("tile.lava.name");
         }
     }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.getUnlocalizedName());
-
-    public static int renderIdFluid = -1;
 
     static
     {
@@ -87,7 +85,8 @@ public abstract class FluidRegistry
     /**
      * Called by forge to load default fluid IDs from the world or from server -> client for syncing
      * DO NOT call this and expect useful behaviour.
-     * @param newfluidIDs
+     * @param localFluidIDs
+     * @param defaultNames
      */
     private static void loadFluidDefaults(BiMap<Fluid, Integer> localFluidIDs, Set<String> defaultNames)
     {
@@ -206,12 +205,6 @@ public abstract class FluidRegistry
         return fluidIDs.get(getFluid(fluidName));
     }
 
-    @Deprecated //Remove in 1.8.3
-    public static String getFluidName(int fluidID)
-    {
-        return fluidNames.get(fluidID);
-    }
-
     public static String getFluidName(Fluid fluid)
     {
         return fluids.inverse().get(fluid);
@@ -242,10 +235,9 @@ public abstract class FluidRegistry
     /**
      * Returns a read-only map containing Fluid Names and their associated IDs.
      */
-    @Deprecated //Change return type to <Fluid, Integer> in 1.8.3
-    public static Map<String, Integer> getRegisteredFluidIDs()
+    public static Map<Fluid, Integer> getRegisteredFluidIDs()
     {
-        return ImmutableMap.copyOf(fluidNames.inverse());
+        return ImmutableMap.copyOf(fluidIDs);
     }
 
     /**
@@ -394,23 +386,6 @@ public abstract class FluidRegistry
         void rebind()
         {
             fluid = fluids.get(name);
-        }
-    }
-
-    public static void onTextureStitchedPre(TextureMap map)
-    {
-        for(Fluid fluid : fluids.values())
-        {
-            if(fluid.getStill() != null)
-            {
-                TextureAtlasSprite still = map.registerSprite(fluid.getStill());
-                fluid.setStillIcon(still);
-            }
-            if(fluid.getFlowing() != null)
-            {
-                TextureAtlasSprite flowing = map.registerSprite(fluid.getFlowing());
-                fluid.setStillIcon(flowing);
-            }
         }
     }
 }
