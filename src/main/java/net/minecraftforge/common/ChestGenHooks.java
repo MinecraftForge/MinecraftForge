@@ -234,7 +234,7 @@ public class ChestGenHooks
     public ItemStack getOneItem(Random rand)
     {
         WeightedRandomChestContent item = (WeightedRandomChestContent)WeightedRandom.getRandomItem(rand, getItems(rand));
-        ItemStack[] stacks = ChestGenHooks.generateStacks(rand, item.theItemId, item.theMinimumChanceToGenerateItem, item.theMaximumChanceToGenerateItem);
+        ItemStack[] stacks = ChestGenHooks.generateStacks(rand, item.theItemId, item.minStackSize, item.maxStackSize);
         return (stacks.length > 0 ? stacks[0] : null);
     }
 

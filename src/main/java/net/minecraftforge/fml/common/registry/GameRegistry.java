@@ -506,7 +506,7 @@ public class GameRegistry
             NBTBase nbttag = null;
             try
             {
-                nbttag = JsonToNBT.func_180713_a(nbtString);
+                nbttag = JsonToNBT.getTagFromJson(nbtString);
             } catch (NBTException e)
             {
                 FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);

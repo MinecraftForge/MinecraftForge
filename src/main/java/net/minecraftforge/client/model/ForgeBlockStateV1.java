@@ -50,7 +50,7 @@ public class ForgeBlockStateV1 extends Marker
         {
             JsonObject json = element.getAsJsonObject();
             ForgeBlockStateV1 ret = new ForgeBlockStateV1();
-            ret.forge_marker = JsonUtils.getJsonObjectIntegerFieldValue(json, "forge_marker");
+            ret.forge_marker = JsonUtils.getInt(json, "forge_marker");
 
             if (json.has("defaults"))   // Load defaults Variant.
             {
@@ -146,13 +146,13 @@ public class ForgeBlockStateV1 extends Marker
                         part.state = state;
                     }
                 }
-                
+
                 Iterator<List<Variant>> iter = v.submodels.values().iterator();
-                
+
                 while (iter.hasNext())
                 {
                     List<Variant> submodel = iter.next();
-                    
+
                     if (submodel == null)
                         iter.remove();
                 }
@@ -430,7 +430,7 @@ public class ForgeBlockStateV1 extends Marker
                     if (json.get("model").isJsonNull())
                         ret.model = null;   // Allow overriding base model to remove it from a state.
                     else
-                        ret.model = getBlockLocation(JsonUtils.getJsonObjectStringFieldValue(json, "model"));
+                        ret.model = getBlockLocation(JsonUtils.getString(json, "model"));
                     ret.modelSet = true;
                 }
 
@@ -447,8 +447,8 @@ public class ForgeBlockStateV1 extends Marker
 
                 if (json.has("x") || json.has("y"))
                 {   // Load rotation values.
-                    int x = JsonUtils.getJsonObjectIntegerFieldValueOrDefault(json, "x", 0);
-                    int y = JsonUtils.getJsonObjectIntegerFieldValueOrDefault(json, "y", 0);
+                    int x = JsonUtils.getInt(json, "x", 0);
+                    int y = JsonUtils.getInt(json, "y", 0);
                     ret.state = Optional.<IModelState>of(new TRSRTransformation(ModelRotation.getModelRotation(x, y)));
                     if (!ret.state.isPresent())
                         throw new JsonParseException("Invalid BlockModelRotation x: " + x + " y: " + y);
@@ -589,12 +589,12 @@ public class ForgeBlockStateV1 extends Marker
 
                 if (json.has("uvlock"))
                 {   // Load uvlock.
-                    ret.uvLock = Optional.of(JsonUtils.getJsonObjectBooleanFieldValue(json, "uvlock"));
+                    ret.uvLock = Optional.of(JsonUtils.getBoolean(json, "uvlock"));
                 }
 
                 if (json.has("weight"))
                 {   // Load weight.
-                    ret.weight = Optional.of(JsonUtils.getJsonObjectIntegerFieldValue(json, "weight"));
+                    ret.weight = Optional.of(JsonUtils.getInt(json, "weight"));
                 }
 
                 if (json.has("submodel"))

@@ -25,7 +25,7 @@ public class ForgeCommand extends CommandBase {
     }
 
     @Override
-    public String getName()
+    public String getCommandName()
     {
         return "forge";
     }
@@ -42,7 +42,7 @@ public class ForgeCommand extends CommandBase {
         return 2;
     }
     @Override
-    public void execute(ICommandSender sender, String[] args) throws CommandException
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length == 0)
         {
@@ -80,7 +80,7 @@ public class ForgeCommand extends CommandBase {
         else if (args.length == 2)
         {
             if ("tps".equals(args[0])) {
-                return func_175762_a(args, getServer().worldTickTimes.keySet());
+                return getListOfStringsMatchingLastWord(args, getServer().worldTickTimes.keySet());
             }
             else if ("track".equals(args[0]))
             {
@@ -89,7 +89,7 @@ public class ForgeCommand extends CommandBase {
         }
         return null;
     }
-    
+
     private void handleTracking(ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length != 3)

@@ -456,7 +456,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
         for (I thing : this.typeSafeIterable())
         {
-            if (!registry.field_148758_b.containsKey(thing))
+            if (!registry.inverseObjectRegistry.containsKey(thing))
             {
                 if (!registry.activeSubstitutions.containsKey(getNameForObject(thing).toString()))
                 {

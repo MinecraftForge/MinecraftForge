@@ -670,7 +670,7 @@ public class ForgeHooks
         if (world.getTileEntity(pos) == null)
         {
             S23PacketBlockChange packet = new S23PacketBlockChange(world, pos);
-            packet.field_148883_d = Blocks.air.getDefaultState();
+            packet.blockState = Blocks.air.getDefaultState();
             entityPlayer.playerNetServerHandler.sendPacket(packet);
         }
 
