@@ -108,7 +108,7 @@ public class FMLCommonHandler
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
-    private EventBus eventBus = new EventBus();
+    private EventBus eventBus = MinecraftForge.EVENT_BUS;
     private volatile CountDownLatch exitLatch = null;
 
     private FMLCommonHandler()
