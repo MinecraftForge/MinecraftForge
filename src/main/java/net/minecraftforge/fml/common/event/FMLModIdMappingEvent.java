@@ -9,8 +9,21 @@ import java.util.Map.Entry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+/**
+ * Called whenever the ID mapping might have changed. If you register for this event, you
+ * will be called back whenever the client or server loads an ID set. This includes both
+ * when the ID maps are loaded from disk, as well as when the ID maps revert to the initial
+ * state.
+ *
+ * Note: you cannot change the IDs that have been allocated, but you might want to use
+ * this event to update caches or other in-mod artifacts that might be impacted by an ID
+ * change.
+ *
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ * @author cpw
+ */
 public class FMLModIdMappingEvent extends FMLEvent {
-    public static enum RemapTarget { BLOCK, ITEM }
+    public enum RemapTarget { BLOCK, ITEM }
     public class ModRemapping
     {
         public final int oldId;

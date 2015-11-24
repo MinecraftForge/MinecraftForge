@@ -17,7 +17,9 @@ import com.google.common.collect.ListMultimap;
  * These can be remapped to other existing objects, or simply discarded.
  * Use get() and getAll() to process this event.
  *
- * @author cpw, Player
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ * @author cpw
+ * @author Player
  *
  */
 public class FMLMissingMappingsEvent extends FMLEvent {
@@ -31,7 +33,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
      * @author cpw
      *
      */
-    public static enum Action {
+    public enum Action {
         /**
          * Take the default action
          */
@@ -69,16 +71,6 @@ public class FMLMissingMappingsEvent extends FMLEvent {
             this.type = type;
             this.name = name;
             this.id = id;
-        }
-        /**
-         * @deprecated use ignore(), warn(), fail() or remap() instead
-         */
-        @Deprecated
-        public void setAction(Action target)
-        {
-            if (target == Action.DEFAULT || target == Action.REMAP || target == Action.BLOCKONLY) throw new IllegalArgumentException();
-
-            this.action = target;
         }
 
         /**
