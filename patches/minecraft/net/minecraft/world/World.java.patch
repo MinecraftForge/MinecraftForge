@@ -417,7 +417,15 @@
                      }
                  }
              }
-@@ -1626,15 +1765,19 @@
+@@ -1619,22 +1758,26 @@
+                 iterator.remove();
+                 this.field_147482_g.remove(tileentity);
+ 
+-                if (this.func_175667_e(tileentity.func_174877_v()))
++                if (this.func_175667_e(tileentity.func_174877_v()) && this.func_175726_f(tileentity.func_174877_v()).func_177424_a(tileentity.func_174877_v(), Chunk.EnumCreateEntityType.CHECK) == tileentity)
+                 {
+                     this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
+                 }
              }
          }
  
