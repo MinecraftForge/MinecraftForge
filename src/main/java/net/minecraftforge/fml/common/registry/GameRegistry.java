@@ -88,11 +88,11 @@ public class GameRegistry
      * Callback hook for world gen - if your mod wishes to add extra mod related generation to the world
      * call this
      *
-     * @param chunkX
-     * @param chunkZ
-     * @param world
-     * @param chunkGenerator
-     * @param chunkProvider
+     * @param chunkX Chunk X coordinate
+     * @param chunkZ Chunk Z coordinate
+     * @param world World we're generating into
+     * @param chunkGenerator The chunk generator
+     * @param chunkProvider The chunk provider
      */
     public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
     {
@@ -142,7 +142,6 @@ public class GameRegistry
      * @param item The item to register
      * @param name The mod-unique name to register it as - null will remove a custom name
      * @param modId deprecated, unused
-     * where one mod should "own" all the blocks of all the mods, null defaults to the active mod
      */
     public static Item registerItem(Item item, String name, String modId)
     {
@@ -329,6 +328,10 @@ public class GameRegistry
         return GameData.findItem(modId, name);
     }
 
+    /**
+     * Will be switching to using ResourceLocation, since it's used widely elsewhere
+     */
+    @Deprecated
     public static final class UniqueIdentifier
     {
         public final String modId;
@@ -387,7 +390,7 @@ public class GameRegistry
         }
     }
 
-    public static enum Type {
+    public enum Type {
         BLOCK
         {
             @Override
@@ -407,8 +410,6 @@ public class GameRegistry
     }
     /**
      * Look up the mod identifier data for a block.
-     * Returns null if there is no mod specified mod identifier data, or it is part of a
-     * custom itemstack definition {@link #registerCustomItemStack}
      *
      * Note: uniqueness and persistence is only guaranteed by mods using the game registry
      * correctly.
@@ -416,14 +417,13 @@ public class GameRegistry
      * @param block to lookup
      * @return a {@link UniqueIdentifier} for the block or null
      */
+    @Deprecated
     public static UniqueIdentifier findUniqueIdentifierFor(Block block)
     {
         return GameData.getUniqueName(block);
     }
     /**
      * Look up the mod identifier data for an item.
-     * Returns null if there is no mod specified mod identifier data, or it is part of a
-     * custom itemstack definition {@link #registerCustomItemStack}
      *
      * Note: uniqueness and persistence is only guaranteed by mods using the game registry
      * correctly.
@@ -431,6 +431,7 @@ public class GameRegistry
      * @param item to lookup
      * @return a {@link UniqueIdentifier} for the item or null
      */
+    @Deprecated
     public static UniqueIdentifier findUniqueIdentifierFor(Item item)
     {
         return GameData.getUniqueName(item);
@@ -439,9 +440,8 @@ public class GameRegistry
 
 
     /**
-     * This will cause runtime injection of public static final fields to occur at various points
-     * where mod blocks and items <em>could</em> be subject to change. This allows for dynamic
-     * substitution to occur.
+     * ObjectHolder can be used to automatically populate public static final fields with entries
+     * from the registry. These values can then be referred within mod code directly.
      *
      */
     @Retention(RetentionPolicy.RUNTIME)
@@ -457,6 +457,14 @@ public class GameRegistry
         String value();
     }
 
+    /**
+     * ItemStackHolder can be used to automatically populate public static final fields with
+     * {@link ItemStack} instances, referring a specific item, potentially configured with NBT.
+     * These values can then be used in things like recipes and other places where ItemStacks
+     * might be required.
+     *
+     * If the item is not found, the field will be populated with null.
+     */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface ItemStackHolder
