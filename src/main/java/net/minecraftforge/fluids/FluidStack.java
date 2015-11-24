@@ -18,10 +18,6 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate;
  */
 public class FluidStack
 {
-    /**
-     * This field will be removed in 1.8. It may be incorrect after a world is loaded. Code should always
-     * use {@link #getFluid()} instead. That will always reflect the correct value.
-     */
     public int amount;
     public NBTTagCompound tag;
     private RegistryDelegate<Fluid> fluidDelegate;
