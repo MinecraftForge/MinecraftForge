@@ -3,7 +3,7 @@ package net.minecraftforge.fml.common.launcher;
 import java.net.Proxy;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 import com.mojang.authlib.Agent;
@@ -30,7 +30,7 @@ public class Yggdrasil
         }
         catch (AuthenticationException e)
         {
-            LogManager.getLogger("FMLTWEAK").error("-- Login failed!  " + e.getMessage());
+            LoggerFactory.getLogger("FMLTWEAK").error("-- Login failed!  " + e.getMessage());
             Throwables.propagate(e);
             return; // dont set other variables
         }

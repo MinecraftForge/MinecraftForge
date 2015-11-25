@@ -102,13 +102,13 @@ public abstract class FluidRegistry
                 String derivedName = defaultName.split(":",2)[1];
                 String localDefault = defaultFluidName.get(derivedName);
                 if (localDefault == null) {
-                    FMLLog.getLogger().log(Level.ERROR, "The fluid {} (specified as {}) is missing from this instance - it will be removed", derivedName, defaultName);
+                    FMLLog.log(Level.ERROR, "The fluid {} (specified as {}) is missing from this instance - it will be removed", derivedName, defaultName);
                     continue;
                 }
                 fluid = masterFluidReference.get(localDefault);
-                FMLLog.getLogger().log(Level.ERROR, "The fluid {} specified as default is not present - it will be reverted to default {}", defaultName, localDefault);
+                FMLLog.log(Level.ERROR, "The fluid {} specified as default is not present - it will be reverted to default {}", defaultName, localDefault);
             }
-            FMLLog.getLogger().log(Level.DEBUG, "The fluid {} has been selected as the default fluid for {}", defaultName, fluid.getName());
+            FMLLog.log(Level.DEBUG, "The fluid {} has been selected as the default fluid for {}", defaultName, fluid.getName());
             Fluid oldFluid = localFluids.put(fluid.getName(), fluid);
             Integer id = localFluidIDs.remove(oldFluid);
             localFluidIDs.put(fluid, id);
@@ -287,7 +287,7 @@ public abstract class FluidRegistry
     {
         String name = masterFluidReference.inverse().get(key);
         if (Strings.isNullOrEmpty(name)) {
-            FMLLog.getLogger().log(Level.ERROR, "The fluid registry is corrupted. A fluid {} {} is not properly registered. The mod that registered this is broken", key.getClass().getName(), key.getName());
+            FMLLog.log(Level.ERROR, "The fluid registry is corrupted. A fluid {} {} is not properly registered. The mod that registered this is broken", key.getClass().getName(), key.getName());
             throw new IllegalStateException("The fluid registry is corrupted");
         }
         return name;
@@ -298,7 +298,7 @@ public abstract class FluidRegistry
         Set<String> defaults = Sets.newHashSet();
         if (tag.hasKey("DefaultFluidList",9))
         {
-            FMLLog.getLogger().log(Level.DEBUG, "Loading persistent fluid defaults from world");
+            FMLLog.log(Level.DEBUG, "Loading persistent fluid defaults from world");
             NBTTagList tl = tag.getTagList("DefaultFluidList", 8);
             for (int i = 0; i < tl.tagCount(); i++)
             {
@@ -307,7 +307,7 @@ public abstract class FluidRegistry
         }
         else
         {
-            FMLLog.getLogger().log(Level.DEBUG, "World is missing persistent fluid defaults - using local defaults");
+            FMLLog.log(Level.DEBUG, "World is missing persistent fluid defaults - using local defaults");
         }
         loadFluidDefaults(HashBiMap.create(fluidIDs), defaults);
     }
@@ -337,13 +337,13 @@ public abstract class FluidRegistry
 
         if (!illegalFluids.isEmpty())
         {
-            FMLLog.getLogger().log(Level.FATAL, "The fluid registry is corrupted. Something has inserted a fluid without registering it");
-            FMLLog.getLogger().log(Level.FATAL, "There is {} unregistered fluids", illegalFluids.size());
+            FMLLog.log(Level.FATAL, "The fluid registry is corrupted. Something has inserted a fluid without registering it");
+            FMLLog.log(Level.FATAL, "There is {} unregistered fluids", illegalFluids.size());
             for (Fluid f: illegalFluids)
             {
-                FMLLog.getLogger().log(Level.FATAL, "  Fluid name : {}, type: {}", f.getName(), f.getClass().getName());
+                FMLLog.log(Level.FATAL, "  Fluid name : {}, type: {}", f.getName(), f.getClass().getName());
             }
-            FMLLog.getLogger().log(Level.FATAL, "The mods that own these fluids need to register them properly");
+            FMLLog.log(Level.FATAL, "The mods that own these fluids need to register them properly");
             throw new IllegalStateException("The fluid map contains fluids unknown to the master fluid registry");
         }
     }

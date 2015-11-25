@@ -169,7 +169,7 @@ public class FMLInterModComms {
                 Function<T,V> f = Class.forName((String) value).asSubclass(Function.class).newInstance();
                 return Optional.of(f);
             } catch (Exception e) {
-                FMLLog.getLogger().log(Level.INFO, "An error occurred instantiating the IMC function. key: {} value: {}, caller: {}", key,value,sender);
+                FMLLog.log(Level.INFO, "An error occurred instantiating the IMC function. key: {} value: {}, caller: {}", key,value,sender);
                 return Optional.absent();
             }
         }

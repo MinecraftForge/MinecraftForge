@@ -13,7 +13,7 @@
 package net.minecraftforge.fml.common;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 @SuppressWarnings("static-access")
 public class FMLLog

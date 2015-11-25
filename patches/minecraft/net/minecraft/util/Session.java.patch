@@ -22,13 +22,13 @@
 +        {
 +            p_i1098_1_ = "MissingName";
 +            p_i1098_2_ = p_i1098_3_ = "NotValid";
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "=========================================================");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "WARNING!! the username was not set for this session, typically");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "this means you installed Forge incorrectly. We have set your");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "name to \"MissingName\" and your session to nothing. Please");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "check your installation and post a console log from the launcher");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "when asking for help!");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "=========================================================");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "WARNING!! the username was not set for this session, typically");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "this means you installed Forge incorrectly. We have set your");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "name to \"MissingName\" and your session to nothing. Please");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "check your installation and post a console log from the launcher");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "when asking for help!");
++            FMLLog.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
 +        }
 +
          this.field_74286_b = p_i1098_1_;

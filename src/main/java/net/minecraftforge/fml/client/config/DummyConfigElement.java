@@ -53,7 +53,7 @@ public class DummyConfigElement implements IConfigElement
     protected Class<? extends IArrayEntry> arrayEntryClass;
     
     /**
-     * This class provides a Dummy Category IConfigElement. It can be used to define a custom list of GUI entries that will 
+     * This class provides a Dummy Category IConfigElement. It can be used to define a custom list of GUI entries that will
      * appear on the child screen or to specify a custom IGuiConfigListEntryfor a special category.
      */
     public static class DummyCategoryElement extends DummyConfigElement

@@ -84,6 +84,12 @@
       "name": "org.apache.logging.log4j:log4j-core:2.0-beta9"
     },
     {
+      "name": "org.slf4j:slf4j-api:1.7.13"
+    },
+    {
+      "name": "org.apache.logging.log4j:log4j-slf4j-impl:2.0-beta9"
+    },
+    {
       "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
       "rules": [
         {

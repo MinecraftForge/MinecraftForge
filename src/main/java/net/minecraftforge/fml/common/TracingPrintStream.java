@@ -11,7 +11,7 @@ package net.minecraftforge.fml.common;
 
 import java.io.PrintStream;
 
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * PrintStream which redirects it's output to a given logger.

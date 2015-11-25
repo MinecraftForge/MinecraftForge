@@ -345,7 +345,7 @@ public class Loader
         discoverer.findClasspathMods(modClassLoader);
         FMLLog.fine("Minecraft jar mods loaded successfully");
 
-        FMLLog.getLogger().log(Level.INFO, "Found {} mods from the command line. Injecting into mod discoverer",ModListHelper.additionalMods.size());
+        FMLLog.log(Level.INFO, "Found {} mods from the command line. Injecting into mod discoverer",ModListHelper.additionalMods.size());
         FMLLog.info("Searching %s for mods", canonicalModsDir.getAbsolutePath());
         discoverer.findModDirMods(canonicalModsDir, ModListHelper.additionalMods.values().toArray(new File[0]));
         File versionSpecificModsDir = new File(canonicalModsDir,mccversion);
@@ -1032,7 +1032,7 @@ public class Loader
         File injectedDepFile = new File(getConfigDir(),"injectedDependencies.json");
         if (!injectedDepFile.exists())
         {
-            FMLLog.getLogger().log(Level.DEBUG, "File {} not found. No dependencies injected", injectedDepFile.getAbsolutePath());
+            FMLLog.log(Level.DEBUG, "File {} not found. No dependencies injected", injectedDepFile.getAbsolutePath());
             return;
         }
         JsonParser parser = new JsonParser();
@@ -1054,18 +1054,18 @@ public class Loader
                     } else if (type.equals("after")) {
                         injectedAfter.put(modId, VersionParser.parseVersionReference(depObj.get("target").getAsString()));
                     } else {
-                        FMLLog.getLogger().log(Level.ERROR, "Invalid dependency type {}", type);
+                        FMLLog.log(Level.ERROR, "Invalid dependency type {}", type);
                         throw new RuntimeException("Unable to parse type");
                     }
                 }
             }
         } catch (Exception e)
         {
-            FMLLog.getLogger().log(Level.ERROR, "Unable to parse {} - skipping", injectedDepFile);
-            FMLLog.getLogger().throwing(Level.ERROR, e);
+            FMLLog.log(Level.ERROR, "Unable to parse {} - skipping", injectedDepFile);
+            FMLLog.log(Level.ERROR, "{}", e);
             return;
         }
-        FMLLog.getLogger().log(Level.DEBUG, "Loaded {} injected dependencies on modIds: {}", injectedBefore.size(), injectedBefore.keySet());
+        FMLLog.log(Level.DEBUG, "Loaded {} injected dependencies on modIds: {}", injectedBefore.size(), injectedBefore.keySet());
     }
 
     List<ArtifactVersion> getInjectedBefore(String modId)

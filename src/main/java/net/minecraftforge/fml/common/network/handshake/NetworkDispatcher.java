@@ -161,10 +161,10 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception
     {
         if (this.state != null) {
-            FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
+            FMLLog.log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
             return;
         }
-        FMLLog.getLogger().log(Level.TRACE, "Handshake channel activating");
+        FMLLog.log(Level.TRACE, "Handshake channel activating");
         this.state = ConnectionState.OPENING;
         // send ourselves as a user event, to kick the pipeline active
         this.handshakeChannel.pipeline().fireUserEventTriggered(this);

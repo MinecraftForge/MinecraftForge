@@ -18,9 +18,9 @@ import java.util.Locale;
 import net.minecraftforge.fml.common.TracingPrintStream;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class FMLRelaunchLog {
 
@@ -46,18 +46,18 @@ public class FMLRelaunchLog {
      */
     private static void configureLogging()
     {
-        log.myLog = LogManager.getLogger("FML");
-        ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
+        log.myLog = LoggerFactory.getLogger("FML");
+        MDC.put("side", side.name().toLowerCase(Locale.ENGLISH));
         configured = true;
         
         FMLRelaunchLog.fine("Injecting tracing printstreams for STDOUT/STDERR.");
-        System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
-        System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
+        System.setOut(new TracingPrintStream(LoggerFactory.getLogger("STDOUT"), System.out));
+        System.setErr(new TracingPrintStream(LoggerFactory.getLogger("STDERR"), System.err));
     }
 
     public static void log(String targetLog, Level level, String format, Object... data)
     {
-        LogManager.getLogger(targetLog).log(level, String.format(format, data));
+        log(LoggerFactory.getLogger(targetLog), level, String.format(format, data));
     }
 
     public static void log(Level level, String format, Object... data)
@@ -66,12 +66,12 @@ public class FMLRelaunchLog {
         {
             configureLogging();
         }
-        log.myLog.log(level, String.format(format, data));
+        log(log.myLog, level, String.format(format, data));
     }
 
     public static void log(String targetLog, Level level, Throwable ex, String format, Object... data)
     {
-        LogManager.getLogger(targetLog).log(level, String.format(format, data), ex);
+        log(LoggerFactory.getLogger(targetLog), level, String.format(format, data), ex);
     }
 
     public static void log(Level level, Throwable ex, String format, Object... data)
@@ -80,7 +80,31 @@ public class FMLRelaunchLog {
         {
             configureLogging();
         }
-        log.myLog.log(level, String.format(format, data), ex);
+        log(log.myLog, level, String.format(format, data), ex);
+    }
+
+    // For log4j2 -> slf4j transition
+    private static void log(Logger log, Level level, String format, Object... objs) {
+        switch(level) {
+            case TRACE:
+                log.trace(format, objs);
+                break;
+            case DEBUG:
+                log.debug(format, objs);
+                break;
+            case INFO:
+                log.info(format, objs);
+                break;
+            case WARN:
+                log.warn(format, objs);
+                break;
+            case ERROR:
+                log.error(format, objs);
+                break;
+            case FATAL:
+                log.error(format, objs);
+                break;
+        }
     }
 
     public static void severe(String format, Object... data)
