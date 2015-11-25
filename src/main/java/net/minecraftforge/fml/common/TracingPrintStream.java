@@ -44,7 +44,7 @@ public class TracingPrintStream extends PrintStream {
         if (elem.getClassName().startsWith("kotlin.io.")) {
             elem = elems[BASE_DEPTH + 2]; // Kotlins IoPackage masks origins 2 deeper in the stack.
         } else if (elem.getClassName().startsWith("java.lang.Throwable")) {
-            elem = elems[BASE_DEPTH + 2];
+            elem = elems[BASE_DEPTH + 4];
         }
         return "[" + elem.getClassName() + ":" + elem.getMethodName() + ":" + elem.getLineNumber() + "]: ";
     }

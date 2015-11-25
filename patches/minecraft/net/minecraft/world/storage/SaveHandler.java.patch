@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -104,13 +104,17 @@
+@@ -104,20 +104,29 @@
      {
          File file1 = new File(this.field_75770_b, "level.dat");
  
@@ -17,9 +17,13 @@
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound2);
 +                return worldInfo;
              }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++            {
++                throw e;
++            }
              catch (Exception exception1)
              {
-@@ -118,6 +122,7 @@
+                 exception1.printStackTrace();
              }
          }
  
@@ -27,7 +31,7 @@
          file1 = new File(this.field_75770_b, "level.dat_old");
  
          if (file1.exists())
-@@ -126,7 +131,13 @@
+@@ -126,7 +135,13 @@
              {
                  NBTTagCompound nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  NBTTagCompound nbttagcompound1 = nbttagcompound.func_74775_l("Data");
@@ -42,7 +46,7 @@
              }
              catch (Exception exception)
              {
-@@ -143,6 +154,8 @@
+@@ -143,6 +158,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
@@ -51,7 +55,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -181,6 +194,8 @@
+@@ -181,6 +198,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
@@ -60,7 +64,7 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -229,6 +244,7 @@
+@@ -229,6 +248,7 @@
              }
  
              file1.renameTo(file2);
@@ -68,7 +72,7 @@
          }
          catch (Exception var5)
          {
-@@ -259,6 +275,7 @@
+@@ -259,6 +279,7 @@
              p_75752_1_.func_70020_e(nbttagcompound);
          }
  
@@ -76,7 +80,7 @@
          return nbttagcompound;
      }
  
-@@ -300,4 +317,22 @@
+@@ -300,4 +321,22 @@
      {
          return this.field_75767_f;
      }
