@@ -1,17 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
-@@ -188,9 +188,9 @@
-         {
-             return this.field_76756_M != BiomeGenBase.field_150583_P.field_76756_M && this.field_76756_M != BiomeGenBase.field_150582_Q.field_76756_M ? new BiomeGenMutated(p_180277_1_, this)
-             {
--                public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
-+                public void func_180624_a(World worldIn, Random p_180624_2_, BlockPos p_180624_3_)
-                 {
--                    this.field_150611_aD.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
-+                    this.field_150611_aD.func_180624_a(worldIn, p_180624_2_, p_180624_3_);
-                 }
-             }: new BiomeGenMutated(p_180277_1_, this)
-             {
 @@ -201,4 +201,20 @@
              };
          }

@@ -9,7 +9,7 @@
      }
  
      public ItemStack func_75209_a(int p_75209_1_)
-@@ -112,4 +112,64 @@
+@@ -112,4 +112,63 @@
      {
          return true;
      }
@@ -20,7 +20,7 @@
 +    protected Object backgroundMap;
 +    /**
 +     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
-+     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.
++     * @return The resource location for the background image
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.util.ResourceLocation getBackgroundLocation()
@@ -30,7 +30,7 @@
 +
 +    /**
 +     * Sets the texture file to use for the background image of the slot when it's empty.
-+     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
++     * @param texture the resourcelocation for the texture
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public void setBackgroundLocation(net.minecraft.util.ResourceLocation texture)
@@ -40,8 +40,7 @@
 +
 +    /**
 +     * Sets which icon index to use as the background image of the slot when it's empty.
-+     * Getter is func_178171_c
-+     * @param icon The icon to use, null for none
++     * @param name The icon to use, null for none
 +     */
 +    public void setBackgroundName(String name)
 +    {
