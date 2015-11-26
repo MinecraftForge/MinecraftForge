@@ -175,7 +175,6 @@ public class GuiConfig extends GuiScreen
             return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
@@ -344,8 +343,7 @@ public class GuiConfig extends GuiScreen
             this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.applyGlobally"), 300), mouseX, mouseY);
     }
 
-    @SuppressWarnings("rawtypes")
-    public void drawToolTip(List stringList, int x, int y)
+    public void drawToolTip(List<String> stringList, int x, int y)
     {
         this.drawHoveringText(stringList, x, y);
     }

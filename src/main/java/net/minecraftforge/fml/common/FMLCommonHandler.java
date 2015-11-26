@@ -676,7 +676,7 @@ public class FMLCommonHandler
         return sidedDelegate.getWorldThread(net);
     }
 
-    public static void callFuture(FutureTask task)
+    public static void callFuture(FutureTask<?> task)
     {
         try
         {

@@ -12,7 +12,6 @@ public class GuiNotification extends GuiScreen
         this.query = query;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {

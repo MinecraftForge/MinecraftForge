@@ -28,7 +28,6 @@ import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
 import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
 import static net.minecraftforge.oredict.RecipeSorter.Category.*;
 
-@SuppressWarnings("rawtypes")
 public class RecipeSorter implements Comparator<IRecipe>
 {
     public enum Category
@@ -102,10 +101,10 @@ public class RecipeSorter implements Comparator<IRecipe>
         }
     };
 
-    private static Map<Class, Category>     categories = Maps.newHashMap();
+    private static Map<Class<?>, Category>     categories = Maps.newHashMap();
     //private static Map<String, Class>       types = Maps.newHashMap();
     private static Map<String, SortEntry>   entries = Maps.newHashMap();
-    private static Map<Class, Integer>      priorities = Maps.newHashMap();
+    private static Map<Class<?>, Integer>      priorities = Maps.newHashMap();
 
     public static RecipeSorter INSTANCE = new RecipeSorter();
     private static boolean isDirty = true;
@@ -142,8 +141,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         return getPriority(r2) - getPriority(r1); // high priority value first!
     }
 
-    private static Set<Class> warned = Sets.newHashSet();
-    @SuppressWarnings("unchecked")
+    private static Set<Class<?>> warned = Sets.newHashSet();
     public static void sortCraftManager()
     {
         bake();

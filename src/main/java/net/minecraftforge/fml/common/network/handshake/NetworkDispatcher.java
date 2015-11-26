@@ -257,7 +257,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
     }
 
-    private boolean handleVanilla(Packet msg)
+    private boolean handleVanilla(Packet<?> msg)
     {
         if (state == ConnectionState.AWAITING_HANDSHAKE && msg instanceof S01PacketJoinGame)
         {

@@ -150,7 +150,6 @@ public class GuiModList extends GuiScreen
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
