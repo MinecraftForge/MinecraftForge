@@ -55,7 +55,6 @@ public class OreDictionary
         initVanillaEntries();
     }
 
-    @SuppressWarnings("unchecked")
     public static void initVanillaEntries()
     {
         if (!hasInit)
@@ -239,7 +238,7 @@ public class OreDictionary
         List<IRecipe> recipesToAdd = new ArrayList<IRecipe>();
 
         // Search vanilla recipes for recipes to replace
-        for(Object obj : recipes)
+        for(IRecipe obj : recipes)
         {
             if(obj instanceof ShapedRecipes)
             {
@@ -267,7 +266,7 @@ public class OreDictionary
 
                 if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
                 {
-                    recipesToRemove.add((IRecipe)obj);
+                    recipesToRemove.add(obj);
                     IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
                     recipesToAdd.add(newRecipe);
                 }

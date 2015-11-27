@@ -27,7 +27,6 @@ public class GuiModsMissingForServer extends GuiScreen
         this.modsMissing = modsMissing;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {

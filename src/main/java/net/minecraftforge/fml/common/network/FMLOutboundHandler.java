@@ -124,7 +124,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             public void validateArgs(Object args)
             {
             }
-            @SuppressWarnings("unchecked")
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
@@ -152,7 +151,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                     throw new RuntimeException("DIMENSION expects an integer argument");
                 }
             }
-            @SuppressWarnings("unchecked")
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
@@ -187,7 +185,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                 }
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {

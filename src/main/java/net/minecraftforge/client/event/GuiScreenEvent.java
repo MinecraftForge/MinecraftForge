@@ -33,9 +33,9 @@ public class GuiScreenEvent extends Event
         /**
          * The {@code buttonList} field from the GuiScreen object referenced by {@code gui}.
          */
-        public List buttonList;
+        public List<GuiButton> buttonList;
         
-        public InitGuiEvent(GuiScreen gui, List buttonList)
+        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList)
         {
             super(gui);
             this.buttonList = buttonList;
@@ -55,7 +55,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends InitGuiEvent
         {
-            public Pre(GuiScreen gui, List buttonList)
+            public Pre(GuiScreen gui, List<GuiButton> buttonList)
             {
                 super(gui, buttonList);
             }
@@ -69,7 +69,7 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends InitGuiEvent
         {
-            public Post(GuiScreen gui, List buttonList)
+            public Post(GuiScreen gui, List<GuiButton> buttonList)
             {
                 super(gui, buttonList);
             }
@@ -137,13 +137,13 @@ public class GuiScreenEvent extends Event
         /**
          * A COPY of the {@code buttonList} field from the GuiScreen referenced by {@code gui}.
          */
-        public List buttonList;
+        public List<GuiButton> buttonList;
 
-        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List buttonList)
+        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
         {
             super(gui);
             this.button = button;
-            this.buttonList = new ArrayList(buttonList);
+            this.buttonList = new ArrayList<GuiButton>(buttonList);
         }
         
         /**
@@ -156,7 +156,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends ActionPerformedEvent
         {
-            public Pre(GuiScreen gui, GuiButton button, List buttonList)
+            public Pre(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
             {
                 super(gui, button, buttonList);
             }
@@ -170,7 +170,7 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends ActionPerformedEvent
         {
-            public Post(GuiScreen gui, GuiButton button, List buttonList)
+            public Post(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
             {
                 super(gui, button, buttonList);
             }

@@ -28,6 +28,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
@@ -257,7 +258,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         }
     }
 
-    private boolean handleVanilla(Packet msg)
+    private boolean handleVanilla(Packet<?> msg)
     {
         if (state == ConnectionState.AWAITING_HANDSHAKE && msg instanceof S01PacketJoinGame)
         {
@@ -500,8 +501,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             }
             else
             {
-                List<Packet> parts = ((FMLProxyPacket)msg).toS3FPackets();
-                for (Packet pkt : parts)
+                List<Packet<INetHandlerPlayClient>> parts = ((FMLProxyPacket)msg).toS3FPackets();
+                for (Packet<INetHandlerPlayClient> pkt : parts)
                 {
                     ctx.write(pkt, promise);
                 }
