@@ -49,7 +49,7 @@
 +                    p_178890_3_.func_77973_b() != null &&
 +                    p_178890_3_.func_77973_b().onItemUseFirst(p_178890_3_, p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2))
 +                {
-+                        return true;
++                    return true;
 +                }
 +
                  IBlockState iblockstate = p_178890_2_.func_180495_p(p_178890_4_);

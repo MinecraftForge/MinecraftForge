@@ -18,6 +18,15 @@
                  p_180614_3_.func_72908_a((double)((float)p_180614_4_.func_177958_n() + 0.5F), (double)((float)p_180614_4_.func_177956_o() + 0.5F), (double)((float)p_180614_4_.func_177952_p() + 0.5F), this.field_150939_a.field_149762_H.func_150496_b(), (this.field_150939_a.field_149762_H.func_150497_c() + 1.0F) / 2.0F, this.field_150939_a.field_149762_H.func_150494_d() * 0.8F);
                  --p_180614_1_.field_77994_a;
              }
+@@ -124,7 +116,7 @@
+     {
+         Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
+ 
+-        if (block == Blocks.field_150431_aC)
++        if (block == Blocks.field_150431_aC && block.func_176200_f(p_179222_1_, p_179222_2_))
+         {
+             p_179222_3_ = EnumFacing.UP;
+         }
 @@ -162,4 +154,26 @@
      {
          return this.field_150939_a;
