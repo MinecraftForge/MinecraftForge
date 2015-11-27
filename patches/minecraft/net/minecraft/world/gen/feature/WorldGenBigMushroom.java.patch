@@ -5,7 +5,7 @@
                              Block block = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c();
  
 -                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (!block.isAir(p_180709_1_,blockpos$mutableblockpos) && !block.isLeaves(p_180709_1_,blockpos$mutableblockpos))
++                            if (!block.isAir(p_180709_1_, blockpos$mutableblockpos) && !block.isLeaves(p_180709_1_, blockpos$mutableblockpos))
                              {
                                  flag = false;
                              }
@@ -14,7 +14,7 @@
                                      BlockPos blockpos = new BlockPos(l1, l2, i2);
  
 -                                    if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().func_149730_j())
-+                                    if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
++                                    if (p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
                                      {
                                          this.func_175903_a(p_180709_1_, blockpos, this.field_76523_a.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, blockhugemushroom$enumtype));
                                      }
