@@ -32,6 +32,11 @@ public class ExtendedBlockState extends BlockState
         }
         this.unlistedProperties = builder.build();
     }
+    
+    public Collection<IUnlistedProperty<?>> getUnlistedProperties()
+    {
+        return unlistedProperties;
+    }
 
     private static ImmutableMap<IUnlistedProperty<?>, Optional<?>> buildUnlistedMap(IUnlistedProperty<?>[] unlistedProperties)
     {

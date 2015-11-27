@@ -21,7 +21,7 @@ public class ForgeCommand extends CommandBase {
 
     public ForgeCommand(MinecraftServer server)
     {
-        this.server = new WeakReference(server);
+        this.server = new WeakReference<MinecraftServer>(server);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ForgeCommand extends CommandBase {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
     {
         if (args.length == 1)
         {

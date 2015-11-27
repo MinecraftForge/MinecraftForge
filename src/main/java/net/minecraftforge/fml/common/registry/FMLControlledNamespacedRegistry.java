@@ -17,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
@@ -26,9 +25,9 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
 
+@SuppressWarnings({"rawtypes", "unchecked"}) // cpw is working on these classes just shut them up for now.
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaultedByKey {
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
     private final Class<I> superType;
@@ -103,7 +102,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     }
 
-    @SuppressWarnings("unchecked")
     void setFrom(FMLControlledNamespacedRegistry<?> registry) {
         set((FMLControlledNamespacedRegistry<I>) registry);
     }
@@ -259,7 +257,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      * @param obj
      * @return
      */
-    @SuppressWarnings("unchecked")
 	private I cast(Object obj)
     {
     	return (I)(obj);
@@ -579,7 +576,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      * This iterator is used by some regular MC methods to visit all blocks, we need to include substitutions
      * Compare #typeSafeIterable()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<I> iterator()
     {

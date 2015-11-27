@@ -15,7 +15,6 @@ package net.minecraftforge.fml.common;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import java.util.Set;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -42,9 +40,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -67,7 +62,6 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                     "from the file system. It also provides key capabilities for mods to be able " +
                     "to cooperate and provide a good modding environment. ";
         meta.url="https://github.com/MinecraftForge/FML/wiki";
-        meta.updateUrl="https://github.com/MinecraftForge/FML/wiki";
         meta.screenshots=new String[0];
         meta.logoFile="";
     }

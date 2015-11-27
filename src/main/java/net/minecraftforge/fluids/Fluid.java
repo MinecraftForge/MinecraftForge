@@ -1,19 +1,12 @@
 package net.minecraftforge.fluids;
 
 import java.util.Locale;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.LoaderException;
 import net.minecraft.item.EnumRarity;
 
 /**

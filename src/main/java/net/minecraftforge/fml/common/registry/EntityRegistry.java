@@ -172,7 +172,6 @@ public class EntityRegistry
         EntityRegistry.registerEgg(entityClass, eggPrimary, eggSecondary);
     }
 
-    @SuppressWarnings("unchecked")
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
@@ -367,6 +366,7 @@ public class EntityRegistry
      * @param typeOfCreature type of spawn
      * @param biomes List of biomes
      */
+    @SuppressWarnings("unchecked")
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
@@ -406,6 +406,7 @@ public class EntityRegistry
      * @param typeOfCreature type of spawn
      * @param biomes Biomes to remove from
      */
+    @SuppressWarnings("unchecked")
     public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);

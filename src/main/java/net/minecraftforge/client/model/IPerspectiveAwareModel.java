@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
  * Model that changes based on the rendering perspective
  * (first-person, GUI, e.t.c - see TransformType)
  */
+@SuppressWarnings("deprecation")
 public interface IPerspectiveAwareModel extends IBakedModel
 {
     /*

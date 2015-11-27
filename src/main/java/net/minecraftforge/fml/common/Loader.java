@@ -112,6 +112,7 @@ import com.google.gson.JsonParser;
  * @author cpw
  *
  */
+@SuppressWarnings("unused")
 public class Loader
 {
     public static final String MC_VERSION = "1.8.8";

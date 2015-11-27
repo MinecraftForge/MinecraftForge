@@ -6,42 +6,10 @@
 package net.minecraftforge.client;
 
 import java.util.BitSet;
-import java.util.IdentityHashMap;
-
-import com.google.common.collect.Maps;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
 {
-    private static IdentityHashMap<Item, IItemRenderer> customItemRenderers = Maps.newIdentityHashMap();
-
-    /**
-     * Register a custom renderer for a specific item. This can be used to
-     * render the item in-world as an EntityItem, when the item is equipped, or
-     * when the item is in an inventory slot.
-     * @param itemID The item ID (shifted index) to handle rendering.
-     * @param renderer The IItemRenderer interface that handles rendering for
-     * this item.
-     */
-    public static void registerItemRenderer(Item item, IItemRenderer renderer)
-    {
-        customItemRenderers.put(item, renderer);
-    }
-
-    public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
-    {
-        IItemRenderer renderer = customItemRenderers.get(item.getItem());
-        if (renderer != null && renderer.handleRenderType(item, type))
-        {
-            return renderer;
-        }
-        return null;
-    }
-
     public static int getRenderPass()
     {
         return ForgeHooksClient.renderPass;

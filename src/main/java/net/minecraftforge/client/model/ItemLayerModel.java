@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+@SuppressWarnings("deprecation")
 public class ItemLayerModel implements IRetexturableModel {
 
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());

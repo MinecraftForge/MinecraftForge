@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,8 +65,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
@@ -101,7 +97,6 @@ public class FMLCommonHandler
      */
     private IFMLSidedHandler sidedDelegate;
 
-    private Class<?> forge;
     private boolean noForge;
     private List<String> brandings;
     private List<String> brandingsNoMC;
@@ -676,7 +671,7 @@ public class FMLCommonHandler
         return sidedDelegate.getWorldThread(net);
     }
 
-    public static void callFuture(FutureTask task)
+    public static void callFuture(FutureTask<?> task)
     {
         try
         {
@@ -726,7 +721,7 @@ public class FMLCommonHandler
 
         Properties props = new Properties();
         props.load(new InputStreamReader(new ByteArrayInputStream(data), Charsets.UTF_8));
-        for (Entry e : props.entrySet())
+        for (Entry<Object, Object> e : props.entrySet())
         {
             table.put((String)e.getKey(), (String)e.getValue());
         }

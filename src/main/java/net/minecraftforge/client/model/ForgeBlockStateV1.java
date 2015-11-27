@@ -37,6 +37,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+@SuppressWarnings("deprecation")
 public class ForgeBlockStateV1 extends Marker
 {
     ForgeBlockStateV1.Variant defaults;

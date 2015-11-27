@@ -161,6 +161,7 @@ public class FMLInterModComms {
          * @param <V> The result type
          * @return The function value or Optional.absent if it wasn't readable or isn't a function call
          */
+        @SuppressWarnings("unchecked")
         public <T,V> Optional<Function<T,V>> getFunctionValue(Class<T> functionFrom, Class<V> functionTo) {
             if (!isFunction) {
                 return Optional.absent();

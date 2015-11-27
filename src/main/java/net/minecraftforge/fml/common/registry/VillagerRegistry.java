@@ -12,19 +12,13 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-
 import org.apache.commons.lang3.Validate;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.*;
 import net.minecraft.init.Blocks;
@@ -33,11 +27,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
@@ -46,10 +36,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 /**
  * Registry for villager trading control
@@ -203,6 +191,7 @@ public class VillagerRegistry
     {
         register(prof, -1);
     }
+    @SuppressWarnings("deprecation")
     private void register(VillagerProfession prof, int id)
     {
         professions.register(id, prof.name, prof);
@@ -253,14 +242,14 @@ public class VillagerRegistry
     public static class VillagerProfession
     {
         private ResourceLocation name;
-        private ResourceLocation texture;
+        //private ResourceLocation texture;
         private List<VillagerCareer> careers = Lists.newArrayList();
         private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
 
         public VillagerProfession(String name, String texture)
         {
             this.name = new ResourceLocation(name);
-            this.texture = new ResourceLocation(texture);
+            //this.texture = new ResourceLocation(texture);
             ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
         }
 
@@ -268,7 +257,7 @@ public class VillagerRegistry
         {
             Validate.isTrue(!careers.contains(career), "Attempted to register career that is already registered.");
             Validate.isTrue(career.profession == this, "Attempted to register career for the wrong profession.");
-            career.id = careers.size();
+            //career.id = careers.size();
             careers.add(career);
         }
     }
@@ -277,7 +266,7 @@ public class VillagerRegistry
     {
         private VillagerProfession profession;
         private String name;
-        private int id;
+        //private int id;
         public VillagerCareer(VillagerProfession parent, String name)
         {
             this.profession = parent;
@@ -308,8 +297,8 @@ public class VillagerRegistry
      */
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
-        Set<String> entries = INSTANCE.professions.getKeys();
-        int prof = rand.nextInt(entries.size());
+        //int count = INSTANCE.professions.getKeys().size();
+        //int prof = rand.nextInt(count);
         //TODO: Grab id range from internal registry
         entity.setProfession(rand.nextInt(5));
     }

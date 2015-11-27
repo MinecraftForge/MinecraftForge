@@ -41,14 +41,12 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -154,10 +152,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private DummyModContainer optifineContainer;
 
-    private boolean guiLoaded;
-
-    private boolean serverIsRunning;
-
     private MissingModsException modsMissing;
 
     private ModSortingException modSorting;
@@ -173,8 +167,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     private boolean serverShouldBeKilledQuietly;
 
     private List<IResourcePack> resourcePackList;
-
-    private IReloadableResourceManager resourceManager;
 
     private Map<String, IResourcePack> resourcePackMap;
 
@@ -199,7 +191,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         SplashProgress.start();
         client = minecraft;
         this.resourcePackList = resourcePackList;
-        this.resourceManager = resourceManager;
         this.resourcePackMap = Maps.newHashMap();
         if (minecraft.isDemo())
         {
@@ -369,6 +360,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 {
                     continue;
                 }
+                /*
                 Map<String, String> mod = modEntry.getValue();
                 String modSystem = mod.get("modsystem"); // the modsystem (FML uses FML or ModLoader)
                 String modId = mod.get("id"); // unique ID
@@ -377,6 +369,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 String modURL = mod.get("url"); // a URL for the mod (can be empty string)
                 String modAuthors = mod.get("authors"); // a csv of authors (can be empty string)
                 String modDescription = mod.get("description"); // a (potentially) multiline description (can be empty string)
+                */
             }
         }
 

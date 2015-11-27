@@ -1,6 +1,5 @@
 package net.minecraftforge.fml.common.network.handshake;
 
-import java.util.HashSet;
 import java.util.List;
 
 import net.minecraftforge.fml.common.FMLLog;

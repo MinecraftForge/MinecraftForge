@@ -16,19 +16,16 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -37,24 +34,17 @@ import net.minecraft.util.FoodStats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import com.google.common.base.Strings;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class GuiIngameForge extends GuiIngame
 {
     //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
-    private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
+    //private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
     //private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
 
     private static final int WHITE = 0xFFFFFF;
@@ -82,7 +72,7 @@ public class GuiIngameForge extends GuiIngame
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
-    private static final String MC_VERSION = MinecraftForge.MC_VERSION;
+    //private static final String MC_VERSION = MinecraftForge.MC_VERSION;
     private GuiOverlayDebugForge debugOverlay;
 
     public GuiIngameForge(Minecraft mc)

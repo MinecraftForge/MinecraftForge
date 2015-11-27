@@ -37,7 +37,6 @@ import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
@@ -79,7 +78,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
     private URL updateJSONUrl = null;
 
-    @SuppressWarnings("deprecation")
     public ForgeModContainer()
     {
         super(new ModMetadata());
@@ -93,7 +91,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                            "to work cooperatively together. It allows many mods to be created without " +
                            "them editing the main Minecraft code.";
         meta.url         = "http://minecraftforge.net";
-        meta.updateUrl   = "http://minecraftforge.net/forum/index.php/topic,5.0.html";
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
         try {
@@ -303,7 +300,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
 
         if (!ForgeModContainer.disableVersionCheck)
         {

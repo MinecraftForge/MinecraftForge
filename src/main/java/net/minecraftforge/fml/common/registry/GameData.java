@@ -12,9 +12,7 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +28,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -44,27 +41,18 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMappin
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
-import com.google.common.collect.Table;
-import com.google.common.io.Files;
 
+@SuppressWarnings({"rawtypes", "deprecation", "unchecked", "static-access", "unused"}) // cpw is cleaning these classes up so just suppress everything for now.
 public class GameData {
     static final int MIN_BLOCK_ID = 0;
     static final int MAX_BLOCK_ID = 4095;
@@ -965,7 +953,6 @@ public class GameData {
 
     private BiMap<String, Item> itemSubstitutions = HashBiMap.create();
     private BiMap<String, Block> blockSubstitutions = HashBiMap.create();
-    @SuppressWarnings("unchecked")
     <T> BiMap<String, T> getPersistentSubstitutionMap(Class<T> type)
     {
         if (type.equals(Item.class))
@@ -1024,13 +1011,11 @@ public class GameData {
         findSuperTypes(type.getSuperclass(),types);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> FMLControlledNamespacedRegistry<T> getGenericRegistry(String registryName, Class<T> type) {
         FMLControlledNamespacedRegistry<?> fmlControlledNamespacedRegistry = genericRegistries.get(registryName);
         return (FMLControlledNamespacedRegistry<T>) fmlControlledNamespacedRegistry;
     }
 
-    @SuppressWarnings("unchecked")
     private <T> FMLControlledNamespacedRegistry<T> createGenericRegistry(String registryName, Class<T> type, int minId, int maxId) {
         Set<Class<?>> parents = Sets.newHashSet();
         findSuperTypes(type, parents);

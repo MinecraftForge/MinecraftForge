@@ -1,16 +1,11 @@
 package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.RandomAccess;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.Level;
@@ -55,7 +50,6 @@ public class OreDictionary
         initVanillaEntries();
     }
 
-    @SuppressWarnings("unchecked")
     public static void initVanillaEntries()
     {
         if (!hasInit)
@@ -406,7 +400,7 @@ public class OreDictionary
         return false;
     }
 
-    private static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
+    public static boolean containsMatch(boolean strict, List<ItemStack> inputs, ItemStack... targets)
     {
         for (ItemStack input : inputs)
         {

@@ -30,6 +30,7 @@ import com.google.common.base.Objects;
  * should be comparable to using Matrix4f directly.
  * Immutable.
  */
+@SuppressWarnings("deprecation")
 public class TRSRTransformation implements IModelState, ITransformation
 {
     private final Matrix4f matrix;
@@ -312,6 +313,7 @@ public class TRSRTransformation implements IModelState, ITransformation
         m.setColumn(i, t);
     }
 
+    @SuppressWarnings("unused")
     private static void sortSingularValues(Matrix3f b, Quat4f v)
     {
         float p0 = b.m00 * b.m00 + b.m10 * b.m10 + b.m20 * b.m20;

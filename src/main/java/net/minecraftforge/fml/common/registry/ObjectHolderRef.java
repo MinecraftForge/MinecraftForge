@@ -49,6 +49,7 @@ class ObjectHolderRef {
                 }
                 else
                 {
+                    @SuppressWarnings("unchecked")
                     Object tmp = isBlock ? GameData.getBlockRegistry().getNameForObject(existing) :
                         isItem ? GameData.getItemRegistry().getNameForObject(existing) : null;
                     this.injectedObject = tmp != null ? tmp.toString() : null;

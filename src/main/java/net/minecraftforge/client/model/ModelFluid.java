@@ -33,6 +33,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+@SuppressWarnings("deprecation")
 public class ModelFluid implements IModelCustomData
 {
     public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);

@@ -194,6 +194,7 @@ public class GameRegistry
      * @param name The mod-unique name to register it as, will get prefixed by your modid.
      * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
+    @SuppressWarnings("unchecked")
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
     {
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))

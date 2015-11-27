@@ -117,7 +117,7 @@ public class FMLNetworkHandler
         embeddedChannel.writeOutbound(new FMLMessage.EntityAdjustMessage(entity, serverX, serverY, serverZ));
     }
 
-    public static Packet getEntitySpawningPacket(Entity entity)
+    public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
         EntityRegistration er = EntityRegistry.instance().lookupModSpawn(entity.getClass(), false);
         if (er == null)

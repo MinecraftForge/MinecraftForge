@@ -63,6 +63,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+@SuppressWarnings("deprecation")
 public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = new HashMap<ModelResourceLocation, IModel>();
@@ -498,7 +499,7 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        @Deprecated public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
+        @Deprecated @SuppressWarnings("unused") public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
         public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
@@ -601,6 +602,7 @@ public class ModelLoader extends ModelBakery
 
     private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
     {
+        @SuppressWarnings("unused")
         private final WeightedBakedModel parent;
         private final VertexFormat format;
 
@@ -617,6 +619,7 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+    @SuppressWarnings("unused")
     private boolean isBuiltinModel(ModelBlock model)
     {
         return model == MODEL_GENERATED || model == MODEL_COMPASS || model == MODEL_CLOCK || model == MODEL_ENTITY;

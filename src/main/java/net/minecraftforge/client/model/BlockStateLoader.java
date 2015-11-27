@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@SuppressWarnings("deprecation")
 public class BlockStateLoader
 {
     private static final Gson GSON = (new GsonBuilder())

@@ -574,7 +574,6 @@ public class ForgeHooks
         IChatComponent ichat = null;
         Matcher matcher = URL_PATTERN.matcher(string);
         int lastEnd = 0;
-        String remaining = string;
 
         // Find all urls
         while (matcher.find())

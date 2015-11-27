@@ -150,7 +150,6 @@ public class GuiModList extends GuiScreen
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
@@ -475,11 +474,6 @@ public class GuiModList extends GuiScreen
         @Override protected boolean isSelected(int index) { return false; }
         @Override protected void drawBackground() {}
         @Override protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) { }
-
-        private List<String> splitLines(String line)
-        {
-            return null;
-        }
 
         private List<IChatComponent> resizeContent(List<String> lines)
         {

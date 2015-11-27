@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 /**
  * IModelState that can change depending on the perspective.
  */
+@SuppressWarnings("deprecation")
 public interface IPerspectiveState extends IModelState
 {
     /**

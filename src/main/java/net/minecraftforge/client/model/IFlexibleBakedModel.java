@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 /*
  * Version of IBakedModel with less restriction on camera transformations and with explicit format of the baked array.
  */
+@SuppressWarnings("deprecation")
 public interface IFlexibleBakedModel extends IBakedModel
 {
     /*

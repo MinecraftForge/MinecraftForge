@@ -27,7 +27,6 @@ public class GuiBackupFailed extends GuiScreen
         this.zipName = zipName;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
