@@ -77,23 +77,16 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-//import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
-//import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
-
-
-
-
-
 
 import com.google.common.collect.Maps;
 
+@SuppressWarnings("deprecation")
 public class ForgeHooksClient
 {
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
@@ -108,165 +101,6 @@ public class ForgeHooksClient
         String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
         return result != null ? result : _default;
     }
-
-    /*
-     * Removed, Modders let me know if this is needed anymore.
-    public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, TextureManager engine, RenderBlocks renderBlocks, int count)
-    {
-        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
-        if (customRenderer == null)
-        {
-            return false;
-        }
-
-        if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))
-        {
-            GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F);
-        }
-        if (!customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_BOBBING))
-        {
-            GL11.glTranslatef(0.0F, -bobing, 0.0F);
-        }
-        boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
-
-        engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-        Block block = item.getItem() instanceof ItemBlock ? Block.getBlockFromItem(item.getItem()) : null;
-        if (is3D || (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())))
-        {
-            int renderType = (block != null ? block.getRenderType() : 1);
-            float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
-            boolean blend = block != null && block.getRenderBlockPass() > 0;
-
-            if (RenderItem.renderInFrame)
-            {
-                GL11.glScalef(1.25F, 1.25F, 1.25F);
-                GL11.glTranslatef(0.0F, 0.05F, 0.0F);
-                GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-            }
-
-            if (blend)
-            {
-                GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-                GL11.glEnable(GL11.GL_BLEND);
-                OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-            }
-
-            GL11.glScalef(scale, scale, scale);
-
-            for(int j = 0; j < count; j++)
-            {
-                GL11.glPushMatrix();
-                if (j > 0)
-                {
-                    GL11.glTranslatef(
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale,
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale,
-                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / scale);
-                }
-                customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
-                GL11.glPopMatrix();
-            }
-
-            if (blend)
-            {
-                GL11.glDisable(GL11.GL_BLEND);
-            }
-        }
-        else
-        {
-            GL11.glScalef(0.5F, 0.5F, 0.5F);
-            customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
-        }
-
-        return true;
-    }
-    */
-
-    /*
-    public static boolean renderInventoryItem(RenderBlocks renderBlocks, TextureManager engine, ItemStack item, boolean inColor, float zLevel, float x, float y)
-    {
-        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
-        if (customRenderer == null)
-        {
-            return false;
-        }
-
-        engine.bindTexture(item.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-        if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
-        {
-            GL11.glPushMatrix();
-            GL11.glTranslatef(x - 2, y + 3, -3.0F + zLevel);
-            GL11.glScalef(10F, 10F, 10F);
-            GL11.glTranslatef(1.0F, 0.5F, 1.0F);
-            GL11.glScalef(1.0F, 1.0F, -1F);
-            GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
-            GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-
-            if(inColor)
-            {
-                int color = item.getItem().getColorFromItemStack(item, 0);
-                float r = (float)(color >> 16 & 0xff) / 255F;
-                float g = (float)(color >> 8 & 0xff) / 255F;
-                float b = (float)(color & 0xff) / 255F;
-                GL11.glColor4f(r, g, b, 1.0F);
-            }
-
-            GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
-            renderBlocks.useInventoryTint = inColor;
-            customRenderer.renderItem(INVENTORY, item, renderBlocks);
-            renderBlocks.useInventoryTint = true;
-            GL11.glPopMatrix();
-        }
-        else
-        {
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glPushMatrix();
-            GL11.glTranslatef(x, y, -3.0F + zLevel);
-
-            if (inColor)
-            {
-                int color = item.getItem().getColorFromItemStack(item, 0);
-                float r = (float)(color >> 16 & 255) / 255.0F;
-                float g = (float)(color >> 8 & 255) / 255.0F;
-                float b = (float)(color & 255) / 255.0F;
-                GL11.glColor4f(r, g, b, 1.0F);
-            }
-
-            customRenderer.renderItem(INVENTORY, item, renderBlocks);
-            GL11.glPopMatrix();
-            GL11.glEnable(GL11.GL_LIGHTING);
-        }
-
-        return true;
-    }
-
-    public static void renderEffectOverlay(TextureManager manager, RenderItem render)
-    {
-    }
-
-    public static void renderEquippedItem(ItemRenderType type, IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLivingBase entity, ItemStack item)
-    {
-        if (customRenderer.shouldUseRenderHelper(type, item, EQUIPPED_BLOCK))
-        {
-            GL11.glPushMatrix();
-            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-            customRenderer.renderItem(type, item, renderBlocks, entity);
-            GL11.glPopMatrix();
-        }
-        else
-        {
-            GL11.glPushMatrix();
-            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            GL11.glTranslatef(0.0F, -0.3F, 0.0F);
-            GL11.glScalef(1.5F, 1.5F, 1.5F);
-            GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
-            GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-            customRenderer.renderItem(type, item, renderBlocks, entity);
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            GL11.glPopMatrix();
-        }
-    }*/
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optfine, these methods are invoked using reflection, which
@@ -518,7 +352,7 @@ public class ForgeHooksClient
         loader.onPostBakeEvent(modelRegistry);
     }
 
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
+	public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -540,7 +374,7 @@ public class ForgeHooksClient
         return m;
     }
 
-    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
+	public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
     {
         if(model instanceof IPerspectiveAwareModel)
         {
@@ -686,11 +520,10 @@ public class ForgeHooksClient
 
     public static void renderTileItem(Item item, int metadata)
     {
-        Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item,
-                metadata));
+        Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item, metadata));
         if (tileClass != null)
         {
-            TileEntitySpecialRenderer r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
+            TileEntitySpecialRenderer<TileEntity> r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
             if (r != null)
             {
                 r.renderTileEntityAt(null, 0, 0, 0, 0, -1);
