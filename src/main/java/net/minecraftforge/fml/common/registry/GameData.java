@@ -14,6 +14,8 @@ package net.minecraftforge.fml.common.registry;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -22,12 +24,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.GameRegistry.Type;
-import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 
-import com.google.common.collect.Maps;
-
-public class GameData {
+public class GameData
+{
     static final int MIN_BLOCK_ID = 0;
     static final int MAX_BLOCK_ID = 4095;
     static final int MIN_ITEM_ID = 4096;
@@ -41,7 +40,8 @@ public class GameData {
      *
      * @return Block Registry.
      */
-    public static FMLControlledNamespacedRegistry<Block> getBlockRegistry() {
+    public static FMLControlledNamespacedRegistry<Block> getBlockRegistry()
+    {
         return getMain().iBlockRegistry;
     }
 
@@ -50,7 +50,8 @@ public class GameData {
      *
      * @return Item Registry.
      */
-    public static FMLControlledNamespacedRegistry<Item> getItemRegistry() {
+    public static FMLControlledNamespacedRegistry<Item> getItemRegistry()
+    {
         return getMain().iItemRegistry;
     }
 
@@ -59,45 +60,59 @@ public class GameData {
      ***************************************************/
 
 
-    static Item findItem(String modId, String name) {
+    static Item findItem(String modId, String name)
+    {
         return getMain().iItemRegistry.getObject(new ResourceLocation(modId, name));
     }
 
-    static Block findBlock(String modId, String name) {
+    static Block findBlock(String modId, String name)
+    {
         return getMain().iBlockRegistry.getObject(new ResourceLocation(modId, name));
     }
 
-    static UniqueIdentifier getUniqueName(Block block) {
-        if (block == null) return null;
+    static GameRegistry.UniqueIdentifier getUniqueName(Block block)
+    {
+        if (block == null)
+        {
+            return null;
+        }
         Object name = getMain().iBlockRegistry.getNameForObject(block);
-        return new UniqueIdentifier(name);
+        return new GameRegistry.UniqueIdentifier(name);
     }
 
-    static UniqueIdentifier getUniqueName(Item item) {
-        if (item == null) return null;
+    static GameRegistry.UniqueIdentifier getUniqueName(Item item)
+    {
+        if (item == null)
+        {
+            return null;
+        }
         Object name = getMain().iItemRegistry.getNameForObject(item);
-        return new UniqueIdentifier(name);
+        return new GameRegistry.UniqueIdentifier(name);
     }
 
-    protected static GameData getMain() {
+    protected static GameData getMain()
+    {
         return mainData;
     }
 
     // internal registry objects
-    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true);
+    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true, BlockStateCapture.INSTANCE);
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true);
 
     int registerItem(Item item, String name) // from GameRegistry
     {
         int index = name.indexOf(':');
         if (index != -1)
+        {
             FMLLog.bigWarning("Dangerous extra prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
+        }
 
         ResourceLocation rl = addPrefix(name);
         return registerItem(item, rl, -1);
     }
 
-    private int registerItem(Item item, ResourceLocation name, int idHint) {
+    private int registerItem(Item item, ResourceLocation name, int idHint)
+    {
         return iItemRegistry.add(idHint, name, item);
     }
 
@@ -105,20 +120,17 @@ public class GameData {
     {
         int index = name.indexOf(':');
         if (index != -1)
+        {
             FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
+        }
 
         ResourceLocation rl = addPrefix(name);
         return registerBlock(block, rl, -1);
     }
 
-    private int registerBlock(Block block, ResourceLocation name, int idHint) {
-        int blockId = iBlockRegistry.add(idHint, name, block);
-
-        for (IBlockState state : block.getBlockState().getValidStates()) {
-            GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
-        }
-
-        return blockId;
+    private int registerBlock(Block block, ResourceLocation name, int idHint)
+    {
+        return iBlockRegistry.add(idHint, name, block);
     }
 
     /**
@@ -133,33 +145,41 @@ public class GameData {
      * @param name name to prefix.
      * @return prefixed name.
      */
-    private ResourceLocation addPrefix(String name) {
+    private ResourceLocation addPrefix(String name)
+    {
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index);
         String prefix;
         ModContainer mc = Loader.instance().activeModContainer();
 
-        if (mc != null) {
+        if (mc != null)
+        {
             prefix = mc.getModId();
-        } else // no mod container, assume minecraft
+        }
+        else // no mod container, assume minecraft
         {
             prefix = "minecraft";
         }
 
-        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0) {
+        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
+        {
             prefix = oldPrefix;
         }
 
-        return new ResourceLocation(prefix,name);
+        return new ResourceLocation(prefix, name);
     }
 
-    void registerSubstitutionAlias(String name, Type type, Object toReplace) throws ExistingSubstitutionException {
+    void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
+    {
         ResourceLocation nameToSubstitute = new ResourceLocation(Loader.instance().activeModContainer().getModId(), name);
-        if (type == Type.BLOCK) {
-            iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block) toReplace);
+        if (type == GameRegistry.Type.BLOCK)
+        {
+            iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
             iBlockRegistry.activateSubstitution(nameToSubstitute);
-        } else if (type == Type.ITEM) {
-            iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item) toReplace);
+        }
+        else if (type == GameRegistry.Type.ITEM)
+        {
+            iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
             iItemRegistry.activateSubstitution(nameToSubstitute);
         }
     }
@@ -167,26 +187,45 @@ public class GameData {
     private static Map<Block, Item> BLOCK_TO_ITEM = Maps.newHashMap();
 
     //Internal: DO NOT USE, will change without warning.
-    public static Map getBlockItemMap() {
+    public static Map getBlockItemMap()
+    {
         return BLOCK_TO_ITEM;
     }
 
     private static ClearableObjectIntIdentityMap<IBlockState> BLOCKSTATE_TO_ID = new ClearableObjectIntIdentityMap<IBlockState>();
 
     //Internal: DO NOT USE, will change without warning.
-    public static ObjectIntIdentityMap getBlockStateIDMap() {
+    public static ClearableObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
+    {
         return BLOCKSTATE_TO_ID;
     }
 
     //Lets us clear the map so we can rebuild it.
-    private static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I> {
-        private void clear() {
+    static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
+    {
+        void clear()
+        {
             this.identityMap.clear();
             this.objectList.clear();
         }
     }
 
-    public <T> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass) {
+    public <T> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
+    {
         return PersistentRegistryManager.makeDelegate(obj, rootClass);
+    }
+
+    private static class BlockStateCapture implements FMLControlledNamespacedRegistry.AddCallback<Block>
+    {
+        static final BlockStateCapture INSTANCE = new BlockStateCapture();
+
+        @Override
+        public void onAdd(Block block, int blockId)
+        {
+            for (IBlockState state : block.getBlockState().getValidStates())
+            {
+                GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
+            }
+        }
     }
 }

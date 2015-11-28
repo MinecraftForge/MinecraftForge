@@ -25,6 +25,17 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -48,18 +59,6 @@ import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.ObjectArrays;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
-
 public class GameRegistry
 {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
@@ -70,9 +69,9 @@ public class GameRegistry
     /**
      * Register a world generator - something that inserts new block types into the world
      *
-     * @param generator the generator
+     * @param generator           the generator
      * @param modGenerationWeight a weight to assign to this generator. Heavy weights tend to sink to the bottom of
-     * list of world generators (i.e. they run later)
+     *                            list of world generators (i.e. they run later)
      */
     public static void registerWorldGenerator(IWorldGenerator generator, int modGenerationWeight)
     {
@@ -88,11 +87,11 @@ public class GameRegistry
      * Callback hook for world gen - if your mod wishes to add extra mod related generation to the world
      * call this
      *
-     * @param chunkX Chunk X coordinate
-     * @param chunkZ Chunk Z coordinate
-     * @param world World we're generating into
+     * @param chunkX         Chunk X coordinate
+     * @param chunkZ         Chunk Z coordinate
+     * @param world          World we're generating into
      * @param chunkGenerator The chunk generator
-     * @param chunkProvider The chunk provider
+     * @param chunkProvider  The chunk provider
      */
     public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
     {
@@ -116,7 +115,8 @@ public class GameRegistry
     private static void computeSortedGeneratorList()
     {
         ArrayList<IWorldGenerator> list = Lists.newArrayList(worldGenerators);
-        Collections.sort(list, new Comparator<IWorldGenerator>() {
+        Collections.sort(list, new Comparator<IWorldGenerator>()
+        {
             @Override
             public int compare(IWorldGenerator o1, IWorldGenerator o2)
             {
@@ -139,8 +139,9 @@ public class GameRegistry
 
     /**
      * Register the specified Item with a mod specific name : overrides the standard type based name
-     * @param item The item to register
-     * @param name The mod-unique name to register it as - null will remove a custom name
+     *
+     * @param item  The item to register
+     * @param name  The mod-unique name to register it as - null will remove a custom name
      * @param modId deprecated, unused
      */
     public static Item registerItem(Item item, String name, String modId)
@@ -156,9 +157,9 @@ public class GameRegistry
      * referenced.
      *
      * @param nameToSubstitute The name to link to (this is the NEW block or item)
-     * @param type The type (Block or Item)
-     * @param object a NEW instance that is type compatible with the existing instance
-     * @throws ExistingSubstitutionException if someone else has already registered an alias either from or to one of the names
+     * @param type             The type (Block or Item)
+     * @param object           a NEW instance that is type compatible with the existing instance
+     * @throws ExistingSubstitutionException     if someone else has already registered an alias either from or to one of the names
      * @throws IncompatibleSubstitutionException if the substitution is incompatible
      */
     public static void addSubstitutionAlias(String nameToSubstitute, GameRegistry.Type type, Object object) throws ExistingSubstitutionException
@@ -168,8 +169,9 @@ public class GameRegistry
 
     /**
      * Register a block with the specified mod specific name
+     *
      * @param block The block to register
-     * @param name The mod-unique name to register it as, will get prefixed by your modid.
+     * @param name  The mod-unique name to register it as, will get prefixed by your modid.
      */
     public static Block registerBlock(Block block, String name)
     {
@@ -178,20 +180,22 @@ public class GameRegistry
 
     /**
      * Register a block with the world, with the specified item class and block name
-     * @param block The block to register
+     *
+     * @param block     The block to register
      * @param itemclass The item type to register with it : null registers a block without associated item.
-     * @param name The mod-unique name to register it as, will get prefixed by your modid.
+     * @param name      The mod-unique name to register it as, will get prefixed by your modid.
      */
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
     {
-        return registerBlock(block, itemclass, name, new Object[]{});
+        return registerBlock(block, itemclass, name, new Object[] {});
     }
 
     /**
      * Register a block with the world, with the specified item class, block name and owning modId
-     * @param block The block to register
-     * @param itemclass The item type to register with it : null registers a block without associated item.
-     * @param name The mod-unique name to register it as, will get prefixed by your modid.
+     *
+     * @param block        The block to register
+     * @param itemclass    The item type to register with it : null registers a block without associated item.
+     * @param name         The mod-unique name to register it as, will get prefixed by your modid.
      * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
     @SuppressWarnings("unchecked")
@@ -211,7 +215,7 @@ public class GameRegistry
                 ctorArgClasses[0] = Block.class;
                 for (int idx = 1; idx < ctorArgClasses.length; idx++)
                 {
-                    ctorArgClasses[idx] = itemCtorArgs[idx-1].getClass();
+                    ctorArgClasses[idx] = itemCtorArgs[idx - 1].getClass();
                 }
                 Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
                 i = itemCtor.newInstance(ObjectArrays.concat(block, itemCtorArgs));
@@ -224,8 +228,7 @@ public class GameRegistry
                 GameData.getBlockItemMap().put(block, i);
             }
             return block;
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
             throw new LoaderException(e);
@@ -277,14 +280,14 @@ public class GameRegistry
      * This method allows for you to "rename" the 'id' of the tile entity.
      *
      * @param tileEntityClass The tileEntity class to register
-     * @param id The primary ID, this will be the ID that the tileentity saves as
-     * @param alternatives A list of alternative IDs that will also map to this class. These will never save, but they will load
+     * @param id              The primary ID, this will be the ID that the tileentity saves as
+     * @param alternatives    A list of alternative IDs that will also map to this class. These will never save, but they will load
      */
     public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
     {
         TileEntity.addMapping(tileEntityClass, id);
-        Map<String,Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "nameToClassMap");
-        for (String s: alternatives)
+        Map<String, Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "nameToClassMap");
+        for (String s : alternatives)
         {
             if (!teMappings.containsKey(s))
             {
@@ -297,6 +300,7 @@ public class GameRegistry
     {
         fuelHandlers.add(handler);
     }
+
     public static int getFuelValue(ItemStack itemStack)
     {
         int fuelValue = 0;
@@ -309,8 +313,9 @@ public class GameRegistry
 
     /**
      * Look up a mod block in the global "named item list"
+     *
      * @param modId The modid owning the block
-     * @param name The name of the block itself
+     * @param name  The name of the block itself
      * @return The block or null if not found
      */
     public static Block findBlock(String modId, String name)
@@ -320,8 +325,9 @@ public class GameRegistry
 
     /**
      * Look up a mod item in the global "named item list"
+     *
      * @param modId The modid owning the item
-     * @param name The name of the item itself
+     * @param name  The name of the item itself
      * @return The item or null if not found
      */
     public static Item findItem(String modId, String name)
@@ -337,6 +343,7 @@ public class GameRegistry
     {
         public final String modId;
         public final String name;
+
         UniqueIdentifier(String modId, String name)
         {
             this.modId = modId;
@@ -361,7 +368,7 @@ public class GameRegistry
             else if (obj instanceof ResourceLocation)
             {
                 this.modId = ((ResourceLocation)obj).getResourceDomain();
-                this.name  = ((ResourceLocation)obj).getResourcePath();
+                this.name = ((ResourceLocation)obj).getResourcePath();
             }
             else
             {
@@ -372,9 +379,15 @@ public class GameRegistry
         @Override
         public boolean equals(Object obj)
         {
-            if (obj == null) return false;
-            if (obj.getClass() != this.getClass()) return false;
-            final UniqueIdentifier other = (UniqueIdentifier) obj;
+            if (obj == null)
+            {
+                return false;
+            }
+            if (obj.getClass() != this.getClass())
+            {
+                return false;
+            }
+            final UniqueIdentifier other = (UniqueIdentifier)obj;
             return Objects.equal(modId, other.modId) && Objects.equal(name, other.name);
         }
 
@@ -391,13 +404,15 @@ public class GameRegistry
         }
     }
 
-    public enum Type {
+    public enum Type
+    {
         BLOCK,
         ITEM;
     }
+
     /**
      * Look up the mod identifier data for a block.
-     *
+     * <p/>
      * Note: uniqueness and persistence is only guaranteed by mods using the game registry
      * correctly.
      *
@@ -409,9 +424,10 @@ public class GameRegistry
     {
         return GameData.getUniqueName(block);
     }
+
     /**
      * Look up the mod identifier data for an item.
-     *
+     * <p/>
      * Note: uniqueness and persistence is only guaranteed by mods using the game registry
      * correctly.
      *
@@ -425,15 +441,14 @@ public class GameRegistry
     }
 
 
-
     /**
      * ObjectHolder can be used to automatically populate public static final fields with entries
      * from the registry. These values can then be referred within mod code directly.
-     *
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE, ElementType.FIELD})
-    public @interface ObjectHolder {
+    public @interface ObjectHolder
+    {
         /**
          * If used on a class, this represents a modid only.
          * If used on a field, it represents a name, which can be abbreviated or complete.
@@ -449,7 +464,7 @@ public class GameRegistry
      * {@link ItemStack} instances, referring a specific item, potentially configured with NBT.
      * These values can then be used in things like recipes and other places where ItemStacks
      * might be required.
-     *
+     * <p/>
      * If the item is not found, the field will be populated with null.
      */
     @Retention(RetentionPolicy.RUNTIME)
@@ -458,12 +473,14 @@ public class GameRegistry
     {
         /**
          * The registry name of the item being looked up.
+         *
          * @return The registry name
          */
         public String value();
 
         /**
          * The metadata or damage value for the itemstack, defaults to 0.
+         *
          * @return the metadata value
          */
         public int meta() default 0;
@@ -478,26 +495,31 @@ public class GameRegistry
 
     /**
      * Makes an {@link ItemStack} based on the itemName reference, with supplied meta, stackSize and nbt, if possible
-     *
+     * <p/>
      * Will return null if the item doesn't exist (because it's not from a loaded mod for example)
      * Will throw a {@link RuntimeException} if the nbtString is invalid for use in an {@link ItemStack}
      *
-     * @param itemName a registry name reference
-     * @param meta the meta
+     * @param itemName  a registry name reference
+     * @param meta      the meta
      * @param stackSize the stack size
      * @param nbtString an nbt stack as a string, will be processed by {@link JsonToNBT}
      * @return a new itemstack
      */
     public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString)
     {
-        if (itemName == null) throw new IllegalArgumentException("The itemName cannot be null");
+        if (itemName == null)
+        {
+            throw new IllegalArgumentException("The itemName cannot be null");
+        }
         Item item = GameData.getItemRegistry().getObject(new ResourceLocation(itemName));
-        if (item == null) {
+        if (item == null)
+        {
             FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
             return null;
         }
-        ItemStack is = new ItemStack(item,1,meta);
-        if (!Strings.isNullOrEmpty(nbtString)) {
+        ItemStack is = new ItemStack(item, 1, meta);
+        if (!Strings.isNullOrEmpty(nbtString))
+        {
             NBTBase nbttag = null;
             try
             {
@@ -507,11 +529,14 @@ public class GameRegistry
                 FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
                 throw Throwables.propagate(e);
             }
-            if (!(nbttag instanceof NBTTagCompound)) {
+            if (!(nbttag instanceof NBTTagCompound))
+            {
                 FMLLog.getLogger().log(Level.WARN, "Unexpected NBT string - multiple values {}", nbtString);
                 throw new RuntimeException("Invalid NBT JSON");
-            } else {
-                is.setTagCompound((NBTTagCompound) nbttag);
+            }
+            else
+            {
+                is.setTagCompound((NBTTagCompound)nbttag);
             }
         }
         return is;
