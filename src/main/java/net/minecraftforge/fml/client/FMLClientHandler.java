@@ -87,8 +87,8 @@ import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -651,7 +651,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         // ONLY revert a non-local connection
         if (client != null && !client.isLocalChannel())
         {
-            GameData.revertToFrozen();
+            PersistentRegistryManager.revertToFrozen();
         }
     }
 

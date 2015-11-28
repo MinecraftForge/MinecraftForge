@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.passive.EntityVillager;
@@ -191,14 +193,13 @@ public class VillagerRegistry
     {
         register(prof, -1);
     }
-    @SuppressWarnings("deprecation")
     private void register(VillagerProfession prof, int id)
     {
         professions.register(id, prof.name, prof);
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = GameData.createRegistry("villagerprofessions", VillagerProfession.class, 0, 1024);
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(new ResourceLocation("minecraft:villagerprofessions"), VillagerProfession.class, null, 1024, 0, true);
 
 
     private void init()
@@ -242,22 +243,22 @@ public class VillagerRegistry
     public static class VillagerProfession
     {
         private ResourceLocation name;
-        //private ResourceLocation texture;
+        private ResourceLocation texture;
         private List<VillagerCareer> careers = Lists.newArrayList();
-        private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
+        public final RegistryDelegate<VillagerProfession> delegate = PersistentRegistryManager.makeDelegate(this, VillagerProfession.class);
 
         public VillagerProfession(String name, String texture)
         {
             this.name = new ResourceLocation(name);
-            //this.texture = new ResourceLocation(texture);
-            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
+            this.texture = new ResourceLocation(texture);
+            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setResourceName(this.name);
         }
 
         private void register(VillagerCareer career)
         {
             Validate.isTrue(!careers.contains(career), "Attempted to register career that is already registered.");
             Validate.isTrue(career.profession == this, "Attempted to register career for the wrong profession.");
-            //career.id = careers.size();
+            career.id = careers.size();
             careers.add(career);
         }
     }
@@ -266,7 +267,7 @@ public class VillagerRegistry
     {
         private VillagerProfession profession;
         private String name;
-        //private int id;
+        private int id;
         public VillagerCareer(VillagerProfession parent, String name)
         {
             this.profession = parent;
@@ -297,8 +298,8 @@ public class VillagerRegistry
      */
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
-        //int count = INSTANCE.professions.getKeys().size();
-        //int prof = rand.nextInt(count);
+        Set<ResourceLocation> entries = INSTANCE.professions.getKeys();
+        int prof = rand.nextInt(entries.size());
         //TODO: Grab id range from internal registry
         entity.setProfession(rand.nextInt(5));
     }

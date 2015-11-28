@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
@@ -325,7 +326,7 @@ public class OreDictionary
         // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
         // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
         // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
-        String registryName = stack.getItem().delegate.name();
+        ResourceLocation registryName = stack.getItem().delegate.getResourceName();
         int id;
         if (registryName == null)
         {
@@ -449,7 +450,7 @@ public class OreDictionary
         // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
         // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
         // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
-        String registryName = ore.getItem().delegate.name();
+        ResourceLocation registryName = ore.getItem().delegate.getResourceName();
         int hash;
         if (registryName == null)
         {
@@ -506,7 +507,7 @@ public class OreDictionary
             for (ItemStack ore : ores)
             {
                 // HACK: use the registry name's ID. It is unique and it knows about substitutions
-                String name = ore.getItem().delegate.name();
+                ResourceLocation name = ore.getItem().delegate.getResourceName();
                 int hash;
                 if (name == null)
                 {

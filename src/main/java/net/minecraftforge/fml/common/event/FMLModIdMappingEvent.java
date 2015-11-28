@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Called whenever the ID mapping might have changed. If you register for this event, you
@@ -30,25 +31,28 @@ public class FMLModIdMappingEvent extends FMLEvent {
         public final int newId;
         public final String tag;
         public final RemapTarget remapTarget;
-        public ModRemapping(int oldId, int newId, String tag, RemapTarget type)
+        public final ResourceLocation resourceLocation;
+
+        public ModRemapping(int oldId, int newId, ResourceLocation tag, RemapTarget type)
         {
             this.oldId = oldId;
             this.newId = newId;
-            this.tag = tag;
+            this.tag = tag.toString();
             this.remapTarget = type;
+            this.resourceLocation = tag;
         }
 
     }
     public final ImmutableList<ModRemapping> remappedIds;
 
-    public FMLModIdMappingEvent(Map<String, Integer[]> blocks, Map<String, Integer[]> items)
+    public FMLModIdMappingEvent(Map<ResourceLocation, Integer[]> blocks, Map<ResourceLocation, Integer[]> items)
     {
         List<ModRemapping> remappings = Lists.newArrayList();
-        for (Entry<String, Integer[]> mapping : blocks.entrySet())
+        for (Entry<ResourceLocation, Integer[]> mapping : blocks.entrySet())
         {
             remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey(), RemapTarget.BLOCK));
         }
-        for (Entry<String, Integer[]> mapping : items.entrySet())
+        for (Entry<ResourceLocation, Integer[]> mapping : items.entrySet())
         {
             remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey(), RemapTarget.ITEM));
         }

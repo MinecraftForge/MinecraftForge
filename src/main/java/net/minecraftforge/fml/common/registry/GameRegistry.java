@@ -392,22 +392,8 @@ public class GameRegistry
     }
 
     public enum Type {
-        BLOCK
-        {
-            @Override
-            public FMLControlledNamespacedRegistry<?> getRegistry() {
-                return GameData.getBlockRegistry();
-            }
-        },
-        ITEM
-        {
-            @Override
-            public FMLControlledNamespacedRegistry<?> getRegistry() {
-                return GameData.getItemRegistry();
-            }
-        };
-
-        public abstract FMLControlledNamespacedRegistry<?> getRegistry();
+        BLOCK,
+        ITEM;
     }
     /**
      * Look up the mod identifier data for a block.
@@ -505,7 +491,7 @@ public class GameRegistry
     public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString)
     {
         if (itemName == null) throw new IllegalArgumentException("The itemName cannot be null");
-        Item item = GameData.getItemRegistry().getObject(itemName);
+        Item item = GameData.getItemRegistry().getObject(new ResourceLocation(itemName));
         if (item == null) {
             FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
             return null;

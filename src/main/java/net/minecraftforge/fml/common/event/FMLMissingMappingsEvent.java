@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -63,14 +64,16 @@ public class FMLMissingMappingsEvent extends FMLEvent {
         public final GameRegistry.Type type;
         public final String name;
         public final int id;
+        public final ResourceLocation resourceLocation;
         private Action action = Action.DEFAULT;
         private Object target;
 
-        public MissingMapping(GameRegistry.Type type, String name, int id)
+        public MissingMapping(GameRegistry.Type type, ResourceLocation name, int id)
         {
             this.type = type;
-            this.name = name;
+            this.name = name.toString();
             this.id = id;
+            this.resourceLocation = name;
         }
 
         /**

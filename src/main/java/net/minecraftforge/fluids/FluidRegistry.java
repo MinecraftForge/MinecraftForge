@@ -376,6 +376,11 @@ public abstract class FluidRegistry
         }
 
         @Override
+        public ResourceLocation getResourceName() {
+            return new ResourceLocation(name);
+        }
+
+        @Override
         public Class<Fluid> type()
         {
             return Fluid.class;
