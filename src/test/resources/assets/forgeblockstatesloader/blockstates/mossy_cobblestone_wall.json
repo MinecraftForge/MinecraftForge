@@ -3,7 +3,8 @@
 	"defaults": {
 		"textures": {"wall": "blocks/cobblestone_mossy"},
 		"model": "cobblestone_wall_post",
-		"uvlock": true
+		"uvlock": true,
+		"transform": "forge:default-block"
 	},
 	"variants": {
 		"north": {
@@ -24,6 +25,12 @@
 		},
 		"up": {"true": {}, "false": {}},
 		"east=false,north=true,south=true,up=false,west=false": {"model": null},
-		"east=true,north=false,south=false,up=false,west=true": {"model": null}
+		"east=true,north=false,south=false,up=false,west=true": {"model": null},
+		"inventory": [{  // inventory variant can be specified here too, and it will inherit properties from "defaults"
+		    submodel: {
+		        "north": { "model": "forgeblockstatesloader:wall_connect" },
+		        "south": { "model": "forgeblockstatesloader:wall_connect", "y": 180 }
+		    }
+		}]
 	}
 }

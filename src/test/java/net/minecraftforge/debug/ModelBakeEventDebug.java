@@ -155,8 +155,8 @@ public class ModelBakeEventDebug
             {
                 CustomTileEntity cte = (CustomTileEntity) te;
                 Vec3 vec = revRotate(new Vec3(hitX - .5, hitY - .5, hitZ - .5), side).addVector(.5, .5, .5);
-                IUnlistedProperty property = properties[side.ordinal()];
-                Integer value = (Integer)cte.getState().getValue(property);
+                IUnlistedProperty<Integer> property = properties[side.ordinal()];
+                Integer value = cte.getState().getValue(property);
                 if(value == null) value = 0;
                 value ^= (1 << ( cubeSize * ((int)(vec.xCoord * (cubeSize - .0001))) + ((int)(vec.zCoord * (cubeSize - .0001))) ));
                 cte.setState(cte.getState().withProperty(property, value));
@@ -269,7 +269,7 @@ public class ModelBakeEventDebug
                     {
                         if(state != null)
                         {
-                            Integer value = (Integer)state.getValue(properties[f.ordinal()]);
+                            Integer value = state.getValue(properties[f.ordinal()]);
                             if(value != null && (value & (1 << (i * cubeSize + j))) != 0)
                             {
                                 ret.add(createSidedBakedQuad((float)(1 + i * 5) / len, (float)(5 + i * 5) / len, (float)(1 + j * 5) / len, (float)(5 + j * 5) / len, 1.0001f, overlay, f));

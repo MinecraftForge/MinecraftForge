@@ -85,7 +85,7 @@
                  }
  
 -                float f1 = this.field_78293_l ? 0.5F : 1.0F;
-+                float f1 = func_78263_a(c0) / 32f;
++                float f1 = j == -1 || this.field_78293_l ? 0.5f : 1f;
                  boolean flag1 = (c0 == 0 || j == -1 || this.field_78293_l) && p_78255_2_;
  
                  if (flag1)
@@ -114,7 +114,7 @@
              this.field_78295_j = p_180455_2_;
              this.field_78296_k = p_180455_3_;
              this.func_78255_a(p_180455_1_, p_180455_5_);
-@@ -583,11 +593,6 @@
+@@ -583,12 +593,6 @@
                  int j = this.field_78287_e[p_78263_1_] >>> 4;
                  int k = this.field_78287_e[p_78263_1_] & 15;
  
@@ -123,10 +123,11 @@
 -                    k = 15;
 -                    j = 0;
 -                }
- 
+-
                  ++k;
                  return (k - j) / 2 + 1;
-@@ -842,6 +847,26 @@
+             }
+@@ -842,6 +846,26 @@
          return this.field_78294_m;
      }
  

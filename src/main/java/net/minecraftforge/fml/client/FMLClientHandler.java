@@ -710,7 +710,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void showInGameModOptions(GuiIngameMenu guiIngameMenu)
     {
-        showGuiScreen(new GuiIngameModOptions(guiIngameMenu));
+        showGuiScreen(new GuiModList(guiIngameMenu));
     }
 
     public IModGuiFactory getGuiFactoryFor(ModContainer selectedMod)
@@ -928,7 +928,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
         Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");
-        for (String resourceDomain : missingTextures.keySet())
+        for (String resourceDomain : badTextureDomains)
         {
             Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
             logger.error(Strings.repeat("=", 50));
@@ -964,12 +964,13 @@ public class FMLClientHandler implements IFMLSidedHandler
                 }
             }
             logger.error(Strings.repeat("-", 25));
-            logger.error("    The missing resources for domain {} are:",resourceDomain);
-            for (ResourceLocation rl : missing)
-            {
-                logger.error("      {}",rl.getResourcePath());
+            if (missingTextures.containsKey(resourceDomain)) {
+                logger.error("    The missing resources for domain {} are:", resourceDomain);
+                for (ResourceLocation rl : missing) {
+                    logger.error("      {}", rl.getResourcePath());
+                }
+                logger.error(Strings.repeat("-", 25));
             }
-            logger.error(Strings.repeat("-", 25));
             if (!brokenTextures.containsRow(resourceDomain))
             {
                 logger.error("    No other errors exist for domain {}", resourceDomain);

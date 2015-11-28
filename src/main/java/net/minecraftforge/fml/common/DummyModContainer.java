@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.common;
 
 import java.io.File;
+import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
@@ -205,5 +206,11 @@ public class DummyModContainer implements ModContainer
     public boolean shouldLoadInEnvironment()
     {
         return true;
+    }
+
+    @Override
+    public URL getUpdateUrl()
+    {
+        return null;
     }
 }

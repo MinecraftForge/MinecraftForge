@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.common;
 
 import java.io.File;
+import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Map;
@@ -206,5 +207,11 @@ public class InjectedModContainer implements ModContainer
     public boolean shouldLoadInEnvironment()
     {
         return true;
+    }
+
+    @Override
+    public URL getUpdateUrl()
+    {
+        return wrappedContainer.getUpdateUrl();
     }
 }

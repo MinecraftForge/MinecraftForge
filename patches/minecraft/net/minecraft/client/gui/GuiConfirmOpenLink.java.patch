@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiConfirmOpenLink.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiConfirmOpenLink.java
+@@ -26,6 +26,8 @@
+ 
+     public void func_73866_w_()
+     {
++        super.func_73866_w_();// Call super to add line #2
++        this.field_146292_n.clear();
+         this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 50 - 105, this.field_146295_m / 6 + 96, 100, 20, this.field_146352_g));
+         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 50, this.field_146295_m / 6 + 96, 100, 20, this.field_146362_s));
+         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 50 + 105, this.field_146295_m / 6 + 96, 100, 20, this.field_146356_h));

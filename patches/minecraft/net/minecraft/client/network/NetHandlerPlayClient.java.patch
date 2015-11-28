@@ -61,3 +61,12 @@
          }
      }
  
+@@ -1346,7 +1358,7 @@
+ 
+         if (entity instanceof EntityLivingBase)
+         {
+-            PotionEffect potioneffect = new PotionEffect(p_147260_1_.func_149427_e(), p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), false, p_147260_1_.func_179707_f());
++            PotionEffect potioneffect = new PotionEffect(p_147260_1_.func_149427_e() & 0xff, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), false, p_147260_1_.func_179707_f());
+             potioneffect.func_100012_b(p_147260_1_.func_149429_c());
+             ((EntityLivingBase)entity).func_70690_d(potioneffect);
+         }

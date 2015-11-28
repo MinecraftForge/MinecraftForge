@@ -2,11 +2,8 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -16,13 +13,11 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.debug.ModelBakeEventDebug.BakeEventHandler;
-import net.minecraftforge.debug.ModelBakeEventDebug.ClientProxy;
-import net.minecraftforge.debug.ModelBakeEventDebug.CustomModel;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -41,6 +36,9 @@ public class ItemTileDebug
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
 
+    @EventHandler
+    public void init(FMLInitializationEvent event) { proxy.init(event); }
+
     public static class CommonProxy
     {
         public void preInit(FMLPreInitializationEvent event)
@@ -48,6 +46,8 @@ public class ItemTileDebug
             GameRegistry.registerBlock(TestBlock.instance, TestBlock.name);
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
+
+        public void init(FMLInitializationEvent event) {}
     }
 
     public static class ClientProxy extends CommonProxy
@@ -58,11 +58,15 @@ public class ItemTileDebug
         public void preInit(FMLPreInitializationEvent event)
         {
             super.preInit(event);
-            ClientRegistry.bindTileEntitySpecialRenderer(CustomTileEntity.class, TestTESR.instance);
             Item item = Item.getItemFromBlock(TestBlock.instance);
             ForgeHooksClient.registerTESRItemStack(item, 0, CustomTileEntity.class);
             ModelLoader.setCustomModelResourceLocation(item, 0, itemLocation);
             MinecraftForge.EVENT_BUS.register(BakeEventHandler.instance);
+        }
+
+        @Override
+        public void init(FMLInitializationEvent event) {
+            ClientRegistry.bindTileEntitySpecialRenderer(CustomTileEntity.class, TestTESR.instance);
         }
     }
 

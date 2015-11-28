@@ -6,10 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.vecmath.Matrix4f;
 
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.resources.model.ModelRotation;
@@ -201,7 +198,7 @@ public class BlockStateLoader
                 models.put(entry.getKey(), Pair.of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
             }
 
-            return new MultiModel(hasBase ? base : null, baseTr, models.build());
+            return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());
         }
 
         @Override

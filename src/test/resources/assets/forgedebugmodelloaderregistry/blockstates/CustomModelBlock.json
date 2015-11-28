@@ -2,34 +2,24 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            "#texture": "forgedebugmodelloaderregistry:texture",
+            //"#texture": "forgedebugmodelloaderregistry:texture",
             "#chest": "entity/chest/normal"
         },
-        "model": "forgedebugmodelloaderregistry:chest.b3d"
+        "model": "forgedebugmodelloaderregistry:chest.b3d",
+        "transform": "forge:default-block"
      },
     "variants": {
-        "normal": [{
-            /*"transform": {
-                "rotation": {"y": 45}
-            }*/
-        }],
+        "normal": [{}],
         "inventory": [{
-            /*"transform": {
-                "thirdperson": {
-                    "translation": [ 0, 0.09375, -0.171875 ],
-                    "rotation": [ {"y": -45}, {"x": 10}, {"z": 170} ],
-                    "scale": 0.375
-                }
-            }*/
-            "transform": "forge:default-block"
+            "y": 180
         }],
         "facing": {
-            "down": {"model": "forgedebugmodelloaderregistry:chest.b3d", "x": 90},
-            "up": {"model": "forgedebugmodelloaderregistry:chest.b3d", "x": 270},
-            "north": {"model": "forgedebugmodelloaderregistry:chest.b3d"},
-            "south": {"model": "forgedebugmodelloaderregistry:chest.b3d", "y": 180},
-            "west": {"model": "forgedebugmodelloaderregistry:chest.b3d", "y": 270},
-            "east": {"model": "forgedebugmodelloaderregistry:chest.b3d", "y": 90}
+            "down": {"x": 90},
+            "up": {"x": 270},
+            "north": {"y": 180},
+            "south": {},
+            "west": {"y": 90},
+            "east": {"y": 270}
         }
     }
 }

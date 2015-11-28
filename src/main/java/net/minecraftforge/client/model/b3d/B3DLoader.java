@@ -2,7 +2,6 @@ package net.minecraftforge.client.model.b3d;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -20,15 +20,13 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -44,7 +42,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.b3d.B3DModel.Animation;
-import net.minecraftforge.client.model.b3d.B3DModel.Bone;
 import net.minecraftforge.client.model.b3d.B3DModel.Face;
 import net.minecraftforge.client.model.b3d.B3DModel.IKind;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
@@ -52,13 +49,14 @@ import net.minecraftforge.client.model.b3d.B3DModel.Mesh;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
 import net.minecraftforge.client.model.b3d.B3DModel.Texture;
 import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.lwjgl.BufferUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -68,7 +66,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 /*
  * Loader for Blitz3D models.
@@ -142,16 +142,19 @@ public class B3DLoader implements ICustomModelLoader
                 FMLLog.severe("No mesh named %s in model %s, skipping", mesh, modelLocation);
                 return ModelLoaderRegistry.getMissingModel();
             }
-            return new Wrapper(modelLocation, model.getTextures(), model.getMeshes().get(mesh));
+            return new ModelWrapper(modelLocation, model, ImmutableSet.of(mesh), 1);
         }
         if(!(model.getRoot().getKind() instanceof Mesh))
         {
-            FMLLog.severe("No root mesh in model %s and no mesh name in location, skipping", modelLocation);
-            return ModelLoaderRegistry.getMissingModel();
+            return new ModelWrapper(modelLocation, model, ImmutableSet.<String>of(), 1);
         }
-        return new Wrapper(modelLocation, model.getTextures(), (Node<Mesh>)model.getRoot());
+        return new ModelWrapper(modelLocation, model, ImmutableSet.of(((Node<Mesh>)model.getRoot()).getName()), 1);
     }
 
+    /**
+     * @deprecated Use json or IModelCustomData.process
+     */
+    @Deprecated
     public static class B3DMeshLocation extends ResourceLocation
     {
         public final String mesh;
@@ -196,17 +199,31 @@ public class B3DLoader implements ICustomModelLoader
     {
         private final Animation animation;
         private final int frame;
+        private final int nextFrame;
+        private final float progress;
         private final IModelState parent;
 
         public B3DState(Animation animation, int frame)
         {
-            this(animation, frame, null);
+            this(animation, frame, frame, 0);
         }
 
         public B3DState(Animation animation, int frame, IModelState parent)
         {
+            this(animation, frame, frame, 0, parent);
+        }
+
+        public B3DState(Animation animation, int frame, int nextFrame, float progress)
+        {
+            this(animation, frame, nextFrame, progress, null);
+        }
+
+        public B3DState(Animation animation, int frame, int nextFrame, float progress, IModelState parent)
+        {
             this.animation = animation;
             this.frame = frame;
+            this.nextFrame = nextFrame;
+            this.progress = MathHelper.clamp_float(progress, 0, 1);
             this.parent = getParent(parent);
         }
 
@@ -227,17 +244,47 @@ public class B3DLoader implements ICustomModelLoader
             return frame;
         }
 
+        public int getNextFrame()
+        {
+            return nextFrame;
+        }
+
+        public float getProgress()
+        {
+            return progress;
+        }
+
+        public IModelState getParent()
+        {
+            return parent;
+        }
+
         public TRSRTransformation apply(IModelPart part)
         {
             if(!(part instanceof PartWrapper<?>))
             {
                 throw new IllegalArgumentException("B3DState can only be applied to b3d models");
             }
+            Node<?> node = ((PartWrapper<?>)part).getNode();
+            TRSRTransformation nodeTransform;
+            if(progress < 1e-5 || frame == nextFrame)
+            {
+                nodeTransform = getNodeMatrix(node, frame);
+            }
+            else if(progress > 1 - 1e-5)
+            {
+                nodeTransform = getNodeMatrix(node, nextFrame);
+            }
+            else
+            {
+                nodeTransform = getNodeMatrix(node, frame);
+                nodeTransform = nodeTransform.slerp(getNodeMatrix(node, nextFrame), progress);
+            }
             if(parent != null)
             {
-                return parent.apply(part).compose(getNodeMatrix(((PartWrapper<?>)part).getNode()));
+                return parent.apply(part).compose(nodeTransform);
             }
-            return getNodeMatrix(((PartWrapper<?>)part).getNode());
+            return nodeTransform;
         }
 
         private static LoadingCache<Triple<Animation, Node<?>, Integer>, TRSRTransformation> cache = CacheBuilder.newBuilder()
@@ -256,12 +303,17 @@ public class B3DLoader implements ICustomModelLoader
             return cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node, frame));
         }
 
+        public TRSRTransformation getNodeMatrix(Node<?> node, int frame)
+        {
+            return cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node, frame));
+        }
+
         public static TRSRTransformation getNodeMatrix(Animation animation, Node<?> node, int frame)
         {
             TRSRTransformation ret = TRSRTransformation.identity();
             Key key = null;
             if(animation != null) key = animation.getKeys().get(frame, node);
-            else if(key == null && node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
+            else if(node.getAnimation() != null && node.getAnimation() != animation) key = node.getAnimation().getKeys().get(frame, node);
             if(key != null)
             {
                 Node<?> parent = node.getParent();
@@ -330,20 +382,36 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
+    /**
+     * @deprecated Use ModelWrapper, this will be removed in 1.9
+     */
+    @Deprecated
     public static class Wrapper extends PartWrapper<Mesh> implements IRetexturableModel, IModelCustomData
     {
         private final ResourceLocation location;
+        private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, ResourceLocation> textures;
 
         public Wrapper(ResourceLocation location, List<Texture> textures, B3DModel.Node<Mesh> mesh)
         {
-            this(location, buildTextures(textures), mesh);
+            this(location, ImmutableSet.<String>of(), buildTextures(textures), mesh);
         }
 
         public Wrapper(ResourceLocation location, ImmutableMap<String, ResourceLocation> textures, B3DModel.Node<Mesh> mesh)
         {
+            this(location, ImmutableSet.<String>of(), textures, mesh);
+        }
+
+        public Wrapper(ResourceLocation location, ImmutableSet<String> meshes, List<Texture> textures, B3DModel.Node<Mesh> mesh)
+        {
+            this(location, meshes, buildTextures(textures), mesh);
+        }
+
+        public Wrapper(ResourceLocation location, ImmutableSet<String> meshes, ImmutableMap<String, ResourceLocation> textures, B3DModel.Node<Mesh> mesh)
+        {
             super(mesh);
             this.location = location;
+            this.meshes = meshes;
             this.textures = textures;
         }
 
@@ -354,7 +422,9 @@ public class B3DLoader implements ICustomModelLoader
             for(Texture t : textures)
             {
                 String path = t.getPath();
-                builder.put(path, new ResourceLocation(getLocation(path)));
+                String location = getLocation(path);
+                if(!location.startsWith("#")) location = "#" + location;
+                builder.put(path, new ResourceLocation(location));
             }
             return builder.build();
         }
@@ -400,7 +470,7 @@ public class B3DLoader implements ICustomModelLoader
                 }
             }
             builder.put("missingno", missing);
-            return new BakedWrapper(this, state, format, builder.build());
+            return new BakedWrapper(getNode(), state, format, meshes, builder.build());
         }
 
         public B3DState getDefaultState()
@@ -467,32 +537,207 @@ public class B3DLoader implements ICustomModelLoader
         @Override
         public IModel process(ImmutableMap<String, String> customData)
         {
-            // TODO keyframe
-            return null;
+            return this;
+        }
+    }
+    public static class ModelWrapper implements IRetexturableModel, IModelCustomData
+    {
+        private final ResourceLocation modelLocation;
+        private final B3DModel model;
+        private final ImmutableSet<String> meshes;
+        private final ImmutableMap<String, ResourceLocation> textures;
+        private final int defaultKey;
+
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, int defaultKey)
+        {
+            this(modelLocation, model, meshes, defaultKey, buildTextures(model.getTextures()));
+        }
+
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, int defaultKey, ImmutableMap<String, ResourceLocation> textures)
+        {
+            this.modelLocation = modelLocation;
+            this.model = model;
+            this.meshes = meshes;
+            this.textures = textures;
+            this.defaultKey = defaultKey;
+        }
+
+        private static ImmutableMap<String, ResourceLocation> buildTextures(List<Texture> textures)
+        {
+            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+
+            for(Texture t : textures)
+            {
+                String path = t.getPath();
+                String location = getLocation(path);
+                if(!location.startsWith("#")) location = "#" + location;
+                builder.put(path, new ResourceLocation(location));
+            }
+            return builder.build();
+        }
+
+        private static String getLocation(String path)
+        {
+            if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
+            return path;
+        }
+
+        @Override
+        public Collection<ResourceLocation> getDependencies()
+        {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Collection<ResourceLocation> getTextures()
+        {
+            return Collections2.filter(textures.values(), new Predicate<ResourceLocation>()
+            {
+                public boolean apply(ResourceLocation loc)
+                {
+                    return !loc.getResourcePath().startsWith("#");
+                }
+            });
+        }
+
+        @Override
+        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        {
+            ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
+            TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
+            for(Map.Entry<String, ResourceLocation> e : textures.entrySet())
+            {
+                if(e.getValue().getResourcePath().startsWith("#"))
+                {
+                    FMLLog.severe("unresolved texture '%s' for b3d model '%s'", e.getValue().getResourcePath(), modelLocation);
+                    builder.put(e.getKey(), missing);
+                }
+                else
+                {
+                    builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue()));
+                }
+            }
+            builder.put("missingno", missing);
+            return new BakedWrapper(model.getRoot(), state, format, meshes, builder.build());
+        }
+
+        @Override
+        public IModelState getDefaultState()
+        {
+            return new B3DState(model.getRoot().getAnimation(), defaultKey, defaultKey, 0);
+        }
+
+        @Override
+        public IModel retexture(ImmutableMap<String, String> textures)
+        {
+            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
+            for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
+            {
+                String path = e.getKey();
+                String loc = getLocation(path);
+                if(textures.containsKey(loc))
+                {
+                    String newLoc = textures.get(loc);
+                    if(newLoc == null) newLoc = getLocation(path);
+                    builder.put(e.getKey(), new ResourceLocation(newLoc));
+                }
+                else
+                {
+                    builder.put(e);
+                }
+            }
+            return new ModelWrapper(modelLocation, model, meshes, defaultKey, builder.build());
+        }
+
+        @Override
+        public IModel process(ImmutableMap<String, String> data)
+        {
+            if(data.containsKey("mesh"))
+            {
+                JsonElement e = new JsonParser().parse(data.get("mesh"));
+                if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())
+                {
+                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), defaultKey, textures);
+                }
+                else if (e.isJsonArray())
+                {
+                    ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+                    for(JsonElement s : e.getAsJsonArray())
+                    {
+                        if(s.isJsonPrimitive() && s.getAsJsonPrimitive().isString())
+                        {
+                            builder.add(s.getAsString());
+                        }
+                        else
+                        {
+                            FMLLog.severe("unknown mesh definition '%s' in array for b3d model '%s'", s.toString(), modelLocation);
+                            return this;
+                        }
+                    }
+                    return new ModelWrapper(modelLocation, model, builder.build(), defaultKey, textures);
+                }
+                else
+                {
+                    FMLLog.severe("unknown mesh definition '%s' for b3d model '%s'", e.toString(), modelLocation);
+                    return this;
+                }
+            }
+            if(data.containsKey("key"))
+            {
+                JsonElement e = new JsonParser().parse(data.get("key"));
+                if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber())
+                {
+                    return new ModelWrapper(modelLocation, model, meshes, e.getAsNumber().intValue(), textures);
+                }
+                else
+                {
+                    FMLLog.severe("unknown keyframe definition '%s' for b3d model '%s'", e.toString(), modelLocation);
+                    return this;
+                }
+            }
+            return this;
         }
     }
 
     private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
     {
-        private final B3DLoader.Wrapper model;
+        private final Node<?> node;
         private final IModelState state;
         private final VertexFormat format;
+        private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
+        private final LoadingCache<Integer, BakedWrapper> cache;
 
-        private final ByteBuffer buf;
         private ImmutableList<BakedQuad> quads;
 
-        private static final int BYTES_IN_INT = Integer.SIZE / Byte.SIZE;
-        private static final int VERTICES_IN_QUAD = 4;
-
-        public BakedWrapper(B3DLoader.Wrapper model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
+        public BakedWrapper(final Node<?> node, final IModelState state, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
-            this.model = model;
+            this(node, state, format, meshes, textures, CacheBuilder.newBuilder()
+                .maximumSize(128)
+                .expireAfterAccess(2, TimeUnit.MINUTES)
+                .build(new CacheLoader<Integer, BakedWrapper>()
+                {
+                    public BakedWrapper load(Integer frame) throws Exception
+                    {
+                        IModelState parent = state;
+                        Animation newAnimation = node.getAnimation();
+                        if(parent instanceof B3DState)
+                        {
+                            B3DState ps = (B3DState)parent;
+                            parent = ps.getParent();
+                        }
+                        return new BakedWrapper(node, new B3DState(newAnimation, frame, frame, 0, parent), format, meshes, textures);
+                    }
+                }));
+        }
+        public BakedWrapper(Node<?> node, IModelState state, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, BakedWrapper> cache)
+        {
+            this.node = node;
             this.state = state;
             this.format = format;
+            this.meshes = meshes;
             this.textures = textures;
-
-            buf = BufferUtils.createByteBuffer(VERTICES_IN_QUAD * format.getNextOffset());
+            this.cache = cache;
         }
 
         public List<BakedQuad> getFaceQuads(EnumFacing side)
@@ -500,112 +745,100 @@ public class B3DLoader implements ICustomModelLoader
             return Collections.emptyList();
         }
 
-        @SuppressWarnings("unchecked")
         public List<BakedQuad> getGeneralQuads()
         {
             if(quads == null)
             {
-                Node<Mesh> mesh = model.getNode();
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for(Node<?> child : mesh.getNodes().values())
+                for(Node<?> child : node.getNodes().values())
                 {
-                    if(child.getKind() instanceof Mesh)
-                    {
-                        Node<Mesh> childMesh = (Node<Mesh>)child;
-                        builder.addAll(new BakedWrapper(new B3DLoader.Wrapper(model.getLocation(), model.getTextureMap(), childMesh), state, format, textures).getGeneralQuads());
-                    }
+                    builder.addAll(new BakedWrapper(child, state, format, meshes, textures).getGeneralQuads());
                 }
-                Multimap<Vertex, Pair<Float, Node<Bone>>> weightMap = mesh.getKind().getWeightMap();
-                Collection<Face> faces = mesh.getKind().getFaces();
-                faces = mesh.getKind().bake(new Function<Node<?>, Matrix4f>()
+                if(node.getKind() instanceof Mesh && meshes.contains(node.getName()))
                 {
-                    // gets transformation in global space
-                    public Matrix4f apply(Node<?> node)
+                    Mesh mesh = (Mesh)node.getKind();
+                    Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
                     {
-                        return state.apply(PartWrapper.create(node)).getMatrix();
+                        // gets transformation in global space
+                        public Matrix4f apply(Node<?> node)
+                        {
+                            return state.apply(PartWrapper.create(node)).getMatrix();
+                        }
+                    });
+                    for(Face f : faces)
+                    {
+                        UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
+                        quadBuilder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
+                        quadBuilder.setQuadColored();
+                        List<Texture> textures = null;
+                        if(f.getBrush() != null) textures = f.getBrush().getTextures();
+                        TextureAtlasSprite sprite;
+                        if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
+                        else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
+                        else sprite = this.textures.get(textures.get(0).getPath());
+                        putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
+                        putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
+                        putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
+                        putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
+                        builder.add(quadBuilder.build());
                     }
-                });
-                for(Face f : faces)
-                {
-                    buf.clear();
-                    List<Texture> textures = null;
-                    if(f.getBrush() != null) textures = f.getBrush().getTextures();
-                    TextureAtlasSprite sprite;
-                    if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
-                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
-                    else sprite = this.textures.get(textures.get(0).getPath());
-                    putVertexData(f.getV1(), sprite);
-                    putVertexData(f.getV2(), sprite);
-                    putVertexData(f.getV3(), sprite);
-                    putVertexData(f.getV3(), sprite);
-                    buf.flip();
-                    int[] data = new int[VERTICES_IN_QUAD * format.getNextOffset() / BYTES_IN_INT];
-                    buf.asIntBuffer().get(data);
-                    builder.add(new ColoredBakedQuad(data, -1, EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z)));
                 }
                 quads = builder.build();
             }
             return quads;
         }
 
-        private void put(VertexFormatElement e, Float... fs)
-        {
-            Attributes.put(buf, e, true, 0f, fs);
-        }
-
-        @SuppressWarnings("unchecked")
-        private final void putVertexData(Vertex v, TextureAtlasSprite sprite)
+        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
         {
             // TODO handle everything not handled (texture transformations, bones, transformations, normals, e.t.c)
-            int oldPos = buf.position();
-            Number[] ns = new Number[16];
-            for(int i = 0; i < ns.length; i++) ns[i] = 0f;
-            for(VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
+            for(int e = 0; e < format.getElementCount(); e++)
             {
-                switch(e.getUsage())
+                switch(format.getElement(e).getUsage())
                 {
                 case POSITION:
-                    put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1f);
+                    builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1);
                     break;
                 case COLOR:
+                    float d = LightUtil.diffuseLight(faceNormal.x, faceNormal.y, faceNormal.z);
                     if(v.getColor() != null)
                     {
-                        put(e, v.getColor().x, v.getColor().y, v.getColor().z, v.getColor().w);
+                        builder.put(e, d * v.getColor().x, d * v.getColor().y, d * v.getColor().z, v.getColor().w);
                     }
                     else
                     {
-                        put(e, 1f, 1f, 1f, 1f);
+                        builder.put(e, d, d, d, 1);
                     }
                     break;
                 case UV:
                     // TODO handle more brushes
-                    if(e.getIndex() < v.getTexCoords().length)
+                    if(format.getElement(e).getIndex() < v.getTexCoords().length)
                     {
-                        put(e,
+                        builder.put(e,
                             sprite.getInterpolatedU(v.getTexCoords()[0].x * 16),
                             sprite.getInterpolatedV(v.getTexCoords()[0].y * 16),
-                            0f,
-                            1f
+                            0,
+                            1
                         );
                     }
                     else
                     {
-                        put(e, 0f, 0f, 0f, 1f);
+                        builder.put(e, 0, 0, 0, 1);
                     }
                     break;
                 case NORMAL:
-                    // TODO
-                    put(e, 0f, 1f, 0f, 1f);
-                    break;
-                case GENERIC:
-                    // TODO
-                    put(e, 0f, 0f, 0f, 0f);
+                    if(v.getNormal() != null)
+                    {
+                        builder.put(e, v.getNormal().x, v.getNormal().y, v.getNormal().z, 0);
+                    }
+                    else
+                    {
+                        builder.put(e, faceNormal.x, faceNormal.y, faceNormal.z, 0);
+                    }
                     break;
                 default:
-                    break;
+                    builder.put(e);
                 }
             }
-            buf.position(oldPos + format.getNextOffset());
         }
 
         public boolean isAmbientOcclusion()
@@ -642,25 +875,31 @@ public class B3DLoader implements ICustomModelLoader
                 IExtendedBlockState exState = (IExtendedBlockState)state;
                 if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
                 {
-                    B3DState s = (B3DState)exState.getValue(B3DFrameProperty.instance);
+                    B3DState s = exState.getValue(B3DFrameProperty.instance);
                     if(s != null)
                     {
-                        return getCachedModel(s.getFrame());
+                        //return getCachedModel(s.getFrame());
+                        IModelState parent = this.state;
+                        Animation newAnimation = s.getAnimation();
+                        if(parent instanceof B3DState)
+                        {
+                            B3DState ps = (B3DState)parent;
+                            parent = ps.getParent();
+                        }
+                        if(newAnimation == null)
+                        {
+                            newAnimation = node.getAnimation();
+                        }
+                        if(s.getFrame() == s.getNextFrame())
+                        {
+                            return cache.getUnchecked(s.getFrame());
+                        }
+                        B3DState newState = new B3DState(newAnimation, s.getFrame(), s.getNextFrame(), s.getProgress(), parent);
+                        return new BakedWrapper(node, newState, format, meshes, textures);
                     }
                 }
             }
             return this;
-        }
-
-        private final Map<Integer, BakedWrapper> cache = new HashMap<Integer, BakedWrapper>();
-
-        public BakedWrapper getCachedModel(int frame)
-        {
-            if(!cache.containsKey(frame))
-            {
-                cache.put(frame, new BakedWrapper(model, new B3DState(model.getNode().getAnimation(), frame, state), format, textures));
-            }
-            return cache.get(frame);
         }
 
         public VertexFormat getFormat()
@@ -678,7 +917,7 @@ public class B3DLoader implements ICustomModelLoader
         {
             if(state instanceof IPerspectiveState)
             {
-                return Pair.of((IBakedModel)this, TRSRTransformation.blockCornerToCenter(((IPerspectiveState)state).forPerspective(cameraTransformType).apply(model)).getMatrix());
+                return Pair.of((IBakedModel)this, TRSRTransformation.blockCornerToCenter(((IPerspectiveState)state).forPerspective(cameraTransformType).apply(PartWrapper.create(node))).getMatrix());
             }
             return Pair.of((IBakedModel)this, null);
         }

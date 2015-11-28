@@ -82,7 +82,11 @@ public class GuiSelectString extends GuiScreen
             this.titleLine2 = ((GuiConfig) parentScreen).titleLine2;
             this.titleLine3 = I18n.format(configElement.getLanguageKey());
             this.tooltipHoverChecker = new HoverChecker(28, 37, 0, parentScreen.width, 800);
-
+            if(titleLine3 != null && titleLine2 == null)
+            {
+                ((GuiConfig) parentScreen).titleLine2 = "";
+                this.titleLine2 = "";
+            }
         }
         else
         {
