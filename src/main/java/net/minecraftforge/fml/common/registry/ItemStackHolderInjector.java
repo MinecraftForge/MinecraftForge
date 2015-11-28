@@ -23,11 +23,11 @@ public enum ItemStackHolderInjector
     private List<ItemStackHolderRef> itemStackHolders = Lists.newArrayList();
 
     public void inject() {
-        FMLLog.getLogger().log(Level.INFO, "Injecting itemstacks");
+        FMLLog.log(Level.INFO, "Injecting itemstacks");
         for (ItemStackHolderRef ishr: itemStackHolders) {
             ishr.apply();
         }
-        FMLLog.getLogger().log(Level.INFO, "Itemstack injection complete");
+        FMLLog.log(Level.INFO, "Itemstack injection complete");
     }
 
     public void findHolders(ASMDataTable table) {

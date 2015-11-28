@@ -11,10 +11,7 @@ import java.util.jar.JarFile;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.repackage.com.nothome.delta.Delta;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataOutput;
@@ -33,7 +30,7 @@ public class GenDiffSet {
         String outputDir = args[3]; //Path to place generated .binpatch
         String killTarget = args[4]; //"true" if we should destroy the target file if it generated a successful .binpatch
 
-        LogManager.getLogger("GENDIFF").log(Level.INFO, String.format("Creating patches at %s for %s from %s", outputDir, sourceJar, targetDir));
+        LoggerFactory.getLogger("GENDIFF").info(String.format("Creating patches at %s for %s from %s", outputDir, sourceJar, targetDir));
         Delta delta = new Delta();
         FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
         remapper.setupLoadOnly(deobfData, false);
@@ -45,7 +42,7 @@ public class GenDiffSet {
 
         for (String name : remapper.getObfedClasses())
         {
-//            Logger.getLogger("GENDIFF").info(String.format("Evaluating path for data :%s",name));
+//            LoggerFactory.getLogger("GENDIFF").info(String.format("Evaluating path for data :%s",name));
             String fileName = name;
             String jarName = name;
             if (RESERVED_NAMES.contains(name.toUpperCase(Locale.ENGLISH)))
@@ -87,11 +84,11 @@ public class GenDiffSet {
                 File target = new File(outputDir, targetClassName+".binpatch");
                 target.getParentFile().mkdirs();
                 Files.write(diffOut.toByteArray(), target);
-                Logger.getLogger("GENDIFF").info(String.format("Wrote patch for %s (%s) at %s",name, targetClassName, target.getAbsolutePath()));
+                LoggerFactory.getLogger("GENDIFF").info(String.format("Wrote patch for %s (%s) at %s",name, targetClassName, target.getAbsolutePath()));
                 if (kill)
                 {
                     targetFile.delete();
-                    Logger.getLogger("GENDIFF").info(String.format("  Deleted target: %s", targetFile.toString()));
+                    LoggerFactory.getLogger("GENDIFF").info(String.format("  Deleted target: %s", targetFile.toString()));
                 }
             }
         }

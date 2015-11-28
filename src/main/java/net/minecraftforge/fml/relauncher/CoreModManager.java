@@ -280,13 +280,13 @@ public class CoreModManager {
         File[] derpdirlist = coreMods.listFiles(derpdirfilter);
         if (derpdirlist != null && derpdirlist.length > 0)
         {
-            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "There appear to be jars extracted into the mods directory. This is VERY BAD and will almost NEVER WORK WELL");
-            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "You should place original jars only in the mods directory. NEVER extract them to the mods directory.");
-            FMLRelaunchLog.log.getLogger().log(Level.FATAL, "The directories below appear to be extracted jar files. Fix this before you continue.");
+            FMLRelaunchLog.log(Level.FATAL, "There appear to be jars extracted into the mods directory. This is VERY BAD and will almost NEVER WORK WELL");
+            FMLRelaunchLog.log(Level.FATAL, "You should place original jars only in the mods directory. NEVER extract them to the mods directory.");
+            FMLRelaunchLog.log(Level.FATAL, "The directories below appear to be extracted jar files. Fix this before you continue.");
 
             for (File f : derpdirlist)
             {
-                FMLRelaunchLog.log.getLogger().log(Level.FATAL, "Directory {} contains {}", f.getName(), Arrays.asList(new File(f,"META-INF").list()));
+                FMLRelaunchLog.log(Level.FATAL, "Directory {} contains {}", f.getName(), Arrays.asList(new File(f,"META-INF").list()));
             }
 
             RuntimeException re = new RuntimeException("Extracted mod jars found, loading will NOT continue");

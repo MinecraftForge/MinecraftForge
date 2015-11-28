@@ -11,8 +11,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -42,7 +42,7 @@ public final class UsernameCache {
     private static final File saveFile = new File( /* The minecraft dir */(File) FMLInjectionData.data()[6], "usernamecache.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final Logger log = LogManager.getLogger(UsernameCache.class);
+    private static final Logger log = LoggerFactory.getLogger(UsernameCache.class);
 
     private UsernameCache() {}
 

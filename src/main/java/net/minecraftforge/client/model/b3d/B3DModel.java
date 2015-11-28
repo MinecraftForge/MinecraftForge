@@ -27,8 +27,8 @@ import javax.vecmath.Vector4f;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -42,7 +42,7 @@ import com.google.common.collect.Table;
 
 public class B3DModel
 {
-    static final Logger logger = LogManager.getLogger(B3DModel.class);
+    static final Logger logger = LoggerFactory.getLogger(B3DModel.class);
     private final List<Texture> textures;
     private final List<Brush> brushes;
     private final Node<?> root;

@@ -32,7 +32,6 @@ import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 
 public class DimensionManager
@@ -300,7 +299,7 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
+            FMLLog.log(Level.ERROR, String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
                     dim, providers.get(getProviderType(dim)).getSimpleName()),e);
             throw new RuntimeException(e);
         }

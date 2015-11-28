@@ -22,7 +22,6 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -142,6 +141,7 @@ public class FMLPreInitializationEvent extends FMLStateEvent
      *
      * @return A logger
      */
+    // Not updated to slf4j yet as that would be a breaking change
     public Logger getModLog()
     {
         Logger log = LogManager.getLogger(modContainer.getModId());

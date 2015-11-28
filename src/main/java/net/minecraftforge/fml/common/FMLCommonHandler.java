@@ -62,7 +62,7 @@ import net.minecraftforge.fml.server.FMLServerHandler;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
