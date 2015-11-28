@@ -193,7 +193,6 @@ public class ItemLayerModel implements IRetexturableModel {
                 }
             }
         }
-
         // front
         builder.add(buildQuad(format, transform, EnumFacing.SOUTH, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
@@ -211,7 +210,8 @@ public class ItemLayerModel implements IRetexturableModel {
         return builder.build();
     }
 
-    protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v) {
+    protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
+    {
         return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
     }
 
