@@ -27,17 +27,7 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -264,7 +265,8 @@
-                         if (chunk.func_150802_k())
-                         {
-                             list.add(chunk);
--                            list1.addAll(((WorldServer)this.field_70170_p).func_147486_a(chunkcoordintpair.field_77276_a * 16, 0, chunkcoordintpair.field_77275_b * 16, chunkcoordintpair.field_77276_a * 16 + 16, 256, chunkcoordintpair.field_77275_b * 16 + 16));
-+                            list1.addAll(((WorldServer)this.field_70170_p).func_147486_a(chunkcoordintpair.field_77276_a * 16, 0, chunkcoordintpair.field_77275_b * 16, chunkcoordintpair.field_77276_a * 16 + 16, 256, chunkcoordintpair.field_77275_b * 16 + 15));
-+                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
-                             iterator1.remove();
-                         }
-                     }
-@@ -294,6 +296,7 @@
+@@ -294,6 +295,7 @@
                  for (Chunk chunk1 : list)
                  {
                      this.func_71121_q().func_73039_n().func_85172_a(this, chunk1);
@@ -45,7 +35,7 @@
                  }
              }
          }
-@@ -424,6 +427,7 @@
+@@ -424,6 +426,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -53,7 +43,7 @@
          if (this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages"))
          {
              Team team = this.func_96124_cp();
-@@ -447,7 +451,20 @@
+@@ -447,7 +450,20 @@
  
          if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
          {
@@ -74,7 +64,7 @@
          }
  
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c))
-@@ -461,6 +478,7 @@
+@@ -461,6 +477,7 @@
          if (entitylivingbase != null)
          {
              EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(entitylivingbase)));
@@ -82,7 +72,7 @@
  
              if (entitylist$entityegginfo != null)
              {
-@@ -831,6 +849,7 @@
+@@ -831,6 +848,7 @@
      {
          if (p_71064_1_ != null)
          {

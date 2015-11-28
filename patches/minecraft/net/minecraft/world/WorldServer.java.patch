@@ -127,23 +127,24 @@
                      int k = 0;
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(-k, -k, -k), nextticklistentry1.field_180282_a.func_177982_a(k, k, k)))
-@@ -696,22 +720,39 @@
+@@ -696,22 +720,40 @@
      {
          List<TileEntity> list = Lists.<TileEntity>newArrayList();
  
 -        for (int i = 0; i < this.field_147482_g.size(); ++i)
-+        //Forge: Optomize this loop to only grab from the chunks it needs
-+        for (int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
++        //Forge: Optimize this loop to only grab from the chunks it needs
++        for (int x = p_147486_1_; x < p_147486_4_; x += 16)
          {
 -            TileEntity tileentity = (TileEntity)this.field_147482_g.get(i);
 -            BlockPos blockpos = tileentity.func_174877_v();
 -
 -            if (blockpos.func_177958_n() >= p_147486_1_ && blockpos.func_177956_o() >= p_147486_2_ && blockpos.func_177952_p() >= p_147486_3_ && blockpos.func_177958_n() < p_147486_4_ && blockpos.func_177956_o() < p_147486_5_ && blockpos.func_177952_p() < p_147486_6_)
-+            for (int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
++            for (int z = p_147486_3_; z < p_147486_6_; z += 16)
              {
 -                list.add(tileentity);
-+                Chunk chunk = this.func_72964_e(x, z);
-+                if (chunk != null)
++                if (!this.func_175680_a(x >> 4, z >> 4, true)) continue; //Prevent loading extra chunks to just read data. This causes orphaned chunks that never unload.
++                Chunk chunk = this.func_72964_e(x >> 4, z >> 4);
++                if (chunk != null && !chunk.func_76621_g())
 +                {
 +                    for (TileEntity entity : chunk.func_177434_r().values())
 +                    {
@@ -151,7 +152,7 @@
 +                        {
 +                            BlockPos pos = entity.func_174877_v();
 +                            if (pos.func_177958_n() >= p_147486_1_ && pos.func_177956_o() >= p_147486_2_ && pos.func_177952_p() >= p_147486_3_ &&
-+                                pos.func_177958_n() <= p_147486_4_ && pos.func_177956_o() <= p_147486_5_ && pos.func_177952_p() <= p_147486_6_)
++                                pos.func_177958_n() <  p_147486_4_ && pos.func_177956_o() <  p_147486_5_ && pos.func_177952_p() <  p_147486_6_)
 +                            {
 +                                list.add(entity);
 +                            }
@@ -174,7 +175,7 @@
          return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-@@ -777,6 +818,7 @@
+@@ -777,6 +819,7 @@
          }
          else
          {
@@ -182,7 +183,7 @@
              this.field_72987_B = true;
              WorldChunkManager worldchunkmanager = this.field_73011_w.func_177499_m();
              List<BiomeGenBase> list = worldchunkmanager.func_76932_a();
-@@ -822,7 +864,7 @@
+@@ -822,7 +865,7 @@
  
      protected void func_73047_i()
      {
@@ -191,7 +192,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -859,6 +901,7 @@
+@@ -859,6 +902,7 @@
              }
  
              this.field_73020_y.func_73151_a(p_73044_1_, p_73044_2_);
@@ -199,7 +200,7 @@
  
              for (Chunk chunk : Lists.newArrayList(this.field_73059_b.func_152380_a()))
              {
-@@ -892,6 +935,7 @@
+@@ -892,6 +936,7 @@
          this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_71203_ab().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -207,7 +208,7 @@
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -947,6 +991,7 @@
+@@ -947,6 +992,7 @@
      public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -215,7 +216,7 @@
          explosion.func_77278_a();
          explosion.func_77279_a(false);
  
-@@ -1026,19 +1071,23 @@
+@@ -1026,19 +1072,23 @@
              this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.func_177502_q());
          }
  
@@ -243,7 +244,7 @@
          }
      }
  
-@@ -1104,6 +1153,11 @@
+@@ -1104,6 +1154,11 @@
          return this.field_73061_a.func_152345_ab();
      }
  
