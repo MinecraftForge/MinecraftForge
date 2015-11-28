@@ -469,39 +469,39 @@ public class GameData {
             }
         }
 
-        // Update potion IDs and array
-        Arrays.fill(Potion.potionTypes, null); // first we clear the array
-        for(Map.Entry<String, Integer> entry : potions.ids.entrySet()) {
-            String name = entry.getKey();
-            int newId = entry.getValue();
-            int currId = getMain().potionRegistry.getId(name);
+        // Update potion IDs and array. potions may be missing if we're updating from an old world
+        if(potions != null) {
+            Arrays.fill(Potion.potionTypes, null); // first we clear the array
+            for(Map.Entry<String, Integer> entry : potions.ids.entrySet()) {
+                String name = entry.getKey();
+                int newId = entry.getValue();
+                int currId = getMain().potionRegistry.getId(name);
 
-            if (currId == -1)
-            {
-                FMLLog.info("Found a missing potion id from the world %s", name);
-                missingPotions.put(entry.getKey(), newId);
-                continue; // no potion -> nothing to adjust
+                if(currId == -1) {
+                    FMLLog.info("Found a missing potion id from the world %s", name);
+                    missingPotions.put(entry.getKey(), newId);
+                    continue; // no potion -> nothing to adjust
+                }
+                else if(currId != newId) {
+                    FMLLog
+                        .fine("Fixed potion id mismatch for %s. Attempt to fix: %d (init) -> %d (map).", name, currId, newId);
+                    remapPotions.put(name, new Integer[]{currId, newId});
+                }
+
+                Potion potion = getMain().potionRegistry.getRaw(name);
+                currId = newData.registerPotion(potion, name, newId);
+
+                if(currId != newId) {
+                    throw new IllegalStateException(
+                        String.format("Can't map potion %s to id %d (seen at: %d), already occupied by %s",
+                                      name, newId, currId, newData.potionRegistry.getRaw(newId)));
+                }
+
+                // fix the data in the potion and the potions-array
+                potion.id = currId;
+                Potion.ensureArraySize(currId);
+                Potion.potionTypes[currId] = potion;
             }
-            else if (currId != newId)
-            {
-                FMLLog.fine("Fixed potion id mismatch for %s. Attempt to fix: %d (init) -> %d (map).", name, currId, newId);
-                remapPotions.put(name, new Integer[] { currId, newId });
-            }
-
-            Potion potion = getMain().potionRegistry.getRaw(name);
-            currId = newData.registerPotion(potion, name, newId);
-
-            if (currId != newId)
-            {
-                throw new IllegalStateException(
-                    String.format("Can't map potion %s to id %d (seen at: %d), already occupied by %s",
-                                  name, newId, currId, newData.potionRegistry.getRaw(newId)));
-            }
-
-            // fix the data in the potion and the potions-array
-            potion.id = currId;
-            Potion.ensureArraySize(currId);
-            Potion.potionTypes[currId] = potion;
         }
 
 

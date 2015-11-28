@@ -31,6 +31,11 @@ public class PotionRegistryDebug {
 
     Random rand = new Random();
     TIntSet taken = new TIntHashSet(100);
+    int ra = rand.nextInt(100) + 100;
+    taken.add(ra);
+
+    // a new potion with a random id so that forge has to remap it
+    new PotionForge(ra, new ResourceLocation("forge", "realRandomPotion"), false, 0x0000ff);
 
     for(int i = 0; i < 20; i++) {
       int r = rand.nextInt(200) + 35;
