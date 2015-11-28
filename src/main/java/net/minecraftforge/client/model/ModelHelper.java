@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
 import org.lwjgl.BufferUtils;
 
@@ -18,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 
 public final class ModelHelper {
   private ModelHelper() {} // non-instantiable
@@ -30,14 +32,13 @@ public final class ModelHelper {
    * The resulting list of quads is the texture represented as a list of horizontal OR vertical quads,
    * depending on which creates less quads. If the amount of quads is equal, horizontal is preferred.
    *
-   * @param buf
    * @param format
-   *@param template The input texture to convert
+   * @param template The input texture to convert
    * @param sprite The texture whose UVs shall be used   @return The generated quads.
    */
-  public static List<BakedQuad> convertTexture(ByteBuffer buf, VertexFormat format, TextureAtlasSprite template, TextureAtlasSprite sprite, int color) {
-    List<BakedQuad> horizontal = convertTextureHorizontal(buf, format, template, sprite, color);
-    List<BakedQuad> vertical = convertTextureVertical(buf, format, template, sprite, color);
+  public static List<BakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z1, float z2, int color) {
+    List<BakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z1, z2, color);
+    List<BakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z1, z2, color);
 
     return horizontal.size() >= vertical.size() ? horizontal : vertical;
   }
@@ -46,7 +47,7 @@ public final class ModelHelper {
    * Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
    * The height of the strips is as big as possible.
    */
-  public static List<BakedQuad> convertTextureHorizontal(ByteBuffer buf, VertexFormat format, TextureAtlasSprite template, TextureAtlasSprite sprite, int color) {
+  public static List<BakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z1, float z2, int color) {
     int w = template.getIconWidth();
     int h = template.getIconHeight();
     int[] data = template.getFrameTextureData(0)[0];
@@ -84,8 +85,8 @@ public final class ModelHelper {
           }
 
           // create the quad
-          quads.add(genQuad(buf, format, start,y, x,endY, sprite, 0.01f, EnumFacing.SOUTH, color));
-          quads.add(genQuad(buf, format, start,y, x,endY, sprite, 0.01f, EnumFacing.NORTH, color));
+          quads.add(genQuad(format, transform, start,y, x,endY, z1, sprite, EnumFacing.SOUTH, color));
+          quads.add(genQuad(format, transform, start,y, x,endY, z2, sprite, EnumFacing.NORTH, color));
 
           // update Y if all the rows match. no need to rescan
           if(endY - y > 1) {
@@ -104,7 +105,7 @@ public final class ModelHelper {
    * Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
    * The width of the strips is as big as possible.
    */
-  public static List<BakedQuad> convertTextureVertical(ByteBuffer buf, VertexFormat format, TextureAtlasSprite template, TextureAtlasSprite sprite, int color) {
+  public static List<BakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z1, float z2, int color) {
     int w = template.getIconWidth();
     int h = template.getIconHeight();
     int[] data = template.getFrameTextureData(0)[0];
@@ -142,8 +143,8 @@ public final class ModelHelper {
           }
 
           // create the quad
-          quads.add(genQuad(buf, format, x,start, endX,y, sprite, 0.01f, EnumFacing.SOUTH, color));
-          quads.add(genQuad(buf, format, x,start, endX,y, sprite, 0.01f, EnumFacing.NORTH, color));
+          quads.add(genQuad(format, transform, x,start, endX,y, z1, sprite, EnumFacing.SOUTH, color));
+          quads.add(genQuad(format, transform, x,start, endX,y, z2, sprite, EnumFacing.NORTH, color));
 
           // update X if all the columns match. no need to rescan
           if(endX - x > 1) {
@@ -158,11 +159,13 @@ public final class ModelHelper {
     return quads;
   }
 
+  // true if alpha != 0
+  private static boolean isVisible(int color) {
+    return (color >> 24 & 255) > 0;
+  }
 
-  private static FaceBakery faceBakery = new FaceBakery();
-  // FIXME
-  // todo: change this to the generic quad-generation function in forge.. as soon as we get one
-  public static BakedQuad genQuad(ByteBuffer buf, VertexFormat format, float x1, float y1, float x2, float y2, TextureAtlasSprite sprite, float offset, EnumFacing facing, int color) {
+
+  public static BakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color) {
     float u1 = sprite.getInterpolatedU(x1);
     float v1 = sprite.getInterpolatedV(y1);
     float u2 = sprite.getInterpolatedU(x2);
@@ -179,107 +182,67 @@ public final class ModelHelper {
 
     BakedQuad quad;
     if(facing == EnumFacing.SOUTH) {
-      offset *= -1;
-      quad = ItemLayerModel.buildFrontQuad(buf, format, 0, x1, y1, x2, y2, u1, v1, u2, v2);
+      quad = putQuad(format, transform, facing, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
     } else if(facing == EnumFacing.NORTH) {
-      quad = ItemLayerModel.buildBackQuad(buf, format, 0, x1, y1, x2, y2, u1, v1, u2, v2);
+      quad = putQuad(format, transform, facing, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
     } else {
       throw new UnsupportedOperationException("This function only supports front(SOUTH) and back(NORTH) quads");
     }
 
-    int[] data = quad.getVertexData();
-
-    /*
-    //y1 = 16f-y1;
-    //y2 = 16f-y2;
-    //float tmp = x1;
-    //x1 = x2;
-    //x2 = tmp;
-
-    float u1 = x1;
-    float v1 = y1;
-    float u2 = x2;
-    float v2 = y2;
-
-    BakedQuad quad = faceBakery.makeBakedQuad(new Vector3f(x1, y1, 9.5f + offset),
-                                    new Vector3f(x2, y2, 6.5f - offset),
-                                    new BlockPartFace(null, -1, sprite.getIconName(), new BlockFaceUV(new float[] {u1, v1, u2, v2}, 0)),
-                                    sprite, facing, ModelRotation.X0_Y0, null, false, true);
-
-    int[] data = quad.getVertexData();
-
-    int c = 0;
-    c |= ((color >> 16) & 0xFF) << 0; // red
-    c |= ((color >>  8) & 0xFF) << 8; // green
-    c |= ((color >>  0) & 0xFF) << 16; // blue
-    c |= ((color >> 24) & 0xFF) << 24; // alpha
-
-    /*
-    int[] data = new int[28];
-
-    float z = 8;
-    if(facing == EnumFacing.NORTH)
-        z -= 0.5+offset;
-    if(facing == EnumFacing.SOUTH)
-        z += 0.5+offset;
-    
-    x1 /= 16f;
-    x2 /= 16f;
-    y1 /= 16f;
-    y2 /= 16f;
-    z /= 16f;
-    
-    int i = 0;
-    data[i*7 + 0] = Float.floatToRawIntBits(x1);
-    data[i*7 + 1] = Float.floatToRawIntBits(y1);
-    data[i*7 + 2] = Float.floatToRawIntBits(z);
-    data[i*7 + 3] = c;
-    data[i*7 + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(x1));
-    data[i*7 + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(y1));
-    
-    i++;
-    data[i*7 + 0] = Float.floatToRawIntBits(x1);
-    data[i*7 + 1] = Float.floatToRawIntBits(y2);
-    data[i*7 + 2] = Float.floatToRawIntBits(z);
-    data[i*7 + 3] = c;
-    data[i*7 + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(x1));
-    data[i*7 + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(y2));
-    
-    i++;
-    data[i*7 + 0] = Float.floatToRawIntBits(x2);
-    data[i*7 + 1] = Float.floatToRawIntBits(y2);
-    data[i*7 + 2] = Float.floatToRawIntBits(z);
-    data[i*7 + 3] = c;
-    data[i*7 + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(x2));
-    data[i*7 + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(y2));
-    
-    i++;
-    data[i*7 + 0] = Float.floatToRawIntBits(x2);
-    data[i*7 + 1] = Float.floatToRawIntBits(y1);
-    data[i*7 + 2] = Float.floatToRawIntBits(z);
-    data[i*7 + 3] = c;
-    data[i*7 + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(x2));
-    data[i*7 + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(y1));
-*/
-
-    int c = 0;
-    c |= ((color >> 16) & 0xFF) << 0; // red
-    c |= ((color >>  8) & 0xFF) << 8; // green
-    c |= ((color >>  0) & 0xFF) << 16; // blue
-    c |= ((color >> 24) & 0xFF) << 24; // alpha
-
-    // data that's the same on all vertices
-    for(int i = 0; i < 4; i++) {
-      data[i*7 + 2] = Float.floatToRawIntBits(Float.intBitsToFloat(data[i*7 + 2]) + offset);
-      data[i*7 + 3] = c;
-    }
-    
-    return new IColoredBakedQuad.ColoredBakedQuad(data, -1, facing);
+    return quad;
   }
 
+  private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, int color,
+                                           float x1, float y1, float x2, float y2, float z,
+                                           float u1, float v1, float u2, float v2) {
+    side = side.getOpposite();
+    UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+    builder.setQuadTint(0);
+    builder.setQuadOrientation(side);
+    builder.setQuadColored();
 
-  // true if alpha != 0
-  private static boolean isVisible(int color) {
-    return (color >> 24 & 255) > 0;
+    putVertex(builder, format, transform, side, x1, y1, z, u1, v2, color);
+    putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);
+    putVertex(builder, format, transform, side, x2, y2, z, u2, v1, color);
+    putVertex(builder, format, transform, side, x2, y1, z, u2, v2, color);
+    return builder.build();
+  }
+
+  private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, TRSRTransformation transform, EnumFacing side,
+                                float x, float y, float z, float u, float v, int color)
+  {
+    Vector4f vec = new Vector4f();
+    for(int e = 0; e < format.getElementCount(); e++)
+    {
+      switch(format.getElement(e).getUsage())
+      {
+        case POSITION:
+          vec.x = x;
+          vec.y = y;
+          vec.z = z;
+          vec.w = 1;
+          transform.getMatrix().transform(vec);
+          builder.put(e, vec.x, vec.y, vec.z, vec.w);
+          break;
+        case COLOR:
+          float r = ((color >> 16) & 0xFF)/255f; // red
+          float g = ((color >>  8) & 0xFF)/255f; // green
+          float b = ((color >>  0) & 0xFF)/255f; // blue
+          float a = ((color >> 24) & 0xFF)/255f; // alpha
+          builder.put(e, r, g, b, a);
+          break;
+        case UV: if(format.getElement(e).getIndex() == 0)
+        {
+          builder.put(e, u, v, 0f, 1f);
+          break;
+        }
+        case NORMAL:
+          builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+          break;
+        default:
+          builder.put(e);
+          break;
+      }
+    }
   }
 }

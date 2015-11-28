@@ -16,6 +16,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -31,10 +32,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector4f;
 
 public class ModelDynBucket implements IModel {
   public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
-    
+
+  private static final float SOUTH_Z_FLUID = 7.45f/16f;
+  private static final float NORTH_Z_FLUID = 8.55f/16f;
+
+  private static final float SOUTH_Z_COVER = 7.40f/16f;
+  private static final float NORTH_Z_COVER = 8.60f/16f;
+
   protected final IModel bucket;
   protected static final ResourceLocation interior = new ResourceLocation("forge", "items/bucket_interior");
   protected static final ResourceLocation front = new ResourceLocation("forge", "items/bucket_front");
@@ -81,8 +89,9 @@ public class ModelDynBucket implements IModel {
                                   Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
     // bucket model
     IFlexibleBakedModel bakedBucket = bucket.bake(bucket.getDefaultState(), format, bakedTextureGetter);
+    TRSRTransformation transform = state.apply(bucket);
 
-    return new BakedDynBucket(bakedBucket, FluidRegistry.WATER, hasTextures);
+    return new BakedDynBucket(bakedBucket, transform, FluidRegistry.WATER, hasTextures);
   }
 
   @Override
@@ -115,16 +124,18 @@ public class ModelDynBucket implements IModel {
     private final IFlexibleBakedModel vanillaBakedBucket;
     private final Map<String, IFlexibleBakedModel> cache = Maps.newHashMap(); // contains all the baked models since they'll never change
 
+    private final TRSRTransformation transform;
     private final List<BakedQuad> generalQuads;
     private final boolean hasTextures;
 
-    public BakedDynBucket(IFlexibleBakedModel bakedBucket, Fluid fluid, boolean hasTextures) {
+    public BakedDynBucket(IFlexibleBakedModel bakedBucket, TRSRTransformation transform, Fluid fluid, boolean hasTextures) {
       this.vanillaBakedBucket = bakedBucket;
       this.hasTextures = hasTextures;
 
       TextureAtlasSprite interiorSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(interior.toString());
       TextureAtlasSprite frontSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(front.toString());
 
+      this.transform = transform;
       this.generalQuads = bakeModel(interiorSprite, frontSprite, fluid);
     }
 
@@ -137,10 +148,10 @@ public class ModelDynBucket implements IModel {
       Fluid fluid = fluidStack.getFluid();
       String name = fluid.getName();
 
-      cache.clear();
+      cache.clear(); // todo: remove
       
       if(!cache.containsKey(name)) {
-        cache.put(name, new BakedDynBucket(vanillaBakedBucket, fluidStack.getFluid(), hasTextures));
+        cache.put(name, new BakedDynBucket(vanillaBakedBucket, transform, fluidStack.getFluid(), hasTextures));
       }
 
       return cache.get(name);
@@ -153,12 +164,11 @@ public class ModelDynBucket implements IModel {
       builder.addAll(vanillaBakedBucket.getGeneralQuads());
       TextureAtlasSprite fluidSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString());
 
-      ByteBuffer buf = BufferUtils.createByteBuffer(4 * this.getFormat().getNextOffset());
       VertexFormat format = this.getFormat();
 
       if(hasTextures) {
 
-        builder.addAll(ModelHelper.convertTexture(buf, format, interior, fluidSprite, fluid.getColor()));
+        builder.addAll(ModelHelper.convertTexture(format, transform, interior, fluidSprite, SOUTH_Z_FLUID, NORTH_Z_FLUID, fluid.getColor()));
 
         // add the front cover
 /*
@@ -167,23 +177,24 @@ public class ModelDynBucket implements IModel {
         builder.add(ModelHelper.genQuad(buf, format, 0, 8, 8, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
         builder.add(ModelHelper.genQuad(buf, format, 8, 8, 16, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
         */
-        builder.add(ModelHelper.genQuad(buf, format, 0, 0, 16, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
-        //builder.add(ModelHelper.genQuad(buf, format, 0, 0, 16, 16, front, 0.03f, EnumFacing.SOUTH, 0xffffffff));
+        builder.add(ModelHelper.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_COVER, front, EnumFacing.NORTH, 0xffffffff));
+        builder.add(ModelHelper.genQuad(format, transform, 0, 0, 16, 16, SOUTH_Z_COVER, front, EnumFacing.SOUTH, 0xffffffff));
       }
       else {
         int color = fluid.getColor();
-        //fluidSprite = vanillaBakedBucket.getTexture();
-        float offset = 0.01f;
 
-        for(EnumFacing face : new EnumFacing[]{EnumFacing.NORTH}){
-          builder.add(ModelHelper.genQuad(buf, format, 5, 3, 11, 4, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 3, 4, 13, 5, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 4, 5, 12, 6, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 6, 6, 10, 7, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 10, 7, 12, 8, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 6, 8, 7, 9, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 10, 8, 11, 10, fluidSprite, offset, face, color));
-          builder.add(ModelHelper.genQuad(buf, format, 10, 11, 11, 12, fluidSprite, offset, face, color));
+        EnumFacing[] faces = new EnumFacing[] {EnumFacing.NORTH, EnumFacing.SOUTH};
+        float[] depths = new float[] {NORTH_Z_COVER, SOUTH_Z_COVER};
+
+        for(int i = 0; i < 2; i++){
+          builder.add(ModelHelper.genQuad(format, transform,  5, 3, 11, 4, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform,  3, 4, 13, 5, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform,  4, 5, 12, 6, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform,  6, 6, 10, 7, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform, 10, 7, 12, 8, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform,  6, 8,  7, 9, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform, 10, 8, 11,10, depths[i], fluidSprite, faces[i], color));
+          builder.add(ModelHelper.genQuad(format, transform, 10,11, 11,12, depths[i], fluidSprite, faces[i], color));
         }
       }
 

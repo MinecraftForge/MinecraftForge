@@ -193,12 +193,8 @@ public class ItemLayerModel implements IRetexturableModel {
                 }
             }
         }
+
         // front
-        //builder.add(buildFrontQuad(format, transform, tint, 0, 0, 1, 1, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV()));
-        // back
-        //builder.add(buildBackQuad(format, transform, tint, 0, 0, 1, 1, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV()));
-
-
         builder.add(buildQuad(format, transform, EnumFacing.SOUTH, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
@@ -309,26 +305,6 @@ public class ItemLayerModel implements IRetexturableModel {
             x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x0, y0, z2, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
         );
-    }
-
-    static final BakedQuad buildFrontQuad(VertexFormat format, TRSRTransformation transform, int tint,
-                                          float x0, float y0, float x1, float y1,
-                                          float u0, float v0, float u1, float v1) {
-        return buildQuad(format, transform, EnumFacing.SOUTH, tint,
-                         x0, y0, 7.5f / 16f, u0, v1,
-                         x0, y1, 7.5f / 16f, u0, v0,
-                         x1, y1, 7.5f / 16f, u1, v0,
-                         x1, y0, 7.5f / 16f, u1, v1);
-    }
-
-    static final BakedQuad buildBackQuad(VertexFormat format, TRSRTransformation transform, int tint,
-                                         float x0, float y0, float x1, float y1,
-                                         float u0, float v0, float u1, float v1) {
-        return buildQuad(format, transform, EnumFacing.NORTH, tint,
-                         x0, y0, 8.5f / 16f, u0, v1,
-                         x1, y0, 8.5f / 16f, u1, v1,
-                         x1, y1, 8.5f / 16f, u1, v0,
-                         x0, y1, 8.5f / 16f, u0, v0);
     }
 
     private static final BakedQuad buildQuad(
