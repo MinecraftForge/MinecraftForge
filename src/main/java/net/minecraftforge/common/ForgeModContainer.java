@@ -12,13 +12,14 @@ import static net.minecraftforge.common.ForgeVersion.revisionVersion;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
@@ -58,6 +59,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
 {
+    public static final String VERSION_CHECK_CAT = "version_checking";
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
@@ -70,8 +72,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableVersionCheck = false;
     public static int defaultSpawnFuzz = 20;
     public static boolean defaultHasSpawnFuzz = true;
+    public static boolean forgeLightPipelineEnabled = true;
 
     private static Configuration config;
+    private static ForgeModContainer INSTANCE;
+    public static ForgeModContainer getInstance()
+    {
+        return INSTANCE;
+    }
+
+    private URL updateJSONUrl = null;
 
     public ForgeModContainer()
     {
@@ -81,7 +91,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         meta.name        = "Minecraft Forge";
         meta.version     = String.format("%d.%d.%d.%d", majorVersion, minorVersion, revisionVersion, buildVersion);
         meta.credits     = "Made possible with help from many people";
-        meta.authorList  = Arrays.asList("LexManos", "Eloraam", "Spacetoad");
+        meta.authorList  = Arrays.asList("LexManos", "Cpw");
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
                            "to work cooperatively together. It allows many mods to be created without " +
                            "them editing the main Minecraft code.";
@@ -89,12 +99,17 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         meta.updateUrl   = "http://MinecraftForge.net/forum/index.php/topic,5.0.html";
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
+        try {
+            updateJSONUrl    = new URL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
+        } catch (MalformedURLException e) {}
 
         config = null;
         File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
         config = new Configuration(cfgFile);
 
         syncConfig(true);
+
+        INSTANCE = this;
     }
 
     @Override
@@ -222,7 +237,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         defaultHasSpawnFuzz = prop.getBoolean(Boolean.TRUE);
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,
+                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
+        forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
+
+        propOrder = new ArrayList<String>();
+        prop = config.get(VERSION_CHECK_CAT, "Global", true, "Enable the entire mod update check system. This only applies to mods using the Forge system.");
+        propOrder.add("Global");
+
+        config.setCategoryPropertyOrder(VERSION_CHECK_CAT, propOrder);
 
         if (config.hasChanged())
         {
@@ -247,6 +273,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             {
                 ForgeChunkManager.syncConfigDefaults();
                 ForgeChunkManager.loadConfiguration();
+            }
+            else if (VERSION_CHECK_CAT.equals(event.configID))
+            {
+                syncConfig(false);
             }
         }
     }
@@ -389,5 +419,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();
         return certificates != null ? certificates[0] : null;
+    }
+
+    @Override
+    public URL getUpdateUrl()
+    {
+        return updateJSONUrl;
     }
 }

@@ -35,7 +35,12 @@ public class ModMetadata
     public String description = "";
 
     public String url = "";
+    @Deprecated //Never really used for anything and format is undefined. See updateJSON for replacement.
     public String updateUrl = "";
+    /**
+     * URL to update json file. Format is defined here: https://gist.github.com/LexManos/7aacb9aa991330523884
+     */
+    public String updateJSON = "";
 
     public String logoFile = "";
     public String version = "";

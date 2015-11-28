@@ -14,8 +14,11 @@ package net.minecraftforge.fml.client;
 
 import java.util.ArrayList;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.StringUtils;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.ForgeVersion.CheckResult;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer;
@@ -31,9 +34,9 @@ public class GuiSlotModList extends GuiScrollingList
 
     public GuiSlotModList(GuiModList parent, ArrayList<ModContainer> mods, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 88 + 4, 10, 35);
-        this.parent=parent;
-        this.mods=mods;
+        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 88 + 4, 10, 35, parent.width, parent.height);
+        this.parent = parent;
+        this.mods = mods;
     }
 
     @Override
@@ -43,15 +46,15 @@ public class GuiSlotModList extends GuiScrollingList
     }
 
     @Override
-    protected void elementClicked(int var1, boolean var2)
+    protected void elementClicked(int index, boolean doubleClick)
     {
-        this.parent.selectModIndex(var1);
+        this.parent.selectModIndex(index);
     }
 
     @Override
-    protected boolean isSelected(int var1)
+    protected boolean isSelected(int index)
     {
-        return this.parent.modIndexSelected(var1);
+        return this.parent.modIndexSelected(index);
     }
 
     @Override
@@ -72,23 +75,39 @@ public class GuiSlotModList extends GuiScrollingList
     }
 
     @Override
-    protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
+    protected void drawSlot(int idx, int right, int top, int height, Tessellator tess)
     {
-        ModContainer mc=mods.get(listIndex);
-        String name = StringUtils.stripControlCodes(mc.getName());
-        String version = StringUtils.stripControlCodes(mc.getDisplayVersion());
-        if (Loader.instance().getModState(mc)==ModState.DISABLED)
+        ModContainer mc       = mods.get(idx);
+        String       name     = StringUtils.stripControlCodes(mc.getName());
+        String       version  = StringUtils.stripControlCodes(mc.getDisplayVersion());
+        FontRenderer font     = this.parent.getFontRenderer();
+        CheckResult  vercheck = ForgeVersion.getResult(mc);
+
+        if (Loader.instance().getModState(mc) == ModState.DISABLED)
         {
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(name, listWidth - 10), this.left + 3 , var3 + 2, 0xFF2222);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(version, listWidth - 10), this.left + 3 , var3 + 12, 0xFF2222);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth("DISABLED", listWidth - 10), this.left + 3 , var3 + 22, 0xFF2222);
+            font.drawString(font.trimStringToWidth(name,       listWidth - 10), this.left + 3 , top +  2, 0xFF2222);
+            font.drawString(font.trimStringToWidth(version,    listWidth - 10), this.left + 3 , top + 12, 0xFF2222);
+            font.drawString(font.trimStringToWidth("DISABLED", listWidth - 10), this.left + 3 , top + 22, 0xFF2222);
         }
         else
         {
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(name, listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(version, listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 10), this.left + 3 , var3 + 22, 0xCCCCCC);
+            font.drawString(font.trimStringToWidth(name,    listWidth - 10), this.left + 3 , top +  2, 0xFFFFFF);
+            font.drawString(font.trimStringToWidth(version, listWidth - 10), this.left + 3 , top + 12, 0xCCCCCC);
+            font.drawString(font.trimStringToWidth(mc.getMetadata() != null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 10), this.left + 3 , top + 22, 0xCCCCCC);
+
+            switch(vercheck.status) //TODO: Change to icons?
+            {
+                case BETA_OUTDATED:
+                case OUTDATED:
+                    font.drawString("U", right - font.getCharWidth('U') - 1, top+height-font.FONT_HEIGHT+2, 0x22FF22);
+                    break;
+                case AHEAD:
+                case BETA:
+                case FAILED:
+                case PENDING:
+                case UP_TO_DATE:
+                    break;
+            }
         }
     }
-
 }

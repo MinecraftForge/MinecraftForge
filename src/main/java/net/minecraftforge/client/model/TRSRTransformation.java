@@ -3,6 +3,8 @@ package net.minecraftforge.client.model;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
@@ -40,7 +42,14 @@ public class TRSRTransformation implements IModelState, ITransformation
 
     public TRSRTransformation(Matrix4f matrix)
     {
-        this.matrix = matrix;
+        if(matrix == null)
+        {
+            this.matrix = identity.matrix;
+        }
+        else
+        {
+            this.matrix = matrix;
+        }
     }
 
     public TRSRTransformation(Vector3f translation, Quat4f leftRot, Vector3f scale, Quat4f rightRot)
@@ -67,6 +76,25 @@ public class TRSRTransformation implements IModelState, ITransformation
     public TRSRTransformation(ModelRotation rotation)
     {
         this(rotation.getMatrix());
+    }
+    
+    public TRSRTransformation(EnumFacing facing)
+    {
+        this(getMatrix(facing));
+    }
+    
+    public static Matrix4f getMatrix(EnumFacing facing)
+    {
+        switch(facing)
+        {
+        case DOWN: return ModelRotation.X90_Y0.getMatrix();
+        case UP: return ModelRotation.X270_Y0.getMatrix();
+        case NORTH: return TRSRTransformation.identity.matrix;
+        case SOUTH: return ModelRotation.X0_Y180.getMatrix();
+        case WEST: return ModelRotation.X0_Y270.getMatrix();
+        case EAST: return ModelRotation.X0_Y90.getMatrix();
+        default: return new Matrix4f();
+        }
     }
 
     private static final TRSRTransformation identity;
@@ -155,7 +183,6 @@ public class TRSRTransformation implements IModelState, ITransformation
     {
         Matrix4f res = new Matrix4f(), t = new Matrix4f();
         res.setIdentity();
-        if(translation != null) res.setTranslation(translation);
         if(leftRot != null)
         {
             t.set(leftRot);
@@ -174,6 +201,7 @@ public class TRSRTransformation implements IModelState, ITransformation
             t.set(rightRot);
             res.mul(t);
         }
+        if(translation != null) res.setTranslation(translation);
         return res;
     }
 
@@ -195,7 +223,8 @@ public class TRSRTransformation implements IModelState, ITransformation
         b.set(m);
         b.mul(t);
 
-        sortSingularValues(b, v);
+        // FIXME: this doesn't work correctly for some reason; not crucial, so disabling for now; investigate in the future.
+        //sortSingularValues(b, v);
 
         Pair<Float, Float> p;
 
@@ -255,7 +284,7 @@ public class TRSRTransformation implements IModelState, ITransformation
         return f;
     }
 
-    private static final float eps = 1e-7f;
+    private static final float eps = 1e-6f;
     private static final float g = 3f + 2f * (float)Math.sqrt(2);
     private static final float cs = (float)Math.cos(Math.PI / 8);
     private static final float ss = (float)Math.sin(Math.PI / 8);
@@ -339,50 +368,59 @@ public class TRSRTransformation implements IModelState, ITransformation
         Quat4f qt = new Quat4f(), ret = new Quat4f(0, 0, 0, 1);
         Pair<Float, Float> p;
         // 01
-        p = approxGivensQuat(m.m00, .5f * (m.m01 + m.m10), m.m11);
-        qt.set(0, 0, p.getLeft(), p.getRight());
-        //qt.normalize();
-        ret.mul(qt);
-        //t.set(qt);
-        t.setIdentity();
-        t.m00 = qt.w * qt.w - qt.z * qt.z;
-        t.m11 = t.m00;
-        t.m10 = 2 * qt.z * qt.w;
-        t.m01 = -t.m10;
-        t.m22 = qt.w * qt.w + qt.z * qt.z;
-        m.mul(m, t);
-        t.transpose();
-        m.mul(t, m);
+        if(m.m01 * m.m01 + m.m10 * m.m10 > eps)
+        {
+            p = approxGivensQuat(m.m00, .5f * (m.m01 + m.m10), m.m11);
+            qt.set(0, 0, p.getLeft(), p.getRight());
+            //qt.normalize();
+            ret.mul(qt);
+            //t.set(qt);
+            t.setIdentity();
+            t.m00 = qt.w * qt.w - qt.z * qt.z;
+            t.m11 = t.m00;
+            t.m10 = 2 * qt.z * qt.w;
+            t.m01 = -t.m10;
+            t.m22 = qt.w * qt.w + qt.z * qt.z;
+            m.mul(m, t);
+            t.transpose();
+            m.mul(t, m);
+        }
         // 02
-        p = approxGivensQuat(m.m00, .5f * (m.m02 + m.m20), m.m22);
-        qt.set(0, -p.getLeft(), 0, p.getRight());
-        //qt.normalize();
-        ret.mul(qt);
-        //t.set(qt);
-        t.setIdentity();
-        t.m00 = qt.w * qt.w - qt.y * qt.y;
-        t.m22 = t.m00;
-        t.m20 = -2 * qt.y * qt.w;
-        t.m02 = -t.m20;
-        t.m11 = qt.w * qt.w + qt.y * qt.y;
-        m.mul(m, t);
-        t.transpose();
-        m.mul(t, m);
+        if(m.m02 * m.m02 + m.m20 * m.m20 > eps)
+        {
+            p = approxGivensQuat(m.m00, .5f * (m.m02 + m.m20), m.m22);
+            qt.set(0, -p.getLeft(), 0, p.getRight());
+            //qt.normalize();
+            ret.mul(qt);
+            //t.set(qt);
+            t.setIdentity();
+            t.m00 = qt.w * qt.w - qt.y * qt.y;
+            t.m22 = t.m00;
+            t.m20 = -2 * qt.y * qt.w;
+            t.m02 = -t.m20;
+            t.m11 = qt.w * qt.w + qt.y * qt.y;
+            m.mul(m, t);
+            t.transpose();
+            m.mul(t, m);
+        }
         // 12
-        p = approxGivensQuat(m.m11, .5f * (m.m12 + m.m21), m.m22);
-        qt.set(p.getLeft(), 0, 0, p.getRight());
-        //qt.normalize();
-        ret.mul(qt);
-        //t.set(qt);
-        t.setIdentity();
-        t.m11 = qt.w * qt.w - qt.x * qt.x;
-        t.m22 = t.m11;
-        t.m21 = 2 * qt.x * qt.w;
-        t.m12 = -t.m21;
-        t.m00 = qt.w * qt.w + qt.x * qt.x;
-        m.mul(m, t);
-        t.transpose();
-        m.mul(t, m);
+        if(m.m12 * m.m12 + m.m21 * m.m21 > eps)
+        {
+            p = approxGivensQuat(m.m11, .5f * (m.m12 + m.m21), m.m22);
+            qt.set(p.getLeft(), 0, 0, p.getRight());
+            //qt.normalize();
+            ret.mul(qt);
+            //t.set(qt);
+            t.setIdentity();
+            t.m11 = qt.w * qt.w - qt.x * qt.x;
+            t.m22 = t.m11;
+            t.m21 = 2 * qt.x * qt.w;
+            t.m12 = -t.m21;
+            t.m00 = qt.w * qt.w + qt.x * qt.x;
+            m.mul(m, t);
+            t.transpose();
+            m.mul(t, m);
+        }
         return ret;
     }
 
@@ -515,5 +553,60 @@ public class TRSRTransformation implements IModelState, ITransformation
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp);
         return new TRSRTransformation(ret);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((matrix == null) ? 0 : matrix.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        TRSRTransformation other = (TRSRTransformation) obj;
+        if (matrix == null)
+        {
+            if (other.matrix != null) return false;
+        }
+        else if (!matrix.equals(other.matrix)) return false;
+        return true;
+    }
+
+    public static Vector3f lerp(Tuple3f from, Tuple3f to, float progress)
+    {
+        Vector3f res = new Vector3f(from);
+        res.interpolate(from, to, progress);
+        return res;
+    }
+
+    public static Vector4f lerp(Tuple4f from, Tuple4f to, float progress)
+    {
+        Vector4f res = new Vector4f(from);
+        res.interpolate(from, to, progress);
+        return res;
+    }
+
+    public static Quat4f slerp(Quat4f from, Quat4f to, float progress)
+    {
+        Quat4f res = new Quat4f();
+        res.interpolate(from, to, progress);
+        return res;
+    }
+
+    public TRSRTransformation slerp(TRSRTransformation that, float progress)
+    {
+        return new TRSRTransformation(
+            lerp(this.getTranslation(), that.getTranslation(), progress),
+            slerp(this.getLeftRot(), that.getLeftRot(), progress),
+            lerp(this.getScale(), that.getScale(), progress),
+            slerp(this.getRightRot(), that.getRightRot(), progress)
+        );
     }
 }

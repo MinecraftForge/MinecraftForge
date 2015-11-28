@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.vecmath.AxisAngle4d;
-import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -21,8 +20,8 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.BlockStateLoader.SubModel;
 import net.minecraftforge.client.model.BlockStateLoader.Marker;
+import net.minecraftforge.client.model.BlockStateLoader.SubModel;
 import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.base.Optional;

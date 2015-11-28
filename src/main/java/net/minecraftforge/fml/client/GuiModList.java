@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -30,6 +31,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -37,15 +39,22 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.ForgeVersion.CheckResult;
+import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
+import static net.minecraft.util.EnumChatFormatting.*;
 
 import org.apache.logging.log4j.Level;
-import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Strings;
 
@@ -93,14 +102,13 @@ public class GuiModList extends GuiScreen
 
     private GuiScreen mainMenu;
     private GuiSlotModList modList;
+    private GuiScrollingList modInfo;
     private int selected = -1;
     private ModContainer selectedMod;
     private int listWidth;
     private ArrayList<ModContainer> mods;
     private GuiButton configModButton;
     private GuiButton disableModButton;
-    private ResourceLocation cachedLogo;
-    private Dimension cachedLogoDimensions;
 
     private int buttonMargin = 1;
     private int numButtons = SortType.values().length;
@@ -152,7 +160,6 @@ public class GuiModList extends GuiScreen
         }
         listWidth = Math.min(listWidth, 150);
         this.modList = new GuiSlotModList(this, mods, listWidth);
-        this.modList.registerScrollButtons(this.buttonList, 7, 8);
 
         this.buttonList.add(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")));
         configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, "Config");
@@ -173,6 +180,8 @@ public class GuiModList extends GuiScreen
         buttonList.add(new GuiButton(SortType.A_TO_Z.buttonID, x, y, width - buttonMargin, 20, "A-Z"));
         x += width + buttonMargin;
         buttonList.add(new GuiButton(SortType.Z_TO_A.buttonID, x, y, width - buttonMargin, 20, "Z-A"));
+
+        updateCache();
     }
 
     @Override
@@ -230,14 +239,15 @@ public class GuiModList extends GuiScreen
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) throws IOException
+    {
         if (button.enabled)
         {
             SortType type = SortType.getTypeForButton(button);
 
             if (type != null)
             {
-                for (GuiButton b : (List<GuiButton>) buttonList)
+                for (GuiButton b : (List<GuiButton>)buttonList)
                 {
                     if (SortType.getTypeForButton(b) != null)
                     {
@@ -254,9 +264,12 @@ public class GuiModList extends GuiScreen
                 switch (button.id)
                 {
                     case 6:
+                    {
                         this.mc.displayGuiScreen(this.mainMenu);
                         return;
+                    }
                     case 20:
+                    {
                         try
                         {
                             IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
@@ -269,6 +282,7 @@ public class GuiModList extends GuiScreen
                         }
                         return;
                     }
+                }
             }
         }
         super.actionPerformed(button);
@@ -281,147 +295,15 @@ public class GuiModList extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int p_571_1_, int p_571_2_, float p_571_3_)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
-        this.drawCenteredString(this.fontRendererObj, "Mod List", this.width / 2, 16, 0xFFFFFF);
-        int offset = this.listWidth  + 20;
-        if (selectedMod != null)
-        {
-            GlStateManager.enableBlend();
-            if (!selectedMod.getMetadata().autogenerated)
-            {
-                configModButton.visible = true;
-                disableModButton.visible = true;
-                disableModButton.packedFGColour = 0xFF3377;
-                configModButton.enabled = false;
-                int shifty = 35;
-                String logoFile = selectedMod.getMetadata().logoFile;
-                if (!logoFile.isEmpty())
-                {
-                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                    TextureManager tm = mc.getTextureManager();
-                    IResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
-                    try
-                    {
-                        if (cachedLogo == null)
-                        {
-                            BufferedImage logo = null;
-                            if (pack!=null)
-                            {
-                                logo = pack.getPackImage();
-                            }
-                            else
-                            {
-                                InputStream logoResource = getClass().getResourceAsStream(logoFile);
-                                if (logoResource != null)
-                                {
-                                    logo = ImageIO.read(logoResource);
-                                }
-                            }
-                            if (logo != null)
-                            {
-                                cachedLogo = tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo));
-                                cachedLogoDimensions = new Dimension(logo.getWidth(), logo.getHeight());
-                            }
-                        }
-                        if (cachedLogo != null)
-                        {
-                            this.mc.renderEngine.bindTexture(cachedLogo);
-                            double scaleX = cachedLogoDimensions.width / 200.0;
-                            double scaleY = cachedLogoDimensions.height / 65.0;
-                            double scale = 1.0;
-                            if (scaleX > 1 || scaleY > 1)
-                            {
-                                scale = 1.0 / Math.max(scaleX, scaleY);
-                            }
-                            cachedLogoDimensions.width *= scale;
-                            cachedLogoDimensions.height *= scale;
-                            int top = 32;
-                            Tessellator tess = Tessellator.getInstance();
-                            WorldRenderer world = tess.getWorldRenderer();
-                            world.startDrawingQuads();
-                            world.addVertexWithUV(offset,                               top + cachedLogoDimensions.height,  zLevel, 0, 1);
-                            world.addVertexWithUV(offset + cachedLogoDimensions.width,  top + cachedLogoDimensions.height,  zLevel, 1, 1);
-                            world.addVertexWithUV(offset + cachedLogoDimensions.width,  top,                                zLevel, 1, 0);
-                            world.addVertexWithUV(offset,                               top,                                zLevel, 0, 0);
-                            tess.draw();
+        this.modList.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.modInfo != null)
+            this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
 
-                            shifty += 65;
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        ;
-                    }
-                }
-                this.fontRendererObj.drawStringWithShadow(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
-                shifty += 12;
-
-                shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);
-                shifty = drawLine(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)), offset, shifty);
-                if (!selectedMod.getMetadata().credits.isEmpty())
-                {
-                   shifty = drawLine(String.format("Credits: %s", selectedMod.getMetadata().credits), offset, shifty);
-                }
-                shifty = drawLine(String.format("Authors: %s", selectedMod.getMetadata().getAuthorList()), offset, shifty);
-                shifty = drawLine(String.format("URL: %s", selectedMod.getMetadata().url), offset, shifty);
-                shifty = drawLine(selectedMod.getMetadata().childMods.isEmpty() ? "No child mods for this mod" : String.format("Child mods: %s", selectedMod.getMetadata().getChildModList()), offset, shifty);
-                int rightSide = this.width - offset - 20;
-                if (rightSide > 20)
-                {
-                    this.getFontRenderer().drawSplitString(selectedMod.getMetadata().description, offset, shifty + 10, rightSide, 0xDDDDDD);
-                }
-                Disableable disableable = selectedMod.canBeDisabled();
-                if (disableable == Disableable.RESTART)
-                {
-                    disableModButton.enabled = true;
-                    disableModButton.visible = true;
-                    disableModButton.packedFGColour = 0xFF3377;
-                }
-                else if (disableable == Disableable.YES)
-                {
-                    disableModButton.enabled = true;
-                    disableModButton.visible = true;
-                    disableModButton.packedFGColour = 0;
-                }
-                else
-                {
-                    disableModButton.packedFGColour = 0;
-                    disableModButton.visible = true;
-                    disableModButton.enabled = false;
-                }
-                IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
-                if (guiFactory == null || guiFactory.mainConfigGuiClass() == null)
-                {
-                    configModButton.visible = true;
-                    configModButton.enabled = false;
-                }
-                else
-                {
-                    configModButton.visible = true;
-                    configModButton.enabled = true;
-                }
-            }
-            else
-            {
-                offset = ( this.listWidth + this.width ) / 2;
-                this.drawCenteredString(this.fontRendererObj, selectedMod.getName(), offset, 35, 0xFFFFFF);
-                this.drawCenteredString(this.fontRendererObj, String.format("Version: %s",selectedMod.getVersion()), offset, 45, 0xFFFFFF);
-                this.drawCenteredString(this.fontRendererObj, String.format("Mod State: %s",Loader.instance().getModState(selectedMod)), offset, 55, 0xFFFFFF);
-                this.drawCenteredString(this.fontRendererObj, "No mod information found", offset, 65, 0xDDDDDD);
-                this.drawCenteredString(this.fontRendererObj, "Ask your mod author to provide a mod mcmod.info file", offset, 75, 0xDDDDDD);
-                configModButton.visible = false;
-                disableModButton.visible = false;
-            }
-            GlStateManager.disableBlend();
-        }
-        else
-        {
-            configModButton.visible = false;
-            disableModButton.visible = false;
-        }
-        super.drawScreen(p_571_1_, p_571_2_, p_571_3_);
+        int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
+        this.drawCenteredString(this.fontRendererObj, "Mod List", left, 16, 0xFFFFFF);
+        super.drawScreen(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
         int x = ((10 + modList.right) / 2) - (getFontRenderer().getStringWidth(text) / 2);
@@ -441,13 +323,266 @@ public class GuiModList extends GuiScreen
 
     public void selectModIndex(int index)
     {
+        if (index == this.selected)
+            return;
         this.selected = index;
         this.selectedMod = (index >= 0 && index <= mods.size()) ? mods.get(selected) : null;
-        cachedLogo = null;
+
+        updateCache();
     }
 
     public boolean modIndexSelected(int index)
     {
         return index == selected;
+    }
+
+    private void updateCache()
+    {
+        configModButton.visible = false;
+        disableModButton.visible = false;
+        modInfo = null;
+
+        if (selectedMod == null)
+            return;
+
+        ResourceLocation logoPath = null;
+        Dimension logoDims = new Dimension(0, 0);
+        List<String> lines = new ArrayList<String>();
+        CheckResult vercheck = ForgeVersion.getResult(selectedMod);
+
+        String logoFile = selectedMod.getMetadata().logoFile;
+        if (!logoFile.isEmpty())
+        {
+            TextureManager tm = mc.getTextureManager();
+            IResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
+            try
+            {
+                BufferedImage logo = null;
+                if (pack != null)
+                {
+                    logo = pack.getPackImage();
+                }
+                else
+                {
+                    InputStream logoResource = getClass().getResourceAsStream(logoFile);
+                    if (logoResource != null)
+                        logo = ImageIO.read(logoResource);
+                }
+                if (logo != null)
+                {
+                    logoPath = tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo));
+                    logoDims = new Dimension(logo.getWidth(), logo.getHeight());
+                }
+            }
+            catch (IOException e) { }
+        }
+
+        if (!selectedMod.getMetadata().autogenerated)
+        {
+            disableModButton.visible = true;
+            disableModButton.enabled = true;
+            disableModButton.packedFGColour = 0;
+            Disableable disableable = selectedMod.canBeDisabled();
+            if (disableable == Disableable.RESTART)
+            {
+                disableModButton.packedFGColour = 0xFF3377;
+            }
+            else if (disableable != Disableable.YES)
+            {
+                disableModButton.enabled = false;
+            }
+
+            IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
+            configModButton.visible = true;
+            configModButton.enabled = guiFactory != null && guiFactory.mainConfigGuiClass() != null;
+
+            lines.add(selectedMod.getMetadata().name);
+            lines.add(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
+            lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)));
+
+            if (!selectedMod.getMetadata().credits.isEmpty())
+            {
+                lines.add("Credits: " + selectedMod.getMetadata().credits);
+            }
+
+            lines.add("Authors: " + selectedMod.getMetadata().getAuthorList());
+            lines.add("URL: " + selectedMod.getMetadata().url);
+
+            if (selectedMod.getMetadata().childMods.isEmpty())
+                lines.add("No child mods for this mod");
+            else
+                lines.add("Child mods: " + selectedMod.getMetadata().getChildModList());
+
+            if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
+                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+
+            lines.add(null);
+            lines.add(selectedMod.getMetadata().description);
+        }
+        else
+        {
+            lines.add(WHITE + selectedMod.getName());
+            lines.add(WHITE + "Version: " + selectedMod.getVersion());
+            lines.add(WHITE + "Mod State: " + Loader.instance().getModState(selectedMod));
+            if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
+                lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
+
+            lines.add(null);
+            lines.add(RED + "No mod information found");
+            lines.add(RED + "Ask your mod author to provide a mod mcmod.info file");
+        }
+
+        if ((vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
+        {
+            lines.add(null);
+            lines.add("Changes:");
+            for (Entry<ComparableVersion, String> entry : vercheck.changes.entrySet())
+            {
+                lines.add("  " + entry.getKey() + ":");
+                lines.add(entry.getValue());
+                lines.add(null);
+            }
+        }
+
+        modInfo = new Info(this.width - this.listWidth - 30, lines, logoPath, logoDims);
+    }
+
+    private class Info extends GuiScrollingList
+    {
+        private ResourceLocation logoPath;
+        private Dimension logoDims;
+        private List<IChatComponent> lines = null;
+
+        public Info(int width, List<String> lines, ResourceLocation logoPath, Dimension logoDims)
+        {
+            super(GuiModList.this.getMinecraftInstance(),
+                  width,
+                  GuiModList.this.height,
+                  32, GuiModList.this.height - 88 + 4,
+                  GuiModList.this.listWidth + 20, 60,
+                  GuiModList.this.width,
+                  GuiModList.this.height);
+            this.lines    = resizeContent(lines);
+            this.logoPath = logoPath;
+            this.logoDims = logoDims;
+
+            this.setHeaderInfo(true, getHeaderHeight());
+        }
+
+        @Override protected int getSize() { return 0; }
+        @Override protected void elementClicked(int index, boolean doubleClick) { }
+        @Override protected boolean isSelected(int index) { return false; }
+        @Override protected void drawBackground() {}
+        @Override protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) { }
+
+        private List<String> splitLines(String line)
+        {
+            return null;
+        }
+
+        private List<IChatComponent> resizeContent(List<String> lines)
+        {
+            List<IChatComponent> ret = new ArrayList<IChatComponent>();
+            for (String line : lines)
+            {
+                if (line == null)
+                {
+                    ret.add(null);
+                    continue;
+                }
+
+                IChatComponent chat = ForgeHooks.newChatWithLinks(line, false);
+                ret.addAll(GuiUtilRenderComponents.func_178908_a(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
+            }
+            return ret;
+        }
+
+        private int getHeaderHeight()
+        {
+          int height = 0;
+          if (logoPath != null)
+          {
+              double scaleX = logoDims.width / 200.0;
+              double scaleY = logoDims.height / 65.0;
+              double scale = 1.0;
+              if (scaleX > 1 || scaleY > 1)
+              {
+                  scale = 1.0 / Math.max(scaleX, scaleY);
+              }
+              logoDims.width *= scale;
+              logoDims.height *= scale;
+
+              height += logoDims.height;
+              height += 10;
+          }
+          height += (lines.size() * 10);
+          if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
+          return height;
+        }
+
+
+        protected void drawHeader(int entryRight, int relativeY, Tessellator tess)
+        {
+            int top = relativeY;
+
+            if (logoPath != null)
+            {
+                GlStateManager.enableBlend();
+                GuiModList.this.mc.renderEngine.bindTexture(logoPath);
+                WorldRenderer world = tess.getWorldRenderer();
+                int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
+                world.startDrawingQuads();
+                world.addVertexWithUV(offset,                  top + logoDims.height, zLevel, 0, 1);
+                world.addVertexWithUV(offset + logoDims.width, top + logoDims.height, zLevel, 1, 1);
+                world.addVertexWithUV(offset + logoDims.width, top,                   zLevel, 1, 0);
+                world.addVertexWithUV(offset,                  top,                   zLevel, 0, 0);
+                tess.draw();
+                GlStateManager.disableBlend();
+                top += logoDims.height + 10;
+            }
+
+            for (IChatComponent line : lines)
+            {
+                if (line != null)
+                {
+                    GlStateManager.enableBlend();
+                    GuiModList.this.fontRendererObj.drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
+                    GlStateManager.disableAlpha();
+                    GlStateManager.disableBlend();
+                }
+                top += 10;
+            }
+        }
+
+        @Override
+        protected void clickHeader(int x, int y)
+        {
+            int offset = y;
+            if (logoPath != null) {
+              offset -= logoDims.height + 10;
+            }
+            if (offset <= 0)
+                return;
+
+            int lineIdx = offset / 10;
+            if (lineIdx >= lines.size())
+                return;
+
+            IChatComponent line = lines.get(lineIdx);
+            if (line != null)
+            {
+                int k = -4;
+                for (IChatComponent part : (Iterable<IChatComponent>)line) {
+                    if (!(part instanceof ChatComponentText))
+                        continue;
+                    k += GuiModList.this.fontRendererObj.getStringWidth(((ChatComponentText)part).getChatComponentText_TextValue());
+                    if (k >= x)
+                    {
+                        GuiModList.this.func_175276_a(part);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

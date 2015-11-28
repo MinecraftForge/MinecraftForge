@@ -1,6 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,11 +13,10 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
 
 /*
  * Central hub for custom model loaders.
@@ -32,6 +30,7 @@ public class ModelLoaderRegistry
     static
     {
         registerLoader(B3DLoader.instance);
+        registerLoader(OBJLoader.instance);
         registerLoader(ModelFluid.FluidLoader.instance);
         registerLoader(ItemLayerModel.Loader.instance);
     }
@@ -65,8 +64,8 @@ public class ModelLoaderRegistry
 
     public static IModel getModel(ResourceLocation location) throws IOException
     {
-        ResourceLocation actual = getActualLocation(location);
         if(cache.containsKey(location)) return cache.get(location);
+        ResourceLocation actual = getActualLocation(location);
         ICustomModelLoader accepted = null;
         for(ICustomModelLoader loader : loaders)
         {
@@ -128,5 +127,9 @@ public class ModelLoaderRegistry
     public static void clearModelCache()
     {
         cache.clear();
+        // putting the builtin models in
+        cache.put(new ResourceLocation("minecraft:builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
+        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
+        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
     }
 }

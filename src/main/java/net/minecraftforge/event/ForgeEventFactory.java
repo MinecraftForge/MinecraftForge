@@ -63,6 +63,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -396,6 +397,10 @@ public class ForgeEventFactory
     public static void onPlayerFall(EntityPlayer player, float distance, float multiplier)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, multiplier));
+    }
+    
+    public static boolean onPlayerSpawnSet(EntityPlayer player, BlockPos pos, boolean forced) {
+        return MinecraftForge.EVENT_BUS.post(new PlayerSetSpawnEvent(player, pos, forced));
     }
 
     public static void onPlayerClone(EntityPlayer player, EntityPlayer oldPlayer, boolean wasDeath)

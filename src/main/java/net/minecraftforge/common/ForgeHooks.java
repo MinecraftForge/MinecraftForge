@@ -57,6 +57,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
@@ -442,12 +443,13 @@ public class ForgeHooks
             "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_\\.]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
             Pattern.CASE_INSENSITIVE);
 
-    public static IChatComponent newChatWithLinks(String string)
+    public static IChatComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
+    public static IChatComponent newChatWithLinks(String string, boolean allowMissingHeader)
     {
         // Includes ipv4 and domain pattern
         // Matches an ip (xx.xxx.xx.xxx) or a domain (something.com) with or
         // without a protocol or path.
-        IChatComponent ichat = new ChatComponentText("");
+        IChatComponent ichat = null;
         Matcher matcher = URL_PATTERN.matcher(string);
         int lastEnd = 0;
         String remaining = string;
@@ -459,7 +461,14 @@ public class ForgeHooks
             int end = matcher.end();
 
             // Append the previous left overs.
-            ichat.appendText(string.substring(lastEnd, start));
+            String part = string.substring(lastEnd, start);
+            if (part.length() > 0)
+            {
+                if (ichat == null)
+                    ichat = new ChatComponentText(part);
+                else
+                    ichat.appendText(part);
+            }
             lastEnd = end;
             String url = string.substring(start, end);
             IChatComponent link = new ChatComponentText(url);
@@ -468,23 +477,43 @@ public class ForgeHooks
             {
                 // Add schema so client doesn't crash.
                 if ((new URI(url)).getScheme() == null)
+                {
+                    if (!allowMissingHeader)
+                    {
+                        if (ichat == null)
+                            ichat = new ChatComponentText(url);
+                        else
+                            ichat.appendText(url);
+                        continue;
+                    }
                     url = "http://" + url;
+                }
             }
             catch (URISyntaxException e)
             {
                 // Bad syntax bail out!
-                ichat.appendText(url);
+                if (ichat == null) ichat = new ChatComponentText(url);
+                else ichat.appendText(url);
                 continue;
             }
 
             // Set the click event and append the link.
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
             link.getChatStyle().setChatClickEvent(click);
-            ichat.appendSibling(link);
+            link.getChatStyle().setUnderlined(true);
+            link.getChatStyle().setColor(EnumChatFormatting.BLUE);
+            if (ichat == null)
+                ichat = link;
+            else
+                ichat.appendSibling(link);
         }
 
         // Append the rest of the message.
-        ichat.appendText(string.substring(lastEnd));
+        String end = string.substring(lastEnd);
+        if (ichat == null)
+            ichat = new ChatComponentText(end);
+        else if (end.length() > 0)
+            ichat.appendText(string.substring(lastEnd));
         return ichat;
     }
 

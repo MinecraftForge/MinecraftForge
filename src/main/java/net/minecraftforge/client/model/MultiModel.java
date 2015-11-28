@@ -8,15 +8,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
+import javax.vecmath.Matrix4f;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -25,20 +31,26 @@ import com.google.common.collect.Sets;
 
 public class MultiModel implements IModel
 {
-    public static class Baked implements IFlexibleBakedModel
+    public static class Baked implements IFlexibleBakedModel, IPerspectiveAwareModel
     {
         protected final IFlexibleBakedModel base;
         protected final ImmutableMap<String, IFlexibleBakedModel> parts;
-        
+
         protected final IFlexibleBakedModel internalBase;
         protected final ImmutableList<BakedQuad> general;
         protected final ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> faces;
-        
+        protected final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
+
         public Baked(IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
+        {
+            this(null, false, base, parts);
+        }
+
+        public Baked(ResourceLocation location, boolean perspective, IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
         {
             this.base = base;
             this.parts = parts;
-            
+
             if (base != null)
                 internalBase = base;
             else
@@ -47,12 +59,12 @@ public class MultiModel implements IModel
                 if (iter.hasNext())
                     internalBase = iter.next();
                 else
-                    throw new RuntimeException("No base model or submodel provided for this MultiModel.Baked.");
+                    throw new IllegalArgumentException("No base model or submodel provided for MultiModel.Baked " + location + ".");
             }
-            
+
             // Create map of each face's quads.
             EnumMap<EnumFacing, ImmutableList<BakedQuad>> faces = Maps.newEnumMap(EnumFacing.class);
-            
+
             for (EnumFacing face : EnumFacing.values())
             {
                 ImmutableList.Builder<BakedQuad> faceQuads = ImmutableList.builder();
@@ -62,9 +74,9 @@ public class MultiModel implements IModel
                     faceQuads.addAll(bakedPart.getFaceQuads(face));
                 faces.put(face, faceQuads.build());
             }
-            
+
             this.faces = Maps.immutableEnumMap(faces);
-            
+
             // Create list of general quads.
             ImmutableList.Builder<BakedQuad> genQuads = ImmutableList.builder();
             if (base != null)
@@ -72,8 +84,34 @@ public class MultiModel implements IModel
             for (IFlexibleBakedModel bakedPart : parts.values())
                 genQuads.addAll(bakedPart.getGeneralQuads());
             general = genQuads.build();
+
+            // Only changes the base model based on perspective, may recurse for parts in the future.
+            if(perspective && base instanceof IPerspectiveAwareModel)
+            {
+                IPerspectiveAwareModel perBase = (IPerspectiveAwareModel)base;
+                ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
+                for(TransformType type : TransformType.values())
+                {
+                    Pair<IBakedModel, Matrix4f> p = perBase.handlePerspective(type);
+                    IFlexibleBakedModel newBase;
+                    if(p.getLeft() instanceof IFlexibleBakedModel)
+                    {
+                        newBase = (IFlexibleBakedModel)p.getLeft();
+                    }
+                    else
+                    {
+                        newBase = new IFlexibleBakedModel.Wrapper(p.getLeft(), base.getFormat());
+                    }
+                    builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
+                }
+                transforms = builder.build();
+            }
+            else
+            {
+                transforms = ImmutableMap.of();
+            }
         }
-        
+
         @Override
         public boolean isAmbientOcclusion()
         {
@@ -121,87 +159,113 @@ public class MultiModel implements IModel
         {
             return internalBase.getFormat();
         }
-        
+
         public IFlexibleBakedModel getBaseModel()
         {
             return base;
         }
-        
+
         public Map<String, IFlexibleBakedModel> getParts()
         {
             return parts;
         }
+
+        @Override
+        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        {
+            if(transforms.isEmpty()) return Pair.<IBakedModel, Matrix4f>of(this, null);
+            Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
+            return Pair.of((IBakedModel)p.getLeft(), p.getRight().getMatrix());
+        }
     }
-    
+
+    protected final ResourceLocation location;
     protected final IModel base;
     protected final IModelState baseState;
     protected final Map<String, Pair<IModel, IModelState>> parts;
-    
-    public MultiModel(IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
+
+    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
     {
+        this.location = location;
         this.base = base;
         this.baseState = baseState;
         this.parts = parts;
     }
 
+    public MultiModel(IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
+    {
+        this(null, base, baseState, parts);
+    }
+
     public MultiModel(IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
     {
-        this(base, baseState, ImmutableMap.copyOf(parts));
+        this(null, base, baseState, ImmutableMap.copyOf(parts));
     }
-    
+
+    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
+    {
+        this(location, base, baseState, ImmutableMap.copyOf(parts));
+    }
+
     @Override
     public Collection<ResourceLocation> getDependencies()
     {
         Set<ResourceLocation> deps = Sets.newHashSet();
-        
+
         if (base != null)
             deps.addAll(base.getDependencies());
-        
+
         for (Pair<IModel, IModelState> pair : parts.values())
             deps.addAll(pair.getLeft().getDependencies());
-        
+
         return deps;
     }
-    
+
     @Override
     public Collection<ResourceLocation> getTextures()
     {
         Set<ResourceLocation> deps = Sets.newHashSet();
-        
+
         if (base != null)
             deps.addAll(base.getTextures());
-        
+
         for (Pair<IModel, IModelState> pair : parts.values())
             deps.addAll(pair.getLeft().getTextures());
-        
+
         return deps;
     }
-    
+
     @Override
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         IFlexibleBakedModel bakedBase = null;
-        
+
         if (base != null)
             bakedBase = base.bake(state, format, bakedTextureGetter);
-        
+
         ImmutableMap.Builder<String, IFlexibleBakedModel> mapBuilder = ImmutableMap.builder();
-        
+
         for (Entry<String, Pair<IModel, IModelState>> entry : parts.entrySet())
         {
             Pair<IModel, IModelState> pair = entry.getValue();
             mapBuilder.put(entry.getKey(), pair.getLeft().bake(pair.getRight(), format, bakedTextureGetter));
         }
-        
-        return new Baked(bakedBase, mapBuilder.build());
+
+        if(bakedBase == null && parts.isEmpty())
+        {
+            FMLLog.log(Level.ERROR, "MultiModel %s is empty (no base model or parts were provided/resolved)", location);
+            IModel missing = ModelLoaderRegistry.getMissingModel();
+            return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
+        }
+        return new Baked(location, true, bakedBase, mapBuilder.build());
     }
-    
+
     @Override
     public IModelState getDefaultState()
     {
         return baseState;
     }
-    
+
     /**
      * @return The base model of this MultiModel. May be null.
      */
@@ -209,7 +273,7 @@ public class MultiModel implements IModel
     {
         return base;
     }
-    
+
     /**
      * @return A map of the submodel name to its IModel and IModelState.
      */

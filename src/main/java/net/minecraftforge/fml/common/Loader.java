@@ -979,14 +979,7 @@ public class Loader
 
     public void fireRemapEvent(Map<String, Integer[]> remapBlocks, Map<String, Integer[]> remapItems)
     {
-        if (remapBlocks.isEmpty() && remapItems.isEmpty())
-        {
-            FMLLog.finer("Skipping remap event - no remaps occured");
-        }
-        else
-        {
-            modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems));
-        }
+	modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems));
     }
 
     public void runtimeDisableMod(String modId)

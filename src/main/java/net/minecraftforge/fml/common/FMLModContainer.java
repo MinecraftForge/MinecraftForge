@@ -18,6 +18,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +89,7 @@ public class FMLModContainer implements ModContainer
     private ListMultimap<Class<? extends FMLEvent>,Method> eventMethods;
     private Map<String, String> customModProperties;
     private ModCandidate candidate;
+    private URL updateJSONUrl;
 
     public FMLModContainer(String className, ModCandidate container, Map<String,Object> modDescriptor)
     {
@@ -214,6 +217,19 @@ public class FMLModContainer implements ModContainer
         else
         {
             minecraftAccepted = Loader.instance().getMinecraftModContainer().getStaticVersionRange();
+        }
+
+        String jsonURL = (String)descriptor.get("updateJSON");
+        if (!Strings.isNullOrEmpty(jsonURL))
+        {
+            try
+            {
+                this.updateJSONUrl = new URL(jsonURL);
+            }
+            catch (MalformedURLException e)
+            {
+                FMLLog.log(getModId(), Level.DEBUG, "Specified json URL invalid: %s", jsonURL);
+            }
         }
     }
 
@@ -662,5 +678,11 @@ public class FMLModContainer implements ModContainer
         }
 
         return true;
+    }
+
+    @Override
+    public URL getUpdateUrl()
+    {
+        return updateJSONUrl;
     }
 }
