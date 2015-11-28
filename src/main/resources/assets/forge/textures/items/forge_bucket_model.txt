@@ -1,0 +1,10 @@
+The Forge bucket model supports custom textures in case the bucket model is changed in your resource pack.
+
+There are 2 files you need to provide:
+forge:textures/items/bucket_interior.png
+forge:textures/items/bucket_front.png
+
+bucket_interior represents the area that contains liquid. It can be any color, just be sure that any pixel without liquid is completely transparent.
+bucket_front represents a "cover" that is put on top of bucket_interior. This allows you to put an overlay over the liquid.
+
+You HAVE TO provide both if you want to use this feature!
