@@ -23,25 +23,22 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector4f;
 
 public class ModelDynBucket implements IModel {
   public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
 
-  private static final float SOUTH_Z_FLUID = 7.45f/16f;
-  private static final float NORTH_Z_FLUID = 8.55f/16f;
+  private static final float NORTH_Z_FLUID = 7.49f / 16f;
+  private static final float SOUTH_Z_FLUID = 8.51f / 16f;
 
-  private static final float SOUTH_Z_COVER = 7.40f/16f;
-  private static final float NORTH_Z_COVER = 8.60f/16f;
+  private static final float NORTH_Z_COVER = 7.48f / 16f;
+  private static final float SOUTH_Z_COVER = 8.52f / 16f;
 
   protected final IModel bucket;
   protected static final ResourceLocation interior = new ResourceLocation("forge", "items/bucket_interior");
@@ -115,7 +112,9 @@ public class ModelDynBucket implements IModel {
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {}
+    public void onResourceManagerReload(IResourceManager resourceManager) {
+      // no need to clear cache since we create a new  model instance
+    }
   }
 
   // the dynamic bucket is based on the empty bucket
@@ -148,8 +147,6 @@ public class ModelDynBucket implements IModel {
       Fluid fluid = fluidStack.getFluid();
       String name = fluid.getName();
 
-      cache.clear(); // todo: remove
-      
       if(!cache.containsKey(name)) {
         cache.put(name, new BakedDynBucket(vanillaBakedBucket, transform, fluidStack.getFluid(), hasTextures));
       }
@@ -167,24 +164,20 @@ public class ModelDynBucket implements IModel {
       VertexFormat format = this.getFormat();
 
       if(hasTextures) {
-
-        builder.addAll(ModelHelper.convertTexture(format, transform, interior, fluidSprite, SOUTH_Z_FLUID, NORTH_Z_FLUID, fluid.getColor()));
-
-        // add the front cover
-/*
-        builder.add(ModelHelper.genQuad(buf, format, 0, 0, 8, 8, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
-        builder.add(ModelHelper.genQuad(buf, format, 8, 0, 16, 8, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
-        builder.add(ModelHelper.genQuad(buf, format, 0, 8, 8, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
-        builder.add(ModelHelper.genQuad(buf, format, 8, 8, 16, 16, front, 0.03f, EnumFacing.NORTH, 0xffffffff));
-        */
+        // fluid and cover on the top side
+        builder.addAll(ModelHelper.convertTexture(format, transform, interior, fluidSprite, NORTH_Z_FLUID, EnumFacing.NORTH, fluid.getColor()));
+        // add the front cover to cover up the liquid
         builder.add(ModelHelper.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_COVER, front, EnumFacing.NORTH, 0xffffffff));
+
+        // and the same on the back side
+        builder.addAll(ModelHelper.convertTexture(format, transform, interior, fluidSprite, SOUTH_Z_FLUID, EnumFacing.SOUTH, fluid.getColor()));
         builder.add(ModelHelper.genQuad(format, transform, 0, 0, 16, 16, SOUTH_Z_COVER, front, EnumFacing.SOUTH, 0xffffffff));
       }
       else {
         int color = fluid.getColor();
 
         EnumFacing[] faces = new EnumFacing[] {EnumFacing.NORTH, EnumFacing.SOUTH};
-        float[] depths = new float[] {NORTH_Z_COVER, SOUTH_Z_COVER};
+        float[] depths = new float[] {NORTH_Z_FLUID, SOUTH_Z_FLUID};
 
         for(int i = 0; i < 2; i++){
           builder.add(ModelHelper.genQuad(format, transform,  5, 3, 11, 4, depths[i], fluidSprite, faces[i], color));

@@ -36,9 +36,9 @@ public final class ModelHelper {
    * @param template The input texture to convert
    * @param sprite The texture whose UVs shall be used   @return The generated quads.
    */
-  public static List<BakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z1, float z2, int color) {
-    List<BakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z1, z2, color);
-    List<BakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z1, z2, color);
+  public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color) {
+    List<UnpackedBakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z, facing, color);
+    List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color);
 
     return horizontal.size() >= vertical.size() ? horizontal : vertical;
   }
@@ -47,11 +47,11 @@ public final class ModelHelper {
    * Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
    * The height of the strips is as big as possible.
    */
-  public static List<BakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z1, float z2, int color) {
+  public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color) {
     int w = template.getIconWidth();
     int h = template.getIconHeight();
     int[] data = template.getFrameTextureData(0)[0];
-    List<BakedQuad> quads = Lists.newArrayList();
+    List<UnpackedBakedQuad> quads = Lists.newArrayList();
 
     // the upper left x-position of the current quad
     int start = -1;
@@ -85,8 +85,7 @@ public final class ModelHelper {
           }
 
           // create the quad
-          quads.add(genQuad(format, transform, start,y, x,endY, z1, sprite, EnumFacing.SOUTH, color));
-          quads.add(genQuad(format, transform, start,y, x,endY, z2, sprite, EnumFacing.NORTH, color));
+          quads.add(genQuad(format, transform, start,y, x,endY, z, sprite, facing, color));
 
           // update Y if all the rows match. no need to rescan
           if(endY - y > 1) {
@@ -105,11 +104,11 @@ public final class ModelHelper {
    * Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
    * The width of the strips is as big as possible.
    */
-  public static List<BakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z1, float z2, int color) {
+  public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color) {
     int w = template.getIconWidth();
     int h = template.getIconHeight();
     int[] data = template.getFrameTextureData(0)[0];
-    List<BakedQuad> quads = Lists.newArrayList();
+    List<UnpackedBakedQuad> quads = Lists.newArrayList();
 
     // the upper left y-position of the current quad
     int start = -1;
@@ -143,8 +142,7 @@ public final class ModelHelper {
           }
 
           // create the quad
-          quads.add(genQuad(format, transform, x,start, endX,y, z1, sprite, EnumFacing.SOUTH, color));
-          quads.add(genQuad(format, transform, x,start, endX,y, z2, sprite, EnumFacing.NORTH, color));
+          quads.add(genQuad(format, transform, x,start, endX,y, z, sprite, facing, color));
 
           // update X if all the columns match. no need to rescan
           if(endX - x > 1) {
@@ -165,7 +163,7 @@ public final class ModelHelper {
   }
 
 
-  public static BakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color) {
+  public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color) {
     float u1 = sprite.getInterpolatedU(x1);
     float v1 = sprite.getInterpolatedV(y1);
     float u2 = sprite.getInterpolatedU(x2);
@@ -180,16 +178,7 @@ public final class ModelHelper {
     y1 = 1f - y2;
     y2 = 1f - tmp;
 
-    BakedQuad quad;
-    if(facing == EnumFacing.SOUTH) {
-      quad = putQuad(format, transform, facing, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
-    } else if(facing == EnumFacing.NORTH) {
-      quad = putQuad(format, transform, facing, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
-    } else {
-      throw new UnsupportedOperationException("This function only supports front(SOUTH) and back(NORTH) quads");
-    }
-
-    return quad;
+    return putQuad(format, transform, facing, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
   }
 
   private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, int color,
@@ -197,14 +186,14 @@ public final class ModelHelper {
                                            float u1, float v1, float u2, float v2) {
     side = side.getOpposite();
     UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-    builder.setQuadTint(0);
+    builder.setQuadTint(-1);
     builder.setQuadOrientation(side);
     builder.setQuadColored();
 
     putVertex(builder, format, transform, side, x1, y1, z, u1, v2, color);
-    putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);
-    putVertex(builder, format, transform, side, x2, y2, z, u2, v1, color);
     putVertex(builder, format, transform, side, x2, y1, z, u2, v2, color);
+    putVertex(builder, format, transform, side, x2, y2, z, u2, v1, color);
+    putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);
     return builder.build();
   }
 
