@@ -237,13 +237,13 @@ public class GameRegistry
     }
 
     /** Called from Potion Constructor */
-    public static int registerPotion(Potion potion, String name, int potionID) {
+    public static int registerPotion(Potion potion, ResourceLocation name, int potionID) {
         return GameData.getMain().registerPotion(potion, name, potionID);
     }
 
     public static String[] getPotionMapAsArray() {
         List<String> names = Lists.newLinkedList();
-        for(ResourceLocation location : (Set<ResourceLocation>)GameData.getPotionRegistry().getKeys()) {
+        for(ResourceLocation location : GameData.getPotionRegistry().getKeys()) {
             names.add(location.toString());
         }
         return names.toArray(new String[names.size()]);
