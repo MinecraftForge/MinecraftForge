@@ -147,7 +147,7 @@
          catch (Throwable throwable1)
          {
              field_147145_h.error("Encountered an unexpected exception", throwable1);
-@@ -535,6 +524,7 @@
+@@ -535,14 +524,15 @@
                  field_147145_h.error("We were unable to save this crash report to disk.");
              }
  
@@ -155,6 +155,15 @@
              this.func_71228_a(crashreport);
          }
          finally
+         {
+             try
+             {
+-                this.field_71316_v = true;
+                 this.func_71260_j();
++                this.field_71316_v = true;
+             }
+             catch (Throwable throwable)
+             {
 @@ -550,6 +540,8 @@
              }
              finally
