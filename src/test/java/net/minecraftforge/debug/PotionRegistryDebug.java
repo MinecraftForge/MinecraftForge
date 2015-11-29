@@ -73,7 +73,7 @@ public class PotionRegistryDebug {
 
       int width = 18;
       int height = width;
-
+/*
       Tessellator tessellator = Tessellator.getInstance();
       WorldRenderer worldrenderer = tessellator.getWorldRenderer();
       worldrenderer.startDrawingQuads();
@@ -82,7 +82,7 @@ public class PotionRegistryDebug {
       worldrenderer.addVertexWithUV((double)(x + width), (double)(y + height), 0.0D, sprite.getMaxU(), sprite.getMaxV());
       worldrenderer.addVertexWithUV((double)(x + width), (double)y, 0.0D, sprite.getMaxU(), sprite.getMinV());
       worldrenderer.addVertexWithUV((double)x, (double)y, 0.0D, sprite.getMinU(), sprite.getMinV());
-      tessellator.draw();
+      tessellator.draw();*/
     }
   }
 }
