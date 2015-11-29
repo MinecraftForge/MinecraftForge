@@ -1,58 +1,51 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/MapGenCaves.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/MapGenCaves.java
-@@ -2,6 +2,7 @@
- 
- import com.google.common.base.Objects;
- import java.util.Random;
-+import net.minecraft.block.Block;
- import net.minecraft.block.BlockSand;
- import net.minecraft.block.material.Material;
- import net.minecraft.block.state.IBlockState;
-@@ -141,7 +142,7 @@
+@@ -138,7 +138,7 @@
                                  {
-                                     IBlockState iblockstate = p_180702_5_.func_177856_a(k2, i3, l2);
+                                     IBlockState iblockstate = p_180702_5_.func_177856_a(j1, l1, k1);
  
 -                                    if (iblockstate.func_177230_c() == Blocks.field_150358_i || iblockstate.func_177230_c() == Blocks.field_150355_j)
-+                                    if (isOceanBlock(p_180702_5_, k2, i3, l2, p_180702_3_, p_180702_4_))
++                                    if (isOceanBlock(p_180702_5_, j1, l1, k1, p_180702_3_, p_180702_4_))
                                      {
                                          flag3 = true;
                                      }
-@@ -177,32 +178,11 @@
-                                             IBlockState iblockstate1 = p_180702_5_.func_177856_a(k2, j3, j4);
-                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.func_177856_a(k2, j3 + 1, j4), Blocks.field_150350_a.func_176223_P());
+@@ -176,33 +176,12 @@
+                                             IBlockState iblockstate1 = p_180702_5_.func_177856_a(j3, j2, i2);
+                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.func_177856_a(j3, j2 + 1, i2), Blocks.field_150350_a.func_176223_P());
  
 -                                            if (iblockstate1.func_177230_c() == Blocks.field_150349_c || iblockstate1.func_177230_c() == Blocks.field_150391_bh)
-+                                            if (isTopBlock(p_180702_5_, k2, j3, j4, p_180702_3_, p_180702_4_))
++                                            if (isTopBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_))
                                              {
                                                  flag1 = true;
                                              }
--
+ 
 -                                            if (this.func_175793_a(iblockstate1, iblockstate2))
 -                                            {
--                                                if (j3 - 1 < 10)
+-                                                if (j2 - 1 < 10)
 -                                                {
--                                                    p_180702_5_.func_177855_a(k2, j3, j4, Blocks.field_150353_l.func_176223_P());
+-                                                    p_180702_5_.func_177855_a(j3, j2, i2, Blocks.field_150353_l.func_176223_P());
 -                                                }
 -                                                else
 -                                                {
--                                                    p_180702_5_.func_177855_a(k2, j3, j4, Blocks.field_150350_a.func_176223_P());
+-                                                    p_180702_5_.func_177855_a(j3, j2, i2, Blocks.field_150350_a.func_176223_P());
 -
 -                                                    if (iblockstate2.func_177230_c() == Blocks.field_150354_m)
 -                                                    {
--                                                        p_180702_5_.func_177855_a(k2, j3 + 1, j4, iblockstate2.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? Blocks.field_180395_cM.func_176223_P() : Blocks.field_150322_A.func_176223_P());
+-                                                        p_180702_5_.func_177855_a(j3, j2 + 1, i2, iblockstate2.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? Blocks.field_180395_cM.func_176223_P() : Blocks.field_150322_A.func_176223_P());
 -                                                    }
 -
--                                                    if (flag1 && p_180702_5_.func_177856_a(k2, j3 - 1, j4).func_177230_c() == Blocks.field_150346_d)
+-                                                    if (flag1 && p_180702_5_.func_177856_a(j3, j2 - 1, i2).func_177230_c() == Blocks.field_150346_d)
 -                                                    {
--                                                        p_180702_5_.func_177855_a(k2, j3 - 1, j4, this.field_75039_c.func_180494_b(new BlockPos(k2 + p_180702_3_ * 16, 0, j4 + p_180702_4_ * 16)).field_76752_A.func_177230_c().func_176223_P());
+-                                                        blockpos$mutableblockpos.func_181079_c(j3 + p_180702_3_ * 16, 0, i2 + p_180702_4_ * 16);
+-                                                        p_180702_5_.func_177855_a(j3, j2 - 1, i2, this.field_75039_c.func_180494_b(blockpos$mutableblockpos).field_76752_A.func_177230_c().func_176223_P());
 -                                                    }
 -                                                }
 -                                            }
-+                                            digBlock(p_180702_5_, k2, j3, j4, p_180702_3_, p_180702_4_, flag1, iblockstate1, iblockstate2);
++                                            digBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_, flag1, iblockstate1, iblockstate2);
                                          }
                                      }
                                  }
-@@ -261,4 +241,71 @@
+@@ -261,4 +240,71 @@
              }
          }
      }

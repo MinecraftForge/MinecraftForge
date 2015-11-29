@@ -57,12 +57,11 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
+@SuppressWarnings("deprecation")
 public class OBJModel implements IRetexturableModel, IModelCustomData
 {
-    private Gson GSON = new GsonBuilder().create();
+    //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
     private final ResourceLocation modelLocation;
     private CustomData customData;
@@ -831,6 +830,11 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         public String getMaterialName()
         {
             return this.materialName;
+        }
+        
+        public boolean isTriangles() 
+        {
+            return isTri;
         }
 
         public boolean setVertices(Vertex[] verts)

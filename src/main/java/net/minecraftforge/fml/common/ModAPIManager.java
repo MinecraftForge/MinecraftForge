@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 
 public class ModAPIManager {
     public static final ModAPIManager INSTANCE = new ModAPIManager();
+    @SuppressWarnings("unused")
     private ModAPITransformer transformer;
     private ASMDataTable dataTable;
     private Map<String,APIContainer> apiContainers;

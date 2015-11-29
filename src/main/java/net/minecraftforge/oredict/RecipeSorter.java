@@ -143,7 +143,6 @@ public class RecipeSorter implements Comparator<IRecipe>
     }
 
     private static Set<Class> warned = Sets.newHashSet();
-    @SuppressWarnings("unchecked")
     public static void sortCraftManager()
     {
         bake();

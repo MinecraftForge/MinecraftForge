@@ -1,6 +1,5 @@
 package net.minecraftforge.event.brewing;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -16,7 +15,7 @@ import net.minecraft.item.ItemStack;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@Deprecated
+@Deprecated // remove in 1.9
 public class PotionBrewedEvent extends PotionBrewEvent
 {
     /**

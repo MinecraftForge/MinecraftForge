@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
-@@ -33,7 +33,7 @@
+@@ -31,7 +31,7 @@
      public static boolean func_176563_d(IBlockState p_176563_0_)
      {
          Block block = p_176563_0_.func_177230_c();
@@ -9,10 +9,10 @@
      }
  
      protected BlockRailBase(boolean p_i45389_1_)
-@@ -174,7 +174,81 @@
-     }
+@@ -175,6 +175,81 @@
  
-     public abstract IProperty func_176560_l();
+     public abstract IProperty<BlockRailBase.EnumRailDirection> func_176560_l();
+ 
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Return true if the rail can make corners.
@@ -25,7 +25,7 @@
 +    {
 +        return !this.field_150053_a;
 +    }
- 
++
 +    /**
 +     * Returns true if the rail can make up and down slopes.
 +     * Used by placement logic.
@@ -91,57 +91,57 @@
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -251,6 +325,7 @@
+@@ -245,6 +320,7 @@
+         private IBlockState field_180366_e;
          private final boolean field_150656_f;
-         private final List field_150657_g = Lists.newArrayList();
-         private static final String __OBFID = "CL_00000196";
+         private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
 +        private final boolean canMakeSlopes;
  
          public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -259,7 +334,8 @@
+@@ -253,7 +329,8 @@
              this.field_180366_e = p_i45739_4_;
              this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
-             BlockRailBase.EnumRailDirection enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(BlockRailBase.this.func_176560_l());
+             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(BlockRailBase.this.func_176560_l());
 -            this.field_150656_f = this.field_180365_d.field_150053_a;
 +            this.field_150656_f = !this.field_180365_d.isFlexibleRail(p_i45739_2_, p_i45739_3_);
 +            canMakeSlopes = this.field_180365_d.canMakeSlopes(p_i45739_2_, p_i45739_3_);
-             this.func_180360_a(enumraildirection);
+             this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -448,7 +524,7 @@
+@@ -439,7 +516,7 @@
                  }
              }
  
--            if (enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
-+            if (enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -461,7 +537,7 @@
+@@ -452,7 +529,7 @@
                  }
              }
  
--            if (enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
-+            if (enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -604,7 +680,7 @@
+@@ -595,7 +672,7 @@
                  }
              }
  
--            if (enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
-+            if (enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH && canMakeSlopes)
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -617,7 +693,7 @@
+@@ -608,7 +685,7 @@
                  }
              }
  
--            if (enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
-+            if (enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST && canMakeSlopes)
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {

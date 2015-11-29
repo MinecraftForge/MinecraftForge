@@ -1,0 +1,72 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
+@@ -63,16 +63,8 @@
+             int i = this.getMetadata(stack.getMetadata());
+             IBlockState iblockstate1 = this.block.onBlockPlaced(worldIn, pos, side, hitX, hitY, hitZ, i, playerIn);
+ 
+-            if (worldIn.setBlockState(pos, iblockstate1, 3))
++            if (placeBlockAt(stack, playerIn, worldIn, pos, side, hitX, hitY, hitZ, iblockstate1))
+             {
+-                iblockstate1 = worldIn.getBlockState(pos);
+-
+-                if (iblockstate1.getBlock() == this.block)
+-                {
+-                    setTileEntityNBT(worldIn, pos, stack);
+-                    this.block.onBlockPlacedBy(worldIn, pos, iblockstate1, playerIn, stack);
+-                }
+-
+                 worldIn.playSoundEffect((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F), this.block.stepSound.getPlaceSound(), (this.block.stepSound.getVolume() + 1.0F) / 2.0F, this.block.stepSound.getFrequency() * 0.8F);
+                 --stack.stackSize;
+             }
+@@ -85,14 +77,24 @@
+         }
+     }
+ 
++    @Deprecated //Use player sensitive version
+     public static boolean setTileEntityNBT(World worldIn, BlockPos pos, ItemStack stack)
+     {
++        return setTileEntityNBT(worldIn, pos, stack, null);
++    }
++    public static boolean setTileEntityNBT(World worldIn, BlockPos pos, ItemStack stack, EntityPlayer player)
++    {
+         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("BlockEntityTag", 10))
+         {
+             TileEntity tileentity = worldIn.getTileEntity(pos);
+ 
+             if (tileentity != null)
+             {
++                //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
++                final net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.getServer();
++                if (!worldIn.isRemote && tileentity.restrictNBTCopy() &&
++                   (server == null || !server.getConfigurationManager().canSendCommands(player.getGameProfile())))
++                       return false;
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttagcompound.copy();
+                 tileentity.writeToNBT(nbttagcompound);
+@@ -157,4 +159,26 @@
+     {
+         return this.block;
+     }
++
++    /**
++     * Called to actually place the block, after the location is determined
++     * and all permission checks have been made.
++     *
++     * @param stack The item stack that was used to place the block. This can be changed inside the method.
++     * @param player The player who is placing the block. Can be null if the block is not being placed by a player.
++     * @param side The side the player (or machine) right-clicked on.
++     */
++    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState)
++    {
++        if (!world.setBlockState(pos, newState, 3)) return false;
++
++        IBlockState state = world.getBlockState(pos);
++        if (state.getBlock() == this.block)
++        {
++            setTileEntityNBT(world, pos, stack, player);
++            this.block.onBlockPlacedBy(world, pos, state, player, stack);
++        }
++
++        return true;
++    }
+ }

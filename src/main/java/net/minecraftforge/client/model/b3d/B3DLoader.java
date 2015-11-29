@@ -75,6 +75,7 @@ import com.google.gson.JsonParser;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
+@SuppressWarnings("deprecation")
 public class B3DLoader implements ICustomModelLoader
 {
     public static final B3DLoader instance = new B3DLoader();

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
@@ -97,7 +98,7 @@ public enum ObjectHolderRegistry {
             try
             {
                 Field f = clazz.getField(annotationTarget);
-                addHolderReference(new ObjectHolderRef(f, value, extractFromValue));
+                addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
             }
             catch (Exception ex)
             {
@@ -118,7 +119,7 @@ public enum ObjectHolderRegistry {
             {
                 continue;
             }
-            addHolderReference(new ObjectHolderRef(f, value + ":"+ f.getName(), extractFromExistingValues));
+            addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
         }
     }
 

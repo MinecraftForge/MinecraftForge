@@ -1,0 +1,94 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
+@@ -61,7 +61,7 @@
+                     {
+                         if (j >= 0 && j < 256)
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(new BlockPos(k, j, l)).getBlock()))
++                            if (!this.isReplaceable(worldIn, new BlockPos(k, j, l)))
+                             {
+                                 flag = false;
+                             }
+@@ -80,11 +80,13 @@
+             }
+             else
+             {
+-                Block block1 = worldIn.getBlockState(p_180709_3_.down()).getBlock();
++                BlockPos down = p_180709_3_.down();
++                Block block1 = worldIn.getBlockState(down).getBlock();
++                boolean isSoil = block1.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling);
+ 
+-                if ((block1 == Blocks.grass || block1 == Blocks.dirt || block1 == Blocks.farmland) && p_180709_3_.getY() < 256 - i - 1)
++                if (isSoil && p_180709_3_.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, p_180709_3_.down());
++                    block1.onPlantGrow(worldIn, down, p_180709_3_);
+                     b0 = 3;
+                     byte b1 = 0;
+                     int i1;
+@@ -111,7 +113,7 @@
+                                     blockpos1 = new BlockPos(k1, l, i2);
+                                     Block block = worldIn.getBlockState(blockpos1).getBlock();
+ 
+-                                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves || block.getMaterial() == Material.vine)
++                                    if (block.isAir(worldIn, blockpos1) || block.isLeaves(worldIn, blockpos1) || block.getMaterial() == Material.vine)
+                                     {
+                                         this.func_175905_a(worldIn, blockpos1, Blocks.leaves, this.metaLeaves);
+                                     }
+@@ -122,9 +124,10 @@
+ 
+                     for (l = 0; l < i; ++l)
+                     {
+-                        Block block2 = worldIn.getBlockState(p_180709_3_.up(l)).getBlock();
++                        BlockPos upN = p_180709_3_.up(l);
++                        Block block2 = worldIn.getBlockState(upN).getBlock();
+ 
+-                        if (block2.getMaterial() == Material.air || block2.getMaterial() == Material.leaves || block2.getMaterial() == Material.vine)
++                        if (block2.isAir(worldIn, upN) || block2.isLeaves(worldIn, upN) || block2.getMaterial() == Material.vine)
+                         {
+                             this.func_175905_a(worldIn, p_180709_3_.up(l), Blocks.log, this.metaWood);
+ 
+@@ -166,29 +169,29 @@
+                                 {
+                                     BlockPos blockpos3 = new BlockPos(k1, l, l1);
+ 
+-                                    if (worldIn.getBlockState(blockpos3).getBlock().getMaterial() == Material.leaves)
++                                    if (worldIn.getBlockState(blockpos3).getBlock().isLeaves(worldIn, blockpos3))
+                                     {
+                                         BlockPos blockpos4 = blockpos3.west();
+                                         blockpos1 = blockpos3.east();
+                                         BlockPos blockpos5 = blockpos3.north();
+                                         BlockPos blockpos2 = blockpos3.south();
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos4).getBlock().getMaterial() == Material.air)
++                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos4).getBlock().isAir(worldIn, blockpos4))
+                                         {
+                                             this.func_175923_a(worldIn, blockpos4, BlockVine.EAST_FLAG);
+                                         }
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos1).getBlock().getMaterial() == Material.air)
++                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos1).getBlock().isAir(worldIn, blockpos1))
+                                         {
+                                             this.func_175923_a(worldIn, blockpos1, BlockVine.WEST_FLAG);
+                                         }
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos5).getBlock().getMaterial() == Material.air)
++                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos5).getBlock().isAir(worldIn, blockpos5))
+                                         {
+                                             this.func_175923_a(worldIn, blockpos5, BlockVine.SOUTH_FLAG);
+                                         }
+ 
+-                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos2).getBlock().getMaterial() == Material.air)
++                                        if (p_180709_2_.nextInt(4) == 0 && worldIn.getBlockState(blockpos2).getBlock().isAir(worldIn, blockpos2))
+                                         {
+                                             this.func_175923_a(worldIn, blockpos2, BlockVine.NORTH_FLAG);
+                                         }
+@@ -233,7 +236,7 @@
+         this.func_175905_a(worldIn, p_175923_2_, Blocks.vine, p_175923_3_);
+         int j = 4;
+ 
+-        for (p_175923_2_ = p_175923_2_.down(); worldIn.getBlockState(p_175923_2_).getBlock().getMaterial() == Material.air && j > 0; --j)
++        for (p_175923_2_ = p_175923_2_.down(); worldIn.getBlockState(p_175923_2_).getBlock().isAir(worldIn, p_175923_2_) && j > 0; --j)
+         {
+             this.func_175905_a(worldIn, p_175923_2_, Blocks.vine, p_175923_3_);
+             p_175923_2_ = p_175923_2_.down();

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
-@@ -198,6 +198,7 @@
+@@ -199,6 +199,7 @@
          {
              if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0)
              {

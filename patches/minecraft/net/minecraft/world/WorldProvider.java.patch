@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -52,26 +52,12 @@
+@@ -51,26 +51,12 @@
  
      protected void func_76572_b()
      {
@@ -29,7 +29,7 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -155,13 +141,13 @@
+@@ -153,13 +139,13 @@
  
      public static WorldProvider func_76570_a(int p_76570_0_)
      {
@@ -45,11 +45,11 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -177,13 +163,13 @@
+@@ -175,13 +161,13 @@
  
      public int func_76557_i()
      {
--        return this.field_76577_b == WorldType.field_77138_c ? 4 : 64;
+-        return this.field_76577_b == WorldType.field_77138_c ? 4 : this.field_76579_a.func_181545_F() + 1;
 +        return this.field_76577_b.getMinimumSpawnHeight(this.field_76579_a);
      }
  
@@ -61,7 +61,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -225,4 +211,319 @@
+@@ -223,4 +209,319 @@
      {
          return new WorldBorder();
      }

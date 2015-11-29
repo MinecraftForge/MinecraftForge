@@ -249,6 +249,127 @@ public class ForgeHooks
      */
     public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
     {
+        /*
+            int i = 0;
+            boolean flag1 = false;
+            TileEntity tileentity = null;
+            Item item;
+
+            if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            {
+                BlockPos blockpos = this.objectMouseOver.getBlockPos();
+                Block block = this.theWorld.getBlockState(blockpos).getBlock();
+
+                if (block.getMaterial() == Material.air)
+                {
+                    return;
+                }
+
+                item = block.getItem(this.theWorld, blockpos);
+
+                if (item == null)
+                {
+                    return;
+                }
+
+                if (flag && GuiScreen.isCtrlKeyDown())
+                {
+                    tileentity = this.theWorld.getTileEntity(blockpos);
+                }
+
+                Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
+                i = block1.getDamageValue(this.theWorld, blockpos);
+                flag1 = item.getHasSubtypes();
+            }
+            else
+            {
+                if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
+                {
+                    return;
+                }
+
+                if (this.objectMouseOver.entityHit instanceof EntityPainting)
+                {
+                    item = Items.painting;
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
+                {
+                    item = Items.lead;
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
+                {
+                    EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
+                    ItemStack itemstack = entityitemframe.getDisplayedItem();
+
+                    if (itemstack == null)
+                    {
+                        item = Items.item_frame;
+                    }
+                    else
+                    {
+                        item = itemstack.getItem();
+                        i = itemstack.getMetadata();
+                        flag1 = true;
+                    }
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
+                {
+                    EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
+
+                    switch (entityminecart.getMinecartType())
+                    {
+                        case FURNACE:
+                            item = Items.furnace_minecart;
+                            break;
+                        case CHEST:
+                            item = Items.chest_minecart;
+                            break;
+                        case TNT:
+                            item = Items.tnt_minecart;
+                            break;
+                        case HOPPER:
+                            item = Items.hopper_minecart;
+                            break;
+                        case COMMAND_BLOCK:
+                            item = Items.command_block_minecart;
+                            break;
+                        default:
+                            item = Items.minecart;
+                    }
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
+                {
+                    item = Items.boat;
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
+                {
+                    item = Items.armor_stand;
+                }
+                else
+                {
+                    item = Items.spawn_egg;
+                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
+                    flag1 = true;
+
+                    if (!EntityList.entityEggs.containsKey(Integer.valueOf(i)))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            InventoryPlayer inventoryplayer = this.thePlayer.inventory;
+
+            if (tileentity == null)
+            {
+                inventoryplayer.setCurrentItem(item, i, flag1, flag);
+            }
+            else
+            {
+                ItemStack itemstack1 = this.func_181036_a(item, i, tileentity);
+                inventoryplayer.setInventorySlotContents(inventoryplayer.currentItem, itemstack1);
+            }
+         */
         ItemStack result = null;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;
@@ -426,6 +547,7 @@ public class ForgeHooks
         return world.getBlockState(pos).getBlock().getEnchantPowerBonus(world, pos);
     }
 
+    @SuppressWarnings("deprecation")
     public static ChatComponentTranslation onServerChatEvent(NetHandlerPlayServer net, String raw, ChatComponentTranslation comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
@@ -452,7 +574,6 @@ public class ForgeHooks
         IChatComponent ichat = null;
         Matcher matcher = URL_PATTERN.matcher(string);
         int lastEnd = 0;
-        String remaining = string;
 
         // Find all urls
         while (matcher.find())
@@ -548,7 +669,7 @@ public class ForgeHooks
         if (world.getTileEntity(pos) == null)
         {
             S23PacketBlockChange packet = new S23PacketBlockChange(world, pos);
-            packet.field_148883_d = Blocks.air.getDefaultState();
+            packet.blockState = Blocks.air.getDefaultState();
             entityPlayer.playerNetServerHandler.sendPacket(packet);
         }
 
@@ -568,7 +689,7 @@ public class ForgeHooks
             TileEntity tileentity = world.getTileEntity(pos);
             if (tileentity != null)
             {
-                Packet pkt = tileentity.getDescriptionPacket();
+                Packet<?> pkt = tileentity.getDescriptionPacket();
                 if (pkt != null)
                 {
                     entityPlayer.playerNetServerHandler.sendPacket(pkt);
@@ -608,6 +729,7 @@ public class ForgeHooks
                 newNBT = (NBTTagCompound)itemstack.getTagCompound().copy();
             }
             net.minecraftforge.event.world.BlockEvent.PlaceEvent placeEvent = null;
+            @SuppressWarnings("unchecked")
             List<net.minecraftforge.common.util.BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)world.capturedBlockSnapshots.clone();
             world.capturedBlockSnapshots.clear();
 

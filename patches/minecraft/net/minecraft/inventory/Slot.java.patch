@@ -1,13 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
-@@ -1,5 +1,6 @@
- package net.minecraft.inventory;
- 
-+import net.minecraft.client.Minecraft;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.item.ItemStack;
- import net.minecraftforge.fml.relauncher.Side;
-@@ -86,7 +87,7 @@
+@@ -89,7 +89,7 @@
      @SideOnly(Side.CLIENT)
      public String func_178171_c()
      {
@@ -16,7 +9,7 @@
      }
  
      public ItemStack func_75209_a(int p_75209_1_)
-@@ -109,4 +110,64 @@
+@@ -112,4 +112,63 @@
      {
          return true;
      }
@@ -27,7 +20,7 @@
 +    protected Object backgroundMap;
 +    /**
 +     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
-+     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.
++     * @return The resource location for the background image
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.util.ResourceLocation getBackgroundLocation()
@@ -37,7 +30,7 @@
 +
 +    /**
 +     * Sets the texture file to use for the background image of the slot when it's empty.
-+     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
++     * @param texture the resourcelocation for the texture
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public void setBackgroundLocation(net.minecraft.util.ResourceLocation texture)
@@ -47,8 +40,7 @@
 +
 +    /**
 +     * Sets which icon index to use as the background image of the slot when it's empty.
-+     * Getter is func_178171_c
-+     * @param icon The icon to use, null for none
++     * @param name The icon to use, null for none
 +     */
 +    public void setBackgroundName(String name)
 +    {
@@ -65,7 +57,7 @@
 +    @SideOnly(Side.CLIENT)
 +    protected net.minecraft.client.renderer.texture.TextureMap getBackgroundMap()
 +    {
-+        if (backgroundMap == null) backgroundMap = Minecraft.func_71410_x().func_147117_R();
++        if (backgroundMap == null) backgroundMap = net.minecraft.client.Minecraft.func_71410_x().func_147117_R();
 +        return (net.minecraft.client.renderer.texture.TextureMap)backgroundMap;
 +    }
 +

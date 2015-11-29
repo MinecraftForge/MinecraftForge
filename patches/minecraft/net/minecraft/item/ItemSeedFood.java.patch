@@ -9,7 +9,7 @@
  {
      private Block field_150908_b;
      private Block field_82809_c;
-@@ -29,7 +29,7 @@
+@@ -28,7 +28,7 @@
          {
              return false;
          }
@@ -18,7 +18,7 @@
          {
              p_180614_3_.func_175656_a(p_180614_4_.func_177984_a(), this.field_150908_b.func_176223_P());
              --p_180614_1_.field_77994_a;
-@@ -40,4 +40,16 @@
+@@ -39,4 +39,16 @@
              return false;
          }
      }

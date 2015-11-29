@@ -14,6 +14,10 @@ package net.minecraftforge.fml.common.event;
 
 import net.minecraftforge.fml.common.ModContainer;
 
+/**
+ * Parent type to all FML events. This is based on Guava EventBus. Event Subscription isn't using the Guava annotation
+ * however, it's using a custom annotation specific to FML {@link net.minecraftforge.fml.common.Mod.EventHandler}
+ */
 public class FMLEvent
 {
     public final String getEventType()

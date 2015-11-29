@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/block/BlockAir.java
-+++ ../src-work/minecraft/net/minecraft/block/BlockAir.java
-@@ -36,4 +36,6 @@
-     }
- 
-     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_) {}
-+
-+    public boolean func_176200_f(World worldIn, BlockPos pos){ return true; }
- }

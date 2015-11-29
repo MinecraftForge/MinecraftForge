@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/LanguageManager.java
++++ ../src-work/minecraft/net/minecraft/client/resources/LanguageManager.java
+@@ -83,6 +83,7 @@
+         }
+ 
+         currentLocale.loadLocaleDataFiles(resourceManager, arraylist);
++        net.minecraftforge.fml.common.registry.LanguageRegistry.instance().mergeLanguageTable(currentLocale.properties, this.currentLanguage);
+         StringTranslate.replaceWith(currentLocale.properties);
+     }
+ 

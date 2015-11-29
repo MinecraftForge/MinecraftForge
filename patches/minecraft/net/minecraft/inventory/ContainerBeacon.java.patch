@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBeacon.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBeacon.java
-@@ -132,7 +132,7 @@
+@@ -143,7 +143,7 @@
  
          public boolean func_75214_a(ItemStack p_75214_1_)
          {

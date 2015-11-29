@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
-@@ -187,7 +187,7 @@
+@@ -186,7 +186,7 @@
  
              if (this.field_146297_k.func_71359_d().func_90033_f(s))
              {

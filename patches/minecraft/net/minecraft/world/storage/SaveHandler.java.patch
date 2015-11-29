@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -107,20 +107,29 @@
-         NBTTagCompound nbttagcompound;
-         NBTTagCompound nbttagcompound1;
+@@ -104,20 +104,29 @@
+     {
+         File file1 = new File(this.field_75770_b, "level.dat");
  
 +        WorldInfo worldInfo = null;
 +
@@ -10,11 +10,11 @@
          {
              try
              {
-                 nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
-                 nbttagcompound1 = nbttagcompound.func_74775_l("Data");
--                return new WorldInfo(nbttagcompound1);
-+                worldInfo = new WorldInfo(nbttagcompound1);
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
+                 NBTTagCompound nbttagcompound2 = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound3 = nbttagcompound2.func_74775_l("Data");
+-                return new WorldInfo(nbttagcompound3);
++                worldInfo = new WorldInfo(nbttagcompound3);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound2);
 +                return worldInfo;
              }
 +            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
@@ -31,10 +31,10 @@
          file1 = new File(this.field_75770_b, "level.dat_old");
  
          if (file1.exists())
-@@ -129,7 +138,13 @@
+@@ -126,7 +135,13 @@
              {
-                 nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
-                 nbttagcompound1 = nbttagcompound.func_74775_l("Data");
+                 NBTTagCompound nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound1 = nbttagcompound.func_74775_l("Data");
 -                return new WorldInfo(nbttagcompound1);
 +                worldInfo = new WorldInfo(nbttagcompound1);
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
@@ -46,16 +46,16 @@
              }
              catch (Exception exception)
              {
-@@ -146,6 +161,8 @@
-         NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-         nbttagcompound2.func_74782_a("Data", nbttagcompound1);
+@@ -143,6 +158,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound2);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound1);
 +
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -184,6 +201,8 @@
+@@ -181,6 +198,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  
@@ -64,15 +64,15 @@
          try
          {
              File file1 = new File(this.field_75770_b, "level.dat_new");
-@@ -232,6 +251,7 @@
+@@ -229,6 +248,7 @@
              }
  
              file1.renameTo(file2);
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_75753_1_, this.field_75771_c, p_75753_1_.func_110124_au().toString());
          }
-         catch (Exception exception)
+         catch (Exception var5)
          {
-@@ -262,6 +282,7 @@
+@@ -259,6 +279,7 @@
              p_75752_1_.func_70020_e(nbttagcompound);
          }
  
@@ -80,7 +80,7 @@
          return nbttagcompound;
      }
  
-@@ -301,4 +322,22 @@
+@@ -300,4 +321,22 @@
      {
          return this.field_75767_f;
      }

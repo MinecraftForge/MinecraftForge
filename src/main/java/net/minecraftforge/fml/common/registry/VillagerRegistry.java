@@ -12,9 +12,6 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +21,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.*;
 import net.minecraft.init.Blocks;
@@ -33,20 +29,17 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
+import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
+import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 /**
  * Registry for villager trading control
@@ -103,7 +96,7 @@ public class VillagerRegistry
          * @param facing
          * @param p5
          */
-        Object buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random, int p1,
+        Village buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random, int p1,
                 int p2, int p3, EnumFacing facing, int p5);
     }
 
@@ -181,17 +174,16 @@ public class VillagerRegistry
         return Collections.unmodifiableCollection(instance().newVillagerIds);
     }
 
-    public static void addExtraVillageComponents(@SuppressWarnings("rawtypes") ArrayList components, Random random, int i)
+    public static void addExtraVillageComponents(List<PieceWeight> list, Random random, int i)
     {
-        @SuppressWarnings("unchecked")
-        List<StructureVillagePieces.PieceWeight> parts = components;
+        List<StructureVillagePieces.PieceWeight> parts = list;
         for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
         {
             parts.add(handler.getVillagePieceWeight(random, i));
         }
     }
 
-    public static Object getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, @SuppressWarnings("rawtypes") List pieces, Random random,
+    public static Village getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random,
             int p1, int p2, int p3, EnumFacing facing, int p5)
     {
         return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, facing, p5);
@@ -207,7 +199,7 @@ public class VillagerRegistry
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = GameData.createRegistry("villagerprofessions", VillagerProfession.class, 0, 1024);
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(new ResourceLocation("minecraft:villagerprofessions"), VillagerProfession.class, null, 1024, 0, true);
 
 
     private void init()
@@ -253,13 +245,13 @@ public class VillagerRegistry
         private ResourceLocation name;
         private ResourceLocation texture;
         private List<VillagerCareer> careers = Lists.newArrayList();
-        private RegistryDelegate<VillagerProfession> delegate = GameData.getRegistry("villagerprofessions", VillagerProfession.class).getDelegate(this, VillagerProfession.class);
+        public final RegistryDelegate<VillagerProfession> delegate = PersistentRegistryManager.makeDelegate(this, VillagerProfession.class);
 
         public VillagerProfession(String name, String texture)
         {
             this.name = new ResourceLocation(name);
             this.texture = new ResourceLocation(texture);
-            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setName(name);
+            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setResourceName(this.name);
         }
 
         private void register(VillagerCareer career)
@@ -306,7 +298,7 @@ public class VillagerRegistry
      */
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
-        Set<String> entries = INSTANCE.professions.getKeys();
+        Set<ResourceLocation> entries = INSTANCE.professions.getKeys();
         int prof = rand.nextInt(entries.size());
         //TODO: Grab id range from internal registry
         entity.setProfession(rand.nextInt(5));

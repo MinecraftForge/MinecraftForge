@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
+@@ -16,6 +16,9 @@
+ import net.minecraft.world.World;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.DungeonHooks;
++import static net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST;
+ 
+ public class WorldGenDungeons extends WorldGenerator
+ {
+@@ -140,12 +143,11 @@
+                                 if (k2 == 1)
+                                 {
+                                     worldIn.setBlockState(blockpos2, Blocks.chest.correctFacing(worldIn, blockpos2, Blocks.chest.getDefaultState()), 2);
+-                                    List list = WeightedRandomChestContent.func_177629_a(CHESTCONTENT, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(p_180709_2_)});
+                                     TileEntity tileentity1 = worldIn.getTileEntity(blockpos2);
+ 
+                                     if (tileentity1 instanceof TileEntityChest)
+                                     {
+-                                        WeightedRandomChestContent.generateChestContents(p_180709_2_, list, (TileEntityChest)tileentity1, 8);
++                                        WeightedRandomChestContent.generateChestContents(p_180709_2_, ChestGenHooks.getItems(DUNGEON_CHEST, p_180709_2_), (TileEntityChest)tileentity1, ChestGenHooks.getCount(DUNGEON_CHEST, p_180709_2_));
+                                     }
+ 
+                                     break label197;
+@@ -184,6 +186,12 @@
+ 
+     private String pickMobSpawner(Random p_76543_1_)
+     {
+-        return SPAWNERTYPES[p_76543_1_.nextInt(SPAWNERTYPES.length)];
++        return DungeonHooks.getRandomDungeonMob(p_76543_1_);
+     }
++
++    static
++    {
++        ChestGenHooks.init(DUNGEON_CHEST, CHESTCONTENT, 8, 8);
++        ChestGenHooks.addItem(DUNGEON_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++    }
+ }

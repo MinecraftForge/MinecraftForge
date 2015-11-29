@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
-@@ -109,4 +109,19 @@
+@@ -103,4 +103,19 @@
          biomegenplains.field_150609_ah = 14273354;
          return biomegenplains;
      }

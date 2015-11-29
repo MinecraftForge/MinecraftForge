@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -63,16 +63,8 @@
+@@ -54,16 +54,8 @@
              int i = this.func_77647_b(p_180614_1_.func_77960_j());
              IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_2_);
  
@@ -11,39 +11,23 @@
 -
 -                if (iblockstate1.func_177230_c() == this.field_150939_a)
 -                {
--                    func_179224_a(p_180614_3_, p_180614_4_, p_180614_1_);
+-                    func_179224_a(p_180614_3_, p_180614_2_, p_180614_4_, p_180614_1_);
 -                    this.field_150939_a.func_180633_a(p_180614_3_, p_180614_4_, iblockstate1, p_180614_2_, p_180614_1_);
 -                }
 -
                  p_180614_3_.func_72908_a((double)((float)p_180614_4_.func_177958_n() + 0.5F), (double)((float)p_180614_4_.func_177956_o() + 0.5F), (double)((float)p_180614_4_.func_177952_p() + 0.5F), this.field_150939_a.field_149762_H.func_150496_b(), (this.field_150939_a.field_149762_H.func_150497_c() + 1.0F) / 2.0F, this.field_150939_a.field_149762_H.func_150494_d() * 0.8F);
                  --p_180614_1_.field_77994_a;
              }
-@@ -85,14 +77,24 @@
-         }
-     }
- 
-+    @Deprecated //Use player sensitive version
-     public static boolean func_179224_a(World p_179224_0_, BlockPos p_179224_1_, ItemStack p_179224_2_)
+@@ -124,7 +116,7 @@
      {
-+        return setTileEntityNBT(p_179224_0_, p_179224_1_, p_179224_2_, null);
-+    }
-+    public static boolean setTileEntityNBT(World p_179224_0_, BlockPos p_179224_1_, ItemStack p_179224_2_, EntityPlayer player)
-+    {
-         if (p_179224_2_.func_77942_o() && p_179224_2_.func_77978_p().func_150297_b("BlockEntityTag", 10))
-         {
-             TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_1_);
+         Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
-             if (tileentity != null)
-             {
-+                //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
-+                final net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.func_71276_C();
-+                if (!p_179224_0_.field_72995_K && tileentity.restrictNBTCopy() &&
-+                   (server == null || !server.func_71203_ab().func_152596_g(player.func_146103_bH())))
-+                       return false;
-                 NBTTagCompound nbttagcompound = new NBTTagCompound();
-                 NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttagcompound.func_74737_b();
-                 tileentity.func_145841_b(nbttagcompound);
-@@ -157,4 +159,26 @@
+-        if (block == Blocks.field_150431_aC)
++        if (block == Blocks.field_150431_aC && block.func_176200_f(p_179222_1_, p_179222_2_))
+         {
+             p_179222_3_ = EnumFacing.UP;
+         }
+@@ -162,4 +154,26 @@
      {
          return this.field_150939_a;
      }
@@ -63,7 +47,7 @@
 +        IBlockState state = world.func_180495_p(pos);
 +        if (state.func_177230_c() == this.field_150939_a)
 +        {
-+            setTileEntityNBT(world, pos, stack, player);
++            func_179224_a(world, player, pos, stack);
 +            this.field_150939_a.func_180633_a(world, pos, state, player, stack);
 +        }
 +

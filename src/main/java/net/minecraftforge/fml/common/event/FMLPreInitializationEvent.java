@@ -26,6 +26,22 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Called before {@link FMLInitializationEvent} during mod startup.
+ *
+ * This is the first of three commonly called events during mod initialization.
+ *
+ * Recommended activities:
+ * Setup your logging {@link #getModLog()}
+ * Load any configuration data you might have {@link #getSuggestedConfigurationFile()}
+ * Search for a version.properties file and load it {@link #getVersionProperties()}
+ * Configure your {@link ModMetadata} programmatically {@link #getModMetadata()}
+ * Register your blocks and items with the {@link net.minecraftforge.fml.common.registry.GameRegistry}
+ * Discover parts of your mod by using annotation search {@link #getAsmData()}
+ *
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ * @author cpw
+ */
 public class FMLPreInitializationEvent extends FMLStateEvent
 {
     private ModMetadata modMetadata;
@@ -57,31 +73,58 @@ public class FMLPreInitializationEvent extends FMLStateEvent
         this.suggestedConfigFile = new File(configurationDir, activeContainer.getModId()+".cfg");
     }
 
+    /**
+     * Get the {@link File} the mod was loaded from
+     * @return The file the mod was loaded from
+     */
     public File getSourceFile()
     {
         return sourceFile;
     }
 
+    /**
+     * Get the {@link ModMetadata} for this mod
+     * @return the mod metadata for the mod
+     */
     public ModMetadata getModMetadata()
     {
         return modMetadata;
     }
 
+    /**
+     * Get the main configuration directory for this minecraft instance
+     * @return the main configuration directory
+     */
     public File getModConfigurationDirectory()
     {
         return configurationDir;
     }
 
+    /**
+     * Get a suggested configuration file for this mod. It will be of the form &lt;modid&gt;.cfg
+     * @return A suggested configuration file name for this mod
+     */
     public File getSuggestedConfigurationFile()
     {
         return suggestedConfigFile;
     }
 
+    /**
+     * Get the {@link ASMDataTable} for this instance of Minecraft. This is a special structure containing
+     * parsing information from FML. It can be searched for annotations parsed out by FML.
+     * @return
+     */
     public ASMDataTable getAsmData()
     {
         return asmData;
     }
 
+    /**
+     * Get a version.properties file as a {@link Properties} object from the mod file.
+     * This can be used to load build-type information
+     * such as a unique version number from a properties file shipped as part of the distributable.
+     * @return A properties object if one exists, else null
+     */
     public Properties getVersionProperties()
     {
         if (this.modContainer instanceof FMLModContainer)

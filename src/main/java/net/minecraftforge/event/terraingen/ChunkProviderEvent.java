@@ -1,9 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 

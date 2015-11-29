@@ -7,25 +7,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.google.common.base.Joiner;
 
 /**
- * @deprecated not a stable API, will break, don't use this yet
+ * Not a fully fleshed out API, may change in future MC versions.
+ * However feel free to use and suggest additions.
  */
-@Deprecated
 public class ProgressManager
 {
     private static final List<ProgressBar> bars = new CopyOnWriteArrayList<ProgressBar>();
 
     /**
-     * @deprecated not a stable API, will break, don't use this yet
+     * Not a fully fleshed out API, may change in future MC versions.
+     * However feel free to use and suggest additions.
      */
-    @Deprecated
     public static ProgressBar push(String title, int steps)
     {
         return push(title, steps, false);
     }
     /**
-     * @deprecated not a stable API, will break, don't use this yet
+     * Not a fully fleshed out API, may change in future MC versions.
+     * However feel free to use and suggest additions.
      */
-    @Deprecated
     public static ProgressBar push(String title, int steps, boolean timeEachStep)
     {
         ProgressBar bar = new ProgressBar(title, steps);
@@ -38,10 +38,11 @@ public class ProgressManager
         return bar;
     }
 
+
     /**
-     * @deprecated not a stable API, will break, don't use this yet
+     * Not a fully fleshed out API, may change in future MC versions.
+     * However feel free to use and suggest additions.
      */
-    @Deprecated
     public static void pop(ProgressBar bar)
     {
         if(bar.getSteps() != bar.getStep()) throw new IllegalStateException("can't pop unfinished ProgressBar " + bar.getTitle());
@@ -67,10 +68,11 @@ public class ProgressManager
         return bars.iterator();
     }
 
+
     /**
-     * @deprecated not a stable API, will break, don't use this yet
+     * Not a fully fleshed out API, may change in future MC versions.
+     * However feel free to use and suggest additions.
      */
-    @Deprecated
     public static class ProgressBar
     {
         private final String title;

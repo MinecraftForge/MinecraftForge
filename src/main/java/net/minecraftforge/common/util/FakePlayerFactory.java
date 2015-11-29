@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory
@@ -26,7 +25,7 @@ public class FakePlayerFactory
         if (ret == null)
         {
             ret = FakePlayerFactory.get(world,  MINECRAFT);
-            MINECRAFT_PLAYER = new WeakReference(ret);
+            MINECRAFT_PLAYER = new WeakReference<FakePlayer>(ret);
         }
         return ret;
     }

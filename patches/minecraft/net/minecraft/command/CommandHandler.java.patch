@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -48,6 +48,16 @@
+@@ -44,6 +44,16 @@
          }
          else if (icommand.func_71519_b(p_71556_1_))
          {
@@ -16,4 +16,4 @@
 +
              if (i > -1)
              {
-                 List list = PlayerSelector.func_179656_b(p_71556_1_, astring[i], Entity.class);
+                 List<Entity> list = PlayerSelector.<Entity>func_179656_b(p_71556_1_, astring[i], Entity.class);

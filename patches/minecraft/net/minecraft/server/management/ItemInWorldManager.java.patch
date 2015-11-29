@@ -8,8 +8,8 @@
 +    private double blockReachDistance = 5.0d;
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
-     private WorldSettings.GameType field_73091_c;
-@@ -137,6 +139,14 @@
+     private WorldSettings.GameType field_73091_c = WorldSettings.GameType.NOT_SET;
+@@ -130,6 +132,14 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -24,7 +24,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -171,18 +181,35 @@
+@@ -164,18 +174,35 @@
                  }
              }
  
@@ -64,7 +64,7 @@
                  this.func_180237_b(p_180784_1_);
              }
              else
-@@ -203,7 +230,7 @@
+@@ -196,7 +223,7 @@
              int i = this.field_73100_i - this.field_73089_e;
              Block block = this.field_73092_a.func_180495_p(p_180785_1_).func_177230_c();
  
@@ -73,7 +73,7 @@
              {
                  float f = block.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
-@@ -232,9 +259,13 @@
+@@ -225,9 +252,13 @@
  
      private boolean func_180235_c(BlockPos p_180235_1_)
      {
@@ -88,7 +88,7 @@
  
          if (flag)
          {
-@@ -246,7 +277,8 @@
+@@ -239,7 +270,8 @@
  
      public boolean func_180237_b(BlockPos p_180237_1_)
      {
@@ -98,7 +98,7 @@
          {
              return false;
          }
-@@ -255,40 +287,21 @@
+@@ -248,40 +280,21 @@
              IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180237_1_);
              TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
  
@@ -144,7 +144,7 @@
  
                  if (itemstack1 != null)
                  {
-@@ -300,12 +313,18 @@
+@@ -293,12 +306,18 @@
                      }
                  }
  
@@ -163,15 +163,15 @@
              return flag1;
          }
      }
-@@ -343,6 +362,7 @@
-                 if (itemstack1.field_77994_a == 0)
+@@ -332,6 +351,7 @@
+                 if (itemstack.field_77994_a == 0)
                  {
                      p_73085_1_.field_71071_by.field_70462_a[p_73085_1_.field_71071_by.field_70461_c] = null;
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_73085_1_, itemstack1);
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_73085_1_, itemstack);
                  }
  
                  if (!p_73085_1_.func_71039_bw())
-@@ -387,33 +407,51 @@
+@@ -380,33 +400,51 @@
          }
          else
          {
@@ -241,7 +241,7 @@
          }
      }
  
-@@ -421,4 +459,13 @@
+@@ -414,4 +452,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }
