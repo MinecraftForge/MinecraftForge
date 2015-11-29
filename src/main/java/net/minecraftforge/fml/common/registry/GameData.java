@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
@@ -31,6 +32,8 @@ public class GameData
     static final int MAX_BLOCK_ID = 4095;
     static final int MIN_ITEM_ID = 4096;
     static final int MAX_ITEM_ID = 31999;
+    public static final int MIN_POTION_ID = 32; // 0-31 are vanilla, forge start at 32
+    public static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
 
     private static final GameData mainData = new GameData();
     // public api
@@ -54,6 +57,16 @@ public class GameData
     {
         return getMain().iItemRegistry;
     }
+
+    /**
+      * Get the currently active potion registry.
+      *
+      * @return Potion Registry.
+      */
+    public static FMLControlledNamespacedRegistry<Potion> getPotionRegistry() {
+        return getMain().iPotionRegistry;
+    }
+
 
     /***************************************************
      * INTERNAL CODE FROM HERE ON DO NOT USE!
@@ -98,6 +111,7 @@ public class GameData
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true, BlockStateCapture.INSTANCE);
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true);
+    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MAX_POTION_ID, MIN_POTION_ID, false, PotionArrayCapture.INSTANCE);
 
     int registerItem(Item item, String name) // from GameRegistry
     {
@@ -131,6 +145,13 @@ public class GameData
     private int registerBlock(Block block, ResourceLocation name, int idHint)
     {
         return iBlockRegistry.add(idHint, name, block);
+    }
+
+    /**
+     * Called from GameRegistry, which is called from Potion-Constructor
+     */
+    int registerPotion(Potion potion, ResourceLocation name, int id) {
+        return iPotionRegistry.add(id, name, potion);
     }
 
     /**
@@ -226,6 +247,18 @@ public class GameData
             {
                 GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
             }
+        }
+    }
+
+    private static class PotionArrayCapture implements FMLControlledNamespacedRegistry.AddCallback<Potion>
+    {
+        static final PotionArrayCapture INSTANCE = new PotionArrayCapture();
+
+        @Override
+        public void onAdd(Potion potion, int id) {
+            // fix the data in the potion and the potions-array
+            potion.id = id;
+            Potion.potionTypes[id] = potion;
         }
     }
 }
