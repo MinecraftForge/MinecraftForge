@@ -1,0 +1,134 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
+@@ -517,8 +517,10 @@
+ 
+     public void renderEntities(Entity p_180446_1_, ICamera p_180446_2_, float partialTicks)
+     {
++        int pass = net.minecraftforge.client.MinecraftForgeClient.getRenderPass();
+         if (this.renderEntitiesStartupCounter > 0)
+         {
++            if (pass > 0) return;
+             --this.renderEntitiesStartupCounter;
+         }
+         else
+@@ -529,9 +531,12 @@
+             this.theWorld.theProfiler.startSection("prepare");
+             TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRendererObj, this.mc.getRenderViewEntity(), partialTicks);
+             this.renderManager.cacheActiveRenderInfo(this.theWorld, this.mc.fontRendererObj, this.mc.getRenderViewEntity(), this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
++            if (pass == 0) // no indentation to shrink patch
++            {
+             this.countEntitiesTotal = 0;
+             this.countEntitiesRendered = 0;
+             this.countEntitiesHidden = 0;
++            }
+             Entity entity1 = this.mc.getRenderViewEntity();
+             double d3 = entity1.lastTickPosX + (entity1.posX - entity1.lastTickPosX) * (double)partialTicks;
+             double d4 = entity1.lastTickPosY + (entity1.posY - entity1.lastTickPosY) * (double)partialTicks;
+@@ -543,13 +548,17 @@
+             this.mc.entityRenderer.enableLightmap();
+             this.theWorld.theProfiler.endStartSection("global");
+             List list = this.theWorld.getLoadedEntityList();
++            if (pass == 0) // no indentation to shrink patch
++            {
+             this.countEntitiesTotal = list.size();
++            }
+             int i;
+             Entity entity2;
+ 
+             for (i = 0; i < this.theWorld.weatherEffects.size(); ++i)
+             {
+                 entity2 = (Entity)this.theWorld.weatherEffects.get(i);
++                if (!entity2.shouldRenderInPass(pass)) continue;
+                 ++this.countEntitiesRendered;
+ 
+                 if (entity2.isInRangeToRender3d(d0, d1, d2))
+@@ -571,6 +580,7 @@
+                 for (i = 0; i < list.size(); ++i)
+                 {
+                     entity2 = (Entity)list.get(i);
++                    if (!entity2.shouldRenderInPass(pass)) continue;
+                     boolean flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping();
+                     boolean flag1 = entity2.isInRangeToRender3d(d0, d1, d2) && (entity2.ignoreFrustumCheck || p_180446_2_.isBoundingBoxInFrustum(entity2.getEntityBoundingBox()) || entity2.riddenByEntity == this.mc.thePlayer) && entity2 instanceof EntityPlayer;
+ 
+@@ -605,6 +615,7 @@
+                 while (iterator2.hasNext())
+                 {
+                     Entity entity3 = (Entity)iterator2.next();
++                    if (!entity3.shouldRenderInPass(pass)) continue;
+                     boolean flag2 = this.renderManager.shouldRender(entity3, p_180446_2_, d0, d1, d2) || entity3.riddenByEntity == this.mc.thePlayer;
+ 
+                     if (flag2)
+@@ -640,6 +651,7 @@
+                 while (iterator1.hasNext())
+                 {
+                     tileentity = (TileEntity)iterator1.next();
++                    if (!tileentity.shouldRenderInPass(pass) || !p_180446_2_.isBoundingBoxInFrustum(tileentity.getRenderBoundingBox())) continue;
+                     TileEntityRendererDispatcher.instance.renderTileEntity(tileentity, partialTicks, -1);
+                 }
+             }
+@@ -671,7 +683,7 @@
+ 
+                 Block block = this.theWorld.getBlockState(blockpos).getBlock();
+ 
+-                if (tileentity != null && (block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockSign || block instanceof BlockSkull))
++                if (tileentity != null && tileentity.shouldRenderInPass(pass) && tileentity.canRenderBreaking() && p_180446_2_.isBoundingBoxInFrustum(tileentity.getRenderBoundingBox()))
+                 {
+                     TileEntityRendererDispatcher.instance.renderTileEntity(tileentity, partialTicks, destroyblockprogress.getPartialBlockDamage());
+                 }
+@@ -1151,6 +1163,12 @@
+ 
+     public void renderSky(float partialTicks, int pass)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.getDimensionId() == 1)
+         {
+             this.renderSkyEnd();
+@@ -1381,6 +1399,12 @@
+ 
+     public void renderClouds(float p_180447_1_, int p_180447_2_)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.mc.theWorld.provider.getCloudRenderer();
++        if (renderer != null)
++        {
++            renderer.render(p_180447_1_, this.mc.theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.isSurfaceWorld())
+         {
+             if (this.mc.gameSettings.fancyGraphics)
+@@ -1805,8 +1829,11 @@
+                 double d4 = (double)blockpos.getY() - d1;
+                 double d5 = (double)blockpos.getZ() - d2;
+                 Block block = this.theWorld.getBlockState(blockpos).getBlock();
++                TileEntity te = this.theWorld.getTileEntity(blockpos);
++                boolean hasBreak = block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockSign || block instanceof BlockSkull;
++                if (!hasBreak) hasBreak = te != null && te.canRenderBreaking();
+ 
+-                if (!(block instanceof BlockChest) && !(block instanceof BlockEnderChest) && !(block instanceof BlockSign) && !(block instanceof BlockSkull))
++                if (!hasBreak)
+                 {
+                     if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
+                     {
+@@ -1949,13 +1976,16 @@
+         if (recordName != null)
+         {
+             ItemRecord itemrecord = ItemRecord.getRecord(recordName);
++            ResourceLocation resource = null;
+ 
+             if (itemrecord != null)
+             {
+                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.getRecordNameLocal());
++                resource = itemrecord.getRecordResource(recordName);
+             }
+ 
+-            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(new ResourceLocation(recordName), (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
++            if (resource == null) resource = new ResourceLocation(recordName);
++            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(resource, (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
+             this.mapSoundPositions.put(blockPosIn, positionedsoundrecord);
+             this.mc.getSoundHandler().playSound(positionedsoundrecord);
+         }

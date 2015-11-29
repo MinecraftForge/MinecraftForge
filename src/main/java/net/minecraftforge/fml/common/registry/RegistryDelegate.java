@@ -1,6 +1,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import com.google.common.base.Objects;
+import net.minecraft.util.ResourceLocation;
 
 
 /**
@@ -24,12 +25,24 @@ public interface RegistryDelegate<T> {
 
     /**
      * Get the name of this delegate. This is completely static after registration has completed and will never change.
+     *
+     * Deprecated in favour of the resource location.
+     *
+     * @see #getResourceName()
      * @return The name
      */
+    @Deprecated
     String name();
 
     /**
-     * Get the delegate type. It will be Item or Block.
+     * Get the unique resource location for this delegate. Completely static after registration has completed, and
+     * will never change.
+     * @return The name
+     */
+    ResourceLocation getResourceName();
+
+    /**
+     * Get the delegate type. It will be dependent on the registry this delegate is sourced from.
      * @return The type of delegate
      */
     Class<T> type();
@@ -40,7 +53,7 @@ public interface RegistryDelegate<T> {
     final class Delegate<T> implements RegistryDelegate<T>
     {
         private T referant;
-        private String name;
+        private ResourceLocation name;
         private final Class<T> type;
 
         public Delegate(T referant, Class<T> type) {
@@ -55,8 +68,11 @@ public interface RegistryDelegate<T> {
 
         @Override
         public String name() {
-            return name;
+            return name.toString();
         }
+
+        @Override
+        public ResourceLocation getResourceName() { return name; }
 
         @Override
         public Class<T> type()
@@ -69,10 +85,7 @@ public interface RegistryDelegate<T> {
             this.referant = newTarget;
         }
 
-        void setName(String name)
-        {
-            this.name = name;
-        }
+        void setResourceName(ResourceLocation name) { this.name = name; }
 
         @Override
         public boolean equals(Object obj)

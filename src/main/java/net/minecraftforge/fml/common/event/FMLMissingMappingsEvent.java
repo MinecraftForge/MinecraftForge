@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -17,7 +18,9 @@ import com.google.common.collect.ListMultimap;
  * These can be remapped to other existing objects, or simply discarded.
  * Use get() and getAll() to process this event.
  *
- * @author cpw, Player
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ * @author cpw
+ * @author Player
  *
  */
 public class FMLMissingMappingsEvent extends FMLEvent {
@@ -31,7 +34,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
      * @author cpw
      *
      */
-    public static enum Action {
+    public enum Action {
         /**
          * Take the default action
          */
@@ -61,24 +64,16 @@ public class FMLMissingMappingsEvent extends FMLEvent {
         public final GameRegistry.Type type;
         public final String name;
         public final int id;
+        public final ResourceLocation resourceLocation;
         private Action action = Action.DEFAULT;
         private Object target;
 
-        public MissingMapping(GameRegistry.Type type, String name, int id)
+        public MissingMapping(GameRegistry.Type type, ResourceLocation name, int id)
         {
             this.type = type;
-            this.name = name;
+            this.name = name.toString();
             this.id = id;
-        }
-        /**
-         * @deprecated use ignore(), warn(), fail() or remap() instead
-         */
-        @Deprecated
-        public void setAction(Action target)
-        {
-            if (target == Action.DEFAULT || target == Action.REMAP || target == Action.BLOCKONLY) throw new IllegalArgumentException();
-
-            this.action = target;
+            this.resourceLocation = name;
         }
 
         /**

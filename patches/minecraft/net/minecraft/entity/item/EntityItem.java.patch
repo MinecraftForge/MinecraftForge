@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -31,6 +31,11 @@
+@@ -29,6 +29,11 @@
+     private String field_145802_g;
      public float field_70290_d;
-     private static final String __OBFID = "CL_00001669";
  
 +    /**
 +     * The maximum age of this EntityItem.  The item is expired once this is reached.
@@ -12,7 +12,7 @@
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
          super(p_i1709_1_);
-@@ -48,6 +53,7 @@
+@@ -46,6 +51,7 @@
      {
          this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
          this.func_92058_a(p_i1710_8_);
@@ -20,7 +20,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -71,6 +77,8 @@
+@@ -69,6 +75,8 @@
  
      public void func_70071_h_()
      {
@@ -29,7 +29,7 @@
          if (this.func_92059_d() == null)
          {
              this.func_70106_y();
-@@ -131,8 +139,16 @@
+@@ -129,8 +137,16 @@
  
              this.func_70072_I();
  
@@ -47,7 +47,7 @@
                  this.func_70106_y();
              }
          }
-@@ -276,6 +292,7 @@
+@@ -271,6 +287,7 @@
          p_70014_1_.func_74777_a("Health", (short)((byte)this.field_70291_e));
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -55,9 +55,9 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -316,20 +333,23 @@
-         NBTTagCompound nbttagcompound1 = p_70037_1_.func_74775_l("Item");
-         this.func_92058_a(ItemStack.func_77949_a(nbttagcompound1));
+@@ -311,20 +328,23 @@
+         NBTTagCompound nbttagcompound = p_70037_1_.func_74775_l("Item");
+         this.func_92058_a(ItemStack.func_77949_a(nbttagcompound));
  
 -        if (this.func_92059_d() == null)
 -        {
@@ -84,7 +84,7 @@
              {
                  if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150364_r))
                  {
-@@ -366,6 +386,7 @@
+@@ -361,6 +381,7 @@
                      }
                  }
  

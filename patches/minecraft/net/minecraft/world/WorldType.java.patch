@@ -1,21 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -1,5 +1,14 @@
- package net.minecraft.world;
- 
-+import java.util.Arrays;
-+import net.minecraft.client.Minecraft;
-+import net.minecraft.client.gui.GuiCreateFlatWorld;
-+import net.minecraft.client.gui.GuiCreateWorld;
-+import net.minecraft.client.gui.GuiCustomizeWorldScreen;
-+import net.minecraft.world.gen.layer.GenLayer;
-+import net.minecraft.world.gen.layer.GenLayerBiome;
-+import net.minecraft.world.gen.layer.GenLayerBiomeEdge;
-+import net.minecraft.world.gen.layer.GenLayerZoom;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -28,6 +37,7 @@
+@@ -27,6 +27,7 @@
  
      private WorldType(int p_i1960_1_, String p_i1960_2_, int p_i1960_3_)
      {
@@ -23,7 +8,7 @@
          this.field_77133_f = p_i1960_2_;
          this.field_77134_g = p_i1960_3_;
          this.field_77140_h = true;
-@@ -114,4 +124,144 @@
+@@ -113,4 +114,144 @@
          this.field_151361_l = true;
          return this;
      }
@@ -84,7 +69,7 @@
 +        }
 +
 +        int oldLen = field_77139_a.length;
-+        field_77139_a = Arrays.copyOf(field_77139_a, oldLen + 16);
++        field_77139_a = java.util.Arrays.copyOf(field_77139_a, oldLen + 16);
 +        return oldLen;
 +    }
 +
@@ -119,15 +104,15 @@
 +     * @param guiCreateWorld the createworld GUI
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public void onCustomizeButton(Minecraft mc, GuiCreateWorld guiCreateWorld)
++    public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld guiCreateWorld)
 +    {
 +        if (this == WorldType.field_77138_c)
 +        {
-+            mc.func_147108_a(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_146334_a));
++            mc.func_147108_a(new net.minecraft.client.gui.GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_146334_a));
 +        }
 +        else if (this == WorldType.field_180271_f)
 +        {
-+            mc.func_147108_a(new GuiCustomizeWorldScreen(guiCreateWorld, guiCreateWorld.field_146334_a));
++            mc.func_147108_a(new net.minecraft.client.gui.GuiCustomizeWorldScreen(guiCreateWorld, guiCreateWorld.field_146334_a));
 +        }
 +    }
 +
@@ -160,11 +145,11 @@
 +     * @param chunkProviderSettingsJson The JSON string to use when initializing ChunkProviderSettings.Factory
 +     * @return A GenLayer that will return ints representing the Biomes to be generated, see GenLayerBiome
 +     */
-+    public GenLayer getBiomeLayer(long worldSeed, GenLayer parentLayer, String chunkProviderSettingsJson)
++    public net.minecraft.world.gen.layer.GenLayer getBiomeLayer(long worldSeed, net.minecraft.world.gen.layer.GenLayer parentLayer, String chunkProviderSettingsJson)
 +    {
-+        GenLayer ret = new GenLayerBiome(200L, parentLayer, this, chunkProviderSettingsJson);
-+        ret = GenLayerZoom.func_75915_a(1000L, ret, 2);
-+        ret = new GenLayerBiomeEdge(1000L, ret);
++        net.minecraft.world.gen.layer.GenLayer ret = new net.minecraft.world.gen.layer.GenLayerBiome(200L, parentLayer, this, chunkProviderSettingsJson);
++        ret = net.minecraft.world.gen.layer.GenLayerZoom.func_75915_a(1000L, ret, 2);
++        ret = new net.minecraft.world.gen.layer.GenLayerBiomeEdge(1000L, ret);
 +        return ret;
 +    }
  }

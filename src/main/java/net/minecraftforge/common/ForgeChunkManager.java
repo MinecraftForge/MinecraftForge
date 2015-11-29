@@ -901,7 +901,6 @@ public class ForgeChunkManager
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
@@ -912,7 +911,7 @@ public class ForgeChunkManager
         Chunk chunk = cache.getIfPresent(coords);
         if (chunk != null)
         {
-            for (ClassInheritanceMultiMap eList : chunk.getEntityLists())
+            for (ClassInheritanceMultiMap<Entity> eList : chunk.getEntityLists())
             {
                 Iterator<Entity> itr = (Iterator<Entity>)eList.iterator();
                 while (itr.hasNext())

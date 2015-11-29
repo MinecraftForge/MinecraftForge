@@ -1,9 +1,7 @@
 package net.minecraftforge.client;
 
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
 
@@ -40,12 +38,12 @@ public class ItemModelMesherForge extends ItemModelMesher
         TIntObjectHashMap<IBakedModel>           mods = models.get(item);
         if (locs == null)
         {
-            locs = new TIntObjectHashMap();
+            locs = new TIntObjectHashMap<ModelResourceLocation>();
             locations.put(item, locs);
         }
         if (mods == null)
         {
-            mods = new TIntObjectHashMap();
+            mods = new TIntObjectHashMap<IBakedModel>();
             models.put(item, mods);
         }
         locs.put(meta, location);
@@ -64,7 +62,7 @@ public class ItemModelMesherForge extends ItemModelMesher
             }
             else
             {
-                mods = new TIntObjectHashMap();
+                mods = new TIntObjectHashMap<IBakedModel>();
                 models.put(e.getKey(), mods);
             }
             final TIntObjectHashMap<IBakedModel> map = mods;

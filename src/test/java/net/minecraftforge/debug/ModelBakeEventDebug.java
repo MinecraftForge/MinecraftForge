@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.primitives.Ints;
 
+@SuppressWarnings("deprecation")
 @Mod(modid = ModelBakeEventDebug.MODID, version = ModelBakeEventDebug.VERSION)
 public class ModelBakeEventDebug
 {
@@ -54,6 +55,7 @@ public class ModelBakeEventDebug
 
     private static String blockName = MODID.toLowerCase() + ":" + CustomModelBlock.name;
 
+    @SuppressWarnings("unchecked")
     public static final IUnlistedProperty<Integer>[] properties = new IUnlistedProperty[6];
 
     static
@@ -207,7 +209,7 @@ public class ModelBakeEventDebug
     public static class CustomModel implements IBakedModel, ISmartBlockModel, ISmartItemModel
     {
         private final TextureAtlasSprite base, overlay;
-        private boolean hasStateSet = false;
+        //private boolean hasStateSet = false;
         private final IExtendedBlockState state;
 
         public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)

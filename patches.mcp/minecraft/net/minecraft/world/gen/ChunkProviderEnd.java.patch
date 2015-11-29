@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
+@@ -15,6 +15,9 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.ChunkPrimer;
+ import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraftforge.common.*;
++import net.minecraftforge.fml.common.eventhandler.Event.*;
++import net.minecraftforge.event.terraingen.*;
+ 
+ public class ChunkProviderEnd implements IChunkProvider
+ {
+@@ -43,6 +46,14 @@
+         this.noiseGen3 = new NoiseGeneratorOctaves(this.endRNG, 8);
+         this.noiseGen4 = new NoiseGeneratorOctaves(this.endRNG, 10);
+         this.noiseGen5 = new NoiseGeneratorOctaves(this.endRNG, 16);
++
++        NoiseGenerator[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
++        noiseGens = TerrainGen.getModdedNoiseGenerators(worldIn, this.endRNG, noiseGens);
++        this.noiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
++        this.noiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
++        this.noiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
++        this.noiseGen4 = (NoiseGeneratorOctaves)noiseGens[3];
++        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
+     }
+ 
+     public void func_180520_a(int p_180520_1_, int p_180520_2_, ChunkPrimer p_180520_3_)
+@@ -115,6 +126,9 @@
+ 
+     public void func_180519_a(ChunkPrimer p_180519_1_)
+     {
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, chunkX, chunkZ, p_180519_1_, this.endWorld);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == Result.DENY) return;
+         for (int i = 0; i < 16; ++i)
+         {
+             for (int j = 0; j < 16; ++j)
+@@ -164,8 +178,10 @@
+         }
+     }
+ 
++    private int chunkX=0, chunkZ=0;
+     public Chunk provideChunk(int x, int z)
+     {
++        chunkX = x; chunkZ = z;
+         this.endRNG.setSeed((long)x * 341873128712L + (long)z * 132897987541L);
+         ChunkPrimer chunkprimer = new ChunkPrimer();
+         this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, x * 16, z * 16, 16, 16);
+@@ -185,6 +201,10 @@
+ 
+     private double[] initializeNoiseField(double[] p_73187_1_, int p_73187_2_, int p_73187_3_, int p_73187_4_, int p_73187_5_, int p_73187_6_, int p_73187_7_)
+     {
++        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, p_73187_1_, p_73187_2_, p_73187_3_, p_73187_4_, p_73187_5_, p_73187_6_, p_73187_7_);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == Result.DENY) return event.noisefield;
++
+         if (p_73187_1_ == null)
+         {
+             p_73187_1_ = new double[p_73187_5_ * p_73187_6_ * p_73187_7_];
+@@ -275,8 +295,14 @@
+     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+     {
+         BlockFalling.fallInstantly = true;
++
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, endWorld, endWorld.rand, p_73153_2_, p_73153_3_, false));
++
+         BlockPos blockpos = new BlockPos(p_73153_2_ * 16, 0, p_73153_3_ * 16);
+         this.endWorld.getBiomeGenForCoords(blockpos.add(16, 0, 16)).decorate(this.endWorld, this.endWorld.rand, blockpos);
++
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, endWorld, endWorld.rand, p_73153_2_, p_73153_3_, false));
++
+         BlockFalling.fallInstantly = false;
+     }
+ 

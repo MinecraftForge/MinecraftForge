@@ -3,24 +3,19 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.WeightedRandom;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.biome.WorldChunkManager;
-import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.util.EnumHelper;
 
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-
-    private static boolean isModded = false;
 
     public static List<BiomeGenBase> oceanBiomes = new ArrayList<BiomeGenBase>();
 
@@ -36,8 +31,9 @@ public class BiomeManager
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
+        @SuppressWarnings("unchecked")
         TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
-        List list = new ArrayList();
+        List<BiomeEntry> list = new ArrayList<BiomeEntry>();
 
         list.add(new BiomeEntry(BiomeGenBase.forest, 10));
         list.add(new BiomeEntry(BiomeGenBase.roofedForest, 10));
@@ -46,7 +42,7 @@ public class BiomeManager
         list.add(new BiomeEntry(BiomeGenBase.birchForest, 10));
         list.add(new BiomeEntry(BiomeGenBase.swampland, 10));
 
-        currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList(list);
+        currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
         list.add(new BiomeEntry(BiomeGenBase.forest, 10));
@@ -54,21 +50,20 @@ public class BiomeManager
         list.add(new BiomeEntry(BiomeGenBase.taiga, 10));
         list.add(new BiomeEntry(BiomeGenBase.plains, 10));
 
-        currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList(list);
+        currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
         list.add(new BiomeEntry(BiomeGenBase.icePlains, 30));
         list.add(new BiomeEntry(BiomeGenBase.coldTaiga, 10));
 
-        currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList(list);
+        currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
-        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList(list);
+        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<BiomeEntry>(list);
 
         return currentBiomes;
     }
 
-    @SuppressWarnings("unchecked")
     public static void addVillageBiome(BiomeGenBase biome, boolean canSpawn)
     {
         if (!MapGenVillage.villageSpawnBiomes.contains(biome))
@@ -79,7 +74,6 @@ public class BiomeManager
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static void removeVillageBiome(BiomeGenBase biome)
     {
         if (MapGenVillage.villageSpawnBiomes.contains(biome))
@@ -124,8 +118,6 @@ public class BiomeManager
 
     public static void addBiome(BiomeType type, BiomeEntry entry)
     {
-        isModded = true;
-
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
         if (list != null) list.add(entry);
@@ -133,8 +125,6 @@ public class BiomeManager
 
     public static void removeBiome(BiomeType type, BiomeEntry entry)
     {
-        isModded = true;
-
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
 
@@ -200,6 +190,7 @@ public class BiomeManager
 
     private static class TrackedList<E> extends ArrayList<E>
     {
+        private static final long serialVersionUID = 1L;
         private boolean isModded = false;
 
         public TrackedList(Collection<? extends E> c)

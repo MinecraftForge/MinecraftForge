@@ -44,11 +44,9 @@ public class GuiSelectString extends GuiScreen
     public final Object beforeValue;
     public Object currentValue;
     protected HoverChecker tooltipHoverChecker;
-    @SuppressWarnings("rawtypes")
-    protected List toolTip;
+    protected List<String> toolTip;
     protected boolean enabled;
 
-    @SuppressWarnings("rawtypes")
     public GuiSelectString(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Map<Object, String> selectableValues, Object currentValue, boolean enabled)
     {
         this.mc = Minecraft.getMinecraft();
@@ -58,7 +56,7 @@ public class GuiSelectString extends GuiScreen
         this.selectableValues = selectableValues;
         this.beforeValue = currentValue;
         this.currentValue = currentValue;
-        this.toolTip = new ArrayList();
+        this.toolTip = new ArrayList<String>();
         this.enabled = enabled;
         String propName = I18n.format(configElement.getLanguageKey());
         String comment;
@@ -95,7 +93,6 @@ public class GuiSelectString extends GuiScreen
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
@@ -178,8 +175,7 @@ public class GuiSelectString extends GuiScreen
             drawToolTip(this.toolTip, par1, par2);
     }
 
-    @SuppressWarnings("rawtypes")
-    public void drawToolTip(List stringList, int x, int y)
+    public void drawToolTip(List<String> stringList, int x, int y)
     {
         this.drawHoveringText(stringList, x, y);
     }

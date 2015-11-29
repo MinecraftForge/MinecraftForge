@@ -12,6 +12,11 @@
 
 package net.minecraftforge.fml.common.event;
 
+/**
+ * Internal only event, used to begin the lifecycle of loading mods.
+ *
+ * @author cpw
+ */
 public class FMLLoadEvent
 {
 

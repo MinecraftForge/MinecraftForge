@@ -11,6 +11,8 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraftforge.fml.common.FMLLog;
@@ -28,7 +30,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 
-public class FMLProxyPacket implements Packet {
+public class FMLProxyPacket implements Packet<INetHandler> {
     final String channel;
     private Side target;
     private final PacketBuffer payload;
@@ -117,16 +119,16 @@ public class FMLProxyPacket implements Packet {
     {
         return netHandler;
     }
-    public Packet toC17Packet()
+    public Packet<INetHandlerPlayServer> toC17Packet()
     {
         return new C17PacketCustomPayload(channel, payload);
     }
 
     static final int PART_SIZE = 0x1000000 - 0x50; // Make it a constant so that it gets inlined below.
     public static final int MAX_LENGTH = PART_SIZE * 255;
-    public List<Packet> toS3FPackets() throws IOException
+    public List<Packet<INetHandlerPlayClient>> toS3FPackets() throws IOException
     {
-        List<Packet> ret = Lists.newArrayList();
+        List<Packet<INetHandlerPlayClient>> ret = Lists.newArrayList();
         byte[] data = payload.array();
 
         if (data.length < PART_SIZE)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntitySpawnPlacementRegistry.java
-@@ -45,6 +45,12 @@
+@@ -44,6 +44,12 @@
          return (EntityLiving.SpawnPlacementType)field_180110_a.get(p_180109_0_);
      }
  

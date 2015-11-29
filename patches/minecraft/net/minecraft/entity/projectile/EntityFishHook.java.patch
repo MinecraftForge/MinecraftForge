@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
-@@ -562,11 +562,19 @@
+@@ -567,11 +567,19 @@
          }
      }
  

@@ -1,0 +1,69 @@
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
+@@ -113,6 +113,12 @@
+             }
+         }
+ 
++        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
++        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, pos, mc.thePlayer))
++        {
++            return false;
++        }
++
+         if (this.currentGameType.isCreative() && this.mc.thePlayer.getHeldItem() != null && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)
+         {
+             return false;
+@@ -130,7 +136,7 @@
+             else
+             {
+                 worldclient.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
+-                boolean flag = worldclient.setBlockToAir(pos);
++                boolean flag = block1.removedByPlayer(worldclient, pos, mc.thePlayer, false);
+ 
+                 if (flag)
+                 {
+@@ -360,11 +366,19 @@
+         {
+             if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
+             {
++
++                if (p_178890_3_ != null &&
++                    p_178890_3_.getItem() != null &&
++                    p_178890_3_.getItem().onItemUseFirst(p_178890_3_, p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2))
++                {
++                        return true;
++                }
++
+                 IBlockState iblockstate = p_178890_2_.getBlockState(p_178890_4_);
+ 
+-                if ((!p_178890_1_.isSneaking() || p_178890_1_.getHeldItem() == null) && iblockstate.getBlock().onBlockActivated(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2))
++                if ((!p_178890_1_.isSneaking() || p_178890_1_.getHeldItem() == null || p_178890_1_.getHeldItem().getItem().doesSneakBypassUse(p_178890_2_, p_178890_4_, p_178890_1_)))
+                 {
+-                    flag = true;
++                    flag = iblockstate.getBlock().onBlockActivated(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2);
+                 }
+ 
+                 if (!flag && p_178890_3_ != null && p_178890_3_.getItem() instanceof ItemBlock)
+@@ -397,7 +411,9 @@
+                 }
+                 else
+                 {
+-                    return p_178890_3_.onItemUse(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2);
++                    if (!p_178890_3_.onItemUse(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2)) return false;
++                    if (p_178890_3_.stackSize <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_178890_1_, p_178890_3_);
++                    return true;
+                 }
+             }
+             else
+@@ -428,9 +444,10 @@
+             {
+                 playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = itemstack1;
+ 
+-                if (itemstack1.stackSize == 0)
++                if (itemstack1.stackSize <= 0)
+                 {
+                     playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = null;
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(playerIn, itemstack1);
+                 }
+ 
+                 return true;

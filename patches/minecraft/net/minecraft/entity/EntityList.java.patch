@@ -1,26 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -90,6 +90,7 @@
+@@ -88,6 +88,7 @@
  
-     public static void func_75618_a(Class p_75618_0_, String p_75618_1_, int p_75618_2_)
+     public static void func_75618_a(Class <? extends Entity > p_75618_0_, String p_75618_1_, int p_75618_2_)
      {
 +        if (p_75618_2_ < 0 || p_75618_2_ > 255) throw new IllegalArgumentException("Attempted to register a entity with invalid ID: " + p_75618_2_ + " Name: " + p_75618_1_ + " Class: " + p_75618_0_);
          if (field_75625_b.containsKey(p_75618_1_))
          {
              throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
-@@ -153,9 +154,10 @@
+@@ -151,9 +152,10 @@
              p_75615_0_.func_82580_o("Type");
          }
  
-+        Class oclass = null;
++        Class <? extends Entity > oclass = null;
          try
          {
--            Class oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
-+            oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+-            Class <? extends Entity > oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            oclass = field_75625_b.get(p_75615_0_.func_74779_i("id"));
  
              if (oclass != null)
              {
-@@ -169,7 +171,17 @@
+@@ -167,7 +169,17 @@
  
          if (entity != null)
          {
@@ -38,7 +38,7 @@
          }
          else
          {
-@@ -344,7 +356,9 @@
+@@ -343,7 +355,9 @@
  
      public static class EntityEggInfo
          {
@@ -48,7 +48,7 @@
              public final int field_75611_b;
              public final int field_75612_c;
              public final StatBase field_151512_d;
-@@ -358,6 +372,17 @@
+@@ -356,6 +370,17 @@
                  this.field_75612_c = p_i1583_3_;
                  this.field_151512_d = StatList.func_151182_a(this);
                  this.field_151513_e = StatList.func_151176_b(this);

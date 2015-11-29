@@ -9,7 +9,7 @@
  {
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container()
      {
-@@ -142,11 +142,12 @@
+@@ -140,11 +140,12 @@
          }
      }
  
@@ -23,7 +23,7 @@
          {
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -334,4 +335,19 @@
+@@ -327,4 +328,19 @@
          field_175514_bm.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
          field_175514_bm.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
      }

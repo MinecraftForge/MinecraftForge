@@ -27,7 +27,6 @@ public class GuiAccessDenied extends GuiScreen
         this.data = data;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {

@@ -1,48 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockState.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockState.java
-@@ -47,6 +47,16 @@
+@@ -38,6 +38,16 @@
  
-     public BlockState(Block p_i45663_1_, IProperty ... p_i45663_2_)
+     public BlockState(Block p_i45663_1_, IProperty... p_i45663_2_)
      {
 +        this(p_i45663_1_, p_i45663_2_, null);
 +    }
 +
-+    protected StateImplementation createState(Block block, ImmutableMap properties, ImmutableMap unlistedProperties)
++    protected StateImplementation createState(Block block, ImmutableMap<IProperty, Comparable> properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
 +    {
 +        return new StateImplementation(block, properties);
 +    }
 +
-+    protected BlockState(Block p_i45663_1_, IProperty[] p_i45663_2_, ImmutableMap unlistedProperties)
++    protected BlockState(Block p_i45663_1_, IProperty[] p_i45663_2_, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
 +    {
          this.field_177627_c = p_i45663_1_;
-         Arrays.sort(p_i45663_2_, new Comparator()
+         Arrays.sort(p_i45663_2_, new Comparator<IProperty>()
          {
-@@ -70,7 +80,7 @@
+@@ -53,7 +63,7 @@
+         for (List<Comparable> list1 : Cartesian.func_179321_a(this.func_177620_e()))
          {
-             List list = (List)iterator.next();
-             Map map = MapPopulator.func_179400_b(this.field_177624_d, list);
--            BlockState.StateImplementation stateimplementation = new BlockState.StateImplementation(p_i45663_1_, ImmutableMap.copyOf(map), null);
-+            BlockState.StateImplementation stateimplementation = createState(p_i45663_1_, ImmutableMap.copyOf(map), unlistedProperties);
-             linkedhashmap.put(map, stateimplementation);
-             arraylist.add(stateimplementation);
+             Map<IProperty, Comparable> map1 = MapPopulator.<IProperty, Comparable>func_179400_b(this.field_177624_d, list1);
+-            BlockState.StateImplementation blockstate$stateimplementation = new BlockState.StateImplementation(p_i45663_1_, ImmutableMap.copyOf(map1));
++            BlockState.StateImplementation blockstate$stateimplementation = createState(p_i45663_1_, ImmutableMap.copyOf(map1), unlistedProperties);
+             map.put(map1, blockstate$stateimplementation);
+             list.add(blockstate$stateimplementation);
          }
-@@ -135,6 +145,13 @@
-                 this.field_177239_a = p_i45660_1_;
-                 this.field_177237_b = p_i45660_2_;
+@@ -132,6 +142,13 @@
+                 }
              }
-+            
-+            protected StateImplementation(Block blockIn, ImmutableMap propertiesIn, ImmutableTable propertyValueTable)
+ 
++            protected StateImplementation(Block blockIn, ImmutableMap<IProperty, Comparable> propertiesIn, ImmutableTable<IProperty, Comparable, IBlockState> propertyValueTable)
 +            {
 +                this.field_177239_a = blockIn;
 +                this.field_177237_b = propertiesIn;
 +                this.field_177238_c = propertyValueTable;
 +            }
- 
-             public Collection func_177227_a()
++
+             public <T extends Comparable<T>, V extends T> IBlockState func_177226_a(IProperty<T> p_177226_1_, V p_177226_2_)
              {
-@@ -231,5 +248,10 @@
-             {
-                 this(p_i45661_1_, p_i45661_2_);
+                 if (!this.field_177237_b.containsKey(p_177226_1_))
+@@ -199,5 +216,10 @@
+                 map.put(p_177236_1_, p_177236_2_);
+                 return map;
              }
 +
 +            public ImmutableTable<IProperty, Comparable, IBlockState> getPropertyValueTable()

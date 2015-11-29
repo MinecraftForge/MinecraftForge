@@ -5,12 +5,13 @@ import java.util.List;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionHelper;
 
 /**
- * Used in BrewingRecipeRegistry to maintain the vanilla behaviour. 
- * 
- * Most of the code was simply adapted from net.minecraft.tileentity.TileEntityBrewingStand 
+ * Used in BrewingRecipeRegistry to maintain the vanilla behaviour.
+ *
+ * Most of the code was simply adapted from net.minecraft.tileentity.TileEntityBrewingStand
  */
 public class VanillaBrewingRecipe implements IBrewingRecipe {
 
@@ -49,8 +50,8 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
                 return null;
             }
 
-            List oldEffects = Items.potionitem.getEffects(inputMeta);
-            List newEffects = Items.potionitem.getEffects(outputMeta);
+            List<PotionEffect> oldEffects = Items.potionitem.getEffects(inputMeta);
+            List<PotionEffect> newEffects = Items.potionitem.getEffects(outputMeta);
 
             boolean hasResult = false;
             if ((inputMeta <= 0 || oldEffects != newEffects) && (oldEffects == null || !oldEffects.equals(newEffects) && newEffects != null))

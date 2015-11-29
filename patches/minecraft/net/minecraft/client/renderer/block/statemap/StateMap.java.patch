@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/statemap/StateMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/statemap/StateMap.java
-@@ -40,7 +40,7 @@
+@@ -38,7 +38,7 @@
          }
          else
          {
--            s = this.field_178142_a.func_177702_a((Comparable)linkedhashmap.remove(this.field_178142_a));
-+            s = String.format("%s:%s", ((ResourceLocation)Block.field_149771_c.func_177774_c(p_178132_1_.func_177230_c())).func_110624_b(), this.field_178142_a.func_177702_a((Comparable)linkedhashmap.remove(this.field_178142_a)));
+-            s = ((IProperty)this.field_178142_a).func_177702_a((Comparable)map.remove(this.field_178142_a));
++            s = String.format("%s:%s", ((ResourceLocation)Block.field_149771_c.func_177774_c(p_178132_1_.func_177230_c())).func_110624_b(), ((IProperty)this.field_178142_a).func_177702_a((Comparable)map.remove(this.field_178142_a)));
          }
  
          if (this.field_178141_c != null)

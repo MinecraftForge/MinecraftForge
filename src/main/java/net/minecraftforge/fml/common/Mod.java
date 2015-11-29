@@ -129,16 +129,6 @@ public @interface Mod
      */
     String acceptableSaveVersions() default "";
     /**
-     * An optional bukkit plugin that will be injected into the bukkit plugin framework if
-     * this mod is loaded into the FML framework and the bukkit coremod is present.
-     * Instances of the bukkit plugin can be obtained via the {@link BukkitPluginRef} annotation on fields.
-     *
-     * This may be implemented by a bukkit integration. It is not provided with vanilla FML or MinecraftForge.
-     *
-     * @return The name of the plugin to load for this mod
-     */
-    String bukkitPlugin() default "";
-    /**
      * Specifying this field allows for a mod to expect a signed jar with a fingerprint matching this value.
      * The fingerprint should be SHA-1 encoded, lowercase with ':' removed. An empty value indicates that
      * the mod is not expecting to be signed.
@@ -168,16 +158,6 @@ public @interface Mod
      * @return The full class name of the language adapter
      */
     String modLanguageAdapter() default "";
-
-    /**
-     * NOT YET IMPLEMENTED. </br>
-     * An optional ASM hook class, that can be used to apply ASM to classes loaded from this mod. It is also given
-     * the ASM tree of the class declaring {@link Mod} to do with what it will.
-     *
-     * @return The name of a class to be loaded and executed. Must implement {@link IASMHook}.
-     */
-    @Deprecated
-    String asmHookClass() default "";
 
     /**
      * If your mod doesn't have a runtime persistent effect on the state of the game, and can be disabled without side effects

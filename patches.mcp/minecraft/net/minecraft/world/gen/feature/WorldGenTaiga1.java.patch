@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
+@@ -50,7 +50,7 @@
+                     {
+                         if (i1 >= 0 && i1 < 256)
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(new BlockPos(j1, i1, k1)).getBlock()))
++                            if (!this.isReplaceable(worldIn, new BlockPos(j1, i1, k1)))
+                             {
+                                 flag = false;
+                             }
+@@ -69,11 +69,13 @@
+             }
+             else
+             {
+-                Block block = worldIn.getBlockState(p_180709_3_.down()).getBlock();
++                BlockPos down = p_180709_3_.down();
++                Block block = worldIn.getBlockState(down).getBlock();
++                boolean isSoil = block.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling);
+ 
+-                if ((block == Blocks.grass || block == Blocks.dirt) && p_180709_3_.getY() < 256 - i - 1)
++                if (isSoil && p_180709_3_.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, p_180709_3_.down());
++                    block.onPlantGrow(worldIn, down, p_180709_3_);
+                     k2 = 0;
+ 
+                     for (j1 = p_180709_3_.getY() + i; j1 >= p_180709_3_.getY() + j; --j1)
+@@ -90,7 +92,7 @@
+                                 {
+                                     BlockPos blockpos1 = new BlockPos(k1, j1, i2);
+ 
+-                                    if (!worldIn.getBlockState(blockpos1).getBlock().isFullBlock())
++                                    if (worldIn.getBlockState(blockpos1).getBlock().canBeReplacedByLeaves(worldIn, blockpos1))
+                                     {
+                                         this.func_175905_a(worldIn, blockpos1, Blocks.leaves, BlockPlanks.EnumType.SPRUCE.getMetadata());
+                                     }
+@@ -110,9 +112,10 @@
+ 
+                     for (j1 = 0; j1 < i - 1; ++j1)
+                     {
+-                        Block block1 = worldIn.getBlockState(p_180709_3_.up(j1)).getBlock();
++                        BlockPos upN = p_180709_3_.up(j1);
++                        Block block1 = worldIn.getBlockState(upN).getBlock();
+ 
+-                        if (block1.getMaterial() == Material.air || block1.getMaterial() == Material.leaves)
++                        if (block1.isAir(worldIn, upN) || block1.isLeaves(worldIn, upN))
+                         {
+                             this.func_175905_a(worldIn, p_180709_3_.up(j1), Blocks.log, BlockPlanks.EnumType.SPRUCE.getMetadata());
+                         }

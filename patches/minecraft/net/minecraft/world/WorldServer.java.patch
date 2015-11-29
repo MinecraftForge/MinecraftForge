@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
 @@ -94,30 +94,46 @@
-     private List field_94579_S = Lists.newArrayList();
-     private static final String __OBFID = "CL_00001437";
+     private static final List<WeightedRandomChestContent> field_73069_S = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.field_151055_y, 0, 1, 3, 10), new WeightedRandomChestContent(Item.func_150898_a(Blocks.field_150344_f), 0, 1, 3, 10), new WeightedRandomChestContent(Item.func_150898_a(Blocks.field_150364_r), 0, 1, 3, 10), new WeightedRandomChestContent(Items.field_151049_t, 0, 1, 1, 3), new WeightedRandomChestContent(Items.field_151053_p, 0, 1, 1, 5), new WeightedRandomChestContent(Items.field_151050_s, 0, 1, 1, 3), new WeightedRandomChestContent(Items.field_151039_o, 0, 1, 1, 5), new WeightedRandomChestContent(Items.field_151034_e, 0, 2, 3, 5), new WeightedRandomChestContent(Items.field_151025_P, 0, 2, 3, 3), new WeightedRandomChestContent(Item.func_150898_a(Blocks.field_150363_s), 0, 1, 3, 10)});
+     private List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();
  
 +    /** Stores the recently processed (lighting) chunks */
 +    protected Set<ChunkCoordIntPair> doneChunks = new java.util.HashSet<ChunkCoordIntPair>();
@@ -63,12 +63,12 @@
 @@ -217,6 +237,7 @@
      public BiomeGenBase.SpawnListEntry func_175734_a(EnumCreatureType p_175734_1_, BlockPos p_175734_2_)
      {
-         List list = this.func_72863_F().func_177458_a(p_175734_1_, p_175734_2_);
+         List<BiomeGenBase.SpawnListEntry> list = this.func_72863_F().func_177458_a(p_175734_1_, p_175734_2_);
 +        list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(this, p_175734_1_, p_175734_2_, list);
          return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.func_76271_a(this.field_73012_v, list) : null;
      }
  
-@@ -274,10 +295,7 @@
+@@ -268,10 +289,7 @@
  
      private void func_73051_P()
      {
@@ -80,16 +80,16 @@
      }
  
      public boolean func_73056_e()
-@@ -367,7 +385,7 @@
-                 int i1;
-                 BlockPos blockpos;
+@@ -349,7 +367,7 @@
+                 chunk.func_150804_b(false);
+                 this.field_72984_F.func_76318_c("thunder");
  
 -                if (this.field_73012_v.nextInt(100000) == 0 && this.func_72896_J() && this.func_72911_I())
 +                if (this.field_73011_w.canDoLightning(chunk) && this.field_73012_v.nextInt(100000) == 0 && this.func_72896_J() && this.func_72911_I())
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
-                     i1 = this.field_73005_l >> 2;
-@@ -381,7 +399,7 @@
+                     int i1 = this.field_73005_l >> 2;
+@@ -363,7 +381,7 @@
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -97,18 +97,18 @@
 +                if (this.field_73011_w.canDoRainSnowIce(chunk) && this.field_73012_v.nextInt(16) == 0)
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
-                     i1 = this.field_73005_l >> 2;
-@@ -483,6 +501,9 @@
+                     int k2 = this.field_73005_l >> 2;
+@@ -456,6 +474,9 @@
              if (p_175654_2_.func_149698_L())
              {
-                 b0 = 8;
+                 i = 8;
 +                //Keeping here as a note for future when it may be restored.
 +                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.field_180282_a.func_177958_n() >> 4, nextticklistentry.field_180282_a.func_177952_p() >> 4));
-+                b0 = (byte)(isForced ? 0 : 8);
++                i = isForced ? 0 : 8;
  
-                 if (this.func_175707_a(nextticklistentry.field_180282_a.func_177982_a(-b0, -b0, -b0), nextticklistentry.field_180282_a.func_177982_a(b0, b0, b0)))
+                 if (this.func_175707_a(nextticklistentry.field_180282_a.func_177982_a(-i, -i, -i), nextticklistentry.field_180282_a.func_177982_a(i, i, i)))
                  {
-@@ -535,7 +556,7 @@
+@@ -508,7 +529,7 @@
  
      public void func_72939_s()
      {
@@ -117,44 +117,44 @@
          {
              if (this.field_80004_Q++ >= 1200)
              {
-@@ -601,6 +622,9 @@
+@@ -573,6 +594,9 @@
                  {
-                     nextticklistentry = (NextTickListEntry)iterator.next();
+                     NextTickListEntry nextticklistentry1 = (NextTickListEntry)iterator.next();
                      iterator.remove();
 +                    //Keeping here as a note for future when it may be restored.
 +                    //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
 +                    //byte b0 = isForced ? 0 : 8;
-                     byte b0 = 0;
+                     int k = 0;
  
-                     if (this.func_175707_a(nextticklistentry.field_180282_a.func_177982_a(-b0, -b0, -b0), nextticklistentry.field_180282_a.func_177982_a(b0, b0, b0)))
-@@ -729,14 +753,29 @@
+                     if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(-k, -k, -k), nextticklistentry1.field_180282_a.func_177982_a(k, k, k)))
+@@ -696,22 +720,40 @@
      {
-         ArrayList arraylist = Lists.newArrayList();
+         List<TileEntity> list = Lists.<TileEntity>newArrayList();
  
--        for (int k1 = 0; k1 < this.field_147482_g.size(); ++k1)
-+        //Forge: Optomize this loop to only grab from the chunks it needs
-+        for (int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
+-        for (int i = 0; i < this.field_147482_g.size(); ++i)
++        //Forge: Optimize this loop to only grab from the chunks it needs
++        for (int x = p_147486_1_; x < p_147486_4_; x += 16)
          {
--            TileEntity tileentity = (TileEntity)this.field_147482_g.get(k1);
+-            TileEntity tileentity = (TileEntity)this.field_147482_g.get(i);
 -            BlockPos blockpos = tileentity.func_174877_v();
 -
 -            if (blockpos.func_177958_n() >= p_147486_1_ && blockpos.func_177956_o() >= p_147486_2_ && blockpos.func_177952_p() >= p_147486_3_ && blockpos.func_177958_n() < p_147486_4_ && blockpos.func_177956_o() < p_147486_5_ && blockpos.func_177952_p() < p_147486_6_)
-+            for (int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
++            for (int z = p_147486_3_; z < p_147486_6_; z += 16)
              {
--                arraylist.add(tileentity);
-+                Chunk chunk = this.func_72964_e(x, z);
-+                if (chunk != null)
+-                list.add(tileentity);
++                if (!this.func_175680_a(x >> 4, z >> 4, true)) continue; //Prevent loading extra chunks to just read data. This causes orphaned chunks that never unload.
++                Chunk chunk = this.func_72964_e(x >> 4, z >> 4);
++                if (chunk != null && !chunk.func_76621_g())
 +                {
-+                    for (Object obj : chunk.func_177434_r().values())
++                    for (TileEntity entity : chunk.func_177434_r().values())
 +                    {
-+                        TileEntity entity = (TileEntity)obj;
 +                        if (!entity.func_145837_r())
 +                        {
 +                            BlockPos pos = entity.func_174877_v();
 +                            if (pos.func_177958_n() >= p_147486_1_ && pos.func_177956_o() >= p_147486_2_ && pos.func_177952_p() >= p_147486_3_ &&
-+                                pos.func_177958_n() <= p_147486_4_ && pos.func_177956_o() <= p_147486_5_ && pos.func_177952_p() <= p_147486_6_)
++                                pos.func_177958_n() <  p_147486_4_ && pos.func_177956_o() <  p_147486_5_ && pos.func_177952_p() <  p_147486_6_)
 +                            {
-+                                arraylist.add(entity);
++                                list.add(entity);
 +                            }
 +
 +                        }
@@ -162,8 +162,9 @@
 +                }
              }
          }
- 
-@@ -745,6 +784,10 @@
+-
+         return list;
+     }
  
      public boolean func_175660_a(EntityPlayer p_175660_1_, BlockPos p_175660_2_)
      {
@@ -174,15 +175,15 @@
          return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-@@ -810,6 +853,7 @@
+@@ -777,6 +819,7 @@
          }
          else
          {
 +            if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, p_73052_1_)) return;
              this.field_72987_B = true;
              WorldChunkManager worldchunkmanager = this.field_73011_w.func_177499_m();
-             List list = worldchunkmanager.func_76932_a();
-@@ -855,7 +899,7 @@
+             List<BiomeGenBase> list = worldchunkmanager.func_76932_a();
+@@ -822,7 +865,7 @@
  
      protected void func_73047_i()
      {
@@ -191,15 +192,15 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -892,6 +936,7 @@
+@@ -859,6 +902,7 @@
              }
  
              this.field_73020_y.func_73151_a(p_73044_1_, p_73044_2_);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
-             List list = this.field_73059_b.func_152380_a();
-             Iterator iterator = list.iterator();
  
-@@ -929,6 +974,7 @@
+             for (Chunk chunk : Lists.newArrayList(this.field_73059_b.func_152380_a()))
+             {
+@@ -892,6 +936,7 @@
          this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_71203_ab().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -207,7 +208,7 @@
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -984,6 +1030,7 @@
+@@ -947,6 +992,7 @@
      public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -215,7 +216,7 @@
          explosion.func_77278_a();
          explosion.func_77279_a(false);
  
-@@ -1074,19 +1121,23 @@
+@@ -1026,19 +1072,23 @@
              this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.func_177502_q());
          }
  
@@ -243,7 +244,7 @@
          }
      }
  
-@@ -1152,6 +1203,11 @@
+@@ -1104,6 +1154,11 @@
          return this.field_73061_a.func_152345_ab();
      }
  
@@ -252,6 +253,6 @@
 +        return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)field_73059_b.field_73247_e).field_75825_d;
 +    }
 +
-     static class ServerBlockEventList extends ArrayList
+     static class ServerBlockEventList extends ArrayList<BlockEventData>
          {
-             private static final String __OBFID = "CL_00001439";
+             private ServerBlockEventList()

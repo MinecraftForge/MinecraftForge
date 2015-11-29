@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNewLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNewLeaf.java
-@@ -105,14 +105,15 @@
+@@ -99,14 +99,15 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -247,7 +247,7 @@
+@@ -246,7 +246,7 @@
      {
          PacketThreadUtil.func_180031_a(p_147282_1_, this, this.field_147299_f);
          this.field_147299_f.field_71442_b = new PlayerControllerMP(this.field_147299_f, this);
@@ -9,17 +9,7 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
-@@ -410,7 +410,8 @@
-     public void func_147286_a(S11PacketSpawnExperienceOrb p_147286_1_)
-     {
-         PacketThreadUtil.func_180031_a(p_147286_1_, this, this.field_147299_f);
--        EntityXPOrb entityxporb = new EntityXPOrb(this.field_147300_g, (double)p_147286_1_.func_148984_d(), (double)p_147286_1_.func_148983_e(), (double)p_147286_1_.func_148982_f(), p_147286_1_.func_148986_g());
-+        EntityXPOrb entityxporb = new EntityXPOrb(this.field_147300_g, (double)p_147286_1_.func_148984_d() / 32.0D, (double)p_147286_1_.func_148983_e() / 32.0D, (double)p_147286_1_.func_148982_f() / 32.0D, p_147286_1_.func_148986_g());
-+        // FORGE: BugFix MC-12013 Wrong XP orb clientside spawn position
-         entityxporb.field_70118_ct = p_147286_1_.func_148984_d();
-         entityxporb.field_70117_cu = p_147286_1_.func_148983_e();
-         entityxporb.field_70116_cv = p_147286_1_.func_148982_f();
-@@ -754,14 +755,16 @@
+@@ -750,14 +750,16 @@
      public void func_147251_a(S02PacketChat p_147251_1_)
      {
          PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
@@ -38,7 +28,7 @@
          }
      }
  
-@@ -812,6 +815,11 @@
+@@ -808,6 +810,11 @@
          float f = (float)(p_147281_1_.func_149028_l() * 360) / 256.0F;
          float f1 = (float)(p_147281_1_.func_149030_m() * 360) / 256.0F;
          EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.func_75616_a(p_147281_1_.func_149025_e(), this.field_147299_f.field_71441_e);
@@ -50,7 +40,7 @@
          entitylivingbase.field_70118_ct = p_147281_1_.func_149023_f();
          entitylivingbase.field_70117_cu = p_147281_1_.func_149034_g();
          entitylivingbase.field_70116_cv = p_147281_1_.func_149029_h();
-@@ -1137,6 +1145,10 @@
+@@ -1133,6 +1140,10 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }
@@ -61,7 +51,7 @@
          }
      }
  
-@@ -1346,7 +1358,7 @@
+@@ -1341,7 +1352,7 @@
  
          if (entity instanceof EntityLivingBase)
          {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
-@@ -202,9 +202,11 @@
+@@ -197,9 +197,11 @@
  
      public static void func_180600_a(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
      {

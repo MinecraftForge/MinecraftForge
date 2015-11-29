@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/model/ModelManager.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/model/ModelManager.java
-@@ -25,9 +25,10 @@
+@@ -24,9 +24,10 @@
  
      public void func_110549_a(IResourceManager p_110549_1_)
      {

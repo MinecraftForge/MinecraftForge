@@ -11,7 +11,7 @@ public class Envelope {
 	}
 
     public void set_num_points( int num_points ) {
-		int point;
+		//int point; Forge: Unused
 		if( num_points <= 0 ) {
 			num_points = 1;
 		}

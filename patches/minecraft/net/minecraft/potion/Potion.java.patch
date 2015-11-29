@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -330,4 +330,27 @@
+@@ -310,4 +310,27 @@
      {
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }

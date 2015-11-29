@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/block/state/BlockState.java
++++ ../src-work/minecraft/net/minecraft/block/state/BlockState.java
+@@ -47,6 +47,16 @@
+ 
+     public BlockState(Block blockIn, IProperty ... properties)
+     {
++        this(blockIn, properties, null);
++    }
++
++    protected StateImplementation createState(Block block, ImmutableMap properties, ImmutableMap unlistedProperties)
++    {
++        return new StateImplementation(block, properties);
++    }
++
++    protected BlockState(Block blockIn, IProperty[] properties, ImmutableMap unlistedProperties)
++    {
+         this.block = blockIn;
+         Arrays.sort(properties, new Comparator()
+         {
+@@ -70,7 +80,7 @@
+         {
+             List list = (List)iterator.next();
+             Map map = MapPopulator.createMap(this.properties, list);
+-            BlockState.StateImplementation stateimplementation = new BlockState.StateImplementation(blockIn, ImmutableMap.copyOf(map), null);
++            BlockState.StateImplementation stateimplementation = createState(blockIn, ImmutableMap.copyOf(map), unlistedProperties);
+             linkedhashmap.put(map, stateimplementation);
+             arraylist.add(stateimplementation);
+         }
+@@ -135,6 +145,13 @@
+                 this.block = blockIn;
+                 this.properties = propertiesIn;
+             }
++            
++            protected StateImplementation(Block blockIn, ImmutableMap propertiesIn, ImmutableTable propertyValueTable)
++            {
++                this.block = blockIn;
++                this.properties = propertiesIn;
++                this.propertyValueTable = propertyValueTable;
++            }
+ 
+             public Collection getPropertyNames()
+             {
+@@ -231,5 +248,10 @@
+             {
+                 this(p_i45661_1_, p_i45661_2_);
+             }
++
++            public ImmutableTable<IProperty, Comparable, IBlockState> getPropertyValueTable()
++            {
++                return propertyValueTable;
++            }
+         }
+ }
