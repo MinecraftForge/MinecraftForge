@@ -241,14 +241,6 @@ public class GameRegistry
         return GameData.getMain().registerPotion(potion, name, potionID);
     }
 
-    public static String[] getPotionMapAsArray() {
-        List<String> names = Lists.newLinkedList();
-        for(ResourceLocation location : GameData.getPotionRegistry().getKeys()) {
-            names.add(location.toString());
-        }
-        return names.toArray(new String[names.size()]);
-    }
-
     public static void addRecipe(ItemStack output, Object... params)
     {
         addShapedRecipe(output, params);

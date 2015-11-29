@@ -111,7 +111,7 @@ public class GameData
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true, BlockStateCapture.INSTANCE);
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true);
-    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MAX_POTION_ID, MIN_POTION_ID, false);
+    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MAX_POTION_ID, MIN_POTION_ID, false, PotionArrayCapture.INSTANCE);
 
     int registerItem(Item item, String name) // from GameRegistry
     {
@@ -247,6 +247,18 @@ public class GameData
             {
                 GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
             }
+        }
+    }
+
+    private static class PotionArrayCapture implements FMLControlledNamespacedRegistry.AddCallback<Potion>
+    {
+        static final PotionArrayCapture INSTANCE = new PotionArrayCapture();
+
+        @Override
+        public void onAdd(Potion potion, int id) {
+            // fix the data in the potion and the potions-array
+            potion.id = id;
+            Potion.potionTypes[id] = potion;
         }
     }
 }
