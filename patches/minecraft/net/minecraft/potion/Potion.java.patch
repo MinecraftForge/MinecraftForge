@@ -1,27 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -22,6 +22,8 @@
+@@ -21,7 +21,7 @@
+ 
  public class Potion
  {
-     public static Potion[] field_76425_a = new Potion[32];
-+    private static Potion[] potionTypesRef = field_76425_a;
-+    @Deprecated
-     private static final Map field_180150_I = Maps.newHashMap();
+-    public static final Potion[] field_76425_a = new Potion[32];
++    public static final Potion[] field_76425_a = new Potion[256];
+     private static final Map<ResourceLocation, Potion> field_180150_I = Maps.<ResourceLocation, Potion>newHashMap();
      public static final Potion field_180151_b = null;
      public static final Potion field_76424_c = (new Potion(1, new ResourceLocation("speed"), false, 8171462)).func_76390_b("potion.moveSpeed").func_76399_b(0, 0).func_111184_a(SharedMonsterAttributes.field_111263_d, "91AEAA56-376B-4498-935B-2F7F68070635", 0.20000000298023224D, 2);
-@@ -65,8 +67,11 @@
+@@ -64,8 +64,10 @@
+     private double field_76412_L;
      private boolean field_76413_M;
-     private static final String __OBFID = "CL_00001528";
  
 +    @Deprecated // use the Constructor without potion ID or everything will explode.
      protected Potion(int p_i45897_1_, ResourceLocation p_i45897_2_, boolean p_i45897_3_, int p_i45897_4_)
      {
-+        p_i45897_1_ = net.minecraftforge.fml.common.registry.GameRegistry.registerPotion(this, p_i45897_2_.toString(), p_i45897_1_);
-+        ensureArraySize(p_i45897_1_); // ensure the array is big enough to hold the ID
++        p_i45897_1_ = net.minecraftforge.fml.common.registry.GameRegistry.registerPotion(this, p_i45897_2_, p_i45897_1_);
          this.field_76415_H = p_i45897_1_;
          field_76425_a[p_i45897_1_] = this;
          field_180150_I.put(p_i45897_2_, this);
-@@ -84,23 +89,18 @@
+@@ -83,14 +85,18 @@
          this.field_76414_N = p_i45897_4_;
      }
  
@@ -32,26 +31,17 @@
      public static Potion func_180142_b(String p_180142_0_)
      {
 -        return (Potion)field_180150_I.get(new ResourceLocation(p_180142_0_));
-+        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().func_82594_a(p_180142_0_);
++        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().func_82594_a(new ResourceLocation(p_180142_0_));
      }
  
-     public static String[] func_180141_c()
+     public static Set<ResourceLocation> func_181168_c()
      {
--        String[] astring = new String[field_180150_I.size()];
--        int i = 0;
--        ResourceLocation resourcelocation;
--
--        for (Iterator iterator = field_180150_I.keySet().iterator(); iterator.hasNext(); astring[i++] = resourcelocation.toString())
--        {
--            resourcelocation = (ResourceLocation)iterator.next();
--        }
--
--        return astring;
-+        return net.minecraftforge.fml.common.registry.GameRegistry.getPotionMapAsArray();
+-        return field_180150_I.keySet();
++        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().func_148742_b();
      }
  
      protected Potion func_76399_b(int p_76399_1_, int p_76399_2_)
-@@ -330,4 +330,53 @@
+@@ -310,4 +316,27 @@
      {
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
@@ -78,30 +68,4 @@
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
-+
-+    /**
-+     * Ensures that the potions-array is big enough to hold the new potion ID.
-+     * @param maxID the ID
-+     */
-+    public static void ensureArraySize(int maxID) {
-+        // ensure it's still the array created by forge
-+        if(field_76425_a != potionTypesRef) {
-+            net.minecraftforge.fml.common.FMLLog.bigWarning("A mod changed the potionTypes array. Do not manually alter the array, use the alternate constructor and the potion registry to have Forge handle it.");
-+        }
-+        if(maxID < 0 || maxID >= net.minecraftforge.fml.common.registry.GameData.MAX_POTION_ID) {
-+            net.minecraftforge.fml.common.FMLLog.bigWarning("Trying to register Potion with invalid ID! Id's have to be between %d and %d. (was %d)",
-+                                                            net.minecraftforge.fml.common.registry.GameData.MIN_POTION_ID,
-+                                                            net.minecraftforge.fml.common.registry.GameData.MAX_POTION_ID,
-+                                                            maxID);
-+            return;
-+        }
-+        if(maxID >= field_76425_a.length) {
-+            int l = 32;
-+            while(l <= maxID) l <<= 1;
-+            field_76425_a = java.util.Arrays.copyOf(field_76425_a, l);
-+            potionTypesRef = field_76425_a;
-+
-+            net.minecraftforge.fml.common.FMLLog.fine("Extended potions array to %d", l);
-+        }
-+    }
  }
