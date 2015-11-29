@@ -1,11 +1,10 @@
 package net.minecraftforge.common;
 
-import com.google.common.base.Predicate;
-
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
+
+import com.google.common.base.Predicate;
 
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.item.ItemStack;

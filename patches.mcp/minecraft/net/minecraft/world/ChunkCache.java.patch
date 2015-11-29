@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
++++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
+@@ -64,6 +64,8 @@
+     {
+         int i = (pos.getX() >> 4) - this.chunkX;
+         int j = (pos.getZ() >> 4) - this.chunkZ;
++        if (i < 0 || i >= chunkArray.length || j < 0 || j >= chunkArray[i].length) return null;
++        if (chunkArray[i][j] == null) return null;
+         return this.chunkArray[i][j].getTileEntity(pos, Chunk.EnumCreateEntityType.IMMEDIATE);
+     }
+ 
+@@ -87,6 +89,7 @@
+         {
+             int i = (pos.getX() >> 4) - this.chunkX;
+             int j = (pos.getZ() >> 4) - this.chunkZ;
++            if (i < 0 || i >= chunkArray.length || j < 0 || i >= chunkArray[i].length) return Blocks.air.getDefaultState();
+ 
+             if (i >= 0 && i < this.chunkArray.length && j >= 0 && j < this.chunkArray[i].length)
+             {
+@@ -147,6 +150,8 @@
+             {
+                 i = (pos.getX() >> 4) - this.chunkX;
+                 int j = (pos.getZ() >> 4) - this.chunkZ;
++                if (i < 0 || i >= chunkArray.length || j < 0 || j >= chunkArray[i].length) return p_175629_1_.defaultLightValue;
++                if (chunkArray[i][j] == null) return p_175629_1_.defaultLightValue;
+                 return this.chunkArray[i][j].getLightFor(p_175629_1_, pos);
+             }
+         }
+@@ -158,7 +163,7 @@
+ 
+     public boolean isAirBlock(BlockPos pos)
+     {
+-        return this.getBlockState(pos).getBlock().getMaterial() == Material.air;
++        return this.getBlockState(pos).getBlock().isAir(this, pos);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -168,6 +173,7 @@
+         {
+             int i = (pos.getX() >> 4) - this.chunkX;
+             int j = (pos.getZ() >> 4) - this.chunkZ;
++            if (i < 0 || i >= chunkArray.length || j < 0 || i >= chunkArray[i].length) return p_175628_1_.defaultLightValue;
+             return this.chunkArray[i][j].getLightFor(p_175628_1_, pos);
+         }
+         else
+@@ -187,4 +193,15 @@
+     {
+         return this.worldObj.getWorldType();
+     }
++
++    @Override
++    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)
++    {
++        int x = (pos.getX() >> 4) - this.chunkX;
++        int z = (pos.getZ() >> 4) - this.chunkZ;
++        if (pos.getY() >= 0 && pos.getY() < 256) return _default;
++        if (x < 0 || x >= chunkArray.length || z < 0 || x >= chunkArray[x].length) return _default;
++
++        return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
++    }
+ }

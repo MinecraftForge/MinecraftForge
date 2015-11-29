@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/inventory/Container.java
++++ ../src-work/minecraft/net/minecraft/inventory/Container.java
+@@ -624,7 +624,7 @@
+                 slot = (Slot)this.inventorySlots.get(k);
+                 itemstack1 = slot.getStack();
+ 
+-                if (itemstack1 == null)
++                if (itemstack1 == null && slot.isItemValid(stack)) // Forge: Make sure to respect isItemValid in the slot.
+                 {
+                     slot.putStack(stack.copy());
+                     slot.onSlotChanged();

@@ -1,8 +1,8 @@
 package net.minecraftforge.fml.common.network.handshake;
 
-import java.util.HashSet;
 import java.util.List;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage.Serve
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -95,14 +96,14 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
-            GameData.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
+            PersistentRegistryManager.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
             if (snap == null)
             {
-                snap = new GameData.GameDataSnapshot();
+                snap = new PersistentRegistryManager.GameDataSnapshot();
                 ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(snap);
             }
 
-            GameData.GameDataSnapshot.Entry entry = new GameData.GameDataSnapshot.Entry();
+            PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
             entry.ids.putAll(pkt.getIdMap());
             entry.substitutions.addAll(pkt.getSubstitutions());
             snap.entries.put(pkt.getName(), entry);
@@ -115,7 +116,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).remove();
 
-            List<String> locallyMissing = GameData.injectSnapshot(snap, false, false);
+            List<String> locallyMissing = PersistentRegistryManager.injectSnapshot(snap, false, false);
             if (!locallyMissing.isEmpty())
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
@@ -157,7 +158,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         {
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
-                GameData.revertToFrozen();
+                PersistentRegistryManager.revertToFrozen();
                 return HELLO;
             }
             return this;

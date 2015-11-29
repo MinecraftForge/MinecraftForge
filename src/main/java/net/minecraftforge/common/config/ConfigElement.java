@@ -6,7 +6,6 @@
 package net.minecraftforge.common.config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -54,6 +53,7 @@ public class ConfigElement implements IConfigElement
             List<IConfigElement> elements = new ArrayList<IConfigElement>();
             Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
             Iterator<Property> pI = ctgy.getOrderedValues().iterator();
+            @SuppressWarnings("unused")
             int index = 0;
 
             if (categoriesFirst)

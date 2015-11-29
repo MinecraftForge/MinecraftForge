@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
++++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
+@@ -62,7 +62,7 @@
+             this.tryAcceptPlayer();
+         }
+ 
+-        if (this.connectionTimer++ == 600)
++        if (this.connectionTimer++ == net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.LOGIN_TIMEOUT)
+         {
+             this.closeConnection("Took too long to log in");
+         }
+@@ -113,7 +113,7 @@
+             }
+ 
+             this.networkManager.sendPacket(new S02PacketLoginSuccess(this.loginGameProfile));
+-            this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
++            net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getConfigurationManager(), this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
+         }
+     }
+ 

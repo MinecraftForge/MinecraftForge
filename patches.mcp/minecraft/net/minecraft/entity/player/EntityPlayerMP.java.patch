@@ -1,0 +1,92 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
+@@ -127,14 +127,15 @@
+     public boolean playerConqueredTheEnd;
+     private static final String __OBFID = "CL_00001440";
+ 
++    @SuppressWarnings("unused")
+     public EntityPlayerMP(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager)
+     {
+         super(worldIn, profile);
+         interactionManager.thisPlayerMP = this;
+         this.theItemInWorldManager = interactionManager;
+-        BlockPos blockpos = worldIn.getSpawnPoint();
++        BlockPos blockpos = worldIn.provider.getRandomizedSpawnPoint();
+ 
+-        if (!worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
++        if (false && !worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
+         {
+             int i = Math.max(5, server.getSpawnProtectionSize() - 6);
+             int j = MathHelper.floor_double(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
+@@ -227,7 +228,7 @@
+ 
+         this.openContainer.detectAndSendChanges();
+ 
+-        if (!this.worldObj.isRemote && !this.openContainer.canInteractWith(this))
++        if (!this.worldObj.isRemote && !net.minecraftforge.common.ForgeHooks.canInteractWith(this, this.openContainer))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
+@@ -269,7 +270,8 @@
+                         if (chunk.isPopulated())
+                         {
+                             arraylist.add(chunk);
+-                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
++                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
++                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
+                             iterator1.remove();
+                         }
+                     }
+@@ -305,6 +307,7 @@
+                 {
+                     chunk = (Chunk)iterator2.next();
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
+                 }
+             }
+         }
+@@ -440,6 +443,7 @@
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+         if (this.worldObj.getGameRules().getGameRuleBooleanValue("showDeathMessages"))
+         {
+             Team team = this.getTeam();
+@@ -463,7 +467,20 @@
+ 
+         if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
+         {
++            captureDrops = true;
++            capturedDrops.clear();
++
+             this.inventory.dropAllItems();
++
++            captureDrops = false;
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, cause, capturedDrops, recentlyHit > 0);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
++                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
++                {
++                    joinEntityItemWithWorld(item);
++                }
++            }
+         }
+ 
+         Collection collection = this.worldObj.getScoreboard().getObjectivesFromCriteria(IScoreObjectiveCriteria.deathCount);
+@@ -481,6 +498,7 @@
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(EntityList.getEntityID(entitylivingbase)));
++            if (entityegginfo == null) entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.getEntityString(entitylivingbase));
+ 
+             if (entityegginfo != null)
+             {
+@@ -849,6 +867,7 @@
+     {
+         if (stat != null)
+         {
++            if (stat.isAchievement() && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.AchievementEvent(this, (net.minecraft.stats.Achievement) stat))) return;
+             this.statsFile.func_150871_b(this, stat, amount);
+             Iterator iterator = this.getWorldScoreboard().getObjectivesFromCriteria(stat.func_150952_k()).iterator();
+ 

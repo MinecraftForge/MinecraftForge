@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemShears.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
-@@ -21,13 +21,12 @@
+@@ -19,13 +19,12 @@
  
      public boolean func_179218_a(ItemStack p_179218_1_, World p_179218_2_, Block p_179218_3_, BlockPos p_179218_4_, EntityLivingBase p_179218_5_)
      {
@@ -15,7 +15,7 @@
              return true;
          }
      }
-@@ -41,4 +40,71 @@
+@@ -39,4 +38,71 @@
      {
          return p_150893_2_ != Blocks.field_150321_G && p_150893_2_.func_149688_o() != Material.field_151584_j ? (p_150893_2_ == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_)) : 15.0F;
      }

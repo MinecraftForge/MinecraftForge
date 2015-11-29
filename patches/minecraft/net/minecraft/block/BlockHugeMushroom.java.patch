@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockHugeMushroom.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockHugeMushroom.java
-@@ -64,6 +64,20 @@
+@@ -79,6 +79,20 @@
          return new BlockState(this, new IProperty[] {field_176380_a});
      }
  

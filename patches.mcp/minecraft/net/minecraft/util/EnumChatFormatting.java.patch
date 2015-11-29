@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/EnumChatFormatting.java
++++ ../src-work/minecraft/net/minecraft/util/EnumChatFormatting.java
+@@ -92,7 +92,6 @@
+         return this.controlString;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static String getTextWithoutFormattingCodes(String text)
+     {
+         return text == null ? null : formattingCodePattern.matcher(text).replaceAll("");

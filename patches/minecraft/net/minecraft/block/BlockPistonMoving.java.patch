@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -110,16 +110,7 @@
+@@ -109,16 +109,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -10,15 +10,15 @@
 -
 -            if (tileentitypiston != null)
 -            {
--                IBlockState iblockstate1 = tileentitypiston.func_174927_b();
--                iblockstate1.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate1, 0);
+-                IBlockState iblockstate = tileentitypiston.func_174927_b();
+-                iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
 -            }
 -        }
 +        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
      }
  
      public MovingObjectPosition func_180636_a(World p_180636_1_, BlockPos p_180636_2_, Vec3 p_180636_3_, Vec3 p_180636_4_)
-@@ -283,4 +274,16 @@
+@@ -282,4 +273,16 @@
      {
          return new BlockState(this, new IProperty[] {field_176426_a, field_176425_b});
      }

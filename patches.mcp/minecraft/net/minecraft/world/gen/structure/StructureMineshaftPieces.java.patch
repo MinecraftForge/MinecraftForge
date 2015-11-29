@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
+@@ -19,6 +19,8 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class StructureMineshaftPieces
+ {
+@@ -33,6 +35,12 @@
+         MapGenStructureIO.registerStructureComponent(StructureMineshaftPieces.Stairs.class, "MSStairs");
+     }
+ 
++    static
++    {
++        ChestGenHooks.init(MINESHAFT_CORRIDOR, field_175893_a, 8, 8);
++        ChestGenHooks.addItem(MINESHAFT_CORRIDOR, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++    }
++
+     private static StructureComponent func_175892_a(List p_175892_0_, Random p_175892_1_, int p_175892_2_, int p_175892_3_, int p_175892_4_, EnumFacing p_175892_5_, int p_175892_6_)
+     {
+         int i1 = p_175892_1_.nextInt(100);
+@@ -354,14 +362,15 @@
+                         this.func_175809_a(worldIn, p_74875_3_, p_74875_2_, 0.05F, 1, 2, k - 1, Blocks.torch.getStateFromMeta(EnumFacing.UP.getIndex()));
+                         this.func_175809_a(worldIn, p_74875_3_, p_74875_2_, 0.05F, 1, 2, k + 1, Blocks.torch.getStateFromMeta(EnumFacing.UP.getIndex()));
+ 
++                        ChestGenHooks info = ChestGenHooks.getInfo(MINESHAFT_CORRIDOR);
+                         if (p_74875_2_.nextInt(100) == 0)
+                         {
+-                            this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 2, 0, k - 1, WeightedRandomChestContent.func_177629_a(StructureMineshaftPieces.field_175893_a, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(p_74875_2_)}), 3 + p_74875_2_.nextInt(4));
++                            this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 2, 0, k - 1, info.getItems(p_74875_2_), info.getCount(p_74875_2_));
+                         }
+ 
+                         if (p_74875_2_.nextInt(100) == 0)
+                         {
+-                            this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 0, 0, k + 1, WeightedRandomChestContent.func_177629_a(StructureMineshaftPieces.field_175893_a, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(p_74875_2_)}), 3 + p_74875_2_.nextInt(4));
++                            this.func_180778_a(worldIn, p_74875_3_, p_74875_2_, 0, 0, k + 1, info.getItems(p_74875_2_), info.getCount(p_74875_2_));
+                         }
+ 
+                         if (this.hasSpiders && !this.spawnerPlaced)

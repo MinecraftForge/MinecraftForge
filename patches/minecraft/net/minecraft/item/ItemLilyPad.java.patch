@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemLilyPad.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemLilyPad.java
-@@ -51,7 +51,14 @@
+@@ -49,7 +49,14 @@
  
                  if (iblockstate.func_177230_c().func_149688_o() == Material.field_151586_h && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0 && p_77659_2_.func_175623_d(blockpos1))
                  {

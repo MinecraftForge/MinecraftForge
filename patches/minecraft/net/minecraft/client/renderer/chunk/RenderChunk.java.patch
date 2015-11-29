@@ -1,24 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -124,7 +124,7 @@
+@@ -131,7 +131,7 @@
                  return;
              }
  
--            regionrendercache = new RegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
-+            regionrendercache = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
+-            iblockaccess = new RegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
++            iblockaccess = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
              p_178581_4_.func_178543_a(compiledchunk);
          }
          finally
-@@ -150,7 +150,7 @@
-                     visgraph.func_178606_a(mutableblockpos);
+@@ -158,7 +158,7 @@
+                     lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
 -                if (block.func_149716_u())
 +                if (block.hasTileEntity(iblockstate))
                  {
-                     TileEntity tileentity = regionrendercache.func_175625_s(new BlockPos(mutableblockpos));
- 
-@@ -160,7 +160,9 @@
+                     TileEntity tileentity = iblockaccess.func_175625_s(new BlockPos(blockpos$mutableblockpos));
+                     TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.field_147556_a.<TileEntity>func_147547_b(tileentity);
+@@ -174,7 +174,9 @@
                      }
                  }
  
@@ -26,22 +26,21 @@
 +                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
 +                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
 +                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
-                 int i = enumworldblocklayer1.ordinal();
+                 int j = enumworldblocklayer1.ordinal();
  
                  if (block.func_149645_b() != -1)
-@@ -178,6 +180,7 @@
-                         compiledchunk.func_178486_a(enumworldblocklayer1);
-                     }
+@@ -189,6 +191,7 @@
+ 
+                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, iblockaccess, worldrenderer);
                  }
 +                }
              }
  
-             EnumWorldBlockLayer[] aenumworldblocklayer = EnumWorldBlockLayer.values();
-@@ -374,4 +377,24 @@
-     {
+             for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
+@@ -385,6 +388,26 @@
          return this.field_178593_n;
      }
-+
+ 
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Creates a new RegionRenderCache instance.<br>
@@ -61,4 +60,7 @@
 +        return new RegionRenderCache(world, from, to, subtract);
 +    }
 +    /* ========================================= FORGE END ======================================*/
- }
++
+     public BlockPos func_181701_a(EnumFacing p_181701_1_)
+     {
+         return (BlockPos)this.field_181702_p.get(p_181701_1_);

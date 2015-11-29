@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+@SuppressWarnings("deprecation")
 public class MultiModel implements IModel
 {
     public static class Baked implements IFlexibleBakedModel, IPerspectiveAwareModel

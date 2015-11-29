@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
+@@ -5,6 +5,7 @@
+ import java.util.Iterator;
+ import java.util.Set;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.client.gui.FontRenderer;
+ import net.minecraft.client.gui.GuiScreen;
+ import net.minecraft.client.renderer.GlStateManager;
+ import net.minecraft.client.renderer.OpenGlHelper;
+@@ -178,8 +179,11 @@
+         GlStateManager.translate(0.0F, 0.0F, 32.0F);
+         this.zLevel = 200.0F;
+         this.itemRender.zLevel = 200.0F;
++        FontRenderer font = null;
++        if (stack != null) font = stack.getItem().getFontRenderer(stack);
++        if (font == null) font = fontRendererObj;
+         this.itemRender.renderItemAndEffectIntoGUI(stack, x, y);
+-        this.itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, stack, x, y - (this.draggedStack == null ? 0 : 8), altText);
++        this.itemRender.renderItemOverlayIntoGUI(font, stack, x, y - (this.draggedStack == null ? 0 : 8), altText);
+         this.zLevel = 0.0F;
+         this.itemRender.zLevel = 0.0F;
+     }
+@@ -240,13 +244,12 @@
+ 
+         if (itemstack == null)
+         {
+-            String s1 = slotIn.getSlotTexture();
++            TextureAtlasSprite textureatlassprite = slotIn.getBackgroundSprite();
+ 
+-            if (s1 != null)
++            if (textureatlassprite != null)
+             {
+-                TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite(s1);
+                 GlStateManager.disableLighting();
+-                this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
++                this.mc.getTextureManager().bindTexture(slotIn.getBackgroundLocation());
+                 this.drawTexturedModalRect(i, j, textureatlassprite, 16, 16);
+                 GlStateManager.enableLighting();
+                 flag1 = true;
+@@ -465,6 +468,7 @@
+ 
+     protected void mouseReleased(int mouseX, int mouseY, int state)
+     {
++        super.mouseReleased(mouseX, mouseY, state); //Forge, Call parent to release buttons
+         Slot slot = this.getSlotAtPosition(mouseX, mouseY);
+         int l = this.guiLeft;
+         int i1 = this.guiTop;
+@@ -698,4 +702,16 @@
+             this.mc.thePlayer.closeScreen();
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    /**
++     * Returns the slot that is currently displayed under the mouse.
++     */
++    public Slot getSlotUnderMouse()
++    {
++        return this.theSlot;
++    }
++
++    /* ======================================== FORGE END   =====================================*/
+ }

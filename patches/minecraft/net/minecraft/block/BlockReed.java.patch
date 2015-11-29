@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -19,7 +19,7 @@
+@@ -18,7 +18,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -8,8 +8,8 @@
 +public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
  {
      public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
-     private static final String __OBFID = "CL_00000300";
-@@ -67,6 +67,7 @@
+ 
+@@ -65,6 +65,7 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
          Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
@@ -17,7 +17,7 @@
  
          if (block == this)
          {
-@@ -172,4 +173,15 @@
+@@ -164,4 +165,15 @@
      {
          return new BlockState(this, new IProperty[] {field_176355_a});
      }

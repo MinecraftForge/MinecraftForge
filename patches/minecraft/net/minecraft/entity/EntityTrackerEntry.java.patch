@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -388,6 +388,14 @@
+@@ -379,6 +379,14 @@
                      this.field_73138_k = this.field_73132_a.field_70181_x;
                      this.field_73135_l = this.field_73132_a.field_70179_y;
  
@@ -15,7 +15,7 @@
                      if (this.field_73143_t && !(packet instanceof S0FPacketSpawnMob))
                      {
                          p_73117_1_.field_71135_a.func_147359_a(new S12PacketEntityVelocity(this.field_73132_a.func_145782_y(), this.field_73132_a.field_70159_w, this.field_73132_a.field_70181_x, this.field_73132_a.field_70179_y));
-@@ -437,12 +445,14 @@
+@@ -426,12 +434,14 @@
                              p_73117_1_.field_71135_a.func_147359_a(new S1DPacketEntityEffect(this.field_73132_a.func_145782_y(), potioneffect));
                          }
                      }
@@ -30,7 +30,7 @@
              }
          }
      }
-@@ -474,6 +484,9 @@
+@@ -463,6 +473,9 @@
              field_151262_p.warn("Fetching addPacket for removed entity");
          }
  

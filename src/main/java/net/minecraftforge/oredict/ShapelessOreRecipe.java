@@ -56,7 +56,6 @@ public class ShapelessOreRecipe implements IRecipe
         }
     }
 
-    @SuppressWarnings("unchecked")
     ShapelessOreRecipe(ShapelessRecipes recipe, Map<ItemStack, String> replacements)
     {
         output = recipe.getRecipeOutput();

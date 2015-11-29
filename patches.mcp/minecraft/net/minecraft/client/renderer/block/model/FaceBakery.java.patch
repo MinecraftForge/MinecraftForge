@@ -1,0 +1,68 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
+@@ -22,6 +22,11 @@
+ 
+     public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+     {
++        return makeBakedQuad(posFrom, posTo, face, sprite, facing, (net.minecraftforge.client.model.ITransformation)modelRotationIn, partRotation, uvLocked, shade);
++    }
++
++    public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
++    {
+         int[] aint = this.makeQuadVertexData(face, sprite, facing, this.getPositionsDiv16(posFrom, posTo), modelRotationIn, partRotation, uvLocked, shade);
+         EnumFacing enumfacing1 = getFacingFromVertexData(aint);
+ 
+@@ -35,11 +40,17 @@
+             this.func_178408_a(aint, enumfacing1);
+         }
+ 
++        net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, enumfacing1);
+         return new BakedQuad(aint, face.tintIndex, enumfacing1);
+     }
+ 
+     private int[] makeQuadVertexData(BlockPartFace p_178405_1_, TextureAtlasSprite p_178405_2_, EnumFacing p_178405_3_, float[] p_178405_4_, ModelRotation p_178405_5_, BlockPartRotation p_178405_6_, boolean p_178405_7_, boolean shade)
+     {
++        return makeQuadVertexData(p_178405_1_, p_178405_2_, p_178405_3_, p_178405_4_, (net.minecraftforge.client.model.ITransformation)p_178405_5_, p_178405_6_, p_178405_7_, shade);
++    }
++
++    private int[] makeQuadVertexData(BlockPartFace p_178405_1_, TextureAtlasSprite p_178405_2_, EnumFacing p_178405_3_, float[] p_178405_4_, net.minecraftforge.client.model.ITransformation p_178405_5_, BlockPartRotation p_178405_6_, boolean p_178405_7_, boolean shade)
++    {
+         int[] aint = new int[28];
+ 
+         for (int i = 0; i < 4; ++i)
+@@ -90,7 +101,12 @@
+ 
+     private void fillVertexData(int[] faceData, int vertexIndex, EnumFacing facing, BlockPartFace partFace, float[] p_178402_5_, TextureAtlasSprite sprite, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+     {
+-        EnumFacing enumfacing1 = modelRotationIn.rotateFace(facing);
++        fillVertexData(faceData, vertexIndex, facing, partFace, p_178402_5_, sprite, (net.minecraftforge.client.model.ITransformation)modelRotationIn, partRotation, uvLocked, shade);
++    }
++
++    private void fillVertexData(int[] faceData, int vertexIndex, EnumFacing facing, BlockPartFace partFace, float[] p_178402_5_, TextureAtlasSprite sprite, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
++    {
++        EnumFacing enumfacing1 = modelRotationIn.rotate(facing);
+         int j = shade ? this.getFaceShadeColor(enumfacing1) : -1;
+         EnumFaceDirection.VertexInformation vertexinformation = EnumFaceDirection.getFacing(facing).func_179025_a(vertexIndex);
+         Vector3d vector3d = new Vector3d((double)p_178402_5_[vertexinformation.field_179184_a], (double)p_178402_5_[vertexinformation.field_179182_b], (double)p_178402_5_[vertexinformation.field_179183_c]);
+@@ -156,14 +172,19 @@
+ 
+     public int rotateVertex(Vector3d position, EnumFacing facing, int vertexIndex, ModelRotation modelRotationIn, boolean uvLocked)
+     {
++        return rotateVertex(position, facing, vertexIndex, (net.minecraftforge.client.model.ITransformation)modelRotationIn, uvLocked);
++    }
++
++    public int rotateVertex(Vector3d position, EnumFacing facing, int vertexIndex, net.minecraftforge.client.model.ITransformation modelRotationIn, boolean uvLocked)
++    {
+         if (modelRotationIn == ModelRotation.X0_Y0)
+         {
+             return vertexIndex;
+         }
+         else
+         {
+-            this.rotateScale(position, new Vector3d(0.5D, 0.5D, 0.5D), modelRotationIn.getMatrix4d(), new Vector3d(1.0D, 1.0D, 1.0D));
+-            return modelRotationIn.rotateVertex(facing, vertexIndex);
++            net.minecraftforge.client.ForgeHooksClient.transform(position, modelRotationIn.getMatrix());
++            return modelRotationIn.rotate(facing, vertexIndex);
+         }
+     }
+ 

@@ -180,7 +180,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                 {
                     for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext(); )
                     {
-                        String cmd = it.next().input.trim().toLowerCase();
+                        String cmd = it.next().command.trim().toLowerCase();
 
                         if (cmd.equals("/fml confirm"))
                         {

@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
+@@ -57,7 +57,7 @@
+             {
+                 BlockPos blockpos1 = p_180709_3_.up(i2);
+ 
+-                if (this.func_175931_a(worldIn.getBlockState(blockpos1).getBlock().getMaterial()))
++                if (this.isAirLeaves(worldIn, blockpos1))
+                 {
+                     this.func_175905_a(worldIn, blockpos1, Blocks.log, this.woodMetadata);
+ 
+@@ -72,7 +72,7 @@
+                 {
+                     BlockPos blockpos2 = blockpos1.east();
+ 
+-                    if (this.func_175931_a(worldIn.getBlockState(blockpos2).getBlock().getMaterial()))
++                    if (this.isAirLeaves(worldIn, blockpos2))
+                     {
+                         this.func_175905_a(worldIn, blockpos2, Blocks.log, this.woodMetadata);
+ 
+@@ -85,7 +85,7 @@
+ 
+                     BlockPos blockpos3 = blockpos1.south().east();
+ 
+-                    if (this.func_175931_a(worldIn.getBlockState(blockpos3).getBlock().getMaterial()))
++                    if (this.isAirLeaves(worldIn, blockpos3))
+                     {
+                         this.func_175905_a(worldIn, blockpos3, Blocks.log, this.woodMetadata);
+ 
+@@ -98,7 +98,7 @@
+ 
+                     BlockPos blockpos4 = blockpos1.south();
+ 
+-                    if (this.func_175931_a(worldIn.getBlockState(blockpos4).getBlock().getMaterial()))
++                    if (this.isAirLeaves(worldIn, blockpos4))
+                     {
+                         this.func_175905_a(worldIn, blockpos4, Blocks.log, this.woodMetadata);
+ 
+@@ -115,11 +115,6 @@
+         }
+     }
+ 
+-    private boolean func_175931_a(Material p_175931_1_)
+-    {
+-        return p_175931_1_ == Material.air || p_175931_1_ == Material.leaves;
+-    }
+-
+     private void func_175932_b(World worldIn, Random p_175932_2_, BlockPos p_175932_3_, int p_175932_4_)
+     {
+         if (p_175932_2_.nextInt(3) > 0 && worldIn.isAirBlock(p_175932_3_))
+@@ -137,4 +132,11 @@
+             this.func_175925_a(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
+         }
+     }
++
++    //Helper macro
++    private boolean isAirLeaves(World world, BlockPos pos)
++    {
++        net.minecraft.block.Block block = world.getBlockState(pos).getBlock();
++        return block.isAir(world, pos) || block.isLeaves(world, pos);
++    }
+ }

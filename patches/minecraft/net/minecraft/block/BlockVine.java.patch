@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -26,7 +26,7 @@
+@@ -25,7 +25,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      public static final PropertyBool field_176277_a = PropertyBool.func_177716_a("up");
      public static final PropertyBool field_176273_b = PropertyBool.func_177716_a("north");
-@@ -416,13 +416,7 @@
+@@ -387,13 +387,7 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {
@@ -23,10 +23,10 @@
              super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
          }
      }
-@@ -508,6 +502,16 @@
+@@ -474,4 +468,14 @@
+ 
          return i;
      }
- 
 +    /*************************FORGE START***********************************/
 +    @Override public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity){ return true; }
 +    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
@@ -37,6 +37,4 @@
 +    }
 +    /*************************FORGE END***********************************/
 +
-     static final class SwitchEnumFacing
-         {
-             static final int[] field_177057_a = new int[EnumFacing.values().length];
+ }

@@ -100,9 +100,9 @@ import org.lwjgl.opengl.SharedDrawable;
 import org.lwjgl.util.glu.GLU;
 
 /**
- * @deprecated not a stable API, will break, don't use this yet
+ * Not a fully fleshed out API, may change in future MC versions.
+ * However feel free to use and suggest additions.
  */
-@Deprecated
 @SuppressWarnings("serial")
 public class SplashProgress
 {

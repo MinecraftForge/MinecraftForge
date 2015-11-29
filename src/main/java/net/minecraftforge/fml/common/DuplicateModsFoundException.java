@@ -15,26 +15,24 @@ package net.minecraftforge.fml.common;
 import java.io.File;
 import java.util.Map.Entry;
 
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
-
 import com.google.common.collect.SetMultimap;
 
 public class DuplicateModsFoundException extends LoaderException {
     private static final long serialVersionUID = 1L;
     public SetMultimap<ModContainer,File> dupes;
 
-	public DuplicateModsFoundException(SetMultimap<ModContainer, File> dupes) {
-		this.dupes = dupes;
-	}
+    public DuplicateModsFoundException(SetMultimap<ModContainer, File> dupes) {
+        this.dupes = dupes;
+    }
 
-	@Override
-	protected void printStackTrace(WrappedPrintStream stream)
-	{
-	    stream.println("Duplicate Mods:");
-	    for (Entry<ModContainer, File> e : dupes.entries())
-	    {
-	        stream.println(String.format("\t%s : %s", e.getKey().getModId(), e.getValue().getAbsolutePath()));
-	    }
-	    stream.println("");
-	}
+    @Override
+    protected void printStackTrace(WrappedPrintStream stream)
+    {
+        stream.println("Duplicate Mods:");
+        for (Entry<ModContainer, File> e : dupes.entries())
+        {
+            stream.println(String.format("\t%s : %s", e.getKey().getModId(), e.getValue().getAbsolutePath()));
+        }
+        stream.println("");
+    }
 }

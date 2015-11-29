@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
-@@ -276,7 +276,7 @@
+@@ -279,7 +279,7 @@
  
              Block block = this.field_70170_p.func_180495_p(blockpos.func_177977_b()).func_177230_c();
  
