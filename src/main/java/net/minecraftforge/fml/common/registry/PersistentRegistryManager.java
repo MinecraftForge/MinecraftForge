@@ -1,6 +1,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -20,6 +21,7 @@ import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -122,6 +124,7 @@ public class PersistentRegistryManager
 
     public static final ResourceLocation BLOCKS = new ResourceLocation("minecraft:blocks");
     public static final ResourceLocation ITEMS = new ResourceLocation("minecraft:items");
+    public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
 
     public static <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
     {
@@ -145,6 +148,8 @@ public class PersistentRegistryManager
 
         // Empty the blockstate map before loading
         GameData.getBlockStateIDMap().clear();
+        // Clean up potion array before reloading it from the snapshot
+        Arrays.fill(Potion.potionTypes, null);
 
         // Load the snapshot into the "STAGING" registry
         for (Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapshotEntry : snapshot.entries.entrySet())
