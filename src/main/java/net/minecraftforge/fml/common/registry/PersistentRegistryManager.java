@@ -256,6 +256,7 @@ public class PersistentRegistryManager
         if (!PersistentRegistry.FROZEN.isPopulated())
         {
             FMLLog.warning("Can't revert to frozen GameData state without freezing first.");
+            return;
         }
         else
         {

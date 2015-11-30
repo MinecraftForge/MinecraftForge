@@ -63,7 +63,6 @@ public class ModelAnimationDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            B3DLoader.instance.addDomain(MODID);
             GameRegistry.registerBlock(new Block(Material.wood)
             {
                 {
@@ -149,6 +148,7 @@ public class ModelAnimationDebug
         public void preInit(FMLPreInitializationEvent event)
         {
             super.preInit(event);
+            B3DLoader.instance.addDomain(MODID);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
         }
 
