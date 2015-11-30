@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/ChatComponentStyle.java
 +++ ../src-work/minecraft/net/minecraft/util/ChatComponentStyle.java
-@@ -81,7 +81,6 @@
+@@ -74,7 +74,6 @@
          return stringbuilder.toString();
      }
  

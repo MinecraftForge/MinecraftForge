@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/ChatStyle.java
 +++ ../src-work/minecraft/net/minecraft/util/ChatStyle.java
-@@ -230,7 +230,6 @@
+@@ -229,7 +229,6 @@
          return this;
      }
  
