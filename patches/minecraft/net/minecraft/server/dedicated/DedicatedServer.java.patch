@@ -8,6 +8,14 @@
  
      public DedicatedServer(File p_i1508_1_)
      {
+@@ -88,6 +89,7 @@
+
+             public void run()
+             {
++                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
+                 BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in));
+                 String s4;
+ 
 @@ -107,6 +108,8 @@
              field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
@@ -42,3 +50,7 @@
              }
          }
      }
++    public void func_145747_a(net.minecraft.util.IChatComponent message) { field_155771_h.info(message.func_150254_d()); }
+ 
+     public void func_71235_a(WorldSettings.GameType p_71235_1_)
+     {
