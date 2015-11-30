@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I>
 {
-    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
+    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "true"));
     private final Class<I> superType;
     private final boolean isDelegated;
     private final Field delegateAccessor;

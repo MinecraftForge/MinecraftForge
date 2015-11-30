@@ -236,11 +236,6 @@ public class GameRegistry
         }
     }
 
-    /** Called from Potion Constructor */
-    public static int registerPotion(Potion potion, ResourceLocation name, int potionID) {
-        return GameData.getMain().registerPotion(potion, name, potionID);
-    }
-
     public static void addRecipe(ItemStack output, Object... params)
     {
         addShapedRecipe(output, params);

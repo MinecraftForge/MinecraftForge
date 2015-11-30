@@ -217,8 +217,8 @@ public class PersistentRegistryManager
 
     private static <T> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, Class<T> regType)
     {
-        FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getRegistry(registryName, regType);
         FMLControlledNamespacedRegistry<T> frozenRegistry = PersistentRegistry.FROZEN.getRegistry(registryName, regType);
+        FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, frozenRegistry);
         newRegistry.loadIds(frozenRegistry.getEntriesNotIn(newRegistry), Maps.<ResourceLocation, Integer>newLinkedHashMap(), remaps.get(registryName), frozenRegistry, registryName);
     }
 

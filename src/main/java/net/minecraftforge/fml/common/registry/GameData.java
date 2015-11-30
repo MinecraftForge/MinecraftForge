@@ -32,7 +32,7 @@ public class GameData
     static final int MAX_BLOCK_ID = 4095;
     static final int MIN_ITEM_ID = 4096;
     static final int MAX_ITEM_ID = 31999;
-    public static final int MIN_POTION_ID = 32; // 0-31 are vanilla, forge start at 32
+    public static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
     public static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
 
     private static final GameData mainData = new GameData();
@@ -145,13 +145,6 @@ public class GameData
     private int registerBlock(Block block, ResourceLocation name, int idHint)
     {
         return iBlockRegistry.add(idHint, name, block);
-    }
-
-    /**
-     * Called from GameRegistry, which is called from Potion-Constructor
-     */
-    int registerPotion(Potion potion, ResourceLocation name, int id) {
-        return iPotionRegistry.add(id, name, potion);
     }
 
     /**
