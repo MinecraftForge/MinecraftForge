@@ -188,6 +188,9 @@ public class PersistentRegistryManager
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
 
+        // Clean out the staging registry now, we're done with it
+        PersistentRegistry.STAGING.clean();
+
         // Return an empty list, because we're good
         return ImmutableList.of();
     }
@@ -259,8 +262,10 @@ public class PersistentRegistryManager
         }
         // the id mapping has reverted, fire remap events for those that care about id changes
         Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of());
+
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        FMLLog.fine("Frozen state restored.");
     }
 
     public static void freezeData()
