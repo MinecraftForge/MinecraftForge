@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -48,6 +48,16 @@
+@@ -48,6 +48,17 @@
          }
          else if (icommand.func_71519_b(p_71556_1_))
          {
@@ -13,6 +13,7 @@
 +                }
 +                return 1;
 +            }
++            if (event.parameters != null) astring = event.parameters;
 +
              if (i > -1)
              {
