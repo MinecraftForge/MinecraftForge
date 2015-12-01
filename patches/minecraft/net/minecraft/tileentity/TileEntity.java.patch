@@ -54,7 +54,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -279,4 +291,135 @@
+@@ -279,4 +291,146 @@
          func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
          func_145826_a(TileEntityBanner.class, "Banner");
      }
@@ -188,5 +188,16 @@
 +        return this instanceof TileEntityCommandBlock ||
 +               this instanceof TileEntityMobSpawner ||
 +               this instanceof TileEntitySign;
++    }
++
++
++    /**
++     * Called from the Chunk when this is first added to the world. Override instead of adding
++     * if (firstTick) stuff in update. Happens after validate and after it has been placed into the Chunk tileEntity
++     * map.
++     */
++    public void onLoad()
++    {
++        // NOOP
 +    }
  }

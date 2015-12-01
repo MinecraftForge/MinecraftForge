@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -167,7 +167,7 @@
+@@ -10,7 +10,6 @@
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.ConcurrentLinkedQueue;
+ import net.minecraft.block.Block;
+-import net.minecraft.block.ITileEntityProvider;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.crash.CrashReport;
+@@ -167,7 +166,7 @@
                  {
                      Block block = this.func_150810_a(j, l - 1, k);
  
@@ -9,7 +17,7 @@
                      {
                          this.field_76634_f[k << 4 | j] = l;
  
-@@ -440,12 +440,12 @@
+@@ -440,12 +439,12 @@
  
      public int func_177437_b(BlockPos p_177437_1_)
      {
@@ -24,7 +32,7 @@
      }
  
      private Block func_150810_a(int p_150810_1_, int p_150810_2_, int p_150810_3_)
-@@ -623,14 +623,19 @@
+@@ -623,14 +622,19 @@
  
              extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
  
@@ -46,7 +54,7 @@
                      this.field_76637_e.func_175713_t(p_177436_1_);
                  }
              }
-@@ -647,8 +652,8 @@
+@@ -647,8 +651,8 @@
                  }
                  else
                  {
@@ -57,7 +65,7 @@
  
                      if (j1 > 0)
                      {
-@@ -668,28 +673,18 @@
+@@ -668,28 +672,18 @@
                      }
                  }
  
@@ -88,7 +96,7 @@
                          this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
                      }
  
-@@ -792,6 +787,7 @@
+@@ -792,6 +786,7 @@
              k = this.field_76645_j.length - 1;
          }
  
@@ -96,7 +104,7 @@
          p_76612_1_.field_70175_ag = true;
          p_76612_1_.field_70176_ah = this.field_76635_g;
          p_76612_1_.field_70162_ai = k;
-@@ -830,13 +826,20 @@
+@@ -830,13 +825,20 @@
      private TileEntity func_177422_i(BlockPos p_177422_1_)
      {
          Block block = this.func_177428_a(p_177422_1_);
@@ -118,7 +126,7 @@
          if (tileentity == null)
          {
              if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -849,11 +852,6 @@
+@@ -849,11 +851,6 @@
                  this.field_177447_w.add(p_177424_1_);
              }
          }
@@ -130,7 +138,7 @@
  
          return tileentity;
      }
-@@ -873,7 +871,7 @@
+@@ -873,7 +870,7 @@
          p_177426_2_.func_145834_a(this.field_76637_e);
          p_177426_2_.func_174878_a(p_177426_1_);
  
@@ -139,6 +147,14 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
+@@ -882,6 +879,7 @@
+ 
+             p_177426_2_.func_145829_t();
+             this.field_150816_i.put(p_177426_1_, p_177426_2_);
++            p_177426_2_.onLoad();
+         }
+     }
+ 
 @@ -910,8 +908,9 @@
                  entity.func_110123_P();
              }
