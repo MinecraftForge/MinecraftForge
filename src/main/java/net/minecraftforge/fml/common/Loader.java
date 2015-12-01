@@ -639,7 +639,7 @@ public class Loader
         return "8.0.99.99";
     }
 
-    public ClassLoader getModClassLoader()
+    public ModClassLoader getModClassLoader()
     {
         return modClassLoader;
     }
