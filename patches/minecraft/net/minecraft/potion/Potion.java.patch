@@ -43,7 +43,15 @@
      }
  
      protected Potion func_76399_b(int p_76399_1_, int p_76399_2_)
-@@ -310,4 +314,27 @@
+@@ -230,7 +234,6 @@
+         return this.field_76417_J;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public boolean func_76398_f()
+     {
+         return this.field_76418_K;
+@@ -310,4 +313,27 @@
      {
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
