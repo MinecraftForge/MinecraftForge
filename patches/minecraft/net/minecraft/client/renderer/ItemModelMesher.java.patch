@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
-@@ -52,6 +52,11 @@
+@@ -50,6 +50,11 @@
              }
          }
  

@@ -8,7 +8,7 @@
  public class ModelRenderer
  {
      public float field_78801_a;
-@@ -110,6 +109,7 @@
+@@ -109,6 +108,7 @@
          this.field_78798_e = p_78793_3_;
      }
  
@@ -16,7 +16,7 @@
      public void func_78785_a(float p_78785_1_)
      {
          if (!this.field_78807_k)
-@@ -192,6 +192,7 @@
+@@ -190,6 +190,7 @@
          }
      }
  
@@ -24,7 +24,7 @@
      public void func_78791_b(float p_78791_1_)
      {
          if (!this.field_78807_k)
-@@ -227,6 +228,7 @@
+@@ -225,6 +226,7 @@
          }
      }
  
@@ -32,7 +32,7 @@
      public void func_78794_c(float p_78794_1_)
      {
          if (!this.field_78807_k)
-@@ -268,6 +270,7 @@
+@@ -266,6 +268,7 @@
          }
      }
  

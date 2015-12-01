@@ -9,77 +9,73 @@
  {
      public static final PropertyBool field_176237_a = PropertyBool.func_177716_a("decayable");
      public static final PropertyBool field_176236_b = PropertyBool.func_177716_a("check_decay");
-@@ -76,9 +76,9 @@
-                         BlockPos blockpos1 = p_180663_2_.func_177982_a(i1, j1, k1);
-                         IBlockState iblockstate1 = p_180663_1_.func_180495_p(blockpos1);
+@@ -75,9 +75,9 @@
+                         BlockPos blockpos = p_180663_2_.func_177982_a(j1, k1, l1);
+                         IBlockState iblockstate = p_180663_1_.func_180495_p(blockpos);
  
--                        if (iblockstate1.func_177230_c().func_149688_o() == Material.field_151584_j && !((Boolean)iblockstate1.func_177229_b(field_176236_b)).booleanValue())
-+                        if (iblockstate1.func_177230_c().isLeaves(p_180663_1_, blockpos1))
+-                        if (iblockstate.func_177230_c().func_149688_o() == Material.field_151584_j && !((Boolean)iblockstate.func_177229_b(field_176236_b)).booleanValue())
++                        if (iblockstate.func_177230_c().isLeaves(p_180663_1_, blockpos))
                          {
--                            p_180663_1_.func_180501_a(blockpos1, iblockstate1.func_177226_a(field_176236_b, Boolean.valueOf(true)), 4);
-+                            iblockstate1.func_177230_c().beginLeavesDecay(p_180663_1_, blockpos1);
+-                            p_180663_1_.func_180501_a(blockpos, iblockstate.func_177226_a(field_176236_b, Boolean.valueOf(true)), 4);
++                            iblockstate.func_177230_c().beginLeavesDecay(p_180663_1_, blockpos);
                          }
                      }
                  }
-@@ -119,11 +119,12 @@
-                         {
-                             for (i2 = -b0; i2 <= b0; ++i2)
+@@ -117,9 +117,9 @@
                              {
--                                Block block = p_180650_1_.func_180495_p(new BlockPos(j + k1, k + l1, l + i2)).func_177230_c();
-+                                BlockPos tmp = new BlockPos(j + k1, k + l1, l + i2);
-+                                Block block = p_180650_1_.func_180495_p(tmp).func_177230_c();
+                                 Block block = p_180650_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)).func_177230_c();
  
 -                                if (block != Blocks.field_150364_r && block != Blocks.field_150363_s)
-+                                if (!block.canSustainLeaves(p_180650_1_, tmp))
++                                if (!block.canSustainLeaves(p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                  {
 -                                    if (block.func_149688_o() == Material.field_151584_j)
-+                                    if (block.isLeaves(p_180650_1_, tmp))
++                                    if (block.isLeaves(p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                      {
-                                         this.field_150128_a[(k1 + j1) * i1 + (l1 + j1) * b1 + i2 + j1] = -2;
+                                         this.field_150128_a[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
                                      }
-@@ -230,40 +231,7 @@
+@@ -226,40 +226,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
 -        if (!p_180653_1_.field_72995_K)
 -        {
--            int j = this.func_176232_d(p_180653_3_);
+-            int i = this.func_176232_d(p_180653_3_);
 -
 -            if (p_180653_5_ > 0)
 -            {
--                j -= 2 << p_180653_5_;
+-                i -= 2 << p_180653_5_;
 -
--                if (j < 10)
+-                if (i < 10)
 -                {
--                    j = 10;
+-                    i = 10;
 -                }
 -            }
 -
--            if (p_180653_1_.field_73012_v.nextInt(j) == 0)
+-            if (p_180653_1_.field_73012_v.nextInt(i) == 0)
 -            {
 -                Item item = this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_);
 -                func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(item, 1, this.func_180651_a(p_180653_3_)));
 -            }
 -
--            j = 200;
+-            i = 200;
 -
 -            if (p_180653_5_ > 0)
 -            {
--                j -= 10 << p_180653_5_;
+-                i -= 10 << p_180653_5_;
 -
--                if (j < 40)
+-                if (i < 40)
 -                {
--                    j = 40;
+-                    i = 40;
 -                }
 -            }
 -
--            this.func_176234_a(p_180653_1_, p_180653_2_, p_180653_3_, j);
+-            this.func_176234_a(p_180653_1_, p_180653_2_, p_180653_3_, i);
 -        }
 +        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
      }
  
-     protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_) {}
-@@ -298,4 +266,48 @@
+     protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
+@@ -296,4 +263,48 @@
      }
  
      public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);

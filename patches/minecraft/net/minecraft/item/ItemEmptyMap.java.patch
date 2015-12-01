@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemEmptyMap.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemEmptyMap.java
-@@ -24,7 +24,7 @@
+@@ -22,7 +22,7 @@
          p_77659_2_.func_72823_a(s, mapdata);
          mapdata.field_76197_d = 0;
          mapdata.func_176054_a(p_77659_3_.field_70165_t, p_77659_3_.field_70161_v, mapdata.field_76197_d);

@@ -38,6 +38,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.BuiltInModel;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
@@ -62,6 +63,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+@SuppressWarnings("deprecation")
 public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = new HashMap<ModelResourceLocation, IModel>();
@@ -85,7 +87,7 @@ public class ModelLoader extends ModelBakery
     }
 
     @Override
-    public IRegistry setupModelRegistry()
+    public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
     {
         isLoading = true;
         loadBlocks();
@@ -331,7 +333,7 @@ public class ModelLoader extends ModelBakery
             }
             ModelBlock model = this.model;
             if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
-            ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
+            ItemCameraTransforms transforms = model.func_181682_g();
             boolean uvlock = false;
             if(state instanceof UVLock)
             {
@@ -391,7 +393,7 @@ public class ModelLoader extends ModelBakery
 
             ModelBlock neweModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
-                new ItemCameraTransforms(this.model.getThirdPersonTransform(), this.model.getFirstPersonTransform(), this.model.getHeadTransform(), this.model.getInGuiTransform()));
+                model.func_181682_g());
             neweModel.name = this.model.name;
             neweModel.parent = this.model.parent;
 
@@ -497,7 +499,7 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        @Deprecated public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
+        @Deprecated @SuppressWarnings("unused") public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
         public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
@@ -600,6 +602,7 @@ public class ModelLoader extends ModelBakery
 
     private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
     {
+        @SuppressWarnings("unused")
         private final WeightedBakedModel parent;
         private final VertexFormat format;
 
@@ -616,6 +619,7 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+    @SuppressWarnings("unused")
     private boolean isBuiltinModel(ModelBlock model)
     {
         return model == MODEL_GENERATED || model == MODEL_COMPASS || model == MODEL_CLOCK || model == MODEL_ENTITY;
@@ -700,7 +704,14 @@ public class ModelLoader extends ModelBakery
             graphics.clearRect(0, 0, 16, 16);
             BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
             images[0] = image;
-            loadSprite(images, null);
+            try
+            {
+                loadSprite(images, null);
+            }
+            catch(IOException e)
+            {
+                throw new RuntimeException(e);
+            }
             return false;
         }
 
@@ -710,12 +721,12 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    public void onPostBakeEvent(IRegistry modelRegistry)
+    public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
-        Object missingModel = modelRegistry.getObject(MODEL_MISSING);
+        IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
         for(ModelResourceLocation missing : missingVariants)
         {
-            Object model = modelRegistry.getObject(missing);
+            IBakedModel model = modelRegistry.getObject(missing);
             if(model == null || model == missingModel)
             {
                 FMLLog.severe("Model definition for location %s not found", missing);

@@ -30,7 +30,7 @@
      }
  
      public String func_151316_d()
-@@ -233,6 +237,7 @@
+@@ -215,6 +219,7 @@
                      serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
                  }
  
@@ -38,16 +38,12 @@
                  return serverstatusresponse;
              }
  
-@@ -260,6 +265,7 @@
+@@ -242,7 +247,47 @@
                      jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
                  }
  
 +                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.enhanceStatusQuery(jsonobject);
                  return jsonobject;
-             }
- 
-@@ -268,4 +274,43 @@
-                 return this.serialize((ServerStatusResponse)p_serialize_1_, p_serialize_2_, p_serialize_3_);
              }
          }
 +

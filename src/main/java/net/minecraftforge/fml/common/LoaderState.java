@@ -92,6 +92,12 @@ public enum LoaderState
         if (this == NOINIT) return NOINIT;
         return LoaderState.values()[this.ordinal()-1];
     }
+    
+    public String getPrettyName()
+    {
+        return name;
+    }
+    
     public enum ModState
     {
         UNLOADED       ("Unloaded",         "U"),

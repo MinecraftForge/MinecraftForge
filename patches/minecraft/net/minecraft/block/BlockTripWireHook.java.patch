@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTripWireHook.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
-@@ -60,7 +60,7 @@
+@@ -58,14 +58,14 @@
  
      public boolean func_176198_a(World p_176198_1_, BlockPos p_176198_2_, EnumFacing p_176198_3_)
      {
@@ -9,16 +9,15 @@
      }
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
-@@ -77,7 +77,7 @@
- 
-             enumfacing = (EnumFacing)iterator.next();
-         }
--        while (!p_176196_1_.func_180495_p(p_176196_2_.func_177972_a(enumfacing)).func_177230_c().func_149721_r());
-+        while (!p_176196_1_.isSideSolid(p_176196_2_.func_177972_a(enumfacing), enumfacing.func_176734_d(), true));
- 
-         return true;
-     }
-@@ -107,7 +107,7 @@
+     {
+         for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+         {
+-            if (p_176196_1_.func_180495_p(p_176196_2_.func_177972_a(enumfacing)).func_177230_c().func_149721_r())
++            if (p_176196_1_.isSideSolid(p_176196_2_.func_177972_a(enumfacing), enumfacing.func_176734_d(), true))
+             {
+                 return true;
+             }
+@@ -99,7 +99,7 @@
              {
                  EnumFacing enumfacing = (EnumFacing)p_176204_3_.func_177229_b(field_176264_a);
  

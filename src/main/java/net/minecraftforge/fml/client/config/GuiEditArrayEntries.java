@@ -32,10 +32,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.VALID;
 /**
  * This class implements the scrolling list functionality of the GuiEditList screen. It also provides all the default controls
  * for editing array-type properties.
- *
- * @author bspkrs
  */
-@SuppressWarnings("rawtypes")
 public class GuiEditArrayEntries extends GuiListExtended
 {
     protected GuiEditArray owningGui;
@@ -535,11 +532,10 @@ public class GuiEditArrayEntries extends GuiListExtended
         private final HoverChecker addNewEntryAboveHoverChecker;
         protected final GuiButtonExt btnRemoveEntry;
         private final HoverChecker removeEntryHoverChecker;
-        private List addNewToolTip, removeToolTip;
+        private List<String> addNewToolTip, removeToolTip;
         protected boolean isValidValue = true;
         protected boolean isValidated = false;
 
-        @SuppressWarnings({ "unchecked" })
         public BaseEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement)
         {
             this.owningScreen = owningScreen;
@@ -553,8 +549,8 @@ public class GuiEditArrayEntries extends GuiListExtended
             this.btnRemoveEntry.enabled = owningScreen.enabled;
             this.addNewEntryAboveHoverChecker = new HoverChecker(this.btnAddNewEntryAbove, 800);
             this.removeEntryHoverChecker = new HoverChecker(this.btnRemoveEntry, 800);
-            this.addNewToolTip = new ArrayList();
-            this.removeToolTip = new ArrayList();
+            this.addNewToolTip = new ArrayList<String>();
+            this.removeToolTip = new ArrayList<String>();
             addNewToolTip.add(I18n.format("fml.configgui.tooltip.addNewEntryAbove"));
             removeToolTip.add(I18n.format("fml.configgui.tooltip.removeEntry"));
         }

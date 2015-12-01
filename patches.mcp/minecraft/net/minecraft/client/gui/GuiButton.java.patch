@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiButton.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiButton.java
+@@ -22,6 +22,7 @@
+     public boolean visible;
+     protected boolean hovered;
+     private static final String __OBFID = "CL_00000668";
++    public int packedFGColour; //FML
+ 
+     public GuiButton(int buttonId, int x, int y, String buttonText)
+     {
+@@ -75,8 +76,12 @@
+             this.mouseDragged(mc, mouseX, mouseY);
+             int l = 14737632;
+ 
+-            if (!this.enabled)
++            if (packedFGColour != 0)
+             {
++                l = packedFGColour;
++            }
++            else if (!this.enabled)
++            {
+                 l = 10526880;
+             }
+             else if (this.hovered)

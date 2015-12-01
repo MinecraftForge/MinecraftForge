@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -178,7 +178,7 @@
+@@ -169,7 +169,7 @@
                      {
-                         Block block = this.field_145850_b.func_180495_p(new BlockPos(l1, k1, j1)).func_177230_c();
+                         Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
  
 -                        if (block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150484_ah && block != Blocks.field_150339_S)
 +                        if (!block.isBeaconBase(this.field_145850_b, new BlockPos(l1, k1, j1), func_174877_v()))
                          {
                              flag1 = false;
                              break;
-@@ -363,7 +363,7 @@
+@@ -368,7 +368,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {

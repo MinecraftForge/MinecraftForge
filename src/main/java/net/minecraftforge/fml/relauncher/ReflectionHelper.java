@@ -25,12 +25,12 @@ public class ReflectionHelper
     public static class UnableToFindMethodException extends RuntimeException
     {
         private static final long serialVersionUID = 1L;
-        private String[] methodNames;
+        //private String[] methodNames;
 
         public UnableToFindMethodException(String[] methodNames, Exception failed)
         {
             super(failed);
-            this.methodNames = methodNames;
+            //this.methodNames = methodNames;
         }
 
     }
@@ -38,12 +38,12 @@ public class ReflectionHelper
     public static class UnableToFindClassException extends RuntimeException
     {
         private static final long serialVersionUID = 1L;
-        private String[] classNames;
+        //private String[] classNames;
 
         public UnableToFindClassException(String[] classNames, Exception err)
         {
             super(err);
-            this.classNames = classNames;
+            //this.classNames = classNames;
         }
 
     }
@@ -51,23 +51,23 @@ public class ReflectionHelper
     public static class UnableToAccessFieldException extends RuntimeException
     {
         private static final long serialVersionUID = 1L;
-        private String[] fieldNameList;
+        //private String[] fieldNameList;
 
         public UnableToAccessFieldException(String[] fieldNames, Exception e)
         {
             super(e);
-            this.fieldNameList = fieldNames;
+            //this.fieldNameList = fieldNames;
         }
     }
 
     public static class UnableToFindFieldException extends RuntimeException
     {
         private static final long serialVersionUID = 1L;
-        private String[] fieldNameList;
+        //private String[] fieldNameList;
         public UnableToFindFieldException(String[] fieldNameList, Exception e)
         {
             super(e);
-            this.fieldNameList = fieldNameList;
+            //this.fieldNameList = fieldNameList;
         }
     }
 

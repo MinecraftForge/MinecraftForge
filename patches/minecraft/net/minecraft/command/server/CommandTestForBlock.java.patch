@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandTestForBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandTestForBlock.java
-@@ -74,7 +74,7 @@
+@@ -70,7 +70,7 @@
                      NBTTagCompound nbttagcompound = new NBTTagCompound();
                      boolean flag = false;
  

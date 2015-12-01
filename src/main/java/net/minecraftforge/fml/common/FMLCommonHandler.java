@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,6 +47,8 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -65,8 +65,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
@@ -99,14 +97,13 @@ public class FMLCommonHandler
      */
     private IFMLSidedHandler sidedDelegate;
 
-    private Class<?> forge;
     private boolean noForge;
     private List<String> brandings;
     private List<String> brandingsNoMC;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
-    private EventBus eventBus = new EventBus();
+    private EventBus eventBus = MinecraftForge.EVENT_BUS;
     private volatile CountDownLatch exitLatch = null;
 
     private FMLCommonHandler()
@@ -133,8 +130,10 @@ public class FMLCommonHandler
     /**
      * The FML event bus. Subscribe here for FML related events
      *
+     * @Deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
      * @return the event bus
      */
+    @Deprecated
     public EventBus bus()
     {
         return eventBus;
@@ -143,10 +142,8 @@ public class FMLCommonHandler
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
-        FMLLog.log("MinecraftForge", Level.INFO, "Attempting early MinecraftForge initialization");
-        callForgeMethod("initialize");
-        callForgeMethod("registerCrashCallable");
-        FMLLog.log("MinecraftForge", Level.INFO, "Completed early MinecraftForge initialization");
+        MinecraftForge.initialize();
+//        MinecraftForge.registerCrashCallable();
     }
 
     /**
@@ -213,34 +210,6 @@ public class FMLCommonHandler
     }
 
 
-    private Class<?> findMinecraftForge()
-    {
-        if (forge==null && !noForge)
-        {
-            try {
-                forge = Class.forName("net.minecraftforge.common.MinecraftForge");
-            } catch (Exception ex) {
-                noForge = true;
-            }
-        }
-        return forge;
-    }
-
-    private Object callForgeMethod(String method)
-    {
-        if (noForge)
-            return null;
-        try
-        {
-            return findMinecraftForge().getMethod(method).invoke(null);
-        }
-        catch (Exception e)
-        {
-            // No Forge installation
-            return null;
-        }
-    }
-
     public void computeBranding()
     {
         if (brandings == null)
@@ -248,12 +217,7 @@ public class FMLCommonHandler
             Builder<String> brd = ImmutableList.<String>builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
-            brd.add("FML v"+Loader.instance().getFMLVersionString());
-            String forgeBranding = (String) callForgeMethod("getBrandingVersion");
-            if (!Strings.isNullOrEmpty(forgeBranding))
-            {
-                brd.add(forgeBranding);
-            }
+            brd.add("Powered by Forge " + ForgeVersion.getVersion());
             if (sidedDelegate!=null)
             {
                 brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
@@ -707,7 +671,7 @@ public class FMLCommonHandler
         return sidedDelegate.getWorldThread(net);
     }
 
-    public static void callFuture(FutureTask task)
+    public static void callFuture(FutureTask<?> task)
     {
         try
         {
@@ -757,7 +721,7 @@ public class FMLCommonHandler
 
         Properties props = new Properties();
         props.load(new InputStreamReader(new ByteArrayInputStream(data), Charsets.UTF_8));
-        for (Entry e : props.entrySet())
+        for (Entry<Object, Object> e : props.entrySet())
         {
             table.put((String)e.getKey(), (String)e.getValue());
         }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiSleepMP.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiSleepMP.java
-@@ -34,7 +34,7 @@
+@@ -32,7 +32,7 @@
  
              if (!s.isEmpty())
              {

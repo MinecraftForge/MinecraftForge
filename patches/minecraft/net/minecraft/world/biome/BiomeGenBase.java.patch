@@ -1,16 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -50,6 +50,9 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+import net.minecraftforge.common.*;
-+import net.minecraftforge.event.terraingen.*;
-+
- public abstract class BiomeGenBase
- {
-     private static final Logger field_150586_aC = LogManager.getLogger();
-@@ -139,6 +142,10 @@
+@@ -138,6 +138,10 @@
  
      public BiomeGenBase(int p_i1971_1_)
      {
@@ -18,10 +8,10 @@
 +    }
 +    public BiomeGenBase(int p_i1971_1_, boolean register)
 +    {
-         this.field_76752_A = Blocks.field_150349_c.func_176223_P();
-         this.field_76753_B = Blocks.field_150346_d.func_176223_P();
-         this.field_76754_C = 5169201;
-@@ -156,6 +163,7 @@
+         this.field_76748_D = field_150596_a.field_150777_a;
+         this.field_76749_E = field_150596_a.field_150776_b;
+         this.field_76750_F = 0.5F;
+@@ -152,6 +156,7 @@
          this.field_76758_O = new WorldGenBigTree(false);
          this.field_76763_Q = new WorldGenSwamp();
          this.field_76756_M = p_i1971_1_;
@@ -29,7 +19,7 @@
          field_76773_a[p_i1971_1_] = this;
          this.field_76760_I = this.func_76729_a();
          this.field_76762_K.add(new BiomeGenBase.SpawnListEntry(EntitySheep.class, 12, 4, 4));
-@@ -172,11 +180,12 @@
+@@ -168,11 +173,12 @@
          this.field_76761_J.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new BiomeGenBase.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -43,7 +33,7 @@
      }
  
      public BiomeGenBase func_76732_a(float p_76732_1_, float p_76732_2_)
-@@ -346,7 +355,7 @@
+@@ -342,7 +348,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -52,7 +42,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -354,7 +363,7 @@
+@@ -350,7 +356,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -61,7 +51,7 @@
      }
  
      public boolean func_150559_j()
-@@ -500,6 +509,84 @@
+@@ -497,6 +503,84 @@
          }
      }
  
@@ -70,27 +60,27 @@
 +
 +    public BiomeDecorator getModdedBiomeDecorator(BiomeDecorator original)
 +    {
-+        return new DeferredBiomeDecorator(original);
++        return new net.minecraftforge.event.terraingen.DeferredBiomeDecorator(original);
 +    }
 +
 +    public int getWaterColorMultiplier()
 +    {
-+        BiomeEvent.GetWaterColor event = new BiomeEvent.GetWaterColor(this, field_76759_H);
-+        MinecraftForge.EVENT_BUS.post(event);
++        net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor(this, field_76759_H);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
 +    }
 +
 +    public int getModdedBiomeGrassColor(int original)
 +    {
-+        BiomeEvent.GetGrassColor event = new BiomeEvent.GetGrassColor(this, original);
-+        MinecraftForge.EVENT_BUS.post(event);
++        net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor(this, original);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
 +    }
 +
 +    public int getModdedBiomeFoliageColor(int original)
 +    {
-+        BiomeEvent.GetFoliageColor event = new BiomeEvent.GetFoliageColor(this, original);
-+        MinecraftForge.EVENT_BUS.post(event);
++        net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor(this, original);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
 +    }
 +

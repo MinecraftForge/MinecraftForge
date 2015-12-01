@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemTransformVec3f.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemTransformVec3f.java
 @@ -13,9 +13,14 @@
- import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.lwjgl.util.vector.Vector3f;
  
 +/*
 + * @deprecated use {@link net.minecraftforge.client.model.IModelState} and {@link net.minecraftforge.client.model.TRSRTransformation}

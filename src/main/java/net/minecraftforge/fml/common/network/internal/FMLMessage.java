@@ -157,8 +157,7 @@ public abstract class FMLMessage {
         double speedScaledX;
         double speedScaledY;
         double speedScaledZ;
-        @SuppressWarnings("rawtypes")
-        List dataWatcherList;
+        List<DataWatcher.WatchableObject> dataWatcherList;
         ByteBuf dataStream;
 
         public EntitySpawnMessage() {}

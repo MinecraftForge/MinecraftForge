@@ -8,6 +8,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
@@ -22,7 +23,8 @@ import net.minecraftforge.fml.common.FMLLog;
 
 public class PacketLoggingHandler
 {
-    public static void register(NetworkManager manager)
+    @SuppressWarnings("rawtypes")
+	public static void register(NetworkManager manager)
     {
         ChannelPipeline pipeline = manager.channel().pipeline();
         final EnumPacketDirection direction = manager.getDirection();
@@ -62,11 +64,13 @@ public class PacketLoggingHandler
             {
                 String prefix = (direction == EnumPacketDirection.SERVERBOUND ? "SERVER: C->S" : "CLIENT: S->C");
                 @Override
-                protected void decode(ChannelHandlerContext context, ByteBuf input, List output)
+                protected void decode(ChannelHandlerContext context, ByteBuf input, List<Object> output) throws Exception
                 {
                     super.decode(context, input, output);
-                    for (ByteBuf pkt : (List<ByteBuf>)output)
+                    Iterator<Object> itr = output.iterator();
+                    while (itr.hasNext())
                     {
+                        ByteBuf pkt = (ByteBuf)itr.next();
                         pkt.markReaderIndex();
                         FMLLog.log(Level.DEBUG, "%s:\n%s", prefix, ByteBufUtils.getContentDump(pkt));
                         pkt.resetReaderIndex();
@@ -77,7 +81,7 @@ public class PacketLoggingHandler
             {
                 String prefix = (direction == EnumPacketDirection.SERVERBOUND ? "SERVER: S->C" : "CLIENT: C->S");
                 @Override
-                protected void encode(ChannelHandlerContext context, ByteBuf input, ByteBuf output)
+                protected void encode(ChannelHandlerContext context, ByteBuf input, ByteBuf output) throws Exception
                 {
                     input.markReaderIndex();
                     FMLLog.log(Level.DEBUG, "%s:\n%s", prefix, ByteBufUtils.getContentDump(input));
