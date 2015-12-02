@@ -116,7 +116,7 @@ public class ModClassLoader extends URLClassLoader
             "librarylwjglopenal-",
             "soundsystem-",
             "netty-all-",
-            "quava-",
+            "guava-",
             "commons-lang3-",
             "commons-compress-",
             "commons-logging-",
