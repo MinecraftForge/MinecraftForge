@@ -19,6 +19,15 @@
                          {
                              BlockPos blockpos = func_180621_a(p_77192_1_, chunkcoordintpair1.field_77276_a, chunkcoordintpair1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
+@@ -84,7 +85,7 @@
+                             int i2 = blockpos.func_177952_p();
+                             Block block = p_77192_1_.func_180495_p(blockpos).func_177230_c();
+ 
+-                            if (!block.func_149721_r())
++                            if (!block.isNormalCube(p_77192_1_, blockpos))
+                             {
+                                 int j2 = 0;
+ 
 @@ -134,8 +135,10 @@
  
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
@@ -40,7 +49,14 @@
                                                      {
                                                          continue label374;
                                                      }
-@@ -193,7 +196,7 @@
+@@ -187,13 +190,13 @@
+ 
+             if (p_180267_0_ == EntityLiving.SpawnPlacementType.IN_WATER)
+             {
+-                return block.func_149688_o().func_76224_d() && p_180267_1_.func_180495_p(p_180267_2_.func_177977_b()).func_177230_c().func_149688_o().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).func_177230_c().func_149721_r();
++                return block.func_149688_o().func_76224_d() && p_180267_1_.func_180495_p(p_180267_2_.func_177977_b()).func_177230_c().func_149688_o().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).func_177230_c().isNormalCube(p_180267_1_, p_180267_2_.func_177984_a());
+             }
+             else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();
  
@@ -49,3 +65,12 @@
                  {
                      return false;
                  }
+@@ -201,7 +204,7 @@
+                 {
+                     Block block1 = p_180267_1_.func_180495_p(blockpos).func_177230_c();
+                     boolean flag = block1 != Blocks.field_150357_h && block1 != Blocks.field_180401_cv;
+-                    return flag && !block.func_149721_r() && !block.func_149688_o().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).func_177230_c().func_149721_r();
++                    return flag && !block.isNormalCube(p_180267_1_, blockpos) && !block.func_149688_o().func_76224_d() && !p_180267_1_.func_180495_p(p_180267_2_.func_177984_a()).func_177230_c().isNormalCube(p_180267_1_, p_180267_2_.func_177984_a());
+                 }
+             }
+         }

@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemDoor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemDoor.java
+@@ -56,8 +56,8 @@
+     {
+         BlockPos blockpos = p_179235_1_.func_177972_a(p_179235_2_.func_176746_e());
+         BlockPos blockpos1 = p_179235_1_.func_177972_a(p_179235_2_.func_176735_f());
+-        int i = (p_179235_0_.func_180495_p(blockpos1).func_177230_c().func_149721_r() ? 1 : 0) + (p_179235_0_.func_180495_p(blockpos1.func_177984_a()).func_177230_c().func_149721_r() ? 1 : 0);
+-        int j = (p_179235_0_.func_180495_p(blockpos).func_177230_c().func_149721_r() ? 1 : 0) + (p_179235_0_.func_180495_p(blockpos.func_177984_a()).func_177230_c().func_149721_r() ? 1 : 0);
++        int i = (p_179235_0_.func_180495_p(blockpos1).func_177230_c().isNormalCube(p_179235_0_, blockpos1) ? 1 : 0) + (p_179235_0_.func_180495_p(blockpos1.func_177984_a()).func_177230_c().isNormalCube(p_179235_0_, blockpos1) ? 1 : 0);
++        int j = (p_179235_0_.func_180495_p(blockpos).func_177230_c().isNormalCube(p_179235_0_, blockpos) ? 1 : 0) + (p_179235_0_.func_180495_p(blockpos.func_177984_a()).func_177230_c().isNormalCube(p_179235_0_, blockpos.func_177984_a()) ? 1 : 0);
+         boolean flag = p_179235_0_.func_180495_p(blockpos1).func_177230_c() == p_179235_3_ || p_179235_0_.func_180495_p(blockpos1.func_177984_a()).func_177230_c() == p_179235_3_;
+         boolean flag1 = p_179235_0_.func_180495_p(blockpos).func_177230_c() == p_179235_3_ || p_179235_0_.func_180495_p(blockpos.func_177984_a()).func_177230_c() == p_179235_3_;
+         boolean flag2 = false;
