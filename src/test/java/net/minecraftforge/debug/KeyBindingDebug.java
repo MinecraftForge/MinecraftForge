@@ -56,6 +56,11 @@ public class KeyBindingDebug
                     player.addChatMessage(new ChatComponentText("Not a stick..."));
                     return false;
                 }
+
+                @Override
+                public boolean onKeyHold(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt) {
+                    return false;
+                }
             });
 
             ClientRegistry.registerKeyBindingContext(KEY_TEST_CONTEXT_B, Keyboard.KEY_M, CONTEXT_NAME, new IKeyBinding()
@@ -73,6 +78,11 @@ public class KeyBindingDebug
                     player.addChatMessage(new ChatComponentText("Not a diamond..."));
                     return false;
                 }
+
+                @Override
+                public boolean onKeyHold(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt) {
+                    return false;
+                }
             });
 
             ClientRegistry.registerKeyBinding(KEY_REGULAR, Keyboard.KEY_B, CATEGORY_REGULAR, new IKeyBinding()
@@ -82,6 +92,11 @@ public class KeyBindingDebug
                 {
                     player.addChatMessage(new ChatComponentText("Just a regular key binding."));
                     return true;
+                }
+
+                @Override
+                public boolean onKeyHold(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt) {
+                    return false;
                 }
             });
         }

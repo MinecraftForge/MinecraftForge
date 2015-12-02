@@ -102,6 +102,17 @@ public class ClientRegistry
                     }
                 }
             }
+
+            if (entry.getValue().key.isKeyDown())
+            {
+                for (IKeyBinding callback : entry.getValue().callbacks)
+                {
+                    if (callback.onKeyHold(minecraft, minecraft.thePlayer, entry.getKey(), ctrl, shift, alt))
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
 
