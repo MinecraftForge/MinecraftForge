@@ -44,7 +44,7 @@ public class KeyBindingDebug
             ClientRegistry.registerKeyBindingContext(KEY_TEST_CONTEXT_A, Keyboard.KEY_N, CONTEXT_NAME, new IKeyBinding()
             {
                 @Override
-                public boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context)
+                public boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt)
                 {
                     ItemStack itemStack = player.getHeldItem();
                     if (itemStack != null && itemStack.getItem() == Items.stick)
@@ -61,10 +61,10 @@ public class KeyBindingDebug
             ClientRegistry.registerKeyBindingContext(KEY_TEST_CONTEXT_B, Keyboard.KEY_M, CONTEXT_NAME, new IKeyBinding()
             {
                 @Override
-                public boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context)
+                public boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt)
                 {
                     ItemStack itemStack = player.getHeldItem();
-                    if (itemStack != null && itemStack.getItem() == Items.diamond)
+                    if (itemStack != null && itemStack.getItem() == Items.diamond && ctrl && !shift && !alt)
                     {
                         player.addChatMessage(new ChatComponentText("DIAMONDS!"));
                         return true;
@@ -78,7 +78,7 @@ public class KeyBindingDebug
             ClientRegistry.registerKeyBinding(KEY_REGULAR, Keyboard.KEY_B, CATEGORY_REGULAR, new IKeyBinding()
             {
                 @Override
-                public boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context)
+                public boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt)
                 {
                     player.addChatMessage(new ChatComponentText("Just a regular key binding."));
                     return true;

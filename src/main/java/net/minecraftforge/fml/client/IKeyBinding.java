@@ -5,5 +5,5 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface IKeyBinding
 {
-    boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context);
+    boolean onKeyDown(Minecraft minecraft, EntityPlayer player, String context, boolean ctrl, boolean shift, boolean alt);
 }

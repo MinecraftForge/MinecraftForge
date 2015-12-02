@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.client.registry;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -85,13 +86,17 @@ public class ClientRegistry
     public static void onKeyInput(InputEvent event)
     {
         Minecraft minecraft = Minecraft.getMinecraft();
+        boolean ctrl = Minecraft.isRunningOnMac ? Keyboard.isKeyDown(Keyboard.KEY_LMETA) || Keyboard.isKeyDown(Keyboard.KEY_RMETA) : Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+        boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+        boolean alt = Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
+
         for (Map.Entry<String, KeyBindingInfo> entry : mapContexts.entrySet())
         {
             if (entry.getValue().key.isPressed())
             {
                 for (IKeyBinding callback : entry.getValue().callbacks)
                 {
-                    if (callback.onKeyDown(minecraft, minecraft.thePlayer, entry.getKey()))
+                    if (callback.onKeyDown(minecraft, minecraft.thePlayer, entry.getKey(), ctrl, shift, alt))
                     {
                         break;
                     }
