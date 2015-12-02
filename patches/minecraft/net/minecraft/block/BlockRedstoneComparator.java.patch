@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
+@@ -123,7 +123,7 @@
+         {
+             i = block.func_180641_l(p_176397_1_, blockpos);
+         }
+-        else if (i < 15 && block.func_149721_r())
++        else if (i < 15 && block.isNormalCube(p_176397_1_, blockpos))
+         {
+             blockpos = blockpos.func_177972_a(enumfacing);
+             block = p_176397_1_.func_180495_p(blockpos).func_177230_c();
 @@ -295,6 +295,21 @@
          return this.func_176223_P().func_177226_a(field_176387_N, p_180642_8_.func_174811_aO().func_176734_d()).func_177226_a(field_176464_a, Boolean.valueOf(false)).func_177226_a(field_176463_b, BlockRedstoneComparator.Mode.COMPARE);
      }

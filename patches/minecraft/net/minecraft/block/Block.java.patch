@@ -179,7 +179,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1029 @@
+@@ -1010,6 +1030,1043 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -226,7 +226,7 @@
 +     */
 +    public boolean isNormalCube(IBlockAccess world, BlockPos pos)
 +    {
-+        return func_149688_o().func_76218_k() && func_149686_d() && !func_149744_f();
++        return func_149688_o().func_76218_k() && func_149686_d() && !canProvidePower(world, pos);
 +    }
 +
 +    /**
@@ -710,7 +710,21 @@
 +     */
 +    public boolean canConnectRedstone(IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        return func_149744_f() && side != null;
++        return canProvidePower(world, pos) && side != null;
++    }
++    
++    /**
++     * Determine if this block can provide power, 
++     * use {@link #isProvidingWeakPower(IBlockAccess, BlockPos, IBlockState, EnumFacing)}
++     * or {@link #isProvidingStrongPower(IBlockAccess, BlockPos, IBlockState, EnumFacing)}
++     * to determine to power level the block outputs.
++     * 
++     * @param world The current world
++     * @param pos Block position in world
++     * @return True to allow this block to provide power
++     */
++    public boolean canProvidePower(IBlockAccess world, BlockPos pos) {
++        return func_149744_f();
 +    }
 +
 +    /**
@@ -1073,7 +1087,7 @@
 +     */
 +    public boolean shouldCheckWeakPower(IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        return func_149721_r();
++        return isNormalCube(world, pos);
 +    }
 +
 +    /**

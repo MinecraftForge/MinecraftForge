@@ -56,6 +56,15 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
+@@ -415,7 +428,7 @@
+ 
+     private boolean func_175162_d(BlockPos p_175162_1_)
+     {
+-        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().func_149721_r() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_177230_c().func_149721_r();
++        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().isNormalCube(field_70170_p, p_175162_1_) && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_177230_c().isNormalCube(field_70170_p, p_175162_1_.func_177984_a());
+     }
+ 
+     public void func_70031_b(boolean p_70031_1_)
 @@ -448,6 +461,12 @@
  
      public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)
