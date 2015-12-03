@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
@@ -93,16 +92,8 @@ public class MultiModel implements IModel
                 ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
                 for(TransformType type : TransformType.values())
                 {
-                    Pair<IBakedModel, Matrix4f> p = perBase.handlePerspective(type);
-                    IFlexibleBakedModel newBase;
-                    if(p.getLeft() instanceof IFlexibleBakedModel)
-                    {
-                        newBase = (IFlexibleBakedModel)p.getLeft();
-                    }
-                    else
-                    {
-                        newBase = new IFlexibleBakedModel.Wrapper(p.getLeft(), base.getFormat());
-                    }
+                    Pair<? extends IFlexibleBakedModel, Matrix4f> p = perBase.handlePerspective(type);
+                    IFlexibleBakedModel newBase = p.getLeft();
                     builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
                 }
                 transforms = builder.build();
@@ -172,11 +163,11 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            if(transforms.isEmpty()) return Pair.<IBakedModel, Matrix4f>of(this, null);
+            if(transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
-            return Pair.of((IBakedModel)p.getLeft(), p.getRight().getMatrix());
+            return Pair.of(p.getLeft(), p.getRight().getMatrix());
         }
     }
 
@@ -261,12 +252,6 @@ public class MultiModel implements IModel
         return new Baked(location, true, bakedBase, mapBuilder.build());
     }
 
-    @Override
-    public IModelState getDefaultState()
-    {
-        return baseState;
-    }
-
     /**
      * @return The base model of this MultiModel. May be null.
      */
@@ -281,5 +266,11 @@ public class MultiModel implements IModel
     public Map<String, Pair<IModel, IModelState>> getParts()
     {
         return parts;
+    }
+
+    @Override
+    public IModelState getDefaultState()
+    {
+        return baseState;
     }
 }

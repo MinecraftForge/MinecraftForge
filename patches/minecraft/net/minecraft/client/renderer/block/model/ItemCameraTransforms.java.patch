@@ -12,3 +12,12 @@
  public class ItemCameraTransforms
  {
      public static final ItemCameraTransforms field_178357_a = new ItemCameraTransforms();
+@@ -117,7 +121,7 @@
+         }
+ 
+     @SideOnly(Side.CLIENT)
+-    public static enum TransformType
++    public static enum TransformType implements net.minecraftforge.client.model.IModelPart
+     {
+         NONE,
+         THIRD_PERSON,
