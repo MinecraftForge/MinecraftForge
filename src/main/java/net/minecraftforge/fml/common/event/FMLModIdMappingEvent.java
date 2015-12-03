@@ -44,9 +44,10 @@ public class FMLModIdMappingEvent extends FMLEvent {
 
     }
     public final ImmutableList<ModRemapping> remappedIds;
-
-    public FMLModIdMappingEvent(Map<ResourceLocation, Integer[]> blocks, Map<ResourceLocation, Integer[]> items)
+    public final boolean isFrozen;
+    public FMLModIdMappingEvent(Map<ResourceLocation, Integer[]> blocks, Map<ResourceLocation, Integer[]> items, boolean isFrozen)
     {
+        this.isFrozen = isFrozen;
         List<ModRemapping> remappings = Lists.newArrayList();
         for (Entry<ResourceLocation, Integer[]> mapping : blocks.entrySet())
         {

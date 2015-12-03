@@ -188,7 +188,7 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.ACTIVE, DumpRegistryFunction.OPERATION);
 
         // Tell mods that the ids have changed
-        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS));
+        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS), false);
 
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -267,7 +267,7 @@ public class PersistentRegistryManager
             loadRegistry(r.getKey(), PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(r.getKey()));
         }
         // the id mapping has reverted, fire remap events for those that care about id changes
-        Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of());
+        Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of(), true);
 
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
