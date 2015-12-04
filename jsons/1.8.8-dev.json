@@ -9,6 +9,11 @@
       "name": "net.minecraft:launchwrapper:1.12"
     },
     {
+      "name": "jline:jline:2.13",
+      "children": ["sources"],
+      "url" : "http://repo.maven.apache.org/maven2"
+    },
+    {
       "name": "com.google.code.findbugs:jsr305:1.3.9",
       "children": ["sources"],
       "url" : "http://repo.maven.apache.org/maven2"

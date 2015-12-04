@@ -639,7 +639,7 @@ public class Loader
         return "8.0.99.99";
     }
 
-    public ClassLoader getModClassLoader()
+    public ModClassLoader getModClassLoader()
     {
         return modClassLoader;
     }
@@ -974,9 +974,9 @@ public class Loader
         return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, remapBlocks, remapItems);
     }
 
-    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
+    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
     {
-	    modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems));
+	    modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
     }
 
     public void runtimeDisableMod(String modId)

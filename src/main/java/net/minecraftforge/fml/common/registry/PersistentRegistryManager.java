@@ -1,6 +1,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -20,6 +21,7 @@ import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -122,6 +124,7 @@ public class PersistentRegistryManager
 
     public static final ResourceLocation BLOCKS = new ResourceLocation("minecraft:blocks");
     public static final ResourceLocation ITEMS = new ResourceLocation("minecraft:items");
+    public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
 
     public static <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
     {
@@ -145,6 +148,8 @@ public class PersistentRegistryManager
 
         // Empty the blockstate map before loading
         GameData.getBlockStateIDMap().clear();
+        // Clean up potion array before reloading it from the snapshot
+        Arrays.fill(Potion.potionTypes, null);
 
         // Load the snapshot into the "STAGING" registry
         for (Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapshotEntry : snapshot.entries.entrySet())
@@ -183,10 +188,13 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.ACTIVE, DumpRegistryFunction.OPERATION);
 
         // Tell mods that the ids have changed
-        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS));
+        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS), false);
 
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+
+        // Clean out the staging registry now, we're done with it
+        PersistentRegistry.STAGING.clean();
 
         // Return an empty list, because we're good
         return ImmutableList.of();
@@ -209,8 +217,8 @@ public class PersistentRegistryManager
 
     private static <T> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, Class<T> regType)
     {
-        FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getRegistry(registryName, regType);
         FMLControlledNamespacedRegistry<T> frozenRegistry = PersistentRegistry.FROZEN.getRegistry(registryName, regType);
+        FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, frozenRegistry);
         newRegistry.loadIds(frozenRegistry.getEntriesNotIn(newRegistry), Maps.<ResourceLocation, Integer>newLinkedHashMap(), remaps.get(registryName), frozenRegistry, registryName);
     }
 
@@ -248,6 +256,7 @@ public class PersistentRegistryManager
         if (!PersistentRegistry.FROZEN.isPopulated())
         {
             FMLLog.warning("Can't revert to frozen GameData state without freezing first.");
+            return;
         }
         else
         {
@@ -258,9 +267,11 @@ public class PersistentRegistryManager
             loadRegistry(r.getKey(), PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(r.getKey()));
         }
         // the id mapping has reverted, fire remap events for those that care about id changes
-        Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of());
+        Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of(), true);
+
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        FMLLog.fine("Frozen state restored.");
     }
 
     public static void freezeData()
