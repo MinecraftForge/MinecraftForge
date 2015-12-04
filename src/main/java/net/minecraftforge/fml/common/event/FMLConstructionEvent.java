@@ -18,6 +18,9 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 
 import com.google.common.collect.ListMultimap;
 
+/**
+ * An internal FML event used to signal the construction of mods. Should not be used by mods.
+ */
 public class FMLConstructionEvent extends FMLStateEvent
 {
     private ModClassLoader modClassLoader;

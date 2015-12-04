@@ -185,12 +185,12 @@ public class B3DModel
         {
             chunk("BB3D");
             int version = buf.getInt();
-            if(version / 100 > this.version / 100)
+            if(version / 100 > Parser.version / 100)
                 throw new IOException("Unsupported major model version: " + ((float)version / 100));
-            if(version % 100 > this.version % 100)
+            if(version % 100 > Parser.version % 100)
                 logger.warn(String.format("Minor version differnce in model: ", ((float)version / 100)));
-            List<Texture> textures = Collections.EMPTY_LIST;
-            List<Brush> brushes = Collections.EMPTY_LIST;
+            List<Texture> textures = Collections.emptyList();
+            List<Brush> brushes = Collections.emptyList();
             Node<?> root = null;
             while(buf.hasRemaining())
             {
@@ -400,7 +400,6 @@ public class B3DModel
             chunk("NODE");
             animations.push(HashBasedTable.<Integer, Optional<Node<?>>, Key>create());
             Triple<Integer, Integer, Float> animData = null;
-            Animation animation = null;
             Pair<Brush, List<Face>> mesh = null;
             List<Pair<Vertex, Float>> bone = null;
             Map<Integer, Key> keys = new HashMap<Integer, Key>();
@@ -637,13 +636,19 @@ public class B3DModel
             Vector3f rPos = new Vector3f(newPos.x / newPos.w, newPos.y / newPos.w, newPos.z / newPos.w);
 
             // normal
-            Matrix3f tm = new Matrix3f();
-            t.getRotationScale(tm);
-            tm.invert();
-            tm.transpose();
-            Vector3f normal = new Vector3f(this.normal), rNormal = new Vector3f();
-            tm.transform(normal, rNormal);
-            rNormal.normalize();
+            Vector3f rNormal = null;
+
+            if(this.normal != null)
+            {
+                Matrix3f tm = new Matrix3f();
+                t.getRotationScale(tm);
+                tm.invert();
+                tm.transpose();
+                Vector3f normal = new Vector3f(this.normal);
+                rNormal = new Vector3f();
+                tm.transform(normal, rNormal);
+                rNormal.normalize();
+            }
 
             // texCoords TODO
             return new Vertex(rPos, rNormal, color, texCoords);

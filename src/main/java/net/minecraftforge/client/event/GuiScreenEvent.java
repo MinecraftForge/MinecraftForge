@@ -33,9 +33,9 @@ public class GuiScreenEvent extends Event
         /**
          * The {@code buttonList} field from the GuiScreen object referenced by {@code gui}.
          */
-        public List buttonList;
+        public List<GuiButton> buttonList;
         
-        public InitGuiEvent(GuiScreen gui, List buttonList)
+        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList)
         {
             super(gui);
             this.buttonList = buttonList;
@@ -49,13 +49,11 @@ public class GuiScreenEvent extends Event
          * If canceled the following lines are skipped in {@code GuiScreen.setWorldAndResolution()}:<br/>
          * {@code this.buttonList.clear();}<br/>
          * {@code this.initGui();}<br/>
-         * 
-         * @author bspkrs
          */
         @Cancelable
         public static class Pre extends InitGuiEvent
         {
-            public Pre(GuiScreen gui, List buttonList)
+            public Pre(GuiScreen gui, List<GuiButton> buttonList)
             {
                 super(gui, buttonList);
             }
@@ -64,12 +62,10 @@ public class GuiScreenEvent extends Event
         /**
          * This event fires right after {@code GuiScreen.initGui()}.
          * This is a good place to alter a GuiScreen's component layout if desired.
-         * 
-         * @author bspkrs
          */
         public static class Post extends InitGuiEvent
         {
-            public Post(GuiScreen gui, List buttonList)
+            public Post(GuiScreen gui, List<GuiButton> buttonList)
             {
                 super(gui, buttonList);
             }
@@ -102,8 +98,6 @@ public class GuiScreenEvent extends Event
         /**
          * This event fires just before {@code GuiScreen.drawScreen()} is called.
          * Cancel this event to skip {@code GuiScreen.drawScreen()}.
-         * 
-         * @author bspkrs
          */
         @Cancelable
         public static class Pre extends DrawScreenEvent
@@ -116,8 +110,6 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires just after {@code GuiScreen.drawScreen()} is called.
-         * 
-         * @author bspkrs
          */
         public static class Post extends DrawScreenEvent
         {
@@ -137,26 +129,24 @@ public class GuiScreenEvent extends Event
         /**
          * A COPY of the {@code buttonList} field from the GuiScreen referenced by {@code gui}.
          */
-        public List buttonList;
+        public List<GuiButton> buttonList;
 
-        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List buttonList)
+        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
         {
             super(gui);
             this.button = button;
-            this.buttonList = new ArrayList(buttonList);
+            this.buttonList = new ArrayList<GuiButton>(buttonList);
         }
         
         /**
          * This event fires once it has been determined that a GuiButton object has been clicked.
          * Cancel this event to bypass {@code GuiScreen.actionPerformed()}.
          * Replace button with a different button from buttonList to have that button's action executed.
-         * 
-         * @author bspkrs
          */
         @Cancelable
         public static class Pre extends ActionPerformedEvent
         {
-            public Pre(GuiScreen gui, GuiButton button, List buttonList)
+            public Pre(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
             {
                 super(gui, button, buttonList);
             }
@@ -165,12 +155,10 @@ public class GuiScreenEvent extends Event
         /**
          * This event fires after {@code GuiScreen.actionPerformed()} provided that the active 
          * screen has not been changed as a result of {@code GuiScreen.actionPerformed()}.
-         * 
-         * @author bspkrs
          */
         public static class Post extends ActionPerformedEvent
         {
-            public Post(GuiScreen gui, GuiButton button, List buttonList)
+            public Post(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
             {
                 super(gui, button, buttonList);
             }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityMinecartCommandBlock.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityMinecartCommandBlock.java
-@@ -111,6 +111,7 @@
+@@ -109,6 +109,7 @@
  
      public boolean func_130002_c(EntityPlayer p_130002_1_)
      {

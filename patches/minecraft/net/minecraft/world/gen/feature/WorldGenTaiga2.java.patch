@@ -1,19 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
-@@ -49,9 +49,10 @@
-                     {
-                         if (i1 >= 0 && i1 < 256)
+@@ -55,7 +55,7 @@
                          {
--                            Block block = p_180709_1_.func_180495_p(new BlockPos(j1, i1, k1)).func_177230_c();
-+                            BlockPos off = new BlockPos(j1, i1, k1);
-+                            Block block = p_180709_1_.func_180495_p(off).func_177230_c();
+                             Block block = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k1, i1, l1)).func_177230_c();
  
 -                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (!block.isAir(p_180709_1_, off) && !block.isLeaves(p_180709_1_, off))
++                            if (block.isAir(p_180709_1_, blockpos$mutableblockpos) && !block.isLeaves(p_180709_1_, blockpos$mutableblockpos))
                              {
                                  flag = false;
                              }
-@@ -70,11 +71,13 @@
+@@ -74,11 +74,13 @@
              }
              else
              {
@@ -27,28 +23,28 @@
                  {
 -                    this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
 +                    block1.onPlantGrow(p_180709_1_, down, p_180709_3_);
-                     i3 = p_180709_2_.nextInt(2);
-                     j1 = 1;
-                     byte b0 = 0;
-@@ -97,7 +100,7 @@
+                     int i3 = p_180709_2_.nextInt(2);
+                     int j3 = 1;
+                     int k3 = 0;
+@@ -99,7 +101,7 @@
                                  {
-                                     BlockPos blockpos1 = new BlockPos(i2, l1, k2);
+                                     BlockPos blockpos = new BlockPos(i2, j4, k2);
  
--                                    if (!p_180709_1_.func_180495_p(blockpos1).func_177230_c().func_149730_j())
-+                                    if (p_180709_1_.func_180495_p(blockpos1).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos1))
+-                                    if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().func_149730_j())
++                                    if (p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
                                      {
-                                         this.func_175905_a(p_180709_1_, blockpos1, Blocks.field_150362_t, BlockPlanks.EnumType.SPRUCE.func_176839_a());
+                                         this.func_175903_a(p_180709_1_, blockpos, field_181646_b);
                                      }
-@@ -126,9 +129,10 @@
+@@ -128,9 +130,10 @@
  
-                     for (l1 = 0; l1 < i - j3; ++l1)
+                     for (int k4 = 0; k4 < i - i4; ++k4)
                      {
--                        Block block2 = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(l1)).func_177230_c();
-+                        BlockPos upN = p_180709_3_.func_177981_b(l1);
+-                        Block block2 = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(k4)).func_177230_c();
++                        BlockPos upN = p_180709_3_.func_177981_b(k4);
 +                        Block block2 = p_180709_1_.func_180495_p(upN).func_177230_c();
  
 -                        if (block2.func_149688_o() == Material.field_151579_a || block2.func_149688_o() == Material.field_151584_j)
 +                        if (block2.isAir(p_180709_1_, upN) || block2.isLeaves(p_180709_1_, upN))
                          {
-                             this.func_175905_a(p_180709_1_, p_180709_3_.func_177981_b(l1), Blocks.field_150364_r, BlockPlanks.EnumType.SPRUCE.func_176839_a());
+                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(k4), field_181645_a);
                          }

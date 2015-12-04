@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
 +++ ../src-work/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
-@@ -16,6 +16,7 @@
+@@ -14,6 +14,7 @@
+     private String field_149598_b;
      private int field_149599_c;
      private EnumConnectionState field_149597_d;
-     private static final String __OBFID = "CL_00001372";
 +    private boolean hasFMLMarker = false;
  
-     public C00Handshake() {}
- 
+     public C00Handshake()
+     {
 @@ -28,18 +29,26 @@
          this.field_149597_d = p_i45266_4_;
      }
@@ -36,9 +36,9 @@
          p_148840_1_.writeShort(this.field_149599_c);
          p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
      }
-@@ -63,4 +72,9 @@
+@@ -58,4 +67,9 @@
      {
-         this.func_180770_a((INetHandlerHandshakeServer)p_148833_1_);
+         return this.field_149600_a;
      }
 +
 +    public boolean hasFMLMarker()

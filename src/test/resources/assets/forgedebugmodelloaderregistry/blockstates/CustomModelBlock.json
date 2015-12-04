@@ -6,7 +6,10 @@
             "#chest": "entity/chest/normal"
         },
         "model": "forgedebugmodelloaderregistry:chest.b3d",
-        "transform": "forge:default-block"
+        "transform": "forge:default-block",
+        "custom": {
+            "mesh": ["Base", "Lid"]
+        }
      },
     "variants": {
         "normal": [{}],

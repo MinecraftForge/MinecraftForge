@@ -26,11 +26,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
@@ -785,7 +785,7 @@ public class ModelLoaderRegistryDebug
         }
     }
     
-    public static class OBJDynamicEyeTileEntity extends TileEntity implements IUpdatePlayerListBox
+    public static class OBJDynamicEyeTileEntity extends TileEntity implements ITickable
     {
         public OBJModel.OBJState state;
         
@@ -803,7 +803,7 @@ public class ModelLoaderRegistryDebug
                 EntityPlayer player = Minecraft.getMinecraft().thePlayer;
                 Vector3d playerLoc = new Vector3d();
                 playerLoc.setX(player.posX);
-                playerLoc.setY(player.posY + player.eyeHeight);
+                playerLoc.setY(player.posY + player.getEyeHeight());
                 playerLoc.setZ(player.posZ);
                 Vector3d lookVec = new Vector3d(playerLoc.getX() - teLoc.getX(), playerLoc.getY() - teLoc.getY(), playerLoc.getZ() - teLoc.getZ());
                 double angleYaw = Math.atan2(lookVec.getZ(), lookVec.getX()) - Math.PI/2d;

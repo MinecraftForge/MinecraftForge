@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
@@ -28,6 +27,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+@SuppressWarnings("deprecation")
 public class ItemLayerModel implements IRetexturableModel {
 
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());

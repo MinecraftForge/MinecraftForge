@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
-@@ -35,6 +35,11 @@
+@@ -34,6 +34,11 @@
  
      public boolean func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumFacing p_180614_5_, float p_180614_6_, float p_180614_7_, float p_180614_8_)
      {
@@ -12,7 +12,7 @@
          if (p_180614_5_ == EnumFacing.DOWN)
          {
              return false;
-@@ -47,7 +52,7 @@
+@@ -46,7 +51,7 @@
  
              if (!flag)
              {
@@ -21,7 +21,7 @@
                  {
                      return false;
                  }
-@@ -67,6 +72,7 @@
+@@ -66,6 +71,7 @@
              {
                  if (!p_180614_3_.field_72995_K)
                  {

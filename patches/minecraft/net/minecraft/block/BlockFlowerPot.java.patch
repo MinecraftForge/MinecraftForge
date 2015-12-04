@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
-@@ -162,13 +162,6 @@
+@@ -169,13 +169,6 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -14,7 +14,7 @@
          super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
-@@ -388,6 +381,31 @@
+@@ -395,6 +388,31 @@
          return EnumWorldBlockLayer.CUTOUT;
      }
  

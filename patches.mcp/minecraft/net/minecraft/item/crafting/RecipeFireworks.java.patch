@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
+@@ -90,9 +90,9 @@
+             {
+                 this.field_92102_a = new ItemStack(Items.fireworks);
+ 
++                nbttagcompound = new NBTTagCompound();
+                 if (l > 0)
+                 {
+-                    nbttagcompound = new NBTTagCompound();
+                     nbttagcompound1 = new NBTTagCompound();
+                     NBTTagList nbttaglist = new NBTTagList();
+ 
+@@ -109,8 +109,8 @@
+                     nbttagcompound1.setTag("Explosions", nbttaglist);
+                     nbttagcompound1.setByte("Flight", (byte)j);
+                     nbttagcompound.setTag("Fireworks", nbttagcompound1);
+-                    this.field_92102_a.setTagCompound(nbttagcompound);
+                 }
++                this.field_92102_a.setTagCompound(nbttagcompound); //Forge BugFix: NPE Protection
+ 
+                 return true;
+             }
+@@ -253,11 +253,7 @@
+         for (int i = 0; i < aitemstack.length; ++i)
+         {
+             ItemStack itemstack = p_179532_1_.getStackInSlot(i);
+-
+-            if (itemstack != null && itemstack.getItem().hasContainerItem())
+-            {
+-                aitemstack[i] = new ItemStack(itemstack.getItem().getContainerItem());
+-            }
++            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+         }
+ 
+         return aitemstack;

@@ -18,12 +18,6 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate;
  */
 public class FluidStack
 {
-    /**
-     * This field will be removed in 1.8. It may be incorrect after a world is loaded. Code should always
-     * use {@link #getFluid()} instead. That will always reflect the correct value.
-     */
-    @Deprecated
-    public final Fluid fluid;
     public int amount;
     public NBTTagCompound tag;
     private RegistryDelegate<Fluid> fluidDelegate;
@@ -42,7 +36,6 @@ public class FluidStack
         }
     	this.fluidDelegate = FluidRegistry.makeDelegate(fluid);
         this.amount = amount;
-        this.fluid = fluid;
     }
 
     public FluidStack(Fluid fluid, int amount, NBTTagCompound nbt)
@@ -58,20 +51,6 @@ public class FluidStack
     public FluidStack(FluidStack stack, int amount)
     {
         this(stack.getFluid(), amount, stack.tag);
-    }
-
-    // To be removed in 1.8
-    @Deprecated
-    public FluidStack(int fluidID, int amount)
-    {
-    	this(FluidRegistry.getFluid(fluidID), amount);
-    }
-
-    // To be removed in 1.8
-    @Deprecated
-    public FluidStack(int fluidID, int amount, NBTTagCompound nbt)
-    {
-    	this(FluidRegistry.getFluid(fluidID), amount, nbt);
     }
 
     /**
@@ -114,11 +93,6 @@ public class FluidStack
     public final Fluid getFluid()
     {
         return fluidDelegate.get();
-    }
-
-    public final int getFluidID()
-    {
-    	return FluidRegistry.getFluidID(getFluid());
     }
 
     public String getLocalizedName()

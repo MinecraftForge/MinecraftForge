@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
-@@ -52,6 +52,7 @@
-     private int field_176155_J;
-     private GameRules field_82577_x;
-     private static final String __OBFID = "CL_00000587";
+@@ -51,6 +51,7 @@
+     private int field_176154_I = 5;
+     private int field_176155_J = 15;
+     private GameRules field_82577_x = new GameRules();
 +    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
  
      protected WorldInfo()
      {
-@@ -803,4 +804,24 @@
+@@ -745,4 +746,24 @@
              }
          });
      }

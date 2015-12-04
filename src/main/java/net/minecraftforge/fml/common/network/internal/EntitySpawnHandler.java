@@ -3,8 +3,6 @@ package net.minecraftforge.fml.common.network.internal;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.util.List;
-
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -128,7 +126,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
 
             if (spawnMsg.dataWatcherList != null)
             {
-                entity.getDataWatcher().updateWatchedObjectsFromList((List<?>) spawnMsg.dataWatcherList);
+                entity.getDataWatcher().updateWatchedObjectsFromList(spawnMsg.dataWatcherList);
             }
 
             if (spawnMsg.throwerId > 0)

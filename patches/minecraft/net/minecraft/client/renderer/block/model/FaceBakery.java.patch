@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
-@@ -22,7 +22,12 @@
+@@ -20,7 +20,12 @@
  
      public BakedQuad func_178414_a(Vector3f p_178414_1_, Vector3f p_178414_2_, BlockPartFace p_178414_3_, TextureAtlasSprite p_178414_4_, EnumFacing p_178414_5_, ModelRotation p_178414_6_, BlockPartRotation p_178414_7_, boolean p_178414_8_, boolean p_178414_9_)
      {
@@ -11,20 +11,20 @@
 +    public BakedQuad makeBakedQuad(Vector3f p_178414_1_, Vector3f p_178414_2_, BlockPartFace p_178414_3_, TextureAtlasSprite p_178414_4_, EnumFacing p_178414_5_, net.minecraftforge.client.model.ITransformation p_178414_6_, BlockPartRotation p_178414_7_, boolean p_178414_8_, boolean p_178414_9_)
 +    {
 +        int[] aint = this.makeQuadVertexData(p_178414_3_, p_178414_4_, p_178414_5_, this.func_178403_a(p_178414_1_, p_178414_2_), p_178414_6_, p_178414_7_, p_178414_8_, p_178414_9_);
-         EnumFacing enumfacing1 = func_178410_a(aint);
+         EnumFacing enumfacing = func_178410_a(aint);
  
          if (p_178414_8_)
-@@ -35,16 +40,22 @@
-             this.func_178408_a(aint, enumfacing1);
+@@ -33,16 +38,22 @@
+             this.func_178408_a(aint, enumfacing);
          }
  
-+        net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, enumfacing1);
-         return new BakedQuad(aint, p_178414_3_.field_178245_c, enumfacing1);
++        net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, enumfacing);
+         return new BakedQuad(aint, p_178414_3_.field_178245_c, enumfacing);
      }
  
      private int[] func_178405_a(BlockPartFace p_178405_1_, TextureAtlasSprite p_178405_2_, EnumFacing p_178405_3_, float[] p_178405_4_, ModelRotation p_178405_5_, BlockPartRotation p_178405_6_, boolean p_178405_7_, boolean p_178405_8_)
      {
-+        return makeQuadVertexData(p_178405_1_, p_178405_2_, p_178405_3_, p_178405_4_, (net.minecraftforge.client.model.ITransformation)p_178405_5_, p_178405_6_, p_178405_7_, p_178405_8_);
++        return func_178405_a(p_178405_1_, p_178405_2_, p_178405_3_, p_178405_4_, p_178405_5_, p_178405_6_, p_178405_7_, p_178405_8_);
 +    }
 +
 +    private int[] makeQuadVertexData(BlockPartFace p_178405_1_, TextureAtlasSprite p_178405_2_, EnumFacing p_178405_3_, float[] p_178405_4_, net.minecraftforge.client.model.ITransformation p_178405_5_, BlockPartRotation p_178405_6_, boolean p_178405_7_, boolean p_178405_8_)
@@ -38,34 +38,34 @@
          }
  
          return aint;
-@@ -90,12 +101,17 @@
+@@ -88,12 +99,17 @@
  
      private void func_178402_a(int[] p_178402_1_, int p_178402_2_, EnumFacing p_178402_3_, BlockPartFace p_178402_4_, float[] p_178402_5_, TextureAtlasSprite p_178402_6_, ModelRotation p_178402_7_, BlockPartRotation p_178402_8_, boolean p_178402_9_, boolean p_178402_10_)
      {
--        EnumFacing enumfacing1 = p_178402_7_.func_177523_a(p_178402_3_);
-+        fillVertexData(p_178402_1_, p_178402_2_, p_178402_3_, p_178402_4_, p_178402_5_, p_178402_6_, (net.minecraftforge.client.model.ITransformation)p_178402_7_, p_178402_8_, p_178402_9_, p_178402_10_);
+-        EnumFacing enumfacing = p_178402_7_.func_177523_a(p_178402_3_);
++        func_178402_a(p_178402_1_, p_178402_2_, p_178402_3_, p_178402_4_, p_178402_5_, p_178402_6_, p_178402_7_, p_178402_8_, p_178402_9_, p_178402_10_);
 +    }
 +
 +    private void fillVertexData(int[] p_178402_1_, int p_178402_2_, EnumFacing p_178402_3_, BlockPartFace p_178402_4_, float[] p_178402_5_, TextureAtlasSprite p_178402_6_, net.minecraftforge.client.model.ITransformation p_178402_7_, BlockPartRotation p_178402_8_, boolean p_178402_9_, boolean p_178402_10_)
 +    {
-+        EnumFacing enumfacing1 = p_178402_7_.rotate(p_178402_3_);
-         int j = p_178402_10_ ? this.func_178413_a(enumfacing1) : -1;
-         EnumFaceDirection.VertexInformation vertexinformation = EnumFaceDirection.func_179027_a(p_178402_3_).func_179025_a(p_178402_2_);
-         Vector3d vector3d = new Vector3d((double)p_178402_5_[vertexinformation.field_179184_a], (double)p_178402_5_[vertexinformation.field_179182_b], (double)p_178402_5_[vertexinformation.field_179183_c]);
-         this.func_178407_a(vector3d, p_178402_8_);
--        int k = this.func_178415_a(vector3d, p_178402_3_, p_178402_2_, p_178402_7_, p_178402_9_);
-+        int k = this.rotateVertex(vector3d, p_178402_3_, p_178402_2_, p_178402_7_, p_178402_9_);
-         this.func_178404_a(p_178402_1_, k, p_178402_2_, vector3d, j, p_178402_6_, p_178402_4_.field_178243_e);
++        EnumFacing enumfacing = p_178402_7_.rotate(p_178402_3_);
+         int i = p_178402_10_ ? this.func_178413_a(enumfacing) : -1;
+         EnumFaceDirection.VertexInformation enumfacedirection$vertexinformation = EnumFaceDirection.func_179027_a(p_178402_3_).func_179025_a(p_178402_2_);
+         Vector3f vector3f = new Vector3f(p_178402_5_[enumfacedirection$vertexinformation.field_179184_a], p_178402_5_[enumfacedirection$vertexinformation.field_179182_b], p_178402_5_[enumfacedirection$vertexinformation.field_179183_c]);
+         this.func_178407_a(vector3f, p_178402_8_);
+-        int j = this.func_178415_a(vector3f, p_178402_3_, p_178402_2_, p_178402_7_, p_178402_9_);
++        int j = this.rotateVertex(vector3f, p_178402_3_, p_178402_2_, p_178402_7_, p_178402_9_);
+         this.func_178404_a(p_178402_1_, j, p_178402_2_, vector3f, i, p_178402_6_, p_178402_4_.field_178243_e);
      }
  
-@@ -156,14 +172,19 @@
+@@ -154,14 +170,19 @@
  
-     public int func_178415_a(Vector3d p_178415_1_, EnumFacing p_178415_2_, int p_178415_3_, ModelRotation p_178415_4_, boolean p_178415_5_)
+     public int func_178415_a(Vector3f p_178415_1_, EnumFacing p_178415_2_, int p_178415_3_, ModelRotation p_178415_4_, boolean p_178415_5_)
      {
-+        return rotateVertex(p_178415_1_, p_178415_2_, p_178415_3_, (net.minecraftforge.client.model.ITransformation)p_178415_4_, p_178415_5_);
++        return func_178415_a(p_178415_1_, p_178415_2_, p_178415_3_, p_178415_4_, p_178415_5_);
 +    }
 +
-+    public int rotateVertex(Vector3d p_178415_1_, EnumFacing p_178415_2_, int p_178415_3_, net.minecraftforge.client.model.ITransformation p_178415_4_, boolean p_178415_5_)
++    public int rotateVertex(Vector3f p_178415_1_, EnumFacing p_178415_2_, int p_178415_3_, net.minecraftforge.client.model.ITransformation p_178415_4_, boolean p_178415_5_)
 +    {
          if (p_178415_4_ == ModelRotation.X0_Y0)
          {
@@ -73,7 +73,7 @@
          }
          else
          {
--            this.func_178406_a(p_178415_1_, new Vector3d(0.5D, 0.5D, 0.5D), p_178415_4_.func_177525_a(), new Vector3d(1.0D, 1.0D, 1.0D));
+-            this.func_178406_a(p_178415_1_, new Vector3f(0.5F, 0.5F, 0.5F), p_178415_4_.func_177525_a(), new Vector3f(1.0F, 1.0F, 1.0F));
 -            return p_178415_4_.func_177520_a(p_178415_2_, p_178415_3_);
 +            net.minecraftforge.client.ForgeHooksClient.transform(p_178415_1_, p_178415_4_.getMatrix());
 +            return p_178415_4_.rotate(p_178415_2_, p_178415_3_);

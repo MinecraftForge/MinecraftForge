@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockOre.java
++++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.util.BlockPos;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+ public class BlockOre extends Block
+@@ -54,34 +55,40 @@
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+-
+-        if (this.getItemDropped(state, worldIn.rand, fortune) != Item.getItemFromBlock(this))
++    }
++    @Override
++    public int getExpDrop(IBlockAccess world, BlockPos pos, int fortune)
++    {
++        IBlockState state = world.getBlockState(pos);
++        Random rand = world instanceof World ? ((World)world).rand : new Random();
++        if (this.getItemDropped(state, rand, fortune) != Item.getItemFromBlock(this))
+         {
+             int j = 0;
+ 
+             if (this == Blocks.coal_ore)
+             {
+-                j = MathHelper.getRandomIntegerInRange(worldIn.rand, 0, 2);
++                j = MathHelper.getRandomIntegerInRange(rand, 0, 2);
+             }
+             else if (this == Blocks.diamond_ore)
+             {
+-                j = MathHelper.getRandomIntegerInRange(worldIn.rand, 3, 7);
++                j = MathHelper.getRandomIntegerInRange(rand, 3, 7);
+             }
+             else if (this == Blocks.emerald_ore)
+             {
+-                j = MathHelper.getRandomIntegerInRange(worldIn.rand, 3, 7);
++                j = MathHelper.getRandomIntegerInRange(rand, 3, 7);
+             }
+             else if (this == Blocks.lapis_ore)
+             {
+-                j = MathHelper.getRandomIntegerInRange(worldIn.rand, 2, 5);
++                j = MathHelper.getRandomIntegerInRange(rand, 2, 5);
+             }
+             else if (this == Blocks.quartz_ore)
+             {
+-                j = MathHelper.getRandomIntegerInRange(worldIn.rand, 2, 5);
++                j = MathHelper.getRandomIntegerInRange(rand, 2, 5);
+             }
+ 
+-            this.dropXpOnBlockBreak(worldIn, pos, j);
++            return j;
+         }
++        return 0;
+     }
+ 
+     public int getDamageValue(World worldIn, BlockPos pos)

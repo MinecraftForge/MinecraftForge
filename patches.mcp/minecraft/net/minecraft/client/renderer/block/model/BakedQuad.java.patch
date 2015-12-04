@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
+@@ -5,8 +5,9 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public class BakedQuad
++public class BakedQuad implements net.minecraftforge.client.model.pipeline.IVertexProducer
+ {
++    @Override public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer) { net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this); }
+     protected final int[] vertexData;
+     protected final int tintIndex;
+     protected final EnumFacing face;

@@ -1,23 +1,19 @@
 package net.minecraftforge.common.property;
 
-import java.lang.reflect.InvocationTargetException;
-
 import net.minecraft.block.properties.IProperty;
-
-import org.apache.commons.lang3.reflect.ConstructorUtils;
 
 public class Properties
 {
-    public static <P extends IProperty, V>IUnlistedProperty<V> toUnlisted(P property)
+    public static <V extends Comparable<V>> IUnlistedProperty<V> toUnlisted(IProperty<V> property)
     {
-        return new PropertyAdapter(property);
+        return new PropertyAdapter<V>(property);
     }
 
-    public static class PropertyAdapter<V extends Comparable> implements IUnlistedProperty<V>
+    public static class PropertyAdapter<V extends Comparable<V>> implements IUnlistedProperty<V>
     {
-        private final IProperty parent;
+        private final IProperty<V> parent;
 
-        public PropertyAdapter(IProperty parent)
+        public PropertyAdapter(IProperty<V> parent)
         {
             this.parent = parent;
         }

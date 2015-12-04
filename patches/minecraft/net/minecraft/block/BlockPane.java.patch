@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -39,7 +39,10 @@
+@@ -38,7 +38,10 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
@@ -12,9 +12,9 @@
      }
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -65,10 +68,10 @@
+@@ -64,10 +67,10 @@
  
-     public void func_180638_a(World p_180638_1_, BlockPos p_180638_2_, IBlockState p_180638_3_, AxisAlignedBB p_180638_4_, List p_180638_5_, Entity p_180638_6_)
+     public void func_180638_a(World p_180638_1_, BlockPos p_180638_2_, IBlockState p_180638_3_, AxisAlignedBB p_180638_4_, List<AxisAlignedBB> p_180638_5_, Entity p_180638_6_)
      {
 -        boolean flag = this.func_150098_a(p_180638_1_.func_180495_p(p_180638_2_.func_177978_c()).func_177230_c());
 -        boolean flag1 = this.func_150098_a(p_180638_1_.func_180495_p(p_180638_2_.func_177968_d()).func_177230_c());
@@ -27,7 +27,7 @@
  
          if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
          {
-@@ -187,4 +190,11 @@
+@@ -186,4 +189,11 @@
      {
          return new BlockState(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }

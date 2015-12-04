@@ -11,7 +11,6 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.security.Permission;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -178,7 +177,8 @@ public class ASMTransformerWrapper
         return "$wrapper." + parentClass;
     }
 
-    private static class WrapperVisitor extends ClassVisitor
+    @SuppressWarnings("unused")
+	private static class WrapperVisitor extends ClassVisitor
     {
         private final String name;
         private final String parentClass;
@@ -248,6 +248,8 @@ public class ASMTransformerWrapper
 
     static class TransformerException extends RuntimeException
     {
+        private static final long serialVersionUID = -6616232415696157218L;
+
         public TransformerException(String message, Throwable cause)
         {
             super(message, cause);

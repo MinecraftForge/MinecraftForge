@@ -1,37 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -60,6 +60,7 @@
-     public void func_94305_f()
+@@ -58,12 +58,17 @@
      {
-         Stitcher.Holder[] aholder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
-+        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", aholder.length);
-         Arrays.sort(aholder);
-         Stitcher.Holder[] aholder1 = aholder;
-         int i = aholder.length;
-@@ -67,10 +68,14 @@
-         for (int j = 0; j < i; ++j)
-         {
-             Stitcher.Holder holder = aholder1[j];
-+            bar.step(holder.func_98150_a().func_94215_i());
+         Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
+         Arrays.sort((Object[])astitcher$holder);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", astitcher$holder.length);
  
-             if (!this.func_94310_b(holder))
+         for (Stitcher.Holder stitcher$holder : astitcher$holder)
+         {
++            bar.step(stitcher$holder.func_98150_a().func_94215_i());
+             if (!this.func_94310_b(stitcher$holder))
              {
-                 String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", new Object[] {holder.func_98150_a().func_94215_i(), Integer.valueOf(holder.func_98150_a().func_94211_a()), Integer.valueOf(holder.func_98150_a().func_94216_b())});
+                 String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", new Object[] {stitcher$holder.func_98150_a().func_94215_i(), Integer.valueOf(stitcher$holder.func_98150_a().func_94211_a()), Integer.valueOf(stitcher$holder.func_98150_a().func_94216_b())});
 +                net.minecraftforge.fml.common.FMLLog.info(s);
-+                for (Stitcher.Holder h : aholder)
++                for (Stitcher.Holder h : astitcher$holder)
 +                    net.minecraftforge.fml.common.FMLLog.info("  %s", h);
-                 throw new StitcherException(holder, s);
+                 throw new StitcherException(stitcher$holder, s);
              }
          }
-@@ -80,6 +85,7 @@
+@@ -73,6 +78,7 @@
              this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
              this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
-     public List func_94309_g()
-@@ -273,7 +279,7 @@
+     public List<TextureAtlasSprite> func_94309_g()
+@@ -260,7 +266,7 @@
  
              public String toString()
              {

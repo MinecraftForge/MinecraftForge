@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockQuartz.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockQuartz.java
-@@ -91,6 +91,26 @@
+@@ -90,6 +90,26 @@
          return new BlockState(this, new IProperty[] {field_176335_a});
      }
  
