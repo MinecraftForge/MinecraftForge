@@ -48,6 +48,7 @@ import net.minecraftforge.fml.relauncher.FMLInjectionData;
 public class Configuration
 {
     public static final String CATEGORY_GENERAL = "general";
+    public static final String CATEGORY_CLIENT = "client";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
     public static final String CATEGORY_SPLITTER = ".";

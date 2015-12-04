@@ -44,10 +44,17 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.WeightedBakedModel;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
@@ -175,6 +182,7 @@ public class ModelLoader extends ModelBakery
         registerVariantNames();
         for(Item item : GameData.getItemRegistry().typeSafeIterable())
         {
+            // default loading
             for(String s : (List<String>)getVariantNames(item))
             {
                 ResourceLocation file = getItemLocation(s);
@@ -198,6 +206,28 @@ public class ModelLoader extends ModelBakery
                     else stateModels.put(memory, model);
                 }
             }
+        }
+
+        // replace vanilla bucket models if desired. done afterwards for performance reasons
+        if(ForgeModContainer.replaceVanillaBucketModel) {
+            setBucketModel(Items.water_bucket);
+            setBucketModel(Items.lava_bucket);
+            // milk bucket only replaced if some mod adds milk
+            if(FluidRegistry.isFluidRegistered("milk")) {
+                // can the milk be put into a bucket?
+                Fluid milk = FluidRegistry.getFluid("milk");
+                FluidStack milkStack = new FluidStack(milk, FluidContainerRegistry.BUCKET_VOLUME);
+                if(FluidContainerRegistry.getContainerCapacity(milkStack, new ItemStack(Items.bucket)) == FluidContainerRegistry.BUCKET_VOLUME)
+                    setBucketModel(Items.milk_bucket);
+            }
+        }
+    }
+
+    private void setBucketModel(Item item) {
+        for(String s : getVariantNames(item)) {
+            ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+            IModel model = stateModels.get(ModelDynBucket.LOCATION);
+            stateModels.put(memory, model);
         }
     }
 
