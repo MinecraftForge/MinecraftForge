@@ -264,10 +264,12 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
             for (String key : regs.getKeySet())
             {
                 PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
-                if ("fml:blocks".equals(key)) key = "minecraft:blocks";
-                if ("fml:items".equals(key)) key = "minecraft:items";
-                if ("fmlgr:villagerprofessions".equals(key)) key = "minecraft:villagerprofessions";
-                snapshot.entries.put(new ResourceLocation(key), entry);
+                ResourceLocation entryLoc;
+                if ("fml:blocks".equals(key)) entryLoc = PersistentRegistryManager.BLOCKS;
+                else if ("fml:items".equals(key)) entryLoc = PersistentRegistryManager.ITEMS;
+                else if ("fmlgr:villagerprofessions".equals(key)) entryLoc = new ResourceLocation("minecraft:villagerprofessions");
+                else entryLoc = new ResourceLocation(key);
+                snapshot.entries.put(entryLoc, entry);
 
                 NBTTagList list = regs.getCompoundTag(key).getTagList("ids", 10);
                 for (int x = 0; x < list.tagCount(); x++)

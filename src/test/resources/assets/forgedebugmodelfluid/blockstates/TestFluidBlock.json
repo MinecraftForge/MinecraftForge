@@ -8,6 +8,10 @@
         "gas": {
             "model": "forge:fluid",
             "custom": { "fluid": "testgas" }
+        },
+        "milk": {
+            "model": "forge:fluid",
+            "custom": { "fluid": "milk" }
         }
     }
 }

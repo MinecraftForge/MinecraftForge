@@ -34,14 +34,15 @@ public final class TerminalHandler
                 try
                 {
                     line = reader.readLine("> ");
-
-                    if (line != null)
+                    if (line == null)
                     {
-                        line = line.trim();
-                        if (!line.isEmpty())
-                        {
-                            server.addPendingCommand(line, server);
-                        }
+                        break;
+                    }
+
+                    line = line.trim();
+                    if (!line.isEmpty())
+                    {
+                        server.addPendingCommand(line, server);
                     }
                 }
                 catch (IOException e)

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 /*
  * Interpolation-friendly affine transformation.
@@ -474,9 +475,13 @@ public class TRSRTransformation implements IModelState, ITransformation
         return (Quat4f)rightRot.clone();
     }
 
-    public TRSRTransformation apply(IModelPart part)
+    public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
-        return this;
+        if(part.isPresent())
+        {
+            return Optional.absent();
+        }
+        return Optional.of(this);
     }
 
     public EnumFacing rotate(EnumFacing facing)

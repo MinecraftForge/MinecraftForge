@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
@@ -44,10 +45,17 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.WeightedBakedModel;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
@@ -55,6 +63,7 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -175,6 +184,7 @@ public class ModelLoader extends ModelBakery
         registerVariantNames();
         for(Item item : GameData.getItemRegistry().typeSafeIterable())
         {
+            // default loading
             for(String s : (List<String>)getVariantNames(item))
             {
                 ResourceLocation file = getItemLocation(s);
@@ -198,6 +208,40 @@ public class ModelLoader extends ModelBakery
                     else stateModels.put(memory, model);
                 }
             }
+        }
+
+        // replace vanilla bucket models if desired. done afterwards for performance reasons
+        if(ForgeModContainer.replaceVanillaBucketModel) {
+            // empty bucket
+            for(String s : getVariantNames(Items.bucket)) {
+                ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+                try {
+                    IModel model = getModel(new ResourceLocation("forge", "item/bucket"));
+                    // only on successful load, otherwise continue using the old model
+                    stateModels.put(memory, model);
+                } catch(IOException e) {
+                    // use the original vanilla model
+                }
+            }
+
+            setBucketModel(Items.water_bucket);
+            setBucketModel(Items.lava_bucket);
+            // milk bucket only replaced if some mod adds milk
+            if(FluidRegistry.isFluidRegistered("milk")) {
+                // can the milk be put into a bucket?
+                Fluid milk = FluidRegistry.getFluid("milk");
+                FluidStack milkStack = new FluidStack(milk, FluidContainerRegistry.BUCKET_VOLUME);
+                if(FluidContainerRegistry.getContainerCapacity(milkStack, new ItemStack(Items.bucket)) == FluidContainerRegistry.BUCKET_VOLUME)
+                    setBucketModel(Items.milk_bucket);
+            }
+        }
+    }
+
+    private void setBucketModel(Item item) {
+        for(String s : getVariantNames(item)) {
+            ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+            IModel model = stateModels.get(ModelDynBucket.LOCATION);
+            stateModels.put(memory, model);
         }
     }
 
@@ -225,8 +269,14 @@ public class ModelLoader extends ModelBakery
             IModel model = ModelLoaderRegistry.getModel(location);
             for (ResourceLocation dep : model.getDependencies())
             {
-                getModel(dep);
-               
+                if(dep instanceof ModelResourceLocation)
+                {
+                    loadVariants(ImmutableList.of((ModelResourceLocation)dep));
+                }
+                else
+                {
+                    getModel(dep);
+                }
             }
             textures.addAll(model.getTextures());
         }
@@ -332,7 +382,14 @@ public class ModelLoader extends ModelBakery
                 throw new IllegalArgumentException("can't bake vanilla models to the format that doesn't fit into the default one: " + format);
             }
             ModelBlock model = this.model;
-            if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
+            if(model == null) return getMissingModel().bake(getMissingModel().getDefaultState(), format, bakedTextureGetter);
+
+            List<TRSRTransformation> newTransforms = Lists.newArrayList();
+            for(int i = 0; i < model.getElements().size(); i++)
+            {
+                newTransforms.add(null);
+            }
+
             ItemCameraTransforms transforms = model.func_181682_g();
             boolean uvlock = false;
             if(state instanceof UVLock)
@@ -340,43 +397,58 @@ public class ModelLoader extends ModelBakery
                 uvlock = true;
                 state = ((UVLock)state).getParent();
             }
-            IPerspectiveState perState = state instanceof IPerspectiveState ? (IPerspectiveState)state : new IPerspectiveState.Impl(state, transforms);
+            Map<TransformType, TRSRTransformation> tMap = Maps.newHashMap();
+            tMap.putAll(IPerspectiveAwareModel.MapWrapper.getTransforms(transforms));
+            tMap.putAll(IPerspectiveAwareModel.MapWrapper.getTransforms(state));
+            IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap));
+
             if(hasItemModel(model))
             {
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
-            // TODO perspective awareness for this
-            return bakeNormal(model, perState, state.apply(this), format, bakedTextureGetter, uvlock);
+            return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
         }
 
-        private IFlexibleBakedModel bakeNormal(ModelBlock model, IPerspectiveState perState, TRSRTransformation state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IFlexibleBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
-            for(BlockPart part : (Iterable<BlockPart>)model.getElements())
+            for(int i = 0; i < model.getElements().size(); i++)
             {
+                BlockPart part = model.getElements().get(i);
+                TRSRTransformation transformation = modelState;
+                if(newTransforms.get(i) != null)
+                {
+                    transformation = transformation.compose(newTransforms.get(i));
+                }
                 for(Map.Entry<EnumFacing, BlockPartFace> e : (Iterable<Map.Entry<EnumFacing, BlockPartFace>>)part.mapFaces.entrySet())
                 {
                     TextureAtlasSprite textureatlassprite1 = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName(e.getValue().texture)));
 
-                    if (e.getValue().cullFace == null || !TRSRTransformation.isInteger(state.getMatrix()))
+                    if (e.getValue().cullFace == null || !TRSRTransformation.isInteger(transformation.getMatrix()))
                     {
-                        builder.addGeneralQuad(makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), state, uvLocked));
+                        builder.addGeneralQuad(makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), transformation, uvLocked));
                     }
                     else
                     {
-                        builder.addFaceQuad(state.rotate(e.getValue().cullFace), makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), state, uvLocked));
+                        builder.addFaceQuad(modelState.rotate(e.getValue().cullFace), makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), transformation, uvLocked));
                     }
                 }
             }
 
-            return new IPerspectiveAwareModel.MapWrapper(new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format), perState, this);
+            return new ISmartBlockModel.PerspectiveWrapper(new IPerspectiveAwareModel.MapWrapper(new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format), perState))
+            {
+                public IBakedModel handleBlockState(IBlockState state)
+                {
+                    return VanillaModelWrapper.this.handleBlockState(parent, modelState, state);
+                }
+            };
         }
 
-        public IModelState getDefaultState()
+        private IBakedModel handleBlockState(IFlexibleBakedModel model, TRSRTransformation modelState, IBlockState state)
         {
-            return ModelRotation.X0_Y0;
+            return model;
         }
 
         @Override
@@ -439,6 +511,11 @@ public class ModelLoader extends ModelBakery
 
             return new VanillaModelWrapper(location, neweModel);
         }
+
+        public IModelState getDefaultState()
+        {
+            return ModelRotation.X0_Y0;
+        }
     }
 
     public static class UVLock implements IModelState
@@ -455,7 +532,7 @@ public class ModelLoader extends ModelBakery
             return parent;
         }
 
-        public TRSRTransformation apply(IModelPart part)
+        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             return parent.apply(part);
         }
@@ -503,7 +580,7 @@ public class ModelLoader extends ModelBakery
         public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
-            ImmutableMap.Builder<IModelPart, IModelState> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<MapModelState.Wrapper, IModelState> builder = ImmutableMap.builder();
             for (Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
@@ -533,14 +610,14 @@ public class ModelLoader extends ModelBakery
 
                 model = new WeightedPartWrapper(model);
                 models.add(model);
-                builder.put(model, v.getState());
+                builder.put(MapModelState.wrap(model), v.getState());
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
             {
                 IModel missing = getMissingModel();
                 models.add(missing);
-                builder.put(missing, TRSRTransformation.identity());
+                builder.put(MapModelState.wrap(missing), TRSRTransformation.identity());
             }
 
             defaultState = new MapModelState(builder.build());
@@ -563,11 +640,11 @@ public class ModelLoader extends ModelBakery
             return state;
         }
 
-        private IModelState getState(IModelState state, IModelPart part)
+        private IModelState getState(IModelState state, IModel model)
         {
             if(state instanceof MapModelState)
             {
-                return ((MapModelState)state).getState(part);
+                return ((MapModelState)state).getState(model);
             }
             return state;
         }

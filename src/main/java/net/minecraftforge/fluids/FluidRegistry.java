@@ -188,19 +188,26 @@ public abstract class FluidRegistry
         return fluids.get(fluidName);
     }
 
+    @Deprecated // Modders should never actually use int ID, use String
     public static Fluid getFluid(int fluidID)
     {
         return fluidIDs.inverse().get(fluidID);
     }
 
+    @Deprecated // Modders should never actually use int ID, use String
     public static int getFluidID(Fluid fluid)
     {
-        return fluidIDs.get(fluid);
+        Integer ret = fluidIDs.get(fluid);
+        if (ret == null) throw new RuntimeException("Attempted to access ID for unregistered fluid, Stop using this method modder!");
+        return ret;
     }
 
+    @Deprecated // Modders should never actually use int ID, use String
     public static int getFluidID(String fluidName)
     {
-        return fluidIDs.get(getFluid(fluidName));
+        Integer ret = fluidIDs.get(getFluid(fluidName));
+        if (ret == null) throw new RuntimeException("Attempted to access ID for unregistered fluid, Stop using this method modder!");
+        return ret;
     }
 
     public static String getFluidName(Fluid fluid)
@@ -232,17 +239,10 @@ public abstract class FluidRegistry
 
     /**
      * Returns a read-only map containing Fluid Names and their associated IDs.
+     * Modders should never actually use this, use the String names.
      */
+    @Deprecated
     public static Map<Fluid, Integer> getRegisteredFluidIDs()
-    {
-        return ImmutableMap.copyOf(fluidIDs);
-    }
-
-    /**
-     * Returns a read-only map containing Fluid IDs and their associated Fluids.
-     * In 1.8.3, this will change to just 'getRegisteredFluidIDs'
-     */
-    public static Map<Fluid, Integer> getRegisteredFluidIDsByFluid()
     {
         return ImmutableMap.copyOf(fluidIDs);
     }

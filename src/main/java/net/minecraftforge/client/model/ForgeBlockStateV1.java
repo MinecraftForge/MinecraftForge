@@ -467,40 +467,40 @@ public class ForgeBlockStateV1 extends Marker
                         }
                         else if (transform.equals("forge:default-block"))
                         {
-                            IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                                 new Vector3f(0, 1.5f / 16, -2.75f / 16),
                                 TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)),
                                 new Vector3f(0.375f, 0.375f, 0.375f),
                                 null));
-                            ret.state = Optional.<IModelState>of(new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson)));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson)));
                         }
                         else if (transform.equals("forge:default-item"))
                         {
-                            IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                                 new Vector3f(0, 1f / 16, -3f / 16),
                                 TRSRTransformation.quatFromYXZDegrees(new Vector3f(-90, 0, 0)),
                                 new Vector3f(0.55f, 0.55f, 0.55f),
                                 null));
-                            IModelState firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            TRSRTransformation firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                                 new Vector3f(0, 4f / 16, 2f / 16),
                                 TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
                                 new Vector3f(1.7f, 1.7f, 1.7f),
                                 null));
-                            ret.state = Optional.<IModelState>of(new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
                         }
                         else if (transform.equals("forge:default-tool"))
                         {
-                            IModelState thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                                 new Vector3f(0, 1.25f / 16, -3.5f / 16),
                                 TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, 90, -35)),
                                 new Vector3f(0.85f, 0.85f, 0.85f),
                                 null));
-                            IModelState firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                            TRSRTransformation firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                                 new Vector3f(0, 4f / 16, 2f / 16),
                                 TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
                                 new Vector3f(1.7f, 1.7f, 1.7f),
                                 null));
-                            ret.state = Optional.<IModelState>of(new IPerspectiveState.Impl(TRSRTransformation.identity(), ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
                         }
                         else
                         {
@@ -522,7 +522,7 @@ public class ForgeBlockStateV1 extends Marker
                     else
                     {
                         JsonObject transform = json.get("transform").getAsJsonObject();
-                        EnumMap<TransformType, IModelState> transforms = Maps.newEnumMap(TransformType.class);
+                        EnumMap<TransformType, TRSRTransformation> transforms = Maps.newEnumMap(TransformType.class);
                         if(transform.has("thirdperson"))
                         {
                             TRSRTransformation t = context.deserialize(transform.get("thirdperson"), TRSRTransformation.class);
@@ -582,7 +582,7 @@ public class ForgeBlockStateV1 extends Marker
                         }
                         else
                         {
-                            state = new IPerspectiveState.Impl(base, Maps.immutableEnumMap(transforms));
+                            state = new SimpleModelState(Maps.immutableEnumMap(transforms), Optional.of(base));
                         }
                         ret.state = Optional.of(state);
                     }

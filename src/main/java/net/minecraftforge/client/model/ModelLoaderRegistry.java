@@ -33,6 +33,8 @@ public class ModelLoaderRegistry
         registerLoader(OBJLoader.instance);
         registerLoader(ModelFluid.FluidLoader.instance);
         registerLoader(ItemLayerModel.Loader.instance);
+        registerLoader(MultiLayerModel.Loader.instance);
+        registerLoader(ModelDynBucket.LoaderDynBucket.instance);
     }
 
     /*

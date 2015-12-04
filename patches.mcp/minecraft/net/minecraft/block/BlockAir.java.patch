@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/block/BlockAir.java
-+++ ../src-work/minecraft/net/minecraft/block/BlockAir.java
-@@ -36,4 +36,6 @@
-     }
- 
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {}
-+
-+    public boolean isReplaceable(World worldIn, BlockPos pos){ return true; }
- }

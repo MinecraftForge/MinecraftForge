@@ -147,16 +147,6 @@ public class LayerBreakingTest
         IFlexibleBakedModel solid;
         IFlexibleBakedModel translucent;
 
-        @SuppressWarnings("unused")
-        private class DefState implements IModelState
-        {
-            @Override
-            public TRSRTransformation apply(IModelPart part)
-            {
-                return TRSRTransformation.identity();
-            }
-        };
-
         @Override
         public List<BakedQuad> getFaceQuads(EnumFacing p_177551_1_)
         {

@@ -70,6 +70,8 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.TRSRTransformation;
@@ -82,8 +84,8 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("deprecation")
@@ -111,7 +113,7 @@ public class ForgeHooksClient
 
         if (block != null && block.isBed(world, pos, entity))
         {
-            GL11.glRotatef((float)(block.getBedDirection(world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
+            glRotatef((float)(block.getBedDirection(world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
         }
     }
 
@@ -378,7 +380,7 @@ public class ForgeHooksClient
     {
         if(model instanceof IPerspectiveAwareModel)
         {
-            Pair<IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
+            Pair<? extends IFlexibleBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
 
             if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             return pair.getLeft();
@@ -402,7 +404,7 @@ public class ForgeHooksClient
             matrixBuf.put(t);
         }
         matrixBuf.flip();
-        GL11.glMultMatrix(matrixBuf);
+        glMultMatrix(matrixBuf);
     }
 
     // moved and expanded from WorldVertexBufferUploader.draw
@@ -523,7 +525,7 @@ public class ForgeHooksClient
         Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item, metadata));
         if (tileClass != null)
         {
-            TileEntitySpecialRenderer<TileEntity> r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
+            TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
             if (r != null)
             {
                 r.renderTileEntityAt(null, 0, 0, 0, 0, -1);
@@ -561,5 +563,17 @@ public class ForgeHooksClient
         {
             faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
         }
+    }
+
+    public static Optional<TRSRTransformation> applyTransform(ItemTransformVec3f transform, Optional<? extends IModelPart> part)
+    {
+        if(part.isPresent()) return Optional.absent();
+        return Optional.of(new TRSRTransformation(transform));
+    }
+
+    public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)
+    {
+        if(part.isPresent()) return Optional.absent();
+        return Optional.of(new TRSRTransformation(matrix));
     }
 }

@@ -165,6 +165,7 @@ public class Fluid
         return this.fluidName;
     }
 
+    @Deprecated // Modders should never actually use int ID, use String
     public final int getID()
     {
         return FluidRegistry.getFluidID(this.fluidName);

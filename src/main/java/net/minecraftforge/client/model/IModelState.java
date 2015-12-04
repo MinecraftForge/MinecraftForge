@@ -1,16 +1,17 @@
 package net.minecraftforge.client.model;
 
-import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 /*
  * Represents the dynamic information associated with the model.
  * Common use case is (possibly interpolated) animation frame.
  */
-public interface IModelState extends Function<IModelPart, TRSRTransformation>
+public interface IModelState
 {
     /*
-     * returns the transformation (in the local coordinates) that needs to be applied to the specific part of the model.
+     * Returns the transformation that needs to be applied to the specific part of the model.
+     * Coordinate system is determined by the part type.
+     * if no part is provided, global model transformation is returned.
      */
-    @Override
-    TRSRTransformation apply(IModelPart part);
+    Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part);
 }

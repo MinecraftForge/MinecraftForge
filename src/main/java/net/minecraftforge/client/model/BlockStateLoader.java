@@ -193,7 +193,7 @@ public class BlockStateLoader
                 IModelState partState = new ModelStateComposition(baseTr, part.getState());
                 if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
 
-                models.put(entry.getKey(), Pair.of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
+                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
             }
 
             return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());

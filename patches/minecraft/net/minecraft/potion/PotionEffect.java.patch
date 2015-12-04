@@ -57,16 +57,15 @@
 +     */
 +    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
-+        boolean found = false;
 +        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
 +        {
 +            if (curativeItem.func_77969_a(stack))
 +            {
-+                found = true;
++                return true;
 +            }
 +        }
 +
-+        return found;
++        return false;
 +    }
 +
 +    /***
@@ -84,15 +83,7 @@
 +     */
 +    public void addCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
-+        boolean found = false;
-+        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
-+        {
-+            if (curativeItem.func_77969_a(stack))
-+            {
-+                found = true;
-+            }
-+        }
-+        if (!found)
++        if (!this.isCurativeItem(stack))
 +        {
 +            this.curativeItems.add(stack);
 +        }
