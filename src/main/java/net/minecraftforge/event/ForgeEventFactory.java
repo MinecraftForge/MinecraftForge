@@ -20,6 +20,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -432,6 +434,18 @@ public class ForgeEventFactory
     public static boolean onCreateWorldSpawn(World world, WorldSettings settings)
     {
         return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
+    }
+
+    public static void onTileEntityLoaded(TileEntity tileEntity, NBTTagCompound teTagCompound)
+    {
+    	MinecraftForge.EVENT_BUS.post(new TileEntityEvent.LoadNBTEvent(tileEntity, teTagCompound));
+    }
+
+    public static NBTTagCompound onTileEntitySaved(TileEntity tileEntity, NBTTagCompound teTagCompound)
+    {
+        TileEntityEvent.SaveNBTEvent event = new TileEntityEvent.SaveNBTEvent(tileEntity, teTagCompound);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.tileEntityNBT;
     }
 
     public static float onLivingHeal(EntityLivingBase entity, float amount)
