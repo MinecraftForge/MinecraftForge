@@ -42,8 +42,9 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -217,7 +218,7 @@ public class FMLCommonHandler
             Builder<String> brd = ImmutableList.<String>builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
-            brd.add("Powered by Forge " + ForgeVersion.getVersion());
+            brd.add(StatCollector.translateToLocalFormatted("fml.menu.poweredByForge", ForgeVersion.getVersion()));
             if (sidedDelegate!=null)
             {
                 brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
@@ -228,7 +229,7 @@ public class FMLCommonHandler
             }
             int tModCount = Loader.instance().getModList().size();
             int aModCount = Loader.instance().getActiveModList().size();
-            brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount!=1 ? "s" :"", aModCount, aModCount!=1 ? "s" :"" ));
+            brd.add(StatCollector.translateToLocalFormatted("fml.menu.modsLoadedActiveSingular", tModCount, tModCount!=1 ? StatCollector.translateToLocalFormatted("fml.menu.modsLoadedPlural") :"", aModCount, aModCount!=1 ? StatCollector.translateToLocalFormatted("fml.menu.modsActivePlural") :"" ));
             brandings = brd.build();
             brandingsNoMC = brandings.subList(1, brandings.size());
         }
@@ -419,10 +420,7 @@ public class FMLCommonHandler
             return;
         }
 
-        String text = "Forge Mod Loader detected that the backup level.dat is being used.\n\n" +
-                "This may happen due to a bug or corruption, continuing can damage\n" +
-                "your world beyond repair or lose data / progress.\n\n" +
-                "It's recommended to create a world backup before continuing.";
+        String text = StatCollector.translateToLocalFormatted("fml.error.backupLevelIsBeingUsed");
 
         boolean confirmed = StartupQuery.confirm(text);
         if (!confirmed) StartupQuery.abort();
@@ -607,7 +605,7 @@ public class FMLCommonHandler
     {
         if (!shouldAllowPlayerLogins())
         {
-            ChatComponentText text = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
+            ChatComponentTranslation text = new ChatComponentTranslation("fml.message.serverStillStarting");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
             manager.sendPacket(new S00PacketDisconnect(text));
             manager.closeChannel(text);
@@ -617,7 +615,7 @@ public class FMLCommonHandler
         if (packet.getRequestedState() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
         {
             manager.setConnectionState(EnumConnectionState.LOGIN);
-            ChatComponentText text = new ChatComponentText("This server requires FML/Forge to be installed. Contact your server admin for more details.");
+            ChatComponentTranslation text = new ChatComponentTranslation("fml.message.serverRequiresForgeToBeInstalled");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
             manager.sendPacket(new S00PacketDisconnect(text));
             manager.closeChannel(text);

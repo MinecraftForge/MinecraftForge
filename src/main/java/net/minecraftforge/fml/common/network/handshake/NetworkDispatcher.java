@@ -36,6 +36,7 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -236,7 +237,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.state = ConnectionState.CONNECTED;
         MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         if (DEBUG_HANDSHAKE)
-            manager.closeChannel(new ChatComponentText("Handshake Complete review log file for details."));
+            manager.closeChannel(new ChatComponentTranslation("fml.message.handshakeComplete"));
         scm.initializeConnectionToPlayer(manager, player, serverHandler);
     }
     

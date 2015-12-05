@@ -162,8 +162,8 @@ public class GuiModList extends GuiScreen
         this.modList = new GuiSlotModList(this, mods, listWidth);
 
         this.buttonList.add(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")));
-        configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, "Config");
-        disableModButton = new GuiButton(21, 10, this.height - 27, this.listWidth, 20, "Disable");
+        configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, I18n.format("fml.menu.config"));
+        disableModButton = new GuiButton(21, 10, this.height - 27, this.listWidth, 20, I18n.format("fml.menu.disable"));
         this.buttonList.add(configModButton);
         this.buttonList.add(disableModButton);
 
@@ -302,7 +302,7 @@ public class GuiModList extends GuiScreen
             this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
 
         int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
-        this.drawCenteredString(this.fontRendererObj, "Mod List", left, 16, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.menu.modlist"), left, 16, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
@@ -397,24 +397,24 @@ public class GuiModList extends GuiScreen
             configModButton.enabled = guiFactory != null && guiFactory.mainConfigGuiClass() != null;
 
             lines.add(selectedMod.getMetadata().name);
-            lines.add(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
-            lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)));
+            lines.add(I18n.format("fml.menu.modinfo.versionFormatted", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
+            lines.add(I18n.format("fml.menu.modinfo.modIdAndState", selectedMod.getModId(), Loader.instance().getModState(selectedMod)));
 
             if (!selectedMod.getMetadata().credits.isEmpty())
             {
-                lines.add("Credits: " + selectedMod.getMetadata().credits);
+                lines.add(I18n.format("fml.menu.modinfo.credits") + " " + selectedMod.getMetadata().credits);
             }
 
-            lines.add("Authors: " + selectedMod.getMetadata().getAuthorList());
-            lines.add("URL: " + selectedMod.getMetadata().url);
+            lines.add(I18n.format("fml.menu.modinfo.authors") + " " + selectedMod.getMetadata().getAuthorList());
+            lines.add(I18n.format("fml.menu.modinfo.url") + " " + selectedMod.getMetadata().url);
 
             if (selectedMod.getMetadata().childMods.isEmpty())
-                lines.add("No child mods for this mod");
+                lines.add(I18n.format("fml.menu.modinfo.noChildMods"));
             else
-                lines.add("Child mods: " + selectedMod.getMetadata().getChildModList());
+                lines.add(I18n.format("fml.menu.modinfo.childMods") + " " + selectedMod.getMetadata().getChildModList());
 
             if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+                lines.add(I18n.format("fml.menu.modinfo.updateAvailable") + " " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
             lines.add(selectedMod.getMetadata().description);
@@ -422,20 +422,20 @@ public class GuiModList extends GuiScreen
         else
         {
             lines.add(WHITE + selectedMod.getName());
-            lines.add(WHITE + "Version: " + selectedMod.getVersion());
-            lines.add(WHITE + "Mod State: " + Loader.instance().getModState(selectedMod));
+            lines.add(WHITE + I18n.format("fml.menu.modinfo.version") + " " + selectedMod.getVersion());
+            lines.add(WHITE + I18n.format("fml.menu.modinfo.modState") + " " + Loader.instance().getModState(selectedMod));
             if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
+                lines.add(I18n.format("fml.menu.modinfo.updateAvailable") + " " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
-            lines.add(RED + "No mod information found");
-            lines.add(RED + "Ask your mod author to provide a mod mcmod.info file");
+            lines.add(RED + I18n.format("fml.menu.modinfo.noInformation"));
+            lines.add(RED + I18n.format("fml.menu.modinfo.nomcmodFile"));
         }
 
         if ((vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
         {
             lines.add(null);
-            lines.add("Changes:");
+            lines.add(I18n.format("fml.menu.modinfo.changes"));
             for (Entry<ComparableVersion, String> entry : vercheck.changes.entrySet())
             {
                 lines.add("  " + entry.getKey() + ":");

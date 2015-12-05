@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.Map.Entry;
 
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.ModContainer;
 
@@ -41,11 +42,11 @@ public class GuiDupesFound extends GuiErrorScreen
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - dupes.dupes.size() * 10, 10);
-        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.common.problemWithMinecraftInstallation"), this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.drawCenteredString(this.fontRendererObj, "You have mod sources that are duplicate within your system", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.duplicatedModSources"), this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.drawCenteredString(this.fontRendererObj, "Mod Id : File name", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.modIdFileName"), this.width / 2, offset, 0xFFFFFF);
         offset+=5;
         for (Entry<ModContainer, File> mc : dupes.dupes.entries())
         {

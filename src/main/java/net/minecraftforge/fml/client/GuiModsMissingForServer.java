@@ -46,11 +46,11 @@ public class GuiModsMissingForServer extends GuiScreen
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
-        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.common.couldNotConnectToServer"), this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.drawCenteredString(this.fontRendererObj, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.common.modsCouldNotBeFound"), this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.drawCenteredString(this.fontRendererObj, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.theyAreRequiredToPlayOnServer"), this.width / 2, offset, 0xFFFFFF);
         offset += 5;
         for (ArtifactVersion v : modsMissing.missingMods)
         {

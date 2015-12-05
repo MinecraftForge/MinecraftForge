@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.CheckResult;
@@ -87,13 +88,13 @@ public class GuiSlotModList extends GuiScrollingList
         {
             font.drawString(font.trimStringToWidth(name,       listWidth - 10), this.left + 3 , top +  2, 0xFF2222);
             font.drawString(font.trimStringToWidth(version,    listWidth - 10), this.left + 3 , top + 12, 0xFF2222);
-            font.drawString(font.trimStringToWidth("DISABLED", listWidth - 10), this.left + 3 , top + 22, 0xFF2222);
+            font.drawString(font.trimStringToWidth(I18n.format("fml.menu.disabled"), listWidth - 10), this.left + 3 , top + 22, 0xFF2222);
         }
         else
         {
             font.drawString(font.trimStringToWidth(name,    listWidth - 10), this.left + 3 , top +  2, 0xFFFFFF);
             font.drawString(font.trimStringToWidth(version, listWidth - 10), this.left + 3 , top + 12, 0xCCCCCC);
-            font.drawString(font.trimStringToWidth(mc.getMetadata() != null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 10), this.left + 3 , top + 22, 0xCCCCCC);
+            font.drawString(font.trimStringToWidth(mc.getMetadata() != null ? mc.getMetadata().getChildModCountString() : I18n.format("fml.menu.metaNotFound"), listWidth - 10), this.left + 3 , top + 22, 0xCCCCCC);
 
             switch(vercheck.status) //TODO: Change to icons?
             {

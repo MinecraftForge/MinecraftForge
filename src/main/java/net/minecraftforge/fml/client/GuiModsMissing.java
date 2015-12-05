@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
@@ -39,9 +40,9 @@ public class GuiModsMissing extends GuiErrorScreen
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
-        this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader has found a problem with your minecraft installation", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.common.problemWithMinecraftInstallation"), this.width / 2, offset, 0xFFFFFF);
         offset+=10;
-        this.drawCenteredString(this.fontRendererObj, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.common.modsCouldNotBeFound"), this.width / 2, offset, 0xFFFFFF);
         offset+=5;
         for (ArtifactVersion v : modsMissing.missingMods)
         {
@@ -51,13 +52,13 @@ public class GuiModsMissing extends GuiErrorScreen
                 DefaultArtifactVersion dav =  (DefaultArtifactVersion)v;
                 if (dav.getRange() != null && dav.getRange().isUnboundedAbove())
                 {
-                    this.drawCenteredString(this.fontRendererObj, String.format("%s : minimum version required is %s", v.getLabel(), dav.getRange().getLowerBoundString()), this.width / 2, offset, 0xEEEEEE);
+                    this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.minimumRequiredVersion", v.getLabel(), dav.getRange().getLowerBoundString()), this.width / 2, offset, 0xEEEEEE);
                     continue;
                 }
             }
             this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
         offset+=20;
-        this.drawCenteredString(this.fontRendererObj, "The file 'logs/fml-client-latest.log' contains more information", this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, I18n.format("fml.error.common.fileContainsMoreInfo"), this.width / 2, offset, 0xFFFFFF);
     }
 }
