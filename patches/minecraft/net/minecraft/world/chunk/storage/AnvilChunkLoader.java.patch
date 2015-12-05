@@ -150,13 +150,14 @@
              }
          }
  
-@@ -303,8 +377,17 @@
+@@ -303,8 +377,18 @@
          {
              TileEntity tileentity = (TileEntity)iterator.next();
              nbttagcompound1 = new NBTTagCompound();
 +            try
 +            {
              tileentity.func_145841_b(nbttagcompound1);
++            nbttagcompound1 = net.minecraftforge.event.ForgeEventFactory.onTileEntitySaved(tileentity, nbttagcompound1);
              nbttaglist2.func_74742_a(nbttagcompound1);
 +            }
 +            catch (Exception e)
@@ -168,7 +169,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -386,6 +469,12 @@
+@@ -386,6 +470,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -181,7 +182,18 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -457,8 +546,6 @@
+@@ -425,7 +515,9 @@
+             {
+                 NBTTagCompound nbttagcompound3 = nbttaglist2.func_150305_b(j2);
+                 TileEntity tileentity = TileEntity.func_145827_c(nbttagcompound3);
+-
++                
++                net.minecraftforge.event.ForgeEventFactory.onTileEntityLoaded(tileentity, tileentity.getTileData());
++                
+                 if (tileentity != null)
+                 {
+                     chunk.func_150813_a(tileentity);
+@@ -457,8 +549,6 @@
                  }
              }
          }
