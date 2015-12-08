@@ -13,7 +13,24 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityRenderer implements IResourceManagerReloadListener
-@@ -358,7 +364,7 @@
+@@ -93,6 +99,7 @@
+     private float field_78507_R;
+     private float field_78506_S;
+     private float field_78501_T;
++    private float mouseSensitivityTemp;
+     private float field_82831_U;
+     private float field_82832_V;
+     private boolean field_78500_U;
+@@ -237,7 +244,7 @@
+ 
+         if (this.field_78531_r.field_71474_y.field_74326_T)
+         {
+-            f = this.field_78531_r.field_71474_y.field_74341_c * 0.6F + 0.2F;
++            f = net.minecraftforge.client.ForgeHooksClient.getMouseSensitivity(this.field_78531_r.field_71474_y.field_74341_c) * 0.6F + 0.2F;
+             f1 = f * f * f * 8.0F;
+             this.field_78498_J = this.field_78527_v.func_76333_a(this.field_78496_H, 0.05F * f1);
+             this.field_78499_K = this.field_78526_w.func_76333_a(this.field_78497_I, 0.05F * f1);
+@@ -358,7 +365,7 @@
  
                              if (d3 < d2 || d2 == 0.0D)
                              {
@@ -22,7 +39,7 @@
                                  {
                                      if (d2 == 0.0D)
                                      {
-@@ -392,8 +398,15 @@
+@@ -392,8 +399,15 @@
  
      private void func_78477_e()
      {
@@ -40,7 +57,7 @@
          this.field_78506_S = this.field_78507_R;
          this.field_78507_R += (this.field_78501_T - this.field_78507_R) * 0.5F;
  
-@@ -416,7 +429,7 @@
+@@ -416,7 +430,7 @@
          }
          else
          {
@@ -49,7 +66,7 @@
              float f1 = 70.0F;
  
              if (p_78481_2_)
-@@ -497,15 +510,7 @@
+@@ -497,15 +511,7 @@
  
              if (!this.field_78531_r.field_71474_y.field_74325_U)
              {
@@ -66,7 +83,25 @@
                  GL11.glRotatef(entitylivingbase.field_70126_B + (entitylivingbase.field_70177_z - entitylivingbase.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entitylivingbase.field_70127_C + (entitylivingbase.field_70125_A - entitylivingbase.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -1052,7 +1057,9 @@
+@@ -680,6 +686,8 @@
+                 GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
+             }
+         }
++
++        net.minecraftforge.client.ForgeHooksClient.setupCameraTransform(p_78479_1_,p_78479_2_);
+     }
+ 
+     private void func_78476_b(float p_78476_1_, int p_78476_2_)
+@@ -958,7 +966,7 @@
+         if (this.field_78531_r.field_71415_G && flag)
+         {
+             this.field_78531_r.field_71417_B.func_74374_c();
+-            float f1 = this.field_78531_r.field_71474_y.field_74341_c * 0.6F + 0.2F;
++            float f1 = net.minecraftforge.client.ForgeHooksClient.getMouseSensitivity(this.field_78531_r.field_71474_y.field_74341_c) * 0.6F + 0.2F;
+             float f2 = f1 * f1 * f1 * 8.0F;
+             float f3 = (float)this.field_78531_r.field_71417_B.field_74377_a * f2;
+             float f4 = (float)this.field_78531_r.field_71417_B.field_74375_b * f2;
+@@ -1052,7 +1060,9 @@
  
                  try
                  {
@@ -77,7 +112,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1213,7 +1220,10 @@
+@@ -1213,7 +1223,10 @@
                  GL11.glPushMatrix();
                  RenderHelper.func_74519_b();
                  this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -88,7 +123,7 @@
                  RenderHelper.func_74518_a();
                  this.func_78483_a((double)p_78471_1_);
                  GL11.glMatrixMode(GL11.GL_MODELVIEW);
-@@ -1225,7 +1235,10 @@
+@@ -1225,7 +1238,10 @@
                      entityplayer = (EntityPlayer)entitylivingbase;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -100,7 +135,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1238,14 +1251,17 @@
+@@ -1238,14 +1254,17 @@
                  entityplayer = (EntityPlayer)entitylivingbase;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -120,7 +155,7 @@
              GL11.glDisable(GL11.GL_BLEND);
  
              if (this.field_78532_q == 0)
-@@ -1313,6 +1329,16 @@
+@@ -1313,6 +1332,16 @@
                  renderglobal.func_72719_a(entitylivingbase, 1, (double)p_78471_1_);
              }
  
@@ -137,7 +172,7 @@
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
              GL11.glDisable(GL11.GL_BLEND);
-@@ -1324,9 +1350,12 @@
+@@ -1324,9 +1353,12 @@
                  this.func_82829_a(renderglobal, p_78471_1_);
              }
  
@@ -151,7 +186,7 @@
              {
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                  this.func_78476_b(p_78471_1_, j);
-@@ -1442,6 +1471,13 @@
+@@ -1442,6 +1474,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -165,7 +200,7 @@
          float f1 = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f1 > 0.0F)
-@@ -1791,6 +1827,13 @@
+@@ -1791,6 +1830,13 @@
              this.field_78533_p = f7;
          }
  
@@ -179,7 +214,7 @@
          GL11.glClearColor(this.field_78518_n, this.field_78519_o, this.field_78533_p, 0.0F);
      }
  
-@@ -1826,6 +1869,13 @@
+@@ -1826,6 +1872,13 @@
              Block block = ActiveRenderInfo.func_151460_a(this.field_78531_r.field_71441_e, entitylivingbase, p_78468_2_);
              float f1;
  
@@ -193,7 +228,7 @@
              if (entitylivingbase.func_70644_a(Potion.field_76440_q))
              {
                  f1 = 5.0F;
-@@ -1930,6 +1980,7 @@
+@@ -1930,6 +1983,7 @@
                      GL11.glFogf(GL11.GL_FOG_START, f1 * 0.05F);
                      GL11.glFogf(GL11.GL_FOG_END, Math.min(f1, 192.0F) * 0.5F);
                  }
