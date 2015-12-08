@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 
 import org.apache.logging.log4j.Level;
 
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -88,6 +89,7 @@ public class ModClassLoader extends URLClassLoader
 
     public boolean isDefaultLibrary(File file)
     {
+    	if (file.getAbsolutePath().startsWith(StandardSystemProperty.JAVA_HOME.value())) return true;
         // Should really pull this from the json somehow, but we dont have that at runtime.
         String name = file.getName();
         if (!name.endsWith(".jar")) return false;
