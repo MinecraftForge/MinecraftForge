@@ -107,7 +107,7 @@
                  Block block1 = iblockstate.func_177230_c();
  
 -                if (block.func_149717_k() != block1.func_149717_k() || block.func_149750_m() != block1.func_149750_m())
-+                if (block.func_149717_k() != block1.func_149717_k() || block.getLightValue(this, p_180501_1_) != block1.func_149750_m())
++                if (block.func_149717_k() != block1.func_149717_k() || block.getLightValue(this, p_180501_1_) != oldLight)
                  {
                      this.field_72984_F.func_76320_a("checkLight");
                      this.func_175664_x(p_180501_1_);
