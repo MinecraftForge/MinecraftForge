@@ -15,7 +15,7 @@ public interface IItemHandler {
 
     /**
      * Returns the ItemStack in a given slot on the given side. This should not be used to manipulate contents.
-     * The resultant value's stacksize may be greater than the stacks max limit.
+     * The resultant value's stacksize may be greater than the stacks max size.
      *
      * @param slot Slot to query
      * @param side Orientation being queried.
@@ -36,11 +36,11 @@ public interface IItemHandler {
     ItemStack insertItem(int slot, ItemStack stack, EnumFacing side, boolean simulate);
 
     /**
-     * Extracts an ItemStack from the given slot on the given side. This must respect max stack limits.
+     * Extracts an ItemStack from the given slot on the given side. This must respect max stack-size.
      *
      * @param side     Orientation the ItemStack is extracted from.
-     * @param slot     Slot to extract into.
-     * @param amount   ItemStack to extract
+     * @param slot     Slot to extract from.
+     * @param amount   Amount to extract (may be greater than the current stacks max limit)
      * @param simulate If true, the extraction is only simulated
      * @return ItemStack extracted from the slot (should be null, if nothing can be extracted)
      **/
