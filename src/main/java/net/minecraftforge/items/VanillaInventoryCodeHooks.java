@@ -34,7 +34,7 @@ public class VanillaInventoryCodeHooks {
                 for (int j = 0; j < dest.getSizeInventory(); j++)
                 {
                     ItemStack destStack = dest.getStackInSlot(j);
-                    if (destStack == null || destStack.stackSize < destStack.getMaxStackSize() || ItemHandlerHelper.canItemsStack(extractItem, destStack))
+                    if (destStack == null || destStack.stackSize < destStack.getMaxStackSize() || ItemHandlerHelper.canItemStacksStack(extractItem, destStack))
                     {
                         extractItem = handler.extractItem(i, 1, side, false);
                         if (destStack == null)
@@ -56,7 +56,7 @@ public class VanillaInventoryCodeHooks {
 
     public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, ItemStack stack)
     {
-        EnumFacing enumfacing = (EnumFacing) world.getBlockState(pos).getValue(BlockDropper.FACING);
+        EnumFacing enumfacing = world.getBlockState(pos).getValue(BlockDropper.FACING);
         BlockPos offsetPos = pos.offset(enumfacing);
         TileEntity tileEntity = world.getTileEntity(offsetPos);
         if (tileEntity == null)
