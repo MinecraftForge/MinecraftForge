@@ -716,7 +716,7 @@ public class B3DLoader implements ICustomModelLoader
             this(node, state, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
-                .build(new CacheLoader<Integer, BakedWrapper>()
+                .<Integer, BakedWrapper>build(new CacheLoader<Integer, BakedWrapper>()
                 {
                     public BakedWrapper load(Integer frame) throws Exception
                     {
