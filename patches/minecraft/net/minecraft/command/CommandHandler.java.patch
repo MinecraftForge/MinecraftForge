@@ -10,7 +10,7 @@
  public class CommandHandler implements ICommandManager
  {
      private static final Logger field_147175_a = LogManager.getLogger();
-@@ -47,6 +50,16 @@
+@@ -47,6 +50,17 @@
  
              if (icommand.func_71519_b(p_71556_1_))
              {
@@ -23,6 +23,7 @@
 +                    }
 +                    return 1;
 +                }
++                if (event.parameters != null) astring = event.parameters;
 +
                  if (i > -1)
                  {
