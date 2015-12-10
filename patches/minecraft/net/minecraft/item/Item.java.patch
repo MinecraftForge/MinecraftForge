@@ -113,7 +113,7 @@
      public Multimap func_111205_h()
      {
          return HashMultimap.create();
-@@ -728,6 +746,591 @@
+@@ -728,6 +746,605 @@
          return this.field_111218_cA == null ? "MISSING_ICON_ITEM_" + field_150901_e.func_148757_b(this) + "_" + this.field_77774_bZ : this.field_111218_cA;
      }
  
@@ -700,12 +700,26 @@
 +    {
 +        return this == Items.field_151166_bC || this == Items.field_151045_i || this == Items.field_151043_k || this == Items.field_151042_j;
 +    }
++
++    /**
++     * Whether this Item can be used to breed the given animal.
++     * @param entity the {@link EntityAnimal} being bred
++     * @param stack the {@link ItemStack} being used on the animal
++     * @return true if the {@link ItemStack stack} will put the {@link EntityAnimal entity} into breeding mode
++     */
++    public boolean isBreedingItem(net.minecraft.entity.passive.EntityAnimal entity, ItemStack stack)
++    {
++        // Use instanceof here because that's how it was in EntityChicken
++        if (this instanceof ItemSeeds) return entity.getClass() == net.minecraft.entity.passive.EntityChicken.class;
++        if (this == Items.field_151172_bF) return entity.getClass() == net.minecraft.entity.passive.EntityPig.class;
++        return this == Items.field_151015_O; // This is needed since wheat is just an instance of the Item class
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static enum ToolMaterial
      {
          WOOD(0, 59, 2.0F, 0.0F, 15),
-@@ -743,6 +1346,10 @@
+@@ -743,6 +1360,10 @@
  
          private static final String __OBFID = "CL_00000042";
  
@@ -716,7 +730,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -777,9 +1384,36 @@
+@@ -777,9 +1398,36 @@
              return this.field_78008_j;
          }
  

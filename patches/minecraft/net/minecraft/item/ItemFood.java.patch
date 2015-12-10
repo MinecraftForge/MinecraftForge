@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFood.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFood.java
+@@ -83,6 +83,11 @@
+     {
+         return this.field_77856_bY;
+     }
++    
++    public boolean isWolfFood(ItemStack stack)
++    {
++        return func_77845_h();
++    }
+ 
+     public ItemFood func_77844_a(int p_77844_1_, int p_77844_2_, int p_77844_3_, float p_77844_4_)
+     {
