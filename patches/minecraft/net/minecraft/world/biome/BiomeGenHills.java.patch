@@ -7,7 +7,7 @@
 -        int i = 3 + p_180624_2_.nextInt(6);
 +        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Pre(p_180624_1_, p_180624_2_, p_180624_3_));
 +        WorldGenerator emeralds = new EmeraldGenerator();
-+        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(p_180624_1_, p_180624_2_, emeralds, p_180624_3_, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.LAPIS))
++        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(p_180624_1_, p_180624_2_, emeralds, p_180624_3_, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.EMERALD))
 +            emeralds.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_);
  
 -        for (int j = 0; j < i; ++j)
@@ -40,7 +40,7 @@
      {
          return (new BiomeGenHills(p_180277_1_, false)).func_150633_b(this);
      }
-+    
++
 +    private static class EmeraldGenerator extends WorldGenerator
 +    {
 +        @Override
