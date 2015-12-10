@@ -48,10 +48,11 @@ public abstract class ForgeMessage {
     public static class FluidIdMapMessage extends ForgeMessage {
         BiMap<Fluid, Integer> fluidIds = HashBiMap.create();
         Set<String> defaultFluids = Sets.newHashSet();
+        @SuppressWarnings("deprecation")
         @Override
         void toBytes(ByteBuf bytes)
         {
-            Map<Fluid, Integer> ids = FluidRegistry.getRegisteredFluidIDsByFluid();
+            Map<Fluid, Integer> ids = FluidRegistry.getRegisteredFluidIDs();
             bytes.writeInt(ids.size());
             for (Map.Entry<Fluid, Integer> entry : ids.entrySet())
             {
