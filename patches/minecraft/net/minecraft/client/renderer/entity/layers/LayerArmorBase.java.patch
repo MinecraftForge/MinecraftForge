@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -55,28 +55,27 @@
+@@ -55,29 +55,28 @@
              T t = this.func_177175_a(p_177182_9_);
              t.func_178686_a(this.field_177190_a.func_177087_b());
              t.func_78086_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_4_);
@@ -34,11 +34,13 @@
                      t.func_78088_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
 -                default:
 -
+-                    if (!this.field_177193_i && itemstack.func_77948_v())
 +                }
 +                // Default
-                     if (!this.field_177193_i && itemstack.func_77948_v())
++                    if (!this.field_177193_i && itemstack.func_77962_s())
                      {
                          this.func_177183_a(p_177182_1_, t, p_177182_2_, p_177182_3_, p_177182_4_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
+                     }
 @@ -135,11 +134,13 @@
          GlStateManager.func_179084_k();
      }
