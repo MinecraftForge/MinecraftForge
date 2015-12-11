@@ -2,6 +2,7 @@ package net.minecraftforge.server.console;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -28,14 +29,9 @@ public final class ConsoleCommandCompleter implements Completer
     public int complete(String buffer, int cursor, List<CharSequence> candidates)
     {
         int len = buffer.length();
-        buffer = buffer.trim();
-        if (buffer.isEmpty())
-        {
-            return cursor;
-        }
 
         boolean prefix;
-        if (buffer.charAt(0) != '/')
+        if (buffer.isEmpty() || buffer.charAt(0) != '/')
         {
             buffer = '/' + buffer;
             prefix = false;
@@ -59,6 +55,7 @@ public final class ConsoleCommandCompleter implements Completer
         try
         {
             List<String> completions = tabComplete.get();
+            Collections.sort(completions);
             if (prefix)
             {
                 candidates.addAll(completions);
@@ -75,6 +72,10 @@ public final class ConsoleCommandCompleter implements Completer
             if (pos == -1)
             {
                 return cursor - len;
+            }
+            else if (prefix)
+            {
+                return cursor - len + pos + 1;
             }
             else
             {
