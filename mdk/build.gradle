@@ -31,7 +31,7 @@ minecraft {
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not allways work.
+    // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "@MAPPINGS@"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
