@@ -23,16 +23,16 @@
          else
          {
 -            return false;
-+            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, field_145945_j[3], field_145947_i);
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, field_145945_j[3], field_145947_i, this);
          }
      }
  
      private void func_145940_l()
      {
-+        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j, this)) return;
          if (this.func_145934_k())
          {
-+            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j[3], field_145947_i);
++            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j[3], field_145947_i, this);
              ItemStack itemstack = this.field_145945_j[3];
  
 +            if (false) { // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
@@ -61,7 +61,7 @@
                      this.field_145945_j[3] = null;
                  }
              }
-+            net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
++            net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j, this);
          }
      }
  
