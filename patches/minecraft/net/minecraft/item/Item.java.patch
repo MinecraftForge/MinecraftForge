@@ -57,7 +57,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -371,11 +380,578 @@
+@@ -371,11 +380,591 @@
          return false;
      }
  
@@ -88,6 +88,19 @@
 +    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
 +    {
 +        return true;
++    }
++
++    /**
++     * Allow the item one last chance to modify its name used for the 
++     * tool highlight useful for adding something extra that can't be removed
++     * by a user in the displayed name, such as a mode of operation.
++     * 
++     * @param item the ItemStack for the item.
++     * @param the name that will be displayed unless it is changed in this method.
++     */
++    public String getHighlightTip( ItemStack item, String displayName )
++    {
++        return displayName;	
 +    }
 +
 +    /**
@@ -636,7 +649,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -855,6 +1431,10 @@
+@@ -855,6 +1444,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -647,7 +660,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -889,9 +1469,36 @@
+@@ -889,9 +1482,36 @@
              return this.field_78008_j;
          }
  
