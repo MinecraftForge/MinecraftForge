@@ -6,7 +6,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionHelper;
-import net.minecraft.tileentity.TileEntity;
 
 /**
  * Used in BrewingRecipeRegistry to maintain the vanilla behaviour. 
@@ -39,7 +38,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * or if the new potion is a splash potion when the old one wasn't.
      */
     @Override
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient, TileEntity tile)
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
         if (ingredient != null && input != null && input.getItem() instanceof ItemPotion && isIngredient(ingredient))
         {
