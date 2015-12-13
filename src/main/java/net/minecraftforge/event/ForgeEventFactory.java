@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -440,13 +441,13 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
     }
 
-    public static boolean onPotionAttemptBreaw(ItemStack[] stacks)
+    public static boolean onPotionAttemptBreaw(ItemStack[] stacks, TileEntity tile)
     {
         ItemStack[] tmp = new ItemStack[stacks.length];
         for (int x = 0; x < tmp.length; x++)
             tmp[x] = ItemStack.copyItemStack(stacks[x]);
 
-        PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp);
+        PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp, tile);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             boolean changed = false;
@@ -456,15 +457,15 @@ public class ForgeEventFactory
                 stacks[x] = event.getItem(x);
             }
             if (changed)
-                onPotionBrewed(stacks);
+                onPotionBrewed(stacks, tile);
             return true;
         }
         return false;
     }
 
-    public static void onPotionBrewed(ItemStack[] brewingItemStacks)
+    public static void onPotionBrewed(ItemStack[] brewingItemStacks, TileEntity brewerTileEntity)
     {
-        MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
+        MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks, brewerTileEntity));
     }
     
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
