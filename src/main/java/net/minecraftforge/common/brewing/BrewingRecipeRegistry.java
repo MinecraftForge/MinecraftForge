@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class BrewingRecipeRegistry {
 
@@ -65,28 +66,29 @@ public class BrewingRecipeRegistry {
      * Returns the output ItemStack obtained by brewing the passed input and
      * ingredient. Null if no matches are found.
      */
-    public static ItemStack getOutput(ItemStack input, ItemStack ingredient)
+    public static ItemStack getOutput(ItemStack input, ItemStack ingredient, TileEntity tile)
     {
         if (input == null || input.getMaxStackSize() != 1 || input.stackSize != 1) return null;
         if (ingredient == null || ingredient.stackSize <= 0) return null;
 
         for (IBrewingRecipe recipe : recipes)
         {
-            ItemStack output = recipe.getOutput(input, ingredient);
+            ItemStack output = recipe.getOutput(input, ingredient, tile);
             if (output != null)
             {
                 return output;
             }
         }
+        
         return null;
     }
 
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOuput(ItemStack input, ItemStack ingredient)
+    public static boolean hasOuput(ItemStack input, ItemStack ingredient, TileEntity tile)
     {
-        return getOutput(input, ingredient) != null;
+        return getOutput(input, ingredient, tile) != null;
     }
 
     /**
@@ -94,13 +96,13 @@ public class BrewingRecipeRegistry {
      * Extra parameters exist to allow modders to create bigger brewing stands
      * without much hassle
      */
-    public static boolean canBrew(ItemStack[] inputs, ItemStack ingredient, int[] inputIndexes)
+    public static boolean canBrew(ItemStack[] inputs, ItemStack ingredient, int[] inputIndexes, TileEntity tile)
     {
         if (ingredient == null || ingredient.stackSize <= 0) return false;
 
         for (int i : inputIndexes)
         {
-            if (hasOuput(inputs[i], ingredient))
+            if (hasOuput(inputs[i], ingredient, tile))
             {
                 return true;
             }
@@ -113,11 +115,11 @@ public class BrewingRecipeRegistry {
      * Used by the brewing stand to brew its inventory Extra parameters exist to
      * allow modders to create bigger brewing stands without much hassle
      */
-    public static void brewPotions(ItemStack[] inputs, ItemStack ingredient, int[] inputIndexes)
+    public static void brewPotions(ItemStack[] inputs, ItemStack ingredient, int[] inputIndexes, TileEntity tile)
     {
         for (int i : inputIndexes)
         {
-            ItemStack output = getOutput(inputs[i], ingredient);
+            ItemStack output = getOutput(inputs[i], ingredient, tile);
             if (output != null)
             {
                 inputs[i] = output;
@@ -140,6 +142,7 @@ public class BrewingRecipeRegistry {
                 return true;
             }
         }
+        
         return false;
     }
 
@@ -158,6 +161,7 @@ public class BrewingRecipeRegistry {
                 return true;
             }
         }
+        
         return false;
     }
 

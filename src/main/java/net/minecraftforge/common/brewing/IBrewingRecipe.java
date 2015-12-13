@@ -1,6 +1,7 @@
 package net.minecraftforge.common.brewing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public interface IBrewingRecipe {
 
@@ -20,7 +21,7 @@ public interface IBrewingRecipe {
 
     /**
      * Returns the output when the passed input is brewed with the passed
-     * ingredient. Null if invalid input or ingredient.
+     * ingredient inside the given TileEntity. Null has to be returned if input or ingredient are invalid.
      */
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient);
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient, TileEntity tile);
 }
