@@ -597,6 +597,8 @@ public class GuiIngameForge extends GuiIngame
                 if (this.highlightingItemStack.hasDisplayName())
                     name = EnumChatFormatting.ITALIC + name;
 
+                name = this.highlightingItemStack.getItem().getHighlightTip(this.highlightingItemStack, name);
+
                 int opacity = (int)((float)this.remainingHighlightTicks * 256.0F / 10.0F);
                 if (opacity > 255) opacity = 255;
 
