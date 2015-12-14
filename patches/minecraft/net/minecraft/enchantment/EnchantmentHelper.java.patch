@@ -25,7 +25,7 @@
 -                                if (!enchantmentdata1.field_76302_b.func_77326_a(Enchantment.func_180306_c(integer.intValue())))
 +                                Enchantment e1 = enchantmentdata1.field_76302_b;
 +                                Enchantment e2 = Enchantment.func_180306_c(integer.intValue());
-+                                if (e1.func_77326_a(e2) && e2.func_77326_a(e1)) //Forge BugFix: Let Both enchantments veto being together
++                                if (!e1.func_77326_a(e2) || !e2.func_77326_a(e1)) //Forge BugFix: Let Both enchantments veto being together
                                  {
                                      flag = false;
                                      break;
