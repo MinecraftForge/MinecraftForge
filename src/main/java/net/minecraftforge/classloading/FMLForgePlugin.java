@@ -38,6 +38,6 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     @Override
     public String getAccessTransformerClass()
     {
-        return "net.minecraftforge.transformers.ForgeAccessTransformer";
+        return null;
     }
 }

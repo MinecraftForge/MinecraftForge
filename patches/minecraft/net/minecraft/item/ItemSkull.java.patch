@@ -17,7 +17,7 @@
              if (!flag)
              {
 -                if (!p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_149688_o().func_76220_a())
-+                if (!p_180614_3_.isSideSolid(p_180614_4_, p_180614_5_, true))
++                if (!p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_149688_o().func_76220_a() && !p_180614_3_.isSideSolid(p_180614_4_, p_180614_5_, true))
                  {
                      return false;
                  }

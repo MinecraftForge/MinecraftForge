@@ -171,7 +171,7 @@ public class BlockFluidClassic extends BlockFluidBase
 
     public boolean isSourceBlock(IBlockAccess world, BlockPos pos)
     {
-        return world.getBlockState(pos) == this && ((Integer)world.getBlockState(pos).getValue(LEVEL)).intValue() == 0;
+        return world.getBlockState(pos).getBlock() == this && ((Integer)world.getBlockState(pos).getValue(LEVEL)).intValue() == 0;
     }
 
     protected boolean[] getOptimalFlowDirections(World world, BlockPos pos)

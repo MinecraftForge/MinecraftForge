@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.BuiltInModel;
@@ -47,18 +47,13 @@ import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -74,6 +69,7 @@ public class ModelLoader extends ModelBakery
     private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private IModel missingModel = null;
+    private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -123,7 +119,7 @@ public class ModelLoader extends ModelBakery
                 return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
             }
         };
-        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter);
+        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
         for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
             if(e.getValue() == getMissingModel())
@@ -132,7 +128,7 @@ public class ModelLoader extends ModelBakery
             }
             else
             {
-                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT, textureGetter));
+                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), DefaultVertexFormats.ITEM, textureGetter));
             }
         }
         return bakedRegistry;
@@ -222,13 +218,20 @@ public class ModelLoader extends ModelBakery
             throw new IllegalStateException("circular model dependencies involving model " + location);
         }
         loadingModels.add(location);
-        IModel model = ModelLoaderRegistry.getModel(location);
-        for(ResourceLocation dep : model.getDependencies())
+        try
         {
-            getModel(dep);
+            IModel model = ModelLoaderRegistry.getModel(location);
+            for (ResourceLocation dep : model.getDependencies())
+            {
+                getModel(dep);
+               
+            }
+            textures.addAll(model.getTextures());
         }
-        textures.addAll(model.getTextures());
-        loadingModels.remove(location);
+        finally
+        {
+            loadingModels.remove(location);
+        }
     }
 
     private class VanillaModelWrapper implements IRetexturableModel
@@ -253,29 +256,36 @@ public class ModelLoader extends ModelBakery
             // setting parent here to make textures resolve properly
             if(model.getParentLocation() != null)
             {
-                try
+                if(model.getParentLocation().getResourcePath().equals("builtin/generated"))
                 {
-                    IModel parent = getModel(model.getParentLocation());
-                    if(parent instanceof VanillaModelWrapper)
-                    {
-                        model.parent = ((VanillaModelWrapper) parent).model;
-                    }
-                    else
-                    {
-                        throw new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent");
-                    }
+                    model.parent = MODEL_GENERATED;
                 }
-                catch (IOException e)
+                else
                 {
-                    FMLLog.warning("Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model + "': " + e.toString());
-                    IModel missing = ModelLoader.this.getMissingModel();
-                    if (missing instanceof VanillaModelWrapper)
+                    try
                     {
-                        model.parent = ((VanillaModelWrapper)missing).model;
+                        IModel parent = getModel(model.getParentLocation());
+                        if(parent instanceof VanillaModelWrapper)
+                        {
+                            model.parent = ((VanillaModelWrapper) parent).model;
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent");
+                        }
                     }
-                    else
+                    catch (IOException e)
                     {
-                        throw new IllegalStateException("vanilla model '" + model + "' has missing parent, and missing model is not a vanilla model");
+                        FMLLog.warning("Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model + "': " + e.toString());
+                        IModel missing = ModelLoader.this.getMissingModel();
+                        if (missing instanceof VanillaModelWrapper)
+                        {
+                            model.parent = ((VanillaModelWrapper)missing).model;
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("vanilla model '" + model + "' has missing parent, and missing model is not a vanilla model");
+                        }
                     }
                 }
             }
@@ -322,16 +332,23 @@ public class ModelLoader extends ModelBakery
             ModelBlock model = this.model;
             if(model == null) return getMissingModel().bake(state, format, bakedTextureGetter);
             ItemCameraTransforms transforms = new ItemCameraTransforms(model.getThirdPersonTransform(), model.getFirstPersonTransform(), model.getHeadTransform(), model.getInGuiTransform());
+            boolean uvlock = false;
+            if(state instanceof UVLock)
+            {
+                uvlock = true;
+                state = ((UVLock)state).getParent();
+            }
+            IPerspectiveState perState = state instanceof IPerspectiveState ? (IPerspectiveState)state : new IPerspectiveState.Impl(state, transforms);
             if(hasItemModel(model))
             {
-                IPerspectiveState perState = state instanceof IPerspectiveState ? (IPerspectiveState)state : new IPerspectiveState.Impl(state, transforms);
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
             if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
-            return bakeNormal(model, state.apply(this), format, bakedTextureGetter, state instanceof UVLock);
+            // TODO perspective awareness for this
+            return bakeNormal(model, perState, state.apply(this), format, bakedTextureGetter, uvlock);
         }
 
-        private IFlexibleBakedModel bakeNormal(ModelBlock model, TRSRTransformation state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IFlexibleBakedModel bakeNormal(ModelBlock model, IPerspectiveState perState, TRSRTransformation state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
@@ -352,7 +369,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format);
+            return new IPerspectiveAwareModel.MapWrapper(new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format), perState, this);
         }
 
         public IModelState getDefaultState()
@@ -424,16 +441,21 @@ public class ModelLoader extends ModelBakery
 
     public static class UVLock implements IModelState
     {
-        private final IModelState state;
+        private final IModelState parent;
 
-        public UVLock(IModelState state)
+        public UVLock(IModelState parent)
         {
-            this.state = state;
+            this.parent = parent;
+        }
+
+        public IModelState getParent()
+        {
+            return parent;
         }
 
         public TRSRTransformation apply(IModelPart part)
         {
-            return state.apply(part);
+            return parent.apply(part);
         }
     }
 
@@ -614,6 +636,11 @@ public class ModelLoader extends ModelBakery
             }
         }
         return missingModel;
+    }
+
+    public IModel getItemModel()
+    {
+        return itemModel;
     }
 
     static enum VanillaLoader implements ICustomModelLoader

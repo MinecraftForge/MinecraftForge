@@ -8,3 +8,61 @@
          if (field_75625_b.containsKey(p_75618_1_))
          {
              throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
+@@ -153,9 +154,10 @@
+             p_75615_0_.func_82580_o("Type");
+         }
+ 
++        Class oclass = null;
+         try
+         {
+-            Class oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+ 
+             if (oclass != null)
+             {
+@@ -169,7 +171,17 @@
+ 
+         if (entity != null)
+         {
++            try
++            {
+             entity.func_70020_e(p_75615_0_);
++            }
++            catch (Exception e)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_75615_0_.func_74779_i("id"), oclass.getName());
++                entity = null;
++            }
+         }
+         else
+         {
+@@ -344,7 +356,9 @@
+ 
+     public static class EntityEggInfo
+         {
++            @Deprecated // This is not always a valid number in the global ID list.
+             public final int field_75613_a;
++            public final String name;
+             public final int field_75611_b;
+             public final int field_75612_c;
+             public final StatBase field_151512_d;
+@@ -358,6 +372,17 @@
+                 this.field_75612_c = p_i1583_3_;
+                 this.field_151512_d = StatList.func_151182_a(this);
+                 this.field_151513_e = StatList.func_151176_b(this);
++                this.name = EntityList.func_75617_a(p_i1583_1_);
+             }
++
++            public EntityEggInfo(String name, int primaryColor, int secondaryColor)
++            {
++                this.field_75613_a = -1;
++                this.name = name;
++                this.field_75611_b = primaryColor;
++                this.field_75612_c = secondaryColor;
++                this.field_151512_d = (new StatBase("stat.killEntity."     + name, new net.minecraft.util.ChatComponentTranslation("stat.entityKill",     new net.minecraft.util.ChatComponentTranslation("entity." + name + ".name")))).func_75971_g();
++                this.field_151513_e = (new StatBase("stat.entityKilledBy." + name, new net.minecraft.util.ChatComponentTranslation("stat.entityKilledBy", new net.minecraft.util.ChatComponentTranslation("entity." + name + ".name")))).func_75971_g();
++            }
+         }
+ }

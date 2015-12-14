@@ -1,0 +1,29 @@
+mtllib direction_test.mtl
+v 0 0 1
+v 1 0 1
+v 0 1 1
+v 1 1 1
+v 0 1 0
+v 1 1 0
+v 0 0 0
+v 1 0 0
+#vt 1 0
+#vt 0 0
+#vt 1 1
+#vt 0 1
+usemtl back
+#f 1/4 2/3 4/1 3/2
+f 1 2 4 3
+usemtl front
+#f 5/1 6/2 8/4 7/3
+f 5 6 8 7
+usemtl side
+#f 3/4 4/3 6/1 5/2
+f 3 4 6 5
+#f 7/1 8/2 2/4 1/3
+f 7 8 2 1
+usemtl top
+#f 2/3 8/1 6/2 4/4
+f 2 8 6 4
+#f 7/2 1/4 3/3 5/1
+f 7 1 3 5

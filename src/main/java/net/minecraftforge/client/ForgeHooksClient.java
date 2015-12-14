@@ -7,9 +7,11 @@ import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.block.Block;
@@ -33,6 +35,8 @@ import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.client.resources.I18n;
@@ -44,9 +48,12 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.MovingObjectPosition;
@@ -78,6 +85,9 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 //import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 //import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
+
+import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {
@@ -535,22 +545,25 @@ public class ForgeHooksClient
             if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             return pair.getLeft();
         }
-        switch(cameraTransformType)
+        else
         {
-            case FIRST_PERSON:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
-                break;
-            case GUI:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
-                break;
-            case HEAD:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
-                break;
-            case THIRD_PERSON:
-                RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
-                break;
-            default:
-                break;
+            switch(cameraTransformType)
+            {
+                case FIRST_PERSON:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().firstPerson);
+                    break;
+                case GUI:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().gui);
+                    break;
+                case HEAD:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().head);
+                    break;
+                case THIRD_PERSON:
+                    RenderItem.applyVanillaTransform(model.getItemCameraTransforms().thirdPerson);
+                    break;
+                default:
+                    break;
+            }
         }
         return model;
     }
@@ -675,7 +688,55 @@ public class ForgeHooksClient
             int ncg = Math.min(0xFF, (int)(cg * vcg / 0xFF));
             int ncb = Math.min(0xFF, (int)(cb * vcb / 0xFF));
             int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
-            renderer.putColorRGBA(renderer.getColorIndex(i + 1), ncr, ncg, ncb, nca);
+            renderer.putColorRGBA(renderer.getColorIndex(4 - i), ncr, ncg, ncb, nca);
+        }
+    }
+
+    private static Map<Pair<Item, Integer>, Class<? extends TileEntity>> tileItemMap = Maps.newHashMap();
+
+    public static void renderTileItem(Item item, int metadata)
+    {
+        Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item,
+                metadata));
+        if (tileClass != null)
+        {
+            TileEntitySpecialRenderer r = TileEntityRendererDispatcher.instance.getSpecialRendererByClass(tileClass);
+            if (r != null)
+            {
+                r.renderTileEntityAt(null, 0, 0, 0, 0, -1);
+            }
+        }
+    }
+
+    /**
+     * @deprecated Will be removed as soon as possible, hopefully 1.9.
+     */
+    @Deprecated
+    public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
+    {
+        tileItemMap.put(Pair.of(item, metadata), TileClass);
+    }
+
+    /**
+     * internal, relies on fixed format of FaceBakery
+     */
+    public static void fillNormal(int[] faceData, EnumFacing facing)
+    {
+        Vector3f v1 = new Vector3f(faceData[3 * 7 + 0], faceData[3 * 7 + 1], faceData[3 * 7 + 2]);
+        Vector3f t = new Vector3f(faceData[1 * 7 + 0], faceData[1 * 7 + 1], faceData[1 * 7 + 2]);
+        Vector3f v2 = new Vector3f(faceData[2 * 7 + 0], faceData[2 * 7 + 1], faceData[2 * 7 + 2]);
+        v1.sub(t);
+        t.set(faceData[0 * 7 + 0], faceData[0 * 7 + 1], faceData[0 * 7 + 2]);
+        v2.sub(t);
+        v1.cross(v2, v1);
+        v1.normalize();
+
+        int x = ((byte)(v1.x * 127)) & 0xFF;
+        int y = ((byte)(v1.y * 127)) & 0xFF;
+        int z = ((byte)(v1.z * 127)) & 0xFF;
+        for(int i = 0; i < 4; i++)
+        {
+            faceData[i * 7 + 6] = x | (y << 0x08) | (z << 0x10);
         }
     }
 }

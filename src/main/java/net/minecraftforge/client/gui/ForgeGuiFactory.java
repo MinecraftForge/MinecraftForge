@@ -6,42 +6,38 @@
 package net.minecraftforge.client.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.IModGuiFactory;
-import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
-import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
-import net.minecraftforge.fml.client.config.HoverChecker;
 import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
 
 /**
  * This is the base GuiConfig screen class that all the other Forge-specific config screens will be called from.
@@ -109,6 +105,7 @@ public class ForgeGuiFactory implements IModGuiFactory
             List<IConfigElement> list = new ArrayList<IConfigElement>();
             list.add(new DummyCategoryElement("forgeCfg", "forge.configgui.ctgy.forgeGeneralConfig", GeneralEntry.class));
             list.add(new DummyCategoryElement("forgeChunkLoadingCfg", "forge.configgui.ctgy.forgeChunkLoadingConfig", ChunkLoaderEntry.class));
+            list.add(new DummyCategoryElement("forgeVersionCheckCfg", "forge.configgui.ctgy.VersionCheckConfig", VersionCheckEntry.class));
             return list;
         }
 
@@ -163,6 +160,59 @@ public class ForgeGuiFactory implements IModGuiFactory
                         this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
                         GuiConfig.getAbridgedConfigPath(ForgeChunkManager.getConfig().toString()),
                         I18n.format("forge.configgui.ctgy.forgeChunkLoadingConfig"));
+            }
+        }
+
+        /**
+         * This custom list entry provides the Forge Version Checking Config entry on the Minecraft Forge Configuration screen.
+         * It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
+         */
+        public static class VersionCheckEntry extends CategoryEntry
+        {
+            public VersionCheckEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop)
+            {
+                super(owningScreen, owningEntryList, prop);
+            }
+
+            @Override
+            protected GuiScreen buildChildScreen()
+            {
+                ConfigCategory cfg = ForgeModContainer.getConfig().getCategory(VERSION_CHECK_CAT);
+                Map<String, Property> values = new HashMap<String, Property>(cfg.getValues());
+                values.remove("Global");
+
+                Property global = ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, "Global", true);
+
+                List<Property> props = new ArrayList<Property>();
+
+                for (ModContainer mod : ForgeVersion.gatherMods().keySet())
+                {
+                    values.remove(mod.getModId());
+                    props.add(ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, mod.getModId(), true)); //Get or make the value in the config
+                }
+                props.addAll(values.values()); // Add any left overs from the config
+                Collections.sort(props, new Comparator<Property>()
+                {
+                    @Override
+                    public int compare(Property o1, Property o2)
+                    {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+
+                List<IConfigElement> list = new ArrayList<IConfigElement>();
+                list.add(new ConfigElement(global));
+                for (Property prop : props)
+                {
+                    list.add(new ConfigElement(prop));
+                }
+
+                // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
+                // GuiConfig object's propertyList will also be refreshed to reflect the changes.
+                return new GuiConfig(this.owningScreen,
+                        list,
+                        this.owningScreen.modID, VERSION_CHECK_CAT, true, true,
+                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
             }
         }
 

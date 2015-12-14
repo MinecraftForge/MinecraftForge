@@ -101,6 +101,15 @@
              int i = aworldserver.length;
  
              for (int j = 0; j < i; ++j)
+@@ -399,7 +373,7 @@
+ 
+     public void func_71260_j()
+     {
+-        if (!this.field_71290_O)
++        if (!this.field_71290_O && net.minecraftforge.fml.common.Loader.instance().hasReachedState(net.minecraftforge.fml.common.LoaderState.SERVER_STARTED) && !field_71316_v) // make sure the save is valid and we don't save twice
+         {
+             field_147145_h.info("Stopping server");
+ 
 @@ -423,8 +397,15 @@
                  for (int i = 0; i < this.field_71305_c.length; ++i)
                  {
@@ -117,7 +126,61 @@
              }
  
              if (this.field_71307_n.func_76468_d())
-@@ -630,6 +611,7 @@
+@@ -456,6 +437,7 @@
+         {
+             if (this.func_71197_b())
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarted();
+                 this.field_175591_ab = func_130071_aq();
+                 long i = 0L;
+                 this.field_147147_p.func_151315_a(new ChatComponentText(this.field_71286_C));
+@@ -500,12 +482,20 @@
+                     Thread.sleep(Math.max(1L, 50L - i));
+                     this.field_71296_Q = true;
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopping();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+                 this.func_71228_a((CrashReport)null);
+             }
+         }
++        catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++        {
++            // ignore silently
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++        }
+         catch (Throwable throwable1)
+         {
+             field_147145_h.error("Encountered an unexpected exception", throwable1);
+@@ -531,6 +521,7 @@
+                 field_147145_h.error("We were unable to save this crash report to disk.");
+             }
+ 
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.func_71228_a(crashreport);
+         }
+         finally
+@@ -546,6 +537,8 @@
+             }
+             finally
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
++                this.field_71316_v = true;
+                 this.func_71240_o();
+             }
+         }
+@@ -591,6 +584,7 @@
+     public void func_71217_p()
+     {
+         long i = System.nanoTime();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreServerTick();
+         ++this.field_71315_w;
+ 
+         if (this.field_71295_T)
+@@ -617,6 +611,7 @@
  
              Collections.shuffle(Arrays.asList(agameprofile));
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -125,7 +188,24 @@
          }
  
          if (this.field_71315_w % 900 == 0)
-@@ -681,15 +663,18 @@
+@@ -644,6 +639,7 @@
+ 
+         this.field_71304_b.func_76319_b();
+         this.field_71304_b.func_76319_b();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostServerTick();
+     }
+ 
+     public void func_71190_q()
+@@ -657,7 +653,7 @@
+             {
+                 try
+                 {
+-                    ((FutureTask)this.field_175589_i.poll()).run();
++                    net.minecraftforge.fml.common.FMLCommonHandler.callFuture(((FutureTask)this.field_175589_i.poll()));
+                 }
+                 catch (Throwable throwable2)
+                 {
+@@ -667,15 +663,18 @@
          }
  
          this.field_71304_b.func_76318_c("levels");
@@ -147,7 +227,23 @@
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
  
                  if (this.field_71315_w % 20 == 0)
-@@ -733,9 +718,11 @@
+@@ -686,6 +685,7 @@
+                 }
+ 
+                 this.field_71304_b.func_76320_a("tick");
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreWorldTick(worldserver);
+                 CrashReport crashreport;
+ 
+                 try
+@@ -710,6 +710,7 @@
+                     throw new ReportedException(crashreport);
+                 }
+ 
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostWorldTick(worldserver);
+                 this.field_71304_b.func_76319_b();
+                 this.field_71304_b.func_76320_a("tracker");
+                 worldserver.func_73039_n().func_72788_a();
+@@ -717,9 +718,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -160,7 +256,15 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -774,7 +761,13 @@
+@@ -741,6 +744,7 @@
+ 
+     public void func_71256_s()
+     {
++        net.minecraftforge.fml.common.StartupQuery.reset();
+         this.field_175590_aa = new Thread(this, "Server thread");
+         this.field_175590_aa.start();
+     }
+@@ -757,7 +761,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -175,7 +279,16 @@
      }
  
      public String func_71249_w()
-@@ -1025,6 +1018,7 @@
+@@ -787,7 +797,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().getModName();
+     }
+ 
+     public CrashReport func_71230_b(CrashReport p_71230_1_)
+@@ -1008,6 +1018,7 @@
  
              if (worldserver != null)
              {
@@ -183,7 +296,7 @@
                  worldserver.func_73041_k();
              }
          }
-@@ -1607,7 +1601,6 @@
+@@ -1590,7 +1601,6 @@
          this.field_71319_s = p_71208_1_;
      }
  

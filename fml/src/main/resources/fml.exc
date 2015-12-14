@@ -1,2 +1,0 @@
-net/minecraft/server/management/ServerConfigurationManager.initializeConnectionToPlayer(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/network/NetHandlerPlayServer;)V=|p_72355_1_,p_72355_2_,nethandlerplayserver
-net/minecraft/item/ItemMonsterPlacer.spawnCreature(Lnet/minecraft/world/World;Ljava/lang/String;DDD)Lnet/minecraft/entity/Entity;=|p_77840_0_,name,p_77840_2_,p_77840_4_,p_77840_6_

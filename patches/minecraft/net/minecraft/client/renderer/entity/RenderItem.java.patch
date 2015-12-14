@@ -9,17 +9,16 @@
          this.func_175041_b();
      }
  
-@@ -212,6 +212,9 @@
-     private void func_175033_a(WorldRenderer p_175033_1_, BakedQuad p_175033_2_, int p_175033_3_)
-     {
-         p_175033_1_.func_178981_a(p_175033_2_.func_178209_a());
-+        if(p_175033_2_ instanceof net.minecraftforge.client.model.IColoredBakedQuad)
-+            net.minecraftforge.client.ForgeHooksClient.putQuadColor(p_175033_1_, p_175033_2_, p_175033_3_);
-+        else
-         p_175033_1_.func_178968_d(p_175033_3_);
-         this.func_175038_a(p_175033_1_, p_175033_2_);
-     }
-@@ -302,6 +305,10 @@
+@@ -222,7 +222,7 @@
+         BakedQuad bakedquad;
+         int j;
+ 
+-        for (Iterator iterator = p_175032_2_.iterator(); iterator.hasNext(); this.func_175033_a(p_175032_1_, bakedquad, j))
++        for (Iterator iterator = p_175032_2_.iterator(); iterator.hasNext(); net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(p_175032_1_, bakedquad, j))
+         {
+             bakedquad = (BakedQuad)iterator.next();
+             j = p_175032_3_;
+@@ -302,6 +302,10 @@
                      modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
                  }
              }
@@ -30,7 +29,7 @@
  
              if (modelresourcelocation != null)
              {
-@@ -314,6 +321,11 @@
+@@ -314,6 +318,11 @@
  
      protected void func_175034_a(ItemTransformVec3f p_175034_1_)
      {
@@ -42,7 +41,7 @@
          if (p_175034_1_ != ItemTransformVec3f.field_178366_a)
          {
              GlStateManager.func_179109_b(p_175034_1_.field_178365_c.x + field_175055_b, p_175034_1_.field_178365_c.y + field_175056_c, p_175034_1_.field_178365_c.z + field_175053_d);
-@@ -335,23 +347,7 @@
+@@ -335,23 +344,7 @@
          GlStateManager.func_179120_a(770, 771, 1, 0);
          GlStateManager.func_179094_E();
  
@@ -67,7 +66,7 @@
  
          this.func_180454_a(p_175040_1_, p_175040_2_);
          GlStateManager.func_179121_F();
-@@ -374,7 +370,7 @@
+@@ -374,7 +367,7 @@
          GlStateManager.func_179112_b(770, 771);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          this.func_180452_a(p_175042_2_, p_175042_3_, ibakedmodel.func_177556_c());
@@ -76,7 +75,7 @@
          this.func_180454_a(p_175042_1_, ibakedmodel);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -485,10 +481,11 @@
+@@ -485,10 +478,11 @@
                  GlStateManager.func_179126_j();
              }
  
@@ -91,7 +90,7 @@
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -501,7 +498,7 @@
+@@ -501,7 +495,7 @@
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0);
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, i1);
                  this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, j1, 1, l);
@@ -100,7 +99,7 @@
                  GlStateManager.func_179141_d();
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
-@@ -1072,12 +1069,26 @@
+@@ -1072,12 +1066,26 @@
          this.func_175029_a(Blocks.field_150420_aW, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "brown_mushroom_block");
          this.func_175029_a(Blocks.field_150419_aX, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "red_mushroom_block");
          this.func_175031_a(Blocks.field_150380_bt, "dragon_egg");

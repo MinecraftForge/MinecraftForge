@@ -45,7 +45,16 @@
          {
              super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
          }
-@@ -296,6 +293,32 @@
+@@ -220,8 +217,6 @@
+         else
+         {
+             p_176489_4_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
+-            int i = (enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).func_177044_a();
+-            func_180635_a(p_176489_1_, p_176489_2_, new ItemStack(Blocks.field_150329_H, 2, i));
+             return true;
+         }
+     }
+@@ -296,6 +291,32 @@
          return Block.EnumOffsetType.XZ;
      }
  

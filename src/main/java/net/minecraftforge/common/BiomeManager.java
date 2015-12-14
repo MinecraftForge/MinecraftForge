@@ -147,7 +147,7 @@ public class BiomeManager
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
     {
         int idx = type.ordinal();
-        List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
+        List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
         return list != null ? ImmutableList.copyOf(list) : null;
     }
@@ -175,11 +175,11 @@ public class BiomeManager
                 if (t.name().equals(name)) return t;
             }
 
-            BiomeType ret = EnumHelper.addEnum(BiomeType.class, name, BiomeType.class);
+            BiomeType ret = EnumHelper.addEnum(BiomeType.class, name, new Class[0], new Object[0]);
 
             if (ret.ordinal() >= biomes.length)
             {
-                biomes = Arrays.copyOf(biomes, ret.ordinal());
+                biomes = Arrays.copyOf(biomes, ret.ordinal() + 1);
             }
 
             return ret;

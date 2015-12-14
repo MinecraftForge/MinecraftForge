@@ -152,9 +152,12 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -949,6 +951,7 @@
+@@ -947,8 +949,9 @@
+                 entity.func_110123_P();
+             }
  
-             this.field_76637_e.func_175650_b(this.field_76645_j[i]);
+-            this.field_76637_e.func_175650_b(this.field_76645_j[i]);
++            this.field_76637_e.func_175650_b(com.google.common.collect.ImmutableList.copyOf(this.field_76645_j[i]));
          }
 +        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(this));
      }

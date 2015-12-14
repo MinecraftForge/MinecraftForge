@@ -14,7 +14,13 @@
          EnumFacing enumfacing1 = func_178410_a(aint);
  
          if (p_178414_8_)
-@@ -40,11 +45,16 @@
+@@ -35,16 +40,22 @@
+             this.func_178408_a(aint, enumfacing1);
+         }
+ 
++        net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, enumfacing1);
+         return new BakedQuad(aint, p_178414_3_.field_178245_c, enumfacing1);
+     }
  
      private int[] func_178405_a(BlockPartFace p_178405_1_, TextureAtlasSprite p_178405_2_, EnumFacing p_178405_3_, float[] p_178405_4_, ModelRotation p_178405_5_, BlockPartRotation p_178405_6_, boolean p_178405_7_, boolean p_178405_8_)
      {
@@ -32,7 +38,7 @@
          }
  
          return aint;
-@@ -90,12 +100,17 @@
+@@ -90,12 +101,17 @@
  
      private void func_178402_a(int[] p_178402_1_, int p_178402_2_, EnumFacing p_178402_3_, BlockPartFace p_178402_4_, float[] p_178402_5_, TextureAtlasSprite p_178402_6_, ModelRotation p_178402_7_, BlockPartRotation p_178402_8_, boolean p_178402_9_, boolean p_178402_10_)
      {
@@ -52,7 +58,7 @@
          this.func_178404_a(p_178402_1_, k, p_178402_2_, vector3d, j, p_178402_6_, p_178402_4_.field_178243_e);
      }
  
-@@ -156,14 +171,19 @@
+@@ -156,14 +172,19 @@
  
      public int func_178415_a(Vector3d p_178415_1_, EnumFacing p_178415_2_, int p_178415_3_, ModelRotation p_178415_4_, boolean p_178415_5_)
      {

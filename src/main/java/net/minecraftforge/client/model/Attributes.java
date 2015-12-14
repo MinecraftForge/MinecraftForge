@@ -74,6 +74,10 @@ public class Attributes
         return true;
     }
 
+    /**
+     * @deprecated use UnpackedBakedQuad.Builder
+     */
+    @Deprecated
     public static void put(ByteBuffer buf, VertexFormatElement e, boolean denormalize, Number fill, Number... ns)
     {
         if(e.getElementCount() > ns.length && fill == null) throw new IllegalArgumentException("not enough elements");
@@ -109,6 +113,10 @@ public class Attributes
         }
     }
 
+    /**
+     * @deprecated use IVertexConsumer
+     */
+    @Deprecated
     public static BakedQuad transform(TRSRTransformation transform, BakedQuad quad, VertexFormat format)
     {
         for (VertexFormatElement e : (List<VertexFormatElement>)format.getElements())
@@ -120,17 +128,21 @@ public class Attributes
                     throw new IllegalArgumentException("can only transform float position");
                 }
                 int[] data = Arrays.copyOf(quad.getVertexData(), quad.getVertexData().length);
-                float[] pos = new float[] { 0f, 0f, 0f, 1f };
-                for (int i = 0; i < Math.min(4, e.getElementCount()); i++)
+                int shift = data.length / 4;
+                for(int v = 0; v < 4; v++)
                 {
-                    pos[i] = Float.intBitsToFloat(data[e.getOffset() / 4 + i]);
-                }
-                Vector4f vec = new Vector4f(pos);
-                transform.getMatrix().transform(vec);
-                vec.get(pos);
-                for (int i = 0; i < Math.min(4, e.getElementCount()); i++)
-                {
-                    data[e.getOffset() / 4 + i] = Float.floatToRawIntBits(pos[i]);
+                    float[] pos = new float[] { 0f, 0f, 0f, 1f };
+                    for (int i = 0; i < Math.min(4, e.getElementCount()); i++)
+                    {
+                        pos[i] = Float.intBitsToFloat(data[shift * v + e.getOffset() / 4 + i]);
+                    }
+                    Vector4f vec = new Vector4f(pos);
+                    transform.getMatrix().transform(vec);
+                    vec.get(pos);
+                    for (int i = 0; i < Math.min(4, e.getElementCount()); i++)
+                    {
+                        data[shift * v + e.getOffset() / 4 + i] = Float.floatToRawIntBits(pos[i]);
+                    }
                 }
                 return new BakedQuad(data, quad.getTintIndex(), quad.getFace());
             }

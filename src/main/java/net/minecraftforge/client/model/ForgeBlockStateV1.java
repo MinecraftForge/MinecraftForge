@@ -6,12 +6,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.vecmath.AxisAngle4d;
-import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -20,8 +20,8 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.BlockStateLoader.SubModel;
 import net.minecraftforge.client.model.BlockStateLoader.Marker;
+import net.minecraftforge.client.model.BlockStateLoader.SubModel;
 import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.base.Optional;
@@ -145,6 +145,16 @@ public class ForgeBlockStateV1 extends Marker
                         part.simpleSubmodels.clear();
                         part.state = state;
                     }
+                }
+                
+                Iterator<List<Variant>> iter = v.submodels.values().iterator();
+                
+                while (iter.hasNext())
+                {
+                    List<Variant> submodel = iter.next();
+                    
+                    if (submodel == null)
+                        iter.remove();
                 }
 
                 if (v.textures != null)
@@ -283,7 +293,7 @@ public class ForgeBlockStateV1 extends Marker
             this.uvLock = other.uvLock;
             this.weight = other.weight;
             this.textures.putAll(other.textures);
-            this.submodels.putAll(other.submodels);
+            this.mergeModelPartVariants(this.submodels, other.submodels);
             this.simpleSubmodels.putAll(other.simpleSubmodels);
             this.customData.putAll(other.customData);
         }

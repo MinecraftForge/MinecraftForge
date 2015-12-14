@@ -1,8 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotCrafting.java
-@@ -115,7 +115,9 @@
+@@ -113,8 +113,11 @@
+ 
+     public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
      {
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(p_82870_1_, p_82870_2_, field_75239_a);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(p_82870_1_, p_82870_2_, field_75239_a);
          this.func_75208_c(p_82870_2_);
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_82870_1_);
          ItemStack[] aitemstack = CraftingManager.func_77594_a().func_180303_b(this.field_75239_a, p_82870_1_.field_70170_p);
