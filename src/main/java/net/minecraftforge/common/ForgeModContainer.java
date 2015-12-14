@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
@@ -68,6 +69,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static int defaultSpawnFuzz = 20;
     public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
+    public static boolean replaceVanillaBucketModel = true;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -241,6 +243,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder = new ArrayList<String>();
         prop = config.get(VERSION_CHECK_CAT, "Global", true, "Enable the entire mod update check system. This only applies to mods using the Forge system.");
         propOrder.add("Global");
+
+
+        // Client-Side only properties
+        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.TRUE,
+                "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
+        replaceVanillaBucketModel = prop.getBoolean(Boolean.TRUE);
+        propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(VERSION_CHECK_CAT, propOrder);
 
