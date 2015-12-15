@@ -1,18 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -5,6 +5,7 @@
- import java.util.Iterator;
- import java.util.Set;
- import net.minecraft.client.Minecraft;
-+import net.minecraft.client.gui.FontRenderer;
- import net.minecraft.client.gui.GuiScreen;
- import net.minecraft.client.renderer.GlStateManager;
- import net.minecraft.client.renderer.OpenGlHelper;
-@@ -178,8 +179,11 @@
+@@ -175,8 +175,11 @@
          GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
          this.field_73735_i = 200.0F;
          this.field_146296_j.field_77023_b = 200.0F;
-+        FontRenderer font = null;
++        net.minecraft.client.gui.FontRenderer font = null;
 +        if (p_146982_1_ != null) font = p_146982_1_.func_77973_b().getFontRenderer(p_146982_1_);
 +        if (font == null) font = field_146289_q;
          this.field_146296_j.func_180450_b(p_146982_1_, p_146982_2_, p_146982_3_);
@@ -21,7 +13,7 @@
          this.field_73735_i = 0.0F;
          this.field_146296_j.field_77023_b = 0.0F;
      }
-@@ -240,13 +244,12 @@
+@@ -239,13 +242,12 @@
  
          if (itemstack == null)
          {
@@ -38,15 +30,15 @@
                  this.func_175175_a(i, j, textureatlassprite, 16, 16);
                  GlStateManager.func_179145_e();
                  flag1 = true;
-@@ -465,6 +468,7 @@
+@@ -463,6 +465,7 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
 +        super.func_146286_b(p_146286_1_, p_146286_2_, p_146286_3_); //Forge, Call parent to release buttons
          Slot slot = this.func_146975_c(p_146286_1_, p_146286_2_);
-         int l = this.field_147003_i;
-         int i1 = this.field_147009_r;
-@@ -698,4 +702,16 @@
+         int i = this.field_147003_i;
+         int j = this.field_147009_r;
+@@ -685,4 +688,16 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }

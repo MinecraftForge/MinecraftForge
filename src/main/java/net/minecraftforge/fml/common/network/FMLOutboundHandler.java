@@ -21,8 +21,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
-    public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = new AttributeKey<OutboundTarget>("fml:outboundTarget");
-    public static final AttributeKey<Object> FML_MESSAGETARGETARGS = new AttributeKey<Object>("fml:outboundTargetArgs");
+    public static final AttributeKey<OutboundTarget> FML_MESSAGETARGET = AttributeKey.valueOf("fml:outboundTarget");
+    public static final AttributeKey<Object> FML_MESSAGETARGETARGS = AttributeKey.valueOf("fml:outboundTargetArgs");
     public enum OutboundTarget {
         /**
          * The packet is sent nowhere. It will be on the {@link EmbeddedChannel#outboundMessages()} Queue.
@@ -124,7 +124,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             public void validateArgs(Object args)
             {
             }
-            @SuppressWarnings("unchecked")
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
@@ -152,7 +151,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                     throw new RuntimeException("DIMENSION expects an integer argument");
                 }
             }
-            @SuppressWarnings("unchecked")
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
@@ -187,7 +185,6 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                 }
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
@@ -279,14 +276,12 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         if (dispatchers == null)
         {
             ctx.write(msg, promise);
-            promise.setSuccess();
             return;
         }
         for (NetworkDispatcher targetDispatcher : dispatchers)
         {
             targetDispatcher.sendProxy((FMLProxyPacket) msg);
         }
-        promise.setSuccess();
     }
 
 }

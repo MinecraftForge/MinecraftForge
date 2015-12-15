@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
-@@ -85,6 +85,7 @@
+@@ -86,6 +86,7 @@
  
      public static boolean func_180685_d(World p_180685_0_, BlockPos p_180685_1_)
      {

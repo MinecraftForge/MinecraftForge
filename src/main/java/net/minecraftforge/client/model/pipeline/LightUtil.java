@@ -139,7 +139,7 @@ public class LightUtil
         {
             if(i < element.getElementCount())
             {
-                int pos = v * formatFrom.getNextOffset() + element.getOffset() + element.getType().getSize() * i;
+                int pos = v * formatFrom.getNextOffset() + formatFrom.func_181720_d(e) + element.getType().getSize() * i;
                 int index = pos >> 2;
                 int offset = pos & 3;
                 int bits = from[index];
@@ -187,7 +187,7 @@ public class LightUtil
         {
             if(i < element.getElementCount())
             {
-                int pos = v * formatTo.getNextOffset() + element.getOffset() + element.getType().getSize() * i;
+                int pos = v * formatTo.getNextOffset() + formatTo.func_181720_d(e) + element.getType().getSize() * i;
                 int index = pos >> 2;
                 int offset = pos & 3;
                 int bits = 0;

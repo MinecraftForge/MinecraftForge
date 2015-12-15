@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
-@@ -83,7 +83,7 @@
+@@ -72,7 +72,7 @@
      public RenderItem(TextureManager p_i46165_1_, ModelManager p_i46165_2_)
      {
          this.field_175057_n = p_i46165_1_;
@@ -9,97 +9,78 @@
          this.func_175041_b();
      }
  
-@@ -222,7 +222,7 @@
-         BakedQuad bakedquad;
-         int j;
- 
--        for (Iterator iterator = p_175032_2_.iterator(); iterator.hasNext(); this.func_175033_a(p_175032_1_, bakedquad, j))
-+        for (Iterator iterator = p_175032_2_.iterator(); iterator.hasNext(); net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(p_175032_1_, bakedquad, j))
-         {
-             bakedquad = (BakedQuad)iterator.next();
-             j = p_175032_3_;
-@@ -302,6 +302,10 @@
-                     modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
-                 }
+@@ -226,7 +226,7 @@
+                 k = k | -16777216;
              }
-+            else
-+            {
-+                modelresourcelocation = item.getModel(p_175049_1_, entityplayer, entityplayer.func_71052_bv());
-+            }
  
-             if (modelresourcelocation != null)
-             {
-@@ -314,6 +318,11 @@
+-            this.func_175033_a(p_175032_1_, bakedquad, k);
++            net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(p_175032_1_, bakedquad, k);
+         }
+     }
  
-     protected void func_175034_a(ItemTransformVec3f p_175034_1_)
-     {
-+        applyVanillaTransform(p_175034_1_);
-+    }
-+
-+    public static void applyVanillaTransform(ItemTransformVec3f p_175034_1_)
-+    {
-         if (p_175034_1_ != ItemTransformVec3f.field_178366_a)
-         {
-             GlStateManager.func_179109_b(p_175034_1_.field_178365_c.x + field_175055_b, p_175034_1_.field_178365_c.y + field_175056_c, p_175034_1_.field_178365_c.z + field_175053_d);
-@@ -335,23 +344,7 @@
+@@ -296,6 +296,11 @@
+                         modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
+                     }
+                 }
++                else
++                {
++                    // TODO: maybe switch to the smart player model / normal smart item model?
++                    modelresourcelocation = item.getModel(p_175049_1_, entityplayer, entityplayer.func_71052_bv());
++                }
+ 
+                 if (modelresourcelocation != null)
+                 {
+@@ -317,14 +322,9 @@
+         GlStateManager.func_179147_l();
          GlStateManager.func_179120_a(770, 771, 1, 0);
          GlStateManager.func_179094_E();
- 
--        switch (RenderItem.SwitchTransformType.field_178640_a[p_175040_3_.ordinal()])
--        {
--            case 1:
--            default:
--                break;
--            case 2:
--                this.func_175034_a(p_175040_2_.func_177552_f().field_178355_b);
--                break;
--            case 3:
--                this.func_175034_a(p_175040_2_.func_177552_f().field_178356_c);
--                break;
--            case 4:
--                this.func_175034_a(p_175040_2_.func_177552_f().field_178353_d);
--                break;
--            case 5:
--                this.func_175034_a(p_175040_2_.func_177552_f().field_178354_e);
--        }
+-        ItemCameraTransforms itemcameratransforms = p_175040_2_.func_177552_f();
+-        itemcameratransforms.func_181689_a(p_175040_3_);
++        // TODO: check if negative scale is a thing
 +        p_175040_2_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_175040_2_, p_175040_3_);
  
+-        if (this.func_183005_a(itemcameratransforms.func_181688_b(p_175040_3_)))
+-        {
+-            GlStateManager.func_179107_e(1028);
+-        }
+-
          this.func_180454_a(p_175040_1_, p_175040_2_);
+         GlStateManager.func_179107_e(1029);
          GlStateManager.func_179121_F();
-@@ -374,7 +367,7 @@
+@@ -352,7 +352,7 @@
          GlStateManager.func_179112_b(770, 771);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          this.func_180452_a(p_175042_2_, p_175042_3_, ibakedmodel.func_177556_c());
--        this.func_175034_a(ibakedmodel.func_177552_f().field_178354_e);
+-        ibakedmodel.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GUI);
 +        ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GUI);
          this.func_180454_a(p_175042_1_, ibakedmodel);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -485,10 +478,11 @@
+@@ -459,10 +459,11 @@
                  GlStateManager.func_179126_j();
              }
  
 -            if (p_180453_2_.func_77951_h())
 +            if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_))
              {
--                int j1 = (int)Math.round(13.0D - (double)p_180453_2_.func_77952_i() * 13.0D / (double)p_180453_2_.func_77958_k());
--                int k = (int)Math.round(255.0D - (double)p_180453_2_.func_77952_i() * 255.0D / (double)p_180453_2_.func_77958_k());
+-                int j = (int)Math.round(13.0D - (double)p_180453_2_.func_77952_i() * 13.0D / (double)p_180453_2_.func_77958_k());
+-                int i = (int)Math.round(255.0D - (double)p_180453_2_.func_77952_i() * 255.0D / (double)p_180453_2_.func_77958_k());
 +                double health = p_180453_2_.func_77973_b().getDurabilityForDisplay(p_180453_2_);
-+                int j1 = (int)Math.round(13.0D - health * 13.0D);
-+                int k = (int)Math.round(255.0D - health * 255.0D);
++                int j = (int)Math.round(13.0D - health * 13.0D);
++                int i = (int)Math.round(255.0D - health * 255.0D);
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -501,7 +495,7 @@
-                 this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0);
-                 this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, i1);
-                 this.func_175044_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, j1, 1, l);
+@@ -473,7 +474,7 @@
+                 this.func_181565_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
+                 this.func_181565_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
+                 this.func_181565_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, j, 1, 255 - i, i, 0, 255);
 -                GlStateManager.func_179147_l();
-+                //GlStateManager.enableBlend(); // Forge: Disable Bled because it screws with a lot of things down the line.
++                //GlStateManager.enableBlend(); // Forge: Disable Blend because it screws with a lot of things down the line.
                  GlStateManager.func_179141_d();
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
-@@ -1072,12 +1066,26 @@
+@@ -1038,6 +1039,7 @@
          this.func_175029_a(Blocks.field_150420_aW, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "brown_mushroom_block");
          this.func_175029_a(Blocks.field_150419_aX, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "red_mushroom_block");
          this.func_175031_a(Blocks.field_150380_bt, "dragon_egg");
@@ -107,22 +88,3 @@
      }
  
      public void func_110549_a(IResourceManager p_110549_1_)
-     {
-         this.field_175059_m.func_178085_b();
-     }
-+    /*==================================== FORGE START ===========================================* /
-+    private static RenderItem instance;
-+    /**
-+     * Returns a single lazy loaded instance of RenderItem, for use in mods who
-+     * don't care about the interaction of other objects on the current state of the RenderItem they are using.
-+     * @return A global instance of RenderItem
-+     * /
-+    public static RenderItem getInstance()
-+    {
-+        if (instance == null) instance = new RenderItem();
-+        return instance;
-+    }
-+    /*==================================== FORGE END =============================================*/
- 
-     @SideOnly(Side.CLIENT)
- 

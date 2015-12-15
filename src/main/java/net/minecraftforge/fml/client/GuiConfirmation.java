@@ -12,7 +12,6 @@ public class GuiConfirmation extends GuiNotification
         super(query);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {

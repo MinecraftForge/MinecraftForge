@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -52,6 +52,7 @@
+@@ -49,6 +49,7 @@
+     private Block field_179550_j;
      private boolean field_179551_k;
-     private static final String __OBFID = "CL_00000043";
  
 +    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
      public ItemStack(Block p_i1876_1_)
      {
-         this(p_i1876_1_, 1);
-@@ -83,7 +84,7 @@
+         this((Block)p_i1876_1_, 1);
+@@ -80,7 +81,7 @@
          this.field_179553_i = false;
          this.field_179550_j = null;
          this.field_179551_k = false;
@@ -17,7 +17,7 @@
          this.field_77994_a = p_i1881_2_;
          this.field_77991_e = p_i1881_3_;
  
-@@ -123,11 +124,12 @@
+@@ -120,11 +121,12 @@
  
      public Item func_77973_b()
      {
@@ -31,7 +31,7 @@
          boolean flag = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
  
          if (flag)
-@@ -172,11 +174,11 @@
+@@ -169,11 +171,11 @@
      {
          if (p_77963_1_.func_150297_b("id", 8))
          {
@@ -45,7 +45,7 @@
          }
  
          this.field_77994_a = p_77963_1_.func_74771_c("Count");
-@@ -200,7 +202,7 @@
+@@ -197,7 +199,7 @@
  
      public int func_77976_d()
      {
@@ -54,7 +54,7 @@
      }
  
      public boolean func_77985_e()
-@@ -210,7 +212,7 @@
+@@ -207,7 +209,7 @@
  
      public boolean func_77984_f()
      {
@@ -63,7 +63,7 @@
      }
  
      public boolean func_77981_g()
-@@ -220,32 +222,27 @@
+@@ -217,32 +219,27 @@
  
      public boolean func_77951_h()
      {
@@ -101,7 +101,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -277,8 +274,8 @@
+@@ -274,8 +271,8 @@
                  }
              }
  
@@ -112,7 +112,7 @@
          }
      }
  
-@@ -337,7 +334,7 @@
+@@ -334,7 +331,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
@@ -121,25 +121,24 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
-@@ -752,6 +749,8 @@
+@@ -742,6 +739,7 @@
              }
          }
  
-+        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, arraylist, p_82840_2_);
-+
-         return arraylist;
++        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
+         return list;
      }
  
-@@ -862,7 +861,7 @@
+@@ -852,7 +850,7 @@
          }
          else
          {
--            object = this.func_77973_b().func_111205_h();
-+            object = this.func_77973_b().getAttributeModifiers(this);
+-            multimap = this.func_77973_b().func_111205_h();
++            multimap = this.func_77973_b().getAttributeModifiers(this);
          }
  
-         return (Multimap)object;
-@@ -870,6 +869,7 @@
+         return multimap;
+@@ -860,6 +858,7 @@
  
      public void func_150996_a(Item p_150996_1_)
      {

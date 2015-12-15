@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/util/MovingObjectPosition.java
 +++ ../src-work/minecraft/net/minecraft/util/MovingObjectPosition.java
-@@ -11,6 +11,12 @@
+@@ -10,6 +10,12 @@
+     public Vec3 field_72307_f;
      public Entity field_72308_g;
-     private static final String __OBFID = "CL_00000610";
  
 +    /** Used to determine what sub-segment is hit */
 +    public int subHit = -1;

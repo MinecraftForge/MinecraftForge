@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -62,7 +62,7 @@
+@@ -61,7 +61,7 @@
  
          if (field_180311_a[p_i45771_1_] != null)
          {
@@ -9,7 +9,7 @@
          }
          else
          {
-@@ -149,13 +149,52 @@
+@@ -139,7 +139,7 @@
  
      public boolean func_92089_a(ItemStack p_92089_1_)
      {
@@ -17,9 +17,10 @@
 +        return canApplyAtEnchantingTable(p_92089_1_);
      }
  
-     public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_) {}
- 
-     public void func_151367_b(EntityLivingBase p_151367_1_, Entity p_151367_2_, int p_151367_3_) {}
+     public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
+@@ -150,6 +150,45 @@
+     {
+     }
  
 +    /**
 +     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
@@ -62,4 +63,4 @@
 +
      static
      {
-         ArrayList var0 = Lists.newArrayList();
+         List<Enchantment> list = Lists.<Enchantment>newArrayList();

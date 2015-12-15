@@ -165,7 +165,7 @@ public class SimpleNetworkWrapper {
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs
      */
-    public Packet getPacketFrom(IMessage message)
+    public Packet<?> getPacketFrom(IMessage message)
     {
         return channels.get(Side.SERVER).generatePacketFrom(message);
     }

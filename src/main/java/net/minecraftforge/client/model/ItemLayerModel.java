@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
@@ -28,6 +27,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+@SuppressWarnings("deprecation")
 public class ItemLayerModel implements IRetexturableModel {
 
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
@@ -194,14 +194,14 @@ public class ItemLayerModel implements IRetexturableModel {
             }
         }
         // front
-        builder.add(buildQuad(format, transform, EnumFacing.SOUTH, tint,
+        builder.add(buildQuad(format, transform, EnumFacing.NORTH, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
             1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
             1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
         ));
         // back
-        builder.add(buildQuad(format, transform, EnumFacing.NORTH, tint,
+        builder.add(buildQuad(format, transform, EnumFacing.SOUTH, tint,
             0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
             1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),

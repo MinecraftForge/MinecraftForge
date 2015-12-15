@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Base class for Noteblock Events
  *
  */
+@SuppressWarnings("unused")
 public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;

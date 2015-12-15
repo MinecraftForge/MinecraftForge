@@ -147,6 +147,7 @@ public class LayerBreakingTest
         IFlexibleBakedModel solid;
         IFlexibleBakedModel translucent;
 
+        @SuppressWarnings("unused")
         private class DefState implements IModelState
         {
             @Override
@@ -157,13 +158,13 @@ public class LayerBreakingTest
         };
 
         @Override
-        public List getFaceQuads(EnumFacing p_177551_1_)
+        public List<BakedQuad> getFaceQuads(EnumFacing p_177551_1_)
         {
             return Collections.emptyList();
         }
 
         @Override
-        public List getGeneralQuads()
+        public List<BakedQuad> getGeneralQuads()
         {
             return Collections.emptyList();
         }

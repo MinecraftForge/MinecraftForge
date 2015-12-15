@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/model/ModelRotation.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/model/ModelRotation.java
 @@ -10,7 +10,7 @@
- import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.lwjgl.util.vector.Vector3f;
  
  @SideOnly(Side.CLIENT)
 -public enum ModelRotation
@@ -9,8 +9,8 @@
  {
      X0_Y0(0, 0),
      X0_Y90(0, 90),
-@@ -122,4 +122,9 @@
-             field_177546_q.put(Integer.valueOf(var3.field_177545_r), var3);
+@@ -116,4 +116,9 @@
+             field_177546_q.put(Integer.valueOf(modelrotation.field_177545_r), modelrotation);
          }
      }
 +

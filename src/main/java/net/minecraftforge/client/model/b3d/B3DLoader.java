@@ -75,6 +75,7 @@ import com.google.gson.JsonParser;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
+@SuppressWarnings("deprecation")
 public class B3DLoader implements ICustomModelLoader
 {
     public static final B3DLoader instance = new B3DLoader();
@@ -715,7 +716,7 @@ public class B3DLoader implements ICustomModelLoader
             this(node, state, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
-                .build(new CacheLoader<Integer, BakedWrapper>()
+                .<Integer, BakedWrapper>build(new CacheLoader<Integer, BakedWrapper>()
                 {
                     public BakedWrapper load(Integer frame) throws Exception
                     {

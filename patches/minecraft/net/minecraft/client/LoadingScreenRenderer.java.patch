@@ -11,10 +11,10 @@
                  Tessellator tessellator = Tessellator.func_178181_a();
                  WorldRenderer worldrenderer = tessellator.func_178180_c();
                  this.field_73725_b.func_110434_K().func_110577_a(Gui.field_110325_k);
-@@ -177,6 +181,12 @@
+@@ -174,6 +178,12 @@
                  GlStateManager.func_179120_a(770, 771, 1, 0);
-                 this.field_73725_b.field_71466_p.func_175063_a(this.field_73726_c, (float)((l - this.field_73725_b.field_71466_p.func_78256_a(this.field_73726_c)) / 2), (float)(i1 / 2 - 4 - 16), 16777215);
-                 this.field_73725_b.field_71466_p.func_175063_a(this.field_73727_a, (float)((l - this.field_73725_b.field_71466_p.func_78256_a(this.field_73727_a)) / 2), (float)(i1 / 2 - 4 + 8), 16777215);
+                 this.field_73725_b.field_71466_p.func_175063_a(this.field_73726_c, (float)((k - this.field_73725_b.field_71466_p.func_78256_a(this.field_73726_c)) / 2), (float)(l / 2 - 4 - 16), 16777215);
+                 this.field_73725_b.field_71466_p.func_175063_a(this.field_73727_a, (float)((k - this.field_73725_b.field_71466_p.func_78256_a(this.field_73727_a)) / 2), (float)(l / 2 - 4 + 8), 16777215);
 +                }
 +                }
 +                catch (java.io.IOException e)

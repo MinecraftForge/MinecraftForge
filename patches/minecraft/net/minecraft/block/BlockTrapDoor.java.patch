@@ -8,20 +8,20 @@
 +    public static boolean disableValidation = false;
      public static final PropertyDirection field_176284_a = PropertyDirection.func_177712_a("facing", EnumFacing.Plane.HORIZONTAL);
      public static final PropertyBool field_176283_b = PropertyBool.func_177716_a("open");
-     public static final PropertyEnum field_176285_M = PropertyEnum.func_177709_a("half", BlockTrapDoor.DoorHalf.class);
-@@ -141,9 +143,10 @@
+     public static final PropertyEnum<BlockTrapDoor.DoorHalf> field_176285_M = PropertyEnum.<BlockTrapDoor.DoorHalf>func_177709_a("half", BlockTrapDoor.DoorHalf.class);
+@@ -140,9 +142,10 @@
      {
          if (!p_176204_1_.field_72995_K)
          {
 +            EnumFacing direction = (EnumFacing)p_176204_3_.func_177229_b(field_176284_a);
-             BlockPos blockpos1 = p_176204_2_.func_177972_a(((EnumFacing)p_176204_3_.func_177229_b(field_176284_a)).func_176734_d());
+             BlockPos blockpos = p_176204_2_.func_177972_a(((EnumFacing)p_176204_3_.func_177229_b(field_176284_a)).func_176734_d());
  
--            if (!func_150119_a(p_176204_1_.func_180495_p(blockpos1).func_177230_c()))
-+            if (!(func_150119_a(p_176204_1_.func_180495_p(blockpos1).func_177230_c()) || p_176204_1_.isSideSolid(blockpos1, direction, true)))
+-            if (!func_150119_a(p_176204_1_.func_180495_p(blockpos).func_177230_c()))
++            if (!(func_150119_a(p_176204_1_.func_180495_p(blockpos).func_177230_c()) || p_176204_1_.isSideSolid(blockpos, direction, true)))
              {
                  p_176204_1_.func_175698_g(p_176204_2_);
                  this.func_176226_b(p_176204_1_, p_176204_2_, p_176204_3_, 0);
-@@ -187,7 +190,10 @@
+@@ -186,7 +189,10 @@
  
      public boolean func_176198_a(World p_176198_1_, BlockPos p_176198_2_, EnumFacing p_176198_3_)
      {
@@ -33,7 +33,7 @@
      }
  
      protected static EnumFacing func_176281_b(int p_176281_0_)
-@@ -224,6 +230,7 @@
+@@ -223,6 +229,7 @@
  
      private static boolean func_150119_a(Block p_150119_0_)
      {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -19,7 +19,7 @@
+@@ -18,7 +18,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -8,28 +8,35 @@
 +public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
  {
      public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
-     private static final String __OBFID = "CL_00000300";
-@@ -67,6 +67,7 @@
+ 
+@@ -65,6 +65,7 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
          Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
-+        if (block.canSustainPlant(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP, this)) return true;
++        if (net.minecraftforge.common.EnumPlantType.canPlantStayDefault(p_176196_1_, p_176196_2_, this, p_176196_1_.func_180495_p(p_176196_2_))) return true;
  
          if (block == this)
          {
-@@ -172,4 +173,15 @@
+@@ -164,4 +165,22 @@
      {
          return new BlockState(this, new IProperty[] {field_176355_a});
      }
 +
 +    @Override
-+    public net.minecraftforge.common.EnumPlantType getPlantType(IBlockAccess world, BlockPos pos)
++    public java.util.Set<net.minecraftforge.common.EnumPlantType> getSoilTypes(IBlockAccess world, BlockPos pos, IBlockState state)
 +    {
-+        return net.minecraftforge.common.EnumPlantType.Beach;
++        return java.util.Collections.singleton(net.minecraftforge.common.EnumPlantType.Beach);
 +    }
++
 +    @Override
-+    public IBlockState getPlant(IBlockAccess world, BlockPos pos)
++    public boolean canPlantStay(World world, BlockPos pos, IBlockState state)
 +    {
-+        return this.func_176223_P();
++        return func_176354_d(world, pos);
++    }
++
++    @Override
++    public boolean isGrowable(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state)
++    {
++        return false;
 +    }
  }

@@ -1,19 +1,12 @@
 package net.minecraftforge.fluids;
 
 import java.util.Locale;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.LoaderException;
 import net.minecraft.item.EnumRarity;
 
 /**
@@ -41,15 +34,6 @@ public class Fluid
 
     /** The unlocalized name of this fluid. */
     protected String unlocalizedName;
-
-    /**
-     *  The Icons for this fluid.
-     *  @deprecated use ResourceLocation-based ones instead.
-     */
-    @Deprecated
-    protected TextureAtlasSprite stillIcon;
-    @Deprecated
-    protected TextureAtlasSprite flowingIcon;
 
     protected final ResourceLocation still;
     protected final ResourceLocation flowing;
@@ -111,15 +95,6 @@ public class Fluid
      * The default value of null should remain for any Fluid without a Block implementation.
      */
     protected Block block = null;
-
-    /**
-     * @deprecated use the constructor with texture locations.
-     */
-    @Deprecated
-    public Fluid(String fluidName)
-    {
-        this(fluidName, null, null);
-    }
 
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing)
     {
@@ -190,6 +165,7 @@ public class Fluid
         return this.fluidName;
     }
 
+    @Deprecated // Modders should never actually use int ID, use String
     public final int getID()
     {
         return FluidRegistry.getFluidID(this.fluidName);
@@ -210,15 +186,6 @@ public class Fluid
      */
     public String getLocalizedName(FluidStack stack)
     {
-        return getLocalizedName();
-    }
-
-    /**
-     * Use the FluidStack sensitive version above
-     */
-     @Deprecated
-    public String getLocalizedName()
-    {
         String s = this.getUnlocalizedName();
         return s == null ? "" : StatCollector.translateToLocal(s);
     }
@@ -237,14 +204,6 @@ public class Fluid
     public String getUnlocalizedName()
     {
         return "fluid." + this.unlocalizedName;
-    }
-
-    /**
-     * Returns 0 for "/terrain.png". ALL FLUID TEXTURES MUST BE ON THIS SHEET.
-     */
-    public final int getSpriteNumber()
-    {
-        return 0;
     }
 
     /* Default Accessors */
@@ -293,47 +252,6 @@ public class Fluid
         return flowing;
     }
 
-    @Deprecated
-    public final Fluid setStillIcon(TextureAtlasSprite stillIcon)
-    {
-        this.stillIcon = stillIcon;
-        return this;
-    }
-
-    @Deprecated
-    public final Fluid setFlowingIcon(TextureAtlasSprite flowingIcon)
-    {
-        this.flowingIcon = flowingIcon;
-        return this;
-    }
-
-    @Deprecated
-    public final Fluid setIcons(TextureAtlasSprite stillIcon, TextureAtlasSprite flowingIcon)
-    {
-        return this.setStillIcon(stillIcon).setFlowingIcon(flowingIcon);
-    }
-
-    @Deprecated
-    public final Fluid setIcons(TextureAtlasSprite commonIcon)
-    {
-        return this.setStillIcon(commonIcon).setFlowingIcon(commonIcon);
-    }
-
-    @Deprecated
-    public TextureAtlasSprite getIcon(){ return getStillIcon(); }
-
-    @Deprecated
-    public TextureAtlasSprite getStillIcon()
-    {
-        return this.stillIcon;
-    }
-
-    @Deprecated
-    public TextureAtlasSprite getFlowingIcon()
-    {
-        return this.flowingIcon;
-    }
-
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
@@ -342,8 +260,6 @@ public class Fluid
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
-    @Deprecated
-    public TextureAtlasSprite getIcon(FluidStack stack){ return getIcon(); }
     public ResourceLocation getStill(FluidStack stack) { return getStill(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowing(); }
 
@@ -355,8 +271,6 @@ public class Fluid
     public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
     public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
     public int getColor(World world, BlockPos pos){ return getColor(); }
-    @Deprecated
-    public TextureAtlasSprite getIcon(World world, BlockPos pos){ return getIcon(); }
     public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
     public ResourceLocation getFlowing(World world, BlockPos pos) { return getFlowing(); }
 

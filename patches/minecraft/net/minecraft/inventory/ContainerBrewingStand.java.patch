@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
-@@ -158,7 +158,7 @@
+@@ -154,7 +154,7 @@
  
          public boolean func_75214_a(ItemStack p_75214_1_)
          {
@@ -9,7 +9,7 @@
          }
  
          public int func_75219_a()
-@@ -190,7 +190,7 @@
+@@ -185,7 +185,7 @@
  
              public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
              {
@@ -18,7 +18,7 @@
                  {
                      this.field_75244_a.func_71029_a(AchievementList.field_76001_A);
                  }
-@@ -200,7 +200,7 @@
+@@ -195,7 +195,7 @@
  
              public static boolean func_75243_a_(ItemStack p_75243_0_)
              {

@@ -23,10 +23,14 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         this.type = type;
         this.manager = manager;
     }
+    
+    public Class<T> getHandlerType()
+    {
+        return type;
+    }
+    
     /**
      * Fired at the client when a client connects to a server
-     * @author cpw
-     *
      */
     public static class ClientConnectedToServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
         public final boolean isLocal;

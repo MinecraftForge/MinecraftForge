@@ -7,9 +7,9 @@
 -public class BlockTallGrass extends BlockBush implements IGrowable
 +public class BlockTallGrass extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
  {
-     public static final PropertyEnum field_176497_a = PropertyEnum.func_177709_a("type", BlockTallGrass.EnumType.class);
-     private static final String __OBFID = "CL_00000321";
-@@ -44,7 +44,7 @@
+     public static final PropertyEnum<BlockTallGrass.EnumType> field_176497_a = PropertyEnum.<BlockTallGrass.EnumType>func_177709_a("type", BlockTallGrass.EnumType.class);
+ 
+@@ -43,7 +43,7 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -18,7 +18,7 @@
      }
  
      public boolean func_176200_f(World p_176200_1_, BlockPos p_176200_2_)
-@@ -74,7 +74,7 @@
+@@ -53,7 +53,7 @@
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
      {
@@ -27,7 +27,7 @@
      }
  
      public int func_149679_a(int p_149679_1_, Random p_149679_2_)
-@@ -84,13 +84,7 @@
+@@ -63,13 +63,7 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {
@@ -41,7 +41,7 @@
              super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
          }
      }
-@@ -210,4 +204,22 @@
+@@ -204,4 +198,22 @@
              }
          }
      }

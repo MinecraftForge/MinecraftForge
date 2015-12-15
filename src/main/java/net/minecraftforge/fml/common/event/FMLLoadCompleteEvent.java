@@ -14,6 +14,12 @@ package net.minecraftforge.fml.common.event;
 
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
+/**
+ * This is a mostly internal event fired to mod containers that indicates that loading is complete. Mods should not
+ * in general override or otherwise attempt to implement this event.
+ *
+ * @author cpw
+ */
 public class FMLLoadCompleteEvent extends FMLStateEvent
 {
 
