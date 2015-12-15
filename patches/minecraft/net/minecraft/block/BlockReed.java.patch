@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockReed extends Block
-+public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
++public class BlockReed extends Block implements net.minecraftforge.common.IPlant
  {
      public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
  
@@ -13,23 +13,24 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
          Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
-+        if (block.canSustainPlant(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP, this)) return true;
++        if (net.minecraftforge.common.SoilType.canPlantStayDefault(p_176196_1_, p_176196_2_, net.minecraftforge.common.SoilType.Beach)) return true;
  
          if (block == this)
          {
-@@ -164,4 +165,15 @@
+@@ -164,4 +165,16 @@
      {
          return new BlockState(this, new IProperty[] {field_176355_a});
      }
 +
 +    @Override
-+    public net.minecraftforge.common.EnumPlantType getPlantType(IBlockAccess world, BlockPos pos)
++    public boolean canPlantStay(World world, BlockPos pos, IBlockState state)
 +    {
-+        return net.minecraftforge.common.EnumPlantType.Beach;
++        return func_176354_d(world, pos);
 +    }
++
 +    @Override
-+    public IBlockState getPlant(IBlockAccess world, BlockPos pos)
++    public boolean isGrowable(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state)
 +    {
-+        return this.func_176223_P();
++        return false;
 +    }
  }
