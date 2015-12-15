@@ -40,7 +40,7 @@ public class MultiLayerModelDebug
 
                 @Override
                 public boolean isFullCube() { return false; }
-                
+
                 @Override
                 public boolean canRenderInLayer(EnumWorldBlockLayer layer)
                 {
