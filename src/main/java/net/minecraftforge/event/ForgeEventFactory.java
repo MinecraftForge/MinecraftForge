@@ -440,13 +440,13 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
     }
 
-    public static boolean onPotionAttemptBreaw(ItemStack[] stacks)
+    public static boolean onPotionAttemptBreaw(ItemStack[] stacks, World world, BlockPos position, Object brewer)
     {
         ItemStack[] tmp = new ItemStack[stacks.length];
         for (int x = 0; x < tmp.length; x++)
             tmp[x] = ItemStack.copyItemStack(stacks[x]);
 
-        PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp);
+        PotionBrewEvent.Pre event = new PotionBrewEvent.Pre(tmp, world, position, brewer);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             boolean changed = false;
@@ -456,15 +456,15 @@ public class ForgeEventFactory
                 stacks[x] = event.getItem(x);
             }
             if (changed)
-                onPotionBrewed(stacks);
+                onPotionBrewed(stacks, world, position, brewer);
             return true;
         }
         return false;
     }
 
-    public static void onPotionBrewed(ItemStack[] brewingItemStacks)
+    public static void onPotionBrewed(ItemStack[] stacks, World world, BlockPos position, Object brewer)
     {
-        MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
+        MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(stacks, world, position, brewer));
     }
     
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)

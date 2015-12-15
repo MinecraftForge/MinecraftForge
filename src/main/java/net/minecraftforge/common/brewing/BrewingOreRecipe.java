@@ -26,7 +26,7 @@ public class BrewingOreRecipe extends AbstractBrewingRecipe<List<ItemStack>> {
                 return true;
             }
 
-        }
+        }        
         return false;
     }
 }

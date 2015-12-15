@@ -1,6 +1,8 @@
 package net.minecraftforge.event.brewing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
@@ -8,11 +10,17 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 public class PotionBrewEvent extends Event
 {
-    private ItemStack[] stacks;
-
-    protected PotionBrewEvent(ItemStack[] stacks)
+    private final ItemStack[] stacks;
+    public final World world;
+    public final BlockPos position;
+    public final Object brewer;
+    
+    protected PotionBrewEvent(ItemStack[] stacks, World world, BlockPos position, Object brewer)
     {
         this.stacks = stacks;
+        this.world = world;
+        this.position = position;
+        this.brewer = brewer;
     }
 
     public ItemStack getItem(int index)
@@ -40,7 +48,7 @@ public class PotionBrewEvent extends Event
      * <br>
      * The event is fired during the TileEntityBrewingStand#brewPotions() method invocation.<br>
      * <br>
-     * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
+     * This event offers access to the ItemStack array holding all items in Brewer, as well as the world, location and object in which the brewing took place.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the vanilla brewing will take place instead of modded brewing.
@@ -54,9 +62,9 @@ public class PotionBrewEvent extends Event
     @Cancelable
     public static class Pre extends PotionBrewEvent
     {
-        public Pre(ItemStack[] stacks)
+        public Pre(ItemStack[] stacks, World world, BlockPos position, Object brewer)
         {
-            super(stacks);
+            super(stacks, world, position, brewer);
         }
     }
 
@@ -65,7 +73,7 @@ public class PotionBrewEvent extends Event
      * <br>
      * The event is fired during the TileEntityBrewingStand#brewPotions() method invocation.<br>
      * <br>
-     * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
+     * This event offers access to the ItemStack array holding all items in Brewer, as well as the world, location and object in which the brewing took place.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -73,11 +81,11 @@ public class PotionBrewEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Post extends PotionBrewedEvent
+    public static class Post extends PotionBrewEvent
     {
-        public Post(ItemStack[] stacks)
+        public Post(ItemStack[] stacks, World world, BlockPos position, Object brewer)
         {
-            super(stacks);
+            super(stacks, world, position, brewer);
         }
     }
 }
