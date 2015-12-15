@@ -131,7 +131,15 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 z += normal[v][2] * .5f;
             }
 
+            float blocklight = lightmap[v][0], skylight = lightmap[v][1];
             updateLightmap(normal[v], lightmap[v], x, y, z);
+
+            if ( dataLength[lightmapIndex] > 0 )
+            {
+                lightmap[v][0] = Math.max( lightmap[v][0], blocklight );
+                if ( dataLength[lightmapIndex] > 1 ) lightmap[v][1] = Math.max( lightmap[v][1], skylight );
+            }
+
             updateColor(normal[v], color[v], x, y, z, tint, multiplier);
             if(EntityRenderer.anaglyphEnable)
             {
