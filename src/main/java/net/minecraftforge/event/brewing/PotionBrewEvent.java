@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 public class PotionBrewEvent extends Event
 {
     private final ItemStack[] stacks;
-    private final World world;
-    private final BlockPos position;
-    private final Object brewer;
+    public final World world;
+    public final BlockPos position;
+    public final Object brewer;
     
     protected PotionBrewEvent(ItemStack[] stacks, World world, BlockPos position, Object brewer)
     {
@@ -40,32 +40,6 @@ public class PotionBrewEvent extends Event
     public int getLength()
     {
         return stacks.length;
-    }
-    
-    /**
-     * @return The world in which the brewing took place
-     */
-    public World getWorld()
-    {
-        return this.world;
-    }
-    
-    /**
-     * @return The position at which the brewing took place
-     */
-    public BlockPos getPosition()
-    {
-        return this.position;
-    }
-    
-    
-    /**
-     * This is usually a TileEntity, but also allows other types
-     * @return The object in which the brewing took place
-     */
-    public Object getBrewer()
-    {
-        return this.brewer;
     }
 
     /**
