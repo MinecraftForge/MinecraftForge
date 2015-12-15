@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1062 @@
+@@ -1010,6 +1030,1060 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -858,61 +858,59 @@
 +    }
 +
 +    /**
-+     * Determines if this block can support the passed in plant, allowing it to be planted and grow.
-+     * Some examples:
-+     *   Reeds check if its a reed, or if its sand/dirt/grass and adjacent to water
-+     *   Cacti checks if its a cacti, or if its sand
-+     *   Nether types check for soul sand
-+     *   Crops check for tilled soil
-+     *   Caves check if it's a solid surface
-+     *   Plains check if its grass or dirt
-+     *   Water check if its still water
-+     *
++     * Gets the collection of {@link net.minecraftforge.common.EnumPlantType soil types} that represent this Block.
++     * This is used by plants to determine whether they can be planted with this as their soil.
++     * 
 +     * @param world The current world
-+     * @param pos Block position in world
-+     * @param direction The direction relative to the given position the plant wants to be, typically its UP
-+     * @param plantable The plant that wants to check
-+     * @return True to allow the plant to be planted/stay.
++     * @param pos The soil's position in the world.
++     * @return A collection of soil types.
++     * @see net.minecraftforge.common.EnumPlantType Comments in EnumPlantType list the vanilla blocks in each category.
 +     */
-+    public boolean canSustainPlant(IBlockAccess world, BlockPos pos, EnumFacing direction, net.minecraftforge.common.IPlantable plantable)
++    public java.util.Collection<net.minecraftforge.common.EnumPlantType> getSoilTypes(IBlockAccess world, BlockPos pos)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
-+        IBlockState plant = plantable.getPlant(world, pos.func_177972_a(direction));
-+        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177972_a(direction));
-+
-+        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF && this == net.minecraft.init.Blocks.field_150434_aF)
++        java.util.Set<net.minecraftforge.common.EnumPlantType> set = com.google.common.collect.Sets.newHashSet();
++        
++        if (this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d)
 +        {
-+            return true;
++            set.add(net.minecraftforge.common.EnumPlantType.Plains);
++        }
++        else if (this == net.minecraft.init.Blocks.field_150354_m ||
++                 this == net.minecraft.init.Blocks.field_150405_ch ||
++                 this == net.minecraft.init.Blocks.field_150406_ce ||
++                 this == net.minecraft.init.Blocks.field_150346_d)
++        {
++            set.add(net.minecraftforge.common.EnumPlantType.Desert);
++        }
++        else if (this == net.minecraft.init.Blocks.field_150425_aM)
++        {
++            set.add(net.minecraftforge.common.EnumPlantType.Nether);
++        }
++        else if (func_149688_o() == Material.field_151586_h && (world.func_180495_p(pos).func_177229_b(BlockLiquid.field_176367_b)) == 0)
++        {
++            set.add(net.minecraftforge.common.EnumPlantType.Water);
++        }
++        else if (this == net.minecraft.init.Blocks.field_150458_ak)
++        {
++            set.add(net.minecraftforge.common.EnumPlantType.Crop);
 +        }
 +
-+        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150436_aH && this == net.minecraft.init.Blocks.field_150436_aH)
++        if ((this == net.minecraft.init.Blocks.field_150349_c ||
++             this == net.minecraft.init.Blocks.field_150346_d ||
++             this == net.minecraft.init.Blocks.field_150354_m) &&
++            (world.func_180495_p(pos.func_177974_f()).func_177230_c().func_149688_o() == Material.field_151586_h ||
++             world.func_180495_p(pos.func_177976_e()).func_177230_c().func_149688_o() == Material.field_151586_h ||
++             world.func_180495_p(pos.func_177978_c()).func_177230_c().func_149688_o() == Material.field_151586_h ||
++             world.func_180495_p(pos.func_177968_d()).func_177230_c().func_149688_o() == Material.field_151586_h))
 +        {
-+            return true;
++            set.add(net.minecraftforge.common.EnumPlantType.Beach);
 +        }
 +
-+        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_149854_a(this))
++        if (isSideSolid(world, pos, EnumFacing.UP))
 +        {
-+            return true;
++            set.add(net.minecraftforge.common.EnumPlantType.Cave);
 +        }
 +
-+        switch (plantType)
-+        {
-+            case Desert: return this == net.minecraft.init.Blocks.field_150354_m || this == net.minecraft.init.Blocks.field_150405_ch || this == net.minecraft.init.Blocks.field_150406_ce || this == net.minecraft.init.Blocks.field_150346_d;
-+            case Nether: return this == net.minecraft.init.Blocks.field_150425_aM;
-+            case Crop:   return this == net.minecraft.init.Blocks.field_150458_ak;
-+            case Cave:   return isSideSolid(world, pos, EnumFacing.UP);
-+            case Plains: return this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150458_ak;
-+            case Water:  return func_149688_o() == Material.field_151586_h && ((Integer)state.func_177229_b(BlockLiquid.field_176367_b)) == 0;
-+            case Beach:
-+                boolean isBeach = this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150354_m;
-+                boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_177230_c().func_149688_o() == Material.field_151586_h ||
-+                                    world.func_180495_p(pos.func_177976_e()).func_177230_c().func_149688_o() == Material.field_151586_h ||
-+                                    world.func_180495_p(pos.func_177978_c()).func_177230_c().func_149688_o() == Material.field_151586_h ||
-+                                    world.func_180495_p(pos.func_177968_d()).func_177230_c().func_149688_o() == Material.field_151586_h);
-+                return isBeach && hasWater;
-+        }
-+
-+        return false;
++        return set;
 +    }
 +
 +    /**

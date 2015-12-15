@@ -14,53 +14,59 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
 -        return super.func_176196_c(p_176196_1_, p_176196_2_) && this.func_149854_a(p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c());
-+        return super.func_176196_c(p_176196_1_, p_176196_2_) && p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c().canSustainPlant(p_176196_1_, p_176196_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
++        return super.func_176196_c(p_176196_1_, p_176196_2_) && this.func_180671_f(p_176196_1_, p_176196_2_, func_176223_P());
      }
  
      protected boolean func_149854_a(Block p_149854_1_)
-@@ -66,7 +66,10 @@
+@@ -66,7 +66,9 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
 -        return this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
 +        BlockPos down = p_180671_2_.func_177977_b();
 +        Block soil = p_180671_1_.func_180495_p(down).func_177230_c();
-+        if (p_180671_3_.func_177230_c() != this) return this.func_149854_a(soil); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-+        return soil.canSustainPlant(p_180671_1_, down, net.minecraft.util.EnumFacing.UP, this);
++        return net.minecraftforge.common.EnumPlantType.canPlantStayDefault(p_180671_1_, p_180671_2_, this, p_180671_3_);
      }
  
      public AxisAlignedBB func_180640_a(World p_180640_1_, BlockPos p_180640_2_, IBlockState p_180640_3_)
-@@ -89,4 +92,33 @@
+@@ -89,4 +91,40 @@
      {
          return EnumWorldBlockLayer.CUTOUT;
      }
 +
 +    @Override
-+    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    public java.util.Collection<net.minecraftforge.common.EnumPlantType> getSoilTypes(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state)
 +    {
-+        if (this == Blocks.field_150464_aj)          return net.minecraftforge.common.EnumPlantType.Crop;
-+        if (this == Blocks.field_150459_bM)        return net.minecraftforge.common.EnumPlantType.Crop;
-+        if (this == Blocks.field_150469_bN)       return net.minecraftforge.common.EnumPlantType.Crop;
-+        if (this == Blocks.field_150394_bc)     return net.minecraftforge.common.EnumPlantType.Crop;
-+        if (this == Blocks.field_150393_bb)   return net.minecraftforge.common.EnumPlantType.Crop;
-+        if (this == Blocks.field_150330_I)       return net.minecraftforge.common.EnumPlantType.Desert;
-+        if (this == Blocks.field_150392_bi)      return net.minecraftforge.common.EnumPlantType.Water;
-+        if (this == Blocks.field_150337_Q)   return net.minecraftforge.common.EnumPlantType.Cave;
-+        if (this == Blocks.field_150338_P) return net.minecraftforge.common.EnumPlantType.Cave;
-+        if (this == Blocks.field_150388_bm)    return net.minecraftforge.common.EnumPlantType.Nether;
-+        if (this == Blocks.field_150345_g)        return net.minecraftforge.common.EnumPlantType.Plains;
-+        if (this == Blocks.field_150329_H)      return net.minecraftforge.common.EnumPlantType.Plains;
-+        if (this == Blocks.field_150398_cm)   return net.minecraftforge.common.EnumPlantType.Plains;
-+        if (this == Blocks.field_150328_O)     return net.minecraftforge.common.EnumPlantType.Plains;
-+        if (this == Blocks.field_150327_N)  return net.minecraftforge.common.EnumPlantType.Plains;
-+        return net.minecraftforge.common.EnumPlantType.Plains;
++        if (this == Blocks.field_150464_aj ||
++            this == Blocks.field_150459_bM ||
++            this == Blocks.field_150469_bN ||
++            this == Blocks.field_150394_bc ||
++            this == Blocks.field_150393_bb)
++            return java.util.Collections.singleton(net.minecraftforge.common.EnumPlantType.Crop);
++        if (this == Blocks.field_150330_I)
++            return java.util.Collections.singleton(net.minecraftforge.common.EnumPlantType.Desert);
++        if (this == Blocks.field_150392_bi)
++            return java.util.Collections.singleton(net.minecraftforge.common.EnumPlantType.Water);
++        if (this == Blocks.field_150337_Q ||
++            this == Blocks.field_150338_P)
++            return java.util.Collections.singleton(net.minecraftforge.common.EnumPlantType.Cave);
++        if (this == Blocks.field_150388_bm)
++            return java.util.Collections.singleton(net.minecraftforge.common.EnumPlantType.Nether);
++        return com.google.common.collect.ImmutableSet.of(net.minecraftforge.common.EnumPlantType.Plains,
++                                                         net.minecraftforge.common.EnumPlantType.Crop);
 +    }
 +
 +    @Override
-+    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    public boolean canPlantStay(World world, BlockPos pos, IBlockState state)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
-+        if (state.func_177230_c() != this) return func_176223_P();
-+        return state;
++        return func_180671_f(world, pos, state);
++    }
++
++    @Override
++    public boolean isGrowable(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state)
++    {
++        java.util.Collection<net.minecraftforge.common.EnumPlantType> types = getSoilTypes(world, pos, state);
++        return (types.contains(net.minecraftforge.common.EnumPlantType.Crop) && types.size() == 1)
++               || this == Blocks.field_150388_bm;
 +    }
  }

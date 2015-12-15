@@ -1,29 +1,33 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCrops.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCrops.java
-@@ -81,11 +81,11 @@
+@@ -79,13 +79,14 @@
+             for (int j = -1; j <= 1; ++j)
+             {
                  float f1 = 0.0F;
-                 IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
+-                IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
++                BlockPos soilPos = blockpos.func_177982_a(i, 0, j);
++                IBlockState iblockstate = p_180672_1_.func_180495_p(soilPos);
  
 -                if (iblockstate.func_177230_c() == Blocks.field_150458_ak)
-+                if (iblockstate.func_177230_c().canSustainPlant(p_180672_1_, blockpos.func_177982_a(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)p_180672_0_))
++                if (p_180672_0_ instanceof net.minecraftforge.common.IPlantable && ((net.minecraftforge.common.IPlantable)p_180672_0_).canPlantStay(p_180672_1_, soilPos.func_177984_a(), p_180672_1_.func_180495_p(soilPos.func_177984_a())))
                  {
                      f1 = 1.0F;
  
 -                    if (((Integer)iblockstate.func_177229_b(BlockFarmland.field_176531_a)).intValue() > 0)
-+                    if (iblockstate.func_177230_c().isFertile(p_180672_1_, blockpos.func_177982_a(i, 0, j)))
++                    if (iblockstate.func_177230_c().isFertile(p_180672_1_, soilPos))
                      {
                          f1 = 3.0F;
                      }
-@@ -126,7 +126,7 @@
+@@ -126,7 +127,7 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
 -        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
-+        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c().canSustainPlant(p_180671_1_, p_180671_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
++        return (p_180671_1_.func_175699_k(p_180671_2_) >= 8 || p_180671_1_.func_175678_i(p_180671_2_)) && super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_);
      }
  
      protected Item func_149866_i()
-@@ -142,24 +142,6 @@
+@@ -142,24 +143,6 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, 0);
@@ -48,7 +52,7 @@
      }
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -202,4 +184,26 @@
+@@ -202,4 +185,26 @@
      {
          return new BlockState(this, new IProperty[] {field_176488_a});
      }
