@@ -1,7 +1,8 @@
 package net.minecraftforge.common.brewing;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe {
@@ -34,7 +35,7 @@ public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe {
     }
 
     @Override
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient, TileEntity tile)
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient, World world, BlockPos position, Object brewer)
     {
         return isInput(input) && isIngredient(ingredient) ? ItemStack.copyItemStack(output) : null;
     }

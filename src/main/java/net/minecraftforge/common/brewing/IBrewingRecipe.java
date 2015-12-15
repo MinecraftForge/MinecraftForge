@@ -1,7 +1,10 @@
 package net.minecraftforge.common.brewing;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 public interface IBrewingRecipe {
 
@@ -21,7 +24,8 @@ public interface IBrewingRecipe {
 
     /**
      * Returns the output when the passed input is brewed with the passed
-     * ingredient inside the given TileEntity. Null has to be returned if input or ingredient are invalid.
+     * ingredient at the given location and brewer (usually a TileEntity, but this may vary).
+     * Null has to be returned if input or ingredient are invalid or the given recipe is not applicable to the situation.
      */
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient, TileEntity tile);
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient, @Nullable World world, @Nullable BlockPos position, @Nullable Object brewer);
 }
