@@ -68,6 +68,24 @@ public interface IPerspectiveAwareModel extends IFlexibleBakedModel
             return builder.build();
         }
 
+        public static Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(IFlexibleBakedModel model, ImmutableMap<TransformType, TRSRTransformation> transforms, TransformType cameraTransformType)
+        {
+            TRSRTransformation tr = transforms.get(cameraTransformType);
+            Matrix4f mat = null;
+            if(tr != null && tr != TRSRTransformation.identity()) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
+            return Pair.of(model, mat);
+        }
+
+        public static Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(IFlexibleBakedModel model, IModelState state, TransformType cameraTransformType)
+        {
+            TRSRTransformation tr = state.apply(Optional.of(cameraTransformType)).or(TRSRTransformation.identity());
+            if(tr != TRSRTransformation.identity())
+            {
+                return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
+            }
+            return Pair.of(model, null);
+        }
+
         public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
         public boolean isGui3d() { return parent.isGui3d(); }
         public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
@@ -80,10 +98,7 @@ public interface IPerspectiveAwareModel extends IFlexibleBakedModel
         @Override
         public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            TRSRTransformation tr = transforms.get(cameraTransformType);
-            Matrix4f mat = null;
-            if(tr != null && tr != TRSRTransformation.identity()) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
-            return Pair.of(this, mat);
+            return handlePerspective(this, transforms, cameraTransformType);
         }
     }
 }

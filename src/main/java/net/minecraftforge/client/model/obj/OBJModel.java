@@ -1575,12 +1575,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         @Override
         public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            TRSRTransformation tr = state.apply(Optional.of(cameraTransformType)).or(TRSRTransformation.identity());
-            if(tr != TRSRTransformation.identity())
-            {
-                return Pair.of(this, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
-            }
-            return Pair.of(this, null);
+            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
         @Override

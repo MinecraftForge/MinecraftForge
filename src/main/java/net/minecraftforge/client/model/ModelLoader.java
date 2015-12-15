@@ -227,8 +227,14 @@ public class ModelLoader extends ModelBakery
             IModel model = ModelLoaderRegistry.getModel(location);
             for (ResourceLocation dep : model.getDependencies())
             {
-                getModel(dep);
-               
+                if(dep instanceof ModelResourceLocation)
+                {
+                    loadVariants(ImmutableList.of((ModelResourceLocation)dep));
+                }
+                else
+                {
+                    getModel(dep);
+                }
             }
             textures.addAll(model.getTextures());
         }
