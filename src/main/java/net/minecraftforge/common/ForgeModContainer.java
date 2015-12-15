@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
@@ -68,6 +69,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static int defaultSpawnFuzz = 20;
     public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
+    public static boolean replaceVanillaBucketModel = true;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -243,6 +245,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add("Global");
 
         config.setCategoryPropertyOrder(VERSION_CHECK_CAT, propOrder);
+
+        // Client-Side only properties
+        propOrder = new ArrayList<String>();
+        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
+                "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
+        prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
+        replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        propOrder.add(prop.getName());
+
+        config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
 
         if (config.hasChanged())
         {
