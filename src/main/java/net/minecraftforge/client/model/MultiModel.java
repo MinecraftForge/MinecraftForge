@@ -37,8 +37,8 @@ public class MultiModel implements IModel
         protected final ImmutableMap<String, IFlexibleBakedModel> parts;
 
         protected final IFlexibleBakedModel internalBase;
-        protected final ImmutableList<BakedQuad> general;
-        protected final ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> faces;
+        protected ImmutableList<BakedQuad> general;
+        protected ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> faces;
         protected final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
 
         public Baked(IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
@@ -61,29 +61,6 @@ public class MultiModel implements IModel
                 else
                     throw new IllegalArgumentException("No base model or submodel provided for MultiModel.Baked " + location + ".");
             }
-
-            // Create map of each face's quads.
-            EnumMap<EnumFacing, ImmutableList<BakedQuad>> faces = Maps.newEnumMap(EnumFacing.class);
-
-            for (EnumFacing face : EnumFacing.values())
-            {
-                ImmutableList.Builder<BakedQuad> faceQuads = ImmutableList.builder();
-                if (base != null)
-                    faceQuads.addAll(base.getFaceQuads(face));
-                for (IFlexibleBakedModel bakedPart : parts.values())
-                    faceQuads.addAll(bakedPart.getFaceQuads(face));
-                faces.put(face, faceQuads.build());
-            }
-
-            this.faces = Maps.immutableEnumMap(faces);
-
-            // Create list of general quads.
-            ImmutableList.Builder<BakedQuad> genQuads = ImmutableList.builder();
-            if (base != null)
-                genQuads.addAll(base.getGeneralQuads());
-            for (IFlexibleBakedModel bakedPart : parts.values())
-                genQuads.addAll(bakedPart.getGeneralQuads());
-            general = genQuads.build();
 
             // Only changes the base model based on perspective, may recurse for parts in the future.
             if(perspective && base instanceof IPerspectiveAwareModel)
@@ -137,12 +114,38 @@ public class MultiModel implements IModel
         @Override
         public List<BakedQuad> getFaceQuads(EnumFacing side)
         {
+            if(faces == null)
+            {
+                // Create map of each face's quads.
+                EnumMap<EnumFacing, ImmutableList<BakedQuad>> faces = Maps.newEnumMap(EnumFacing.class);
+
+                for (EnumFacing face : EnumFacing.values())
+                {
+                    ImmutableList.Builder<BakedQuad> faceQuads = ImmutableList.builder();
+                    if (base != null)
+                        faceQuads.addAll(base.getFaceQuads(face));
+                    for (IFlexibleBakedModel bakedPart : parts.values())
+                        faceQuads.addAll(bakedPart.getFaceQuads(face));
+                    faces.put(face, faceQuads.build());
+                }
+                this.faces = Maps.immutableEnumMap(faces);
+            }
             return faces.get(side);
         }
 
         @Override
         public List<BakedQuad> getGeneralQuads()
         {
+            if(general == null)
+            {
+                // Create list of general quads.
+                ImmutableList.Builder<BakedQuad> genQuads = ImmutableList.builder();
+                if (base != null)
+                    genQuads.addAll(base.getGeneralQuads());
+                for (IFlexibleBakedModel bakedPart : parts.values())
+                    genQuads.addAll(bakedPart.getGeneralQuads());
+                general = genQuads.build();
+            }
             return general;
         }
 
