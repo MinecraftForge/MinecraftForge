@@ -55,7 +55,7 @@ public class FMLPostInitializationEvent extends FMLStateEvent
      * @param className The name of the class I wish to instantiate
      * @return An optional containing the object if possible, or null if not
      */
-    public Optional<Object> buildSoftDependProxy(String modId, String className, Object... arguments)
+    public Optional<?> buildSoftDependProxy(String modId, String className, Object... arguments)
     {
         if (Loader.isModLoaded(modId))
         {

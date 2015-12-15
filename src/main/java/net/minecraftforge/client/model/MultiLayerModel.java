@@ -34,7 +34,7 @@ import com.google.gson.JsonParser;
 
 public class MultiLayerModel implements IModelCustomData
 {
-    public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.of());
+    public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.<Optional<EnumWorldBlockLayer>, ModelResourceLocation>of());
 
     private final ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models;
 
@@ -75,7 +75,7 @@ public class MultiLayerModel implements IModelCustomData
         {
             if("base".equals(key))
             {
-                builder.put(Optional.absent(), getLocation(customData.get(key)));
+                builder.put(Optional.<EnumWorldBlockLayer>absent(), getLocation(customData.get(key)));
             }
             for(EnumWorldBlockLayer layer : EnumWorldBlockLayer.values())
             {
@@ -122,7 +122,7 @@ public class MultiLayerModel implements IModelCustomData
             if(base == null)
             {
                 ModelManager manager = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager();
-                base = getModel(manager, Optional.absent());
+                base = getModel(manager, Optional.<EnumWorldBlockLayer>absent());
 
                 ImmutableMap.Builder<EnumWorldBlockLayer, IBakedModel> builder = ImmutableMap.builder();
                 for(EnumWorldBlockLayer layer : EnumWorldBlockLayer.values())
@@ -135,7 +135,7 @@ public class MultiLayerModel implements IModelCustomData
                 bakedModels = builder.build();
 
                 ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> quadBuilder = ImmutableMap.builder();
-                quadBuilder.put(Optional.absent(), buildQuads(Optional.absent()));
+                quadBuilder.put(Optional.<EnumFacing>absent(), buildQuads(Optional.<EnumFacing>absent()));
                 for(EnumFacing side: EnumFacing.values())
                 {
                     quadBuilder.put(Optional.of(side), buildQuads(Optional.of(side)));
