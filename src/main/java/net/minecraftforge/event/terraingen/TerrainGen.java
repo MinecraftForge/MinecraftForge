@@ -22,9 +22,9 @@ public abstract class TerrainGen
         return event.newNoiseGens;
     }
 
-    public static MapGenBase getModdedMapGen(MapGenBase original, InitMapGenEvent.EventType type)
+    public static MapGenBase getModdedMapGen(MapGenBase original, InitMapGenEvent.EventType type, World worldObj)
     {
-        InitMapGenEvent event = new InitMapGenEvent(type, original);
+        InitMapGenEvent event = new InitMapGenEvent(type, original, worldObj);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.newGen;
     }
