@@ -136,7 +136,8 @@ public class LightUtil
     public static void unpack(int[] from, float[] to, VertexFormat formatFrom, int v, int e)
     {
         VertexFormatElement element = formatFrom.getElement(e);
-        for(int i = 0; i < 4; i++)
+        int length = 4 <+ to.length ? 4 : to.length;
+        for(int i = 0; i < length; i++)
         {
             if(i < element.getElementCount())
             {
@@ -193,20 +194,21 @@ public class LightUtil
                 int offset = pos & 3;
                 int bits = 0;
                 int mask = (256 << (8 * (element.getType().getSize() - 1))) - 1;
+                float f = i < from.length ? from[i] : 0;
                 switch(element.getType())
                 {
                     case FLOAT:
-                        bits = Float.floatToRawIntBits(from[i]);
+                        bits = Float.floatToRawIntBits(f);
                         break;
                     case UBYTE:
                     case USHORT:
                     case UINT:
-                        bits = (int)(from[i] * mask);
+                        bits = (int)(f * mask);
                         break;
                     case BYTE:
                     case SHORT:
                     case INT:
-                        bits = (int)(from[i] * mask / 2);
+                        bits = (int)(f * mask / 2);
                         break;
                 }
                 to[index] &= ~(mask << (offset * 8));
