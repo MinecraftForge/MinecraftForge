@@ -2,6 +2,7 @@ package net.minecraftforge.common.brewing;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -10,6 +11,7 @@ import net.minecraft.world.World;
 public class BrewingRecipeRegistry {
 
     private static List<IBrewingRecipe> recipes = new ArrayList<IBrewingRecipe>();
+    private static boolean disableVanillaRecipes;
 
     static
     {
@@ -57,10 +59,20 @@ public class BrewingRecipeRegistry {
     /**
      * Adds a recipe to the registry. Due to the nature of the brewing stand
      * inputs that stack (a.k.a max stack size > 1) are not allowed.
+     * If vanilla brewing recipes have been disabled and the recipe is of said type,
+     * the element will not be inserted.
      */
     public static boolean addRecipe(IBrewingRecipe recipe)
     {
-        return recipes.add(recipe);
+        return disableVanillaRecipes && recipe instanceof VanillaBrewingRecipe ? false : recipes.add(recipe);
+    }
+    
+    /**
+     * Removes the first occure of this recipe from the recipe list
+     */
+    public static boolean removeRecipe(IBrewingRecipe recipe)
+    {
+        return recipes.remove(recipe);
     }
 
     /**
@@ -164,6 +176,29 @@ public class BrewingRecipeRegistry {
         }
         
         return false;
+    }
+    
+    /**
+     * Removes all recipes extending VanillaBrewingRecipe from the recipe list and
+     *  prevents further recipes of this type from being added
+     */
+    public static void disableVanillaBrewingRecipes()
+    {
+        disableVanillaRecipes = true;
+    	Iterator<IBrewingRecipe> iterator = recipes.iterator();
+        
+        while(iterator.hasNext())
+        {
+            if(iterator.next() instanceof VanillaBrewingRecipe) iterator.remove();            
+        }
+    }
+    
+    /**
+     * @return true if vanilla brewing recipes have been disabled, false otherwise
+     */
+    public static boolean vanillaBrewingDisabled()
+    {
+    	return disableVanillaRecipes;
     }
 
     /**
