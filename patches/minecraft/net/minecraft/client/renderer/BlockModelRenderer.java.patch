@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
+@@ -32,7 +32,7 @@
+ 
+     public boolean func_178267_a(IBlockAccess p_178267_1_, IBakedModel p_178267_2_, IBlockState p_178267_3_, BlockPos p_178267_4_, WorldRenderer p_178267_5_, boolean p_178267_6_)
+     {
+-        boolean flag = Minecraft.func_71379_u() && p_178267_3_.func_177230_c().func_149750_m() == 0 && p_178267_2_.func_177555_b();
++        boolean flag = Minecraft.func_71379_u() && p_178267_3_.func_177230_c().func_149750_m() == 0 && p_178267_2_.func_177555_b() && !p_178267_5_.isNoColor();
+ 
+         try
+         {
 @@ -533,8 +533,19 @@
      @SideOnly(Side.CLIENT)
      public static enum EnumNeighborInfo
