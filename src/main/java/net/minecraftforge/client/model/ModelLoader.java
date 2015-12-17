@@ -225,23 +225,28 @@ public class ModelLoader extends ModelBakery
         try
         {
             IModel model = ModelLoaderRegistry.getModel(location);
-            for (ResourceLocation dep : model.getDependencies())
-            {
-                if(dep instanceof ModelResourceLocation)
-                {
-                    loadVariants(ImmutableList.of((ModelResourceLocation)dep));
-                }
-                else
-                {
-                    getModel(dep);
-                }
-            }
-            textures.addAll(model.getTextures());
+            resolveDependencies(model);
         }
         finally
         {
             loadingModels.remove(location);
         }
+    }
+
+    private void resolveDependencies(IModel model) throws IOException
+    {
+        for (ResourceLocation dep : model.getDependencies())
+        {
+            if(dep instanceof ModelResourceLocation)
+            {
+                loadVariants(ImmutableList.of((ModelResourceLocation)dep));
+            }
+            else
+            {
+                getModel(dep);
+            }
+        }
+        textures.addAll(model.getTextures());
     }
 
     private class VanillaModelWrapper implements IRetexturableModel
@@ -563,6 +568,14 @@ public class ModelLoader extends ModelBakery
                 if (v instanceof ISmartVariant)
                 {
                     model = ((ISmartVariant)v).process(model, ModelLoader.this);
+                    try
+                    {
+                        resolveDependencies(model);
+                    }
+                    catch (IOException e)
+                    {
+                        FMLLog.getLogger().error("Exception resolving indirect dependencies for model" + loc, e);
+                    }
                     textures.addAll(model.getTextures()); // Kick this, just in case.
                 }
 
