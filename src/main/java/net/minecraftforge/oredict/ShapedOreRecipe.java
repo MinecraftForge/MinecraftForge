@@ -157,6 +157,12 @@ public class ShapedOreRecipe implements IRecipe
 
     @Override
     public int getRecipeSize(){ return input.length; }
+    
+    @Override
+    public int getWidth(){ return width; }
+    
+    @Override
+    public int getHeight(){ return height; }
 
     @Override
     public ItemStack getRecipeOutput(){ return output; }
