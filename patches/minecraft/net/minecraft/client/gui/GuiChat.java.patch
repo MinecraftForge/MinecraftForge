@@ -29,3 +29,11 @@
              for (String s : p_146406_1_)
              {
                  if (s.length() > 0)
+@@ -291,6 +298,7 @@
+ 
+             String s1 = this.field_146415_a.func_146179_b().substring(this.field_146415_a.func_146197_a(-1, this.field_146415_a.func_146198_h(), false));
+             String s2 = StringUtils.getCommonPrefix(p_146406_1_);
++            s2 = net.minecraft.util.EnumChatFormatting.func_110646_a(s2);
+ 
+             if (s2.length() > 0 && !s1.equalsIgnoreCase(s2))
+             {
