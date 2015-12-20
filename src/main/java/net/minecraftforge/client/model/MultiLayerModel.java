@@ -106,6 +106,7 @@ public class MultiLayerModel implements IModelCustomData
         private final ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models;
         private final VertexFormat format;
         private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;;
+        private IBakedModel missing;
         private IBakedModel base;
         private ImmutableMap<EnumWorldBlockLayer, IBakedModel> bakedModels;
         private ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
@@ -122,6 +123,7 @@ public class MultiLayerModel implements IModelCustomData
             if(base == null)
             {
                 ModelManager manager = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager();
+                missing = manager.getMissingModel();
                 base = getModel(manager, Optional.<EnumWorldBlockLayer>absent());
 
                 ImmutableMap.Builder<EnumWorldBlockLayer, IBakedModel> builder = ImmutableMap.builder();
@@ -223,7 +225,12 @@ public class MultiLayerModel implements IModelCustomData
         public IBakedModel handleBlockState(IBlockState state)
         {
             compute();
-            return bakedModels.get(MinecraftForgeClient.getRenderLayer());
+            EnumWorldBlockLayer layer = MinecraftForgeClient.getRenderLayer();
+            if(!bakedModels.containsKey(layer))
+            {
+                return missing;
+            }
+            return bakedModels.get(layer);
         }
 
         @Override
