@@ -17,23 +17,106 @@
          {
              if (!this.field_70170_p.field_72995_K && (this.field_70963_i == null || this.field_70963_i.size() > 0))
              {
-@@ -522,6 +523,7 @@
+@@ -241,6 +242,8 @@
+         p_70014_1_.func_74768_a("Career", this.field_175563_bv);
+         p_70014_1_.func_74768_a("CareerLevel", this.field_175562_bw);
+         p_70014_1_.func_74757_a("Willing", this.field_175565_bs);
++        String professionName = net.minecraftforge.fml.common.registry.VillagerRegistry.getProfession(this.func_70946_n()).getName();
++        p_70014_1_.func_74778_a("ProfessionName", professionName);
+ 
+         if (this.field_70963_i != null)
+         {
+@@ -265,13 +268,24 @@
+     public void func_70037_a(NBTTagCompound p_70037_1_)
+     {
+         super.func_70037_a(p_70037_1_);
+-        this.func_70938_b(p_70037_1_.func_74762_e("Profession"));
++        int professionId = p_70037_1_.func_74762_e("Profession");
++        String professionName = p_70037_1_.func_74779_i("ProfessionName");
++        net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession profession = net.minecraftforge.fml.common.registry.VillagerRegistry.getProfession(professionName);
++        String oldProfession = profession.getName();
++        if(oldProfession.equals(professionName) && professionId != profession.getId())
++            professionId = profession.getId();
++        else if(!professionName.isEmpty() && !oldProfession.equals(professionName))
++            professionId = 0;
++        this.func_70938_b(professionId);
+         this.field_70956_bz = p_70037_1_.func_74762_e("Riches");
+         this.field_175563_bv = p_70037_1_.func_74762_e("Career");
+         this.field_175562_bw = p_70037_1_.func_74762_e("CareerLevel");
+         this.field_175565_bs = p_70037_1_.func_74767_n("Willing");
+ 
+-        if (p_70037_1_.func_150297_b("Offers", 10))
++        String newProfessionName = net.minecraftforge.fml.common.registry.VillagerRegistry.getProfession(func_70946_n()).getName();
++        if(professionId != func_70946_n()||!(professionName.equals(newProfessionName)||professionName.isEmpty()))
++            this.func_70938_b(func_70946_n());
++        else if (p_70037_1_.func_150297_b("Offers", 10))
+         {
+             NBTTagCompound nbttagcompound = p_70037_1_.func_74775_l("Offers");
+             this.field_70963_i = new MerchantRecipeList(nbttagcompound);
+@@ -315,12 +329,15 @@
+ 
+     public void func_70938_b(int p_70938_1_)
+     {
++        this.field_175562_bw = 0;
++        this.field_70963_i = null;
++        this.field_175563_bv = 0;
+         this.field_70180_af.func_75692_b(16, Integer.valueOf(p_70938_1_));
+     }
+ 
+     public int func_70946_n()
+     {
+-        return Math.max(this.field_70180_af.func_75679_c(16) % 5, 0);
++        return this.field_70180_af.func_75679_c(16);
+     }
+ 
+     public boolean func_70941_o()
+@@ -522,7 +539,6 @@
  
      private void func_175554_cu()
      {
-+        //TODO: Hook into VillagerRegistry
-         EntityVillager.ITradeList[][][] aentityvillager$itradelist = field_175561_bA[this.func_70946_n()];
+-        EntityVillager.ITradeList[][][] aentityvillager$itradelist = field_175561_bA[this.func_70946_n()];
  
          if (this.field_175563_bv != 0 && this.field_175562_bw != 0)
-@@ -635,6 +637,7 @@
+         {
+@@ -530,7 +546,7 @@
+         }
+         else
+         {
+-            this.field_175563_bv = this.field_70146_Z.nextInt(aentityvillager$itradelist.length) + 1;
++            this.field_175563_bv = this.field_70146_Z.nextInt(net.minecraftforge.fml.common.registry.VillagerRegistry.getNumberOfCareers(this.func_70946_n())) + 1;
+             this.field_175562_bw = 1;
+         }
+ 
+@@ -539,19 +555,9 @@
+             this.field_70963_i = new MerchantRecipeList();
+         }
+ 
+-        int i = this.field_175563_bv - 1;
+-        int j = this.field_175562_bw - 1;
+-        EntityVillager.ITradeList[][] aentityvillager$itradelist1 = aentityvillager$itradelist[i];
+ 
+-        if (j >= 0 && j < aentityvillager$itradelist1.length)
+-        {
+-            EntityVillager.ITradeList[] aentityvillager$itradelist2 = aentityvillager$itradelist1[j];
+ 
+-            for (EntityVillager.ITradeList entityvillager$itradelist : aentityvillager$itradelist2)
+-            {
+-                entityvillager$itradelist.func_179401_a(this.field_70963_i, this.field_70146_Z);
+-            }
+-        }
++        net.minecraftforge.fml.common.registry.VillagerRegistry.populateBuyingList(this.field_70963_i, this, this.field_175562_bw, this.field_70146_Z);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -635,6 +641,7 @@
                      }
              }
  
-+            //TODO: Hook into VillagerRegistry to get name
++            s1 = net.minecraftforge.fml.common.registry.VillagerRegistry.getVillagerDisplay(this);
              if (s1 != null)
              {
                  ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("entity.Villager." + s1, new Object[0]);
-@@ -697,7 +700,7 @@
+@@ -697,7 +704,7 @@
      public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, IEntityLivingData p_180482_2_)
      {
          p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);
@@ -42,3 +125,21 @@
          this.func_175552_ct();
          return p_180482_2_;
      }
+@@ -1012,4 +1019,17 @@
+                 return ((Integer)this.func_76341_a()).intValue() >= ((Integer)this.func_76340_b()).intValue() ? ((Integer)this.func_76341_a()).intValue() : ((Integer)this.func_76341_a()).intValue() + p_179412_1_.nextInt(((Integer)this.func_76340_b()).intValue() - ((Integer)this.func_76341_a()).intValue() + 1);
+             }
+         }
++
++    public void setCareer(int careerId)
++    {
++        this.field_175562_bw = 1;
++        this.field_70963_i = new MerchantRecipeList();
++        net.minecraftforge.fml.common.registry.VillagerRegistry.populateBuyingList(this.field_70963_i, this, this.field_175562_bw, this.field_70146_Z);
++        this.field_175563_bv = careerId;
++    }
++
++    public int getCareer()
++    {
++        return this.field_175563_bv;
++    }
+ }
