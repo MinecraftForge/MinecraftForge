@@ -53,6 +53,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class VillagerRegistry
 {
+    public static final ResourceLocation PROFESSIONS = new ResourceLocation("minecraft:villagerprofessions");
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
     private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();
@@ -206,7 +207,7 @@ public class VillagerRegistry
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(new ResourceLocation("minecraft:villagerprofessions"), VillagerProfession.class, null, 1024, 0, true, null);
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 1024, 0, true, null);
 
 
     private void init()

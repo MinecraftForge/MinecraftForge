@@ -23,11 +23,13 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 
 /**
@@ -138,7 +140,7 @@ public class PersistentRegistryManager
 
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        FMLLog.info("Injecting existing block and item data into this {} instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
+        FMLLog.info("Injecting existing block and item data into this %s instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();
 
@@ -208,11 +210,40 @@ public class PersistentRegistryManager
         }
     }
 
-    private static <T> void loadRegistry(ResourceLocation registryName, PersistentRegistry from, PersistentRegistry to, Class<T> regType)
+    private static <T> void loadRegistry(final ResourceLocation registryName, final PersistentRegistry from, final PersistentRegistry to, Class<T> regType)
     {
         FMLControlledNamespacedRegistry<T> fromRegistry = from.getRegistry(registryName, regType);
-        FMLControlledNamespacedRegistry<T> toRegistry = to.getOrShallowCopyRegistry(registryName, regType, fromRegistry);
-        toRegistry.set(fromRegistry);
+        if (fromRegistry == null)
+        {
+            FMLControlledNamespacedRegistry<T> toRegistry = to.getRegistry(registryName, regType);
+            if (toRegistry == null)
+            {
+                throw new EnhancedRuntimeException("Could not find registry to load: " + registryName){
+                    private static final long serialVersionUID = 1L;
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("Looking For: " + registryName);
+                        stream.println("Found From:");
+                        for (ResourceLocation name : from.registries.keySet())
+                            stream.println("  " + name);
+                        stream.println("Found To:");
+                        for (ResourceLocation name : to.registries.keySet())
+                            stream.println("  " + name);
+                    }
+                };
+            }
+            // We found it in to, so lets trust to's state...
+            // This happens when connecting to a server that doesn't have this registry.
+            // Such as a 1.8.0 Forge server with 1.8.8+ Forge.
+            // We must however, re-fire the callbacks as some internal data may be corrupted {potions}
+            toRegistry.noitifyCallbacks();
+        }
+        else
+        {
+            FMLControlledNamespacedRegistry<T> toRegistry = to.getOrShallowCopyRegistry(registryName, regType, fromRegistry);
+            toRegistry.set(fromRegistry);
+        }
     }
 
     private static <T> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, Class<T> regType)
@@ -225,10 +256,16 @@ public class PersistentRegistryManager
     private static <T> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
     {
         ResourceLocation registryName = snapEntry.getKey();
+
+        //Translate old names
+        if ("fml:blocks".equals(registryName.toString())) registryName = PersistentRegistryManager.BLOCKS;
+        else if ("fml:items".equals(registryName.toString())) registryName = PersistentRegistryManager.ITEMS;
+        else if ("fmlgr:villagerprofessions".equals(registryName.toString())) registryName = VillagerRegistry.PROFESSIONS;
+
         FMLControlledNamespacedRegistry<T> currentRegistry = PersistentRegistry.ACTIVE.getRegistry(registryName, regType);
         if (currentRegistry == null)
         {
-            FMLLog.severe("An unknown persistent registry type {} has been encountered. This Forge instance cannot understand it.", registryName);
+            FMLLog.severe("An unknown persistent registry type \"%s\" has been encountered. This Forge instance cannot understand it.", registryName);
             StartupQuery.abort();
         }
         FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, currentRegistry);

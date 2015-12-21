@@ -267,7 +267,7 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 ResourceLocation entryLoc;
                 if ("fml:blocks".equals(key)) entryLoc = PersistentRegistryManager.BLOCKS;
                 else if ("fml:items".equals(key)) entryLoc = PersistentRegistryManager.ITEMS;
-                else if ("fmlgr:villagerprofessions".equals(key)) entryLoc = new ResourceLocation("minecraft:villagerprofessions");
+                else if ("fmlgr:villagerprofessions".equals(key)) entryLoc = VillagerRegistry.PROFESSIONS;
                 else entryLoc = new ResourceLocation(key);
                 snapshot.entries.put(entryLoc, entry);
 

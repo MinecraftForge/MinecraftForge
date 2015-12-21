@@ -713,4 +713,15 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     {
         blockedIds.add(id);
     }
+
+    public void noitifyCallbacks()
+    {
+        if (addCallback == null)
+            return;
+
+        for (I i : this.underlyingIntegerMap)
+        {
+            addCallback.onAdd(i, this.underlyingIntegerMap.get(i));
+        }
+    }
 }
