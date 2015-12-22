@@ -27,7 +27,13 @@
                      tileentity.func_70296_d();
                      p_180614_3_.func_175689_h(p_180614_4_);
  
-@@ -95,7 +95,7 @@
+@@ -90,12 +90,12 @@
+             p_180614_4_ = p_180614_4_.func_177972_a(p_180614_5_);
+             double d0 = 0.0D;
+ 
+-            if (p_180614_5_ == EnumFacing.UP && iblockstate instanceof BlockFence)
++            if (p_180614_5_ == EnumFacing.UP && iblockstate.func_177230_c() instanceof BlockFence) //Forge: Fix Vanilla bug comparing state instead of block
+             {
                  d0 = 0.5D;
              }
  
