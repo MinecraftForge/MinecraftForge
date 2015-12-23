@@ -254,7 +254,7 @@ public class GameData
             if (item instanceof ItemBlock)
             {
                 ItemBlock itemBlock = (ItemBlock)item;
-                BLOCK_TO_ITEM.put(itemBlock.getBlock(), item);
+                BLOCK_TO_ITEM.put(itemBlock.getBlock().delegate.get(), item);
             }
         }
     }
