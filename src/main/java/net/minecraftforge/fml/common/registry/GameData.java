@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
@@ -110,7 +111,7 @@ public class GameData
 
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true, BlockStateCapture.INSTANCE);
-    private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true);
+    private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true, ItemBlockCapture.INSTANCE);
     private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MAX_POTION_ID, MIN_POTION_ID, false, PotionArrayCapture.INSTANCE);
 
     int registerItem(Item item, String name) // from GameRegistry
@@ -239,6 +240,21 @@ public class GameData
             for (IBlockState state : block.getBlockState().getValidStates())
             {
                 GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
+            }
+        }
+    }
+
+    private static class ItemBlockCapture implements FMLControlledNamespacedRegistry.AddCallback<Item>
+    {
+        static final ItemBlockCapture INSTANCE = new ItemBlockCapture();
+
+        @Override
+        public void onAdd(Item item, int blockId)
+        {
+            if (item instanceof ItemBlock)
+            {
+                ItemBlock itemBlock = (ItemBlock)item;
+                BLOCK_TO_ITEM.put(itemBlock.getBlock(), item);
             }
         }
     }
