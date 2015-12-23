@@ -565,7 +565,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         }
     }
 
-    void activateSubstitution(ResourceLocation nameToReplace)
+    I activateSubstitution(ResourceLocation nameToReplace)
     {
         if (getPersistentSubstitutions().containsKey(nameToReplace))
         {
@@ -573,7 +573,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             I sub = getPersistentSubstitutions().get(nameToReplace);
             getExistingDelegate(original).changeReference(sub);
             activeSubstitutions.put(nameToReplace, sub);
+            return original;
         }
+        return null;
     }
 
     void addSubstitutionAlias(String modId, ResourceLocation nameToReplace, I replacement) throws ExistingSubstitutionException

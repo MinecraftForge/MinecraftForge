@@ -14,6 +14,8 @@ package net.minecraftforge.fml.common.registry;
 
 import java.util.Map;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
@@ -190,16 +192,26 @@ public class GameData
         if (type == GameRegistry.Type.BLOCK)
         {
             iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
-            iBlockRegistry.activateSubstitution(nameToSubstitute);
+            Block orig = iBlockRegistry.activateSubstitution(nameToSubstitute);
+            if (BLOCK_TO_ITEM.containsKey(orig))
+            {
+                Item i = BLOCK_TO_ITEM.get(orig);
+                BLOCK_TO_ITEM.forcePut((Block)toReplace,i);
+            }
         }
         else if (type == GameRegistry.Type.ITEM)
         {
             iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
-            iItemRegistry.activateSubstitution(nameToSubstitute);
+            Item orig = iItemRegistry.activateSubstitution(nameToSubstitute);
+            if (BLOCK_TO_ITEM.containsValue(orig))
+            {
+                Block b = BLOCK_TO_ITEM.inverse().get(orig);
+                BLOCK_TO_ITEM.forcePut(b, (Item)toReplace);
+            }
         }
     }
 
-    private static Map<Block, Item> BLOCK_TO_ITEM = Maps.newHashMap();
+    private static BiMap<Block, Item> BLOCK_TO_ITEM = HashBiMap.create();
 
     //Internal: DO NOT USE, will change without warning.
     public static Map getBlockItemMap()
@@ -254,7 +266,7 @@ public class GameData
             if (item instanceof ItemBlock)
             {
                 ItemBlock itemBlock = (ItemBlock)item;
-                BLOCK_TO_ITEM.put(itemBlock.getBlock().delegate.get(), item);
+                BLOCK_TO_ITEM.forcePut(itemBlock.getBlock().delegate.get(), item);
             }
         }
     }
