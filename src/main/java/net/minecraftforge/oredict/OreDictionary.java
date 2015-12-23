@@ -69,6 +69,8 @@ public class OreDictionary
             registerOre("treeSapling", new ItemStack(Blocks.sapling, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Blocks.leaves, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Blocks.leaves2, 1, WILDCARD_VALUE));
+            registerOre("vine",        Blocks.vine);
+            registerOre("blockCactus", Blocks.cactus);
             registerOre("oreGold",     Blocks.gold_ore);
             registerOre("oreIron",     Blocks.iron_ore);
             registerOre("oreLapis",    Blocks.lapis_ore);
@@ -88,6 +90,7 @@ public class OreDictionary
             registerOre("blockGlassColorless", Blocks.glass);
             registerOre("blockGlass",    Blocks.glass);
             registerOre("blockGlass",    new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
+            registerOre("blockSlime",    Blocks.slime_block);
             //blockGlass{Color} is added below with dyes
             registerOre("paneGlassColorless", Blocks.glass_pane);
             registerOre("paneGlass",     Blocks.glass_pane);
@@ -109,10 +112,15 @@ public class OreDictionary
             registerOre("cropWheat",   Items.wheat);
             registerOre("cropPotato",  Items.potato);
             registerOre("cropCarrot",  Items.carrot);
+            registerOre("dirt",        Blocks.dirt);
+            registerOre("grass",       Blocks.grass);
             registerOre("stone",       Blocks.stone);
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
             registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
+            registerOre("gravel",      Blocks.gravel);
+            registerOre("obsidian",    Blocks.obsidian);
+            registerOre("netherrack",  Blocks.netherrack);
             registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
             registerOre("record",      Items.record_13);
             registerOre("record",      Items.record_cat);
@@ -132,6 +140,7 @@ public class OreDictionary
             registerOre("chestWood",   Blocks.chest);
             registerOre("chestEnder",  Blocks.ender_chest);
             registerOre("chestTrapped", Blocks.trapped_chest);
+            registerOre("workbench",   Blocks.crafting_table);
         }
 
         // Build our list of items to replace with ore tags
