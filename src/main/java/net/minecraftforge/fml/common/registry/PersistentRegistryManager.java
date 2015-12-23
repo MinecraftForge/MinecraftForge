@@ -19,7 +19,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
@@ -167,6 +171,18 @@ public class PersistentRegistryManager
             return missedMappings;
         }
 
+        // If we're loading from disk, we can actually substitute air in the block map for anything that is otherwise "missing". This keeps the reference in the map, in case
+        // the block comes back later
+        if (injectFrozenData)
+        {
+            for (Map.Entry<ResourceLocation, Integer> missingBlock: missing.get(BLOCKS).entrySet())
+            {
+                ResourceLocation rl = missingBlock.getKey();
+                Integer id = missingBlock.getValue();
+                FMLLog.log(Level.DEBUG, "Replacing id %s named as %s with air block. If the mod becomes available again later, it can reload here", id, rl);
+                PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).add(id, rl, new BlockDummyAir());
+            }
+        }
         // If we're loading up the world from disk, we want to add in the new data that might have been provisioned by mods
         if (injectFrozenData)
         {
@@ -201,7 +217,11 @@ public class PersistentRegistryManager
         // Return an empty list, because we're good
         return ImmutableList.of();
     }
-
+    private static class BlockDummyAir extends BlockAir {
+        private BlockDummyAir() {
+            setUnlocalizedName("air");
+        }
+    }
     private static void forAllRegistries(PersistentRegistry registrySet, Function<Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>>, Void> operation)
     {
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : registrySet.registries.entrySet())

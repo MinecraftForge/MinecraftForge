@@ -138,11 +138,13 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             {
                 throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
             }
+/*
             // entry is blocked, thus should be empty
             if (blockedIds.contains(id))
             {
                 throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", registryName, obj, id, name));
             }
+*/
         }
 
     }
