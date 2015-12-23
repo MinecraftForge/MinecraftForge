@@ -269,6 +269,8 @@ public class PersistentRegistryManager
             StartupQuery.abort();
         }
         FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, currentRegistry);
+        // Copy the persistent substitution set from the currently active one into the new registry
+        newRegistry.getPersistentSubstitutions().putAll(currentRegistry.getPersistentSubstitutions());
         GameDataSnapshot.Entry snapshotEntry = snapEntry.getValue();
         Set<ResourceLocation> substitutions = snapshotEntry.substitutions;
         if (injectFrozenData)

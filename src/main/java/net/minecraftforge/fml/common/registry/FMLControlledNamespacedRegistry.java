@@ -160,6 +160,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         this.minId = otherRegistry.minId;
         this.aliases.clear();
         this.aliases.putAll(otherRegistry.aliases);
+        this.persistentSubstitutions.clear();
+        this.persistentSubstitutions.putAll(otherRegistry.getPersistentSubstitutions());
         this.activeSubstitutions.clear();
 
         underlyingIntegerMap = new ObjectIntIdentityMap<I>();
@@ -599,7 +601,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         getPersistentSubstitutions().put(nameToReplace, replacement);
     }
 
-    private BiMap<ResourceLocation, I> getPersistentSubstitutions()
+    BiMap<ResourceLocation, I> getPersistentSubstitutions()
     {
         return persistentSubstitutions;
     }

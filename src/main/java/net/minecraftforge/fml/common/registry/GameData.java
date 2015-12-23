@@ -185,7 +185,7 @@ public class GameData
 
     void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
     {
-        ResourceLocation nameToSubstitute = new ResourceLocation(Loader.instance().activeModContainer().getModId(), name);
+        ResourceLocation nameToSubstitute = new ResourceLocation(name);
         if (type == GameRegistry.Type.BLOCK)
         {
             iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
