@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +32,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 
 /**
@@ -257,7 +255,7 @@ public class PersistentRegistryManager
             // This happens when connecting to a server that doesn't have this registry.
             // Such as a 1.8.0 Forge server with 1.8.8+ Forge.
             // We must however, re-fire the callbacks as some internal data may be corrupted {potions}
-            toRegistry.noitifyCallbacks();
+            toRegistry.notifyCallbacks();
         }
         else
         {

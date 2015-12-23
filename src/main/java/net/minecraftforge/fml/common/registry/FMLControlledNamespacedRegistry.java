@@ -718,7 +718,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         blockedIds.add(id);
     }
 
-    public void noitifyCallbacks()
+    public void notifyCallbacks()
     {
         if (addCallback == null)
             return;
@@ -727,5 +727,16 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             addCallback.onAdd(i, this.underlyingIntegerMap.get(i));
         }
+    }
+
+    @Override
+    public ResourceLocation getNameForObject(I p_177774_1_)
+    {
+        ResourceLocation rl = super.getNameForObject(p_177774_1_);
+        if (rl == null)
+        {
+            rl = activeSubstitutions.inverse().get(p_177774_1_);
+        }
+        return rl;
     }
 }
