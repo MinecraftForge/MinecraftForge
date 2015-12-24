@@ -89,7 +89,6 @@ public class ForgeBlockStatesLoaderDebug {
         Item customWallItem = Item.getItemFromBlock(blockCustomWall);
         ModelLoader.setCustomModelResourceLocation(customWallItem, 0, new ModelResourceLocation(ASSETS + "cobblestone_wall", "inventory"));
         ModelLoader.setCustomModelResourceLocation(customWallItem, 1, new ModelResourceLocation(ASSETS + "mossy_cobblestone_wall", "inventory"));
-        ModelBakery.addVariantName(customWallItem, ASSETS + "cobblestone_wall", ASSETS + "mossy_cobblestone_wall");
     }
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to

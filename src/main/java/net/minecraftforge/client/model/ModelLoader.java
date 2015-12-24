@@ -188,7 +188,7 @@ public class ModelLoader extends ModelBakery
             for(String s : (List<String>)getVariantNames(item))
             {
                 ResourceLocation file = getItemLocation(s);
-                ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+                ModelResourceLocation memory = getInventoryVariant(s);
                 IModel model = null;
                 try
                 {
@@ -216,7 +216,7 @@ public class ModelLoader extends ModelBakery
             // empty bucket
             for(String s : getVariantNames(Items.bucket))
             {
-                ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+                ModelResourceLocation memory = getInventoryVariant(s);
                 try
                 {
                     IModel model = getModel(new ResourceLocation("forge", "item/bucket"));
@@ -247,7 +247,7 @@ public class ModelLoader extends ModelBakery
                 // milk bucket if no milk fluid is present
                 for(String s : getVariantNames(Items.milk_bucket))
                 {
-                    ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+                    ModelResourceLocation memory = getInventoryVariant(s);
                     try
                     {
                         IModel model = getModel(new ResourceLocation("forge", "item/bucket_milk"));
@@ -267,10 +267,19 @@ public class ModelLoader extends ModelBakery
     {
         for(String s : getVariantNames(item))
         {
-            ModelResourceLocation memory = new ModelResourceLocation(s, "inventory");
+            ModelResourceLocation memory = getInventoryVariant(s);
             IModel model = stateModels.get(ModelDynBucket.LOCATION);
             stateModels.put(memory, model);
         }
+    }
+
+    public static ModelResourceLocation getInventoryVariant(String s)
+    {
+        if(s.contains("#"))
+        {
+            return new ModelResourceLocation(s);
+        }
+        return new ModelResourceLocation(s, "inventory");
     }
 
     public IModel getModel(ResourceLocation location) throws IOException
@@ -855,6 +864,9 @@ public class ModelLoader extends ModelBakery
 
     private static final Map<RegistryDelegate<Block>, IStateMapper> customStateMappers = Maps.newHashMap();
 
+    /**
+     * Adds a custom IBlockState -> model variant logic.
+     */
     public static void setCustomStateMapper(Block block, IStateMapper mapper)
     {
         customStateMappers.put(block.delegate, mapper);
@@ -871,11 +883,20 @@ public class ModelLoader extends ModelBakery
     private static final Map<RegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
     private static final Map<Pair<RegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
 
+    /**
+     * Adds a simple mapping from Item + metadata to the model variant.
+     * Registers the variant with the ModelBakery too.
+     */
     public static void setCustomModelResourceLocation(Item item, int metadata, ModelResourceLocation model)
     {
         customModels.put(Pair.of(item.delegate, metadata), model);
+        ModelBakery.registerItemVariants(item, model);
     }
 
+    /**
+     * Adds generic ItemStack -> model variant logic.
+     * You still need to manually call ModelBakery.registerItemVariants with all values that meshDefinition can return.
+     */
     public static void setCustomMeshDefinition(Item item, ItemMeshDefinition meshDefinition)
     {
         customMeshDefinitions.put(item.delegate, meshDefinition);

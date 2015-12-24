@@ -55,17 +55,18 @@ public class DynBucketTest
                     return ModelDynBucket.LOCATION;
                 }
             });
-            ModelBakery.addVariantName(dynBucket, "forge:dynbucket");
+            ModelBakery.registerItemVariants(dynBucket, new ResourceLocation("forge", "dynbucket"));
 
+            final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation("forge", "dynbottle"), "inventory");
             ModelLoader.setCustomMeshDefinition(dynBottle, new ItemMeshDefinition()
             {
                 @Override
                 public ModelResourceLocation getModelLocation(ItemStack stack)
                 {
-                    return new ModelResourceLocation(new ResourceLocation("forge", "dynbottle"), "inventory");
+                    return bottle;
                 }
             });
-            ModelBakery.addVariantName(dynBottle, "forge:dynbottle");
+            ModelBakery.registerItemVariants(dynBottle, bottle);
         }
     }
 

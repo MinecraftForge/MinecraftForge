@@ -60,9 +60,10 @@ public class ModelFluidDebug
             Item fluid = Item.getItemFromBlock(TestFluidBlock.instance);
             Item gas = Item.getItemFromBlock(TestGasBlock.instance);
             Item milk = Item.getItemFromBlock(MilkFluidBlock.instance);
-            ModelBakery.addVariantName(fluid);
-            ModelBakery.addVariantName(gas);
-            ModelBakery.addVariantName(milk);
+            // no need to pass the locations here, since they'll be loaded by the block model logic.
+            ModelBakery.registerItemVariants(fluid);
+            ModelBakery.registerItemVariants(gas);
+            ModelBakery.registerItemVariants(milk);
             ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
             {
                 public ModelResourceLocation getModelLocation(ItemStack stack)
