@@ -16,7 +16,7 @@
 -                Block block = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
 +                BlockPos down = p_180709_3_.func_177977_b();
 +                Block block = p_180709_1_.func_180495_p(down).func_177230_c();
-+                boolean isSoil = block.canSustainPlant(p_180709_1_, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_150345_g);
++                boolean isSoil = ((net.minecraft.block.BlockSapling)Blocks.field_150345_g).canPlantStay(p_180709_1_, p_180709_3_, Blocks.field_150345_g.func_176223_P());
  
 -                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d) && p_180709_3_.func_177956_o() < 256 - i - 1)
 +                if (isSoil && p_180709_3_.func_177956_o() < 256 - i - 1)

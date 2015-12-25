@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockCactus extends Block
-+public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
++public class BlockCactus extends Block implements net.minecraftforge.common.IPlant
  {
      public static final PropertyInteger field_176587_a = PropertyInteger.func_177719_a("age", 0, 15);
  
@@ -14,7 +14,7 @@
  
          Block block = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b()).func_177230_c();
 -        return block == Blocks.field_150434_aF || block == Blocks.field_150354_m;
-+        return block.canSustainPlant(p_176586_1_, p_176586_2_.func_177977_b(), EnumFacing.UP, this);
++        return block == Blocks.field_150434_aF || net.minecraftforge.common.SoilType.canPlantStayDefault(p_176586_1_, p_176586_2_, net.minecraftforge.common.SoilType.Desert);
      }
  
      public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
@@ -24,14 +24,14 @@
      }
 +
 +    @Override
-+    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    public boolean canPlantStay(World world, BlockPos pos, IBlockState state)
 +    {
-+        return net.minecraftforge.common.EnumPlantType.Desert;
++        return func_176586_d(world, pos);
 +    }
 +
 +    @Override
-+    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    public boolean isGrowable(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state)
 +    {
-+        return func_176223_P();
++        return false;
 +    }
  }
