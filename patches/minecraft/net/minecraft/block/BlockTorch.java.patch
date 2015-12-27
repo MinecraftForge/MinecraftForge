@@ -32,7 +32,7 @@
              boolean flag = false;
  
 -            if (enumfacing$axis.func_176722_c() && !p_176592_1_.func_175677_d(p_176592_2_.func_177972_a(enumfacing1), true))
-+            if (enumfacing$axis.func_176722_c() && !p_176592_1_.isSideSolid(p_176592_2_.func_177972_a(enumfacing1), enumfacing1, true))
++            if (enumfacing$axis.func_176722_c() && !p_176592_1_.isSideSolid(p_176592_2_.func_177972_a(enumfacing1), enumfacing, true))
              {
                  flag = true;
              }

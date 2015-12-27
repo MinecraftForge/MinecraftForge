@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1062 @@
+@@ -1010,6 +1030,1065 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -240,10 +240,10 @@
 +
 +    /**
 +     * Check if the face of a block should block rendering.
-+     * 
++     *
 +     * Faces which are fully opaque should return true, faces with transparency
 +     * or faces which do not span the full size of the block should return false.
-+     * 
++     *
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param side The side to check
@@ -268,7 +268,9 @@
 +
 +        if (this instanceof BlockSlab)
 +        {
-+            return func_149730_j() || (state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.TOP && side == EnumFacing.UP);
++            return func_149730_j()
++                  || (state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.TOP    && side == EnumFacing.UP  )
++                  || (state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.BOTTOM && side == EnumFacing.DOWN);
 +        }
 +        else if (this instanceof BlockFarmland)
 +        {
@@ -280,6 +282,7 @@
 +            BlockStairs.EnumShape shape = (BlockStairs.EnumShape)state.func_177229_b(BlockStairs.field_176310_M);
 +            EnumFacing facing = (EnumFacing)state.func_177229_b(BlockStairs.field_176309_a);
 +            if (side == EnumFacing.UP) return flipped;
++            if (side == EnumFacing.DOWN) return !flipped;
 +            if (facing == side) return true;
 +            if (flipped)
 +            {
@@ -808,7 +811,7 @@
 +
 +    /**
 +     * Allows a block to override the standard EntityLivingBase.updateFallState
-+     * particles, this is a server side method that spawns particles with 
++     * particles, this is a server side method that spawns particles with
 +     * WorldServer.spawnParticle
 +     *
 +     * @param world The current Server world
