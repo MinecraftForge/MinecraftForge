@@ -213,6 +213,14 @@ public class ModelLoader extends ModelBakery
         // replace vanilla bucket models if desired. done afterwards for performance reasons
         if(ForgeModContainer.replaceVanillaBucketModel)
         {
+            // ensure the bucket model is loaded
+            if(!stateModels.containsKey(ModelDynBucket.LOCATION))
+            {
+                // load forges blockstate json for it
+                ModelResourceLocation memory = getInventoryVariant("forge:dynbucket");
+                registerVariant(getModelBlockDefinition(memory), memory);
+            }
+
             // empty bucket
             for(String s : getVariantNames(Items.bucket))
             {
@@ -269,7 +277,10 @@ public class ModelLoader extends ModelBakery
         {
             ModelResourceLocation memory = getInventoryVariant(s);
             IModel model = stateModels.get(ModelDynBucket.LOCATION);
-            stateModels.put(memory, model);
+            if(model != null)
+            {
+                stateModels.put(memory, model);
+            }
         }
     }
 
@@ -900,6 +911,18 @@ public class ModelLoader extends ModelBakery
     public static void setCustomMeshDefinition(Item item, ItemMeshDefinition meshDefinition)
     {
         customMeshDefinitions.put(item.delegate, meshDefinition);
+    }
+
+    public static void setBucketModelDefinition(Item item) {
+        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
+        {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack)
+            {
+                return ModelDynBucket.LOCATION;
+            }
+        });
+        ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 
     public static void onRegisterItems(ItemModelMesher mesher)

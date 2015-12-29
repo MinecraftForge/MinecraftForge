@@ -47,15 +47,7 @@ public class DynBucketTest
         @Override
         void setupModels()
         {
-            ModelLoader.setCustomMeshDefinition(dynBucket, new ItemMeshDefinition()
-            {
-                @Override
-                public ModelResourceLocation getModelLocation(ItemStack stack)
-                {
-                    return ModelDynBucket.LOCATION;
-                }
-            });
-            ModelBakery.registerItemVariants(dynBucket, new ResourceLocation("forge", "dynbucket"));
+            ModelLoader.setBucketModelDefinition(dynBucket);
 
             final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation("forge", "dynbottle"), "inventory");
             ModelLoader.setCustomMeshDefinition(dynBottle, new ItemMeshDefinition()
