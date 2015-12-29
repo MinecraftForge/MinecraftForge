@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/S38PacketPlayerListItem.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/S38PacketPlayerListItem.java
+@@ -215,7 +215,7 @@
+         REMOVE_PLAYER;
+     }
+ 
+-    public class AddPlayerData
++    public static class AddPlayerData
+     {
+         private final int field_179966_b;
+         private final WorldSettings.GameType field_179967_c;
