@@ -1,22 +1,24 @@
 package net.minecraftforge.common;
 
-import java.util.*;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.init.Items;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.feature.WorldGenDungeons;
-import net.minecraft.world.gen.structure.*;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.DesertPyramid;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.JunglePyramid;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.ChestCorridor;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.Library;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.RoomCrossing;
-import net.minecraft.world.gen.structure.StructureVillagePieces.House2;
-import net.minecraft.world.gen.structure.StructureNetherBridgePieces.Corridor;
+import net.minecraft.world.gen.structure.StructureMineshaftPieces;
+import net.minecraft.world.gen.structure.StructureNetherBridgePieces;
+import net.minecraft.world.gen.structure.StructureOceanMonument;
+import net.minecraft.world.gen.structure.StructureStrongholdPieces;
+import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ChestGenHooks
@@ -64,9 +66,9 @@ public class ChestGenHooks
     }
 
     // INTERNAL DO NO USE
-    public static void init(String category, List items, int min, int max)
+    public static void init(String category, List<WeightedRandomChestContent> items, int min, int max)
     {
-        chestInfo.put(category, new ChestGenHooks(category, (List<WeightedRandomChestContent>)items, min, max));
+        chestInfo.put(category, new ChestGenHooks(category, items, min, max));
     }
 
     static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)
@@ -134,6 +136,7 @@ public class ChestGenHooks
     public static void removeItem(String category, ItemStack item){ getInfo(category).removeItem(item); }
     public static ItemStack getOneItem(String category, Random rand){ return getInfo(category).getOneItem(rand); }
 
+    @SuppressWarnings("unused")
     private String category;
     private int countMin = 0;
     private int countMax = 0;
@@ -231,7 +234,7 @@ public class ChestGenHooks
     public ItemStack getOneItem(Random rand)
     {
         WeightedRandomChestContent item = (WeightedRandomChestContent)WeightedRandom.getRandomItem(rand, getItems(rand));
-        ItemStack[] stacks = ChestGenHooks.generateStacks(rand, item.theItemId, item.theMinimumChanceToGenerateItem, item.theMaximumChanceToGenerateItem);
+        ItemStack[] stacks = ChestGenHooks.generateStacks(rand, item.theItemId, item.minStackSize, item.maxStackSize);
         return (stacks.length > 0 ? stacks[0] : null);
     }
 

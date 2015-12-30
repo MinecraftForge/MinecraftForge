@@ -5,10 +5,7 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.common.ForgeVersion.buildVersion;
-import static net.minecraftforge.common.ForgeVersion.majorVersion;
-import static net.minecraftforge.common.ForgeVersion.minorVersion;
-import static net.minecraftforge.common.ForgeVersion.revisionVersion;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
@@ -41,7 +38,6 @@ import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
@@ -73,6 +69,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static int defaultSpawnFuzz = 20;
     public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
+    public static boolean replaceVanillaBucketModel = true;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -89,14 +86,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         ModMetadata meta = getMetadata();
         meta.modId       = "Forge";
         meta.name        = "Minecraft Forge";
-        meta.version     = String.format("%d.%d.%d.%d", majorVersion, minorVersion, revisionVersion, buildVersion);
+        meta.version     = ForgeVersion.getVersion();
         meta.credits     = "Made possible with help from many people";
-        meta.authorList  = Arrays.asList("LexManos", "Cpw");
+        meta.authorList  = Arrays.asList("LexManos", "cpw", "fry");
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
                            "to work cooperatively together. It allows many mods to be created without " +
                            "them editing the main Minecraft code.";
-        meta.url         = "http://MinecraftForge.net";
-        meta.updateUrl   = "http://MinecraftForge.net/forum/index.php/topic,5.0.html";
+        meta.url         = "http://minecraftforge.net";
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
         try {
@@ -250,6 +246,16 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         config.setCategoryPropertyOrder(VERSION_CHECK_CAT, propOrder);
 
+        // Client-Side only properties
+        propOrder = new ArrayList<String>();
+        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
+                "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
+        prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
+        replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        propOrder.add(prop.getName());
+
+        config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
+
         if (config.hasChanged())
         {
             config.save();
@@ -306,7 +312,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
 
         if (!ForgeModContainer.disableVersionCheck)
         {

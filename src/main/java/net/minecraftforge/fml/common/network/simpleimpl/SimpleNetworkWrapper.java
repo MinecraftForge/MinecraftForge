@@ -2,14 +2,20 @@ package net.minecraftforge.fml.common.network.simpleimpl;
 
 import io.netty.channel.ChannelFutureListener;
 
+import java.lang.reflect.Method;
 import java.util.EnumMap;
 
 import com.google.common.base.Throwables;
 
+import org.apache.logging.log4j.Level;
+
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelPipeline;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
@@ -85,13 +91,40 @@ import net.minecraftforge.fml.relauncher.Side;
 public class SimpleNetworkWrapper {
     private EnumMap<Side, FMLEmbeddedChannel> channels;
     private SimpleIndexedCodec packetCodec;
-
+    private static Class<?> defaultChannelPipeline;
+    private static Method generateName;
+    {
+        try
+        {
+            defaultChannelPipeline = Class.forName("io.netty.channel.DefaultChannelPipeline");
+            generateName = defaultChannelPipeline.getDeclaredMethod("generateName", ChannelHandler.class);
+            generateName.setAccessible(true);
+        }
+        catch (Exception e)
+        {
+            // How is this possible?
+            FMLLog.log(Level.FATAL, e, "What? Netty isn't installed, what magic is this?");
+            throw Throwables.propagate(e);
+        }
+    }
     public SimpleNetworkWrapper(String channelName)
     {
         packetCodec = new SimpleIndexedCodec();
         channels = NetworkRegistry.INSTANCE.newChannel(channelName, packetCodec);
     }
 
+    private String generateName(ChannelPipeline pipeline, ChannelHandler handler)
+    {
+        try
+        {
+            return (String)generateName.invoke(defaultChannelPipeline.cast(pipeline), handler);
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.FATAL, e, "It appears we somehow have a not-standard pipeline. Huh");
+            throw Throwables.propagate(e);
+        }
+    }
     /**
      * Register a message and it's associated handler. The message will have the supplied discriminator byte. The message handler will
      * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
@@ -144,13 +177,13 @@ public class SimpleNetworkWrapper {
     private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
-        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
+        channel.pipeline().addAfter(type, generateName(channel.pipeline(), handler), handler);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
-        channel.pipeline().addAfter(type, messageHandler.getClass().getName(), handler);
+        channel.pipeline().addAfter(type, generateName(channel.pipeline(), handler), handler);
     }
 
     private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Side side, Class<REQ> requestType)
@@ -165,7 +198,7 @@ public class SimpleNetworkWrapper {
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs
      */
-    public Packet getPacketFrom(IMessage message)
+    public Packet<?> getPacketFrom(IMessage message)
     {
         return channels.get(Side.SERVER).generatePacketFrom(message);
     }

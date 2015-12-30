@@ -17,6 +17,14 @@ import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
+/**
+ * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
+ * This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or
+ * other activities.
+ *
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ * @author cpw
+ */
 public class FMLServerStartingEvent extends FMLStateEvent
 {
 

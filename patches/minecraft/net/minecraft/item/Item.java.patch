@@ -1,19 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -47,8 +47,8 @@
+@@ -48,8 +48,8 @@
  
  public class Item
  {
--    public static final RegistryNamespaced field_150901_e = new RegistryNamespaced();
--    private static final Map field_179220_a = Maps.newHashMap();
-+    public static final RegistryNamespaced field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
-+    private static final Map field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
+-    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced();
+-    private static final Map<Block, Item> field_179220_a = Maps.<Block, Item>newHashMap();
++    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
++    private static final Map<Block, Item> field_179220_a = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
      protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
      private CreativeTabs field_77701_a;
      protected static Random field_77697_d = new Random();
 @@ -61,6 +61,9 @@
+     private String field_77785_bY;
      private String field_77774_bZ;
-     private static final String __OBFID = "CL_00000041";
  
 +    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate =
 +            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_150901_e).getDelegate(this, Item.class);
@@ -37,7 +37,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -308,7 +313,7 @@
+@@ -316,7 +321,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -46,7 +46,7 @@
      }
  
      protected MovingObjectPosition func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -326,6 +331,10 @@
+@@ -334,6 +339,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -57,21 +57,21 @@
          Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -363,11 +372,579 @@
+@@ -371,11 +380,591 @@
          return false;
      }
  
 +    @Deprecated // Use ItemStack sensitive version below.
-     public Multimap func_111205_h()
+     public Multimap<String, AttributeModifier> func_111205_h()
      {
-         return HashMultimap.create();
+         return HashMultimap.<String, AttributeModifier>create();
      }
  
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * ItemStack sensitive version of getItemAttributeModifiers
 +     */
-+    public Multimap getAttributeModifiers(ItemStack stack)
++    public Multimap<String, AttributeModifier> getAttributeModifiers(ItemStack stack)
 +    {
 +        return this.func_111205_h();
 +    }
@@ -88,6 +88,19 @@
 +    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
 +    {
 +        return true;
++    }
++
++    /**
++     * Allow the item one last chance to modify its name used for the 
++     * tool highlight useful for adding something extra that can't be removed
++     * by a user in the displayed name, such as a mode of operation.
++     * 
++     * @param item the ItemStack for the item.
++     * @param the name that will be displayed unless it is changed in this method.
++     */
++    public String getHighlightTip( ItemStack item, String displayName )
++    {
++        return displayName;	
 +    }
 +
 +    /**
@@ -633,13 +646,12 @@
 +    }
 +    /* ======================================== FORGE END   =====================================*/
 +
-+
      public static void func_150900_l()
      {
-         func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function()
-@@ -933,6 +1510,10 @@
- 
-         private static final String __OBFID = "CL_00000042";
+         func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
+@@ -855,6 +1444,10 @@
+         private final float field_78011_i;
+         private final int field_78008_j;
  
 +        //Added by forge for custom Tool materials.
 +        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
@@ -648,7 +660,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -967,9 +1548,36 @@
+@@ -889,9 +1482,36 @@
              return this.field_78008_j;
          }
  

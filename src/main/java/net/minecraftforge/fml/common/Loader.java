@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -38,10 +38,7 @@ import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import net.minecraftforge.fml.common.functions.ArtifactVersionNameFunction;
 import net.minecraftforge.fml.common.functions.ModIdFunction;
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.ItemStackHolderInjector;
-import net.minecraftforge.fml.common.registry.ObjectHolderRegistry;
+import net.minecraftforge.fml.common.registry.*;
 import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.common.toposort.ModSorter;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
@@ -112,9 +109,10 @@ import com.google.gson.JsonParser;
  * @author cpw
  *
  */
+@SuppressWarnings("unused")
 public class Loader
 {
-    public static final String MC_VERSION = "1.8";
+    public static final String MC_VERSION = "1.8.8";
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**
@@ -641,7 +639,7 @@ public class Loader
         return "8.0.99.99";
     }
 
-    public ClassLoader getModClassLoader()
+    public ModClassLoader getModClassLoader()
     {
         return modClassLoader;
     }
@@ -737,7 +735,7 @@ public class Loader
         progressBar.step("Finishing up");
         modController.transition(LoaderState.AVAILABLE, false);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
-        GameData.freezeData();
+        PersistentRegistryManager.freezeData();
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
         progressBar.step("Completing Minecraft initialization");
     }
@@ -833,12 +831,12 @@ public class Loader
 
     public String getMCPVersionString()
     {
-        return String.format("MCP v%s", mcpversion);
+        return String.format("MCP %s", mcpversion);
     }
 
     public void serverStopped()
     {
-        GameData.revertToFrozen();
+        PersistentRegistryManager.revertToFrozen();
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);
@@ -913,8 +911,7 @@ public class Loader
      * @param gameData GameData instance where the new map's config is to be loaded into.
      * @return List with the mapping results.
      */
-    public List<String> fireMissingMappingEvent(LinkedHashMap<String, Integer> missingBlocks, LinkedHashMap<String, Integer> missingItems,
-                boolean isLocalWorld, GameData gameData, Map<String, Integer[]> remapBlocks, Map<String, Integer[]> remapItems)
+    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
     {
         if (missingBlocks.isEmpty() && missingItems.isEmpty()) // nothing to do
         {
@@ -924,15 +921,15 @@ public class Loader
         FMLLog.fine("There are %d mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size());
         ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
 
-        for (Map.Entry<String, Integer> mapping : missingBlocks.entrySet())
+        for (Map.Entry<ResourceLocation, Integer> mapping : missingBlocks.entrySet())
         {
             MissingMapping m = new MissingMapping(GameRegistry.Type.BLOCK, mapping.getKey(), mapping.getValue());
-            missingMappings.put(m.name.substring(0, m.name.indexOf(':')), m);
+            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
         }
-        for (Map.Entry<String, Integer> mapping : missingItems.entrySet())
+        for (Map.Entry<ResourceLocation, Integer> mapping : missingItems.entrySet())
         {
             MissingMapping m = new MissingMapping(GameRegistry.Type.ITEM, mapping.getKey(), mapping.getValue());
-            missingMappings.put(m.name.substring(0, m.name.indexOf(':')), m);
+            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
         }
 
         FMLMissingMappingsEvent missingEvent = new FMLMissingMappingsEvent(missingMappings);
@@ -974,12 +971,12 @@ public class Loader
             }
         }
 
-        return GameData.processIdRematches(missingMappings.values(), isLocalWorld, gameData, remapBlocks, remapItems);
+        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, remapBlocks, remapItems);
     }
 
-    public void fireRemapEvent(Map<String, Integer[]> remapBlocks, Map<String, Integer[]> remapItems)
+    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
     {
-	modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems));
+	    modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
     }
 
     public void runtimeDisableMod(String modId)

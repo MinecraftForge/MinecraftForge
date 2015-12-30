@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Block.EnumOffsetType;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
@@ -36,16 +37,15 @@ public class BlockInfo
     {
         shx = shy = shz = 0;
         long rand = 0;
-        // FIXME
-        switch(block.getOffsetType())
+        if(block.getOffsetType() != EnumOffsetType.NONE)
         {
-            case XYZ:
-                rand = MathHelper.getPositionRandom(blockPos);
+            rand = MathHelper.getPositionRandom(blockPos);
+            shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
+            shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
+            if(block.getOffsetType() == EnumOffsetType.XYZ)
+            {
                 shy = ((float)((rand >> 20) & 0xF) / 0xF - 1) * .2f;
-            case XZ:
-                shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
-                shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
-            default:
+            }
         }
     }
 

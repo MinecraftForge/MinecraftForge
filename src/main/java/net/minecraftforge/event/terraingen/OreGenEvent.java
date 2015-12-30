@@ -87,7 +87,7 @@ public class OreGenEvent extends Event
     @HasResult
     public static class GenerateMinable extends OreGenEvent
     {
-        public static enum EventType { COAL, DIAMOND, DIRT, GOLD, GRAVEL, IRON, LAPIS, REDSTONE, QUARTZ, DIORITE, GRANITE, ANDESITE, CUSTOM }
+        public static enum EventType { COAL, DIAMOND, DIRT, GOLD, GRAVEL, IRON, LAPIS, REDSTONE, QUARTZ, DIORITE, GRANITE, ANDESITE, EMERALD, SILVERFISH, CUSTOM }
 
         public final EventType type;
         public final WorldGenerator generator;

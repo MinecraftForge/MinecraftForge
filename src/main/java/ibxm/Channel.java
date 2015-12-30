@@ -10,7 +10,8 @@ public class Channel {
 	private int[] global_volume, current_note;
 	private boolean linear_periods, fast_volume_slides, key_on, silent;
 	private int sample_idx, sample_frac, step, left_gain, right_gain;
-    private int volume, panning, fine_tune, period, porta_period, key_add;
+    @SuppressWarnings("unused") //Forge
+	private int volume, panning, fine_tune, period, porta_period, key_add;
 	private int tremolo_speed, tremolo_depth, tremolo_tick, tremolo_wave, tremolo_add;
 	private int vibrato_speed, vibrato_depth, vibrato_tick, vibrato_wave, vibrato_add;
 	private int volume_slide_param, portamento_param, retrig_param;

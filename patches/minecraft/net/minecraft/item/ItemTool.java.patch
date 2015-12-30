@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemTool.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemTool.java
-@@ -29,6 +29,18 @@
+@@ -28,6 +28,18 @@
          this.field_77864_a = p_i45333_2_.func_77998_b();
          this.field_77865_bY = p_i45333_1_ + p_i45333_2_.func_78000_c();
          this.func_77637_a(CreativeTabs.field_78040_i);
@@ -19,7 +19,7 @@
      }
  
      public float func_150893_a(ItemStack p_150893_1_, Block p_150893_2_)
-@@ -75,7 +87,9 @@
+@@ -74,7 +86,9 @@
  
      public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {
@@ -29,8 +29,8 @@
 +        return super.func_82789_a(p_82789_1_, p_82789_2_);
      }
  
-     public Multimap func_111205_h()
-@@ -84,4 +98,38 @@
+     public Multimap<String, AttributeModifier> func_111205_h()
+@@ -83,4 +97,38 @@
          multimap.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Tool modifier", (double)this.field_77865_bY, 0));
          return multimap;
      }

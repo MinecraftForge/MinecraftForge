@@ -104,6 +104,7 @@ public class ForgeGuiFactory implements IModGuiFactory
         {
             List<IConfigElement> list = new ArrayList<IConfigElement>();
             list.add(new DummyCategoryElement("forgeCfg", "forge.configgui.ctgy.forgeGeneralConfig", GeneralEntry.class));
+            list.add(new DummyCategoryElement("forgeClientCfg", "forge.configgui.ctgy.forgeClientConfig", ClientEntry.class));
             list.add(new DummyCategoryElement("forgeChunkLoadingCfg", "forge.configgui.ctgy.forgeChunkLoadingConfig", ChunkLoaderEntry.class));
             list.add(new DummyCategoryElement("forgeVersionCheckCfg", "forge.configgui.ctgy.VersionCheckConfig", VersionCheckEntry.class));
             return list;
@@ -130,6 +131,30 @@ public class ForgeGuiFactory implements IModGuiFactory
                         this.owningScreen.modID, Configuration.CATEGORY_GENERAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
                         this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
                         GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+            }
+        }
+
+        /**
+         * This custom list entry provides the Client only Settings entry on the Minecraft Forge Configuration screen.
+         * It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
+         */
+        public static class ClientEntry extends CategoryEntry
+        {
+            public ClientEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop)
+            {
+                super(owningScreen, owningEntryList, prop);
+            }
+
+            @Override
+            protected GuiScreen buildChildScreen()
+            {
+                // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
+                // GuiConfig object's entryList will also be refreshed to reflect the changes.
+                return new GuiConfig(this.owningScreen,
+                                     (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_CLIENT))).getChildElements(),
+                                     this.owningScreen.modID, Configuration.CATEGORY_CLIENT, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                                     this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
+                                     GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
             }
         }
 

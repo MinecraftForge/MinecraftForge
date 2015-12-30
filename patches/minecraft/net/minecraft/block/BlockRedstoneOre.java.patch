@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
-@@ -92,12 +92,16 @@
+@@ -91,12 +91,16 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
@@ -12,8 +12,8 @@
 +    {
 +        if (this.func_180660_a(world.func_180495_p(pos), RANDOM, fortune) != Item.func_150898_a(this))
          {
--            int j = 1 + p_180653_1_.field_73012_v.nextInt(5);
--            this.func_180637_b(p_180653_1_, p_180653_2_, j);
+-            int i = 1 + p_180653_1_.field_73012_v.nextInt(5);
+-            this.func_180637_b(p_180653_1_, p_180653_2_, i);
 +            return 1 + RANDOM.nextInt(5);
          }
 +        return 0;

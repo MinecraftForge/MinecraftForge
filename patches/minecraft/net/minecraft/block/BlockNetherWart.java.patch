@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -36,7 +36,7 @@
+@@ -38,7 +38,7 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -9,7 +9,7 @@
      }
  
      public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
-@@ -52,9 +52,11 @@
+@@ -54,9 +54,11 @@
          super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
      }
  
@@ -20,9 +20,9 @@
 +        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
 +        if (false && !p_180653_1_.field_72995_K)
          {
-             int j = 1;
+             int i = 1;
  
-@@ -105,4 +107,24 @@
+@@ -107,4 +109,24 @@
      {
          return new BlockState(this, new IProperty[] {field_176486_a});
      }

@@ -1,11 +1,7 @@
 package net.minecraftforge.fml.common.asm.transformers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,7 +13,6 @@ import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.SystemUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
 import com.google.common.collect.ImmutableSet;
@@ -27,7 +22,7 @@ public class BlamingTransformer implements IClassTransformer
     private static final Map<String, String> classMap = new HashMap<String, String>();
     private static final Set<String> naughtyMods = new HashSet<String>();
     private static final Set<String> naughtyClasses = new TreeSet<String>();
-    private static final Set<String> orphanNaughtyClasses = new HashSet();
+    private static final Set<String> orphanNaughtyClasses = new HashSet<String>();
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)

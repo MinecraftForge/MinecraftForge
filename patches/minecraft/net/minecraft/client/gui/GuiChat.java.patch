@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
-@@ -217,13 +217,14 @@
+@@ -215,13 +215,14 @@
              this.field_146297_k.field_71456_v.func_146158_b().func_146234_a(new ChatComponentText(stringbuilder.toString()), 1);
          }
  
@@ -16,17 +16,24 @@
              BlockPos blockpos = null;
  
              if (this.field_146297_k.field_71476_x != null && this.field_146297_k.field_71476_x.field_72313_a == MovingObjectPosition.MovingObjectType.BLOCK)
-@@ -285,6 +286,13 @@
-             String[] astring1 = p_146406_1_;
-             int i = p_146406_1_.length;
+@@ -281,6 +282,12 @@
+             this.field_146417_i = false;
+             this.field_146412_t.clear();
  
 +            String[] complete = net.minecraftforge.client.ClientCommandHandler.instance.latestAutoComplete;
 +            if (complete != null)
 +            {
-+                astring1 = com.google.common.collect.ObjectArrays.concat(complete, astring1, String.class);
-+                i = astring1.length;
++                p_146406_1_ = com.google.common.collect.ObjectArrays.concat(complete, p_146406_1_, String.class);
 +            }
 +
-             for (int j = 0; j < i; ++j)
+             for (String s : p_146406_1_)
              {
-                 String s = astring1[j];
+                 if (s.length() > 0)
+@@ -291,6 +298,7 @@
+ 
+             String s1 = this.field_146415_a.func_146179_b().substring(this.field_146415_a.func_146197_a(-1, this.field_146415_a.func_146198_h(), false));
+             String s2 = StringUtils.getCommonPrefix(p_146406_1_);
++            s2 = net.minecraft.util.EnumChatFormatting.func_110646_a(s2);
+ 
+             if (s2.length() > 0 && !s1.equalsIgnoreCase(s2))
+             {

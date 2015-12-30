@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartHopper.java
-@@ -57,6 +57,7 @@
+@@ -54,6 +54,7 @@
  
      public boolean func_130002_c(EntityPlayer p_130002_1_)
      {

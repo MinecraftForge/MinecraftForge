@@ -172,7 +172,6 @@ public class EntityRegistry
         EntityRegistry.registerEgg(entityClass, eggPrimary, eggSecondary);
     }
 
-    @SuppressWarnings("unchecked")
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
@@ -235,6 +234,15 @@ public class EntityRegistry
         return instance().entityEggsUn;
     }
 
+    /**
+     * Registers in the minecraft Entity ID list. This is generally not a good idea and shouldn't be used.
+     * Simply use {@link #registerModEntity(Class, String, int, Object, int, int, boolean, int, int)} instead.
+     *
+     * @param entityClass Class of the entity being registered
+     * @param entityName Name for the entity being registered
+     * @param id A globally unique ID for the entity
+     */
+    @Deprecated
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
         if (EntityList.classToStringMapping.containsKey(entityClass))
@@ -254,6 +262,37 @@ public class EntityRegistry
         }
         id = instance().validateAndClaimId(id);
         EntityList.addMapping(entityClass, entityName, id);
+    }
+
+    /**
+     * Registers in the minecraft Entity ID list. This is generally not a good idea, and shouldn't be used.
+     * Simply use {@link #registerModEntity(Class, String, int, Object, int, int, boolean)} instead.
+     * @param entityClass The class of the entity being registered
+     * @param entityName The name of the entity being registered
+     * @param id The globally unique ID of the entity
+     * @param backgroundEggColour An RGB colour value for the spawn egg background colour
+     * @param foregroundEggColour An RGB colour value for the spawn egg foreground colour
+     */
+    @Deprecated
+    public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
+    {
+        if (EntityList.classToStringMapping.containsKey(entityClass))
+        {
+            ModContainer activeModContainer = Loader.instance().activeModContainer();
+            String modId = "unknown";
+            if (activeModContainer != null)
+            {
+                modId = activeModContainer.getModId();
+            }
+            else
+            {
+                FMLLog.severe("There is a rogue mod failing to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
+            }
+            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", modId, entityClass);
+            return;
+        }
+        instance().validateAndClaimId(id);
+        EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
     }
 
     private int validateAndClaimId(int id)
@@ -287,32 +326,19 @@ public class EntityRegistry
         return realId;
     }
 
-    public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
-    {
-        if (EntityList.classToStringMapping.containsKey(entityClass))
-        {
-            ModContainer activeModContainer = Loader.instance().activeModContainer();
-            String modId = "unknown";
-            if (activeModContainer != null)
-            {
-                modId = activeModContainer.getModId();
-            }
-            else
-            {
-                FMLLog.severe("There is a rogue mod failing to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
-            }
-            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", modId, entityClass);
-            return;
-        }
-        instance().validateAndClaimId(id);
-        EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
-    }
-
+    /**
+     * Add a spawn entry for the supplied entity in the supplied {@link BiomeGenBase} list
+     * @param entityClass Entity class added
+     * @param weightedProb Probability
+     * @param min Min spawn count
+     * @param max Max spawn count
+     * @param typeOfCreature Type of spawn
+     * @param biomes List of biomes
+     */
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         for (BiomeGenBase biome : biomes)
         {
-            @SuppressWarnings("unchecked")
             List<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature);
 
             for (SpawnListEntry entry : spawns)
@@ -331,22 +357,36 @@ public class EntityRegistry
         }
     }
 
+    /**
+     * Add a spawn entry for the supplied entity in the supplied {@link BiomeGenBase} list
+     * @param entityName The entity name
+     * @param weightedProb Probability
+     * @param min Min spawn count
+     * @param max Max spawn count
+     * @param typeOfCreature type of spawn
+     * @param biomes List of biomes
+     */
     @SuppressWarnings("unchecked")
-    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
-        Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.stringToClassMapping.get(entityName);
+        Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
-            addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, spawnList, biomes);
+            addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, typeOfCreature, biomes);
         }
     }
 
+    /**
+     * Remove the spawn entry for the supplied entity
+     * @param entityClass The entity class
+     * @param typeOfCreature type of spawn
+     * @param biomes Biomes to remove from
+     */
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         for (BiomeGenBase biome : biomes)
         {
-            @SuppressWarnings("unchecked")
             Iterator<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature).iterator();
 
             while (spawns.hasNext())
@@ -360,17 +400,30 @@ public class EntityRegistry
         }
     }
 
+    /**
+     * Remove the spawn entry for the supplied entity
+     * @param entityName Name of entity being removed
+     * @param typeOfCreature type of spawn
+     * @param biomes Biomes to remove from
+     */
     @SuppressWarnings("unchecked")
-    public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
-        Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.stringToClassMapping.get(entityName);
+        Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
-            removeSpawn((Class <? extends EntityLiving>) entityClazz, spawnList, biomes);
+            removeSpawn((Class <? extends EntityLiving>) entityClazz, typeOfCreature, biomes);
         }
     }
 
+    /**
+     * Utility function to try and obtain a globally unique entity ID. Not useful as it requires syncing between
+     * client and server. Use {@link #registerModEntity(Class, String, int, Object, int, int, boolean)} instead,
+     * for a much better experience.
+     * @return A theoretically globally unique ID
+     */
+    @Deprecated
     public static int findGlobalUniqueEntityId()
     {
         int res = instance().availableIndicies.nextSetBit(0);

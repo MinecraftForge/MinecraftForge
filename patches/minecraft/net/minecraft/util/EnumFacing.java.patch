@@ -9,31 +9,31 @@
  
  public enum EnumFacing implements IStringSerializable
  {
-@@ -61,7 +59,6 @@
+@@ -60,7 +58,6 @@
          return func_82600_a(this.field_176759_h);
      }
  
 -    @SideOnly(Side.CLIENT)
      public EnumFacing func_176732_a(EnumFacing.Axis p_176732_1_)
      {
-         switch (EnumFacing.SwitchPlane.field_179515_a[p_176732_1_.ordinal()])
-@@ -109,7 +106,6 @@
+         switch (p_176732_1_)
+@@ -111,7 +108,6 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
      private EnumFacing func_176744_n()
      {
-         switch (EnumFacing.SwitchPlane.field_179513_b[this.ordinal()])
-@@ -129,7 +125,6 @@
+         switch (this)
+@@ -131,7 +127,6 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
      private EnumFacing func_176738_p()
      {
-         switch (EnumFacing.SwitchPlane.field_179513_b[this.ordinal()])
-@@ -190,7 +185,6 @@
+         switch (this)
+@@ -192,7 +187,6 @@
          return this.field_176758_k;
      }
  
@@ -41,7 +41,7 @@
      public static EnumFacing func_176739_a(String p_176739_0_)
      {
          return p_176739_0_ == null ? null : (EnumFacing)field_176761_p.get(p_176739_0_.toLowerCase());
-@@ -216,7 +210,6 @@
+@@ -218,7 +212,6 @@
          return values()[p_176741_0_.nextInt(values().length)];
      }
  
@@ -49,15 +49,15 @@
      public static EnumFacing func_176737_a(float p_176737_0_, float p_176737_1_, float p_176737_2_)
      {
          EnumFacing enumfacing = NORTH;
-@@ -249,7 +242,6 @@
-         return this.field_176757_j;
+@@ -261,7 +254,6 @@
+         throw new IllegalArgumentException("No such direction: " + p_181076_0_ + " " + p_181076_1_);
      }
  
 -    @SideOnly(Side.CLIENT)
      public Vec3i func_176730_m()
      {
          return this.field_176756_m;
-@@ -291,7 +283,6 @@
+@@ -297,7 +289,6 @@
              this.field_176723_f = p_i46015_4_;
          }
  
@@ -65,12 +65,3 @@
          public static EnumFacing.Axis func_176717_a(String p_176717_0_)
          {
              return p_176717_0_ == null ? null : (EnumFacing.Axis)field_176725_d.get(p_176717_0_.toLowerCase());
-@@ -376,7 +367,7 @@
-         }
-     }
- 
--    public static enum Plane implements Predicate, Iterable {
-+    public static enum Plane implements Predicate, Iterable<EnumFacing> { //Forge re-add generic because it just makes life easier.
-         HORIZONTAL,
-         VERTICAL;
- 

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
@@ -23,12 +24,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  */
 class ObjectHolderRef {
     private Field field;
-    private String injectedObject;
+    private ResourceLocation injectedObject;
     private boolean isBlock;
     private boolean isItem;
 
 
-    ObjectHolderRef(Field field, String injectedObject, boolean extractFromExistingValues)
+    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
         this.field = field;
         this.isBlock = Block.class.isAssignableFrom(field.getType());
@@ -49,9 +50,9 @@ class ObjectHolderRef {
                 }
                 else
                 {
-                    Object tmp = isBlock ? GameData.getBlockRegistry().getNameForObject(existing) :
-                        isItem ? GameData.getItemRegistry().getNameForObject(existing) : null;
-                    this.injectedObject = tmp != null ? tmp.toString() : null;
+                    ResourceLocation tmp = isBlock ? GameData.getBlockRegistry().getNameForObject((Block)existing) :
+                        isItem ? GameData.getItemRegistry().getNameForObject((Item)existing) : null;
+                    this.injectedObject = tmp;
                 }
             } catch (Exception e)
             {

@@ -5,9 +5,12 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
+import javax.vecmath.Vector4f;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
@@ -33,6 +36,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+@SuppressWarnings("deprecation")
 public class ModelFluid implements IModelCustomData
 {
     public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);
@@ -56,7 +60,13 @@ public class ModelFluid implements IModelCustomData
 
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        return new BakedFluid(state.apply(this), format, fluid.getColor(), bakedTextureGetter.apply(fluid.getStill()), bakedTextureGetter.apply(fluid.getFlowing()), fluid.isGaseous());
+        ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
+        IFlexibleBakedModel ret = new BakedFluid(state.apply(Optional.<IModelPart>absent()), format, fluid.getColor(), bakedTextureGetter.apply(fluid.getStill()), bakedTextureGetter.apply(fluid.getFlowing()), fluid.isGaseous());
+        if(map.isEmpty())
+        {
+            return ret;
+        }
+        return new IPerspectiveAwareModel.MapWrapper(ret, map);
     }
 
     public IModelState getDefaultState()
@@ -90,7 +100,7 @@ public class ModelFluid implements IModelCustomData
         private static final int z[] = { 0, 1, 1, 0 };
         private static final float eps = 1e-3f;
 
-        private final TRSRTransformation transformation;
+        private final Optional<TRSRTransformation> transformation;
         private final VertexFormat format;
         private final int color;
         private final TextureAtlasSprite still, flowing;
@@ -98,12 +108,12 @@ public class ModelFluid implements IModelCustomData
         private final Optional<IExtendedBlockState> state;
         private final EnumMap<EnumFacing, List<BakedQuad>> faceQuads;
 
-        public BakedFluid(TRSRTransformation transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas)
+        public BakedFluid(Optional<TRSRTransformation> transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas)
         {
             this(transformation, format, color, still, flowing, gas, Optional.<IExtendedBlockState>absent());
         }
 
-        public BakedFluid(TRSRTransformation transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
+        public BakedFluid(Optional<TRSRTransformation> transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
         {
             this.transformation = transformation;
             this.format = format;
@@ -236,7 +246,14 @@ public class ModelFluid implements IModelCustomData
                 switch(format.getElement(e).getUsage())
                 {
                 case POSITION:
-                    builder.put(e, x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1f);
+                    float[] data = new float[]{ x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1 };
+                    if(transformation.isPresent())
+                    {
+                        Vector4f vec = new Vector4f(data);
+                        transformation.get().getMatrix().transform(vec);
+                        vec.get(data);
+                    }
+                    builder.put(e, data);
                     break;
                 case COLOR:
                     float d = LightUtil.diffuseLight(side);

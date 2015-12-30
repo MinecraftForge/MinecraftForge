@@ -44,11 +44,11 @@ public class FMLEmbeddedChannel extends EmbeddedChannel {
      * @param object The inbound packet
      * @return A Packet suitable for passing to vanilla network code.
      */
-    public Packet generatePacketFrom(Object object)
+    public Packet<?> generatePacketFrom(Object object)
     {
         OutboundTarget outboundTarget = attr(FMLOutboundHandler.FML_MESSAGETARGET).getAndSet(OutboundTarget.NOWHERE);
         writeOutbound(object);
-        Packet pkt = (Packet) outboundMessages().poll();
+        Packet<?> pkt = (Packet<?>) outboundMessages().poll();
         attr(FMLOutboundHandler.FML_MESSAGETARGET).set(outboundTarget);
         return pkt;
     }
