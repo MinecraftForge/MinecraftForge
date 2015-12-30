@@ -63,7 +63,7 @@ public interface IPerspectiveAwareModel extends IFlexibleBakedModel
             ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
             for(TransformType type : TransformType.values())
             {
-                builder.put(type, new TRSRTransformation(transforms.func_181688_b(type)));
+                builder.put(type, new TRSRTransformation(transforms.getTransform(type)));
             }
             return builder.build();
         }
@@ -89,7 +89,7 @@ public interface IPerspectiveAwareModel extends IFlexibleBakedModel
         public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
         public boolean isGui3d() { return parent.isGui3d(); }
         public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
-        public TextureAtlasSprite getTexture() { return parent.getTexture(); }
+        public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
         public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
         public List<BakedQuad> getFaceQuads(EnumFacing side) { return parent.getFaceQuads(side); }
         public List<BakedQuad> getGeneralQuads() { return parent.getGeneralQuads(); }

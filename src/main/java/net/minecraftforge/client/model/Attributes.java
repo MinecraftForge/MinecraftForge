@@ -17,10 +17,10 @@ public class Attributes
     static
     {
         DEFAULT_BAKED_FORMAT = new VertexFormat();
-        DEFAULT_BAKED_FORMAT.func_181721_a(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.POSITION, 3));
-        DEFAULT_BAKED_FORMAT.func_181721_a(new VertexFormatElement(0, EnumType.UBYTE, EnumUsage.COLOR,    4));
-        DEFAULT_BAKED_FORMAT.func_181721_a(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.UV,       2));
-        DEFAULT_BAKED_FORMAT.func_181721_a(new VertexFormatElement(0, EnumType.BYTE,  EnumUsage.PADDING,  4));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.POSITION, 3));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.UBYTE, EnumUsage.COLOR,    4));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.UV,       2));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.BYTE,  EnumUsage.PADDING,  4));
     }
 
     /*

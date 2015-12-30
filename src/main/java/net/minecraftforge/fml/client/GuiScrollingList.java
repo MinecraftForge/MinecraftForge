@@ -283,11 +283,11 @@ public abstract class GuiScrollingList
             this.client.renderEngine.bindTexture(Gui.optionsBackground);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float scale = 32.0F;
-            worldr.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-            worldr.func_181662_b(this.left,  this.bottom, 0.0D).func_181673_a(this.left  / scale, (this.bottom + (int)this.scrollDistance) / scale).func_181669_b(0x20, 0x20, 0x20, 0xFF).func_181675_d();
-            worldr.func_181662_b(this.right, this.bottom, 0.0D).func_181673_a(this.right / scale, (this.bottom + (int)this.scrollDistance) / scale).func_181669_b(0x20, 0x20, 0x20, 0xFF).func_181675_d();
-            worldr.func_181662_b(this.right, this.top,    0.0D).func_181673_a(this.right / scale, (this.top    + (int)this.scrollDistance) / scale).func_181669_b(0x20, 0x20, 0x20, 0xFF).func_181675_d();
-            worldr.func_181662_b(this.left,  this.top,    0.0D).func_181673_a(this.left  / scale, (this.top    + (int)this.scrollDistance) / scale).func_181669_b(0x20, 0x20, 0x20, 0xFF).func_181675_d();
+            worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            worldr.pos(this.left,  this.bottom, 0.0D).tex(this.left  / scale, (this.bottom + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.right, this.bottom, 0.0D).tex(this.right / scale, (this.bottom + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.right, this.top,    0.0D).tex(this.right / scale, (this.top    + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.left,  this.top,    0.0D).tex(this.left  / scale, (this.top    + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
             tess.draw();
         }
 
@@ -310,15 +310,15 @@ public abstract class GuiScrollingList
                     int max = entryRight;
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GlStateManager.disableTexture2D();
-                    worldr.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-                    worldr.func_181662_b(min,     slotTop + slotBuffer + 2, 0).func_181673_a(0, 1).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-                    worldr.func_181662_b(max,     slotTop + slotBuffer + 2, 0).func_181673_a(1, 1).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-                    worldr.func_181662_b(max,     slotTop              - 2, 0).func_181673_a(1, 0).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-                    worldr.func_181662_b(min,     slotTop              - 2, 0).func_181673_a(0, 0).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-                    worldr.func_181662_b(min + 1, slotTop + slotBuffer + 1, 0).func_181673_a(0, 1).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
-                    worldr.func_181662_b(max - 1, slotTop + slotBuffer + 1, 0).func_181673_a(1, 1).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
-                    worldr.func_181662_b(max - 1, slotTop              - 1, 0).func_181673_a(1, 0).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
-                    worldr.func_181662_b(min + 1, slotTop              - 1, 0).func_181673_a(0, 0).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
+                    worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+                    worldr.pos(min,     slotTop + slotBuffer + 2, 0).tex(0, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(max,     slotTop + slotBuffer + 2, 0).tex(1, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(max,     slotTop              - 2, 0).tex(1, 0).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(min,     slotTop              - 2, 0).tex(0, 0).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(min + 1, slotTop + slotBuffer + 1, 0).tex(0, 1).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(max - 1, slotTop + slotBuffer + 1, 0).tex(1, 1).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(max - 1, slotTop              - 1, 0).tex(1, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(min + 1, slotTop              - 1, 0).tex(0, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
                     tess.draw();
                     GlStateManager.enableTexture2D();
                 }
@@ -346,23 +346,23 @@ public abstract class GuiScrollingList
             }
 
             GlStateManager.disableTexture2D();
-            worldr.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-            worldr.func_181662_b(scrollBarLeft,  this.bottom, 0.0D).func_181673_a(0.0D, 1.0D).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarRight, this.bottom, 0.0D).func_181673_a(1.0D, 1.0D).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarRight, this.top,    0.0D).func_181673_a(1.0D, 0.0D).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarLeft,  this.top,    0.0D).func_181673_a(0.0D, 0.0D).func_181669_b(0x00, 0x00, 0x00, 0xFF).func_181675_d();
+            worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            worldr.pos(scrollBarLeft,  this.bottom, 0.0D).tex(0.0D, 1.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, this.bottom, 0.0D).tex(1.0D, 1.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, this.top,    0.0D).tex(1.0D, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,  this.top,    0.0D).tex(0.0D, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
             tess.draw();
-            worldr.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-            worldr.func_181662_b(scrollBarLeft,  barTop + height, 0.0D).func_181673_a(0.0D, 1.0D).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarRight, barTop + height, 0.0D).func_181673_a(1.0D, 1.0D).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarRight, barTop,          0.0D).func_181673_a(1.0D, 0.0D).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarLeft,  barTop,          0.0D).func_181673_a(0.0D, 0.0D).func_181669_b(0x80, 0x80, 0x80, 0xFF).func_181675_d();
+            worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            worldr.pos(scrollBarLeft,  barTop + height, 0.0D).tex(0.0D, 1.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, barTop + height, 0.0D).tex(1.0D, 1.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, barTop,          0.0D).tex(1.0D, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,  barTop,          0.0D).tex(0.0D, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
             tess.draw();
-            worldr.func_181668_a(7, DefaultVertexFormats.field_181709_i);
-            worldr.func_181662_b(scrollBarLeft,      barTop + height - 1, 0.0D).func_181673_a(0.0D, 1.0D).func_181669_b(0xC0, 0xC0, 0xC0, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarRight - 1, barTop + height - 1, 0.0D).func_181673_a(1.0D, 1.0D).func_181669_b(0xC0, 0xC0, 0xC0, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarRight - 1, barTop,              0.0D).func_181673_a(1.0D, 0.0D).func_181669_b(0xC0, 0xC0, 0xC0, 0xFF).func_181675_d();
-            worldr.func_181662_b(scrollBarLeft,      barTop,              0.0D).func_181673_a(0.0D, 0.0D).func_181669_b(0xC0, 0xC0, 0xC0, 0xFF).func_181675_d();
+            worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            worldr.pos(scrollBarLeft,      barTop + height - 1, 0.0D).tex(0.0D, 1.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarRight - 1, barTop + height - 1, 0.0D).tex(1.0D, 1.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarRight - 1, barTop,              0.0D).tex(1.0D, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,      barTop,              0.0D).tex(0.0D, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
             tess.draw();
         }
 
@@ -391,11 +391,11 @@ public abstract class GuiScrollingList
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.func_181668_a(7, DefaultVertexFormats.field_181706_f);
-        worldrenderer.func_181662_b(right, top, 0.0D).func_181666_a(r1, g1, b1, a1).func_181675_d();
-        worldrenderer.func_181662_b(left,  top, 0.0D).func_181666_a(r1, g1, b1, a1).func_181675_d();
-        worldrenderer.func_181662_b(left,  bottom, 0.0D).func_181666_a(r2, g2, b2, a2).func_181675_d();
-        worldrenderer.func_181662_b(right, bottom, 0.0D).func_181666_a(r2, g2, b2, a2).func_181675_d();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(right, top, 0.0D).color(r1, g1, b1, a1).endVertex();
+        worldrenderer.pos(left,  top, 0.0D).color(r1, g1, b1, a1).endVertex();
+        worldrenderer.pos(left,  bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
+        worldrenderer.pos(right, bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();

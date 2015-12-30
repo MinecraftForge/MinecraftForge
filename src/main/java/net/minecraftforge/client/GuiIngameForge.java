@@ -153,7 +153,7 @@ public class GuiIngameForge extends GuiIngame
 
         Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
         ScoreObjective objective = null;
-        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.thePlayer.getCommandSenderName());
+        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.thePlayer.getName());
         if (scoreplayerteam != null)
         {
             int slot = scoreplayerteam.getChatFormat().getColorIndex();
@@ -276,7 +276,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (f1 > 0.0F)
         {
-            func_180474_b(f1, res);
+            renderPortal(f1, res);
         }
 
         post(PORTAL);

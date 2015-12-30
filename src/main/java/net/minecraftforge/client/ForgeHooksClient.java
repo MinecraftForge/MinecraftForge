@@ -387,7 +387,7 @@ public class ForgeHooksClient
         }
         else
         {
-            model.getItemCameraTransforms().func_181689_a(cameraTransformType);
+            model.getItemCameraTransforms().applyTransform(cameraTransformType);
         }
         return model;
     }

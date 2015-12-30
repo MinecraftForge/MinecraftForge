@@ -276,7 +276,7 @@ public class ModelAnimationDebug
                 GlStateManager.shadeModel(GL11.GL_FLAT);
             }
 
-            worldrenderer.func_181668_a(7, DefaultVertexFormats.BLOCK);
+            worldrenderer.begin(7, DefaultVertexFormats.BLOCK);
             worldrenderer.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
 
             this.blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, te.getPos(), worldrenderer, false);

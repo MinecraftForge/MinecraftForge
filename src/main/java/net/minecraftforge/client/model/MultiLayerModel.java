@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -22,8 +20,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.fml.common.FMLLog;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -209,10 +208,10 @@ public class MultiLayerModel implements IModelCustomData
         }
 
         @Override
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             compute();
-            return base.getTexture();
+            return base.getParticleTexture();
         }
 
         @Override
