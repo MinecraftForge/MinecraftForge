@@ -293,7 +293,7 @@ public class ModelFluid implements IModelCustomData
             return false;
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             return still;
         }

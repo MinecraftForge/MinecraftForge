@@ -149,7 +149,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     }
 
-    @SuppressWarnings("unchecked")
     void set(FMLControlledNamespacedRegistry<I> otherRegistry)
     {
         if (this.superType != otherRegistry.superType)
@@ -623,7 +622,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      * This iterator is used by some regular MC methods to visit all blocks, we need to include substitutions
      * Compare #typeSafeIterable()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<I> iterator()
     {

@@ -16,14 +16,13 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 
 public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)

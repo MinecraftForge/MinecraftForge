@@ -112,7 +112,7 @@ import com.google.gson.JsonParser;
 @SuppressWarnings("unused")
 public class Loader
 {
-    public static final String MC_VERSION = "1.8.8";
+    public static final String MC_VERSION = "1.8.9";
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**

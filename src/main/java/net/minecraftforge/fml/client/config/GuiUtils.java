@@ -185,11 +185,11 @@ public class GuiUtils
         float vScale = 1f / 0x100;
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer wr = tessellator.getWorldRenderer();
-        wr.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-        wr.func_181662_b(x        , y + height, zLevel).func_181673_a( u          * uScale, ((v + height) * vScale)).func_181675_d();
-        wr.func_181662_b(x + width, y + height, zLevel).func_181673_a((u + width) * uScale, ((v + height) * vScale)).func_181675_d();
-        wr.func_181662_b(x + width, y         , zLevel).func_181673_a((u + width) * uScale, ( v           * vScale)).func_181675_d();
-        wr.func_181662_b(x        , y         , zLevel).func_181673_a( u          * uScale, ( v           * vScale)).func_181675_d();
+        wr.begin(7, DefaultVertexFormats.POSITION_TEX);
+        wr.pos(x        , y + height, zLevel).tex( u          * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x + width, y         , zLevel).tex((u + width) * uScale, ( v           * vScale)).endVertex();
+        wr.pos(x        , y         , zLevel).tex( u          * uScale, ( v           * vScale)).endVertex();
         tessellator.draw();
     }
 

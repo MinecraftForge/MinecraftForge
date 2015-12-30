@@ -1469,7 +1469,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
 
         @Override
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             return this.sprite;
         }

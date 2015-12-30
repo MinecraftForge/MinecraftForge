@@ -59,9 +59,9 @@ public interface IFlexibleBakedModel extends IBakedModel
             return parent.isBuiltInRenderer();
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
-            return parent.getTexture();
+            return parent.getParticleTexture();
         }
 
         @Deprecated
