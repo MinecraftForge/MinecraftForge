@@ -1,12 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -578,6 +578,11 @@
+@@ -578,6 +578,16 @@
          }
      }
  
 +    public void checkAndGrow()
 +    {
 +        this.func_181670_b(field_179011_q.func_177338_f()/* / 4 * 4 */);
++    }
++
++    public boolean isColorDisabled()
++    {
++        return field_78939_q;
 +    }
 +
      @SideOnly(Side.CLIENT)
