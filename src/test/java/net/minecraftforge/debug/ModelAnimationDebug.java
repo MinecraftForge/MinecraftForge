@@ -150,13 +150,13 @@ public class ModelAnimationDebug
             super.preInit(event);
             B3DLoader.instance.addDomain(MODID);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
+            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
         }
 
         @Override
         public void init(FMLInitializationEvent event)
         {
             super.init(event);
-            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
         }
     }
 
@@ -239,10 +239,11 @@ public class ModelAnimationDebug
         public static ChestRenderer instance = new ChestRenderer();
         private ChestRenderer() {}
 
-        private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        private BlockRendererDispatcher blockRenderer;
 
         public void renderTileEntityAt(Chest te, double x, double y, double z, float partialTick, int breakStage)
         {
+            if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
             IBlockState state = te.getWorld().getBlockState(te.getPos());
             state = state.withProperty(STATIC, false);
             IBakedModel model = this.blockRenderer.getBlockModelShapes().getModelForState(state);
