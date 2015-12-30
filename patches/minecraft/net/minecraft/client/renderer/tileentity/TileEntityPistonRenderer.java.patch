@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityPistonRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityPistonRenderer.java
+@@ -23,10 +23,11 @@
+ @SideOnly(Side.CLIENT)
+ public class TileEntityPistonRenderer extends TileEntitySpecialRenderer<TileEntityPiston>
+ {
+-    private final BlockRendererDispatcher field_178462_c = Minecraft.func_71410_x().func_175602_ab();
++    private BlockRendererDispatcher field_178462_c;
+ 
+     public void func_180535_a(TileEntityPiston p_180535_1_, double p_180535_2_, double p_180535_4_, double p_180535_6_, float p_180535_8_, int p_180535_9_)
+     {
++        if(field_178462_c == null) field_178462_c = Minecraft.func_71410_x().func_175602_ab();
+         BlockPos blockpos = p_180535_1_.func_174877_v();
+         IBlockState iblockstate = p_180535_1_.func_174927_b();
+         Block block = iblockstate.func_177230_c();
