@@ -31,13 +31,13 @@ public class ClientRegistry
      * @param id
      * @param specialRenderer
      */
-    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<T> specialRenderer)
+    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<? super T> specialRenderer)
     {
         GameRegistry.registerTileEntity(tileEntityClass, id);
         bindTileEntitySpecialRenderer(tileEntityClass, specialRenderer);
     }
 
-    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntitySpecialRenderer<T> specialRenderer)
+    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntitySpecialRenderer<? super T> specialRenderer)
     {
         TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(tileEntityClass, specialRenderer);
         specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);

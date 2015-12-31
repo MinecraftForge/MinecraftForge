@@ -321,7 +321,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         // Reload resources
         client.refreshResources();
-        RenderingRegistry.loadEntityRenderers(Minecraft.getMinecraft().getRenderManager().entityRenderMap);
         guiFactories = HashBiMap.create();
         for (ModContainer mc : Loader.instance().getActiveModList())
         {
