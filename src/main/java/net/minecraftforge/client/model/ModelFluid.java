@@ -156,7 +156,7 @@ public class ModelFluid implements IModelCustomData
             int flowRound = -1000;
             if(stateOption.isPresent())
             {
-                flowRound = (int)Math.round(Math.toDegrees(stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION)));
+                flowRound = (int)Math.round(Math.toDegrees(stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION).doubleValue()));
             }
             return flowRound;
         }
