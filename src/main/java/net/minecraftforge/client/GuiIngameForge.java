@@ -205,6 +205,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderBossHealth()
     {
         if (pre(BOSSHEALTH)) return;
+        bind(Gui.icons);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         mc.mcProfiler.startSection("bossHealth");
         GlStateManager.enableBlend();
