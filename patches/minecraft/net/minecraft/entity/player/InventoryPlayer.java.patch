@@ -15,3 +15,14 @@
      }
  
      public boolean func_146026_a(Item p_146026_1_)
+@@ -483,6 +491,10 @@
+         {
+             p_70299_1_ -= aitemstack.length;
+             aitemstack = this.field_70460_b;
++            ItemStack oldArmorStack = aitemstack[p_70299_1_];
++            aitemstack[p_70299_1_] = p_70299_2_;
++            new net.minecraftforge.event.entity.player.PlayerArmorChangeEvent(this.field_70458_d, p_70299_1_, oldArmorStack, aitemstack[p_70299_1_]);
++            return;
+         }
+ 
+         aitemstack[p_70299_1_] = p_70299_2_;
