@@ -154,6 +154,14 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 blocked[idx++] = i;
             }
             data.setIntArray("blocked", blocked);
+            NBTTagList dummied = new NBTTagList();
+            for (ResourceLocation entry : e.getValue().dummied)
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", entry.toString());
+                dummied.appendTag(tag);
+            }
+            data.setTag("dummied", dummied);
         }
         return fmlData;
     }
@@ -296,6 +304,14 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 for (int i : blocked)
                 {
                     entry.blocked.add(i);
+                }
+                // save doesn't have dummied list
+                if (!regs.getCompoundTag(key).hasKey("dummied")) return;
+                list = regs.getCompoundTag(key).getTagList("dummied",10);
+                for (int x = 0; x < list.tagCount(); x++)
+                {
+                    NBTTagCompound e = list.getCompoundTagAt(x);
+                    entry.dummied.add(new ResourceLocation(e.getString("K")));
                 }
             }
             failedElements = PersistentRegistryManager.injectSnapshot(snapshot, true, true);
