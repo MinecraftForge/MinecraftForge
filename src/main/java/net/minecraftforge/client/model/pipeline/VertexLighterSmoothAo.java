@@ -40,25 +40,28 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
             y *= s;
             z *= s;
         }
-        float ax = Math.abs(x);
-        float ay = Math.abs(y);
-        float az = Math.abs(z);
+        float ax = x > 0 ? x : -x;
+        float ay = y > 0 ? y : -y;
+        float az = z > 0 ? z : -z;
         float e1 = 1 + 1e-4f;
         if(ax > 2 - 1e-4f && ay <= e1 && az <= e1)
         {
-            x = MathHelper.clamp_float(x, -2 + 1e-4f, 2 - 1e-4f);
+            if(x > -2 + 1e-4f) x = -2 + 1e-4f;
+            if(x <  2 - 1e-4f) x =  2 - 1e-4f;
         }
         else if(ay > 2 - 1e-4f && az <= e1 && ax <= e1)
         {
-            y = MathHelper.clamp_float(y, -2 + 1e-4f, 2 - 1e-4f);
+            if(y > -2 + 1e-4f) y = -2 + 1e-4f;
+            if(y <  2 - 1e-4f) y =  2 - 1e-4f;
         }
         else if(az > 2 - 1e-4f && ax <= e1 && ay <= e1)
         {
-            z = MathHelper.clamp_float(z, -2 + 1e-4f, 2 - 1e-4f);
+            if(z > -2 + 1e-4f) z = -2 + 1e-4f;
+            if(z <  2 - 1e-4f) z =  2 - 1e-4f;
         }
-        ax = Math.abs(x);
-        ay = Math.abs(y);
-        az = Math.abs(z);
+        ax = x > 0 ? x : -x;
+        ay = y > 0 ? y : -y;
+        az = z > 0 ? z : -z;
         if(ax <= e1 && ay + az > 3f - 1e-4f)
         {
             float s = (3f - 1e-4f) / (ay + az);

@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
+import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
@@ -51,7 +52,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.animation.IAnimatedModel;
+import net.minecraftforge.client.model.animation.IClip;
+import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -129,14 +136,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
         });
-        Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
-        {
-            public TextureAtlasSprite apply(ResourceLocation location)
-            {
-                return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-            }
-        };
-        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
+        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance);
         for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
             if(e.getValue() == getMissingModel())
@@ -145,7 +145,7 @@ public class ModelLoader extends ModelBakery
             }
             else
             {
-                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), DefaultVertexFormats.ITEM, textureGetter));
+                bakedRegistry.putObject(e.getKey(), e.getValue().bake(e.getValue().getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance));
             }
         }
         return bakedRegistry;
@@ -407,15 +407,17 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
     }
 
-    private class VanillaModelWrapper implements IRetexturableModel
+    private class VanillaModelWrapper implements IRetexturableModel, IAnimatedModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;
+        private final ModelBlockAnimation animation;
 
-        public VanillaModelWrapper(ResourceLocation location, ModelBlock model)
+        public VanillaModelWrapper(ResourceLocation location, ModelBlock model, ModelBlockAnimation animation)
         {
             this.location = location;
             this.model = model;
+            this.animation = animation;
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -508,7 +510,8 @@ public class ModelLoader extends ModelBakery
             List<TRSRTransformation> newTransforms = Lists.newArrayList();
             for(int i = 0; i < model.getElements().size(); i++)
             {
-                newTransforms.add(null);
+                BlockPart part = model.getElements().get(i);
+                newTransforms.add(animation.getPartTransform(state, part, i));
             }
 
             ItemCameraTransforms transforms = model.func_181682_g();
@@ -531,7 +534,7 @@ public class ModelLoader extends ModelBakery
             return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
         }
 
-        private IFlexibleBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IFlexibleBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
@@ -542,6 +545,9 @@ public class ModelLoader extends ModelBakery
                 if(newTransforms.get(i) != null)
                 {
                     transformation = transformation.compose(newTransforms.get(i));
+                    BlockPartRotation rot = part.partRotation;
+                    if(rot == null) rot = new BlockPartRotation(new org.lwjgl.util.vector.Vector3f(), EnumFacing.Axis.Y, 0, false);
+                    part = new BlockPart(part.positionFrom, part.positionTo, part.mapFaces, rot, part.shade);
                 }
                 for(Map.Entry<EnumFacing, BlockPartFace> e : (Iterable<Map.Entry<EnumFacing, BlockPartFace>>)part.mapFaces.entrySet())
                 {
@@ -562,13 +568,25 @@ public class ModelLoader extends ModelBakery
             {
                 public IBakedModel handleBlockState(IBlockState state)
                 {
-                    return VanillaModelWrapper.this.handleBlockState(parent, modelState, state);
+                    return VanillaModelWrapper.this.handleBlockState(parent, bakedTextureGetter, modelState, state);
                 }
             };
         }
 
-        private IBakedModel handleBlockState(IFlexibleBakedModel model, TRSRTransformation modelState, IBlockState state)
+        private IBakedModel handleBlockState(IFlexibleBakedModel model, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, TRSRTransformation modelState, IBlockState state)
         {
+            if(state instanceof IExtendedBlockState)
+            {
+                IExtendedBlockState exState = (IExtendedBlockState)state;
+                if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
+                {
+                    IModelState newState = exState.getValue(Properties.AnimationProperty);
+                    if(newState != null)
+                    {
+                        return VanillaModelWrapper.this.bake(new ModelStateComposition(modelState, newState), model.getFormat(), bakedTextureGetter);
+                    }
+                }
+            }
             return model;
         }
 
@@ -630,7 +648,17 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new VanillaModelWrapper(location, neweModel);
+            return new VanillaModelWrapper(location, neweModel, animation);
+        }
+
+        @Override
+        public Optional<? extends IClip> getClip(String name)
+        {
+            if(animation.getClips().containsKey(name))
+            {
+                return Optional.<IClip>fromNullable(animation.getClips().get(name));
+            }
+            return Optional.absent();
         }
 
         public IModelState getDefaultState()
@@ -829,7 +857,14 @@ public class ModelLoader extends ModelBakery
 
         public IModel loadModel(ResourceLocation modelLocation) throws IOException
         {
-            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation));
+            String modelPath = modelLocation.getResourcePath();
+            if(modelLocation.getResourcePath().startsWith("models/"))
+            {
+                modelPath = modelPath.substring("models/".length());
+            }
+            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
+            ModelBlockAnimation animation = Animation.INSTANCE.loadVanillaAnimation(armatureLocation);
+            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation), animation);
         }
     }
 
@@ -996,5 +1031,20 @@ public class ModelLoader extends ModelBakery
         {
             mesher.register(e.getKey().getLeft().get(), e.getKey().getRight(), e.getValue());
         }
+    }
+
+    private static enum DefaultTextureGetter implements Function<ResourceLocation, TextureAtlasSprite>
+    {
+        instance;
+
+        public TextureAtlasSprite apply(ResourceLocation location)
+        {
+            return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+        }
+    }
+
+    public static Function<ResourceLocation, TextureAtlasSprite> defaultTextureGetter()
+    {
+        return DefaultTextureGetter.instance;
     }
 }
