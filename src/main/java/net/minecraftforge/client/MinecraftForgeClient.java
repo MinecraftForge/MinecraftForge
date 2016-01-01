@@ -6,7 +6,18 @@
 package net.minecraftforge.client;
 
 import java.util.BitSet;
+import java.util.concurrent.TimeUnit;
+
+import net.minecraft.client.renderer.RegionRenderCache;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.world.World;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class MinecraftForgeClient
 {
@@ -55,5 +66,30 @@ public class MinecraftForgeClient
         {
             stencilBits.set(bit);
         }
+    }
+
+    private static final LoadingCache<Pair<World, BlockPos>, RegionRenderCache> regionCache = CacheBuilder.newBuilder()
+        .maximumSize(500)
+        .concurrencyLevel(5)
+        .expireAfterAccess(1, TimeUnit.SECONDS)
+        .build(new CacheLoader<Pair<World, BlockPos>, RegionRenderCache>()
+        {
+            public RegionRenderCache load(Pair<World, BlockPos> key) throws Exception
+            {
+                return new RegionRenderCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
+            }
+        });
+
+    public static void onRebuildChunk(World world, BlockPos position, RegionRenderCache cache)
+    {
+        regionCache.put(Pair.of(world, position), cache);
+    }
+
+    public static RegionRenderCache getRegionRenderCache(World world, BlockPos pos)
+    {
+        int x = pos.getX() & ~0xF;
+        int y = pos.getY() & ~0xF;
+        int z = pos.getZ() & ~0xF;
+        return regionCache.getUnchecked(Pair.of(world, new BlockPos(x, y, z)));
     }
 }

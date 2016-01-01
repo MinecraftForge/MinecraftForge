@@ -1,15 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -131,7 +131,7 @@
+@@ -131,7 +131,9 @@
                  return;
              }
  
 -            iblockaccess = new RegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
-+            iblockaccess = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
++            RegionRenderCache cache = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
++            net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(field_178588_d, field_178586_f, cache);
++            iblockaccess = cache;
              p_178581_4_.func_178543_a(compiledchunk);
          }
          finally
-@@ -158,7 +158,7 @@
+@@ -158,7 +160,7 @@
                      lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
@@ -18,7 +20,7 @@
                  {
                      TileEntity tileentity = iblockaccess.func_175625_s(new BlockPos(blockpos$mutableblockpos));
                      TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.field_147556_a.<TileEntity>func_147547_b(tileentity);
-@@ -174,7 +174,9 @@
+@@ -174,7 +176,9 @@
                      }
                  }
  
@@ -29,7 +31,7 @@
                  int j = enumworldblocklayer1.ordinal();
  
                  if (block.func_149645_b() != -1)
-@@ -189,6 +191,7 @@
+@@ -189,6 +193,7 @@
  
                      aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, iblockaccess, worldrenderer);
                  }
@@ -37,7 +39,7 @@
              }
  
              for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
-@@ -385,6 +388,26 @@
+@@ -385,6 +390,26 @@
          return this.field_178593_n;
      }
  

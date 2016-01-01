@@ -1,7 +1,5 @@
 package net.minecraftforge.client.model.pipeline;
 
-import java.util.Arrays;
-
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -46,7 +44,7 @@ public class WorldRendererConsumer implements IVertexConsumer
             {
                 renderer.addVertexData(quadData);
                 renderer.putPosition(offset.getX(), offset.getY(), offset.getZ());
-                Arrays.fill(quadData, 0);
+                //Arrays.fill(quadData, 0);
                 v = 0;
             }
         }

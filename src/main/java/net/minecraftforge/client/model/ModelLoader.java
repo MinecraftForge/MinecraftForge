@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.vecmath.Matrix4f;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -23,6 +25,7 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
+import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
@@ -51,7 +54,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.animation.Clips;
+import net.minecraftforge.client.model.animation.IAnimatedModel;
+import net.minecraftforge.client.model.animation.IClip;
+import net.minecraftforge.client.model.animation.ModelBlockAnimation;
+import net.minecraftforge.client.model.animation.ModelBlockAnimation.MBJointInfo;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -65,6 +75,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -339,15 +350,17 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
     }
 
-    private class VanillaModelWrapper implements IRetexturableModel
+    private class VanillaModelWrapper implements IRetexturableModel, IAnimatedModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;
+        private final ModelBlockAnimation animation;
 
-        public VanillaModelWrapper(ResourceLocation location, ModelBlock model)
+        public VanillaModelWrapper(ResourceLocation location, ModelBlock model, ModelBlockAnimation animation)
         {
             this.location = location;
             this.model = model;
+            this.animation = animation;
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -440,7 +453,36 @@ public class ModelLoader extends ModelBakery
             List<TRSRTransformation> newTransforms = Lists.newArrayList();
             for(int i = 0; i < model.getElements().size(); i++)
             {
+                BlockPart part = model.getElements().get(i);
+                ImmutableCollection<MBJointInfo> infos = animation.getJoint(i);
                 newTransforms.add(null);
+                if(!infos.isEmpty())
+                {
+                    Matrix4f m = new Matrix4f(), tmp;
+                    float weight = 0;
+                    for(MBJointInfo info : infos)
+                    {
+                        if(info.getWeights().containsKey(i))
+                        {
+                            ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName(), part);
+                            Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
+                            if(trOp.isPresent() && trOp.get() != TRSRTransformation.identity())
+                            {
+                                float w = info.getWeights().get(i)[0];
+                                tmp = trOp.get().getMatrix();
+                                tmp.mul(w);
+                                m.add(tmp);
+                                weight += w;
+                            }
+                        }
+                    }
+                    if(weight > 1e-5)
+                    {
+                        m.mul(1f / weight);
+                        TRSRTransformation tr = new TRSRTransformation(m);
+                        newTransforms.set(i, tr);
+                    }
+                }
             }
 
             ItemCameraTransforms transforms = model.func_181682_g();
@@ -474,6 +516,9 @@ public class ModelLoader extends ModelBakery
                 if(newTransforms.get(i) != null)
                 {
                     transformation = transformation.compose(newTransforms.get(i));
+                    BlockPartRotation rot = part.partRotation;
+                    if(rot == null) rot = new BlockPartRotation(new org.lwjgl.util.vector.Vector3f(), EnumFacing.Axis.Y, 0, false);
+                    part = new BlockPart(part.positionFrom, part.positionTo, part.mapFaces, rot, part.shade);
                 }
                 for(Map.Entry<EnumFacing, BlockPartFace> e : (Iterable<Map.Entry<EnumFacing, BlockPartFace>>)part.mapFaces.entrySet())
                 {
@@ -494,13 +539,25 @@ public class ModelLoader extends ModelBakery
             {
                 public IBakedModel handleBlockState(IBlockState state)
                 {
-                    return VanillaModelWrapper.this.handleBlockState(parent, modelState, state);
+                    return VanillaModelWrapper.this.handleBlockState(parent, bakedTextureGetter, modelState, state);
                 }
             };
         }
 
-        private IBakedModel handleBlockState(IFlexibleBakedModel model, TRSRTransformation modelState, IBlockState state)
+        private IBakedModel handleBlockState(IFlexibleBakedModel model, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, TRSRTransformation modelState, IBlockState state)
         {
+            if(state instanceof IExtendedBlockState)
+            {
+                IExtendedBlockState exState = (IExtendedBlockState)state;
+                if(exState.getUnlistedNames().contains(net.minecraftforge.client.model.animation.Animation.AnimationProperty))
+                {
+                    IModelState newState = exState.getValue(net.minecraftforge.client.model.animation.Animation.AnimationProperty);
+                    if(newState != null)
+                    {
+                        return VanillaModelWrapper.this.bake(new ModelStateComposition(modelState, newState), model.getFormat(), bakedTextureGetter);
+                    }
+                }
+            }
             return model;
         }
 
@@ -562,7 +619,19 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new VanillaModelWrapper(location, neweModel);
+            return new VanillaModelWrapper(location, neweModel, animation);
+        }
+
+        @Override
+        public Optional<? extends IClip> getClip(String name)
+        {
+            if(animation.getClips().containsKey(name))
+            {
+                Optional<? extends IClip> ret = animation.getClips().get(name);
+                if(ret.isPresent()) return ret;
+                return Optional.of(Clips.IdentityClip.instance);
+            }
+            return Optional.absent();
         }
 
         public IModelState getDefaultState()
@@ -813,7 +882,9 @@ public class ModelLoader extends ModelBakery
 
         public IModel loadModel(ResourceLocation modelLocation) throws IOException
         {
-            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation));
+            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "animations/" + modelLocation.getResourcePath());
+            ModelBlockAnimation animation = Animation.loadVanillaAnimation(armatureLocation);
+            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation), animation);
         }
     }
 
