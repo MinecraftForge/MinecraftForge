@@ -56,7 +56,7 @@ public class ModelAnimationDebug
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
     public static final PropertyBool STATIC = PropertyBool.create("static");;
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelAnimationDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelAnimationDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     public static class CommonProxy
@@ -141,6 +141,8 @@ public class ModelAnimationDebug
 
         public void init(FMLInitializationEvent event) {}
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {

@@ -16,7 +16,7 @@ public class ItemLayerModelDebug
     public static final String MODID = "ForgeDebugItemLayerModel";
     public static final String VERSION = "1.0";
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ItemLayerModelDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ItemLayerModelDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     @EventHandler
@@ -29,6 +29,8 @@ public class ItemLayerModelDebug
             GameRegistry.registerItem(TestItem.instance, TestItem.name);
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {

@@ -50,12 +50,14 @@ import java.lang.annotation.Target;
 public @interface SidedProxy
 {
     /**
-     * The name of the client side class to load and populate
+     * The full name of the client side class to load and populate.
+     * Defaults to the nested class named "ClientProxy" in the current class.
      */
     String clientSide() default "";
 
     /**
-     * The name of the server side class to load and populate
+     * The full name of the server side class to load and populate.
+     * Defaults to the nested class named "ServerProxy" in the current class.
      */
     String serverSide() default "";
 

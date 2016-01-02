@@ -30,7 +30,7 @@ public class ItemTileDebug
 
     private static String blockName = MODID.toLowerCase() + ":" + TestBlock.name;
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ItemTileDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ItemTileDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     @EventHandler
@@ -49,6 +49,8 @@ public class ItemTileDebug
 
         public void init(FMLInitializationEvent event) {}
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {

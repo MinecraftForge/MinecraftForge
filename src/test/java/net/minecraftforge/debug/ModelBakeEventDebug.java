@@ -66,7 +66,7 @@ public class ModelBakeEventDebug
         }
     }
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelBakeEventDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelBakeEventDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     @EventHandler
@@ -80,6 +80,8 @@ public class ModelBakeEventDebug
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {
