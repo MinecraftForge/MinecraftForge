@@ -321,11 +321,11 @@ public class PersistentRegistryManager
             substitutions = Sets.union(snapshotEntry.substitutions, currentRegistry.getActiveSubstitutions());
         }
         newRegistry.loadAliases(snapshotEntry.aliases);
-        newRegistry.loadSubstitutions(substitutions);
         newRegistry.loadBlocked(snapshotEntry.blocked);
         missing.put(registryName, Maps.<ResourceLocation, Integer>newLinkedHashMap());
         remaps.put(registryName, Maps.<ResourceLocation, Integer[]>newHashMap());
         newRegistry.loadIds(snapshotEntry.ids, missing.get(registryName), remaps.get(registryName), currentRegistry, registryName);
+        newRegistry.loadSubstitutions(substitutions);
         // Load current dummies AFTER the snapshot is loaded
         newRegistry.loadDummied(snapshotEntry.dummied);
     }
