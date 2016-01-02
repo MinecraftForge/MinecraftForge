@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
@@ -37,24 +38,24 @@ public class ForgeBlockStatesLoaderDebug {
     public static final Block blockCustom = new CustomMappedBlock();
     public static final String nameCustomWall = "custom_wall";
     public static final BlockWall blockCustomWall = new BlockWall(Blocks.cobblestone);
-    public static final ItemMultiTexture itemCustomWall = new ItemMultiTexture(blockCustomWall, blockCustomWall, new Function<ItemStack, String>()
+    public static final ItemMultiTexture itemCustomWall = (ItemMultiTexture)new ItemMultiTexture(blockCustomWall, blockCustomWall, new Function<ItemStack, String>()
     {
         @Override
         public String apply(ItemStack stack)
         {
             return BlockWall.EnumType.byMetadata(stack.getMetadata()).getUnlocalizedName();
         }
-    });
+    }).setRegistryName(nameCustomWall);
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        blockCustom.setUnlocalizedName(MODID + ".customBlock");
-        GameRegistry.registerBlock(blockCustom, "customBlock");
+        blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
+        GameRegistry.registerBlock(blockCustom);
 
-        blockCustomWall.setUnlocalizedName(MODID + ".customWall");
-        GameRegistry.registerBlock(blockCustomWall, null, nameCustomWall);
-        GameRegistry.registerItem(itemCustomWall, nameCustomWall);
+        blockCustomWall.setUnlocalizedName(MODID + ".customWall").setRegistryName(nameCustomWall);
+        GameRegistry.registerBlock(blockCustomWall, (Class<? extends ItemBlock>)null);
+        GameRegistry.registerItem(itemCustomWall);
         GameData.getBlockItemMap().put(blockCustomWall, itemCustomWall);
 
         if (event.getSide() == Side.CLIENT)
@@ -96,34 +97,34 @@ public class ForgeBlockStatesLoaderDebug {
 
         protected CustomMappedBlock() {
             super(Material.rock);
-        
+
             this.setUnlocalizedName(MODID + ".customMappedBlock");
         }
-        
+
         @Override
         protected BlockState createBlockState() {
             return new BlockState(this,  VARIANT);
         }
-        
+
         @Override
         public int getMetaFromState(IBlockState state)
         {
             return ((CustomVariant)state.getValue(VARIANT)).ordinal();
         }
-        
+
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
             if(meta > CustomVariant.values().length || meta < 0)
                 meta = 0;
-        
+
             return this.getDefaultState().withProperty(VARIANT, CustomVariant.values()[meta]);
         }
-        
+
         public static enum CustomVariant implements IStringSerializable {
             TypeA,
             TypeB;
-            
+
             public String getName() { return this.toString(); };
         }
     }

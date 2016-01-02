@@ -128,14 +128,28 @@ public class GameRegistry
     }
 
     /**
+     * Register an item with the item registry with a the name specified in Item.getRegistryName()
+     *
+     * @param item The item to register
+     */
+    public static void registerItem(Item item)
+    {
+        registerItem(item, item.getRegistryName());
+    }
+
+    /**
      * Register an item with the item registry with a custom name : this allows for easier server->client resolution
      *
      * @param item The item to register
      * @param name The mod-unique name of the item
      */
-    public static void registerItem(net.minecraft.item.Item item, String name)
+    public static void registerItem(Item item, String name)
     {
-        registerItem(item, name, null);
+        if (Strings.isNullOrEmpty(name))
+        {
+            throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
+        }
+        GameData.getMain().registerItem(item, name);
     }
 
     /**
@@ -145,12 +159,12 @@ public class GameRegistry
      * @param name  The mod-unique name to register it as - null will remove a custom name
      * @param modId deprecated, unused
      */
+    @Deprecated // See version without modID remove in 1.9
     public static Item registerItem(Item item, String name, String modId)
     {
-        GameData.getMain().registerItem(item, name);
+        registerItem(item, name);
         return item;
     }
-
 
     /**
      * Add a forced persistent substitution alias for the block or item to another block or item. This will have
@@ -169,6 +183,16 @@ public class GameRegistry
     }
 
     /**
+     * Register a block with the name that Block.getRegistryName returns.
+     *
+     * @param block The block to register
+     */
+    public static Block registerBlock(Block block)
+    {
+        return registerBlock(block, block.getRegistryName());
+    }
+
+    /**
      * Register a block with the specified mod specific name
      *
      * @param block The block to register
@@ -177,6 +201,17 @@ public class GameRegistry
     public static Block registerBlock(Block block, String name)
     {
         return registerBlock(block, ItemBlock.class, name);
+    }
+
+    /**
+     * Register a block with the world, with the specified item class using Block.getRegistryName's name
+     *
+     * @param block     The block to register
+     * @param itemclass The item type to register with it : null registers a block without associated item.
+     */
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass)
+    {
+        return registerBlock(block, itemclass, block.getRegistryName());
     }
 
     /**
@@ -191,6 +226,19 @@ public class GameRegistry
         return registerBlock(block, itemclass, name, new Object[] {});
     }
 
+
+    /**
+     * Register a block with the world, with the specified item class using Block.getRegistryName's name
+     *
+     * @param block        The block to register
+     * @param itemclass    The item type to register with it : null registers a block without associated item.
+     * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
+     */
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs)
+    {
+        return registerBlock(block, itemclass, block.getRegistryName(), itemCtorArgs);
+    }
+
     /**
      * Register a block with the world, with the specified item class, block name and owning modId
      *
@@ -201,6 +249,10 @@ public class GameRegistry
      */
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
     {
+        if (Strings.isNullOrEmpty(name))
+        {
+            throw new IllegalArgumentException("Attempted to register a block with no name: " + block);
+        }
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
         {
             FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
