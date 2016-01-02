@@ -117,36 +117,12 @@ public class GameData
 
     int registerItem(Item item, String name) // from GameRegistry
     {
-        int index = name.indexOf(':');
-        if (index != -1)
-        {
-            FMLLog.bigWarning("Dangerous extra prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
-        }
-
-        ResourceLocation rl = addPrefix(name);
-        return registerItem(item, rl, -1);
-    }
-
-    private int registerItem(Item item, ResourceLocation name, int idHint)
-    {
-        return iItemRegistry.add(idHint, name, item);
+        return iItemRegistry.add(-1, addPrefix(name), item);
     }
 
     int registerBlock(Block block, String name) // from GameRegistry
     {
-        int index = name.indexOf(':');
-        if (index != -1)
-        {
-            FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
-        }
-
-        ResourceLocation rl = addPrefix(name);
-        return registerBlock(block, rl, -1);
-    }
-
-    private int registerBlock(Block block, ResourceLocation name, int idHint)
-    {
-        return iBlockRegistry.add(idHint, name, block);
+        return iBlockRegistry.add(-1, addPrefix(name), block);
     }
 
     /**
@@ -165,12 +141,13 @@ public class GameData
     {
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index);
+        name = index == -1 ? name : name.substring(index + 1);
         String prefix;
         ModContainer mc = Loader.instance().activeModContainer();
 
         if (mc != null)
         {
-            prefix = mc.getModId();
+            prefix = mc.getModId().toLowerCase();
         }
         else // no mod container, assume minecraft
         {
@@ -179,6 +156,7 @@ public class GameData
 
         if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
+            FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", prefix, name);
             prefix = oldPrefix;
         }
 
