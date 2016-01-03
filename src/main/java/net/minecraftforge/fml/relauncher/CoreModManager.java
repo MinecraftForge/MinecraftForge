@@ -446,7 +446,9 @@ public class CoreModManager {
             FMLRelaunchLog.log(Level.DEBUG, "Extracted ContainedDep %s from %s to %s", dep, jar.getName(), target.getCanonicalPath());
             try
             {
-                ByteStreams.copy(jar.getInputStream(jarEntry), new FileOutputStream(target));
+                FileOutputStream targ = new FileOutputStream(target);
+                ByteStreams.copy(jar.getInputStream(jarEntry), targ);
+                targ.close();
             } catch (IOException e)
             {
                 FMLRelaunchLog.log(Level.ERROR, e, "An error occurred extracting dependency");
