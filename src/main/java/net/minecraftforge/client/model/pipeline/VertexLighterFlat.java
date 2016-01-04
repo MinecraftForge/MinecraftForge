@@ -243,6 +243,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     public void updateBlockInfo()
     {
-        blockInfo.updateShift();
+        blockInfo.updateShift(true);
     }
 }

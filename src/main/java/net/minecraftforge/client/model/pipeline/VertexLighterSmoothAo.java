@@ -154,7 +154,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
     @Override
     public void updateBlockInfo()
     {
-        super.updateBlockInfo();
+        blockInfo.updateShift(false);
         blockInfo.updateLightMatrix();
     }
 }
