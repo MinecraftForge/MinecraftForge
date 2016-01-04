@@ -153,11 +153,13 @@ public class ModelFluid implements IModelCustomData
 
         private static int getFlow(Optional<IExtendedBlockState> stateOption)
         {
-            int flowRound = -1000;
+            float flow = -1000;
             if(stateOption.isPresent())
             {
-                flowRound = (int)Math.round(Math.toDegrees(stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION).doubleValue()));
+                flow = stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION);
             }
+            int flowRound = (int)Math.round(Math.toDegrees(flow));
+            flowRound = MathHelper.clamp_int(flowRound, -1000, 1000);
             return flowRound;
         }
 
@@ -197,7 +199,7 @@ public class ModelFluid implements IModelCustomData
 
                 TextureAtlasSprite topSprite = flowing;
                 float scale = 4;
-                if(flow < -999F)
+                if(flow < -17F)
                 {
                     flow = 0;
                     scale = 8;
