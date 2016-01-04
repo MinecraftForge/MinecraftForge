@@ -34,6 +34,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -447,6 +448,7 @@ public class CoreModManager {
             try
             {
                 FileOutputStream targ = new FileOutputStream(target);
+                Files.createParentDirs(target);
                 ByteStreams.copy(jar.getInputStream(jarEntry), targ);
                 targ.close();
             } catch (IOException e)
