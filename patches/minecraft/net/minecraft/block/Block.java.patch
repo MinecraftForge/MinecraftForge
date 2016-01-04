@@ -1214,7 +1214,7 @@
 +     */
 +    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return func_176221_a(state, world, pos);
++        return state;
 +    }
 +
 +    /**
