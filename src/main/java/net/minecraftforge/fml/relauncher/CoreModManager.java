@@ -447,8 +447,8 @@ public class CoreModManager {
             FMLRelaunchLog.log(Level.DEBUG, "Extracted ContainedDep %s from %s to %s", dep, jar.getName(), target.getCanonicalPath());
             try
             {
-                FileOutputStream targ = new FileOutputStream(target);
                 Files.createParentDirs(target);
+                FileOutputStream targ = new FileOutputStream(target);
                 ByteStreams.copy(jar.getInputStream(jarEntry), targ);
                 targ.close();
             } catch (IOException e)
