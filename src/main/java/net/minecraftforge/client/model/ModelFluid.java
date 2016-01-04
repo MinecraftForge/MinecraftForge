@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.block.state.IBlockState;
@@ -26,6 +27,8 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLLog;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -64,12 +67,7 @@ public class ModelFluid implements IModelCustomData
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
-        IFlexibleBakedModel ret = new BakedFluid(state.apply(Optional.<IModelPart>absent()), format, fluid.getColor(), bakedTextureGetter.apply(fluid.getStill()), bakedTextureGetter.apply(fluid.getFlowing()), fluid.isGaseous());
-        if(map.isEmpty())
-        {
-            return ret;
-        }
-        return new IPerspectiveAwareModel.MapWrapper(ret, map);
+        return new BakedFluid(state.apply(Optional.<IModelPart>absent()), map, format, fluid.getColor(), bakedTextureGetter.apply(fluid.getStill()), bakedTextureGetter.apply(fluid.getFlowing()), fluid.isGaseous(), Optional.absent());
     }
 
     public IModelState getDefaultState()
@@ -97,7 +95,7 @@ public class ModelFluid implements IModelCustomData
         }
     }
 
-    public static class BakedFluid implements IFlexibleBakedModel, ISmartBlockModel
+    public static class BakedFluid implements IFlexibleBakedModel, ISmartBlockModel, IPerspectiveAwareModel
     {
         private static final int x[] = { 0, 0, 1, 1 };
         private static final int z[] = { 0, 1, 1, 0 };
@@ -116,11 +114,12 @@ public class ModelFluid implements IModelCustomData
                     key >>>= 10;
                 }
                 int flowRound = (int)(key & 0x7FF) - 1024;
-                return new BakedFluid(transformation, format, color, still, flowing, gas, statePresent, cornerRound, flowRound);
+                return new BakedFluid(transformation, transforms, format, color, still, flowing, gas, statePresent, cornerRound, flowRound);
             }
         });
 
         private final Optional<TRSRTransformation> transformation;
+        private final ImmutableMap<TransformType, TRSRTransformation> transforms;
         private final VertexFormat format;
         private final int color;
         private final TextureAtlasSprite still, flowing;
@@ -134,7 +133,12 @@ public class ModelFluid implements IModelCustomData
 
         public BakedFluid(Optional<TRSRTransformation> transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
         {
-            this(transformation, format, color, still, flowing, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption));
+            this(transformation, ImmutableMap.of(), format, color, still, flowing, gas, stateOption);
+        }
+
+        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
+        {
+            this(transformation, transforms, format, color, still, flowing, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption));
         }
 
         private static int[] getCorners(Optional<IExtendedBlockState> stateOption)
@@ -163,9 +167,10 @@ public class ModelFluid implements IModelCustomData
             return flowRound;
         }
 
-        public BakedFluid(Optional<TRSRTransformation> transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, boolean statePresent, int[] cornerRound, int flowRound)
+        public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, boolean statePresent, int[] cornerRound, int flowRound)
         {
             this.transformation = transformation;
+            this.transforms = transforms;
             this.format = format;
             this.color = color;
             this.still = still;
@@ -278,8 +283,8 @@ public class ModelFluid implements IModelCustomData
                     putVertex(
                         builder, EnumFacing.UP,
                         z[i], x[i], 0,
-                        still.getInterpolatedU(x[i] * 16),
-                        still.getInterpolatedV(z[i] * 16));
+                        still.getInterpolatedU(z[i] * 16),
+                        still.getInterpolatedV(x[i] * 16));
                 }
                 faceQuads.put(EnumFacing.SOUTH, ImmutableList.<BakedQuad>of(builder.build()));
             }
@@ -293,7 +298,7 @@ public class ModelFluid implements IModelCustomData
                 {
                 case POSITION:
                     float[] data = new float[]{ x - side.getDirectionVec().getX() * eps, y, z - side.getDirectionVec().getZ() * eps, 1 };
-                    if(transformation.isPresent())
+                    if(transformation.isPresent() && transformation.get() != TRSRTransformation.identity())
                     {
                         Vector4f vec = new Vector4f(data);
                         transformation.get().getMatrix().transform(vec);
@@ -382,6 +387,12 @@ public class ModelFluid implements IModelCustomData
                 return modelCache.getUnchecked(key);
             }
             return this;
+        }
+
+        @Override
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType type)
+        {
+            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
         }
     }
 
