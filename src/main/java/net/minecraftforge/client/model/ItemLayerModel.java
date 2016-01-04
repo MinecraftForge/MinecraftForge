@@ -68,11 +68,15 @@ public class ItemLayerModel implements IRetexturableModel
     public IModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
-        for(int i = 0; i < textures.size(); i++)
+        for(int i = 0; i < textures.size() + this.textures.size(); i++)
         {
             if(textures.containsKey("layer" + i))
             {
                 builder.add(new ResourceLocation(textures.get("layer" + i)));
+            }
+            else if(i < this.textures.size())
+            {
+                builder.add(this.textures.get(i));
             }
         }
         return new ItemLayerModel(builder.build());
