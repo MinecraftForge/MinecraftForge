@@ -203,7 +203,14 @@ public class ModelLoader extends ModelBakery
                     if (model == null || model == getMissingModel())
                     {
                         FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
-                        registerVariant(getModelBlockDefinition(memory), memory);
+                        try
+                        {
+                            registerVariant(getModelBlockDefinition(memory), memory);
+                        }
+                        catch (Exception exception)
+                        {
+                            FMLLog.getLogger().warn("Unable to load definition " + memory, exception);
+                        }
                     }
                     else stateModels.put(memory, model);
                 }
