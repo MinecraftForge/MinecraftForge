@@ -330,7 +330,7 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    private IModel getVariantModel(ModelResourceLocation location)
+    IModel getVariantModel(ModelResourceLocation location)
     {
         loadVariants(ImmutableList.of(location));
         IModel model = stateModels.get(location);
