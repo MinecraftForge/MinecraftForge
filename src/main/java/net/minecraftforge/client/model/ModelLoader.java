@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,7 +87,6 @@ public class ModelLoader extends ModelBakery
 
     private ProgressBar blockBar;
     private ProgressBar itemBar;
-    private boolean shouldProgressBar = false;
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -151,53 +151,47 @@ public class ModelLoader extends ModelBakery
         return bakedRegistry;
     }
 
+    private ArrayDeque<ModelResourceLocation> loadingBlockModels = new ArrayDeque<ModelResourceLocation>();
+
     private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
-        blockBar = ProgressManager.push("ModelLoader: blocks", stateMap.size());
         Collection<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
         variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
         variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
-        shouldProgressBar = true;
+        blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
+        loadingBlockModels.addAll(variants);
         loadVariants(variants);
-        shouldProgressBar = false;
         ProgressManager.pop(blockBar);
     }
 
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        if(shouldProgressBar)
+        if(!loadingBlockModels.isEmpty() && loadingBlockModels.peekFirst() == location)
         {
             blockBar.step(location.toString());
+            loadingBlockModels.removeFirst();
         }
-        boolean p = shouldProgressBar;
+        Variants variants = null;
         try
         {
-            Variants variants = null;
+            variants = definition.getVariants(location.getVariant());
+        }
+        catch(MissingVariantException e)
+        {
+            missingVariants.add(location);
+        }
+        if (variants != null && !variants.getVariants().isEmpty())
+        {
             try
             {
-                variants = definition.getVariants(location.getVariant());
+                stateModels.put(location, new WeightedRandomModel(location, variants));
             }
-            catch(MissingVariantException e)
+            catch(Throwable e)
             {
-                missingVariants.add(location);
+                throw new RuntimeException(e);
             }
-            if (variants != null && !variants.getVariants().isEmpty())
-            {
-                try
-                {
-                    stateModels.put(location, new WeightedRandomModel(location, variants));
-                }
-                catch(Throwable e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        finally
-        {
-            shouldProgressBar = p;
         }
     }
 
