@@ -57,6 +57,8 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.ProgressManager;
+import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
@@ -81,6 +83,10 @@ public class ModelLoader extends ModelBakery
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private IModel missingModel = null;
     private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
+
+    private ProgressBar blockBar;
+    private ProgressBar itemBar;
+    private boolean shouldProgressBar = false;
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -148,47 +154,71 @@ public class ModelLoader extends ModelBakery
     private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
+        blockBar = ProgressManager.push("ModelLoader: blocks", stateMap.size());
         Collection<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
         variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
         variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
+        shouldProgressBar = true;
         loadVariants(variants);
+        shouldProgressBar = false;
+        ProgressManager.pop(blockBar);
     }
 
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        Variants variants = null;
+        if(shouldProgressBar)
+        {
+            blockBar.step(location.toString());
+        }
+        boolean p = shouldProgressBar;
         try
         {
-            variants = definition.getVariants(location.getVariant());
-        }
-        catch(MissingVariantException e)
-        {
-            missingVariants.add(location);
-        }
-        if (variants != null && !variants.getVariants().isEmpty())
-        {
+            Variants variants = null;
             try
             {
-                stateModels.put(location, new WeightedRandomModel(location, variants));
+                variants = definition.getVariants(location.getVariant());
             }
-            catch(Throwable e)
+            catch(MissingVariantException e)
             {
-                throw new RuntimeException(e);
+                missingVariants.add(location);
             }
+            if (variants != null && !variants.getVariants().isEmpty())
+            {
+                try
+                {
+                    stateModels.put(location, new WeightedRandomModel(location, variants));
+                }
+                catch(Throwable e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        finally
+        {
+            shouldProgressBar = p;
         }
     }
 
     private void loadItems()
     {
         registerVariantNames();
-        for(Item item : GameData.getItemRegistry().typeSafeIterable())
+        int size = 0;
+        ImmutableList<Item> items = ImmutableList.copyOf(GameData.getItemRegistry().typeSafeIterable());
+        for(Item item : items)
+        {
+            size += getVariantNames(item).size();
+        }
+        itemBar = ProgressManager.push("ModelLoader: items", size);
+        for(Item item : items)
         {
             // default loading
             for(String s : (List<String>)getVariantNames(item))
             {
                 ResourceLocation file = getItemLocation(s);
                 ModelResourceLocation memory = getInventoryVariant(s);
+                itemBar.step(memory.toString());
                 IModel model = null;
                 try
                 {
@@ -216,6 +246,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
         }
+        ProgressManager.pop(itemBar);
 
         // replace vanilla bucket models if desired. done afterwards for performance reasons
         if(ForgeModContainer.replaceVanillaBucketModel)
