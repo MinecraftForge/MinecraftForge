@@ -1,5 +1,6 @@
 package net.minecraftforge.client.model;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -23,6 +23,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -54,10 +55,36 @@ public class MultiLayerModel implements IModelCustomData
         return ImmutableList.of();
     }
 
+    private static ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> buildModels(ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    {
+        ImmutableMap.Builder<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> builder = ImmutableMap.builder();
+        for(Optional<EnumWorldBlockLayer> key : models.keySet())
+        {
+            IModel model;
+            try
+            {
+                model = ModelLoaderRegistry.getModel(models.get(key));
+            }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.ERROR, e, "Couldn't load MultiLayerModel dependency: %s", models.get(key));
+                model = ModelLoaderRegistry.getMissingModel();
+            }
+            builder.put(key, model.bake(new ModelStateComposition(state, model.getDefaultState()), format, bakedTextureGetter));
+        }
+        return builder.build();
+    }
+
     @Override
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        return new MultiLayerBakedModel(models, format, IPerspectiveAwareModel.MapWrapper.getTransforms(state));
+        IModel missing = ModelLoaderRegistry.getMissingModel();
+        return new MultiLayerBakedModel(
+            buildModels(models, state, format, bakedTextureGetter),
+            missing.bake(missing.getDefaultState(), format, bakedTextureGetter),
+            format,
+            IPerspectiveAwareModel.MapWrapper.getTransforms(state)
+        );
     }
 
     @Override
@@ -102,63 +129,59 @@ public class MultiLayerModel implements IModelCustomData
 
     public static class MultiLayerBakedModel implements IFlexibleBakedModel, ISmartBlockModel, IPerspectiveAwareModel
     {
-        private final ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models;
+        private final ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> models;
         private final VertexFormat format;
         private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;;
-        private IBakedModel missing;
-        private IBakedModel base;
-        private ImmutableMap<EnumWorldBlockLayer, IBakedModel> bakedModels;
-        private ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
+        private final IFlexibleBakedModel base;
+        private final IFlexibleBakedModel missing;
+        private final ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
 
+        private static final Function<ResourceLocation, TextureAtlasSprite> defaultTextureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
+        {
+            public TextureAtlasSprite apply(ResourceLocation location)
+            {
+                return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            }
+        };
+
+        @Deprecated // remove 1.9
         public MultiLayerBakedModel(ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
+        {
+            this(
+                buildModels(models, TRSRTransformation.identity(), format, defaultTextureGetter),
+                ModelLoaderRegistry.getMissingModel().bake(ModelLoaderRegistry.getMissingModel().getDefaultState(), format, defaultTextureGetter),
+                format,
+                cameraTransforms
+            );
+        }
+
+        public MultiLayerBakedModel(ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> models, IFlexibleBakedModel missing, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
         {
             this.models = models;
             this.format = format;
             this.cameraTransforms = cameraTransforms;
-        }
-
-        private void compute()
-        {
-            if(base == null)
+            this.missing = missing;
+            if(models.containsKey(Optional.absent()))
             {
-                ModelManager manager = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager();
-                missing = manager.getMissingModel();
-                base = getModel(manager, Optional.<EnumWorldBlockLayer>absent());
-
-                ImmutableMap.Builder<EnumWorldBlockLayer, IBakedModel> builder = ImmutableMap.builder();
-                for(EnumWorldBlockLayer layer : EnumWorldBlockLayer.values())
-                {
-                    if(models.containsKey(Optional.of(layer)))
-                    {
-                        builder.put(layer, getModel(manager, Optional.of(layer)));
-                    }
-                }
-                bakedModels = builder.build();
-
-                ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> quadBuilder = ImmutableMap.builder();
-                quadBuilder.put(Optional.<EnumFacing>absent(), buildQuads(Optional.<EnumFacing>absent()));
-                for(EnumFacing side: EnumFacing.values())
-                {
-                    quadBuilder.put(Optional.of(side), buildQuads(Optional.of(side)));
-                }
-                quads = quadBuilder.build();
+                base = models.get(Optional.absent());
             }
-        }
-
-        private IBakedModel getModel(ModelManager manager, Optional<EnumWorldBlockLayer> layer)
-        {
-            ModelResourceLocation loc = models.get(layer);
-            if(loc == null)
+            else
             {
-                loc = new ModelResourceLocation("builtin/missing", "missing");
+                base = missing;
             }
-            return manager.getModel(loc);
+            ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> quadBuilder = ImmutableMap.builder();
+            quadBuilder.put(Optional.<EnumFacing>absent(), buildQuads(models, Optional.<EnumFacing>absent()));
+            for(EnumFacing side: EnumFacing.values())
+            {
+                quadBuilder.put(Optional.of(side), buildQuads(models, Optional.of(side)));
+            }
+            quads = quadBuilder.build();
         }
 
-        private ImmutableList<BakedQuad> buildQuads(Optional<EnumFacing> side)
+        private static ImmutableList<BakedQuad> buildQuads(ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> models, Optional<EnumFacing> side)
         {
             ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-            for(IBakedModel model : bakedModels.values())
+            for(IBakedModel model : models.values())
             {
                 if(side.isPresent())
                 {
@@ -175,42 +198,36 @@ public class MultiLayerModel implements IModelCustomData
         @Override
         public List<BakedQuad> getFaceQuads(EnumFacing side)
         {
-            compute();
             return quads.get(Optional.of(side));
         }
 
         @Override
         public List<BakedQuad> getGeneralQuads()
         {
-            compute();
             return quads.get(Optional.absent());
         }
 
         @Override
         public boolean isAmbientOcclusion()
         {
-            compute();
             return base.isAmbientOcclusion();
         }
 
         @Override
         public boolean isGui3d()
         {
-            compute();
             return base.isGui3d();
         }
 
         @Override
         public boolean isBuiltInRenderer()
         {
-            compute();
             return base.isBuiltInRenderer();
         }
 
         @Override
         public TextureAtlasSprite getParticleTexture()
         {
-            compute();
             return base.getParticleTexture();
         }
 
@@ -223,13 +240,12 @@ public class MultiLayerModel implements IModelCustomData
         @Override
         public IBakedModel handleBlockState(IBlockState state)
         {
-            compute();
-            EnumWorldBlockLayer layer = MinecraftForgeClient.getRenderLayer();
-            if(!bakedModels.containsKey(layer))
+            Optional<EnumWorldBlockLayer> layer = Optional.of(MinecraftForgeClient.getRenderLayer());
+            if(!models.containsKey(layer))
             {
                 return missing;
             }
-            return bakedModels.get(layer);
+            return models.get(layer);
         }
 
         @Override
