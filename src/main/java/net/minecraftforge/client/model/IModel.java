@@ -17,6 +17,7 @@ public interface IModel
     /*
      * Returns all model locations that this model depends on.
      * Assume that returned collection is immutable.
+     * See ModelLoaderRegistry.getModel for dependency loading.
      */
     Collection<ResourceLocation> getDependencies();
 

@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap;
 
 /*
  * Simple implementation of IModelState via a map and a default value. Provides a full state for each part.
+ * You probably don't want to use this.
  */
 public class MapModelState implements IModelState
 {

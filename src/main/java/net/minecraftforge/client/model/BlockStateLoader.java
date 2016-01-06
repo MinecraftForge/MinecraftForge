@@ -134,20 +134,14 @@ public class BlockStateLoader
 
         protected IModel runModelHooks(IModel base, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
         {
-            if (!customData.isEmpty())
+            if (!customData.isEmpty() && base instanceof IModelCustomData)
             {
-                if (base instanceof IModelCustomData)
-                    base = ((IModelCustomData)base).process(customData);
-                else
-                    throw new RuntimeException("Attempted to add custom data to a model that doesn't need it: " + base);
+                base = ((IModelCustomData)base).process(customData);
             }
 
-            if (!textureMap.isEmpty())
+            if (!textureMap.isEmpty() && base instanceof IRetexturableModel)
             {
-                if (base instanceof IRetexturableModel)
-                    base = ((IRetexturableModel)base).retexture(textureMap);
-                else
-                    throw new RuntimeException("Attempted to retexture a non-retexturable model: " + base);
+                base = ((IRetexturableModel)base).retexture(textureMap);
             }
 
             return base;

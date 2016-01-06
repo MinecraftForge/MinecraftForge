@@ -330,13 +330,21 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+    private IModel getVariantModel(ModelResourceLocation location)
+    {
+        loadVariants(ImmutableList.of(location));
+        IModel model = stateModels.get(location);
+        if(model == null) model = getMissingModel();
+        return model;
+    }
+
     private void resolveDependencies(IModel model) throws IOException
     {
         for (ResourceLocation dep : model.getDependencies())
         {
             if(dep instanceof ModelResourceLocation)
             {
-                loadVariants(ImmutableList.of((ModelResourceLocation)dep));
+                getVariantModel((ModelResourceLocation)dep);
             }
             else
             {
@@ -598,37 +606,6 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    // Weighted models can contain multiple copies of 1 model with different rotations - this is to make it work with IModelState (different copies will be different objects).
-    private static class WeightedPartWrapper implements IModel
-    {
-        private final IModel model;
-
-        public WeightedPartWrapper(IModel model)
-        {
-            this.model = model;
-        }
-
-        public Collection<ResourceLocation> getDependencies()
-        {
-            return model.getDependencies();
-        }
-
-        public Collection<ResourceLocation> getTextures()
-        {
-            return model.getTextures();
-        }
-
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-        {
-            return model.bake(state, format, bakedTextureGetter);
-        }
-
-        public IModelState getDefaultState()
-        {
-            return model.getDefaultState();
-        }
-    }
-
     private class WeightedRandomModel implements IModel
     {
         private final List<Variant> variants;
@@ -636,11 +613,10 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        @Deprecated @SuppressWarnings("unused") public WeightedRandomModel(Variants variants){ this(null, variants); } // Remove 1.9
         public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
         {
             this.variants = variants.getVariants();
-            ImmutableMap.Builder<MapModelState.Wrapper, IModelState> builder = ImmutableMap.builder();
+            ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
             for (Variant v : (List<Variant>)variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
@@ -676,20 +652,18 @@ public class ModelLoader extends ModelBakery
                     textures.addAll(model.getTextures()); // Kick this, just in case.
                 }
 
-                model = new WeightedPartWrapper(model);
                 models.add(model);
-                builder.put(MapModelState.wrap(model), v.getState());
+                builder.add(Pair.of(model, v.getState()));
             }
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
             {
                 IModel missing = getMissingModel();
                 models.add(missing);
-                builder.put(MapModelState.wrap(missing), TRSRTransformation.identity());
+                builder.add(Pair.<IModel, IModelState>of(missing, TRSRTransformation.identity()));
             }
 
-            defaultState = new MapModelState(builder.build());
-
+            defaultState = new MultiModelState(builder.build());
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -708,15 +682,6 @@ public class ModelLoader extends ModelBakery
             return state;
         }
 
-        private IModelState getState(IModelState state, IModel model)
-        {
-            if(state instanceof MapModelState)
-            {
-                return ((MapModelState)state).getState(model);
-            }
-            return state;
-        }
-
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
@@ -727,14 +692,14 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = models.get(0);
-                return model.bake(addUV(v.isUvLocked(), getState(state, model)), format, bakedTextureGetter);
+                return model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, 0)), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
                 Variant v =  variants.get(i);
-                builder.add(model.bake(addUV(v.isUvLocked(), getState(state, model)), format, bakedTextureGetter), variants.get(i).getWeight());
+                builder.add(model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, i)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
             return new FlexibleWeightedBakedModel(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
         }
@@ -747,14 +712,11 @@ public class ModelLoader extends ModelBakery
 
     private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
     {
-        @SuppressWarnings("unused")
-        private final WeightedBakedModel parent;
         private final VertexFormat format;
 
         public FlexibleWeightedBakedModel(WeightedBakedModel parent, VertexFormat format)
         {
             super(parent.models);
-            this.parent = parent;
             this.format = format;
         }
 
@@ -762,12 +724,6 @@ public class ModelLoader extends ModelBakery
         {
             return format;
         }
-    }
-
-    @SuppressWarnings("unused")
-    private boolean isBuiltinModel(ModelBlock model)
-    {
-        return model == MODEL_GENERATED || model == MODEL_COMPASS || model == MODEL_CLOCK || model == MODEL_ENTITY;
     }
 
     public IModel getMissingModel()
