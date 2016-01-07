@@ -23,7 +23,6 @@ import net.minecraftforge.fml.common.ModClassLoader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.FileListHelper;
-import net.minecraftforge.fml.relauncher.ModListHelper;
 
 import org.apache.logging.log4j.Level;
 
@@ -48,7 +47,7 @@ public class ModDiscoverer
                 // skip default libs
                 .addAll(modClassLoader.getDefaultLibraries())
                 // skip loaded coremods
-                .addAll(CoreModManager.getLoadedCoremods())
+                .addAll(CoreModManager.getIgnoredMods())
                 // skip reparse coremods here
                 .addAll(CoreModManager.getReparseableCoremods())
                 .build();
@@ -98,7 +97,7 @@ public class ModDiscoverer
         for (File modFile : modList)
         {
             // skip loaded coremods
-            if (CoreModManager.getLoadedCoremods().contains(modFile.getName()))
+            if (CoreModManager.getIgnoredMods().contains(modFile.getName()))
             {
                 FMLLog.finer("Skipping already parsed coremod or tweaker %s", modFile.getName());
             }

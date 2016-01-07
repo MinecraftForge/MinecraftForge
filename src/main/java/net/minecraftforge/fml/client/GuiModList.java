@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.ChatComponentText;
@@ -149,7 +150,6 @@ public class GuiModList extends GuiScreen
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
@@ -475,11 +475,6 @@ public class GuiModList extends GuiScreen
         @Override protected void drawBackground() {}
         @Override protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) { }
 
-        private List<String> splitLines(String line)
-        {
-            return null;
-        }
-
         private List<IChatComponent> resizeContent(List<String> lines)
         {
             List<IChatComponent> ret = new ArrayList<IChatComponent>();
@@ -529,13 +524,13 @@ public class GuiModList extends GuiScreen
             {
                 GlStateManager.enableBlend();
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
-                WorldRenderer world = tess.getWorldRenderer();
+                WorldRenderer wr = tess.getWorldRenderer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
-                world.startDrawingQuads();
-                world.addVertexWithUV(offset,                  top + logoDims.height, zLevel, 0, 1);
-                world.addVertexWithUV(offset + logoDims.width, top + logoDims.height, zLevel, 1, 1);
-                world.addVertexWithUV(offset + logoDims.width, top,                   zLevel, 1, 0);
-                world.addVertexWithUV(offset,                  top,                   zLevel, 0, 0);
+                wr.begin(7, DefaultVertexFormats.POSITION_TEX);
+                wr.pos(offset,                  top + logoDims.height, zLevel).tex(0, 1).endVertex();
+                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
+                wr.pos(offset + logoDims.width, top,                   zLevel).tex(1, 0).endVertex();
+                wr.pos(offset,                  top,                   zLevel).tex(0, 0).endVertex();
                 tess.draw();
                 GlStateManager.disableBlend();
                 top += logoDims.height + 10;
@@ -578,7 +573,7 @@ public class GuiModList extends GuiScreen
                     k += GuiModList.this.fontRendererObj.getStringWidth(((ChatComponentText)part).getChatComponentText_TextValue());
                     if (k >= x)
                     {
-                        GuiModList.this.func_175276_a(part);
+                        GuiModList.this.handleComponentClick(part);
                         break;
                     }
                 }

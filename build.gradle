@@ -11,20 +11,26 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
 
+repositories {
+        maven {
+            name = "local"
+            url = "file:///home/cpw/projects/repo"
+        }
+}
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
-    version = "1.8"
-    //mappings = 'stable_16'
-    mappings = "snapshot_nodoc_20141130"
+    version = "1.8.9"
+    mappings = 'stable_20'
+    //mappings = "snapshot_nodoc_20151122"
     workspaceDir = "projects"
-    versionJson = "jsons/1.8-dev.json"
+    versionJson = "jsons/1.8.9-dev.json"
     buildUserdev = true
     buildInstaller = true
     installerVersion = "1.4"
@@ -39,20 +45,13 @@ minecraft {
     }
 
     projects {
-//        fml {
-//            rootDir 'fml'
-//            patchDir "fml/patches/minecraft"
-//            patchAfter "clean"
-//            genPatchesFrom "clean"
-//
-//            with common
-//        }
         forge {
             rootDir "."
             patchDir "patches/minecraft"
             patchAfter "clean"
             genPatchesFrom "clean"
-
+            genMcpPatches = false
+            applyMcpPatches = false
             with common
         }
     }
@@ -66,7 +65,7 @@ extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
 processJson {
-    releaseJson = "jsons/1.8-rel.json"
+    releaseJson = "jsons/1.8.9-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
         "@version@": project.version,
@@ -126,7 +125,7 @@ outputJar {
     manifest.attributes([
         "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
         "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-        "Class-Path": getServerClasspath(file("jsons/1.8-rel.json"))
+        "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-rel.json"))
     ])
 }
 

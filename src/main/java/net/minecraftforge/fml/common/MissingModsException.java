@@ -14,7 +14,6 @@ package net.minecraftforge.fml.common;
 
 import java.util.Set;
 
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
 public class MissingModsException extends EnhancedRuntimeException

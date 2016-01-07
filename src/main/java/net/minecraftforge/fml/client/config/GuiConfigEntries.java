@@ -1454,7 +1454,6 @@ public class GuiConfigEntries extends GuiListExtended
      *
      * Provides a base entry for others to extend. Handles drawing the prop label (if drawLabel == true) and the Undo/Default buttons.
      */
-    @SuppressWarnings("rawtypes")
     public static abstract class ListEntryBase implements IConfigEntry
     {
         protected final GuiConfig owningScreen;
@@ -1464,16 +1463,15 @@ public class GuiConfigEntries extends GuiListExtended
         protected final String name;
         protected final GuiButtonExt btnUndoChanges;
         protected final GuiButtonExt btnDefault;
-        protected List toolTip;
-        protected List undoToolTip;
-        protected List defaultToolTip;
+        protected List<String> toolTip;
+        protected List<String> undoToolTip;
+        protected List<String> defaultToolTip;
         protected boolean isValidValue = true;
         protected HoverChecker tooltipHoverChecker;
         protected HoverChecker undoHoverChecker;
         protected HoverChecker defaultHoverChecker;
         protected boolean drawLabel;
 
-        @SuppressWarnings({ "unchecked" })
         public ListEntryBase(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement)
         {
             this.owningScreen = owningScreen;

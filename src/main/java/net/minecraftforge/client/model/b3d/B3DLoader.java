@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
@@ -34,7 +33,6 @@ import net.minecraftforge.client.model.IModelCustomData;
 import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IPerspectiveState;
 import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
@@ -59,6 +57,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -75,6 +75,7 @@ import com.google.gson.JsonParser;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
+@SuppressWarnings("deprecation")
 public class B3DLoader implements ICustomModelLoader
 {
     public static final B3DLoader instance = new B3DLoader();
@@ -259,13 +260,15 @@ public class B3DLoader implements ICustomModelLoader
             return parent;
         }
 
-        public TRSRTransformation apply(IModelPart part)
+        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
-            if(!(part instanceof PartWrapper<?>))
+            // TODO optionify better
+            if(!part.isPresent()) return parent.apply(part);
+            if(!(part.get() instanceof NodeJoint))
             {
-                throw new IllegalArgumentException("B3DState can only be applied to b3d models");
+                return Optional.absent();
             }
-            Node<?> node = ((PartWrapper<?>)part).getNode();
+            Node<?> node = ((NodeJoint)part.get()).getNode();
             TRSRTransformation nodeTransform;
             if(progress < 1e-5 || frame == nextFrame)
             {
@@ -280,11 +283,11 @@ public class B3DLoader implements ICustomModelLoader
                 nodeTransform = getNodeMatrix(node, frame);
                 nodeTransform = nodeTransform.slerp(getNodeMatrix(node, nextFrame), progress);
             }
-            if(parent != null)
+            if(parent != null && node.getParent() == null)
             {
-                return parent.apply(part).compose(nodeTransform);
+                return Optional.of(parent.apply(part).or(TRSRTransformation.identity()).compose(nodeTransform));
             }
-            return nodeTransform;
+            return Optional.of(nodeTransform);
         }
 
         private static LoadingCache<Triple<Animation, Node<?>, Integer>, TRSRTransformation> cache = CacheBuilder.newBuilder()
@@ -300,7 +303,7 @@ public class B3DLoader implements ICustomModelLoader
 
         public TRSRTransformation getNodeMatrix(Node<?> node)
         {
-            return cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node, frame));
+            return getNodeMatrix(node, frame);
         }
 
         public TRSRTransformation getNodeMatrix(Node<?> node, int frame)
@@ -319,22 +322,99 @@ public class B3DLoader implements ICustomModelLoader
                 Node<?> parent = node.getParent();
                 if(parent != null)
                 {
+                    // parent model-global current pose
                     TRSRTransformation pm = cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node.getParent(), frame));
                     ret = ret.compose(pm);
+                    // joint offset in the parent coords
                     ret = ret.compose(new TRSRTransformation(parent.getPos(), parent.getRot(), parent.getScale(), null));
                 }
+                // current node local pose
                 ret = ret.compose(new TRSRTransformation(key.getPos(), key.getRot(), key.getScale(), null));
-                Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
+                // this part moved inside the model
+                // inverse bind of the curent node
+                /*Matrix4f rm = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
                 rm.invert();
                 ret = ret.compose(new TRSRTransformation(rm));
                 if(parent != null)
                 {
+                    // inverse bind of the parent
                     rm = new TRSRTransformation(parent.getPos(), parent.getRot(), parent.getScale(), null).getMatrix();
                     rm.invert();
                     ret = ret.compose(new TRSRTransformation(rm));
+                }*/
+                // TODO cache
+                TRSRTransformation invBind = new NodeJoint(node).getInvBindPose();
+                ret = ret.compose(invBind);
+            }
+            else
+            {
+                Node<?> parent = node.getParent();
+                if(parent != null)
+                {
+                    // parent model-global current pose
+                    TRSRTransformation pm = cache.getUnchecked(Triple.<Animation, Node<?>, Integer>of(animation, node.getParent(), frame));
+                    ret = ret.compose(pm);
+                    // joint offset in the parent coords
+                    ret = ret.compose(new TRSRTransformation(parent.getPos(), parent.getRot(), parent.getScale(), null));
                 }
+                ret = ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
+                // TODO cache
+                TRSRTransformation invBind = new NodeJoint(node).getInvBindPose();
+                ret = ret.compose(invBind);
             }
             return ret;
+        }
+    }
+
+    public static class NodeJoint implements IModelPart
+    {
+        private final Node<?> node;
+
+        public NodeJoint(Node<?> node)
+        {
+            this.node = node;
+        }
+
+        public TRSRTransformation getInvBindPose()
+        {
+            Matrix4f m = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
+            m.invert();
+            TRSRTransformation pose = new TRSRTransformation(m);
+
+            if(node.getParent() != null)
+            {
+                TRSRTransformation parent = new NodeJoint(node.getParent()).getInvBindPose();
+                pose = pose.compose(parent);
+            }
+            return pose;
+        }
+
+        public Optional<NodeJoint> getParent()
+        {
+            // FIXME cache?
+            if(node.getParent() == null) return Optional.absent();
+            return Optional.of(new NodeJoint(node.getParent()));
+        }
+
+        public Node<?> getNode()
+        {
+            return node;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return node.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj) return true;
+            if (!super.equals(obj)) return false;
+            if (getClass() != obj.getClass()) return false;
+            NodeJoint other = (NodeJoint) obj;
+            return Objects.equal(node, other.node);
         }
     }
 
@@ -715,7 +795,7 @@ public class B3DLoader implements ICustomModelLoader
             this(node, state, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
-                .build(new CacheLoader<Integer, BakedWrapper>()
+                .<Integer, BakedWrapper>build(new CacheLoader<Integer, BakedWrapper>()
                 {
                     public BakedWrapper load(Integer frame) throws Exception
                     {
@@ -759,10 +839,10 @@ public class B3DLoader implements ICustomModelLoader
                     Mesh mesh = (Mesh)node.getKind();
                     Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
                     {
-                        // gets transformation in global space
+                        private final TRSRTransformation global = state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
                         public Matrix4f apply(Node<?> node)
                         {
-                            return state.apply(PartWrapper.create(node)).getMatrix();
+                            return global.compose(state.apply(Optional.of(new NodeJoint(node))).or(TRSRTransformation.identity())).getMatrix();
                         }
                     });
                     for(Face f : faces)
@@ -856,7 +936,7 @@ public class B3DLoader implements ICustomModelLoader
             return false;
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             // FIXME somehow specify particle texture in the model
             return textures.values().asList().get(0);
@@ -913,13 +993,9 @@ public class B3DLoader implements ICustomModelLoader
             return this;
         }
 
-        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            if(state instanceof IPerspectiveState)
-            {
-                return Pair.of((IBakedModel)this, TRSRTransformation.blockCornerToCenter(((IPerspectiveState)state).forPerspective(cameraTransformType).apply(PartWrapper.create(node))).getMatrix());
-            }
-            return Pair.of((IBakedModel)this, null);
+            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }
     }
 }

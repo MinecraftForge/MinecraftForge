@@ -12,11 +12,9 @@ import net.minecraft.util.EnumFacing;
 /*
  * Version of IBakedModel with less restriction on camera transformations and with explicit format of the baked array.
  */
+@SuppressWarnings("deprecation")
 public interface IFlexibleBakedModel extends IBakedModel
 {
-    // non-erased versions of the IBakedModel methods
-    List<BakedQuad> getFaceQuads(EnumFacing side);
-    List<BakedQuad> getGeneralQuads();
     /*
      * Specifies the format which BakedQuads' getVertexData will have.
      */
@@ -36,13 +34,11 @@ public interface IFlexibleBakedModel extends IBakedModel
             this.format = format;
         }
 
-        @SuppressWarnings("unchecked")
         public List<BakedQuad> getFaceQuads(EnumFacing side)
         {
             return parent.getFaceQuads(side);
         }
 
-        @SuppressWarnings("unchecked")
         public List<BakedQuad> getGeneralQuads()
         {
             return parent.getGeneralQuads();
@@ -63,9 +59,9 @@ public interface IFlexibleBakedModel extends IBakedModel
             return parent.isBuiltInRenderer();
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
-            return parent.getTexture();
+            return parent.getParticleTexture();
         }
 
         @Deprecated

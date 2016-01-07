@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -54,12 +54,13 @@
+@@ -52,12 +52,13 @@
          super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), WorldProvider.func_76570_a(p_i45063_3_), p_i45063_5_, true);
          this.field_73035_a = p_i45063_1_;
          this.func_72912_H().func_176144_a(p_i45063_4_);

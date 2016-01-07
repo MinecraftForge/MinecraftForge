@@ -1,6 +1,8 @@
 package net.minecraftforge.fml.common.network.handshake;
 
-import java.util.HashSet;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.util.List;
 
 import net.minecraftforge.fml.common.FMLLog;
@@ -9,10 +11,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage.ServerHello;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Packet handshake sequence manager- client side (responding to remote server)
@@ -95,27 +95,28 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         public FMLHandshakeClientState accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg)
         {
             FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
-            GameData.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
+            PersistentRegistryManager.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
             if (snap == null)
             {
-                snap = new GameData.GameDataSnapshot();
+                snap = new PersistentRegistryManager.GameDataSnapshot();
                 ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(snap);
             }
 
-            GameData.GameDataSnapshot.Entry entry = new GameData.GameDataSnapshot.Entry();
+            PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
             entry.ids.putAll(pkt.getIdMap());
             entry.substitutions.addAll(pkt.getSubstitutions());
+            entry.dummied.addAll(pkt.getDummied());
             snap.entries.put(pkt.getName(), entry);
 
             if (pkt.hasMore())
             {
-                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs", pkt.getName(), entry.ids.size(), entry.substitutions.size());
+                FMLLog.fine("Received Mod Registry mapping for %s: %d IDs %d subs %d dummied", pkt.getName(), entry.ids.size(), entry.substitutions.size(), entry.dummied.size());
                 return WAITINGSERVERCOMPLETE;
             }
 
             ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).remove();
 
-            List<String> locallyMissing = GameData.injectSnapshot(snap, false, false);
+            List<String> locallyMissing = PersistentRegistryManager.injectSnapshot(snap, false, false);
             if (!locallyMissing.isEmpty())
             {
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
@@ -157,7 +158,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         {
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
-                GameData.revertToFrozen();
+                PersistentRegistryManager.revertToFrozen();
                 return HELLO;
             }
             return this;

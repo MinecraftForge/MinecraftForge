@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,10 +22,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -52,15 +54,15 @@ public class ModelAnimationDebug
 
     public static String blockName = "test_animation_block";
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    public static final PropertyBool STATIC = PropertyBool.create("static");;
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelAnimationDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelAnimationDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     public static class CommonProxy
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            B3DLoader.instance.addDomain(MODID);
             GameRegistry.registerBlock(new Block(Material.wood)
             {
                 {
@@ -71,11 +73,8 @@ public class ModelAnimationDebug
                 @Override
                 public ExtendedBlockState createBlockState()
                 {
-                    return new ExtendedBlockState(this, new IProperty[]{ FACING }, new IUnlistedProperty[]{ B3DFrameProperty.instance });
+                    return new ExtendedBlockState(this, new IProperty[]{ FACING, STATIC }, new IUnlistedProperty[]{ B3DFrameProperty.instance });
                 }
-
-                @Override
-                public int getRenderType() { return -1; }
 
                 @Override
                 public boolean isOpaqueCube() { return false; }
@@ -109,6 +108,11 @@ public class ModelAnimationDebug
                     return new Chest(state);
                 }
 
+                @Override
+                public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+                    return state.withProperty(STATIC, true);
+                }
+
                 /*@Override
                 public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
                     TileEntity te = world.getTileEntity(pos);
@@ -138,20 +142,23 @@ public class ModelAnimationDebug
         public void init(FMLInitializationEvent event) {}
     }
 
+    public static class ServerProxy extends CommonProxy {}
+
     public static class ClientProxy extends CommonProxy
     {
         @Override
         public void preInit(FMLPreInitializationEvent event)
         {
             super.preInit(event);
+            B3DLoader.instance.addDomain(MODID);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
+            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
         }
 
         @Override
         public void init(FMLInitializationEvent event)
         {
             super.init(event);
-            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
         }
     }
 
@@ -161,7 +168,7 @@ public class ModelAnimationDebug
     @EventHandler
     public void init(FMLInitializationEvent event) { proxy.init(event); }
 
-    private static class Chest extends TileEntity implements IUpdatePlayerListBox
+    private static class Chest extends TileEntity implements ITickable
     {
         private final int minFrame = 1;
         private final int maxFrame = 10;
@@ -229,23 +236,25 @@ public class ModelAnimationDebug
         }
     }
 
-    private static class ChestRenderer extends TileEntitySpecialRenderer
+    private static class ChestRenderer extends TileEntitySpecialRenderer<Chest>
     {
         public static ChestRenderer instance = new ChestRenderer();
         private ChestRenderer() {}
 
-        private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        private BlockRendererDispatcher blockRenderer;
 
-        public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTick, int breakStage)
+        public void renderTileEntityAt(Chest te, double x, double y, double z, float partialTick, int breakStage)
         {
+            if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
             IBlockState state = te.getWorld().getBlockState(te.getPos());
-            IBakedModel model = this.blockRenderer.getModelFromBlockState(state, te.getWorld(), te.getPos());
+            state = state.withProperty(STATIC, false);
+            IBakedModel model = this.blockRenderer.getBlockModelShapes().getModelForState(state);
             if(state instanceof IExtendedBlockState)
             {
                 IExtendedBlockState exState = (IExtendedBlockState)state;
                 if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
                 {
-                    exState = exState.withProperty(B3DFrameProperty.instance, new B3DState(null, ((Chest)te).getCurFrame(), ((Chest)te).getNextFrame(), partialTick));
+                    exState = exState.withProperty(B3DFrameProperty.instance, new B3DState(null, te.getCurFrame(), te.getNextFrame(), partialTick));
                     if(model instanceof ISmartBlockModel)
                     {
                         model = ((ISmartBlockModel)model).handleBlockState(exState);
@@ -270,8 +279,7 @@ public class ModelAnimationDebug
                 GlStateManager.shadeModel(GL11.GL_FLAT);
             }
 
-            worldrenderer.startDrawingQuads();
-            worldrenderer.setVertexFormat(DefaultVertexFormats.BLOCK);
+            worldrenderer.begin(7, DefaultVertexFormats.BLOCK);
             worldrenderer.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
 
             this.blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, te.getPos(), worldrenderer, false);

@@ -1,8 +1,6 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -12,9 +10,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelFluid;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -30,8 +26,10 @@ public class ModelFluidDebug
     public static final String MODID = "ForgeDebugModelFluid";
     public static final String VERSION = "1.0";
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelFluidDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelFluidDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
+
+    public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation("forge", "blocks/milk_still"), new ResourceLocation("forge", "blocks/milk_flow"));
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
@@ -42,15 +40,20 @@ public class ModelFluidDebug
         {
             FluidRegistry.registerFluid(TestFluid.instance);
             FluidRegistry.registerFluid(TestGas.instance);
+            FluidRegistry.registerFluid(milkFluid);
             GameRegistry.registerBlock(TestFluidBlock.instance, TestFluidBlock.name);
             GameRegistry.registerBlock(TestGasBlock.instance, TestGasBlock.name);
+            GameRegistry.registerBlock(MilkFluidBlock.instance, MilkFluidBlock.name);
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {
         private static ModelResourceLocation fluidLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "fluid");
         private static ModelResourceLocation gasLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "gas");
+        private static ModelResourceLocation milkLocation = new ModelResourceLocation(MODID.toLowerCase() + ":" + TestFluidBlock.name, "milk");
 
         @Override
         public void preInit(FMLPreInitializationEvent event)
@@ -58,8 +61,11 @@ public class ModelFluidDebug
             super.preInit(event);
             Item fluid = Item.getItemFromBlock(TestFluidBlock.instance);
             Item gas = Item.getItemFromBlock(TestGasBlock.instance);
-            ModelBakery.addVariantName(fluid);
-            ModelBakery.addVariantName(gas);
+            Item milk = Item.getItemFromBlock(MilkFluidBlock.instance);
+            // no need to pass the locations here, since they'll be loaded by the block model logic.
+            ModelBakery.registerItemVariants(fluid);
+            ModelBakery.registerItemVariants(gas);
+            ModelBakery.registerItemVariants(milk);
             ModelLoader.setCustomMeshDefinition(fluid, new ItemMeshDefinition()
             {
                 public ModelResourceLocation getModelLocation(ItemStack stack)
@@ -74,6 +80,13 @@ public class ModelFluidDebug
                     return gasLocation;
                 }
             });
+            ModelLoader.setCustomMeshDefinition(milk, new ItemMeshDefinition()
+            {
+                public ModelResourceLocation getModelLocation(ItemStack stack)
+                {
+                    return milkLocation;
+                }
+            });
             ModelLoader.setCustomStateMapper(TestFluidBlock.instance, new StateMapperBase()
             {
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
@@ -86,6 +99,13 @@ public class ModelFluidDebug
                 protected ModelResourceLocation getModelResourceLocation(IBlockState state)
                 {
                     return gasLocation;
+                }
+            });
+            ModelLoader.setCustomStateMapper(MilkFluidBlock.instance, new StateMapperBase()
+            {
+                protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+                {
+                    return milkLocation;
                 }
             });
         }
@@ -135,6 +155,19 @@ public class ModelFluidDebug
         private TestFluidBlock()
         {
             super(TestFluid.instance, Material.water);
+            setCreativeTab(CreativeTabs.tabBlock);
+            setUnlocalizedName(MODID + ":" + name);
+        }
+    }
+
+    public static final class MilkFluidBlock extends BlockFluidClassic
+    {
+        public static final MilkFluidBlock instance = new MilkFluidBlock();
+        public static final String name = "MilkFluidBlock";
+
+        private MilkFluidBlock()
+        {
+            super(milkFluid, Material.water);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
         }

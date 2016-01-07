@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 
 public class ModAPIManager {
     public static final ModAPIManager INSTANCE = new ModAPIManager();
+    @SuppressWarnings("unused")
     private ModAPITransformer transformer;
     private ASMDataTable dataTable;
     private Map<String,APIContainer> apiContainers;
@@ -89,6 +90,9 @@ public class ModAPIManager {
 
         public void validate(String providedAPI, String apiOwner, String apiVersion)
         {
+            if (Loader.instance().getModClassLoader().containsSource(this.getSource())) {
+                FMLLog.bigWarning("The API %s from source %s is loaded from an incompatible classloader. THIS WILL NOT WORK!", providedAPI, this.getSource().getAbsolutePath());
+            }
             // TODO Compare this annotation data to the one we first found. Maybe barf if there is inconsistency?
         }
 

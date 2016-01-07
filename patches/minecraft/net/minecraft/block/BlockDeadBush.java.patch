@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDeadBush.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDeadBush.java
-@@ -13,7 +13,7 @@
+@@ -14,7 +14,7 @@
  import net.minecraft.util.BlockPos;
  import net.minecraft.world.World;
  
 -public class BlockDeadBush extends BlockBush
 +public class BlockDeadBush extends BlockBush implements net.minecraftforge.common.IShearable
  {
-     private static final String __OBFID = "CL_00000224";
- 
-@@ -41,14 +41,15 @@
+     protected BlockDeadBush()
+     {
+@@ -45,14 +45,15 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
      {

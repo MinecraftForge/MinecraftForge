@@ -17,9 +17,10 @@ import com.google.common.cache.LoadingCache;
 
 public class LightUtil
 {
+    private static final float s2 = (float)Math.pow(2, .5);
+
     public static float diffuseLight(float x, float y, float z)
     {
-        float s2 = (float)Math.pow(2, .5);
         float y1 = y + 3 - 2 * s2;
         return (x * x * 0.6f + (y1 * y1 * (3 + 2 * s2)) / 8 + z * z * 0.8f);
     }
@@ -135,11 +136,12 @@ public class LightUtil
     public static void unpack(int[] from, float[] to, VertexFormat formatFrom, int v, int e)
     {
         VertexFormatElement element = formatFrom.getElement(e);
-        for(int i = 0; i < 4; i++)
+        int length = 4 <+ to.length ? 4 : to.length;
+        for(int i = 0; i < length; i++)
         {
             if(i < element.getElementCount())
             {
-                int pos = v * formatFrom.getNextOffset() + element.getOffset() + element.getType().getSize() * i;
+                int pos = v * formatFrom.getNextOffset() + formatFrom.func_181720_d(e) + element.getType().getSize() * i;
                 int index = pos >> 2;
                 int offset = pos & 3;
                 int bits = from[index];
@@ -187,25 +189,26 @@ public class LightUtil
         {
             if(i < element.getElementCount())
             {
-                int pos = v * formatTo.getNextOffset() + element.getOffset() + element.getType().getSize() * i;
+                int pos = v * formatTo.getNextOffset() + formatTo.func_181720_d(e) + element.getType().getSize() * i;
                 int index = pos >> 2;
                 int offset = pos & 3;
                 int bits = 0;
                 int mask = (256 << (8 * (element.getType().getSize() - 1))) - 1;
+                float f = i < from.length ? from[i] : 0;
                 switch(element.getType())
                 {
                     case FLOAT:
-                        bits = Float.floatToRawIntBits(from[i]);
+                        bits = Float.floatToRawIntBits(f);
                         break;
                     case UBYTE:
                     case USHORT:
                     case UINT:
-                        bits = (int)(from[i] * mask);
+                        bits = (int)(f * mask);
                         break;
                     case BYTE:
                     case SHORT:
                     case INT:
-                        bits = (int)(from[i] * mask / 2);
+                        bits = (int)(f * mask / 2);
                         break;
                 }
                 to[index] &= ~(mask << (offset * 8));

@@ -8,9 +8,9 @@
                  tileentitynote.func_145877_a();
 +                if (old == tileentitynote.field_145879_a) return false;
                  tileentitynote.func_175108_a(p_180639_1_, p_180639_2_);
+                 p_180639_4_.func_71029_a(StatList.field_181735_S);
              }
- 
-@@ -96,6 +98,10 @@
+@@ -98,6 +100,10 @@
  
      public boolean func_180648_a(World p_180648_1_, BlockPos p_180648_2_, IBlockState p_180648_3_, int p_180648_4_, int p_180648_5_)
      {

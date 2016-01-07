@@ -1,43 +1,92 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -101,7 +101,7 @@
+@@ -119,7 +119,7 @@
+             }
+         }
  
-             if (item != null)
-             {
--                int i = Item.func_150891_b(item);
-+                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
+-        func_75924_a(field_75928_D);
++        replaceAllSimilarBlocks(field_75928_D, true);
+     }
  
-                 if (s != null)
-@@ -121,11 +121,11 @@
-         while (iterator.hasNext())
+     private static void func_151181_c()
+@@ -141,7 +141,7 @@
+             }
+         }
+ 
+-        func_75924_a(field_75934_C);
++        replaceAllSimilarBlocks(field_75934_C, false);
+     }
+ 
+     private static void func_75925_c()
+@@ -165,7 +165,7 @@
+             }
+         }
+ 
+-        func_75924_a(field_75929_E);
++        replaceAllSimilarBlocks(field_75929_E, true);
+     }
+ 
+     private static void func_151179_e()
+@@ -184,7 +184,7 @@
+             }
+         }
+ 
+-        func_75924_a(field_75930_F);
++        replaceAllSimilarBlocks(field_75930_F, true);
+     }
+ 
+     private static String func_180204_a(Item p_180204_0_)
+@@ -193,28 +193,35 @@
+         return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
+     }
+ 
+-    private static void func_75924_a(StatBase[] p_75924_0_)
++    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_, boolean useItemIds)
+     {
+-        func_151180_a(p_75924_0_, Blocks.field_150355_j, Blocks.field_150358_i);
+-        func_151180_a(p_75924_0_, Blocks.field_150353_l, Blocks.field_150356_k);
+-        func_151180_a(p_75924_0_, Blocks.field_150428_aP, Blocks.field_150423_aK);
+-        func_151180_a(p_75924_0_, Blocks.field_150470_am, Blocks.field_150460_al);
+-        func_151180_a(p_75924_0_, Blocks.field_150439_ay, Blocks.field_150450_ax);
+-        func_151180_a(p_75924_0_, Blocks.field_150416_aS, Blocks.field_150413_aR);
+-        func_151180_a(p_75924_0_, Blocks.field_150455_bV, Blocks.field_150441_bU);
+-        func_151180_a(p_75924_0_, Blocks.field_150429_aA, Blocks.field_150437_az);
+-        func_151180_a(p_75924_0_, Blocks.field_150374_bv, Blocks.field_150379_bu);
+-        func_151180_a(p_75924_0_, Blocks.field_150334_T, Blocks.field_150333_U);
+-        func_151180_a(p_75924_0_, Blocks.field_150373_bw, Blocks.field_150376_bx);
+-        func_151180_a(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP);
+-        func_151180_a(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d);
+-        func_151180_a(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d);
++        mergeStatBases(p_75924_0_, Blocks.field_150355_j, Blocks.field_150358_i, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150353_l, Blocks.field_150356_k, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150428_aP, Blocks.field_150423_aK, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150470_am, Blocks.field_150460_al, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150439_ay, Blocks.field_150450_ax, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150416_aS, Blocks.field_150413_aR, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150455_bV, Blocks.field_150441_bU, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150429_aA, Blocks.field_150437_az, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150374_bv, Blocks.field_150379_bu, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150334_T, Blocks.field_150333_U, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150373_bw, Blocks.field_150376_bx, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_180388_cO, Blocks.field_180389_cP, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150349_c, Blocks.field_150346_d, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.field_150458_ak, Blocks.field_150346_d, useItemIds);
+     }
+ 
+-    private static void func_151180_a(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_)
++    private static void mergeStatBases(StatBase[] p_151180_0_, Block p_151180_1_, Block p_151180_2_, boolean useItemIds)
+     {
+-        int i = Block.func_149682_b(p_151180_1_);
+-        int j = Block.func_149682_b(p_151180_2_);
++        int i;
++        int j;
++        if (useItemIds) {
++            i = Item.func_150891_b(Item.func_150898_a(p_151180_1_));
++            j = Item.func_150891_b(Item.func_150898_a(p_151180_2_));
++        } else {
++            i = Block.func_149682_b(p_151180_1_);
++            j = Block.func_149682_b(p_151180_2_);
++        }
+ 
+         if (p_151180_0_[i] != null && p_151180_0_[j] == null)
          {
-             Block block = (Block)iterator.next();
--            Item item = Item.func_150898_a(block);
-+            Item item = Item.func_150898_a(block); //TODO: Hook FML's stat change event and re-assign these
- 
-             if (item != null)
-             {
--                int i = Block.func_149682_b(block);
-+                int i = Block.func_149682_b(block); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
- 
-                 if (s != null && block.func_149652_G())
-@@ -149,7 +149,7 @@
- 
-             if (item != null)
-             {
--                int i = Item.func_150891_b(item);
-+                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
- 
-                 if (s != null)
-@@ -177,7 +177,7 @@
- 
-             if (item != null)
-             {
--                int i = Item.func_150891_b(item);
-+                int i = Item.func_150891_b(item); //TODO: Hook FML's stat change event and re-assign these
-                 String s = func_180204_a(item);
- 
-                 if (s != null && item.func_77645_m())

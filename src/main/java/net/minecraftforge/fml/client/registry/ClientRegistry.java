@@ -31,14 +31,13 @@ public class ClientRegistry
      * @param id
      * @param specialRenderer
      */
-    public static void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id, TileEntitySpecialRenderer specialRenderer)
+    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<? super T> specialRenderer)
     {
         GameRegistry.registerTileEntity(tileEntityClass, id);
         bindTileEntitySpecialRenderer(tileEntityClass, specialRenderer);
     }
 
-    @SuppressWarnings("unchecked")
-    public static void bindTileEntitySpecialRenderer(Class <? extends TileEntity> tileEntityClass, TileEntitySpecialRenderer specialRenderer)
+    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntitySpecialRenderer<? super T> specialRenderer)
     {
         TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(tileEntityClass, specialRenderer);
         specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);

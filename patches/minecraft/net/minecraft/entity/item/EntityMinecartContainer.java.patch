@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -173,6 +173,7 @@
+@@ -180,6 +180,7 @@
  
      public boolean func_130002_c(EntityPlayer p_130002_1_)
      {

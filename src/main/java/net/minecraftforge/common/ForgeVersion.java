@@ -33,16 +33,18 @@ public class ForgeVersion
     //This number is incremented every time we remove deprecated code/major API changes, never reset
     public static final int majorVersion    = 11;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = 14;
+    public static final int minorVersion    = 15;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 4;
+    public static final int revisionVersion = 0;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
-    public static final String mcVersion = "1.8";
+    public static final String mcVersion = "1.8.9";
     // This is the MCP data version we're using
-    public static final String mcpVersion = "9.10";
+    public static final String mcpVersion = "9.19";
+    @SuppressWarnings("unused")
     private static Status status = PENDING;
+    @SuppressWarnings("unused")
     private static String target = null;
 
     public static int getMajorVersion()
@@ -150,7 +152,9 @@ public class ForgeVersion
                     FMLLog.log("ForgeVersionCheck", Level.DEBUG, "[%s] Received version check data:\n%s", mod.getModId(), data);
 
 
+                    @SuppressWarnings("unchecked")
                     Map<String, Object> json = new Gson().fromJson(data, Map.class);
+                    @SuppressWarnings("unchecked")
                     Map<String, String> promos = (Map<String, String>)json.get("promos");
                     String display_url = (String)json.get("homepage");
 
@@ -201,6 +205,7 @@ public class ForgeVersion
                     FMLLog.log("ForgeVersionCheck", Level.INFO, "[%s] Found status: %s Target: %s", mod.getModId(), status, target);
 
                     Map<ComparableVersion, String> changes = new LinkedHashMap<ComparableVersion, String>();
+                    @SuppressWarnings("unchecked")
                     Map<String, String> tmp = (Map<String, String>)json.get(MinecraftForge.MC_VERSION);
                     if (tmp != null)
                     {
@@ -255,6 +260,7 @@ public class ForgeVersion
 
     public static CheckResult getResult(ModContainer mod)
     {
+        if (mod == null) return PENDING_CHECK;
         if (mod instanceof InjectedModContainer)
             mod = ((InjectedModContainer)mod).wrappedContainer;
         CheckResult ret = results.get(mod);

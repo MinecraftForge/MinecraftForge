@@ -1,5 +1,7 @@
 package net.minecraftforge.client.model;
 
+import com.google.common.base.Optional;
+
 public class ModelStateComposition implements IModelState
 {
     private final IModelState first;
@@ -11,8 +13,13 @@ public class ModelStateComposition implements IModelState
         this.second = second;
     }
 
-    public TRSRTransformation apply(IModelPart part)
+    public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
-        return first.apply(part).compose(second.apply(part));
+        Optional<TRSRTransformation> f = first.apply(part), s = second.apply(part);
+        if(f.isPresent() && s.isPresent())
+        {
+            return Optional.of(f.get().compose(s.get()));
+        }
+        return f.or(s);
     }
 }

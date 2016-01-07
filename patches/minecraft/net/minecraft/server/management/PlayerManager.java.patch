@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerManager.java
-@@ -122,15 +122,24 @@
+@@ -117,15 +117,24 @@
          int j = (int)p_72683_1_.field_70161_v >> 4;
          p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
          p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
 +        // Load nearby chunks first
-+        List<ChunkCoordIntPair> chunkList = new ArrayList<ChunkCoordIntPair>();
++        List<ChunkCoordIntPair> chunkList = Lists.newArrayList();
  
          for (int k = i - this.field_72698_e; k <= i + this.field_72698_e; ++k)
          {
@@ -26,15 +26,15 @@
          this.field_72699_b.add(p_72683_1_);
          this.func_72691_b(p_72683_1_);
      }
-@@ -232,6 +241,7 @@
+@@ -225,6 +234,7 @@
              int i1 = this.field_72698_e;
              int j1 = i - k;
              int k1 = j - l;
-+            List<ChunkCoordIntPair> chunksToLoad = new ArrayList<ChunkCoordIntPair>();
++            List<ChunkCoordIntPair> chunksToLoad = Lists.newArrayList();
  
              if (j1 != 0 || k1 != 0)
              {
-@@ -241,7 +251,7 @@
+@@ -234,7 +244,7 @@
                      {
                          if (!this.func_72684_a(l1, i2, k, l, i1))
                          {
@@ -43,7 +43,7 @@
                          }
  
                          if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
-@@ -259,6 +269,18 @@
+@@ -252,6 +262,18 @@
                  this.func_72691_b(p_72685_1_);
                  p_72685_1_.field_71131_d = p_72685_1_.field_70165_t;
                  p_72685_1_.field_71132_e = p_72685_1_.field_70161_v;
@@ -62,7 +62,7 @@
              }
          }
      }
-@@ -334,12 +356,21 @@
+@@ -322,11 +344,20 @@
          private int field_73262_e;
          private int field_73260_f;
          private long field_111198_g;
@@ -75,7 +75,6 @@
 +                PlayerInstance.this.loaded = true;
 +            }
 +        };
-         private static final String __OBFID = "CL_00001435";
  
          public PlayerInstance(int p_i1518_2_, int p_i1518_3_)
          {
@@ -85,7 +84,7 @@
          }
  
          public void func_73255_a(EntityPlayerMP p_73255_1_)
-@@ -356,7 +387,24 @@
+@@ -343,7 +374,24 @@
                  }
  
                  this.field_73263_b.add(p_73255_1_);
@@ -110,7 +109,7 @@
              }
          }
  
-@@ -364,6 +412,24 @@
+@@ -351,6 +399,24 @@
          {
              if (this.field_73263_b.contains(p_73252_1_))
              {
@@ -135,7 +134,7 @@
                  Chunk chunk = PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b);
  
                  if (chunk.func_150802_k())
-@@ -371,9 +437,12 @@
+@@ -358,9 +424,12 @@
                      p_73252_1_.field_71135_a.func_147359_a(new S21PacketChunkData(chunk, true, 0));
                  }
  
@@ -148,7 +147,7 @@
                  if (this.field_73263_b.isEmpty())
                  {
                      long i = (long)this.field_73264_c.field_77276_a + 2147483647L | (long)this.field_73264_c.field_77275_b + 2147483647L << 32;
-@@ -411,7 +480,7 @@
+@@ -398,7 +467,7 @@
  
              this.field_73260_f |= 1 << (p_151253_2_ >> 4);
  
@@ -157,7 +156,7 @@
              {
                  short short1 = (short)(p_151253_1_ << 12 | p_151253_3_ << 8 | p_151253_2_);
  
-@@ -423,6 +492,10 @@
+@@ -410,6 +479,10 @@
                      }
                  }
  
@@ -168,7 +167,7 @@
                  this.field_151254_d[this.field_73262_e++] = short1;
              }
          }
-@@ -440,6 +513,7 @@
+@@ -427,6 +500,7 @@
              }
          }
  
@@ -176,7 +175,7 @@
          public void func_73254_a()
          {
              if (this.field_73262_e != 0)
-@@ -456,7 +530,7 @@
+@@ -439,18 +513,19 @@
                      BlockPos blockpos = new BlockPos(i, j, k);
                      this.func_151251_a(new S23PacketBlockChange(PlayerManager.this.field_72701_a, blockpos));
  
@@ -185,40 +184,37 @@
                      {
                          this.func_151252_a(PlayerManager.this.field_72701_a.func_175625_s(blockpos));
                      }
-@@ -465,13 +539,14 @@
+                 }
+-                else if (this.field_73262_e == 64)
++                else if (this.field_73262_e >= net.minecraftforge.common.ForgeModContainer.clumpingThreshold)
                  {
-                     int i1;
+                     int i1 = this.field_73264_c.field_77276_a * 16;
+                     int k1 = this.field_73264_c.field_77275_b * 16;
+                     this.func_151251_a(new S21PacketChunkData(PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b), false, this.field_73260_f));
  
--                    if (this.field_73262_e == 64)
-+                    if (this.field_73262_e >= net.minecraftforge.common.ForgeModContainer.clumpingThreshold)
+-                    for (int i2 = 0; i2 < 16; ++i2)
++                    // Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
++                    for (int i2 = 0; false && i2 < 16; ++i2)
                      {
-                         i = this.field_73264_c.field_77276_a * 16;
-                         j = this.field_73264_c.field_77275_b * 16;
-                         this.func_151251_a(new S21PacketChunkData(PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b), false, this.field_73260_f));
- 
--                        for (k = 0; k < 16; ++k)
-+                        // Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
-+                        for (k = 0; false && k < 16; ++k)
+                         if ((this.field_73260_f & 1 << i2) != 0)
                          {
-                             if ((this.field_73260_f & 1 << k) != 0)
-                             {
-@@ -488,7 +563,10 @@
-                     else
+@@ -467,7 +542,9 @@
+                 else
+                 {
+                     this.func_151251_a(new S22PacketMultiBlockChange(this.field_73262_e, this.field_151254_d, PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b)));
+-
++                }
++                { // Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
++                    WorldServer world = PlayerManager.this.field_72701_a;
+                     for (int j1 = 0; j1 < this.field_73262_e; ++j1)
                      {
-                         this.func_151251_a(new S22PacketMultiBlockChange(this.field_73262_e, this.field_151254_d, PlayerManager.this.field_72701_a.func_72964_e(this.field_73264_c.field_77276_a, this.field_73264_c.field_77275_b)));
-+                    }
+                         int l1 = (this.field_151254_d[j1] >> 12 & 15) + this.field_73264_c.field_77276_a * 16;
+@@ -475,7 +552,7 @@
+                         int l2 = (this.field_151254_d[j1] >> 8 & 15) + this.field_73264_c.field_77275_b * 16;
+                         BlockPos blockpos1 = new BlockPos(l1, j2, l2);
  
-+                    { //Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
-+                        WorldServer world = PlayerManager.this.field_72701_a;
-                         for (i = 0; i < this.field_73262_e; ++i)
+-                        if (PlayerManager.this.field_72701_a.func_180495_p(blockpos1).func_177230_c().func_149716_u())
++                        if (world.func_180495_p(blockpos1).func_177230_c().hasTileEntity(world.func_180495_p(blockpos1)))
                          {
-                             j = (this.field_151254_d[i] >> 12 & 15) + this.field_73264_c.field_77276_a * 16;
-@@ -496,7 +574,7 @@
-                             i1 = (this.field_151254_d[i] >> 8 & 15) + this.field_73264_c.field_77275_b * 16;
-                             BlockPos blockpos1 = new BlockPos(j, k, i1);
- 
--                            if (PlayerManager.this.field_72701_a.func_180495_p(blockpos1).func_177230_c().func_149716_u())
-+                            if (world.func_180495_p(blockpos1).func_177230_c().hasTileEntity(world.func_180495_p(blockpos1)))
-                             {
-                                 this.func_151252_a(PlayerManager.this.field_72701_a.func_175625_s(blockpos1));
-                             }
+                             this.func_151252_a(PlayerManager.this.field_72701_a.func_175625_s(blockpos1));
+                         }

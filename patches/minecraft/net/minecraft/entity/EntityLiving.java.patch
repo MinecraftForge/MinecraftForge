@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -124,6 +124,7 @@
+@@ -121,6 +121,7 @@
      public void func_70624_b(EntityLivingBase p_70624_1_)
      {
          this.field_70696_bz = p_70624_1_;
 +        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
      }
  
-     public boolean func_70686_a(Class p_70686_1_)
-@@ -507,10 +508,22 @@
+     public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
+@@ -498,10 +499,22 @@
  
      protected void func_70623_bb()
      {
@@ -30,8 +30,8 @@
 +        }
          else
          {
-             EntityPlayer entityplayer = this.field_70170_p.func_72890_a(this, -1.0D);
-@@ -628,7 +641,6 @@
+             Entity entity = this.field_70170_p.func_72890_a(this, -1.0D);
+@@ -621,7 +634,6 @@
          return this.field_70170_p.func_72917_a(this.func_174813_aQ(), this) && this.field_70170_p.func_72945_a(this, this.func_174813_aQ()).isEmpty() && !this.field_70170_p.func_72953_d(this.func_174813_aQ());
      }
  

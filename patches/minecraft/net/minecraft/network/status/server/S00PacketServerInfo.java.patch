@@ -4,7 +4,7 @@
  
      public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
--        p_148840_1_.func_180714_a(field_149297_a.toJson(this.field_149296_b));
+-        p_148840_1_.func_180714_a(field_149297_a.toJson((Object)this.field_149296_b));
 +        p_148840_1_.func_180714_a(this.field_149296_b.getJson());
      }
  

@@ -18,12 +18,14 @@ public class ForgeTimeTracker {
     public static long tileEntityTrackingTime;
     
     private Map<TileEntity,int[]> tileEntityTimings;
-    private Map<Entity,int[]> entityTimings;
+    private WeakReference<TileEntity> tile;
     
     private static final ForgeTimeTracker INSTANCE = new ForgeTimeTracker();
 
-    private WeakReference<TileEntity> tile;
+    /* not implemented
     private WeakReference<Entity> entity;
+    private Map<Entity,int[]> entityTimings;
+    */
     
     private long timing;
     
@@ -32,7 +34,7 @@ public class ForgeTimeTracker {
         MapMaker mm = new MapMaker();
         mm.weakKeys();
         tileEntityTimings = mm.makeMap();
-        entityTimings = mm.makeMap();
+        //entityTimings = mm.makeMap();
     }
     
 

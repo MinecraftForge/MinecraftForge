@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@SuppressWarnings("deprecation")
 public class BlockStateLoader
 {
     private static final Gson GSON = (new GsonBuilder())
@@ -43,7 +42,6 @@ public class BlockStateLoader
      *
      * @return Model definition including variants for all known combinations.
      */
-    @SuppressWarnings("rawtypes")
     public static ModelBlockDefinition load(Reader reader, final Gson vanillaGSON)
     {
         try
@@ -75,7 +73,7 @@ public class BlockStateLoader
                         variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
                     }
 
-                    return new ModelBlockDefinition((Collection)variants); //Damn lists being collections!
+                    return new ModelBlockDefinition(variants);
 
                 default: //Unknown version.. try loading it as normal.
                     return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);
@@ -136,20 +134,14 @@ public class BlockStateLoader
 
         protected IModel runModelHooks(IModel base, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
         {
-            if (!customData.isEmpty())
+            if (!customData.isEmpty() && base instanceof IModelCustomData)
             {
-                if (base instanceof IModelCustomData)
-                    base = ((IModelCustomData)base).process(customData);
-                else
-                    throw new RuntimeException("Attempted to add custom data to a model that doesn't need it: " + base);
+                base = ((IModelCustomData)base).process(customData);
             }
 
-            if (!textureMap.isEmpty())
+            if (!textureMap.isEmpty() && base instanceof IRetexturableModel)
             {
-                if (base instanceof IRetexturableModel)
-                    base = ((IRetexturableModel)base).retexture(textureMap);
-                else
-                    throw new RuntimeException("Attempted to retexture a non-retexturable model: " + base);
+                base = ((IRetexturableModel)base).retexture(textureMap);
             }
 
             return base;
@@ -195,7 +187,7 @@ public class BlockStateLoader
                 IModelState partState = new ModelStateComposition(baseTr, part.getState());
                 if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
 
-                models.put(entry.getKey(), Pair.of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
+                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
             }
 
             return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());

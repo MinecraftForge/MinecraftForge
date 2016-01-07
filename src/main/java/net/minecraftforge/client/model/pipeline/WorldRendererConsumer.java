@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
@@ -12,6 +13,7 @@ import net.minecraft.util.EnumFacing;
  */
 public class WorldRendererConsumer implements IVertexConsumer
 {
+    private static final float[] dummyColor = new float[]{ 1, 1, 1, 1 };
     private final WorldRenderer renderer;
     private final int[] quadData;
     private int v = 0;
@@ -31,8 +33,13 @@ public class WorldRendererConsumer implements IVertexConsumer
 
     public void put(int e, float... data)
     {
-        LightUtil.pack(data, quadData, getVertexFormat(), v, e);
-        if(e == getVertexFormat().getElementCount() - 1)
+        VertexFormat format = getVertexFormat();
+        if(renderer.isColorDisabled() && format.getElement(e).getUsage() == EnumUsage.COLOR)
+        {
+            data = dummyColor;
+        }
+        LightUtil.pack(data, quadData, format, v, e);
+        if(e == format.getElementCount() - 1)
         {
             v++;
             if(v == 4)

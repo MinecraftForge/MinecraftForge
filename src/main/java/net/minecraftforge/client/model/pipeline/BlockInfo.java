@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Block.EnumOffsetType;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
@@ -34,18 +35,21 @@ public class BlockInfo
 
     public void updateShift()
     {
-        shx = shy = shz = 0;
+        updateShift(false);
+    }
+
+    public void updateShift(boolean ignoreY)
+    {
         long rand = 0;
-        // FIXME
-        switch(block.getOffsetType())
+        if(block.getOffsetType() != EnumOffsetType.NONE)
         {
-            case XYZ:
-                rand = MathHelper.getPositionRandom(blockPos);
+            rand = MathHelper.getCoordinateRandom(blockPos.getX(), ignoreY ? 0 : blockPos.getY(), blockPos.getZ());
+            shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
+            shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
+            if(block.getOffsetType() == EnumOffsetType.XYZ)
+            {
                 shy = ((float)((rand >> 20) & 0xF) / 0xF - 1) * .2f;
-            case XZ:
-                shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
-                shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
-            default:
+            }
         }
     }
 
@@ -68,6 +72,7 @@ public class BlockInfo
         this.blockPos = blockPos;
         cachedTint = -1;
         cachedMultiplier = -1;
+        shx = shy = shz = 0;
     }
 
     private float combine(int c, int s1, int s2, int s3)

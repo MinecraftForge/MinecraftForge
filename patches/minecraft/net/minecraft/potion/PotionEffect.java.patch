@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
-@@ -19,6 +19,8 @@
+@@ -18,6 +18,8 @@
+     @SideOnly(Side.CLIENT)
      private boolean field_100013_f;
      private boolean field_180156_h;
-     private static final String __OBFID = "CL_00001529";
 +    /** List of ItemStack that can cure the potion effect **/
 +    private java.util.List<net.minecraft.item.ItemStack> curativeItems;
  
      public PotionEffect(int p_i1574_1_, int p_i1574_2_)
      {
-@@ -37,6 +39,8 @@
+@@ -36,6 +38,8 @@
          this.field_76461_c = p_i45896_3_;
          this.field_82724_e = p_i45896_4_;
          this.field_180156_h = p_i45896_5_;
@@ -18,7 +18,7 @@
      }
  
      public PotionEffect(PotionEffect p_i1577_1_)
-@@ -46,6 +50,7 @@
+@@ -45,6 +49,7 @@
          this.field_76461_c = p_i1577_1_.field_76461_c;
          this.field_82724_e = p_i1577_1_.field_82724_e;
          this.field_180156_h = p_i1577_1_.field_180156_h;
@@ -26,16 +26,16 @@
      }
  
      public void func_76452_a(PotionEffect p_76452_1_)
-@@ -191,7 +196,7 @@
+@@ -190,7 +195,7 @@
  
      public static PotionEffect func_82722_b(NBTTagCompound p_82722_0_)
      {
--        byte b0 = p_82722_0_.func_74771_c("Id");
-+        int b0 = p_82722_0_.func_74771_c("Id") & 0xff;
+-        int i = p_82722_0_.func_74771_c("Id");
++        int i = p_82722_0_.func_74771_c("Id") & 0xff;
  
-         if (b0 >= 0 && b0 < Potion.field_76425_a.length && Potion.field_76425_a[b0] != null)
+         if (i >= 0 && i < Potion.field_76425_a.length && Potion.field_76425_a[i] != null)
          {
-@@ -224,4 +229,62 @@
+@@ -223,4 +228,53 @@
      {
          return this.field_100013_f;
      }
@@ -57,16 +57,15 @@
 +     */
 +    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
-+        boolean found = false;
 +        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
 +        {
 +            if (curativeItem.func_77969_a(stack))
 +            {
-+                found = true;
++                return true;
 +            }
 +        }
 +
-+        return found;
++        return false;
 +    }
 +
 +    /***
@@ -84,15 +83,7 @@
 +     */
 +    public void addCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
-+        boolean found = false;
-+        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
-+        {
-+            if (curativeItem.func_77969_a(stack))
-+            {
-+                found = true;
-+            }
-+        }
-+        if (!found)
++        if (!this.isCurativeItem(stack))
 +        {
 +            this.curativeItems.add(stack);
 +        }

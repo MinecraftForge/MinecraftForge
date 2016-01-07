@@ -57,6 +57,10 @@ public class ProxyInjector
                     continue;
                 }
                 String targetType = side.isClient() ? annotation.clientSide() : annotation.serverSide();
+                if(targetType.equals(""))
+                {
+                    targetType = targ.getClassName() + (side.isClient() ? "$ClientProxy" : "$ServerProxy");
+                }
                 Object proxy=Class.forName(targetType, true, mcl).newInstance();
 
                 if (languageAdapter.supportsStatics() && (target.getModifiers() & Modifier.STATIC) == 0 )

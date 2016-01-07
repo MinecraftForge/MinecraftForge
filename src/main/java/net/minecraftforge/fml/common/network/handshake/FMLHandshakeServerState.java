@@ -1,18 +1,20 @@
 package net.minecraftforge.fml.common.network.handshake;
 
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {
@@ -61,11 +63,11 @@ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
         {
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
-                GameData.GameDataSnapshot snapshot = GameData.takeSnapshot();
-                Iterator<Map.Entry<String, GameData.GameDataSnapshot.Entry>> itr = snapshot.entries.entrySet().iterator();
+                PersistentRegistryManager.GameDataSnapshot snapshot = PersistentRegistryManager.takeSnapshot();
+                Iterator<Map.Entry<ResourceLocation, PersistentRegistryManager.GameDataSnapshot.Entry>> itr = snapshot.entries.entrySet().iterator();
                 while (itr.hasNext())
                 {
-                    Entry<String, GameData.GameDataSnapshot.Entry> e = itr.next();
+                    Entry<ResourceLocation, PersistentRegistryManager.GameDataSnapshot.Entry> e = itr.next();
                     ctx.writeAndFlush(new FMLHandshakeMessage.RegistryData(itr.hasNext(), e.getKey(), e.getValue())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
                 }
             }

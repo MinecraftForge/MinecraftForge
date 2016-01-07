@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * A simple delegating class loader used to load mods into the system
@@ -42,16 +44,19 @@ public class ModClassLoader extends URLClassLoader
 {
     private static final List<String> STANDARD_LIBRARIES = ImmutableList.of("jinput.jar", "lwjgl.jar", "lwjgl_util.jar", "rt.jar");
     private LaunchClassLoader mainClassLoader;
+    private List<File> sources;
 
     public ModClassLoader(ClassLoader parent) {
         super(new URL[0], null);
         this.mainClassLoader = (LaunchClassLoader)parent;
+        this.sources = Lists.newArrayList();
     }
 
     public void addFile(File modFile) throws MalformedURLException
     {
         URL url = modFile.toURI().toURL();
         mainClassLoader.addURL(url);
+        this.sources.add(modFile);
     }
 
     @Override
@@ -112,7 +117,7 @@ public class ModClassLoader extends URLClassLoader
             "librarylwjglopenal-",
             "soundsystem-",
             "netty-all-",
-            "quava-",
+            "guava-",
             "commons-lang3-",
             "commons-compress-",
             "commons-logging-",
@@ -147,5 +152,21 @@ public class ModClassLoader extends URLClassLoader
         ModAPITransformer modAPI = (ModAPITransformer) transformers.get(transformers.size()-1);
         modAPI.initTable(dataTable);
         return modAPI;
+    }
+
+    List<URL> parentURLs = null;
+    public boolean containsSource(File source)
+    {
+        if (parentURLs == null) {
+            parentURLs = Arrays.asList(mainClassLoader.getURLs());
+        }
+        try
+        {
+            return parentURLs.contains(source.toURI().toURL());
+        } catch (MalformedURLException e)
+        {
+            // shouldn't happen
+            return false;
+        }
     }
 }

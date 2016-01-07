@@ -30,7 +30,7 @@ public class ItemTileDebug
 
     private static String blockName = MODID.toLowerCase() + ":" + TestBlock.name;
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ItemTileDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ItemTileDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     @EventHandler
@@ -50,10 +50,13 @@ public class ItemTileDebug
         public void init(FMLInitializationEvent event) {}
     }
 
+    public static class ServerProxy extends CommonProxy {}
+
     public static class ClientProxy extends CommonProxy
     {
         private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
 
+        @SuppressWarnings("deprecation")
         @Override
         public void preInit(FMLPreInitializationEvent event)
         {
@@ -83,14 +86,14 @@ public class ItemTileDebug
         }
     }
 
-    public static class TestTESR extends TileEntitySpecialRenderer
+    public static class TestTESR extends TileEntitySpecialRenderer<CustomTileEntity>
     {
         private static final TestTESR instance = new TestTESR();
 
         private TestTESR() {}
 
         @Override
-        public void renderTileEntityAt(TileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_)
+        public void renderTileEntityAt(CustomTileEntity p_180535_1_, double x, double y, double z, float p_180535_8_, int p_180535_9_)
         {
             glPushMatrix();
             glTranslated(x, y, z);

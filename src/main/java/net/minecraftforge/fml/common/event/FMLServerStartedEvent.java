@@ -14,6 +14,12 @@ package net.minecraftforge.fml.common.event;
 
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
+/**
+ * Called after {@link FMLServerStartingEvent} when the server is available and ready to play.
+ *
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ * @author cpw
+ */
 public class FMLServerStartedEvent extends FMLStateEvent
 {
 

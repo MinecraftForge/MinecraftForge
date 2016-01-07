@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
 +++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
-@@ -1067,6 +1067,7 @@
+@@ -994,6 +994,7 @@
  
      public void func_74303_b()
      {

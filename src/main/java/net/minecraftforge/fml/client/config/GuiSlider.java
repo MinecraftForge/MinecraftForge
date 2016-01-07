@@ -3,8 +3,6 @@ package net.minecraftforge.fml.client.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 
-import org.lwjgl.opengl.GL11;
-
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *

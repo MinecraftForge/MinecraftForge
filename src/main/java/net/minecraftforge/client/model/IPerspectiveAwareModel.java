@@ -9,27 +9,26 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 /*
  * Model that changes based on the rendering perspective
  * (first-person, GUI, e.t.c - see TransformType)
  */
-public interface IPerspectiveAwareModel extends IBakedModel
+public interface IPerspectiveAwareModel extends IFlexibleBakedModel
 {
     /*
      * Returns the pair of the model for the given perspective, and the matrix
      * that should be applied to the GL state before rendering it (matrix may be null).
      */
-    Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType);
+    Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType);
 
-    public static class MapWrapper implements IFlexibleBakedModel, IPerspectiveAwareModel
+    public static class MapWrapper implements IPerspectiveAwareModel
     {
         private final IFlexibleBakedModel parent;
         private final ImmutableMap<TransformType, TRSRTransformation> transforms;
@@ -40,37 +39,66 @@ public interface IPerspectiveAwareModel extends IBakedModel
             this.transforms = transforms;
         }
 
-        public MapWrapper(IFlexibleBakedModel parent, IPerspectiveState state, IModelPart part)
+        public MapWrapper(IFlexibleBakedModel parent, IModelState state)
         {
-            this(parent, getTransforms(state, part));
+            this(parent, getTransforms(state));
         }
 
-        public static ImmutableMap<TransformType, TRSRTransformation> getTransforms(IPerspectiveState state, IModelPart part)
+        public static ImmutableMap<TransformType, TRSRTransformation> getTransforms(IModelState state)
         {
             ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
             for(TransformType type : TransformType.values())
             {
-                builder.put(type, state.forPerspective(type).apply(part));
+                Optional<TRSRTransformation> tr = state.apply(Optional.of(type));
+                if(tr.isPresent())
+                {
+                    builder.put(type, tr.get());
+                }
             }
             return builder.build();
+        }
+
+        public static ImmutableMap<TransformType, TRSRTransformation> getTransforms(ItemCameraTransforms transforms)
+        {
+            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+            for(TransformType type : TransformType.values())
+            {
+                builder.put(type, new TRSRTransformation(transforms.getTransform(type)));
+            }
+            return builder.build();
+        }
+
+        public static Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(IFlexibleBakedModel model, ImmutableMap<TransformType, TRSRTransformation> transforms, TransformType cameraTransformType)
+        {
+            TRSRTransformation tr = transforms.get(cameraTransformType);
+            Matrix4f mat = null;
+            if(tr != null && tr != TRSRTransformation.identity()) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
+            return Pair.of(model, mat);
+        }
+
+        public static Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(IFlexibleBakedModel model, IModelState state, TransformType cameraTransformType)
+        {
+            TRSRTransformation tr = state.apply(Optional.of(cameraTransformType)).or(TRSRTransformation.identity());
+            if(tr != TRSRTransformation.identity())
+            {
+                return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
+            }
+            return Pair.of(model, null);
         }
 
         public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
         public boolean isGui3d() { return parent.isGui3d(); }
         public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
-        public TextureAtlasSprite getTexture() { return parent.getTexture(); }
+        public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
         public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
         public List<BakedQuad> getFaceQuads(EnumFacing side) { return parent.getFaceQuads(side); }
         public List<BakedQuad> getGeneralQuads() { return parent.getGeneralQuads(); }
         public VertexFormat getFormat() { return parent.getFormat(); }
 
         @Override
-        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            TRSRTransformation tr = transforms.get(cameraTransformType);
-            Matrix4f mat = null;
-            if(tr != null && tr != TRSRTransformation.identity()) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
-            return Pair.of((IBakedModel)this, mat);
+            return handlePerspective(this, transforms, cameraTransformType);
         }
     }
 }

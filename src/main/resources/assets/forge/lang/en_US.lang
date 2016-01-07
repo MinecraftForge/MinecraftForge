@@ -12,6 +12,8 @@ forge.update.beta.2=Major issues may arise, verify before reporting.
 forge.configgui.forgeConfigTitle=Minecraft Forge Configuration
 forge.configgui.ctgy.forgeGeneralConfig.tooltip=This is where you can edit the settings contained in forge.cfg.
 forge.configgui.ctgy.forgeGeneralConfig=General Settings
+forge.configgui.ctgy.forgeClientConfig.tooltip=Settings in the forge.cfg that only concern the local client. Usually graphical settings.
+forge.configgui.ctgy.forgeClientConfig=Client Settings
 forge.configgui.ctgy.forgeChunkLoadingConfig.tooltip=This is where you can edit the settings contained in forgeChunkLoading.cfg.
 forge.configgui.ctgy.forgeChunkLoadingConfig=Forge Chunk Loader Default Settings
 forge.configgui.ctgy.forgeChunkLoadingModConfig.tooltip=This is where you can define mod-specific override settings that will be used instead of the defaults.
@@ -43,6 +45,7 @@ forge.configgui.zombieBaseSummonChance.tooltip=Base zombie summoning spawn chanc
 forge.configgui.zombieBaseSummonChance=Zombie Summon Chance
 forge.configgui.stencilbits=Enable GL Stencil Bits
 forge.configgui.spawnfuzz=Respawn Fuzz Diameter
+forge.configgui.replaceBuckets=Use Forges' bucket model
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID

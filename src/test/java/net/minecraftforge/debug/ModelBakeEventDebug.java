@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.primitives.Ints;
 
+@SuppressWarnings("deprecation")
 @Mod(modid = ModelBakeEventDebug.MODID, version = ModelBakeEventDebug.VERSION)
 public class ModelBakeEventDebug
 {
@@ -54,6 +55,7 @@ public class ModelBakeEventDebug
 
     private static String blockName = MODID.toLowerCase() + ":" + CustomModelBlock.name;
 
+    @SuppressWarnings("unchecked")
     public static final IUnlistedProperty<Integer>[] properties = new IUnlistedProperty[6];
 
     static
@@ -64,7 +66,7 @@ public class ModelBakeEventDebug
         }
     }
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelBakeEventDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelBakeEventDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     @EventHandler
@@ -78,6 +80,8 @@ public class ModelBakeEventDebug
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {
@@ -207,7 +211,7 @@ public class ModelBakeEventDebug
     public static class CustomModel implements IBakedModel, ISmartBlockModel, ISmartItemModel
     {
         private final TextureAtlasSprite base, overlay;
-        private boolean hasStateSet = false;
+        //private boolean hasStateSet = false;
         private final IExtendedBlockState state;
 
         public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)
@@ -291,7 +295,7 @@ public class ModelBakeEventDebug
         public boolean isBuiltInRenderer() { return false; }
 
         @Override
-        public TextureAtlasSprite getTexture() { return this.base; }
+        public TextureAtlasSprite getParticleTexture() { return this.base; }
 
         @Override
         public ItemCameraTransforms getItemCameraTransforms()

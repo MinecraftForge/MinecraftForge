@@ -1,5 +1,6 @@
 package net.minecraftforge.fml.common.registry;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -9,138 +10,189 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBanner;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
 import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterators;
-
-public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaultedByKey {
+public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I>
+{
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
     private final Class<I> superType;
-    private Object optionalDefaultKey;
+    private final boolean isDelegated;
+    private final Field delegateAccessor;
+    private ResourceLocation optionalDefaultKey;
     private I optionalDefaultObject;
     private int maxId;
     private int minId;
-    // aliases redirecting legacy names to the actual name, may need recursive application to find the final name.
-    // these need to be registry specific, it's possible to only have a loosely linked item for a block which may get renamed by itself.
-    private final Map<String, String> aliases = new HashMap<String, String>();
-    private BiMap<String, I> persistentSubstitutions;
-    private BiMap<String, I> activeSubstitutions = HashBiMap.create();
+    /**
+     * Aliases are resource location to resource location pointers, allowing for alternative names to be supplied
+     * pointing at the same thing. They are used to allow programmatic migration of an ID.
+     */
+    private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
+    /**
+     * Persistent substitutions are the mechanism to allow mods to override specific behaviours with new behaviours.
+     */
+    private final BiMap<ResourceLocation, I> persistentSubstitutions = HashBiMap.create();
+    /**
+     * This is the current active substitution set for a particular world. It will change as worlds come and go.
+     */
+    private final BiMap<ResourceLocation, I> activeSubstitutions = HashBiMap.create();
+    /**
+     * The list of IDs blocked for this world. IDs will never be allocated in this set.
+     */
+    private final Set<Integer> blockedIds = Sets.newHashSet();
 
-    FMLControlledNamespacedRegistry(Object defaultKey, int maxIdValue, int minIdValue, Class<I> type)
+    private final Set<ResourceLocation> dummiedLocations = Sets.newHashSet();
+
+    private final BitSet availabilityMap;
+
+    private final AddCallback<I> addCallback;
+
+    public interface AddCallback<T>
+    {
+        public void onAdd(T obj, int id);
+    }
+
+    FMLControlledNamespacedRegistry(ResourceLocation defaultKey, int maxIdValue, int minIdValue, Class<I> type, boolean isDelegated)
+    {
+        this(defaultKey, maxIdValue, minIdValue, type, isDelegated, null);
+    }
+
+    FMLControlledNamespacedRegistry(ResourceLocation defaultKey, int maxIdValue, int minIdValue, Class<I> type, boolean isDelegated, AddCallback<I> callback)
     {
         super(defaultKey);
         this.superType = type;
         this.optionalDefaultKey = defaultKey;
         this.maxId = maxIdValue;
         this.minId = minIdValue;
+        this.availabilityMap = new BitSet(maxIdValue + 1);
+        this.isDelegated = isDelegated;
+        if (this.isDelegated)
+        {
+            try
+            {
+                this.delegateAccessor = type.getField("delegate");
+            } catch (NoSuchFieldException e)
+            {
+                FMLLog.log(Level.ERROR, e, "Delegate class identified with missing delegate field");
+                throw Throwables.propagate(e);
+            }
+        }
+        else
+        {
+            this.delegateAccessor = null;
+        }
+        this.addCallback = callback;
     }
 
-    void validateContent(int maxId, String type, BitSet availabilityMap, Set<Integer> blockedIds, FMLControlledNamespacedRegistry<Block> iBlockRegistry)
+    void validateContent(ResourceLocation registryName)
     {
         for (I obj : typeSafeIterable())
         {
             int id = getId(obj);
-            Object name = getNameForObject(obj);
+            ResourceLocation name = getNameForObject(obj);
             boolean isSubstituted = activeSubstitutions.containsKey(name);
 
             // name lookup failed -> obj is not in the obj<->name map
-            if (name == null) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", type, obj, id));
-
-            ResourceLocation loc = (name instanceof ResourceLocation) ? (ResourceLocation)name : null;
-            String nameS = (name instanceof String) ? (String)name : (loc != null ? name.toString() : null);
-            if (loc == null && nameS == null) throw new IllegalStateException(String.format("Registry entry for %s %s name is invalid, must be a String or ResourceLocation %s", type, obj, name));
-
-            // id lookup failed -> obj is not in the obj<->id map
-            if (!isSubstituted && id < 0) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", type, obj, name));
-            // id is too high
-            if (id > maxId) throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", type, obj, name));
-            // empty name
-            if (name.toString().isEmpty()) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, yields an empty name.", type, obj, id));
-            // non-prefixed name
-            if (name.toString().indexOf(':') == -1) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, has the non-prefixed name %s.", type, obj, id, name));
-            // the rest of the tests don't really work for substituted items or blocks
-            if (isSubstituted) continue;
-            // id -> obj lookup is inconsistent
-            if (getRaw(id) != obj) throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, type, obj));
-            // name -> obj lookup is inconsistent
-            if (getRaw(nameS) != obj ) throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, type, obj));
-            // name -> id lookup is inconsistent
-            if (getId(nameS) != id) throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
-            // id isn't marked as unavailable
-            if (!availabilityMap.get(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as empty.", type, obj, id, name));
-            // entry is blocked, thus should be empty
-            if (blockedIds.contains(id)) throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", type, obj, id, name));
-
-            if (obj instanceof ItemBlock && !(obj instanceof ItemBanner)) //Dammet Mojang not linking Banners
+            if (name == null)
             {
-                Block block = ((ItemBlock) obj).block;
-
-                // verify matching block entry
-                if (iBlockRegistry.getId(block) != id)
-                {
-                    throw new IllegalStateException(String.format("Registry entry for ItemBlock %s, id %d, is missing or uses the non-matching id %d.", obj, id, iBlockRegistry.getId(block)));
-                }
-                // verify id range
-                if (id > GameData.MAX_BLOCK_ID) throw new IllegalStateException(String.format("ItemBlock %s uses the id %d outside the block id range", name, id));
+                throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", registryName, obj, id));
             }
+            // id lookup failed -> obj is not in the obj<->id map
+            if (!isSubstituted && id < 0)
+            {
+                throw new IllegalStateException(String.format("Registry entry for %s %s, name %s, doesn't yield an id.", registryName, obj, name));
+            }
+            // id is too high
+            if (id > maxId)
+            {
+                throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", registryName, obj, name, id));
+            }
+            // the rest of the tests don't really work for substituted items or blocks
+            if (isSubstituted)
+            {
+                continue;
+            }
+            // id -> obj lookup is inconsistent
+            if (getRaw(id) != obj)
+            {
+                throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, registryName, obj));
+            }
+            // name -> obj lookup is inconsistent
+            if (getRaw(name) != obj)
+            {
+                throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, registryName, obj));
+            }
+            // name -> id lookup is inconsistent
+            if (getId(name) != id)
+            {
+                throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+            }
+/*
+            // entry is blocked, thus should be empty
+            if (blockedIds.contains(id))
+            {
+                throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, name %s, marked as dangling.", registryName, obj, id, name));
+            }
+*/
         }
 
     }
 
-    @SuppressWarnings("unchecked")
-    void setFrom(FMLControlledNamespacedRegistry<?> registry) {
-        set((FMLControlledNamespacedRegistry<I>) registry);
-    }
-    void set(FMLControlledNamespacedRegistry<I> registry)
+    void set(FMLControlledNamespacedRegistry<I> otherRegistry)
     {
-        if (this.superType != registry.superType) throw new IllegalArgumentException("incompatible registry");
+        if (this.superType != otherRegistry.superType)
+        {
+            throw new IllegalArgumentException("incompatible registry");
+        }
 
-        this.optionalDefaultKey = registry.optionalDefaultKey;
-        this.maxId = registry.maxId;
-        this.minId = registry.minId;
+        this.optionalDefaultKey = otherRegistry.optionalDefaultKey;
+        this.maxId = otherRegistry.maxId;
+        this.minId = otherRegistry.minId;
         this.aliases.clear();
-        this.aliases.putAll(registry.aliases);
+        this.aliases.putAll(otherRegistry.aliases);
+        this.persistentSubstitutions.clear();
+        this.persistentSubstitutions.putAll(otherRegistry.getPersistentSubstitutions());
         this.activeSubstitutions.clear();
+        this.dummiedLocations.clear();
+        this.dummiedLocations.addAll(otherRegistry.dummiedLocations);
 
-        underlyingIntegerMap = new ObjectIntIdentityMap();
+        underlyingIntegerMap = new ObjectIntIdentityMap<I>();
         registryObjects.clear();
 
-        for (I thing : registry.typeSafeIterable())
+        for (I thing : otherRegistry.typeSafeIterable())
         {
-            addObjectRaw(registry.getId(thing), registry.getNameForObject(thing), thing);
+            addObjectRaw(otherRegistry.getId(thing), otherRegistry.getNameForObject(thing), thing);
         }
-        this.activeSubstitutions.putAll(registry.activeSubstitutions);
+        this.activeSubstitutions.putAll(otherRegistry.activeSubstitutions);
     }
 
     // public api
 
     /**
      * Add an object to the registry, trying to use the specified id.
+     * This is required, to re-route vanilla block and item registration through to
+     * the {@link #add} method.
      *
      * @deprecated register through {@link GameRegistry} instead.
      */
     @Override
     @Deprecated
-    public void register(int id, Object name, Object thing)
+    public void register(int id, ResourceLocation name, I thing)
     {
-        Validate.isInstanceOf(ResourceLocation.class, name);
-        GameData.getMain().register(thing, name.toString(), id);
+        add(id, name, thing);
     }
 
     /**
@@ -150,17 +202,19 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      */
     @Override
     @Deprecated
-    public void putObject(Object objName, Object obj)
+    public void putObject(ResourceLocation name, I thing)
     {
-        String name = objName.toString();
-        I thing = superType.cast(obj);
 
-        if (name == null) throw new NullPointerException("Can't use a null-name for the registry.");
-        if (name.isEmpty()) throw new IllegalArgumentException("Can't use an empty name for the registry.");
-        if (thing == null) throw new NullPointerException("Can't add null-object to the registry.");
+        if (name == null)
+        {
+            throw new NullPointerException("Can't use a null-name for the registry.");
+        }
+        if (thing == null)
+        {
+            throw new NullPointerException("Can't add null-object to the registry.");
+        }
 
-        name = new ResourceLocation(name).toString();
-        Object existingName = getNameForObject(thing);
+        ResourceLocation existingName = getNameForObject(thing);
 
         if (existingName == null)
         {
@@ -173,30 +227,28 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         else
         {
             FMLLog.bigWarning("Ignoring putObject(%s, %s), adding alias to %s instead", name, thing, existingName);
-            addAlias(name, existingName.toString());
+            addAlias(name, existingName);
         }
     }
 
     /**
      * Fetch the object identified by the specified name or the default object.
-     *
+     * <p/>
      * For blocks the default object is the air block, for items it's null.
      *
      * @param name Unique name identifying the object.
      * @return Registered object of the default object if it wasn't found-
      */
     @Override
-    public I getObject(Object name)
+    public I getObject(ResourceLocation name)
     {
-        I object = null;
-        if (name instanceof ResourceLocation) object = getRaw((ResourceLocation)name);
-        if (name instanceof String) object = getRaw((String)name);
+        I object = getRaw(name);
         return object == null ? this.optionalDefaultObject : object;
     }
 
     /**
      * Fetch the object identified by the specified id or the default object.
-     *
+     * <p/>
      * For blocks the default object is the air block, for items it's null.
      *
      * @param id ID identifying the object.
@@ -210,28 +262,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     }
 
     /**
-     * @deprecated use getObjectById instead
-     */
-    @Deprecated
-    public I get(int id)
-    {
-        return getObjectById(id);
-    }
-
-    /**
-     * @deprecated use getObject instead
-     */
-    @Deprecated
-    public I get(String name)
-    {
-        return getObject(name);
-    }
-
-    /**
      * Get the id for the specified object.
-     *
+     * <p/>
      * Don't hold onto the id across the world, it's being dynamically re-mapped as needed.
-     *
+     * <p/>
      * Usually the name should be used instead of the id, if using the Block/Item object itself is
      * not suitable for the task.
      *
@@ -251,28 +285,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      */
     public I getRaw(int id)
     {
-        return cast(super.getObjectById(id));
-    }
-
-    /**
-     * superType.cast appears to be expensive. Skip it for speed?
-     * @param obj
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-	private I cast(Object obj)
-    {
-    	return (I)(obj);
-    }
-    /**
-     * Get the object identified by the specified name.
-     *
-     * @param name Block/Item name.
-     * @return Block/Item object or null if it wasn't found.
-     */
-    public I getRaw(String name)
-    {
-        return getRaw(new ResourceLocation(name));
+        return super.getObjectById(id);
     }
 
     /**
@@ -281,15 +294,18 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      * @param name Block/Item name.
      * @return Block/Item object or null if it wasn't found.
      */
-    private I getRaw(ResourceLocation loc)
+    private I getRaw(ResourceLocation name)
     {
-        I ret = superType.cast(super.getObject(loc));
+        I ret = super.getObject(name);
 
         if (ret == null) // no match, try aliases recursively
         {
-            String name = aliases.get(loc.toString());
+            name = aliases.get(name);
 
-            if (name != null) return getRaw(name);
+            if (name != null)
+            {
+                return getRaw(name);
+            }
         }
 
         return ret;
@@ -297,14 +313,14 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     /**
      * Determine if the registry has an entry for the specified name.
-     *
+     * <p/>
      * Aliased names will be resolved as well.
      *
      * @param name Object name to check.
      * @return true if a matching entry was found.
      */
     @Override
-    public boolean containsKey(Object name)
+    public boolean containsKey(ResourceLocation name)
     {
         boolean ret = super.containsKey(name);
 
@@ -312,7 +328,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             name = aliases.get(name);
 
-            if (name != null) return containsKey(name);
+            if (name != null)
+            {
+                return containsKey(name);
+            }
         }
 
         return ret;
@@ -320,30 +339,24 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     /**
      * Get the id for the specified object.
-     *
+     * <p/>
      * Don't hold onto the id across the world, it's being dynamically re-mapped as needed.
-     *
+     * <p/>
      * Usually the name should be used instead of the id, if using the Block/Item object itself is
      * not suitable for the task.
      *
      * @param itemName Block/Item registry name.
      * @return Block/Item id or -1 if it wasn't found.
      */
-    public int getId(String itemName)
+    public int getId(ResourceLocation itemName)
     {
         I obj = getRaw(itemName);
-        if (obj == null) return -1;
+        if (obj == null)
+        {
+            return -1;
+        }
 
         return getId(obj);
-    }
-
-    /**
-     * @deprecated use containsKey instead
-     */
-    @Deprecated
-    public boolean contains(String itemName)
-    {
-        return containsKey(itemName);
     }
 
     /*
@@ -357,44 +370,46 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     // internal
 
-    public void serializeInto(Map<String, Integer> idMapping) // for saving
+    public void serializeIds(Map<ResourceLocation, Integer> idMapping) // for saving
     {
         for (I thing : this.typeSafeIterable())
         {
-            idMapping.put(getNameForObject(thing).toString(), getId(thing));
+            idMapping.put(getNameForObject(thing), getId(thing));
         }
     }
-    public void serializeAliases(Map<String, String> map)
+
+    public void serializeAliases(Map<ResourceLocation, ResourceLocation> map)
     {
         map.putAll(this.aliases);
     }
-    public void serializeSubstitutions(Set<String> set)
+
+    public void serializeSubstitutions(Set<ResourceLocation> set)
     {
         set.addAll(activeSubstitutions.keySet());
     }
 
-    private BitSet internalAvailabilityMap = new BitSet();
+    public void serializeDummied(Set<ResourceLocation> set) { set.addAll(this.dummiedLocations); }
 
-    int add(int id, String name, Object thing) {
-        return add(id, name, superType.cast(thing), internalAvailabilityMap);
-    }
 
     /**
      * Add the specified object to the registry.
      *
-     * @param id ID to use if available, auto-assigned otherwise.
-     * @param name Name to use, prefixed by the mod id.
+     * @param id    ID to use if available, auto-assigned otherwise.
+     * @param name  Name to use, prefixed by the mod id.
      * @param thing Object to add.
-     * @param availabilityMap Map marking available IDs for auto assignment.
      * @return ID eventually allocated.
      */
-    int add(int id, String name, I thing, BitSet availabilityMap)
+    int add(int id, ResourceLocation name, I thing)
     {
-        if (name == null) throw new NullPointerException(String.format("Can't use a null-name for the registry, object %s.", thing));
-        if (name.isEmpty()) throw new IllegalArgumentException(String.format("Can't use an empty name for the registry, object %s.", thing));
-        if (name.indexOf(':') == -1) throw new IllegalArgumentException(String.format("Can't add the name (%s) without a prefix, object %s", name, thing));
-        if (thing == null) throw new NullPointerException(String.format("Can't add null-object to the registry, name %s.", name));
-        if (optionalDefaultKey != null && optionalDefaultKey.toString().equals(name) && this.optionalDefaultObject == null)
+        if (name == null)
+        {
+            throw new NullPointerException(String.format("Can't use a null-name for the registry, object %s.", thing));
+        }
+        if (thing == null)
+        {
+            throw new NullPointerException(String.format("Can't add null-object to the registry, name %s.", name));
+        }
+        if (optionalDefaultKey != null && optionalDefaultKey.equals(name) && this.optionalDefaultObject == null)
         {
             this.optionalDefaultObject = thing;
         }
@@ -424,43 +439,65 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         if (getId(thing) >= 0) // duplicate object - but only if it's not being substituted
         {
             int foundId = getId(thing);
-            Object otherThing = getRaw(foundId);
+            I otherThing = getRaw(foundId);
             throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", thing, System.identityHashCode(thing), getNameForObject(thing), name, otherThing, System.identityHashCode(otherThing)));
         }
-        if (GameData.isFrozen(this))
+        if (PersistentRegistryManager.isFrozen(this))
         {
             FMLLog.bigWarning("The object %s (name %s) is being added too late.", thing, name);
         }
 
         if (activeSubstitutions.containsKey(name))
         {
+            I oldThing = thing;
             thing = activeSubstitutions.get(name);
+            if (DEBUG)
+            {
+                FMLLog.getLogger().log(Level.DEBUG, "Active substitution: {} {}@{} -> {}@{}", name, oldThing.getClass().getName(), System.identityHashCode(oldThing), thing.getClass().getName(), System.identityHashCode(thing));
+            }
         }
-        addObjectRaw(idToUse, new ResourceLocation(name), thing);
+
+
+        addObjectRaw(idToUse, name, thing);
+        if (isDelegated)
+        {
+            getExistingDelegate(thing).setResourceName(name);
+        }
+        this.dummiedLocations.remove(name);
 
         if (DEBUG)
+        {
             FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
+        }
         return idToUse;
     }
 
-    void addAlias(String from, String to)
+    void markDummy(ResourceLocation rl, Integer id, I thing)
+    {
+        this.dummiedLocations.add(rl);
+        this.addObjectRaw(id, rl, thing);
+    }
+
+    void addAlias(ResourceLocation from, ResourceLocation to)
     {
         aliases.put(from, to);
         if (DEBUG)
+        {
             FMLLog.finer("Registry alias: %s -> %s", from, to);
+        }
     }
 
-    Map<String,Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
+    Map<ResourceLocation, Integer> getEntriesNotIn(FMLControlledNamespacedRegistry<I> registry)
     {
-        Map<String,Integer> ret = new HashMap<String, Integer>();
+        Map<ResourceLocation, Integer> ret = new HashMap<ResourceLocation, Integer>();
 
         for (I thing : this.typeSafeIterable())
         {
-            if (!registry.field_148758_b.containsKey(thing))
+            if (!registry.inverseObjectRegistry.containsKey(thing))
             {
-                if (!registry.activeSubstitutions.containsKey(getNameForObject(thing).toString()))
+                if (!registry.activeSubstitutions.containsKey(getNameForObject(thing)))
                 {
-                    ret.put(getNameForObject(thing).toString(), getId(thing));
+                    ret.put(getNameForObject(thing), getId(thing));
                 }
             }
         }
@@ -468,10 +505,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         return ret;
     }
 
-    void dump()
+    void dump(ResourceLocation registryName)
     {
         if (!DEBUG)
+        {
             return;
+        }
 
         List<Integer> ids = new ArrayList<Integer>();
 
@@ -482,7 +521,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
         // sort by id
         Collections.sort(ids);
-
+        FMLLog.finer("Registry Name : {}", registryName);
         for (int id : ids)
         {
             I thing = getRaw(id);
@@ -493,14 +532,28 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     /**
      * Version of addObject not using the API restricting overrides.
      */
-    private void addObjectRaw(int id, Object name, I thing)
+    private void addObjectRaw(int id, ResourceLocation name, I thing)
     {
-        if (name == null) throw new NullPointerException("The name to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
-        if (thing == null) throw new NullPointerException("The object to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
-        if (!superType.isInstance(thing)) throw new IllegalArgumentException("The object to be added to the registry is not of the right type. Reflection/ASM hackery? Registry bug?");
+        if (name == null)
+        {
+            throw new NullPointerException("The name to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
+        }
+        if (thing == null)
+        {
+            throw new NullPointerException("The object to be added to the registry is null. This can only happen with a corrupted registry state. Reflection/ASM hackery? Registry bug?");
+        }
+        if (!superType.isInstance(thing))
+        {
+            throw new IllegalArgumentException("The object to be added to the registry is not of the right type. Reflection/ASM hackery? Registry bug?");
+        }
 
         underlyingIntegerMap.put(thing, id); // obj <-> id
         super.putObject(name, thing); // name <-> obj
+        availabilityMap.set(id);
+        if (addCallback != null)
+        {
+            addCallback.onAdd(thing, id);
+        }
     }
 
     public I getDefaultValue()
@@ -508,38 +561,44 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         return optionalDefaultObject;
     }
 
-    public RegistryDelegate<I> getDelegate(I thing, Class<I> clazz) {
-        return GameData.buildDelegate(thing, clazz);
+    public RegistryDelegate<I> getDelegate(I thing, Class<I> clazz)
+    {
+        return new RegistryDelegate.Delegate<I>(thing, clazz);
     }
 
-    void activateSubstitution(String nameToReplace)
+    @SuppressWarnings("unchecked")
+    public Delegate<I> getExistingDelegate(I thing)
+    {
+        try
+        {
+            return (Delegate<I>)delegateAccessor.get(thing);
+        } catch (IllegalAccessException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Illegal attempt to access delegate");
+            throw Throwables.propagate(e);
+        }
+    }
+
+    I activateSubstitution(ResourceLocation nameToReplace)
     {
         if (getPersistentSubstitutions().containsKey(nameToReplace))
         {
             I original = getRaw(nameToReplace);
-            if (superType == Item.class) {
-                Item sub = (Item) getPersistentSubstitutions().get(nameToReplace);
-                if (original == null) {
-                    // When we're activated from the server side, we need to set the delegate on the original instance to
-                    // point to us. Go to the "default state" registry to get it
-                    original = (I)GameData.getItemRegistry().getRaw(nameToReplace);
-                }
-                FMLLog.log(Level.DEBUG, "Replacing %s with %s (name %s)", original, sub, nameToReplace);
-                Delegate<Item> delegate = (Delegate<Item>)((Item)original).delegate;
-                delegate.changeReference(sub);
-                ((Delegate<Item>)sub.delegate).setName(nameToReplace);
-            }
-            activeSubstitutions.put(nameToReplace, getPersistentSubstitutions().get(nameToReplace));
+            I sub = getPersistentSubstitutions().get(nameToReplace);
+            getExistingDelegate(original).changeReference(sub);
+            activeSubstitutions.put(nameToReplace, sub);
+            return original;
         }
+        return null;
     }
 
-    void addSubstitutionAlias(String modId, String nameToReplace, Object toReplace) throws ExistingSubstitutionException {
-        if (getPersistentSubstitutions().containsKey(nameToReplace) || getPersistentSubstitutions().containsValue(toReplace))
+    void addSubstitutionAlias(String modId, ResourceLocation nameToReplace, I replacement) throws ExistingSubstitutionException
+    {
+        if (getPersistentSubstitutions().containsKey(nameToReplace) || getPersistentSubstitutions().containsValue(replacement))
         {
-            FMLLog.severe("The substitution of %s has already occured. You cannot duplicate substitutions", nameToReplace);
-            throw new ExistingSubstitutionException(nameToReplace, toReplace);
+            FMLLog.severe("The substitution of %s has already occurred. You cannot duplicate substitutions", nameToReplace);
+            throw new ExistingSubstitutionException(nameToReplace, replacement);
         }
-        I replacement = cast(toReplace);
         I original = getRaw(nameToReplace);
         if (original == null)
         {
@@ -560,12 +619,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         getPersistentSubstitutions().put(nameToReplace, replacement);
     }
 
-    private BiMap<String, I> getPersistentSubstitutions()
+    BiMap<ResourceLocation, I> getPersistentSubstitutions()
     {
-        if (persistentSubstitutions == null)
-        {
-            persistentSubstitutions = GameData.getMain().getPersistentSubstitutionMap(superType);
-        }
         return persistentSubstitutions;
     }
 
@@ -573,30 +628,135 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     public void validateKey()
     {
         if (this.optionalDefaultKey != null)
+        {
             Validate.notNull(this.optionalDefaultObject);
+        }
     }
+
     /*
      * This iterator is used by some regular MC methods to visit all blocks, we need to include substitutions
      * Compare #typeSafeIterable()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<I> iterator()
     {
-        return Iterators.concat(super.iterator(),getPersistentSubstitutions().values().iterator());
+        return Iterators.concat(super.iterator(), getPersistentSubstitutions().values().iterator());
     }
 
 
-
-    FMLControlledNamespacedRegistry<I> makeShallowCopy() {
-        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, maxId, minId, superType);
+    FMLControlledNamespacedRegistry<I> makeShallowCopy()
+    {
+        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, maxId, minId, superType, isDelegated);
     }
-    // ONLY CALLED ON ITEM registry
+
     void resetSubstitutionDelegates()
     {
-        for (I item: typeSafeIterable()) {
-            Delegate<Item> delegate = (Delegate<Item>)((Item)item).delegate;
-            delegate.changeReference((Item)item);
+        if (!isDelegated)
+        {
+            return;
         }
+        for (I obj : typeSafeIterable())
+        {
+            Delegate<I> delegate = getExistingDelegate(obj);
+            delegate.changeReference(obj);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> FMLControlledNamespacedRegistry<T> asType(Class<? extends T> type)
+    {
+        return (FMLControlledNamespacedRegistry<T>)this;
+    }
+
+    public void serializeBlockList(Set<Integer> blocked)
+    {
+        blocked.addAll(this.blockedIds);
+    }
+
+    public Set<? extends ResourceLocation> getActiveSubstitutions()
+    {
+        return activeSubstitutions.keySet();
+    }
+
+    public void loadAliases(Map<ResourceLocation, ResourceLocation> aliases)
+    {
+        for (Map.Entry<ResourceLocation, ResourceLocation> alias : aliases.entrySet())
+        {
+            addAlias(alias.getKey(), alias.getValue());
+        }
+    }
+
+    public void loadSubstitutions(Set<ResourceLocation> substitutions)
+    {
+        for (ResourceLocation rl : substitutions)
+        {
+            activateSubstitution(rl);
+        }
+    }
+
+    public void loadBlocked(Set<Integer> blocked)
+    {
+        for (Integer id : blocked)
+        {
+            blockedIds.add(id);
+            availabilityMap.set(id);
+        }
+    }
+
+    public void loadDummied(Set<ResourceLocation> dummied)
+    {
+        this.dummiedLocations.addAll(dummied);
+    }
+
+    public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, Integer> missingIds, Map<ResourceLocation, Integer[]> remappedIds, FMLControlledNamespacedRegistry<I> currentRegistry, ResourceLocation registryName)
+    {
+        for (Map.Entry<ResourceLocation, Integer> entry : ids.entrySet())
+        {
+            ResourceLocation itemName = entry.getKey();
+            int newId = entry.getValue();
+            int currId = currentRegistry.getId(itemName);
+
+            if (currId == -1)
+            {
+                FMLLog.info("Found a missing id from the world %s", itemName);
+                missingIds.put(entry.getKey(), newId);
+                continue; // no block/item -> nothing to add
+            }
+            else if (currId != newId)
+            {
+                FMLLog.fine("Fixed %s id mismatch %s: %d (init) -> %d (map).", registryName, itemName, currId, newId);
+                remappedIds.put(itemName, new Integer[] {currId, newId});
+            }
+            I obj = currentRegistry.getRaw(itemName);
+
+            add(newId, itemName, obj);
+        }
+    }
+
+    public void blockId(int id)
+    {
+        blockedIds.add(id);
+    }
+
+    public void notifyCallbacks()
+    {
+        if (addCallback == null)
+            return;
+
+        for (I i : this.underlyingIntegerMap)
+        {
+            addCallback.onAdd(i, this.underlyingIntegerMap.get(i));
+        }
+    }
+
+    @Override
+    public ResourceLocation getNameForObject(I p_177774_1_)
+    {
+        ResourceLocation rl = super.getNameForObject(p_177774_1_);
+        if (rl == null)
+        {
+            rl = activeSubstitutions.inverse().get(p_177774_1_);
+        }
+        return rl;
     }
 }
