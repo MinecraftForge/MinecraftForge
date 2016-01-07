@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -222,6 +222,7 @@
+             }
+             else
+             {
++                if (!net.minecraftforge.common.ForgeHooks.onThrowableImpact(this, movingobjectposition))
+                 this.func_70184_a(movingobjectposition);
+             }
+         }
