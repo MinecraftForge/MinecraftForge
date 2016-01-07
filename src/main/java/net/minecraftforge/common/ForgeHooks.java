@@ -88,6 +88,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.world.WeatherEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -905,5 +906,21 @@ public class ForgeHooks
         ItemStack stack = player.getCurrentEquippedItem();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
+    }
+    public static boolean onLightningStrike (World world, BlockPos pos) 
+    {
+    	return MinecraftForge.EVENT_BUS.post(new WeatherEvent.LightningStrike(world, pos));
+    }
+    public static boolean onWeatherClear (World world) 
+    {
+    	return MinecraftForge.EVENT_BUS.post(new WeatherEvent.Change(world, WeatherEvent.Change.WeatherType.CLEAR));
+    }
+    public static boolean onWeatherStorm (World world) 
+    {
+    	return MinecraftForge.EVENT_BUS.post(new WeatherEvent.Change(world, WeatherEvent.Change.WeatherType.STORM));
+    }
+    public static boolean onWeatherRain (World world) 
+    {
+    	return MinecraftForge.EVENT_BUS.post(new WeatherEvent.Change(world, WeatherEvent.Change.WeatherType.RAIN));
     }
 }

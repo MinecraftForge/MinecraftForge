@@ -8,7 +8,40 @@
  
      protected WorldInfo()
      {
-@@ -745,4 +746,24 @@
+@@ -438,7 +439,9 @@
+ 
+     public void func_176142_i(int p_176142_1_)
+     {
+-        this.field_176157_p = p_176142_1_;
++    	if (!net.minecraftforge.common.ForgeHooks.onWeatherClear(MinecraftServer.func_71276_C().func_71218_a(field_76105_j).field_73059_b.field_73251_h)) {
++    		this.field_176157_p = p_176142_1_;
++    	}
+     }
+ 
+     public boolean func_76061_m()
+@@ -448,7 +451,9 @@
+ 
+     public void func_76069_a(boolean p_76069_1_)
+     {
+-        this.field_76102_o = p_76069_1_;
++    	if (!net.minecraftforge.common.ForgeHooks.onWeatherStorm(MinecraftServer.func_71276_C().func_71218_a(field_76105_j).field_73059_b.field_73251_h)) {
++    		this.field_76102_o = p_76069_1_;
++    	}
+     }
+ 
+     public int func_76071_n()
+@@ -468,7 +473,9 @@
+ 
+     public void func_76084_b(boolean p_76084_1_)
+     {
+-        this.field_76104_m = p_76084_1_;
++    	if (!net.minecraftforge.common.ForgeHooks.onWeatherRain(MinecraftServer.func_71276_C().func_71218_a(field_76105_j).field_73059_b.field_73251_h)) {
++    		this.field_76104_m = p_76084_1_;
++    	}
+     }
+ 
+     public int func_76083_p()
+@@ -745,4 +752,24 @@
              }
          });
      }

@@ -89,7 +89,16 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int i1 = this.field_73005_l >> 2;
-@@ -363,7 +381,7 @@
+@@ -357,13 +375,15 @@
+ 
+                     if (this.func_175727_C(blockpos))
+                     {
+-                        this.func_72942_c(new EntityLightningBolt(this, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p()));
++                    	if (!net.minecraftforge.common.ForgeHooks.onLightningStrike(this.field_73011_w.field_76579_a,blockpos)) {
++                    		this.func_72942_c(new EntityLightningBolt(this, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p()));
++                    	}
+                     }
+                 }
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -98,7 +107,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int k2 = this.field_73005_l >> 2;
-@@ -456,6 +474,9 @@
+@@ -456,6 +476,9 @@
              if (p_175654_2_.func_149698_L())
              {
                  i = 8;
@@ -108,7 +117,7 @@
  
                  if (this.func_175707_a(nextticklistentry.field_180282_a.func_177982_a(-i, -i, -i), nextticklistentry.field_180282_a.func_177982_a(i, i, i)))
                  {
-@@ -508,7 +529,7 @@
+@@ -508,7 +531,7 @@
  
      public void func_72939_s()
      {
@@ -117,7 +126,7 @@
          {
              if (this.field_80004_Q++ >= 1200)
              {
-@@ -573,6 +594,9 @@
+@@ -573,6 +596,9 @@
                  {
                      NextTickListEntry nextticklistentry1 = (NextTickListEntry)iterator.next();
                      iterator.remove();
@@ -127,7 +136,7 @@
                      int k = 0;
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(-k, -k, -k), nextticklistentry1.field_180282_a.func_177982_a(k, k, k)))
-@@ -696,22 +720,40 @@
+@@ -696,22 +722,40 @@
      {
          List<TileEntity> list = Lists.<TileEntity>newArrayList();
  
@@ -175,7 +184,7 @@
          return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-@@ -777,6 +819,7 @@
+@@ -777,6 +821,7 @@
          }
          else
          {
@@ -183,7 +192,7 @@
              this.field_72987_B = true;
              WorldChunkManager worldchunkmanager = this.field_73011_w.func_177499_m();
              List<BiomeGenBase> list = worldchunkmanager.func_76932_a();
-@@ -822,7 +865,7 @@
+@@ -822,7 +867,7 @@
  
      protected void func_73047_i()
      {
@@ -192,7 +201,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -859,6 +902,7 @@
+@@ -859,6 +904,7 @@
              }
  
              this.field_73020_y.func_73151_a(p_73044_1_, p_73044_2_);
@@ -200,7 +209,7 @@
  
              for (Chunk chunk : Lists.newArrayList(this.field_73059_b.func_152380_a()))
              {
-@@ -892,6 +936,7 @@
+@@ -892,6 +938,7 @@
          this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_71203_ab().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -208,7 +217,7 @@
      }
  
      public void func_72923_a(Entity p_72923_1_)
-@@ -947,6 +992,7 @@
+@@ -947,6 +994,7 @@
      public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -216,7 +225,7 @@
          explosion.func_77278_a();
          explosion.func_77279_a(false);
  
-@@ -1026,19 +1072,23 @@
+@@ -1026,19 +1074,23 @@
              this.field_73061_a.func_71203_ab().func_148537_a(new S2BPacketChangeGameState(8, this.field_73017_q), this.field_73011_w.func_177502_q());
          }
  
@@ -244,7 +253,7 @@
          }
      }
  
-@@ -1104,6 +1154,11 @@
+@@ -1104,6 +1156,11 @@
          return this.field_73061_a.func_152345_ab();
      }
  
