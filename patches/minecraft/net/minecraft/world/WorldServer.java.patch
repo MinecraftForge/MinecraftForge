@@ -133,13 +133,13 @@
  
 -        for (int i = 0; i < this.field_147482_g.size(); ++i)
 +        //Forge: Optimize this loop to only grab from the chunks it needs
-+        for (int x = p_147486_1_; x < p_147486_4_; x += 16)
++        for (int x = (p_147486_1_ & ~0x0F); x < p_147486_4_; x += 16)
          {
 -            TileEntity tileentity = (TileEntity)this.field_147482_g.get(i);
 -            BlockPos blockpos = tileentity.func_174877_v();
 -
 -            if (blockpos.func_177958_n() >= p_147486_1_ && blockpos.func_177956_o() >= p_147486_2_ && blockpos.func_177952_p() >= p_147486_3_ && blockpos.func_177958_n() < p_147486_4_ && blockpos.func_177956_o() < p_147486_5_ && blockpos.func_177952_p() < p_147486_6_)
-+            for (int z = p_147486_3_; z < p_147486_6_; z += 16)
++            for (int z = (p_147486_3_ & ~0x0F); z < p_147486_6_; z += 16) // & ~0xF Floors it by 16. Yay bitmath!
              {
 -                list.add(tileentity);
 +                if (!this.func_175680_a(x >> 4, z >> 4, true)) continue; //Prevent loading extra chunks to just read data. This causes orphaned chunks that never unload.
