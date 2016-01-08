@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/util/FoodStats.java
++++ ../src-work/minecraft/net/minecraft/util/FoodStats.java
+@@ -53,8 +53,10 @@
+ 
+             if (this.field_75123_d >= 80)
+             {
+-                p_75118_1_.func_70691_i(1.0F);
+-                this.func_75113_a(3.0F);
++                net.minecraftforge.event.entity.player.FoodRegenerationEvent event = net.minecraftforge.event.ForgeEventFactory.onNaturalRegenerate(p_75118_1_, 1.0F, 3.0F);
++                if (event.isCanceled()) return;
++                p_75118_1_.func_70691_i(event.getRegeneratedHealth());
++                this.func_75113_a(event.getExhaustion());
+                 this.field_75123_d = 0;
+             }
+         }
