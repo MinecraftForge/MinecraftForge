@@ -92,3 +92,11 @@
                  if (!this.func_174814_R())
                  {
                      this.field_70170_p.func_72956_a(p_70100_1_, "random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+@@ -480,6 +501,6 @@
+     public void func_174870_v()
+     {
+         this.func_174871_r();
+-        this.field_70292_b = 5999;
++        this.field_70292_b = func_92059_d().func_77973_b().getEntityLifespan(func_92059_d(), field_70170_p) - 1;
+     }
+ }
