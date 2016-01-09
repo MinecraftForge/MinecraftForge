@@ -1,5 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
+@@ -97,7 +97,7 @@
+ 
+     public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
+     {
+-        if (this.field_150632_aF == 3)
++        if (this.field_150632_aF == 3 && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.TREE))
+         {
+             for (int i = 0; i < 4; ++i)
+             {
+@@ -132,7 +132,7 @@
+         {
+             j1 += 2;
+         }
+-
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS)){
+         for (int k1 = 0; k1 < j1; ++k1)
+         {
+             int l1 = p_180624_2_.nextInt(3);
+@@ -162,7 +162,7 @@
+                 }
+             }
+         }
+-
++        }
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+     }
+ 
 @@ -201,4 +201,20 @@
              };
          }
