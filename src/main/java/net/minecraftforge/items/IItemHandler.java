@@ -14,8 +14,14 @@ public interface IItemHandler {
     int getSlots(EnumFacing side);
 
     /**
-     * Returns the ItemStack in a given slot on the given side. This should not be used to manipulate contents.
+     * Returns the ItemStack in a given slot on the given side.
      * The resultant value's stacksize may be greater than the stacks max size.
+     *
+     * IMPORTANT: This ItemStack MUST NOT be modified. This method is not for
+     * altering an inventories contents. Any implementers who are able to detect
+     * modification through this method should throw an exception.
+     *
+     * SERIOUSLY: DO NOT MODIFY
      *
      * @param slot Slot to query
      * @param side Orientation being queried.
