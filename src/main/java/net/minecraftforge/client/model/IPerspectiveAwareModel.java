@@ -72,7 +72,7 @@ public interface IPerspectiveAwareModel extends IFlexibleBakedModel
         {
             TRSRTransformation tr = transforms.get(cameraTransformType);
             Matrix4f mat = null;
-            if(tr != null && tr != TRSRTransformation.identity()) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
+            if(tr != null && !tr.equals(TRSRTransformation.identity())) mat = TRSRTransformation.blockCornerToCenter(tr).getMatrix();
             return Pair.of(model, mat);
         }
 
