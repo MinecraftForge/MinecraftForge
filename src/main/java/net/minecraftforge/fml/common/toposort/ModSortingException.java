@@ -14,7 +14,14 @@ package net.minecraftforge.fml.common.toposort;
 
 import java.util.Set;
 
-public class ModSortingException extends RuntimeException
+import org.apache.logging.log4j.Level;
+
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.toposort.ModSortingException.SortingExceptionData;
+
+public class ModSortingException extends EnhancedRuntimeException
 {
     private static final long serialVersionUID = 1L;
 
@@ -51,6 +58,19 @@ public class ModSortingException extends RuntimeException
     public <T> SortingExceptionData<T> getExceptionData()
     {
         return (SortingExceptionData<T>) sortingExceptionData;
+    }
+
+    @Override
+    protected void printStackTrace(WrappedPrintStream stream)
+    {
+        SortingExceptionData<ModContainer> exceptionData = getExceptionData();
+        stream.println("A dependency cycle was detected in the input mod set so an ordering cannot be determined");
+        stream.println("The first mod in the cycle is " + exceptionData.getFirstBadNode());
+        stream.println("The mod cycle involves:");
+        for (ModContainer mc : exceptionData.getVisitedNodes())
+        {
+            stream.println(String.format("\t%s : before: %s, after: %s", mc.toString(), mc.getDependants(), mc.getDependencies()));
+        }
     }
 
 }

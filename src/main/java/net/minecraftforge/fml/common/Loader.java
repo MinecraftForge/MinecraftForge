@@ -219,7 +219,9 @@ public class Loader
                 if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
                 {
                     FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
-                    throw new WrongMinecraftVersionException(mod);
+                    RuntimeException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
+                    FMLLog.severe(ret.getMessage());
+                    throw ret;
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
@@ -232,7 +234,9 @@ public class Loader
                     {
                         versionMissingMods.add(names.get(modid));
                     }
-                    throw new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    FMLLog.severe(ret.getMessage());
+                    throw ret;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
@@ -249,7 +253,9 @@ public class Loader
                 if (!versionMissingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), versionMissingMods);
-                    throw new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    FMLLog.severe(ret.toString());
+                    throw ret;
                 }
             }
 
