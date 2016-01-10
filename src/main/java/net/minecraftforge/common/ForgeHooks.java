@@ -906,4 +906,10 @@ public class ForgeHooks
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
     }
+
+    public static void onPlayerArmorChange(EntityPlayer player, ItemStack[] armorInventory, int slot, ItemStack newItemStack) {
+        ItemStack oldArmorStack = armorInventory[slot];
+        armorInventory[slot] = newItemStack;
+        MinecraftForge.EVENT_BUS.post(new PlayerArmorChangeEvent(player, slot, oldArmorStack, armorInventory[slot]));
+    }
 }
