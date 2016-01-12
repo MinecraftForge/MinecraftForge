@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
++++ ../src-work/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
+@@ -30,6 +30,8 @@
+     public EntityDiggingFX func_174846_a(BlockPos p_174846_1_)
+     {
+         this.field_181019_az = p_174846_1_;
++        // FORGE: This fixes models not getting proper context for particle texture
++        this.func_180435_a(Minecraft.func_71410_x().func_175602_ab().func_175022_a(field_174847_a, func_130014_f_(), p_174846_1_).func_177554_e());
+ 
+         if (this.field_174847_a.func_177230_c() == Blocks.field_150349_c)
+         {
