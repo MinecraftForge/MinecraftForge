@@ -57,7 +57,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -371,11 +380,641 @@
+@@ -371,11 +380,659 @@
          return false;
      }
  
@@ -694,12 +694,30 @@
 +        if (delegate.getResourceName() != null) return delegate.getResourceName().toString();
 +        return registryName != null ? registryName.toString() : null;
 +    }
++
++    /**
++     * Called from ItemStack.setItem, will hold extra data for the life of this ItemStack.
++     * Can be retrieved from stack.getCapabilities()
++     * The NBT can be null if this is not called from readNBT or if the item the stack is
++     * changing FROM is different then this item, or the previous item had no capabilities.
++     *
++     * This is called BEFORE the stacks item is set so you can use stack.getItem() to see the OLD item.
++     * Remember that getItem CAN return null.
++     *
++     * @param stack The ItemStack
++     * @param nbt NBT of this item serialized, or null.
++     * @return A holder instance associated with this ItemStack where you can hold capabilities for the life of this item.
++     */
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
++    {
++        return null;
++    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -855,6 +1494,10 @@
+@@ -855,6 +1512,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -710,7 +728,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -889,9 +1532,36 @@
+@@ -889,9 +1550,36 @@
              return this.field_78008_j;
          }
  

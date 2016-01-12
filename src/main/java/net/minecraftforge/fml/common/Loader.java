@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -551,6 +552,7 @@ public class Loader
         }
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
+        CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();
