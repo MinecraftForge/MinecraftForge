@@ -80,3 +80,8 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+jar {
+    // to make the jar in the form `modid-mcVersion-version.jar`
+    appendix = minecraft.version
+}
