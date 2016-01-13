@@ -124,10 +124,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 LZMAInputSupplier zis = new LZMAInputSupplier(classData);
                 CharSource srgSource = zis.asCharSource(Charsets.UTF_8);
                 srgList = srgSource.readLines();
+                FMLRelaunchLog.fine("Loading deobfuscation resource %s with %d records", deobfFileName, srgList.size());
             }
             else
             {
                 srgList = Files.readLines(new File(gradleStartProp), Charsets.UTF_8);
+                FMLRelaunchLog.fine("Loading deobfuscation resource %s with %d records", gradleStartProp, srgList.size());
             }
 
             rawMethodMaps = Maps.newHashMap();
@@ -179,7 +181,10 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
         }
-        rawFieldMaps.get(cl).put(oldName + ":" + getFieldType(cl, oldName), newName);
+        String fieldType = getFieldType(cl, oldName);
+        // We might be in mcp named land, where in fact the name is "new"
+        if (fieldType == null) fieldType = getFieldType(cl, newName);
+        rawFieldMaps.get(cl).put(oldName + ":" + fieldType, newName);
         rawFieldMaps.get(cl).put(oldName + ":null", newName);
     }
 
