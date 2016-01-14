@@ -238,7 +238,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             manager.closeChannel(new ChatComponentText("Handshake Complete review log file for details."));
         scm.initializeConnectionToPlayer(manager, player, serverHandler);
     }
-    
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
     {
@@ -430,6 +430,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void sendProxy(FMLProxyPacket msg)
     {
+        if (!manager.isChannelOpen())
+            msg = msg.copy();
         manager.sendPacket(msg);
     }
 

@@ -186,4 +186,13 @@ public class FMLProxyPacket implements Packet<INetHandler> {
     {
         return target;
     }
+
+    public FMLProxyPacket copy()
+    {
+        FMLProxyPacket pkt = new FMLProxyPacket(new PacketBuffer(payload.duplicate()), channel);
+        pkt.dispatcher = dispatcher;
+        pkt.netHandler = netHandler;
+        pkt.target = target;
+        return pkt;
+    }
 }
