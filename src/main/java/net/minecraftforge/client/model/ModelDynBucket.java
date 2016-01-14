@@ -48,7 +48,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
 
     public ModelDynBucket()
     {
-        this(null, null, null, FluidRegistry.WATER, false);
+        this(null, null, null, null, false);
     }
 
     public ModelDynBucket(ResourceLocation baseLocation, ResourceLocation liquidLocation, ResourceLocation coverLocation, Fluid fluid, boolean flipGas)
@@ -88,14 +88,18 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         ImmutableMap<TransformType, TRSRTransformation> transformMap = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
 
         // if the fluid is a gas wi manipulate the initial state to be rotated 180° to turn it upside down
-        if (flipGas && fluid.isGaseous())
+        if (flipGas && fluid != null && fluid.isGaseous())
         {
             state = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
         }
 
         TRSRTransformation transform = state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
-        TextureAtlasSprite fluidSprite = bakedTextureGetter.apply(fluid.getStill());
+        TextureAtlasSprite fluidSprite = null;
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+
+        if(fluid != null) {
+            fluidSprite = bakedTextureGetter.apply(fluid.getStill());
+        }
 
         if (baseLocation != null)
         {
@@ -103,7 +107,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
             IFlexibleBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(state, format, bakedTextureGetter);
             builder.addAll(model.getGeneralQuads());
         }
-        if (liquidLocation != null)
+        if (liquidLocation != null && fluidSprite != null)
         {
             TextureAtlasSprite liquid = bakedTextureGetter.apply(liquidLocation);
             // build liquid layer (inside)
@@ -239,7 +243,10 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
 
             // not a fluid item apparently
             if (fluidStack == null)
+            {
+                // empty bucket
                 return this;
+            }
 
 
             Fluid fluid = fluidStack.getFluid();
