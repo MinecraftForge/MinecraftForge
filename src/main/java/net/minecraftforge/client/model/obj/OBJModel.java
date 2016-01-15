@@ -553,7 +553,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             {
                 currentLine = mtlReader.readLine();
                 if (currentLine == null) break;
-                currentLine.trim();
+                currentLine = currentLine.trim();
                 if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
 
                 String[] fields = WHITE_SPACE.split(currentLine, 2);
@@ -590,6 +590,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         {
                             String[] mapStrings = WHITE_SPACE.split(data);
                             String texturePath = mapStrings[mapStrings.length - 1];
+                            texturePath = texturePath.replace('/','\\')
                             Texture texture = new Texture(texturePath);
                             hasSetTexture = true;
                             material.setTexture(texture);
