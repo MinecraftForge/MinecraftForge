@@ -8,3 +8,44 @@
      String func_150254_d();
  
      List<IChatComponent> func_150253_a();
+@@ -57,7 +56,7 @@
+ 
+                         for (JsonElement jsonelement : jsonarray1)
+                         {
+-                            IChatComponent ichatcomponent2 = this.deserialize(jsonelement, jsonelement.getClass(), p_deserialize_3_);
++                            IChatComponent ichatcomponent2 = p_deserialize_3_.deserialize(jsonelement, IChatComponent.class);
+ 
+                             if (ichatcomponent1 == null)
+                             {
+@@ -91,12 +90,13 @@
+ 
+                         if (jsonobject.has("with"))
+                         {
++                            if (!jsonobject.isJsonArray()) throw new JsonParseException("'with' tag has to be an array");
+                             JsonArray jsonarray = jsonobject.getAsJsonArray("with");
+                             Object[] aobject = new Object[jsonarray.size()];
+ 
+                             for (int i = 0; i < aobject.length; ++i)
+                             {
+-                                aobject[i] = this.deserialize(jsonarray.get(i), p_deserialize_2_, p_deserialize_3_);
++                                aobject[i] = p_deserialize_3_.deserialize(jsonarray.get(i), IChatComponent.class);
+ 
+                                 if (aobject[i] instanceof ChatComponentText)
+                                 {
+@@ -143,6 +143,7 @@
+                     }
+ 
+                     if (jsonobject.has("extra"))
++                    if (!jsonobject.isJsonArray()) ichatcomponent.func_150257_a(p_deserialize_3_.<IChatComponent>deserialize(jsonobject, IChatComponent.class)); else
+                     {
+                         JsonArray jsonarray2 = jsonobject.getAsJsonArray("extra");
+ 
+@@ -153,7 +154,7 @@
+ 
+                         for (int j = 0; j < jsonarray2.size(); ++j)
+                         {
+-                            ichatcomponent.func_150257_a(this.deserialize(jsonarray2.get(j), p_deserialize_2_, p_deserialize_3_));
++                            ichatcomponent.func_150257_a(p_deserialize_3_.<IChatComponent>deserialize(jsonarray2.get(j), IChatComponent.class));
+                         }
+                     }
+ 
