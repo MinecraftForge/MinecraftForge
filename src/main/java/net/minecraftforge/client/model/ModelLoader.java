@@ -3,13 +3,12 @@ package net.minecraftforge.client.model;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -78,10 +77,11 @@ import com.google.common.collect.Sets;
 @SuppressWarnings("deprecation")
 public class ModelLoader extends ModelBakery
 {
-    private final Map<ModelResourceLocation, IModel> stateModels = new HashMap<ModelResourceLocation, IModel>();
-    private final Set<ResourceLocation> textures = new HashSet<ResourceLocation>();
-    private final Set<ResourceLocation> loadingModels = new HashSet<ResourceLocation>();
+    private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
+    private final Set<ResourceLocation> textures = Sets.newHashSet();
+    private final Set<ResourceLocation> loadingModels = Sets.newHashSet();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
+    private final Map<ModelResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
     private IModel missingModel = null;
     private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
 
@@ -151,28 +151,31 @@ public class ModelLoader extends ModelBakery
         return bakedRegistry;
     }
 
-    private ArrayDeque<ModelResourceLocation> loadingBlockModels = new ArrayDeque<ModelResourceLocation>();
-
     private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
-        Collection<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
+        List<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
         variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
         variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
+        Collections.sort(variants, new Comparator<ModelResourceLocation>()
+        {
+            public int compare(ModelResourceLocation v1, ModelResourceLocation v2)
+            {
+                return v1.toString().compareTo(v2.toString());
+            }
+        });
         blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
-        loadingBlockModels.addAll(variants);
-        loadVariants(variants);
+        for(ModelResourceLocation variant : variants)
+        {
+            loadVariants(ImmutableList.of(variant));
+            blockBar.step(variant.toString());
+        }
         ProgressManager.pop(blockBar);
     }
 
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        if(!loadingBlockModels.isEmpty() && loadingBlockModels.peekFirst() == location)
-        {
-            blockBar.step(location.toString());
-            loadingBlockModels.removeFirst();
-        }
         Variants variants = null;
         try
         {
@@ -195,49 +198,53 @@ public class ModelLoader extends ModelBakery
         }
     }
 
+    private void storeException(ModelResourceLocation location, Exception exception)
+    {
+        loadingExceptions.put(location, exception);
+    }
+
     private void loadItems()
     {
         registerVariantNames();
-        int size = 0;
-        ImmutableList<Item> items = ImmutableList.copyOf(GameData.getItemRegistry().typeSafeIterable());
-        for(Item item : items)
+        List<String> itemVariants = Lists.newArrayList();
+        for(Item item : GameData.getItemRegistry().typeSafeIterable())
         {
-            size += getVariantNames(item).size();
+            itemVariants.addAll(getVariantNames(item));
         }
-        itemBar = ProgressManager.push("ModelLoader: items", size);
-        for(Item item : items)
+        Collections.sort(itemVariants);
+        itemBar = ProgressManager.push("ModelLoader: items", itemVariants.size());
+        for(String s : itemVariants)
         {
-            // default loading
-            for(String s : (List<String>)getVariantNames(item))
+            ResourceLocation file = getItemLocation(s);
+            ModelResourceLocation memory = getInventoryVariant(s);
+            itemBar.step(memory.toString());
+            IModel model = null;
+            try
             {
-                ResourceLocation file = getItemLocation(s);
-                ModelResourceLocation memory = getInventoryVariant(s);
-                itemBar.step(memory.toString());
-                IModel model = null;
+                // default loading
+                model = getModel(file);
+                if (model == null)
+                {
+                    model = getMissingModel();
+                }
+                stateModels.put(memory, model);
+            }
+            catch (FileNotFoundException e)
+            {
+                // try blockstate json if the item model is missing
+                FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
                 try
                 {
-                    model = getModel(file);
+                    registerVariant(getModelBlockDefinition(memory), memory);
                 }
-                catch (IOException e)
+                catch (Exception exception)
                 {
-                    // Handled by our finally block.
+                    storeException(memory, new Exception("Could not load item model either from the normal location " + file + " or from the blockstate", exception));
                 }
-                finally
-                {
-                    if (model == null || model == getMissingModel())
-                    {
-                        FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
-                        try
-                        {
-                            registerVariant(getModelBlockDefinition(memory), memory);
-                        }
-                        catch (Exception exception)
-                        {
-                            FMLLog.getLogger().warn("Unable to load definition " + memory, exception);
-                        }
-                    }
-                    else stateModels.put(memory, model);
-                }
+            }
+            catch (Exception exception)
+            {
+                storeException(memory, exception);
             }
         }
         ProgressManager.pop(itemBar);
@@ -850,12 +857,28 @@ public class ModelLoader extends ModelBakery
     public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
+        for(Map.Entry<ModelResourceLocation, Exception> entry : loadingExceptions.entrySet())
+        {
+            IBakedModel model = modelRegistry.getObject(entry.getKey());
+            if(model == null || model == missingModel)
+            {
+                FMLLog.getLogger().error("Exception loading model for variant " + entry.getKey(), entry.getValue());
+            }
+            if(model == null)
+            {
+                modelRegistry.putObject(entry.getKey(), missingModel);
+            }
+        }
         for(ModelResourceLocation missing : missingVariants)
         {
             IBakedModel model = modelRegistry.getObject(missing);
             if(model == null || model == missingModel)
             {
                 FMLLog.severe("Model definition for location %s not found", missing);
+            }
+            if(model == null)
+            {
+                modelRegistry.putObject(missing, missingModel);
             }
         }
         isLoading = false;
