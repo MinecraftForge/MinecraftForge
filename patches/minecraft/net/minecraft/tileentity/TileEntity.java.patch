@@ -93,18 +93,18 @@
 +
 +    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.");
 +    /**
-+     * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
++     * Called from Chunk.setBlockIDWithMetadata and Chunk.fillChunk, determines if this tile entity should be re-created when the ID, or Metadata changes.
 +     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
 +     *
 +     * @param world Current world
 +     * @param pos Tile's world position
-+     * @param oldID The old ID of the block
-+     * @param newID The new ID of the block (May be the same)
-+     * @return True to remove the old tile entity, false to keep it in tact {and create a new one if the new values specify to}
++     * @param oldState The old ID of the block
++     * @param newState The new ID of the block (May be the same)
++     * @return true forcing the invalidation of the existing TE, false not to invalidate the existing TE
 +     */
 +    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 +    {
-+        return !isVanilla || (oldState.func_177230_c() != newSate.func_177230_c());
++        return isVanilla ? (oldState.func_177230_c() != newSate.func_177230_c()) : oldState != newSate;
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
