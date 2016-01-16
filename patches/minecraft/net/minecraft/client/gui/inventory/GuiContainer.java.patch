@@ -30,7 +30,15 @@
                  this.func_175175_a(i, j, textureatlassprite, 16, 16);
                  GlStateManager.func_179145_e();
                  flag1 = true;
-@@ -463,6 +465,7 @@
+@@ -326,6 +328,7 @@
+             int j = this.field_147003_i;
+             int k = this.field_147009_r;
+             boolean flag1 = p_73864_1_ < j || p_73864_2_ < k || p_73864_1_ >= j + this.field_146999_f || p_73864_2_ >= k + this.field_147000_g;
++            if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+             int l = -1;
+ 
+             if (slot != null)
+@@ -463,10 +466,12 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
@@ -38,7 +46,12 @@
          Slot slot = this.func_146975_c(p_146286_1_, p_146286_2_);
          int i = this.field_147003_i;
          int j = this.field_147009_r;
-@@ -685,4 +688,16 @@
+         boolean flag = p_146286_1_ < i || p_146286_2_ < j || p_146286_1_ >= i + this.field_146999_f || p_146286_2_ >= j + this.field_147000_g;
++        if (slot != null) flag = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+         int k = -1;
+ 
+         if (slot != null)
+@@ -685,4 +690,16 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }
