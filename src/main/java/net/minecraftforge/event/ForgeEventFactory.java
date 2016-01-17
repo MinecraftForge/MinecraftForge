@@ -65,6 +65,7 @@ import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
@@ -500,4 +501,17 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities(), parent) : null;
     }
+
+    public static boolean fireSleepingLocationCheck(EntityPlayer player, BlockPos sleepingLocation)
+    {
+        SleepingLocationCheckEvent evt = new SleepingLocationCheckEvent(player, sleepingLocation);
+        MinecraftForge.EVENT_BUS.post(evt);
+
+        Result canContinueSleep = evt.getResult();
+        if (canContinueSleep == Result.DEFAULT)
+            return player.worldObj.getBlockState(player.playerLocation).getBlock().isBed(player.worldObj, player.playerLocation, player);
+        else
+            return canContinueSleep == Result.ALLOW;
+    }
+
 }
