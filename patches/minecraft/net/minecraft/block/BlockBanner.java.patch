@@ -1,0 +1,54 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
+@@ -85,22 +85,7 @@
+ 
+     public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
+     {
+-        TileEntity tileentity = p_180653_1_.func_175625_s(p_180653_2_);
+-
+-        if (tileentity instanceof TileEntityBanner)
+         {
+-            ItemStack itemstack = new ItemStack(Items.field_179564_cE, 1, ((TileEntityBanner)tileentity).func_175115_b());
+-            NBTTagCompound nbttagcompound = new NBTTagCompound();
+-            tileentity.func_145841_b(nbttagcompound);
+-            nbttagcompound.func_82580_o("x");
+-            nbttagcompound.func_82580_o("y");
+-            nbttagcompound.func_82580_o("z");
+-            nbttagcompound.func_82580_o("id");
+-            itemstack.func_77983_a("BlockEntityTag", nbttagcompound);
+-            func_180635_a(p_180653_1_, p_180653_2_, itemstack);
+-        }
+-        else
+-        {
+             super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
+         }
+     }
+@@ -133,6 +118,28 @@
+         }
+     }
+ 
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        TileEntity te = world.func_175625_s(pos);
++
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        if (te instanceof TileEntityBanner)
++        {
++            TileEntityBanner banner = (TileEntityBanner)te;
++            ItemStack item = new ItemStack(Items.field_179564_cE, 1, banner.func_175115_b());
++            NBTTagCompound nbt = new NBTTagCompound();
++            TileEntityBanner.func_181020_a(nbt, banner.func_175115_b(), banner.func_181021_d());
++            item.func_77983_a("BlockEntityTag", nbt);
++            ret.add(item);
++        }
++        else
++        {
++            ret.add(new ItemStack(Items.field_179564_cE, 1, 0));
++        }
++        return ret;
++    }
++
+     public static class BlockBannerHanging extends BlockBanner
+         {
+             public BlockBannerHanging()
