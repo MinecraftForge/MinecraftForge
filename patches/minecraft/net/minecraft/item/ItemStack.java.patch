@@ -180,7 +180,7 @@
          }
  
          return multimap;
-@@ -860,6 +867,17 @@
+@@ -860,6 +867,18 @@
  
      public void func_150996_a(Item p_150996_1_)
      {
@@ -194,11 +194,12 @@
 +            net.minecraftforge.common.capabilities.ICapabilityProvider parent = p_150996_1_.initCapabilities(this, this.capNBT);
 +            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(field_151002_e, this, parent);
 +        }
++        if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        this.delegate = p_150996_1_ != null ? p_150996_1_.delegate : null;
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -946,4 +964,26 @@
+@@ -946,4 +965,26 @@
              return false;
          }
      }
