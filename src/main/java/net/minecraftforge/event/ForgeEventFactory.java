@@ -499,7 +499,7 @@ public class ForgeEventFactory
     private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent event, ICapabilityProvider parent)
     {
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getCapabilities().size() > 0 ? new CapabilityDispatcher(event.getCapabilities(), parent) : null;
+        return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), parent) : null;
     }
 
     public static boolean fireSleepingLocationCheck(EntityPlayer player, BlockPos sleepingLocation)
