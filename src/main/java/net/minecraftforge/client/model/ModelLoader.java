@@ -256,8 +256,15 @@ public class ModelLoader extends ModelBakery
             if(!stateModels.containsKey(ModelDynBucket.LOCATION))
             {
                 // load forges blockstate json for it
-                ModelResourceLocation memory = getInventoryVariant("forge:dynbucket");
-                registerVariant(getModelBlockDefinition(memory), memory);
+                try
+                {
+                    registerVariant(getModelBlockDefinition(ModelDynBucket.LOCATION), ModelDynBucket.LOCATION);
+                }
+                catch (Exception exception)
+                {
+                    FMLLog.getLogger().error("Could not load the forge bucket model from the blockstate", exception);
+                    return;
+                }
             }
 
             // empty bucket
