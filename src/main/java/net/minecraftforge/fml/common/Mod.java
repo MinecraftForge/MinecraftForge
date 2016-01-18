@@ -84,8 +84,8 @@ public @interface Mod
      */
     String dependencies() default "";
     /**
-     * Whether to use the mcmod.info metadata by default for this mod.
-     * If true, settings in the mcmod.info file will override settings in these annotations.
+     * Whether to use the mcmod.json metadata by default for this mod.
+     * If true, settings in the mcmod.json file will override settings in these annotations.
      */
     boolean useMetadata() default false;
 

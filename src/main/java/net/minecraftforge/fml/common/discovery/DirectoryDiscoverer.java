@@ -62,18 +62,30 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
     {
         if (path.length() == 0)
         {
-            File metadata = new File(modDir, "mcmod.info");
+            File metadata = new File(modDir, "mcmod.json");
             try
             {
                 FileInputStream fis = new FileInputStream(metadata);
                 mc = MetadataCollection.from(fis,modDir.getName());
                 fis.close();
-                FMLLog.fine("Found an mcmod.info file in directory %s", modDir.getName());
+                FMLLog.fine("Found an mcmod.json file in directory %s", modDir.getName());
             }
             catch (Exception e)
             {
-                mc = MetadataCollection.from(null,"");
-                FMLLog.fine("No mcmod.info file found in directory %s", modDir.getName());
+                FMLLog.fine("No mcmod.json file found in directory %s. Searching for mcmod.info file...", modDir.getName());
+                metadata = new File(modDir, "mcmod.json");
+                try
+                {
+                    FileInputStream fis = new FileInputStream(metadata);
+                    mc = MetadataCollection.from(fis,modDir.getName());
+                    fis.close();
+                    FMLLog.fine("Found an mcmod.info file in directory %s", modDir.getName());
+                }
+                catch (Exception e1)
+                {
+                    mc = MetadataCollection.from(null,"");
+                    FMLLog.fine("No mcmod.info file found in directory %s", modDir.getName());
+                }
             }
         }
 
