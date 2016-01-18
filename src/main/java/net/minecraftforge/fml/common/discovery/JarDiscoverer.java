@@ -42,17 +42,26 @@ public class JarDiscoverer implements ITypeDiscoverer
         {
             jar = new JarFile(candidate.getModContainer());
 
-            ZipEntry modInfo = jar.getEntry("mcmod.info");
+            ZipEntry modInfo = jar.getEntry("mcmod.json");
             MetadataCollection mc = null;
             if (modInfo != null)
             {
-                FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
+                FMLLog.finer("Located mcmod.json file in file %s", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(jar.getInputStream(modInfo), candidate.getModContainer().getName());
             }
             else
             {
-                FMLLog.fine("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
-                mc = MetadataCollection.from(null, "");
+                FMLLog.fine("The mod container %s appears to be missing an mcmod.json file. Searching for mcmod.info file...", candidate.getModContainer().getName());
+                modInfo = jar.getEntry("mcmod.info");
+                if (modInfo != null)
+                {
+                    FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
+                    mc = MetadataCollection.from(jar.getInputStream(modInfo), candidate.getModContainer().getName());
+                }
+                else
+                {
+                    mc = MetadataCollection.from(null, "");
+                }
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
             {

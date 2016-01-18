@@ -429,7 +429,7 @@ public class GuiModList extends GuiScreen
 
             lines.add(null);
             lines.add(RED + "No mod information found");
-            lines.add(RED + "Ask your mod author to provide a mod mcmod.info file");
+            lines.add(RED + "Ask your mod author to provide a mod mcmod.json file");
         }
 
         if ((vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
