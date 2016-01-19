@@ -61,6 +61,7 @@ group = 'net.minecraftforge'
 version = getVersionFromJava(file("src/main/java/net/minecraftforge/common/ForgeVersion.java"))
 
 extractForgeSources { exclude "**/SideOnly.java", "**/Side.java" }
+extractForgeResources { exclude "**/log4j2.xml" }
 
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
