@@ -81,7 +81,7 @@ public class ModelLoader extends ModelBakery
     private final Set<ResourceLocation> textures = Sets.newHashSet();
     private final Set<ResourceLocation> loadingModels = Sets.newHashSet();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
-    private final Map<ModelResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
+    private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
     private IModel missingModel = null;
     private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
 
@@ -198,9 +198,23 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    private void storeException(ModelResourceLocation location, Exception exception)
+    private void storeException(ResourceLocation location, Exception exception)
     {
         loadingExceptions.put(location, exception);
+    }
+
+    @Override
+    protected ModelBlockDefinition getModelBlockDefinition(ResourceLocation location)
+    {
+        try
+        {
+            return super.getModelBlockDefinition(location);
+        }
+        catch (Exception exception)
+        {
+            storeException(location, new Exception("Could not load model definition for variant " + location, exception));
+        }
+        return new ModelBlockDefinition(new ArrayList<ModelBlockDefinition>());
     }
 
     private void loadItems()
@@ -864,16 +878,30 @@ public class ModelLoader extends ModelBakery
     public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
-        for(Map.Entry<ModelResourceLocation, Exception> entry : loadingExceptions.entrySet())
+        Map<String, Integer> modelErrors = Maps.newHashMap();
+        for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())
         {
-            IBakedModel model = modelRegistry.getObject(entry.getKey());
-            if(model == null || model == missingModel)
+            // ignoring pure ResourceLocation arguments, all things we care about pass ModelResourceLocation
+            if(entry.getKey() instanceof ModelResourceLocation)
             {
-                FMLLog.getLogger().error("Exception loading model for variant " + entry.getKey(), entry.getValue());
-            }
-            if(model == null)
-            {
-                modelRegistry.putObject(entry.getKey(), missingModel);
+                ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
+                IBakedModel model = modelRegistry.getObject(location);
+                if(model == null || model == missingModel)
+                {
+                    String domain = entry.getKey().getResourceDomain();
+                    Integer errorCountBox = modelErrors.get(domain);
+                    int errorCount = errorCountBox == null ? 0 : errorCountBox;
+                    errorCount++;
+                    if(errorCount < 5)
+                    {
+                        FMLLog.getLogger().error("Exception loading model for variant " + entry.getKey(), entry.getValue());
+                    }
+                    modelErrors.put(domain, errorCount);
+                }
+                if(model == null)
+                {
+                    modelRegistry.putObject(location, missingModel);
+                }
             }
         }
         for(ModelResourceLocation missing : missingVariants)
@@ -881,11 +909,26 @@ public class ModelLoader extends ModelBakery
             IBakedModel model = modelRegistry.getObject(missing);
             if(model == null || model == missingModel)
             {
-                FMLLog.severe("Model definition for location %s not found", missing);
+                String domain = missing.getResourceDomain();
+                Integer errorCountBox = modelErrors.get(domain);
+                int errorCount = errorCountBox == null ? 0 : errorCountBox;
+                errorCount++;
+                if(errorCount < 5)
+                {
+                    FMLLog.severe("Model definition for location %s not found", missing);
+                }
+                modelErrors.put(domain, errorCount);
             }
             if(model == null)
             {
                 modelRegistry.putObject(missing, missingModel);
+            }
+        }
+        for(Map.Entry<String, Integer> e : modelErrors.entrySet())
+        {
+            if(e.getValue() >= 5)
+            {
+                FMLLog.severe("Supressed additional %s model loading errors for domain %s", e.getValue(), e.getKey());
             }
         }
         isLoading = false;
