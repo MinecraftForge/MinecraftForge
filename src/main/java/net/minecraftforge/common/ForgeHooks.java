@@ -906,4 +906,9 @@ public class ForgeHooks
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
     }
+
+    public static boolean onBlockDestroyedByFire(World world, BlockPos pos, IBlockState state, EnumFacing facing)
+    {
+        return !(MinecraftForge.EVENT_BUS.post(new BlockEvent.DestroyedByFireEvent(world, pos, state, facing)));
+    }
 }

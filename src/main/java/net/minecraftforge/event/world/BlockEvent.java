@@ -204,4 +204,29 @@ public class BlockEvent extends Event
             return notifiedSides;
         }
     }
+
+    /**
+     * DestroyedByFireEvent is fired when BlockFire replaces a block with fire or air.
+     * 
+     * If this event is cancelled, the block is not replaced.
+     */
+    @Cancelable
+    public static class DestroyedByFireEvent extends BlockEvent
+    {
+        private final EnumFacing facing;
+
+        public DestroyedByFireEvent(World world, BlockPos pos, IBlockState state, EnumFacing facing)
+        {
+            super(world, pos, state);
+            this.facing = facing;
+        }
+
+        /**
+         * Gets the face being lit on fire
+         */
+        public EnumFacing getFace()
+        {
+            return this.facing;
+        }
+    }
 }
