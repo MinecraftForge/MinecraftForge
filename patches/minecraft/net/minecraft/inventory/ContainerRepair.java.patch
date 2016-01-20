@@ -1,15 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
+@@ -61,7 +61,7 @@
+             }
+             public boolean func_82869_a(EntityPlayer p_82869_1_)
+             {
+-                return (p_82869_1_.field_71075_bZ.field_75098_d || p_82869_1_.field_71068_ca >= ContainerRepair.this.field_82854_e) && ContainerRepair.this.field_82854_e > 0 && this.func_75216_d();
++                return (p_82869_1_.field_71075_bZ.field_75098_d || p_82869_1_.field_71068_ca >= ContainerRepair.this.field_82854_e) && this.func_75216_d();
+             }
+             public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
+             {
 @@ -70,6 +70,8 @@
                      p_82870_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
                  }
  
 +                float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_82870_1_, p_82870_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
-+
++                if (!net.minecraftforge.common.AnvilRecipes.getInstance().onPickupFromSlot(ContainerRepair.this.field_82853_g, ContainerRepair.this.field_82857_m, ContainerRepair.this.field_82860_h)) {
                  ContainerRepair.this.field_82853_g.func_70299_a(0, (ItemStack)null);
  
                  if (ContainerRepair.this.field_82856_l > 0)
-@@ -94,7 +96,7 @@
+@@ -89,12 +91,12 @@
+                 else
+                 {
+                     ContainerRepair.this.field_82853_g.func_70299_a(1, (ItemStack)null);
+-                }
++                }}
+ 
                  ContainerRepair.this.field_82854_e = 0;
                  IBlockState iblockstate = p_i45807_2_.func_180495_p(p_i45807_3_);
  
@@ -18,15 +33,27 @@
                  {
                      int l = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++l;
-@@ -172,6 +174,7 @@
+@@ -114,6 +116,7 @@
+                 {
+                     p_i45807_2_.func_175718_b(1021, p_i45807_3_, 0);
+                 }
++                if (!p_i45807_2_.func_175623_d(p_i45807_3_)) ContainerRepair.this.func_82848_d();
+             }
+         });
  
+@@ -169,9 +172,10 @@
+             boolean flag = false;
+             i2 = i2 + itemstack.func_82838_A() + (itemstack2 == null ? 0 : itemstack2.func_82838_A());
+             this.field_82856_l = 0;
+-
++            if (net.minecraftforge.common.AnvilRecipes.getInstance().updateRepairOutput(this, itemstack, itemstack2, field_82852_f, field_82857_m, i2, this.field_82860_h)) return;
              if (itemstack2 != null)
              {
 +                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, i2)) return;
                  flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
-@@ -264,7 +267,8 @@
+@@ -264,7 +268,8 @@
                              {
                                  int i4 = ((Integer)iterator.next()).intValue();
  
@@ -36,7 +63,7 @@
                                  {
                                      flag1 = false;
                                      ++l1;
-@@ -315,6 +319,8 @@
+@@ -315,6 +320,8 @@
                  }
              }
  
