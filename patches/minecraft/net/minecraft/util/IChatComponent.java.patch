@@ -21,7 +21,7 @@
  
                          if (jsonobject.has("with"))
                          {
-+                            if (!jsonobject.isJsonArray()) throw new JsonParseException("'with' tag has to be an array");
++                            if (!jsonobject.get("with").isJsonArray()) throw new JsonParseException("'with' tag has to be an array");
                              JsonArray jsonarray = jsonobject.getAsJsonArray("with");
                              Object[] aobject = new Object[jsonarray.size()];
  
@@ -36,7 +36,7 @@
                      }
  
                      if (jsonobject.has("extra"))
-+                    if (!jsonobject.isJsonArray()) ichatcomponent.func_150257_a(p_deserialize_3_.<IChatComponent>deserialize(jsonobject, IChatComponent.class)); else
++                    if (!jsonobject.get("extra").isJsonArray()) ichatcomponent.func_150257_a(p_deserialize_3_.<IChatComponent>deserialize(jsonobject.get("extra"), IChatComponent.class)); else
                      {
                          JsonArray jsonarray2 = jsonobject.getAsJsonArray("extra");
  
