@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandTitle.java
++++ ../src-work/minecraft/net/minecraft/command/CommandTitle.java
+@@ -89,7 +89,7 @@
+                     catch (JsonParseException jsonparseexception)
+                     {
+                         Throwable throwable = ExceptionUtils.getRootCause(jsonparseexception);
+-                        throw new SyntaxErrorException("commands.tellraw.jsonException", new Object[] {throwable == null ? "" : throwable.getMessage()});
++                        throw new SyntaxErrorException("commands.tellraw.jsonException", new Object[] {(throwable == null ? jsonparseexception : throwable).getMessage()});
+                     }
+ 
+                     S45PacketTitle s45packettitle1 = new S45PacketTitle(s45packettitle$type, ChatComponentProcessor.func_179985_a(p_71515_1_, ichatcomponent, entityplayermp));

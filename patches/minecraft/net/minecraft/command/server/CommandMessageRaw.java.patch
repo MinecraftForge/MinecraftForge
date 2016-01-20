@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandMessageRaw.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandMessageRaw.java
+@@ -50,7 +50,7 @@
+             catch (JsonParseException jsonparseexception)
+             {
+                 Throwable throwable = ExceptionUtils.getRootCause(jsonparseexception);
+-                throw new SyntaxErrorException("commands.tellraw.jsonException", new Object[] {throwable == null ? "" : throwable.getMessage()});
++                throw new SyntaxErrorException("commands.tellraw.jsonException", new Object[] {(throwable == null ? jsonparseexception : throwable).getMessage()});
+             }
+         }
+     }
