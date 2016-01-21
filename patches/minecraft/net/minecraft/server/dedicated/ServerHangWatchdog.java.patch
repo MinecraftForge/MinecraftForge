@@ -5,13 +5,13 @@
      private final DedicatedServer field_180249_b;
      private final long field_180250_c;
 +    private boolean firstRun = true;
-
+ 
      public ServerHangWatchdog(DedicatedServer p_i46310_1_)
      {
 @@ -37,7 +38,7 @@
              long j = MinecraftServer.func_130071_aq();
              long k = j - i;
-
+ 
 -            if (k > this.field_180250_c)
 +            if (k > this.field_180250_c && !this.firstRun)
              {
@@ -20,7 +20,7 @@
 @@ -75,6 +76,8 @@
                  this.func_180248_a();
              }
-
+ 
 +            this.firstRun = false;
 +
              try
