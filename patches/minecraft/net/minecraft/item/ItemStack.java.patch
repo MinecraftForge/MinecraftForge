@@ -38,6 +38,15 @@
          this.field_77994_a = p_i1881_2_;
          this.field_77991_e = p_i1881_3_;
  
+@@ -107,7 +113,7 @@
+ 
+     public ItemStack func_77979_a(int p_77979_1_)
+     {
+-        ItemStack itemstack = new ItemStack(this.field_151002_e, p_77979_1_, this.field_77991_e);
++        ItemStack itemstack = new ItemStack(this.field_151002_e, p_77979_1_, this.field_77991_e, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+ 
+         if (this.field_77990_d != null)
+         {
 @@ -120,11 +126,12 @@
  
      public Item func_77973_b()
