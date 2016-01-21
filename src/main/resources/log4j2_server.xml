@@ -13,7 +13,7 @@
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %replace{%msg}{(?i)\u00A7[0-9A-FK-OR]}{}%n" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
                 <OnStartupTriggeringPolicy />
