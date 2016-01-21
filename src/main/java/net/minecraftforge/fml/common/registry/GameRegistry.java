@@ -569,7 +569,7 @@ public class GameRegistry
             FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
             return null;
         }
-        ItemStack is = new ItemStack(item, 1, meta);
+        ItemStack is = new ItemStack(item, stackSize, meta);
         if (!Strings.isNullOrEmpty(nbtString))
         {
             NBTBase nbttag = null;
