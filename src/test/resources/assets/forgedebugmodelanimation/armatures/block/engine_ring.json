@@ -1,0 +1,64 @@
+{
+  "joints": {
+    "ring":    { "0": [ 1.0 ] },
+    "chamber": { "1": [ 1.0 ] },
+    "trunk":   { "2": [ 1.0 ] }
+  },
+  "clips": {
+    "default": {
+      "loop": false,
+      "joint_clips": {},
+      "events": {}
+    },
+    "moving": {
+      "loop": true,
+      "joint_clips": {
+        "ring": [
+          {
+            "variable": "offset_y",
+            "type": "uniform",
+            "interpolation": "linear",
+            "samples": [ 0, 0.08, 0.25, 0.42, 0.5, 0.42, 0.25, 0.08 ]
+          },
+          {
+            "variable": "axis_y",
+            "type": "uniform",
+            "interpolation": "nearest",
+            "samples": [ 1 ]
+          },
+          {
+            "variable": "angle",
+            "type": "uniform",
+            "interpolation": "linear",
+            "samples": [
+              0, 120, 240,
+              0, 120, 240,
+              0, 120, 240,
+              0, 120, 240
+            ]
+          }
+        ],
+        "chamber": [
+          {
+            "variable": "scale",
+            "type": "uniform",
+            "interpolation": "nearest",
+            "samples": [ 0, 1 ]
+          }
+        ],
+        "trunk": [
+          {
+            "variable": "scale",
+            "type": "uniform",
+            "interpolation": "nearest",
+            "samples": [ 1, 0 ]
+          }
+        ]
+      },
+      "events": {
+        "0.5": "boop"
+      }
+    }
+  }
+}
+
