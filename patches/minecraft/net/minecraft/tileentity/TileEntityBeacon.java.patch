@@ -5,7 +5,7 @@
                          Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
  
 -                        if (block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150484_ah && block != Blocks.field_150339_S)
-+                        if (!block.isBeaconBase(this.field_145850_b, new BlockPos(l1, k1, j1), func_174877_v()))
++                        if (!block.isBeaconBase(this.field_145850_b, new BlockPos(j1, i2, k1), func_174877_v()))
                          {
                              flag1 = false;
                              break;
