@@ -42,6 +42,8 @@ import net.minecraftforge.fml.common.asm.ASMTransformerWrapper;
 import net.minecraftforge.fml.common.asm.transformers.ModAccessTransformer;
 import net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker;
 import net.minecraftforge.fml.common.launcher.FMLTweaker;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.DependsOn;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
@@ -541,12 +543,13 @@ public class CoreModManager {
                 FMLRelaunchLog.finer("coremod named %s is loading", coreModName);
             }
             MCVersion requiredMCVersion = coreModClazz.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
+            DefaultArtifactVersion mcVersion = new DefaultArtifactVersion(FMLInjectionData.mccversion);
             if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
             {
                 FMLRelaunchLog.log(Level.WARN, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
                         coreModClass);
             }
-            else if (requiredMCVersion != null && !FMLInjectionData.mccversion.equals(requiredMCVersion.value()))
+            else if (requiredMCVersion != null && !(VersionParser.parseRange(requiredMCVersion.value()).containsVersion(mcVersion)))
             {
                 FMLRelaunchLog.log(Level.ERROR, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", coreModClass,
                         requiredMCVersion.value(), FMLInjectionData.mccversion);

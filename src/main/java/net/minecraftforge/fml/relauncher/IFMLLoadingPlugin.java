@@ -89,8 +89,10 @@ public interface IFMLLoadingPlugin
     }
 
     /**
-     * Use this to target a specific minecraft version for your coremod. It will refuse to load with an error if
-     * minecraft is not this exact version.
+     * Use this to target specific minecraft versions for your coremod. Should be a version range 
+     * as specified by the maven version range specification
+     * 
+     * The coremod will refuse to load with an error if the minecraft version is not in this range.
      *
      * @author cpw
      *
