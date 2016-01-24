@@ -76,3 +76,22 @@
      }
  
      public boolean[] func_174902_m()
+@@ -386,4 +393,18 @@
+             this.field_145945_j[i] = null;
+         }
+     }
++
++    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.UP)
++                return (T) handlerInput;
++            else
++                return (T) handlerOutput;
++        return super.getCapability(capability, facing);
++    }
+ }
