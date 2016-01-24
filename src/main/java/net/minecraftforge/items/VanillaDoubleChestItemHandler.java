@@ -9,7 +9,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import java.lang.ref.WeakReference;
-import java.util.Objects;
+
+import com.google.common.base.Objects;
 
 public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler
 {
@@ -123,9 +124,9 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
 
         final TileEntityChest otherChest = getOtherChest();
         if (mainChestIsUpper == that.mainChestIsUpper)
-            return Objects.equals(mainChest, that.mainChest) && Objects.equals(otherChest, that.getOtherChest());
+            return Objects.equal(mainChest, that.mainChest) && Objects.equal(otherChest, that.getOtherChest());
         else
-            return Objects.equals(mainChest, that.getOtherChest()) && Objects.equals(otherChest, that.mainChest);
+            return Objects.equal(mainChest, that.getOtherChest()) && Objects.equal(otherChest, that.mainChest);
     }
 
     @Override
