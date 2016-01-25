@@ -314,7 +314,7 @@ public class ModelAnimationDebug
                 }*/
                 else if(asm.currentState().equals("default"))
                 {
-                    float time = Animation.getWorldTime(getWorld());
+                    float time = Animation.getWorldTime(getWorld(), Animation.getPartialTickTime());
                     clickTime.setValue(time);
                     //offset.setValue(time);
                     //asm.transition("moving");
@@ -322,7 +322,7 @@ public class ModelAnimationDebug
                 }
                 else if(asm.currentState().equals("moving"))
                 {
-                    clickTime.setValue(Animation.getWorldTime(getWorld()));
+                    clickTime.setValue(Animation.getWorldTime(getWorld(), Animation.getPartialTickTime()));
                     asm.transition("stopping");
                 }
             }
