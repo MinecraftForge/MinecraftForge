@@ -26,6 +26,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.event.ClickEvent;
@@ -73,6 +74,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -905,5 +907,20 @@ public class ForgeHooks
         ItemStack stack = player.getCurrentEquippedItem();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
+    }
+
+    public static boolean onTravelToDimension(Entity entity, int dimension)
+    {
+        EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled())
+        {
+            // Revert variable back to true as it would have been set to false
+            if (entity instanceof EntityMinecartContainer)
+            {
+               ((EntityMinecartContainer) entity).dropContentsWhenDead = true;
+            }
+        }
+        return !event.isCanceled();
     }
 }

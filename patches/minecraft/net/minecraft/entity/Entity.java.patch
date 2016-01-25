@@ -131,7 +131,15 @@
      }
  
      public boolean func_70093_af()
-@@ -2092,7 +2146,7 @@
+@@ -2049,6 +2103,7 @@
+     {
+         if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
+         {
++            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_71027_1_)) return;
+             this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
+             MinecraftServer minecraftserver = MinecraftServer.func_71276_C();
+             int i = this.field_71093_bK;
+@@ -2092,7 +2147,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -140,7 +148,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2353,4 +2407,209 @@
+@@ -2353,4 +2408,209 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
