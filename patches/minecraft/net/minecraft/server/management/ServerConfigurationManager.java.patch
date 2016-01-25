@@ -221,3 +221,14 @@
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);
              }
+@@ -912,7 +971,9 @@
+ 
+     public void func_148539_a(IChatComponent p_148539_1_)
+     {
+-        this.func_148544_a(p_148539_1_, true);
++    	net.minecraftforge.event.ServerSendChatEvent event = new net.minecraftforge.event.ServerSendChatEvent(p_148539_1_);
++    	net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (!event.isCanceled()) this.func_148544_a(event.getMessage(), true);
+     }
+ 
+     public StatisticsFile func_152602_a(EntityPlayer p_152602_1_)
