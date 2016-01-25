@@ -28,6 +28,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -74,6 +75,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.item.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -905,5 +907,10 @@ public class ForgeHooks
         ItemStack stack = player.getCurrentEquippedItem();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
+    }
+
+    public static boolean onThrowableImpact(EntityThrowable throwable, MovingObjectPosition mop)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, mop));
     }
 }
