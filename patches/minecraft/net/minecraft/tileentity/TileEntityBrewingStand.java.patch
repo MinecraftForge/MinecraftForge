@@ -76,13 +76,20 @@
      }
  
      public boolean[] func_174902_m()
-@@ -386,4 +393,18 @@
+@@ -386,4 +393,26 @@
              this.field_145945_j[i] = null;
          }
      }
 +
 +    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
 +    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++    net.minecraftforge.common.capabilities.work.IWorker capabilityWorker = new net.minecraftforge.common.capabilities.work.VanillaBrewingStandWorker(this);
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, EnumFacing facing)
++    {
++        return capability == net.minecraftforge.common.capabilities.work.CapabilityWorker.WORKER_CAPABILITY || super.hasCapability(capability, facing);
++    }
 +
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
@@ -92,6 +99,7 @@
 +                return (T) handlerInput;
 +            else
 +                return (T) handlerOutput;
++        if(capability == net.minecraftforge.common.capabilities.work.CapabilityWorker.WORKER_CAPABILITY) return (T) capabilityWorker;
 +        return super.getCapability(capability, facing);
 +    }
  }

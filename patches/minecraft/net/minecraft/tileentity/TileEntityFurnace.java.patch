@@ -49,7 +49,7 @@
          }
      }
  
-@@ -451,4 +462,21 @@
+@@ -451,4 +462,29 @@
              this.field_145957_n[i] = null;
          }
      }
@@ -57,6 +57,13 @@
 +    net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
 +    net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
 +    net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.WEST);
++    net.minecraftforge.common.capabilities.work.IWorker capabilityWorker = new net.minecraftforge.common.capabilities.work.VanillaFurnaceWorker(this);
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, EnumFacing facing)
++    {
++        return capability == net.minecraftforge.common.capabilities.work.CapabilityWorker.WORKER_CAPABILITY || super.hasCapability(capability, facing);
++    }
 +
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
@@ -68,6 +75,7 @@
 +                return (T) handlerTop;
 +            else
 +                return (T) handlerSide;
++        if(capability == net.minecraftforge.common.capabilities.work.CapabilityWorker.WORKER_CAPABILITY) return (T) capabilityWorker;
 +        return super.getCapability(capability, facing);
 +    }
  }
