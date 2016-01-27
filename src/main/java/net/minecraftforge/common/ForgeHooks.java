@@ -49,6 +49,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C12PacketUpdateSign;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
@@ -90,6 +91,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.entity.player.PlayerEditSignEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -922,5 +924,12 @@ public class ForgeHooks
             }
         }
         return !event.isCanceled();
+    }
+
+    public static IChatComponent[] onSignEditEvent(C12PacketUpdateSign data, EntityPlayerMP player)
+    {
+        PlayerEditSignEvent e = new PlayerEditSignEvent(data.getPosition(), data.getLines(), player);
+        if (MinecraftForge.EVENT_BUS.post(e))return null;
+        return e.getText();
     }
 }

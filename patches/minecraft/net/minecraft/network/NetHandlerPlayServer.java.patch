@@ -119,3 +119,12 @@
                  }
  
                  break;
+@@ -1089,7 +1110,7 @@
+                 return;
+             }
+ 
+-            IChatComponent[] aichatcomponent = p_147343_1_.func_180768_b();
++            IChatComponent[] aichatcomponent = net.minecraftforge.common.ForgeHooks.onSignEditEvent(p_147343_1_, field_147369_b); if (aichatcomponent == null){ return;};
+ 
+             for (int i = 0; i < aichatcomponent.length; ++i)
+             {
