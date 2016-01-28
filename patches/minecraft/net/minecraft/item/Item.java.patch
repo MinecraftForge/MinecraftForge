@@ -57,7 +57,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -371,11 +380,659 @@
+@@ -371,11 +380,670 @@
          return false;
      }
  
@@ -427,18 +427,29 @@
 +    }
 +
 +    /**
++     * @deprecated Use 4-argument version.
++     */
++    // remove 1.9
++    @SideOnly(Side.CLIENT)
++    @Deprecated
++    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot)
++    {
++        return null;
++    }
++
++    /**
 +     * Override this method to have an item handle its own armor rendering.
 +     *
 +     * @param  entityLiving  The entity wearing the armor
 +     * @param  itemStack  The itemStack to render the model of
 +     * @param  armorSlot  0=head, 1=torso, 2=legs, 3=feet
-+     *
++     * @param _default Original armor model. Will have attributes set.
 +     * @return  A ModelBiped to render instead of the default
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot)
++    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot, net.minecraft.client.model.ModelBiped _default)
 +    {
-+        return null;
++        return getArmorModel(entityLiving, itemStack, armorSlot);
 +    }
 +
 +    /**
@@ -717,7 +728,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -855,6 +1512,10 @@
+@@ -855,6 +1523,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -728,7 +739,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -889,9 +1550,36 @@
+@@ -889,9 +1561,36 @@
              return this.field_78008_j;
          }
  

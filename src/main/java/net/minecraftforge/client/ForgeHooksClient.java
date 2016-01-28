@@ -164,7 +164,7 @@ public class ForgeHooksClient
 
     public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
     {
-        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
+        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID, _default);
         return model == null ? _default : model;
     }
 
