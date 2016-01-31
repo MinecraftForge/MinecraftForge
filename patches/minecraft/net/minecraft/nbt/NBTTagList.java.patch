@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagList.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagList.java
+@@ -82,7 +82,7 @@
+                 stringbuilder.append(',');
+             }
+ 
+-            stringbuilder.append(i).append(':').append(this.field_74747_a.get(i));
++            stringbuilder.append(this.field_74747_a.get(i));
+         }
+ 
+         return stringbuilder.append(']').toString();
