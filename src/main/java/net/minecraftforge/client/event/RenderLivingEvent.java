@@ -32,6 +32,11 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
         public Post(EntityLivingBase entity, RendererLivingEntity<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
     }
 
+    public static class PreRenderCallback<T extends EntityLivingBase> extends RenderLivingEvent<T>
+    {
+        public PreRenderCallback(EntityLivingBase entity, RendererLivingEntity<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
+    }
+
     public abstract static class Specials<T extends EntityLivingBase> extends RenderLivingEvent<T>
     {
         public Specials(EntityLivingBase entity, RendererLivingEntity<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
