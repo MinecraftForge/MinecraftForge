@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
+public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>, IRetexturableModel<ModelDynBucket>
 {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
 
@@ -140,7 +140,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
      * If the fluid can't be found, water is used
      */
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
+    public ModelDynBucket process(ImmutableMap<String, String> customData)
     {
         String fluidName = customData.get("fluid");
         Fluid fluid = FluidRegistry.getFluid(fluidName);
@@ -171,7 +171,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
      * If no liquid is given a hardcoded variant for the bucket is used.
      */
     @Override
-    public IModel retexture(ImmutableMap<String, String> textures)
+    public ModelDynBucket retexture(ImmutableMap<String, String> textures)
     {
 
         ResourceLocation base = baseLocation;

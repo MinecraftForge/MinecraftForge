@@ -407,7 +407,7 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
     }
 
-    private class VanillaModelWrapper implements IRetexturableModel, IAnimatedModel
+    private class VanillaModelWrapper implements IRetexturableModel<VanillaModelWrapper>, IModelSimpleProperties<VanillaModelWrapper>, IAnimatedModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;
@@ -591,7 +591,7 @@ public class ModelLoader extends ModelBakery
         }
 
         @Override
-        public IModel retexture(ImmutableMap<String, String> textures)
+        public VanillaModelWrapper retexture(ImmutableMap<String, String> textures)
         {
             if (textures.isEmpty())
                 return this;
@@ -665,8 +665,35 @@ public class ModelLoader extends ModelBakery
         {
             return ModelRotation.X0_Y0;
         }
+
+        @Override
+        public VanillaModelWrapper smoothLighting(boolean value)
+        {
+            if(model.ambientOcclusion == value)
+            {
+                return this;
+            }
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.func_181682_g());
+            newModel.parent = model.parent;
+            newModel.name = model.name;
+            return new VanillaModelWrapper(location, newModel, animation);
+        }
+
+        @Override
+        public VanillaModelWrapper gui3d(boolean value)
+        {
+            if(model.isGui3d() == value)
+            {
+                return this;
+            }
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.func_181682_g());
+            newModel.parent = model.parent;
+            newModel.name = model.name;
+            return new VanillaModelWrapper(location, newModel, animation);
+        }
     }
 
+    @Deprecated // rework in 1.9
     public static class UVLock implements IModelState
     {
         private final IModelState parent;

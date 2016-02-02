@@ -33,7 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelCustomData;
 import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IModelState;
@@ -64,7 +63,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("deprecation")
-public class OBJModel implements IRetexturableModel, IModelCustomData
+public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel>
 {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
@@ -132,14 +131,14 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     }
 
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
+    public OBJModel process(ImmutableMap<String, String> customData)
     {
         OBJModel ret = new OBJModel(this.matLib, this.modelLocation, new CustomData(this.customData, customData));
         return ret;
     }
 
     @Override
-    public IModel retexture(ImmutableMap<String, String> textures)
+    public OBJModel retexture(ImmutableMap<String, String> textures)
     {
         OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
         return ret;

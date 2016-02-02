@@ -26,7 +26,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class ItemLayerModel implements IRetexturableModel
+public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
 {
 
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
@@ -68,7 +68,7 @@ public class ItemLayerModel implements IRetexturableModel
         return TRSRTransformation.identity();
     }
 
-    public IModel retexture(ImmutableMap<String, String> textures)
+    public ItemLayerModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
         for(int i = 0; i < textures.size() + this.textures.size(); i++)

@@ -43,7 +43,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 @SuppressWarnings("deprecation")
-public class ModelFluid implements IModelCustomData
+public class ModelFluid implements IModelCustomData<ModelFluid>
 {
     public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);
     public static final ModelFluid lavaModel = new ModelFluid(FluidRegistry.LAVA);
@@ -397,7 +397,7 @@ public class ModelFluid implements IModelCustomData
     }
 
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
+    public ModelFluid process(ImmutableMap<String, String> customData)
     {
         if(!customData.containsKey("fluid")) return this;
 
