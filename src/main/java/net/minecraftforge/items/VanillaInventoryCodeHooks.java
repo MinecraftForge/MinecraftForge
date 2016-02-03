@@ -57,7 +57,7 @@ public class VanillaInventoryCodeHooks
         BlockPos offsetPos = pos.offset(enumfacing);
         TileEntity tileEntity = world.getTileEntity(offsetPos);
         if (tileEntity == null)
-            return false;
+            return true;
         if (!tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, enumfacing.getOpposite()))
             return true;
 
