@@ -580,7 +580,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public Wrapper retexture(ImmutableMap<String, String> textures)
+        public IModel retexture(ImmutableMap<String, String> textures)
         {
             ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
             for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
@@ -602,7 +602,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public Wrapper process(ImmutableMap<String, String> customData)
+        public IModel process(ImmutableMap<String, String> customData)
         {
             return this;
         }
@@ -712,7 +712,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public ModelWrapper retexture(ImmutableMap<String, String> textures)
+        public IModel retexture(ImmutableMap<String, String> textures)
         {
             ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
             for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
@@ -734,7 +734,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public ModelWrapper process(ImmutableMap<String, String> data)
+        public IModel process(ImmutableMap<String, String> data)
         {
             if(data.containsKey("mesh"))
             {

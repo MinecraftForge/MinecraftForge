@@ -591,7 +591,7 @@ public class ModelLoader extends ModelBakery
         }
 
         @Override
-        public VanillaModelWrapper retexture(ImmutableMap<String, String> textures)
+        public IModel retexture(ImmutableMap<String, String> textures)
         {
             if (textures.isEmpty())
                 return this;

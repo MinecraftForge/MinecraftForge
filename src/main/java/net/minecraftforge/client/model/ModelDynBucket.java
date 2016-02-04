@@ -140,7 +140,7 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
      * If the fluid can't be found, water is used
      */
     @Override
-    public ModelDynBucket process(ImmutableMap<String, String> customData)
+    public IModel process(ImmutableMap<String, String> customData)
     {
         String fluidName = customData.get("fluid");
         Fluid fluid = FluidRegistry.getFluid(fluidName);
@@ -171,7 +171,7 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
      * If no liquid is given a hardcoded variant for the bucket is used.
      */
     @Override
-    public ModelDynBucket retexture(ImmutableMap<String, String> textures)
+    public IModel retexture(ImmutableMap<String, String> textures)
     {
 
         ResourceLocation base = baseLocation;

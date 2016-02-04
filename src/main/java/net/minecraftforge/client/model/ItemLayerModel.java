@@ -68,7 +68,7 @@ public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
         return TRSRTransformation.identity();
     }
 
-    public ItemLayerModel retexture(ImmutableMap<String, String> textures)
+    public IModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
         for(int i = 0; i < textures.size() + this.textures.size(); i++)

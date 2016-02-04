@@ -94,7 +94,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
     }
 
     @Override
-    public MultiLayerModel process(ImmutableMap<String, String> customData)
+    public IModel process(ImmutableMap<String, String> customData)
     {
         ImmutableMap.Builder<Optional<EnumWorldBlockLayer>, ModelResourceLocation> builder = ImmutableMap.builder();
         for(String key : customData.keySet())

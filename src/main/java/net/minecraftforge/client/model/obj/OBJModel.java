@@ -32,16 +32,7 @@ import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModelCustomData;
-import net.minecraftforge.client.model.IModelPart;
-import net.minecraftforge.client.model.IModelState;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IRetexturableModel;
-import net.minecraftforge.client.model.ISmartBlockModel;
-import net.minecraftforge.client.model.ISmartItemModel;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -131,14 +122,14 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
     }
 
     @Override
-    public OBJModel process(ImmutableMap<String, String> customData)
+    public IModel process(ImmutableMap<String, String> customData)
     {
         OBJModel ret = new OBJModel(this.matLib, this.modelLocation, new CustomData(this.customData, customData));
         return ret;
     }
 
     @Override
-    public OBJModel retexture(ImmutableMap<String, String> textures)
+    public IModel retexture(ImmutableMap<String, String> textures)
     {
         OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
         return ret;

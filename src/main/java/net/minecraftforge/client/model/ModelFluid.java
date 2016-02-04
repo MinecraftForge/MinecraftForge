@@ -397,7 +397,7 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
     }
 
     @Override
-    public ModelFluid process(ImmutableMap<String, String> customData)
+    public IModel process(ImmutableMap<String, String> customData)
     {
         if(!customData.containsKey("fluid")) return this;
 
