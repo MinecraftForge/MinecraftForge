@@ -63,7 +63,7 @@ public class TerminalTransformer implements IClassTransformer
                         {
                             FMLRelaunchLog.warning("=============================================================");
                             FMLRelaunchLog.warning("MOD HAS DIRECT REFERENCE System.exit() THIS IS NOT ALLOWED REROUTING TO FML!");
-                            FMLRelaunchLog.warning("Offendor: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
+                            FMLRelaunchLog.warning("Offender: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
                             FMLRelaunchLog.warning("Use FMLCommonHandler.exitJava instead");
                             FMLRelaunchLog.warning("=============================================================");
                         }
@@ -76,7 +76,7 @@ public class TerminalTransformer implements IClassTransformer
                         {
                             FMLRelaunchLog.warning("=============================================================");
                             FMLRelaunchLog.warning("MOD HAS DIRECT REFERENCE Runtime.exit() THIS IS NOT ALLOWED REROUTING TO FML!");
-                            FMLRelaunchLog.warning("Offendor: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
+                            FMLRelaunchLog.warning("Offender: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
                             FMLRelaunchLog.warning("Use FMLCommonHandler.exitJava instead");
                             FMLRelaunchLog.warning("=============================================================");
                         }
@@ -91,7 +91,7 @@ public class TerminalTransformer implements IClassTransformer
                         {
                             FMLRelaunchLog.warning("=============================================================");
                             FMLRelaunchLog.warning("MOD HAS DIRECT REFERENCE Runtime.halt() THIS IS NOT ALLOWED REROUTING TO FML!");
-                            FMLRelaunchLog.warning("Offendor: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
+                            FMLRelaunchLog.warning("Offender: %s.%s%s", ExitVisitor.this.clsName, mName, mDesc);
                             FMLRelaunchLog.warning("Use FMLCommonHandler.exitJava instead");
                             FMLRelaunchLog.warning("=============================================================");
                         }
