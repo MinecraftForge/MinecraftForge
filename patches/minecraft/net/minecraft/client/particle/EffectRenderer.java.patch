@@ -17,6 +17,15 @@
          {
              p_180533_2_ = p_180533_2_.func_177230_c().func_176221_a(p_180533_2_, this.field_78878_a, p_180533_1_);
              int i = 4;
+@@ -376,7 +377,7 @@
+     {
+         IBlockState iblockstate = this.field_78878_a.func_180495_p(p_180532_1_);
+         Block block = iblockstate.func_177230_c();
+-
++        iblockstate = block.func_176221_a(iblockstate, this.field_78878_a, p_180532_1_);
+         if (block.func_149645_b() != -1)
+         {
+             int i = p_180532_1_.func_177958_n();
 @@ -457,4 +458,13 @@
  
          return "" + i;

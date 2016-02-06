@@ -578,4 +578,19 @@ public class ForgeHooksClient
         if(part.isPresent()) return Optional.absent();
         return Optional.of(new TRSRTransformation(matrix));
     }
+
+    public static IBlockState getStateForEntityFX(World world, int... arguments)
+    {
+        IBlockState state = Block.getStateById(arguments[0]);
+        if (arguments.length == 4)
+        {
+            BlockPos pos = new BlockPos(arguments[1], arguments[2], arguments[3]);
+            if (!world.isAirBlock(pos))
+            {
+                state = world.getBlockState(pos);
+                state = state.getBlock().getActualState(state, world, pos);
+            }
+        }
+        return state;
+    }
 }

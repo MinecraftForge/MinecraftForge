@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/EntityBlockDustFX.java
++++ ../src-work/minecraft/net/minecraft/client/particle/EntityBlockDustFX.java
+@@ -22,7 +22,7 @@
+         {
+             public EntityFX func_178902_a(int p_178902_1_, World p_178902_2_, double p_178902_3_, double p_178902_5_, double p_178902_7_, double p_178902_9_, double p_178902_11_, double p_178902_13_, int... p_178902_15_)
+             {
+-                IBlockState iblockstate = Block.func_176220_d(p_178902_15_[0]);
++                IBlockState iblockstate = net.minecraftforge.client.ForgeHooksClient.getStateForEntityFX(p_178902_2_, p_178902_15_);
+                 return iblockstate.func_177230_c().func_149645_b() == -1 ? null : (new EntityBlockDustFX(p_178902_2_, p_178902_3_, p_178902_5_, p_178902_7_, p_178902_9_, p_178902_11_, p_178902_13_, iblockstate)).func_174845_l();
+             }
+         }
