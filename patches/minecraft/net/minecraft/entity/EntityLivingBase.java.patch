@@ -1,13 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -170,6 +170,7 @@
+@@ -170,7 +170,8 @@
                  }
  
                  int i = (int)(150.0D * d0);
+-                ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.func_176210_f(iblockstate)});
 +                if ( !block.addLandingEffects( (WorldServer)this.field_70170_p, p_180433_5_, iblockstate, this, i ) )
-                 ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.func_176210_f(iblockstate)});
++                ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.func_176210_f(iblockstate), p_180433_5_.func_177958_n(), ((int)Math.ceil(this.field_70163_u) - 1), p_180433_5_.func_177952_p()});
              }
          }
+ 
 @@ -237,7 +238,7 @@
                      }
                  }
