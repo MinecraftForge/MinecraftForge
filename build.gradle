@@ -157,6 +157,7 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
 }
 uploadArchives.dependsOn signUniversal
 build.dependsOn signUniversal
+installer.dependsOn signUniversal
 
 // MDK package
 
