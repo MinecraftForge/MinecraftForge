@@ -92,7 +92,19 @@
                  if (!this.func_174814_R())
                  {
                      this.field_70170_p.func_72956_a(p_70100_1_, "random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-@@ -480,6 +501,6 @@
+@@ -402,11 +423,6 @@
+ 
+         if (itemstack == null)
+         {
+-            if (this.field_70170_p != null)
+-            {
+-                field_145803_d.error("Item entity " + this.func_145782_y() + " has no item?!");
+-            }
+-
+             return new ItemStack(Blocks.field_150348_b);
+         }
+         else
+@@ -480,6 +496,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
