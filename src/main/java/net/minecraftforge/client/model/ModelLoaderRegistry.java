@@ -26,6 +26,7 @@ public class ModelLoaderRegistry
 {
     private static final Set<ICustomModelLoader> loaders = new HashSet<ICustomModelLoader>();
     private static final Map<ResourceLocation, IModel> cache = new HashMap<ResourceLocation, IModel>();
+    private static boolean registered = false;
 
     // Forge built-in loaders
     static
@@ -44,13 +45,17 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener()
+        if(!registered)
         {
-            public void onResourceManagerReload(IResourceManager manager)
+            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener()
             {
-                for(ICustomModelLoader loader : loaders) loader.onResourceManagerReload(manager);
-            }
-        });
+                public void onResourceManagerReload(IResourceManager manager)
+                {
+                    for (ICustomModelLoader loader : loaders) loader.onResourceManagerReload(manager);
+                }
+            });
+            registered = true;
+        }
     }
 
     public static boolean loaded(ResourceLocation location)
