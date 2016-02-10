@@ -22,6 +22,7 @@ import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -66,6 +67,7 @@ import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.OverlayGlintEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -578,4 +580,37 @@ public class ForgeHooksClient
         if(part.isPresent()) return Optional.absent();
         return Optional.of(new TRSRTransformation(matrix));
     }
+
+    private static int glintValue;
+
+    public static boolean renderItemGlint(ItemStack stack, IBakedModel model)
+    {
+       OverlayGlintEvent.StackOverlayEvent event = new OverlayGlintEvent.StackOverlayEvent(stack, model);
+       if(!MinecraftForge.EVENT_BUS.post(event))
+       {
+    	   glintValue = (event.glintValue);
+           return true;
+       }
+       return false;
+    }
+
+    public static boolean renderArmorGlint(ItemStack stack, ModelBase model, EntityLivingBase entity, int slot)
+    {
+       OverlayGlintEvent.ArmorOverlayEvent event = new OverlayGlintEvent.ArmorOverlayEvent(stack, model, entity, slot);
+       if(!MinecraftForge.EVENT_BUS.post(event))
+       {
+           glintValue = event.glintValue;
+           return true;
+       }
+       return false;
+    }
+
+    public static int getGlintColor(){
+        return glintValue;
+    }
+
+	public static void applyGlintColor() {
+		GlStateManager.color((glintValue >> 16 & 255) / 255.0F, (glintValue >> 8 & 255) / 255.0F,  (glintValue & 255) / 255F , (glintValue >> 24 & 255) / 255.0F);
+    }
+
 }

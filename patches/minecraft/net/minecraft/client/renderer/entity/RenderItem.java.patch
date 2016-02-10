@@ -9,6 +9,32 @@
          this.func_175041_b();
      }
  
+@@ -151,7 +151,7 @@
+                 GlStateManager.func_179109_b(-0.5F, -0.5F, -0.5F);
+                 this.func_175036_a(p_180454_2_, p_180454_1_);
+ 
+-                if (p_180454_1_.func_77962_s())
++                if (p_180454_1_.func_77962_s() && net.minecraftforge.client.ForgeHooksClient.renderItemGlint(p_180454_1_, p_180454_2_))
+                 {
+                     this.func_180451_a(p_180454_2_);
+                 }
+@@ -174,14 +174,14 @@
+         float f = (float)(Minecraft.func_71386_F() % 3000L) / 3000.0F / 8.0F;
+         GlStateManager.func_179109_b(f, 0.0F, 0.0F);
+         GlStateManager.func_179114_b(-50.0F, 0.0F, 0.0F, 1.0F);
+-        this.func_175035_a(p_180451_1_, -8372020);
++        this.func_175035_a(p_180451_1_, net.minecraftforge.client.ForgeHooksClient.getGlintColor());
+         GlStateManager.func_179121_F();
+         GlStateManager.func_179094_E();
+         GlStateManager.func_179152_a(8.0F, 8.0F, 8.0F);
+         float f1 = (float)(Minecraft.func_71386_F() % 4873L) / 4873.0F / 8.0F;
+         GlStateManager.func_179109_b(-f1, 0.0F, 0.0F);
+         GlStateManager.func_179114_b(10.0F, 0.0F, 0.0F, 1.0F);
+-        this.func_175035_a(p_180451_1_, -8372020);
++        this.func_175035_a(p_180451_1_, net.minecraftforge.client.ForgeHooksClient.getGlintColor());
+         GlStateManager.func_179121_F();
+         GlStateManager.func_179128_n(5888);
+         GlStateManager.func_179112_b(770, 771);
 @@ -226,7 +226,7 @@
                  k = k | -16777216;
              }

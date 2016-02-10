@@ -37,11 +37,21 @@
 -                    if (!this.field_177193_i && itemstack.func_77948_v())
 +                }
 +                // Default
-+                    if (!this.field_177193_i && itemstack.func_77962_s())
++                    if (!this.field_177193_i && itemstack.func_77962_s() && net.minecraftforge.client.ForgeHooksClient.renderArmorGlint(itemstack, t, p_177182_1_, p_177182_9_))
                      {
                          this.func_177183_a(p_177182_1_, t, p_177182_2_, p_177182_3_, p_177182_4_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
                      }
-@@ -135,11 +134,13 @@
+@@ -114,8 +113,7 @@
+         {
+             GlStateManager.func_179140_f();
+             GlStateManager.func_179112_b(768, 1);
+-            float f2 = 0.76F;
+-            GlStateManager.func_179131_c(0.5F * f2, 0.25F * f2, 0.8F * f2, 1.0F);
++            net.minecraftforge.client.ForgeHooksClient.applyGlintColor();
+             GlStateManager.func_179128_n(5890);
+             GlStateManager.func_179096_D();
+             float f3 = 0.33333334F;
+@@ -135,11 +133,13 @@
          GlStateManager.func_179084_k();
      }
  
@@ -55,7 +65,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -157,4 +158,49 @@
+@@ -157,4 +157,49 @@
      protected abstract void func_177177_a();
  
      protected abstract void func_177179_a(T p_177179_1_, int p_177179_2_);
