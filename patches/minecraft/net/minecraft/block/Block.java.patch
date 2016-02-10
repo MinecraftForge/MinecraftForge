@@ -1021,7 +1021,7 @@
 +     */
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis, EntityPlayer player, MovingObjectPosition hit)
 +    {
-+    	return rotateBlock(world, pos, axis);
++        return rotateBlock(world, pos, axis);
 +    }
 +
 +    /**
@@ -1064,7 +1064,7 @@
 +     */
 +    public EnumFacing[] getValidRotations(World world, BlockPos pos, EntityPlayer player, MovingObjectPosition hit)
 +    {
-+    	return getValidRotations(world, pos);
++        return getValidRotations(world, pos);
 +    }
 +
 +    /**
@@ -1104,7 +1104,7 @@
 +
 +    /**
 +     * Common way to recolor a block with an external tool.<br/>
-+     * <b>This is the method that handeld recoloring devices should call!</b>
++     * <b>This is the method that handheld recoloring devices should call!</b>
 +     * 
 +     * @param world The world
 +     * @param pos Block position in world
@@ -1116,7 +1116,7 @@
 +     */
 +    public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, net.minecraft.item.EnumDyeColor color, EntityPlayer player, MovingObjectPosition hit)
 +    {
-+    	return recolorBlock(world, pos, side, color);
++        return recolorBlock(world, pos, side, color);
 +    }
 +
 +    /**
