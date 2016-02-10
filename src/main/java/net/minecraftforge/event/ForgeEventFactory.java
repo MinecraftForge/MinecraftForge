@@ -24,6 +24,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -51,6 +52,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
+import net.minecraftforge.event.entity.player.EntityInteractAtEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -361,6 +363,11 @@ public class ForgeEventFactory
                 player.joinEntityItemWithWorld(item);
             }
         }
+    }
+
+    public static boolean canInteractAt(EntityPlayer player, Entity entity, Vec3 vec3)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new EntityInteractAtEvent(player, entity, vec3));
     }
 
     public static boolean canInteractWith(EntityPlayer player, Entity entity)

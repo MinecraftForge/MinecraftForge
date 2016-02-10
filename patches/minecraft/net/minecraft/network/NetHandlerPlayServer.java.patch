@@ -110,7 +110,15 @@
              }
  
              this.field_147374_l += 20;
-@@ -916,7 +937,7 @@
+@@ -864,6 +885,7 @@
+                 }
+                 else if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.INTERACT_AT)
+                 {
++                    if (!net.minecraftforge.event.ForgeEventFactory.canInteractAt(this.field_147369_b, entity, p_147340_1_.func_179712_b())) return;
+                     entity.func_174825_a(this.field_147369_b, p_147340_1_.func_179712_b());
+                 }
+                 else if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.ATTACK)
+@@ -916,7 +938,7 @@
                          return;
                      }
  

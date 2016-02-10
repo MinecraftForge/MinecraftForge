@@ -85,3 +85,11 @@
                  }
  
                  return true;
+@@ -462,6 +479,7 @@
+         this.func_78750_j();
+         Vec3 vec3 = new Vec3(p_178894_3_.field_72307_f.field_72450_a - p_178894_2_.field_70165_t, p_178894_3_.field_72307_f.field_72448_b - p_178894_2_.field_70163_u, p_178894_3_.field_72307_f.field_72449_c - p_178894_2_.field_70161_v);
+         this.field_78774_b.func_147297_a(new C02PacketUseEntity(p_178894_2_, vec3));
++        if (!net.minecraftforge.event.ForgeEventFactory.canInteractAt(p_178894_1_, p_178894_2_, vec3)) return false;
+         return this.field_78779_k != WorldSettings.GameType.SPECTATOR && p_178894_2_.func_174825_a(p_178894_1_, vec3);
+     }
+ 
