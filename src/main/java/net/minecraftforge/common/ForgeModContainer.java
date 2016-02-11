@@ -26,6 +26,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
@@ -312,6 +313,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void preInit(FMLPreInitializationEvent evt)
     {
         CapabilityItemHandler.register();
+        CapabilityFluidHandler.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);
