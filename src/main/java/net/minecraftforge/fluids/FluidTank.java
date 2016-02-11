@@ -1,4 +1,3 @@
-
 package net.minecraftforge.fluids;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,9 +7,8 @@ import net.minecraft.tileentity.TileEntity;
  * Reference implementation of {@link IFluidTank}. Use/extend this or implement your own.
  *
  * @author King Lemming, cpw (LiquidTank)
- *
  */
-public class FluidTank implements IFluidTank
+public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capability.IFluidHandler
 {
     protected FluidStack fluid;
     protected int capacity;
@@ -59,21 +57,16 @@ public class FluidTank implements IFluidTank
         return nbt;
     }
 
-    public void setFluid(FluidStack fluid)
-    {
-        this.fluid = fluid;
-    }
-
-    public void setCapacity(int capacity)
-    {
-        this.capacity = capacity;
-    }
-
     /* IFluidTank */
     @Override
     public FluidStack getFluid()
     {
         return fluid;
+    }
+
+    public void setFluid(FluidStack fluid)
+    {
+        this.fluid = fluid;
     }
 
     @Override
@@ -92,6 +85,11 @@ public class FluidTank implements IFluidTank
         return capacity;
     }
 
+    public void setCapacity(int capacity)
+    {
+        this.capacity = capacity;
+    }
+
     @Override
     public FluidTankInfo getInfo()
     {
@@ -99,9 +97,15 @@ public class FluidTank implements IFluidTank
     }
 
     @Override
+    public FluidTankInfo[] getTankInfo()
+    {
+        return new FluidTankInfo[] { getInfo() };
+    }
+
+    @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (resource == null)
+        if (resource == null || !canFill(resource.getFluid()))
         {
             return 0;
         }
@@ -124,6 +128,8 @@ public class FluidTank implements IFluidTank
         if (fluid == null)
         {
             fluid = new FluidStack(resource, Math.min(capacity, resource.amount));
+
+            onContentsChanged();
 
             if (tile != null)
             {
@@ -148,6 +154,8 @@ public class FluidTank implements IFluidTank
             fluid.amount = capacity;
         }
 
+        onContentsChanged();
+
         if (tile != null)
         {
             FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluid, tile.getWorld(), tile.getPos(), this, filled));
@@ -156,9 +164,19 @@ public class FluidTank implements IFluidTank
     }
 
     @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain)
+    {
+        if (resource == null || !resource.isFluidEqual(getFluid()))
+        {
+            return null;
+        }
+        return drain(resource.amount, doDrain);
+    }
+
+    @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (fluid == null)
+        if (fluid == null || !canDrain(fluid.getFluid()))
         {
             return null;
         }
@@ -178,11 +196,28 @@ public class FluidTank implements IFluidTank
                 fluid = null;
             }
 
+            onContentsChanged();
+
             if (tile != null)
             {
                 FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluid, tile.getWorld(), tile.getPos(), this, drained));
             }
         }
         return stack;
+    }
+
+    public boolean canFill(Fluid fluid)
+    {
+        return true;
+    }
+
+    public boolean canDrain(Fluid fluid)
+    {
+        return true;
+    }
+
+    protected void onContentsChanged()
+    {
+
     }
 }
