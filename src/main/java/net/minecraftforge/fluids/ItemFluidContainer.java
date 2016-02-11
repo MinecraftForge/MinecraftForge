@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author King Lemming
  *
  */
+@Deprecated
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {
     protected int capacity;
