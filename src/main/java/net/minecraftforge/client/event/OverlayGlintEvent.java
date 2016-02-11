@@ -61,13 +61,13 @@ public class OverlayGlintEvent<T> extends Event
         /**
          * The entity wearing the armor
          * */
-        public final EntityLivingBase theEntity;
+        public final EntityLivingBase theWearer;
 
         public ArmorOverlayEvent(ItemStack stack, ModelBase model, EntityLivingBase entity, int slot)
         {
             super(stack, model, stack.getItem().getArmorGlintColor(stack, entity, slot));
             armorSlot = slot;
-            theEntity = entity;
+            theWearer = entity;
         }
 
     }
@@ -77,7 +77,7 @@ public class OverlayGlintEvent<T> extends Event
      * Can be cancelled to prevent the vanilla glint from rendering
      * */
     @Cancelable
-    public static class StackOverlayEvent extends OverlayGlintEvent<IBakedModel>
+    public static class OverlayItemStackEvent extends OverlayGlintEvent<IBakedModel>
     {
 
         public StackOverlayEvent(ItemStack stack, IBakedModel model)

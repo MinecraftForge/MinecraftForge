@@ -585,7 +585,7 @@ public class ForgeHooksClient
 
     public static boolean renderItemGlint(ItemStack stack, IBakedModel model)
     {
-       OverlayGlintEvent.StackOverlayEvent event = new OverlayGlintEvent.StackOverlayEvent(stack, model);
+       OverlayGlintEvent.OverlayItemStackEvent event = new OverlayGlintEvent.OverlayItemStackEvent(stack, model);
        if(!MinecraftForge.EVENT_BUS.post(event))
        {
     	   glintValue = (event.glintValue);
