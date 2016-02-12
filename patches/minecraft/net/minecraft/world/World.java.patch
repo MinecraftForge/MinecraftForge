@@ -791,6 +791,15 @@
      }
  
      public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_)
+@@ -3439,7 +3624,7 @@
+ 
+     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
+     {
+-        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
++        for (EnumFacing enumfacing : EnumFacing.field_82609_l)
+         {
+             BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
+ 
 @@ -3447,18 +3632,14 @@
              {
                  IBlockState iblockstate = this.func_180495_p(blockpos);
