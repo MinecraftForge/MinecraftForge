@@ -118,8 +118,12 @@
          if (tileentity == null)
          {
              if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -849,11 +852,6 @@
-                 this.field_177447_w.add(p_177424_1_);
+@@ -846,14 +849,9 @@
+             }
+             else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
+             {
+-                this.field_177447_w.add(p_177424_1_);
++                this.field_177447_w.add(p_177424_1_.getImmutable());
              }
          }
 -        else if (tileentity.func_145837_r())
