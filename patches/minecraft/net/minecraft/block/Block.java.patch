@@ -1277,7 +1277,7 @@
 +        String prefix = mc == null ? "minecraft" : mc.getModId();
 +        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
 +        {
-+            net.minecraftforge.fml.common.FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
++            net.minecraftforge.fml.common.FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", oldPrefix, name);
 +            prefix = oldPrefix;
 +        }
 +        this.registryName = new ResourceLocation(prefix, name);
