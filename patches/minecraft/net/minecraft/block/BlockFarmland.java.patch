@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -79,7 +79,7 @@
+                     return;
+                 }
+ 
+-                p_180658_1_.func_175656_a(p_180658_2_, Blocks.field_150346_d.func_176223_P());
++                if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.FarmlandTrampleEvent(p_180658_1_, p_180658_2_, p_180658_1_.func_180495_p(p_180658_2_), (EntityLivingBase) p_180658_3_))) p_180658_1_.func_175656_a(p_180658_2_, Blocks.field_150346_d.func_176223_P());
+             }
+ 
+             super.func_180658_a(p_180658_1_, p_180658_2_, p_180658_3_, p_180658_4_);
 @@ -89,7 +89,7 @@
      private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
      {
