@@ -8,24 +8,28 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
- * Called just before farmland would change to dirt.
- * If the event is cancelled, the farmland (and plant) will remain intact.
+ * Called just before farmland would change to dirt.<br>
+ * If the event is cancelled, the farmland (and plant) will remain intact.<br>
+ * <br>
+ * {@link #pos} The position of the farmland block<br>
+ * {@link #entity} The entity that trampled the farmland<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * This event does not use {@link HasResult}.<br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
- * 
- * @param pos The position of the farmland block
- * @param entity The entity that trampled the farmland
  */
 @Cancelable
 public class FarmlandTrampleEvent extends BlockEvent
 {
-    public final EntityLivingBase entity;
+    private final EntityLivingBase entity;
 
     public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, EntityLivingBase entity)
     {
         super(world, pos, state);
         this.entity = entity;
+    }
+
+    public final EntityLivingBase getEntity()
+    {
+    	return this.entity;
     }
 }

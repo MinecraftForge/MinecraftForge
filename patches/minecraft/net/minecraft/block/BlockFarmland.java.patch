@@ -4,7 +4,7 @@
                      return;
                  }
  
-+                if (!net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, (EntityLivingBase) p_180658_3_))
++                if (!net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, (EntityLivingBase)p_180658_3_))
                  p_180658_1_.func_175656_a(p_180658_2_, Blocks.field_150346_d.func_176223_P());
              }
  
