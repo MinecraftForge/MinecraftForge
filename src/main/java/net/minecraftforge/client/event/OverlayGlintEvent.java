@@ -6,15 +6,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Events for hooking into the Glint effect Rendering<br>
  * Will allow for adding effects to items, creating custom overlays, modifying vanilla
- * colors, and cancelling of glint overlays. 
+ * colors, and canceling of glint overlays. 
  * @author RANKSHANK
  */
-@SideOnly(Side.CLIENT)
 public class OverlayGlintEvent<T> extends Event
 {
 
@@ -77,12 +74,12 @@ public class OverlayGlintEvent<T> extends Event
      * Can be cancelled to prevent the vanilla glint from rendering
      * */
     @Cancelable
-    public static class OverlayItemStackEvent extends OverlayGlintEvent<IBakedModel>
+    public static class StackOverlayEvent extends OverlayGlintEvent<IBakedModel>
     {
 
         public StackOverlayEvent(ItemStack stack, IBakedModel model)
         {
-			super(stack, model, stack.getItem().getItemGlintColor(stack));
+            super(stack, model, stack.getItem().getItemGlintColor(stack));
         }
 
     }

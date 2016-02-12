@@ -56,22 +56,21 @@ public class GlintModificationTest
     static final int red = 0xff << 24 | 0xFF0096;
     
     @SubscribeEvent
-    public void doTheItems(OverlayGlintEvent.OverlayItemStackEvent e)
+    public void doTheItems(OverlayGlintEvent.StackOverlayEvent e)
     {
         if(e.theStack == null)
             return;
         if(e.theStack.getItem() instanceof ItemPotion)
             e.glintValue = (255 << 24) | (((ItemPotion)e.theStack.getItem()).getColorFromDamage(e.theStack.getItemDamage()));
-        else if(e.theStack.getItem() instanceof ItemEnchantedBook && e.theStack.hasTagCompound()){
+        else if(e.theStack.getItem() instanceof ItemEnchantedBook && e.theStack.hasTagCompound())
             e.setCanceled(true);
-        }
     }
     
     @SubscribeEvent
     public void doTheArmors(OverlayGlintEvent.ArmorOverlayEvent e)
     {
         if(e.armorSlot == 1)
-            e.glintValue = 0xFFcccc00;
+            e.glintValue = 0xc5cccc00;
     }
     
     

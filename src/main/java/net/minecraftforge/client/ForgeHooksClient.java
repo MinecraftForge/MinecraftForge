@@ -356,7 +356,7 @@ public class ForgeHooksClient
         loader.onPostBakeEvent(modelRegistry);
     }
 
-	public static Matrix4f getMatrix(ItemTransformVec3f transform)
+    public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -378,7 +378,7 @@ public class ForgeHooksClient
         return m;
     }
 
-	public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
+    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
     {
         if(model instanceof IPerspectiveAwareModel)
         {
@@ -585,32 +585,32 @@ public class ForgeHooksClient
 
     public static boolean renderItemGlint(ItemStack stack, IBakedModel model)
     {
-       OverlayGlintEvent.OverlayItemStackEvent event = new OverlayGlintEvent.OverlayItemStackEvent(stack, model);
-       if(!MinecraftForge.EVENT_BUS.post(event))
-       {
-    	   glintValue = (event.glintValue);
-           return true;
-       }
-       return false;
+        OverlayGlintEvent.StackOverlayEvent event = new OverlayGlintEvent.StackOverlayEvent(stack, model);
+        if(!MinecraftForge.EVENT_BUS.post(event))
+        {
+            glintValue = (event.glintValue);
+            return true;
+        }
+        return false;
     }
 
     public static boolean renderArmorGlint(ItemStack stack, ModelBase model, EntityLivingBase entity, int slot)
     {
-       OverlayGlintEvent.ArmorOverlayEvent event = new OverlayGlintEvent.ArmorOverlayEvent(stack, model, entity, slot);
-       if(!MinecraftForge.EVENT_BUS.post(event))
-       {
-           glintValue = event.glintValue;
-           return true;
-       }
-       return false;
+        OverlayGlintEvent.ArmorOverlayEvent event = new OverlayGlintEvent.ArmorOverlayEvent(stack, model, entity, slot);
+        if(!MinecraftForge.EVENT_BUS.post(event))
+        {
+            glintValue = event.glintValue;
+            return true;
+        }
+        return false;
     }
 
     public static int getGlintColor(){
         return glintValue;
     }
 
-	public static void applyGlintColor() {
-		GlStateManager.color((glintValue >> 16 & 255) / 255.0F, (glintValue >> 8 & 255) / 255.0F,  (glintValue & 255) / 255F , (glintValue >> 24 & 255) / 255.0F);
+    public static void applyGlintColor() {
+        GlStateManager.color((glintValue >> 16 & 255) / 255.0F, (glintValue >> 8 & 255) / 255.0F,  (glintValue & 255) / 255F , (glintValue >> 24 & 255) / 255.0F);
     }
 
 }
