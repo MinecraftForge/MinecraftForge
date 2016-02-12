@@ -10,7 +10,7 @@
      public RendererLivingEntity(RenderManager p_i46156_1_, ModelBase p_i46156_2_, float p_i46156_3_)
      {
          super(p_i46156_1_);
-@@ -83,6 +86,7 @@
+@@ -83,10 +86,12 @@
  
      public void func_76986_a(T p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_)
      {
@@ -18,7 +18,22 @@
          GlStateManager.func_179094_E();
          GlStateManager.func_179129_p();
          this.field_77045_g.field_78095_p = this.func_77040_d(p_76986_1_, p_76986_9_);
-@@ -191,6 +195,7 @@
+-        this.field_77045_g.field_78093_q = p_76986_1_.func_70115_ae();
++        boolean shouldSit = p_76986_1_.func_70115_ae() && (p_76986_1_.field_70154_o != null && p_76986_1_.field_70154_o.shouldRiderSit());
++        this.field_77045_g.field_78093_q = shouldSit;
+         this.field_77045_g.field_78091_s = p_76986_1_.func_70631_g_();
+ 
+         try
+@@ -95,7 +100,7 @@
+             float f1 = this.func_77034_a(p_76986_1_.field_70758_at, p_76986_1_.field_70759_as, p_76986_9_);
+             float f2 = f1 - f;
+ 
+-            if (p_76986_1_.func_70115_ae() && p_76986_1_.field_70154_o instanceof EntityLivingBase)
++            if (shouldSit && p_76986_1_.field_70154_o instanceof EntityLivingBase)
+             {
+                 EntityLivingBase entitylivingbase = (EntityLivingBase)p_76986_1_.field_70154_o;
+                 f = this.func_77034_a(entitylivingbase.field_70760_ar, entitylivingbase.field_70761_aq, p_76986_9_);
+@@ -191,6 +196,7 @@
          {
              super.func_76986_a(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
          }
@@ -26,7 +41,7 @@
      }
  
      protected boolean func_177088_c(T p_177088_1_)
-@@ -469,10 +474,11 @@
+@@ -469,10 +475,11 @@
  
      public void func_177067_a(T p_177067_1_, double p_177067_2_, double p_177067_4_, double p_177067_6_)
      {
@@ -39,7 +54,7 @@
  
              if (d0 < (double)(f * f))
              {
-@@ -518,6 +524,7 @@
+@@ -518,6 +525,7 @@
                  }
              }
          }
