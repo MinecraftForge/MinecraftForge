@@ -201,7 +201,7 @@
 +        else if (p_150996_1_ != this.field_151002_e && p_150996_1_ != null) // Item Changed
 +        {
 +            net.minecraftforge.common.capabilities.ICapabilityProvider parent = p_150996_1_.initCapabilities(this, this.capNBT);
-+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(field_151002_e, this, parent);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(p_150996_1_, this, parent);
 +        }
 +        if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        this.delegate = p_150996_1_ != null ? p_150996_1_.delegate : null;
