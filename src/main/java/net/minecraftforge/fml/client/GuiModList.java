@@ -414,7 +414,7 @@ public class GuiModList extends GuiScreen
                 lines.add("Child mods: " + selectedMod.getMetadata().getChildModList());
 
             if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+                lines.add("Update Avaliable: " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
             lines.add(selectedMod.getMetadata().description);
