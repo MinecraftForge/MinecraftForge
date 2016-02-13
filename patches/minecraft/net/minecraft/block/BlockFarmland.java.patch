@@ -1,14 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -79,6 +79,7 @@
+@@ -79,7 +79,7 @@
                      return;
                  }
  
-+                if (!net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, (EntityLivingBase)p_180658_3_))
-                 p_180658_1_.func_175656_a(p_180658_2_, Blocks.field_150346_d.func_176223_P());
+-                p_180658_1_.func_175656_a(p_180658_2_, Blocks.field_150346_d.func_176223_P());
++                net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, Blocks.field_150346_d.func_176223_P(), (EntityLivingBase)p_180658_3_);
              }
  
-@@ -89,7 +90,7 @@
+             super.func_180658_a(p_180658_1_, p_180658_2_, p_180658_3_, p_180658_4_);
+@@ -89,7 +89,7 @@
      private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
      {
          Block block = p_176529_1_.func_180495_p(p_176529_2_.func_177984_a()).func_177230_c();

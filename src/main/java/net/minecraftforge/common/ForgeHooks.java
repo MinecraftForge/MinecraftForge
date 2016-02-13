@@ -89,7 +89,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.FarmlandTrampleEvent;
+import net.minecraftforge.event.world.BlockTrampleEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -824,10 +824,15 @@ public class ForgeHooks
         return true;
     }
 
-    public static boolean onFarmlandTrample(World world, BlockPos pos, EntityLivingBase entity)
+    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState target, EntityLivingBase entity)
     {
-        FarmlandTrampleEvent e = new FarmlandTrampleEvent(world, pos, world.getBlockState(pos), entity);        
-        return MinecraftForge.EVENT_BUS.post(e);
+        BlockTrampleEvent e = new BlockTrampleEvent(world, pos, world.getBlockState(pos), target, entity);        
+        if (!MinecraftForge.EVENT_BUS.post(e))
+        {
+            world.setBlockState(pos, e.getTargetBlockState());
+            return true;
+        }
+        return false;
     }
 
     /**
