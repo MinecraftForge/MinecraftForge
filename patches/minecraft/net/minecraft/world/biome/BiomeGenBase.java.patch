@@ -136,3 +136,11 @@
      static
      {
          field_76772_c.func_150566_k();
+@@ -574,6 +658,7 @@
+             public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
+             {
+                 super(p_i1970_2_);
++                net.minecraftforge.common.ForgeHooks.validateMinMax(p_i1970_3_, p_i1970_4_, "GroupCount");
+                 this.field_76300_b = p_i1970_1_;
+                 this.field_76301_c = p_i1970_3_;
+                 this.field_76299_d = p_i1970_4_;

@@ -923,4 +923,10 @@ public class ForgeHooks
         }
         return !event.isCanceled();
     }
+    
+    public static void validateMinMax(int min, int max, String name)
+    {
+    	if (min > max)
+            throw new IllegalArgumentException(String.format("min%1$s must be <= max%1$s", name));
+    }
 }

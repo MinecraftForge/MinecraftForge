@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src-work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -36,48 +36,39 @@
+@@ -18,6 +18,7 @@
+     public WeightedRandomChestContent(Item p_i45311_1_, int p_i45311_2_, int p_i45311_3_, int p_i45311_4_, int p_i45311_5_)
+     {
+         super(p_i45311_5_);
++        net.minecraftforge.common.ForgeHooks.validateMinMax(p_i45311_3_, p_i45311_4_, "StackSize");
+         this.field_76297_b = new ItemStack(p_i45311_1_, 1, p_i45311_2_);
+         this.field_76295_d = p_i45311_3_;
+         this.field_76296_e = p_i45311_4_;
+@@ -26,6 +27,7 @@
+     public WeightedRandomChestContent(ItemStack p_i1558_1_, int p_i1558_2_, int p_i1558_3_, int p_i1558_4_)
+     {
+         super(p_i1558_4_);
++        net.minecraftforge.common.ForgeHooks.validateMinMax(p_i1558_2_, p_i1558_3_, "StackSize");
+         this.field_76297_b = p_i1558_1_;
+         this.field_76295_d = p_i1558_2_;
+         this.field_76296_e = p_i1558_3_;
+@@ -36,48 +38,39 @@
          for (int i = 0; i < p_177630_3_; ++i)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.func_76271_a(p_177630_0_, p_177630_1_);
