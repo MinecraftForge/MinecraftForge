@@ -40,14 +40,8 @@ public class ASMEventHandler implements IEventListener
     @Override
     public void invoke(Event event)
     {
-        if (owner != null && GETCONTEXT)
-        {
-            ThreadContext.put("mod", owner.getName());
-        }
-        else if (GETCONTEXT)
-        {
-            ThreadContext.put("mod", "");
-        }
+        if (GETCONTEXT)
+            ThreadContext.put("mod", owner == null ? "" : owner.getName());
         if (handler != null)
         {
             if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled())
