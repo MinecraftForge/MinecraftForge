@@ -67,7 +67,7 @@ import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.client.event.OverlayGlintEvent;
+import net.minecraftforge.client.event.EffectOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -77,6 +77,8 @@ import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.pipeline.EffectPassHandler.ArmorEffectPassHandler;
+import net.minecraftforge.client.model.pipeline.EffectPassHandler.ItemStackEffectPassHandler;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -581,36 +583,20 @@ public class ForgeHooksClient
         return Optional.of(new TRSRTransformation(matrix));
     }
 
-    private static int glintValue;
-
-    public static boolean renderItemGlint(ItemStack stack, IBakedModel model)
+    public static ItemStackEffectPassHandler getStackGlintEffectPassHandler(ItemStack stack)
     {
-        OverlayGlintEvent.StackOverlayEvent event = new OverlayGlintEvent.StackOverlayEvent(stack, model);
-        if(!MinecraftForge.EVENT_BUS.post(event))
-        {
-            glintValue = (event.glintValue);
-            return true;
-        }
-        return false;
+        EffectOverlayEvent.ItemStackEffectOverlayEvent event = new EffectOverlayEvent.ItemStackEffectOverlayEvent(stack);
+        MinecraftForge.EVENT_BUS.post(event);
+        event.getPassHandler().init(event.getOverriddenColor());
+        return event.isCanceled() ? null : event.getPassHandler();
     }
 
-    public static boolean renderArmorGlint(ItemStack stack, ModelBase model, EntityLivingBase entity, int slot)
+    public static ArmorEffectPassHandler getArmorEffectPassHandler(ItemStack stack, EntityLivingBase entity, int slot)
     {
-        OverlayGlintEvent.ArmorOverlayEvent event = new OverlayGlintEvent.ArmorOverlayEvent(stack, model, entity, slot);
-        if(!MinecraftForge.EVENT_BUS.post(event))
-        {
-            glintValue = event.glintValue;
-            return true;
-        }
-        return false;
-    }
-
-    public static int getGlintColor(){
-        return glintValue;
-    }
-
-    public static void applyGlintColor() {
-        GlStateManager.color((glintValue >> 16 & 255) / 255.0F, (glintValue >> 8 & 255) / 255.0F,  (glintValue & 255) / 255F , (glintValue >> 24 & 255) / 255.0F);
+        EffectOverlayEvent.ArmorEffectOverlayEvent event = new EffectOverlayEvent.ArmorEffectOverlayEvent(stack, entity, slot);
+        MinecraftForge.EVENT_BUS.post(event);
+        event.getPassHandler().init(event.getOverriddenColor());
+        return event.isCanceled() ? null : event.getPassHandler();
     }
 
 }

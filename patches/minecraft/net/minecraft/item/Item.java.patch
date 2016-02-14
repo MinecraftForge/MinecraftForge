@@ -57,7 +57,7 @@
          Vec3 vec31 = vec3.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
      }
-@@ -371,11 +380,696 @@
+@@ -371,11 +380,698 @@
          return false;
      }
  
@@ -723,38 +723,40 @@
 +    {
 +        return null;
 +    }
-+    
++
 +    /**
-+     * Vanilla's default glint value
++     * Vanilla's default effect value. Used for the glint
 +     * */
-+    public static final int defaultGlint = 0xFF8040CC;
++    public static final int defaultEffectColor = 0xFF8040CC;
 +
 +    /**
 +     * Used for effect coloring when the ItemStack is being overlaid.
 +     * @param stack The ItemStack
-+     * @return a hex int (ARGB) used for coloring the glint effect
++     * @param pass The render pass
++     * @return a hex int (ARGB) used for coloring the effect
 +     * */
-+    public int getItemGlintColor(ItemStack stack)
++    public int getItemStackEffectColorForPass(ItemStack stack, int pass)
 +    {
-+        return defaultGlint;
++        return defaultEffectColor;
 +    }
 +    /**
 +     * Used for glint coloring when the Armor Model is being overlaid.
 +     * @param stack The ItemStack
 +     * @param wearer The Entity wearing the armor
 +     * @param armorSlot The slot the armor is in
-+     * @return a hex int (ARGB) used for coloring the glint effect
++     * @param pass The render pass
++     * @return a hex int (ARGB) used for coloring the effect
 +     * */
-+    public int getArmorGlintColor(ItemStack stack, EntityLivingBase wearer, int armorSlot)
++    public int getArmorEffectColorForPass(ItemStack stack, EntityLivingBase wearer, int slot, int pass)
 +    {
-+        return defaultGlint;
++        return defaultEffectColor;
 +    }
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -855,6 +1549,10 @@
+@@ -855,6 +1551,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -765,7 +767,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -889,9 +1587,36 @@
+@@ -889,9 +1589,36 @@
              return this.field_78008_j;
          }
  
