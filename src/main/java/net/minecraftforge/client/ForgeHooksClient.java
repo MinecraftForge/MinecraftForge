@@ -575,12 +575,15 @@ public class ForgeHooksClient
         return Optional.of(new TRSRTransformation(matrix));
     }
 
-    public static void loadEntityShader(Class<? extends Entity> entityClass, EntityRenderer entityRenderer)
+    public static void loadEntityShader(Entity entity, EntityRenderer entityRenderer)
     {
-        ResourceLocation shader = ClientRegistry.getEntityShader(entityClass);
-        if (shader != null)
+        if (entity != null)
         {
-            entityRenderer.loadShader(shader);
+            ResourceLocation shader = ClientRegistry.getEntityShader(entity.getClass());
+            if (shader != null)
+            {
+                entityRenderer.loadShader(shader);
+            }
         }
     }
 }

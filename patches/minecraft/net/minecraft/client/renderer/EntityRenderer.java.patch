@@ -4,7 +4,7 @@
              {
                  this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
              }
-+            else net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_175066_1_.getClass(), this);
++            else net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_175066_1_, this);
          }
      }
  
