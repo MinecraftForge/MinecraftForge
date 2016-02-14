@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -419,7 +419,7 @@
+@@ -200,6 +200,7 @@
+             {
+                 this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
+             }
++            else net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_175066_1_.getClass(), this);
+         }
+     }
+ 
+@@ -419,7 +420,7 @@
  
                          if (d3 < d2 || d2 == 0.0D)
                          {
@@ -9,7 +17,7 @@
                              {
                                  if (d2 == 0.0D)
                                  {
-@@ -576,14 +576,8 @@
+@@ -576,14 +577,8 @@
              {
                  BlockPos blockpos = new BlockPos(entity);
                  IBlockState iblockstate = this.field_78531_r.field_71441_e.func_180495_p(blockpos);
@@ -25,7 +33,7 @@
                  GlStateManager.func_179114_b(entity.field_70126_B + (entity.field_70177_z - entity.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GlStateManager.func_179114_b(entity.field_70127_C + (entity.field_70125_A - entity.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -650,17 +644,20 @@
+@@ -650,17 +645,20 @@
  
          if (!this.field_78531_r.field_71474_y.field_74325_U)
          {
@@ -53,7 +61,7 @@
          }
  
          GlStateManager.func_179109_b(0.0F, -f, 0.0F);
-@@ -1103,7 +1100,7 @@
+@@ -1103,7 +1101,7 @@
  
                  try
                  {
@@ -62,7 +70,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1164,7 +1161,7 @@
+@@ -1164,7 +1162,7 @@
  
                      if (this.field_78531_r.field_71442_b.func_178889_l() == WorldSettings.GameType.SPECTATOR)
                      {
@@ -71,7 +79,7 @@
                      }
                      else
                      {
-@@ -1314,7 +1311,9 @@
+@@ -1314,7 +1312,9 @@
              GlStateManager.func_179094_E();
              RenderHelper.func_74519_b();
              this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -81,7 +89,7 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
              GlStateManager.func_179128_n(5888);
-@@ -1326,6 +1325,7 @@
+@@ -1326,6 +1326,7 @@
                  EntityPlayer entityplayer = (EntityPlayer)entity;
                  GlStateManager.func_179118_c();
                  this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -89,7 +97,7 @@
                  renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
                  GlStateManager.func_179141_d();
              }
-@@ -1339,6 +1339,7 @@
+@@ -1339,6 +1340,7 @@
              EntityPlayer entityplayer1 = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -97,7 +105,7 @@
              renderglobal.func_72731_b(entityplayer1, this.field_78531_r.field_71476_x, 0, p_175068_2_);
              GlStateManager.func_179141_d();
          }
-@@ -1380,6 +1381,15 @@
+@@ -1380,6 +1382,15 @@
          GlStateManager.func_179103_j(7425);
          this.field_78531_r.field_71424_I.func_76318_c("translucent");
          renderglobal.func_174977_a(EnumWorldBlockLayer.TRANSLUCENT, (double)p_175068_2_, p_175068_1_, entity);
@@ -113,7 +121,7 @@
          GlStateManager.func_179103_j(7424);
          GlStateManager.func_179132_a(true);
          GlStateManager.func_179089_o();
-@@ -1392,8 +1402,12 @@
+@@ -1392,8 +1403,12 @@
              this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_);
          }
  
@@ -126,7 +134,7 @@
          if (this.field_175074_C)
          {
              GlStateManager.func_179086_m(256);
-@@ -1505,6 +1519,13 @@
+@@ -1505,6 +1520,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -140,7 +148,7 @@
          float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f > 0.0F)
-@@ -1830,6 +1851,13 @@
+@@ -1830,6 +1852,13 @@
              this.field_175081_S = f7;
          }
  
@@ -154,7 +162,7 @@
          GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
      }
  
-@@ -1848,6 +1876,10 @@
+@@ -1848,6 +1877,10 @@
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          Block block = ActiveRenderInfo.func_180786_a(this.field_78531_r.field_71441_e, entity, p_78468_2_);
  
@@ -165,7 +173,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(Potion.field_76440_q))
          {
              float f1 = 5.0F;
-@@ -1925,6 +1957,7 @@
+@@ -1925,6 +1958,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
              }
