@@ -44,7 +44,7 @@
                      }
              }
          }
-@@ -100,46 +99,27 @@
+@@ -100,46 +99,25 @@
          return p_177180_1_ == 2;
      }
  
@@ -60,11 +60,9 @@
 -        GlStateManager.func_179131_c(f1, f1, f1, 1.0F);
 -
 -        for (int i = 0; i < 2; ++i)
-+        net.minecraftforge.client.model.pipeline.EffectPassHandler.ArmorEffectPassHandler handler = net.minecraftforge.client.ForgeHooksClient.getArmorEffectPassHandler(stack, entitylivingbaseIn, slot);
-+        if(handler == null)
-+        	return;
++        net.minecraftforge.client.model.pipeline.EffectPassHandler.ArmorEffectPassHandler handler = stack.func_77973_b().getEffectRendererForArmor(stack);
 +        ModelBase replacement;
-+        for(int pass = 0; pass < handler.getPassTarget(); pass++)
++        for(int pass = 0; pass < handler.getPassTarget(stack, entitylivingbaseIn, slot); pass++)
          {
 -            GlStateManager.func_179140_f();
 -            GlStateManager.func_179112_b(768, 1);
@@ -102,7 +100,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -157,4 +137,49 @@
+@@ -157,4 +135,49 @@
      protected abstract void func_177177_a();
  
      protected abstract void func_177179_a(T p_177179_1_, int p_177179_2_);

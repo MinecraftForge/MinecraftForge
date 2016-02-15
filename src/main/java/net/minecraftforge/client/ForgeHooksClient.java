@@ -67,7 +67,6 @@ import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.client.event.EffectOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -581,22 +580,6 @@ public class ForgeHooksClient
     {
         if(part.isPresent()) return Optional.absent();
         return Optional.of(new TRSRTransformation(matrix));
-    }
-
-    public static ItemStackEffectPassHandler getStackGlintEffectPassHandler(ItemStack stack)
-    {
-        EffectOverlayEvent.ItemStackEffectOverlayEvent event = new EffectOverlayEvent.ItemStackEffectOverlayEvent(stack);
-        MinecraftForge.EVENT_BUS.post(event);
-        event.getPassHandler().init(event.getOverriddenColor());
-        return event.isCanceled() ? null : event.getPassHandler();
-    }
-
-    public static ArmorEffectPassHandler getArmorEffectPassHandler(ItemStack stack, EntityLivingBase entity, int slot)
-    {
-        EffectOverlayEvent.ArmorEffectOverlayEvent event = new EffectOverlayEvent.ArmorEffectOverlayEvent(stack, entity, slot);
-        MinecraftForge.EVENT_BUS.post(event);
-        event.getPassHandler().init(event.getOverriddenColor());
-        return event.isCanceled() ? null : event.getPassHandler();
     }
 
 }
