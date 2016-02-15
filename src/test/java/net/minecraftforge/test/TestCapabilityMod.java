@@ -1,8 +1,11 @@
 package net.minecraftforge.test;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,6 +55,11 @@ public class TestCapabilityMod
             event.setCanceled(true);
             IExampleCapability inv = te.getCapability(TEST_CAP, event.face);
             System.out.println("Hi I'm a " + inv.getOwnerType());
+        }
+        if (event.world.getBlockState(event.pos).getBlock() == Blocks.dirt)
+        {
+            event.entityPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "" + EnumChatFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
+            event.setCanceled(true);
         }
     }
 
