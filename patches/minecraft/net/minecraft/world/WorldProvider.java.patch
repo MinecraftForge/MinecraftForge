@@ -244,7 +244,7 @@
 +     * */
 +    public float getSunBrightnessFactor(float par1)
 +    {
-+        return field_76579_a.getSunBrightnessFactor(par1);
++        return field_76579_a.getSunBrightnessFactorBody(par1);
 +    }
 +
 +    /**
