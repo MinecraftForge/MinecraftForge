@@ -90,7 +90,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
         if (StatCollector.canTranslate(unloc + "." + fluidStack.getFluid().getName()))
         {
-            return StatCollector.translateToFallback(unloc + "." + fluidStack.getFluid().getName());
+            return StatCollector.translateToLocal(unloc + "." + fluidStack.getFluid().getName());
         }
 
         return StatCollector.translateToLocalFormatted(unloc + ".name", fluidStack.getLocalizedName());
