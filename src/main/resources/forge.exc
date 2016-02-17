@@ -6,7 +6,7 @@ net/minecraft/client/renderer/entity/RenderItem.renderItemIntoGUI(Lnet/minecraft
 net/minecraft/server/management/ServerConfigurationManager.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_72356_1_,p_72356_2_,teleporter
 net/minecraft/server/management/ServerConfigurationManager.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 net/minecraft/world/World.getBiomeGenForCoordsBody(II)Lnet/minecraft/world/biome/BiomeGenBase;=|p_72807_1_,p_72807_2_
-net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
+net/minecraft/world/World.getSunBrightnessFactorBody(F)F=|p_72967_1_
 net/minecraft/world/World.getSunBrightnessBody(F)F=|p_72971_1_
 net/minecraft/world/World.getSkyColorBody(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/Vec3;=|p_72833_1_,p_72833_2_
 net/minecraft/world/World.drawCloudsBody(F)Lnet/minecraft/util/Vec3;=|p_72824_1_
