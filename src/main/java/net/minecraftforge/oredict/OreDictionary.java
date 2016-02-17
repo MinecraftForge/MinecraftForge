@@ -112,6 +112,7 @@ public class OreDictionary
             registerOre("stone",       Blocks.stone);
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
+            registerOre("sandstone",   new ItemStack(Blocks.red_sandstone, 1, WILDCARD_VALUE));
             registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
             registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
             registerOre("record",      Items.record_13);
