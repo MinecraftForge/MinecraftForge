@@ -27,7 +27,7 @@
                  }
  
 +                potion.renderInventoryEffect(i, j, potioneffect, field_146297_k);
-+                if (!potion.shouldRenderInvText(potioneffect)) continue;
++                if (!potion.shouldRenderInvText(potioneffect)) { j += l; continue; }
                  String s1 = I18n.func_135052_a(potion.func_76393_a(), new Object[0]);
  
                  if (potioneffect.func_76458_c() == 1)
