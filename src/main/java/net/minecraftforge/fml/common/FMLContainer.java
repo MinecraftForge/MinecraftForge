@@ -305,13 +305,15 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 {
                     entry.blocked.add(i);
                 }
-                // save doesn't have dummied list
-                if (!regs.getCompoundTag(key).hasKey("dummied")) return;
-                list = regs.getCompoundTag(key).getTagList("dummied",10);
-                for (int x = 0; x < list.tagCount(); x++)
+
+                if (regs.getCompoundTag(key).hasKey("dummied")) // Added in 1.8.9 dev, some worlds may not have it.
                 {
-                    NBTTagCompound e = list.getCompoundTagAt(x);
-                    entry.dummied.add(new ResourceLocation(e.getString("K")));
+                    list = regs.getCompoundTag(key).getTagList("dummied",10);
+                    for (int x = 0; x < list.tagCount(); x++)
+                    {
+                        NBTTagCompound e = list.getCompoundTagAt(x);
+                        entry.dummied.add(new ResourceLocation(e.getString("K")));
+                    }
                 }
             }
             failedElements = PersistentRegistryManager.injectSnapshot(snapshot, true, true);
