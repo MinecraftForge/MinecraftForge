@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1114 @@
+@@ -1010,6 +1030,1147 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1218,6 +1218,39 @@
 +    }
 +
 +    /**
++      * Called when the entity is inside this block, may be used to determined if the entity can breathing,
++      * display material overlays, or if the entity can swim inside a block.
++      * 
++      * @param world that is being tested.
++      * @param blockpos position thats being tested.
++      * @param iblockstate state at world/blockpos
++      * @param entity that is being tested.
++      * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
++      * @param materialIn to test for.
++      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
++      * @return null for default behavior, true if the entity is within the material, false if it was not.
++      */
++     public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
++     {
++         return null;
++     }
++ 
++     /**
++      * Called when boats or fishing hooks are inside the block to check if they are inside
++      * the material requested.
++      * 
++      * @param world world that is being tested.
++      * @param pos block thats being tested.
++      * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
++      * @param materialIn to check for.
++      * @return null for default behavior, true if the box is within the material, false if it was not.
++      */
++     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
++     {
++         return null;
++     }
++
++     /**
 +     * Queries if this block should render in a given layer.
 +     * ISmartBlockModel can use MinecraftForgeClient.getRenderLayer to alter their model based on layer
 +     */

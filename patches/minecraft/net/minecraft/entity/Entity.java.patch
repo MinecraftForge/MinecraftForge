@@ -35,8 +35,13 @@
      }
  
      protected abstract void func_70088_a();
-@@ -998,10 +1010,7 @@
+@@ -996,12 +1008,12 @@
+         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+         Block block = iblockstate.func_177230_c();
  
++        Boolean result = block.isEntityInsideMaterial(this.field_70170_p, blockpos, iblockstate, this, d0, p_70055_1_, true);
++        if (result != null) return result;
++
          if (block.func_149688_o() == p_70055_1_)
          {
 -            float f = BlockLiquid.func_149801_b(iblockstate.func_177230_c().func_176201_c(iblockstate)) - 0.11111111F;
@@ -47,7 +52,7 @@
          }
          else
          {
-@@ -1356,6 +1365,23 @@
+@@ -1356,6 +1368,23 @@
                  p_70109_1_.func_74757_a("Silent", this.func_174814_R());
              }
  
@@ -71,7 +76,7 @@
              this.func_70014_b(p_70109_1_);
  
              if (this.field_70154_o != null)
-@@ -1438,6 +1464,30 @@
+@@ -1438,6 +1467,30 @@
              this.func_174805_g(p_70020_1_.func_74767_n("CustomNameVisible"));
              this.field_174837_as.func_179668_a(p_70020_1_);
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
@@ -102,7 +107,7 @@
              this.func_70037_a(p_70020_1_);
  
              if (this.func_142008_O())
-@@ -1512,7 +1562,10 @@
+@@ -1512,7 +1565,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -114,7 +119,7 @@
              return entityitem;
          }
          else
-@@ -1655,6 +1708,7 @@
+@@ -1655,6 +1711,7 @@
  
      public void func_70078_a(Entity p_70078_1_)
      {
@@ -122,7 +127,7 @@
          this.field_70149_e = 0.0D;
          this.field_70147_f = 0.0D;
  
-@@ -2049,6 +2103,7 @@
+@@ -2049,6 +2106,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -130,7 +135,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.func_71276_C();
              int i = this.field_71093_bK;
-@@ -2092,7 +2147,7 @@
+@@ -2092,7 +2150,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -139,7 +144,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2353,4 +2408,209 @@
+@@ -2353,4 +2411,209 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
