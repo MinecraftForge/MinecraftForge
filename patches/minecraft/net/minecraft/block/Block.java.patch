@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1114 @@
+@@ -1010,6 +1030,1175 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1004,12 +1004,33 @@
 +    {
 +        return this == net.minecraft.init.Blocks.field_150475_bE || this == net.minecraft.init.Blocks.field_150340_R || this == net.minecraft.init.Blocks.field_150484_ah || this == net.minecraft.init.Blocks.field_150339_S;
 +    }
++    
++    /**
++     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
++     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
++     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
++     * The method should return true if the rotation was successful though.<br/>
++     * <b>This is the method that wrenches should call!</b>
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param axis The axis to rotate around
++     * @param player The player that's rotating the block
++     * @param hit The location in the block that was clicked
++     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     */
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis, EntityPlayer player, MovingObjectPosition hit)
++    {
++        return rotateBlock(world, pos, axis);
++    }
 +
 +    /**
 +     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
 +     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
 +     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
-+     * The method should return true if the rotation was successful though.
++     * The method should return true if the rotation was successful though.<br/>
++     * <b>Wrenches should call {@link Block#rotateBlock(World, BlockPos, EnumFacing, EntityPlayer, MovingObjectPosition)}.
++     * This is meant for other rotation systems.</b>
 +     *
 +     * @param world The world
 +     * @param pos Block position in world
@@ -1032,7 +1053,26 @@
 +
 +    /**
 +     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
-+     * Note, this is up to the block to decide. It may not be accurate or representative.
++     * Note, this is up to the block to decide. It may not be accurate or representative.<br/>
++     * <b>This is the method that wrenches should call!</b>
++     * 
++     * @param world The world
++     * @param pos Block position in world
++     * @param player The player that's rotating the block
++     * @param hit The location in the block that was clicked
++     * @return An array of valid axes to rotate around, or null for none or unknown
++     */
++    public EnumFacing[] getValidRotations(World world, BlockPos pos, EntityPlayer player, MovingObjectPosition hit)
++    {
++        return getValidRotations(world, pos);
++    }
++
++    /**
++     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
++     * Note, this is up to the block to decide. It may not be accurate or representative.<br/>
++     * <b>Wrenches should call {@link Block#getValidRotations(World, BlockPos, EntityPlayer, MovingObjectPosition)}.
++     * This is meant for other rotation systems.</b>
++     * 
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @return An array of valid axes to rotate around, or null for none or unknown
@@ -1063,7 +1103,28 @@
 +    }
 +
 +    /**
-+     * Common way to recolor a block with an external tool
++     * Common way to recolor a block with an external tool.<br/>
++     * <b>This is the method that handheld recoloring devices should call!</b>
++     * 
++     * @param world The world
++     * @param pos Block position in world
++     * @param side The side hit with the coloring tool
++     * @param color The color to change to
++     * @param player The player that's recoloring the block
++     * @param hit The location in the block that was clicked
++     * @return If the recoloring was successful
++     */
++    public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, net.minecraft.item.EnumDyeColor color, EntityPlayer player, MovingObjectPosition hit)
++    {
++        return recolorBlock(world, pos, side, color);
++    }
++
++    /**
++     * Common way to recolor a block with an external tool.<br/>
++     * <b>Handheld recoloring devices should call {@link Block#recolorBlock(World, BlockPos, EnumFacing, 
++     * net.minecraft.item.EnumDyeColor, EntityPlayer, MovingObjectPosition)}. This is meant for other
++     * recoloring systems.</b>
++     * 
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @param side The side hit with the coloring tool
