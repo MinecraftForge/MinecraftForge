@@ -122,15 +122,6 @@
          this.field_70149_e = 0.0D;
          this.field_70147_f = 0.0D;
  
-@@ -1789,7 +1843,7 @@
- 
-     public boolean func_70115_ae()
-     {
--        return this.field_70154_o != null;
-+        return this.field_70154_o != null && field_70154_o.shouldRiderSit();
-     }
- 
-     public boolean func_70093_af()
 @@ -2049,6 +2103,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)

@@ -12,6 +12,9 @@
 
 package net.minecraftforge.fml.client.registry;
 
+import com.google.common.collect.Maps;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
@@ -21,8 +24,12 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.util.Map;
+
 public class ClientRegistry
 {
+    private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = Maps.newHashMap();
+
     /**
      *
      * Utility method for registering a tile entity and it's renderer at once - generally you should register them separately
@@ -46,5 +53,22 @@ public class ClientRegistry
     public static void registerKeyBinding(KeyBinding key)
     {
         Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getMinecraft().gameSettings.keyBindings, key);
+    }
+
+    /**
+     * Register a shader for an entity. This shader gets activated when a spectator begins spectating an entity.
+     * Vanilla examples of this are the green effect for creepers and the invert effect for endermans.
+     *
+     * @param entityClass
+     * @param shader
+     */
+    public static void registerEntityShader(Class<? extends Entity> entityClass, ResourceLocation shader)
+    {
+        entityShaderMap.put(entityClass, shader);
+    }
+
+    public static ResourceLocation getEntityShader(Class<? extends Entity> entityClass)
+    {
+        return entityShaderMap.get(entityClass);
     }
 }

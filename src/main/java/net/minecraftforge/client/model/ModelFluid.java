@@ -149,7 +149,8 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
                 IExtendedBlockState state = stateOption.get();
                 for(int i = 0; i < 4; i++)
                 {
-                    cornerRound[i] = Math.round(state.getValue(BlockFluidBase.LEVEL_CORNERS[i]) * 768);
+                    Float level = state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
+                    cornerRound[i] = Math.round((level == null ? 7f / 8 : level) * 768);
                 }
             }
             return cornerRound;
@@ -157,10 +158,11 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
 
         private static int getFlow(Optional<IExtendedBlockState> stateOption)
         {
-            float flow = -1000;
+            Float flow = -1000f;
             if(stateOption.isPresent())
             {
                 flow = stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION);
+                if(flow == null) flow = -1000f;
             }
             int flowRound = (int)Math.round(Math.toDegrees(flow));
             flowRound = MathHelper.clamp_int(flowRound, -1000, 1000);

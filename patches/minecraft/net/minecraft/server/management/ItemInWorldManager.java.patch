@@ -9,6 +9,15 @@
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
      private WorldSettings.GameType field_73091_c = WorldSettings.GameType.NOT_SET;
+@@ -116,7 +118,7 @@
+             else
+             {
+                 int k = this.field_73100_i - this.field_73089_e;
+-                float f1 = block1.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, this.field_180241_i) * (float)(k + 1);
++                float f1 = block1.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, this.field_180240_f) * (float)(k + 1); //Forge: Fix network break progress using wrong position
+                 int l = (int)(f1 * 10.0F);
+ 
+                 if (l != this.field_73094_o)
 @@ -130,6 +132,14 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)

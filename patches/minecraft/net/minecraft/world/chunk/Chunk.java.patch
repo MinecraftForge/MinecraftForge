@@ -24,7 +24,15 @@
      }
  
      private Block func_150810_a(int p_150810_1_, int p_150810_2_, int p_150810_3_)
-@@ -623,14 +623,19 @@
+@@ -607,6 +607,7 @@
+         {
+             Block block = p_177436_2_.func_177230_c();
+             Block block1 = iblockstate.func_177230_c();
++            int k1 = block1.getLightOpacity(this.field_76637_e, p_177436_1_); // Relocate old light value lookup here, so that it is called before TE is removed.
+             ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
+             boolean flag = false;
+ 
+@@ -623,14 +624,19 @@
  
              extendedblockstorage.func_177484_a(i, j & 15, k, p_177436_2_);
  
@@ -46,14 +54,13 @@
                      this.field_76637_e.func_175713_t(p_177436_1_);
                  }
              }
-@@ -647,8 +652,8 @@
+@@ -647,8 +653,7 @@
                  }
                  else
                  {
 -                    int j1 = block.func_149717_k();
 -                    int k1 = block1.func_149717_k();
 +                    int j1 = block.getLightOpacity(this.field_76637_e, p_177436_1_);
-+                    int k1 = block1.getLightOpacity(this.field_76637_e, p_177436_1_);
  
                      if (j1 > 0)
                      {
@@ -118,8 +125,12 @@
          if (tileentity == null)
          {
              if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -849,11 +852,6 @@
-                 this.field_177447_w.add(p_177424_1_);
+@@ -846,14 +849,9 @@
+             }
+             else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
+             {
+-                this.field_177447_w.add(p_177424_1_);
++                this.field_177447_w.add(p_177424_1_.getImmutable());
              }
          }
 -        else if (tileentity.func_145837_r())

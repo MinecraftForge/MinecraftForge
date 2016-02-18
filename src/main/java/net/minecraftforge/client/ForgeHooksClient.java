@@ -22,7 +22,6 @@ import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -52,12 +51,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.IRegistry;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -76,13 +70,12 @@ import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.TRSRTransformation;
-import net.minecraftforge.client.model.pipeline.EffectPassHandler.ArmorEffectPassHandler;
-import net.minecraftforge.client.model.pipeline.EffectPassHandler.ItemStackEffectPassHandler;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -357,7 +350,7 @@ public class ForgeHooksClient
         loader.onPostBakeEvent(modelRegistry);
     }
 
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
+	public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -379,7 +372,7 @@ public class ForgeHooksClient
         return m;
     }
 
-    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
+	public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
     {
         if(model instanceof IPerspectiveAwareModel)
         {
@@ -582,4 +575,15 @@ public class ForgeHooksClient
         return Optional.of(new TRSRTransformation(matrix));
     }
 
+    public static void loadEntityShader(Entity entity, EntityRenderer entityRenderer)
+    {
+        if (entity != null)
+        {
+            ResourceLocation shader = ClientRegistry.getEntityShader(entity.getClass());
+            if (shader != null)
+            {
+                entityRenderer.loadShader(shader);
+            }
+        }
+    }
 }
