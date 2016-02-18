@@ -14,7 +14,7 @@
                  if (p_180454_1_.func_77962_s())
                  {
 -                    this.func_180451_a(p_180454_2_);
-+                    this.renderEffect(p_180454_2_, p_180454_1_);
++                    this.func_180451_a(p_180454_2_, p_180454_1_);
                  }
              }
  
@@ -51,12 +51,12 @@
 -        GlStateManager.func_179143_c(515);
 -        GlStateManager.func_179132_a(true);
 +        net.minecraftforge.client.model.pipeline.EffectPassHandler.ItemStackEffectPassHandler handler = stack.func_77973_b().getEffectRendererForItemStack(stack);
-+        IBakedModel replacement;
++        handler.bindTexture(field_175057_n);
 +        for(int pass = 0; pass < handler.getPassTarget(stack); pass++)
 +        {
-+            handler.prePass(stack, field_175057_n, pass);
-+            this.func_175035_a((replacement = handler.getModelOverrideForPass(stack, pass)) == null ? p_180451_1_ : replacement, handler.getColorForPass(stack, pass));
-+            handler.postPass(stack, field_175057_n, pass);
++            handler.prePass(stack, pass);
++            this.func_175035_a(p_180451_1_, handler.getColorForPass(stack, pass));
++            handler.postPass(stack, pass);
 +        }
          this.field_175057_n.func_110577_a(TextureMap.field_110575_b);
      }

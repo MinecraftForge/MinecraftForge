@@ -44,12 +44,12 @@
                      }
              }
          }
-@@ -100,46 +99,25 @@
+@@ -100,46 +99,26 @@
          return p_177180_1_ == 2;
      }
  
 -    private void func_177183_a(EntityLivingBase p_177183_1_, T p_177183_2_, float p_177183_3_, float p_177183_4_, float p_177183_5_, float p_177183_6_, float p_177183_7_, float p_177183_8_, float p_177183_9_)
-+    private void func_177183_a(EntityLivingBase entitylivingbaseIn, T modelbaseIn, float p_177183_3_, float p_177183_4_, float p_177183_5_, float p_177183_6_, float p_177183_7_, float p_177183_8_, float p_177183_9_, ItemStack stack, int slot)
++    private void func_177183_a(EntityLivingBase p_177183_1_, T p_177183_2_, float p_177183_3_, float p_177183_4_, float p_177183_5_, float p_177183_6_, float p_177183_7_, float p_177183_8_, float p_177183_9_, ItemStack stack, int slot)
      {
 -        float f = (float)p_177183_1_.field_70173_aa + p_177183_5_;
 -        this.field_177190_a.func_110776_a(field_177188_b);
@@ -62,7 +62,8 @@
 -        for (int i = 0; i < 2; ++i)
 +        net.minecraftforge.client.model.pipeline.EffectPassHandler.ArmorEffectPassHandler handler = stack.func_77973_b().getEffectRendererForArmor(stack);
 +        ModelBase replacement;
-+        for(int pass = 0; pass < handler.getPassTarget(stack, entitylivingbaseIn, slot); pass++)
++        handler.bindTexture(field_177190_a);
++        for(int pass = 0; pass < handler.getPassTarget(stack, p_177183_1_, slot); pass++)
          {
 -            GlStateManager.func_179140_f();
 -            GlStateManager.func_179112_b(768, 1);
@@ -76,9 +77,9 @@
 -            GlStateManager.func_179109_b(0.0F, f * (0.001F + (float)i * 0.003F) * 20.0F, 0.0F);
 -            GlStateManager.func_179128_n(5888);
 -            p_177183_2_.func_78088_a(p_177183_1_, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, p_177183_9_);
-+            handler.prePass(stack, entitylivingbaseIn, field_177190_a, slot, pass, p_177183_5_);
-+            ((replacement = handler.getModelOverrideForPass(stack, pass)) == null ? modelbaseIn : replacement).func_78088_a(entitylivingbaseIn, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, p_177183_9_);
-+            handler.postPass(stack, entitylivingbaseIn, field_177190_a, slot, pass, p_177183_5_);
++            handler.prePass(stack, p_177183_1_, slot, pass, p_177183_5_);
++            p_177183_2_.func_78088_a(p_177183_1_, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, p_177183_9_);
++            handler.postPass(stack, p_177183_1_, slot, pass, p_177183_5_);
          }
 -
 -        GlStateManager.func_179128_n(5890);
@@ -100,7 +101,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -157,4 +135,49 @@
+@@ -157,4 +136,49 @@
      protected abstract void func_177177_a();
  
      protected abstract void func_177179_a(T p_177179_1_, int p_177179_2_);
