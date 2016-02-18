@@ -35,6 +35,15 @@
      }
  
      protected abstract void func_70088_a();
+@@ -978,7 +990,7 @@
+         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+         Block block = iblockstate.func_177230_c();
+ 
+-        if (block.func_149645_b() != -1)
++        if (block.func_149645_b() != -1 && !block.addRunningEffects(this.field_70170_p, blockpos, iblockstate, this))
+         {
+             this.field_70170_p.func_175688_a(EnumParticleTypes.BLOCK_CRACK, this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, -this.field_70159_w * 4.0D, 1.5D, -this.field_70179_y * 4.0D, new int[] {Block.func_176210_f(iblockstate)});
+         }
 @@ -998,10 +1010,7 @@
  
          if (block.func_149688_o() == p_70055_1_)

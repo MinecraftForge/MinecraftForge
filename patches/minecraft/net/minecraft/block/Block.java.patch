@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1114 @@
+@@ -1010,6 +1030,1128 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -822,6 +822,20 @@
 +     * @return True to prevent vanilla landing particles form spawning.
 +     */
 +    public boolean addLandingEffects(net.minecraft.world.WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
++    {
++        return false;
++    }
++
++    /**
++     * Allows a block to override the standard Entity.createRunningParticles particles.
++     *
++     * @param worldObj The current world
++     * @param blockpos of the block that the entity is running on.
++     * @param iblockstate State at the specific world/pos
++     * @param entity the entity that is running on the block.
++     * @return True to prevent vanilla running particles form spawning.
++     */
++    public boolean addRunningEffects(World worldObj, BlockPos blockpos, IBlockState iblockstate, Entity entity)
 +    {
 +        return false;
 +    }
