@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -55,29 +55,28 @@
+@@ -55,31 +55,30 @@
              T t = this.func_177175_a(p_177182_9_);
              t.func_178686_a(this.field_177190_a.func_177087_b());
              t.func_78086_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_4_);
@@ -39,10 +39,56 @@
 +                // Default
 +                    if (!this.field_177193_i && itemstack.func_77962_s())
                      {
-                         this.func_177183_a(p_177182_1_, t, p_177182_2_, p_177182_3_, p_177182_4_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
+-                        this.func_177183_a(p_177182_1_, t, p_177182_2_, p_177182_3_, p_177182_4_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
++                        this.func_177183_a(p_177182_1_, t, p_177182_2_, p_177182_3_, p_177182_4_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_, itemstack, p_177182_9_);
                      }
-@@ -135,11 +134,13 @@
-         GlStateManager.func_179084_k();
+             }
+         }
+@@ -100,46 +99,26 @@
+         return p_177180_1_ == 2;
+     }
+ 
+-    private void func_177183_a(EntityLivingBase p_177183_1_, T p_177183_2_, float p_177183_3_, float p_177183_4_, float p_177183_5_, float p_177183_6_, float p_177183_7_, float p_177183_8_, float p_177183_9_)
++    private void func_177183_a(EntityLivingBase p_177183_1_, T p_177183_2_, float p_177183_3_, float p_177183_4_, float p_177183_5_, float p_177183_6_, float p_177183_7_, float p_177183_8_, float p_177183_9_, ItemStack stack, int slot)
+     {
+-        float f = (float)p_177183_1_.field_70173_aa + p_177183_5_;
+-        this.field_177190_a.func_110776_a(field_177188_b);
+-        GlStateManager.func_179147_l();
+-        GlStateManager.func_179143_c(514);
+-        GlStateManager.func_179132_a(false);
+-        float f1 = 0.5F;
+-        GlStateManager.func_179131_c(f1, f1, f1, 1.0F);
+-
+-        for (int i = 0; i < 2; ++i)
++        net.minecraftforge.client.model.pipeline.EffectPassHandler.ArmorEffectPassHandler handler = stack.func_77973_b().getEffectRendererForArmor(stack);
++        ModelBase replacement;
++        handler.bindTexture(field_177190_a);
++        for(int pass = 0; pass < handler.getPassTarget(stack, p_177183_1_, slot); pass++)
+         {
+-            GlStateManager.func_179140_f();
+-            GlStateManager.func_179112_b(768, 1);
+-            float f2 = 0.76F;
+-            GlStateManager.func_179131_c(0.5F * f2, 0.25F * f2, 0.8F * f2, 1.0F);
+-            GlStateManager.func_179128_n(5890);
+-            GlStateManager.func_179096_D();
+-            float f3 = 0.33333334F;
+-            GlStateManager.func_179152_a(f3, f3, f3);
+-            GlStateManager.func_179114_b(30.0F - (float)i * 60.0F, 0.0F, 0.0F, 1.0F);
+-            GlStateManager.func_179109_b(0.0F, f * (0.001F + (float)i * 0.003F) * 20.0F, 0.0F);
+-            GlStateManager.func_179128_n(5888);
+-            p_177183_2_.func_78088_a(p_177183_1_, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, p_177183_9_);
++            handler.prePass(stack, p_177183_1_, slot, pass, p_177183_5_);
++            p_177183_2_.func_78088_a(p_177183_1_, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, p_177183_9_);
++            handler.postPass(stack, p_177183_1_, slot, pass, p_177183_5_);
+         }
+-
+-        GlStateManager.func_179128_n(5890);
+-        GlStateManager.func_179096_D();
+-        GlStateManager.func_179128_n(5888);
+-        GlStateManager.func_179145_e();
+-        GlStateManager.func_179132_a(true);
+-        GlStateManager.func_179143_c(515);
+-        GlStateManager.func_179084_k();
      }
  
 +    @Deprecated //Use the more sensitive version getArmorResource below
@@ -55,7 +101,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -157,4 +158,49 @@
+@@ -157,4 +136,49 @@
      protected abstract void func_177177_a();
  
      protected abstract void func_177179_a(T p_177179_1_, int p_177179_2_);

@@ -9,7 +9,59 @@
          this.func_175041_b();
      }
  
-@@ -226,7 +226,7 @@
+@@ -153,7 +153,7 @@
+ 
+                 if (p_180454_1_.func_77962_s())
+                 {
+-                    this.func_180451_a(p_180454_2_);
++                    this.func_180451_a(p_180454_2_, p_180454_1_);
+                 }
+             }
+ 
+@@ -161,33 +161,16 @@
+         }
+     }
+ 
+-    private void func_180451_a(IBakedModel p_180451_1_)
++    private void func_180451_a(IBakedModel p_180451_1_, ItemStack stack)
+     {
+-        GlStateManager.func_179132_a(false);
+-        GlStateManager.func_179143_c(514);
+-        GlStateManager.func_179140_f();
+-        GlStateManager.func_179112_b(768, 1);
+-        this.field_175057_n.func_110577_a(field_110798_h);
+-        GlStateManager.func_179128_n(5890);
+-        GlStateManager.func_179094_E();
+-        GlStateManager.func_179152_a(8.0F, 8.0F, 8.0F);
+-        float f = (float)(Minecraft.func_71386_F() % 3000L) / 3000.0F / 8.0F;
+-        GlStateManager.func_179109_b(f, 0.0F, 0.0F);
+-        GlStateManager.func_179114_b(-50.0F, 0.0F, 0.0F, 1.0F);
+-        this.func_175035_a(p_180451_1_, -8372020);
+-        GlStateManager.func_179121_F();
+-        GlStateManager.func_179094_E();
+-        GlStateManager.func_179152_a(8.0F, 8.0F, 8.0F);
+-        float f1 = (float)(Minecraft.func_71386_F() % 4873L) / 4873.0F / 8.0F;
+-        GlStateManager.func_179109_b(-f1, 0.0F, 0.0F);
+-        GlStateManager.func_179114_b(10.0F, 0.0F, 0.0F, 1.0F);
+-        this.func_175035_a(p_180451_1_, -8372020);
+-        GlStateManager.func_179121_F();
+-        GlStateManager.func_179128_n(5888);
+-        GlStateManager.func_179112_b(770, 771);
+-        GlStateManager.func_179145_e();
+-        GlStateManager.func_179143_c(515);
+-        GlStateManager.func_179132_a(true);
++        net.minecraftforge.client.model.pipeline.EffectPassHandler.ItemStackEffectPassHandler handler = stack.func_77973_b().getEffectRendererForItemStack(stack);
++        handler.bindTexture(field_175057_n);
++        for(int pass = 0; pass < handler.getPassTarget(stack); pass++)
++        {
++            handler.prePass(stack, pass);
++            this.func_175035_a(p_180451_1_, handler.getColorForPass(stack, pass));
++            handler.postPass(stack, pass);
++        }
+         this.field_175057_n.func_110577_a(TextureMap.field_110575_b);
+     }
+ 
+@@ -226,7 +209,7 @@
                  k = k | -16777216;
              }
  
@@ -18,7 +70,7 @@
          }
      }
  
-@@ -296,6 +296,11 @@
+@@ -296,6 +279,11 @@
                          modelresourcelocation = new ModelResourceLocation("bow_pulling_0", "inventory");
                      }
                  }
@@ -30,7 +82,7 @@
  
                  if (modelresourcelocation != null)
                  {
-@@ -317,14 +322,9 @@
+@@ -317,14 +305,9 @@
          GlStateManager.func_179147_l();
          GlStateManager.func_179120_a(770, 771, 1, 0);
          GlStateManager.func_179094_E();
@@ -47,7 +99,7 @@
          this.func_180454_a(p_175040_1_, p_175040_2_);
          GlStateManager.func_179107_e(1029);
          GlStateManager.func_179121_F();
-@@ -352,7 +352,7 @@
+@@ -352,7 +335,7 @@
          GlStateManager.func_179112_b(770, 771);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          this.func_180452_a(p_175042_2_, p_175042_3_, ibakedmodel.func_177556_c());
@@ -56,7 +108,7 @@
          this.func_180454_a(p_175042_1_, ibakedmodel);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -459,10 +459,11 @@
+@@ -459,10 +442,11 @@
                  GlStateManager.func_179126_j();
              }
  
@@ -71,7 +123,7 @@
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -473,7 +474,7 @@
+@@ -473,7 +457,7 @@
                  this.func_181565_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
                  this.func_181565_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
                  this.func_181565_a(worldrenderer, p_180453_3_ + 2, p_180453_4_ + 13, j, 1, 255 - i, i, 0, 255);
@@ -80,7 +132,7 @@
                  GlStateManager.func_179141_d();
                  GlStateManager.func_179098_w();
                  GlStateManager.func_179145_e();
-@@ -1038,6 +1039,7 @@
+@@ -1038,6 +1022,7 @@
          this.func_175029_a(Blocks.field_150420_aW, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "brown_mushroom_block");
          this.func_175029_a(Blocks.field_150419_aX, BlockHugeMushroom.EnumType.ALL_INSIDE.func_176896_a(), "red_mushroom_block");
          this.func_175031_a(Blocks.field_150380_bt, "dragon_egg");
