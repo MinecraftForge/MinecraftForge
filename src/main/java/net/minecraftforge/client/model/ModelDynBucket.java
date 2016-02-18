@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
+public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>, IRetexturableModel<ModelDynBucket>
 {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
 

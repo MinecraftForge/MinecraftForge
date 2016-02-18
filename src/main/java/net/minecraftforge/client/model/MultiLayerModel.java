@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public class MultiLayerModel implements IModelCustomData
+public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
 {
     public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.<Optional<EnumWorldBlockLayer>, ModelResourceLocation>of());
 

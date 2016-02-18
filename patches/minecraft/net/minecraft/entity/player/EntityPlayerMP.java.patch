@@ -72,7 +72,15 @@
  
              if (entitylist$entityegginfo != null)
              {
-@@ -831,6 +848,7 @@
+@@ -528,6 +545,7 @@
+ 
+     public void func_71027_c(int p_71027_1_)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_71027_1_)) return;
+         if (this.field_71093_bK == 1 && p_71027_1_ == 1)
+         {
+             this.func_71029_a(AchievementList.field_76003_C);
+@@ -831,6 +849,7 @@
      {
          if (p_71064_1_ != null)
          {

@@ -109,31 +109,34 @@ public class ModelBlockAnimation
             if(jointClips == null)
             {
                 ImmutableMap.Builder<String, MBJointClip> builder = ImmutableMap.builder();
-                for(Map.Entry<String, ImmutableList<MBVariableClip>> e : jointClipsFlat.entrySet())
+                for (Map.Entry<String, ImmutableList<MBVariableClip>> e : jointClipsFlat.entrySet())
                 {
                     builder.put(e.getKey(), new MBJointClip(loop, e.getValue()));
                 }
                 jointClips = builder.build();
                 events = Maps.newTreeMap();
-                TreeMap<Float, String> times = Maps.newTreeMap();
-                for(String time : eventsRaw.keySet())
+                if (!eventsRaw.isEmpty())
                 {
-                    times.put(Float.parseFloat(time), time);
-                }
-                float lastTime = Float.POSITIVE_INFINITY;
-                if(loop)
-                {
-                    lastTime = times.firstKey();
-                }
-                for(Map.Entry<Float, String> entry : times.descendingMap().entrySet())
-                {
-                    float time = entry.getKey();
-                    float offset = lastTime - time;
-                    if(loop)
+                    TreeMap<Float, String> times = Maps.newTreeMap();
+                    for (String time : eventsRaw.keySet())
                     {
-                        offset = 1 - (1 - offset) % 1;
+                        times.put(Float.parseFloat(time), time);
                     }
-                    events.put(time, new Event(eventsRaw.get(entry.getValue()), offset));
+                    float lastTime = Float.POSITIVE_INFINITY;
+                    if (loop)
+                    {
+                        lastTime = times.firstKey();
+                    }
+                    for (Map.Entry<Float, String> entry : times.descendingMap().entrySet())
+                    {
+                        float time = entry.getKey();
+                        float offset = lastTime - time;
+                        if (loop)
+                        {
+                            offset = 1 - (1 - offset) % 1;
+                        }
+                        events.put(time, new Event(eventsRaw.get(entry.getValue()), offset));
+                    }
                 }
             }
         }

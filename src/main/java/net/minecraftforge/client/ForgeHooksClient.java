@@ -51,12 +51,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.IRegistry;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -80,6 +75,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -164,7 +160,7 @@ public class ForgeHooksClient
 
     public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
     {
-        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
+        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID, _default);
         return model == null ? _default : model;
     }
 
@@ -577,5 +573,17 @@ public class ForgeHooksClient
     {
         if(part.isPresent()) return Optional.absent();
         return Optional.of(new TRSRTransformation(matrix));
+    }
+
+    public static void loadEntityShader(Entity entity, EntityRenderer entityRenderer)
+    {
+        if (entity != null)
+        {
+            ResourceLocation shader = ClientRegistry.getEntityShader(entity.getClass());
+            if (shader != null)
+            {
+                entityRenderer.loadShader(shader);
+            }
+        }
     }
 }

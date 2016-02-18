@@ -97,6 +97,8 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             }
             else
             {
+                // copy the stack to not modify the original one
+                stack = stack.copy();
                 if (!simulate)
                 {
                     ItemStack copy = stack.splitStack(m);
@@ -116,6 +118,8 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
             if (m < stack.stackSize)
             {
+                // copy the stack to not modify the original one
+                stack = stack.copy();
                 if (!simulate)
                 {
                     inv.setInventorySlotContents(slot1, stack.splitStack(m));

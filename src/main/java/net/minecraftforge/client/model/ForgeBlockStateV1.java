@@ -275,6 +275,8 @@ public class ForgeBlockStateV1 extends Marker
         private boolean modelSet = false;
         private Optional<IModelState> state = Optional.absent();
         private Optional<Boolean> uvLock = Optional.absent();
+        private Optional<Boolean> smooth = Optional.absent();
+        private Optional<Boolean> gui3d = Optional.absent();
         private Optional<Integer> weight = Optional.absent();
         private Map<String, String> textures = Maps.newHashMap();
         private Map<String, List<ForgeBlockStateV1.Variant>> submodels = Maps.newHashMap();
@@ -292,6 +294,8 @@ public class ForgeBlockStateV1 extends Marker
             this.modelSet = other.modelSet;
             this.state = other.state;
             this.uvLock = other.uvLock;
+            this.smooth = other.smooth;
+            this.gui3d = other.gui3d;
             this.weight = other.weight;
             this.textures.putAll(other.textures);
             this.mergeModelPartVariants(this.submodels, other.submodels);
@@ -311,6 +315,8 @@ public class ForgeBlockStateV1 extends Marker
             }
             if (!this.state.isPresent()) this.state = parent.state;
             if (!this.uvLock.isPresent())   this.uvLock   = parent.uvLock;
+            if (!this.smooth.isPresent())   this.smooth   = parent.smooth;
+            if (!this.gui3d.isPresent())    this.gui3d    = parent.gui3d;
             if (!this.weight.isPresent())   this.weight   = parent.weight;
 
             for (Entry<String, String> e : parent.textures.entrySet())
@@ -398,6 +404,16 @@ public class ForgeBlockStateV1 extends Marker
             else {
                 return ImmutableMap.of();
             }
+        }
+
+        public Optional<Boolean> getSmooth()
+        {
+            return smooth;
+        }
+
+        public Optional<Boolean> getGui3d()
+        {
+            return gui3d;
         }
 
         public static class Deserializer implements JsonDeserializer<ForgeBlockStateV1.Variant>
@@ -591,6 +607,16 @@ public class ForgeBlockStateV1 extends Marker
                 if (json.has("uvlock"))
                 {   // Load uvlock.
                     ret.uvLock = Optional.of(JsonUtils.getBoolean(json, "uvlock"));
+                }
+
+                if (json.has("smooth_lighting"))
+                {
+                    ret.smooth = Optional.of(JsonUtils.getBoolean(json, "smooth_lighting"));
+                }
+
+                if (json.has("gui3d"))
+                {
+                    ret.gui3d = Optional.of(JsonUtils.getBoolean(json, "gui3d"));
                 }
 
                 if (json.has("weight"))

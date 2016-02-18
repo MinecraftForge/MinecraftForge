@@ -26,6 +26,8 @@ public enum Animation implements IResourceManagerReloadListener
 {
     INSTANCE;
 
+    private float clientPartialTickTime;
+
     /**
      * Get the global world time for the current tick, in seconds.
      */
@@ -40,6 +42,14 @@ public enum Animation implements IResourceManagerReloadListener
     public static float getWorldTime(World world, float tickProgress)
     {
         return (world.getTotalWorldTime() + tickProgress) / 20;
+    }
+
+    /**
+     * Get current partialTickTime.
+     */
+    public static float getPartialTickTime()
+    {
+        return INSTANCE.clientPartialTickTime;
     }
 
     /**
@@ -176,6 +186,16 @@ public enum Animation implements IResourceManagerReloadListener
 
     private final ModelBlockAnimation defaultModelBlockAnimation = new ModelBlockAnimation(ImmutableMap.<String, ImmutableMap<String, float[]>>of(), ImmutableMap.<String, ModelBlockAnimation.MBClip>of());
 
+    /**
+     * Iternal hook, do not use.
+     */
+    public static void setClientPartialTickTime(float clientPartialTickTime) {
+        Animation.INSTANCE.clientPartialTickTime = clientPartialTickTime;
+    }
+
+    /**
+     * Iternal hook, do not use.
+     */
     public void onResourceManagerReload(IResourceManager manager)
     {
         this.manager = manager;

@@ -26,20 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelCustomData;
-import net.minecraftforge.client.model.IModelPart;
-import net.minecraftforge.client.model.IModelState;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IRetexturableModel;
-import net.minecraftforge.client.model.ISmartBlockModel;
-import net.minecraftforge.client.model.ISmartItemModel;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.ModelStateComposition;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.animation.IClip;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
 import net.minecraftforge.client.model.animation.IJoint;
@@ -471,7 +458,7 @@ public class B3DLoader implements ICustomModelLoader
      * @deprecated Use ModelWrapper, this will be removed in 1.9
      */
     @Deprecated
-    public static class Wrapper extends PartWrapper<Mesh> implements IRetexturableModel, IModelCustomData
+    public static class Wrapper extends PartWrapper<Mesh> implements IRetexturableModel<Wrapper>, IModelCustomData<Wrapper>
     {
         private final ResourceLocation location;
         private final ImmutableSet<String> meshes;
@@ -627,25 +614,41 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    public static class ModelWrapper implements IRetexturableModel, IModelCustomData, IAnimatedModel
+    public static class ModelWrapper implements IRetexturableModel<ModelWrapper>, IModelCustomData<ModelWrapper>, IModelSimpleProperties<ModelWrapper>, IAnimatedModel
     {
         private final ResourceLocation modelLocation;
         private final B3DModel model;
         private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, ResourceLocation> textures;
+        private final boolean smooth;
+        private final boolean gui3d;
         private final int defaultKey;
 
+        @Deprecated // remove in 1.9
         public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, int defaultKey)
         {
-            this(modelLocation, model, meshes, defaultKey, buildTextures(model.getTextures()));
+            this(modelLocation, model, meshes, true, true, defaultKey);
         }
 
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey)
+        {
+            this(modelLocation, model, meshes, smooth, gui3d, defaultKey, buildTextures(model.getTextures()));
+        }
+
+        @Deprecated // remove in 1.9
         public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, int defaultKey, ImmutableMap<String, ResourceLocation> textures)
+        {
+            this(modelLocation, model, meshes, true, true, defaultKey, textures);
+        }
+
+        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey, ImmutableMap<String, ResourceLocation> textures)
         {
             this.modelLocation = modelLocation;
             this.model = model;
             this.meshes = meshes;
             this.textures = textures;
+            this.smooth = smooth;
+            this.gui3d = gui3d;
             this.defaultKey = defaultKey;
         }
 
@@ -705,7 +708,7 @@ public class B3DLoader implements ICustomModelLoader
                 }
             }
             builder.put("missingno", missing);
-            return new BakedWrapper(model.getRoot(), state, format, meshes, builder.build());
+            return new BakedWrapper(model.getRoot(), state, smooth, gui3d, format, meshes, builder.build());
         }
 
         @Override
@@ -792,12 +795,34 @@ public class B3DLoader implements ICustomModelLoader
         {
             return new B3DState(model.getRoot().getAnimation(), defaultKey, defaultKey, 0);
         }
+
+        @Override
+        public ModelWrapper smoothLighting(boolean value)
+        {
+            if(value == smooth)
+            {
+                return this;
+            }
+            return new ModelWrapper(modelLocation, model, meshes, value, gui3d, defaultKey, textures);
+        }
+
+        @Override
+        public ModelWrapper gui3d(boolean value)
+        {
+            if(value == gui3d)
+            {
+                return this;
+            }
+            return new ModelWrapper(modelLocation, model, meshes, smooth, value, defaultKey, textures);
+        }
     }
 
     private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
     {
         private final Node<?> node;
         private final IModelState state;
+        private final boolean smooth;
+        private final boolean gui3d;
         private final VertexFormat format;
         private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
@@ -805,9 +830,15 @@ public class B3DLoader implements ICustomModelLoader
 
         private ImmutableList<BakedQuad> quads;
 
-        public BakedWrapper(final Node<?> node, final IModelState state, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
+        @Deprecated // remove in 1.9
+        public BakedWrapper(Node<?> node, IModelState state, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures)
         {
-            this(node, state, format, meshes, textures, CacheBuilder.newBuilder()
+            this(node, state, true, true, format, meshes, textures);
+        }
+
+        public BakedWrapper(final Node<?> node, final IModelState state, final boolean smooth, final boolean gui3d, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
+        {
+            this(node, state, smooth, gui3d, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
                 .<Integer, BakedWrapper>build(new CacheLoader<Integer, BakedWrapper>()
@@ -821,14 +852,23 @@ public class B3DLoader implements ICustomModelLoader
                             B3DState ps = (B3DState)parent;
                             parent = ps.getParent();
                         }
-                        return new BakedWrapper(node, new B3DState(newAnimation, frame, frame, 0, parent), format, meshes, textures);
+                        return new BakedWrapper(node, new B3DState(newAnimation, frame, frame, 0, parent), smooth, gui3d, format, meshes, textures);
                     }
                 }));
         }
+
+        @Deprecated // remove in 1.9
         public BakedWrapper(Node<?> node, IModelState state, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, BakedWrapper> cache)
+        {
+            this(node, state, true, true, format, meshes, textures, cache);
+        }
+
+        public BakedWrapper(Node<?> node, IModelState state, boolean smooth, boolean gui3d, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, BakedWrapper> cache)
         {
             this.node = node;
             this.state = state;
+            this.smooth = smooth;
+            this.gui3d = gui3d;
             this.format = format;
             this.meshes = meshes;
             this.textures = textures;
@@ -948,12 +988,12 @@ public class B3DLoader implements ICustomModelLoader
 
         public boolean isAmbientOcclusion()
         {
-            return true;
+            return smooth;
         }
 
         public boolean isGui3d()
         {
-            return true;
+            return gui3d;
         }
 
         public boolean isBuiltInRenderer()

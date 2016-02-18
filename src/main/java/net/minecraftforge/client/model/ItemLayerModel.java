@@ -26,7 +26,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class ItemLayerModel implements IRetexturableModel
+public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
 {
 
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());

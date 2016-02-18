@@ -44,13 +44,7 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener()
-        {
-            public void onResourceManagerReload(IResourceManager manager)
-            {
-                for(ICustomModelLoader loader : loaders) loader.onResourceManagerReload(manager);
-            }
-        });
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(loader);
     }
 
     public static boolean loaded(ResourceLocation location)

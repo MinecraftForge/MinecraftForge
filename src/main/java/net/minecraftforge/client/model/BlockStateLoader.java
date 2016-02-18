@@ -63,12 +63,14 @@ public class BlockStateLoader
                         for (ForgeBlockStateV1.Variant var : entry.getValue())
                         {
                             boolean uvLock = var.getUvLock().or(false);
+                            boolean smooth = var.getSmooth().or(true);
+                            boolean gui3d = var.getGui3d().or(true);
                             int weight = var.getWeight().or(1);
 
                             if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0 && var.getState().orNull() instanceof ModelRotation)
                                 mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), (ModelRotation)var.getState().get(), uvLock, weight));
                             else
-                                mcVars.add(new ForgeVariant(var.getModel(), var.getState().or(TRSRTransformation.identity()), uvLock, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
+                                mcVars.add(new ForgeVariant(var.getModel(), var.getState().or(TRSRTransformation.identity()), uvLock, smooth, gui3d, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
                         }
                         variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
                     }
@@ -96,14 +98,24 @@ public class BlockStateLoader
     {
         private final IModelState state;
         private final boolean uvLock;
+        private final boolean smooth;
+        private final boolean gui3d;
         private final ImmutableMap<String, String> textures;
         private final ResourceLocation model;
         private final ImmutableMap<String, String> customData;
 
+        @Deprecated // remove in 1.9
         public SubModel(IModelState state, boolean uvLock, ImmutableMap<String, String> textures, ResourceLocation model, ImmutableMap<String, String> customData)
+        {
+            this(state, uvLock, true, true, textures, model, customData);
+        }
+
+        public SubModel(IModelState state, boolean uvLock, boolean smooth, boolean gui3d, ImmutableMap<String, String> textures, ResourceLocation model, ImmutableMap<String, String> customData)
         {
             this.state = state;
             this.uvLock = uvLock;
+            this.smooth = smooth;
+            this.gui3d = gui3d;
             this.textures = textures;
             this.model = model;
             this.customData = customData;
@@ -121,27 +133,36 @@ public class BlockStateLoader
         private final ImmutableMap<String, String> textures;
         private final ImmutableMap<String, SubModel> parts;
         private final ImmutableMap<String, String> customData;
+        private final boolean smooth;
+        private final boolean gui3d;
         private final IModelState state;
 
-        public ForgeVariant(ResourceLocation model, IModelState state, boolean uvLock, int weight, ImmutableMap<String, String> textures, ImmutableMap<String, SubModel> parts, ImmutableMap<String, String> customData)
+        public ForgeVariant(ResourceLocation model, IModelState state, boolean uvLock, boolean smooth, boolean gui3d, int weight, ImmutableMap<String, String> textures, ImmutableMap<String, SubModel> parts, ImmutableMap<String, String> customData)
         {
             super(model == null ? new ResourceLocation("builtin/missing") : model, state instanceof ModelRotation ? (ModelRotation)state : ModelRotation.X0_Y0, uvLock, weight);
             this.textures = textures;
             this.parts = parts;
             this.customData = customData;
             this.state = state;
+            this.smooth = smooth;
+            this.gui3d = gui3d;
         }
 
-        protected IModel runModelHooks(IModel base, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
+        private IModel runModelHooks(IModel base, boolean smooth, boolean gui3d, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
         {
             if (!customData.isEmpty() && base instanceof IModelCustomData)
             {
-                base = ((IModelCustomData)base).process(customData);
+                base = ((IModelCustomData<?>)base).process(customData);
             }
 
             if (!textureMap.isEmpty() && base instanceof IRetexturableModel)
             {
-                base = ((IRetexturableModel)base).retexture(textureMap);
+                base = ((IRetexturableModel<?>)base).retexture(textureMap);
+            }
+
+            if (base instanceof IModelSimpleProperties<?>)
+            {
+                base = ((IModelSimpleProperties<?>) base).smoothLighting(smooth).gui3d(gui3d);
             }
 
             return base;
@@ -158,7 +179,7 @@ public class BlockStateLoader
 
             if (hasBase)
             {
-                base = runModelHooks(base, textures, customData);
+                base = runModelHooks(base, smooth, gui3d, textures, customData);
 
                 if (size <= 0)
                     return base;
@@ -187,7 +208,7 @@ public class BlockStateLoader
                 IModelState partState = new ModelStateComposition(baseTr, part.getState());
                 if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
 
-                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.getTextures(), part.getCustomData()), partState));
+                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.getTextures(), part.getCustomData()), partState));
             }
 
             return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());

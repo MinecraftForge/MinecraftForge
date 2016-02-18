@@ -88,16 +88,28 @@
              }
  
              flag = true;
-@@ -601,7 +620,7 @@
+@@ -598,12 +617,18 @@
+             this.field_147369_b.field_71137_h = true;
+             this.field_147369_b.field_71071_by.field_70462_a[this.field_147369_b.field_71071_by.field_70461_c] = ItemStack.func_77944_b(this.field_147369_b.field_71071_by.field_70462_a[this.field_147369_b.field_71071_by.field_70461_c]);
+             Slot slot = this.field_147369_b.field_71070_bA.func_75147_a(this.field_147369_b.field_71071_by, this.field_147369_b.field_71071_by.field_70461_c);
++            int windowId = this.field_147369_b.field_71070_bA.field_75152_c;
++            if  (slot == null) // Forge: Fix 'slotless' inventories not selecting a valid slot to update
++            {
++                slot = this.field_147369_b.field_71069_bz.func_75147_a(this.field_147369_b.field_71071_by, this.field_147369_b.field_71071_by.field_70461_c);
++                windowId = this.field_147369_b.field_71069_bz.field_75152_c;
++            }
              this.field_147369_b.field_71070_bA.func_75142_b();
              this.field_147369_b.field_71137_h = false;
  
 -            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()))
 +            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()) || !placeResult) // force client itemstack update if place event was cancelled
              {
-                 this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
+-                this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
++                this.func_147359_a(new S2FPacketSetSlot(windowId, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
              }
-@@ -770,8 +789,10 @@
+         }
+     }
+@@ -770,8 +795,10 @@
              }
              else
              {
@@ -110,7 +122,7 @@
              }
  
              this.field_147374_l += 20;
-@@ -916,7 +937,7 @@
+@@ -916,7 +943,7 @@
                          return;
                      }
  

@@ -24,10 +24,10 @@
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
 -                                                if (entityliving.func_70601_bi() && entityliving.func_70058_J())
-+                                                net.minecraftforge.fml.common.eventhandler.Event.Result canSpawn = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77192_1_, f, l2, f1);
++                                                net.minecraftforge.fml.common.eventhandler.Event.Result canSpawn = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, p_77192_1_, f, i3, f1);
 +                                                if (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && (entityliving.func_70601_bi() && entityliving.func_70058_J())))
                                                  {
-+                                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f1, l2, f1))
++                                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, l3, f1))
                                                      ientitylivingdata = entityliving.func_180482_a(p_77192_1_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);
  
                                                      if (entityliving.func_70058_J())

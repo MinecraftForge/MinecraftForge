@@ -27,6 +27,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
@@ -80,6 +82,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     }
 
     private URL updateJSONUrl = null;
+    public UniversalBucket universalBucket;
 
     public ForgeModContainer()
     {
@@ -319,6 +322,15 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (!ForgeModContainer.disableVersionCheck)
         {
             ForgeVersion.startVersionCheck();
+        }
+
+        // Add and register the forge universal bucket, if it's enabled
+        if(FluidRegistry.isUniversalBucketEnabled())
+        {
+            universalBucket = new UniversalBucket();
+            universalBucket.setUnlocalizedName("forge.bucketFilled");
+            GameRegistry.registerItem(universalBucket, "bucketFilled");
+            MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }
 
