@@ -219,13 +219,13 @@ public class ModelLoader extends ModelBakery
 
     private void loadItems()
     {
-        registerVariantNames();
-
         // register model for the universal bucket, if it exists
         if(FluidRegistry.isUniversalBucketEnabled())
         {
             setBucketModelDefinition(ForgeModContainer.getInstance().universalBucket);
         }
+
+        registerVariantNames();
         
         List<String> itemVariants = Lists.newArrayList();
         for(Item item : GameData.getItemRegistry().typeSafeIterable())
