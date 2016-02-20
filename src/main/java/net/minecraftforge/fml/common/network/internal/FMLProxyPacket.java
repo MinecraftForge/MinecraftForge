@@ -133,7 +133,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
 
         if (data.length < PART_SIZE)
         {
-            ret.add(new S3FPacketCustomPayload(channel, payload));
+            ret.add(new S3FPacketCustomPayload(channel, new PacketBuffer(payload.duplicate())));
         }
         else
         {
