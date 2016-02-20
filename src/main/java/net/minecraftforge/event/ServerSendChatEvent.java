@@ -5,8 +5,13 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
- * Fired when a chat message is sent from the server (e.g. using the /say command).
- * Fired from {@link net.minecraft.server.management.ServerConfigurationManager#sendChatMsg}.
+ * ServerSendChatEvent is fired whenever a chat message is sent by the server (e.g. with the /say command)
+ * Fired via {@link ForgeEventFactory#serverSendChat} which is called from {@link net.minecraft.server.management.ServerConfigurationManager#sendChatMsg}
+ * 
+ * {@link #message} contains the message to be sent by the server
+ * 
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}
+ * This event does not have a result
  */
 @Cancelable
 public class ServerSendChatEvent extends Event
