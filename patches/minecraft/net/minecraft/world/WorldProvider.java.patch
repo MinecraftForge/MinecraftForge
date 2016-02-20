@@ -29,6 +29,24 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
+@@ -112,7 +98,7 @@
+     public float[] func_76560_a(float p_76560_1_, float p_76560_2_)
+     {
+         float f = 0.4F;
+-        float f1 = MathHelper.func_76134_b(p_76560_1_ * (float)Math.PI * 2.0F) - 0.0F;
++        float f1 = this.getSunHeightFactor(p_76560_2_) - 0.0F;
+         float f2 = -0.0F;
+ 
+         if (f1 >= f2 - f && f1 <= f2 + f)
+@@ -135,7 +121,7 @@
+     @SideOnly(Side.CLIENT)
+     public Vec3 func_76562_b(float p_76562_1_, float p_76562_2_)
+     {
+-        float f = MathHelper.func_76134_b(p_76562_1_ * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
++        float f = this.getSunHeightFactor(p_76562_2_) * 2.0F + 0.5F;
+         f = MathHelper.func_76131_a(f, 0.0F, 1.0F);
+         float f1 = 0.7529412F;
+         float f2 = 0.84705883F;
 @@ -153,13 +139,13 @@
  
      public static WorldProvider func_76570_a(int p_76570_0_)
@@ -61,7 +79,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -223,4 +209,319 @@
+@@ -223,4 +209,335 @@
      {
          return new WorldBorder();
      }
@@ -221,6 +239,35 @@
 +    {
 +        return 0;
 +    }
++    
++    /**
++     * The current sun height factor for this dimension.<p>
++     * the height factor should be
++     * <li> 1.0f when sun is highest, </li>
++     * <li> 0.0f ~ 1.0f when sun is on the sky, </li>
++     * <li> 0.0f when sun's center is on horizon, </li>
++     * <li> -1.0f ~ 0.0f when sun is under ground, </li>
++     * <li> -1.0f when sun is lowest. (under ground) </li>
++     * @param partialTicks
++     * @return The current sun height factor
++     * */
++    public float getSunHeightFactor(float partialTicks)
++    {
++        return MathHelper.func_76134_b(field_76579_a.func_72826_c(partialTicks) * (float)Math.PI * 2.0F);
++    }
++    
++    /**
++     * The current sun brightness factor for this dimension.
++     * 0.0f means no light at all, and 1.0f means maximum sunlight.
++     * This will be used for the "calculateSkylightSubtracted"
++     * which is for Sky light value calculation.
++     * @param partialTicks
++     * @return The current brightness factor
++     * */
++    public float getSunBrightnessFactor(float partialTicks)
++    {
++        return field_76579_a.getSunBrightnessFactor(partialTicks);
++    }
 +
 +    /*======================================= Start Moved From World =========================================*/
 +
@@ -232,19 +279,6 @@
 +    public boolean isDaytime()
 +    {
 +        return field_76579_a.func_175657_ab() < 4;
-+    }
-+
-+    /**
-+     * The current sun brightness factor for this dimension.
-+     * 0.0f means no light at all, and 1.0f means maximum sunlight.
-+     * This will be used for the "calculateSkylightSubtracted"
-+     * which is for Sky light value calculation.
-+     *
-+     * @return The current brightness factor
-+     * */
-+    public float getSunBrightnessFactor(float par1)
-+    {
-+        return field_76579_a.getSunBrightnessFactor(par1);
 +    }
 +
 +    /**
