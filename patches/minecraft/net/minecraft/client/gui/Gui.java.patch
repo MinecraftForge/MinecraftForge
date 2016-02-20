@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/Gui.java
++++ ../src-work/minecraft/net/minecraft/client/gui/Gui.java
+@@ -43,6 +43,11 @@
+ 
+     public static void func_73734_a(int p_73734_0_, int p_73734_1_, int p_73734_2_, int p_73734_3_, int p_73734_4_)
+     {
++        drawRect(p_73734_0_, p_73734_1_, p_73734_2_, p_73734_3_, p_73734_4_, 0);
++    }
++    
++    public static void drawRect(int p_73734_0_, int p_73734_1_, int p_73734_2_, int p_73734_3_, int p_73734_4_, double zLevel)
++    {
+         if (p_73734_0_ < p_73734_2_)
+         {
+             int i = p_73734_0_;
+@@ -68,10 +73,10 @@
+         GlStateManager.func_179120_a(770, 771, 1, 0);
+         GlStateManager.func_179131_c(f, f1, f2, f3);
+         worldrenderer.func_181668_a(7, DefaultVertexFormats.field_181705_e);
+-        worldrenderer.func_181662_b((double)p_73734_0_, (double)p_73734_3_, 0.0D).func_181675_d();
+-        worldrenderer.func_181662_b((double)p_73734_2_, (double)p_73734_3_, 0.0D).func_181675_d();
+-        worldrenderer.func_181662_b((double)p_73734_2_, (double)p_73734_1_, 0.0D).func_181675_d();
+-        worldrenderer.func_181662_b((double)p_73734_0_, (double)p_73734_1_, 0.0D).func_181675_d();
++        worldrenderer.func_181662_b((double)p_73734_0_, (double)p_73734_3_, zLevel).func_181675_d();
++        worldrenderer.func_181662_b((double)p_73734_2_, (double)p_73734_3_, zLevel).func_181675_d();
++        worldrenderer.func_181662_b((double)p_73734_2_, (double)p_73734_1_, zLevel).func_181675_d();
++        worldrenderer.func_181662_b((double)p_73734_0_, (double)p_73734_1_, zLevel).func_181675_d();
+         tessellator.func_78381_a();
+         GlStateManager.func_179098_w();
+         GlStateManager.func_179084_k();
