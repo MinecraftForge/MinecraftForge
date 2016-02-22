@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -49,6 +51,7 @@ import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
@@ -74,14 +77,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings("ALL")
 public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
@@ -92,14 +89,13 @@ public class ModelLoader extends ModelBakery
     private IModel missingModel = null;
     private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
 
-    private ProgressBar blockBar;
-    private ProgressBar itemBar;
-
     private boolean isLoading = false;
     public boolean isLoading()
     {
         return isLoading;
     }
+
+    private final boolean enableVerboseMissingInfo = (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment") || Boolean.parseBoolean(System.getProperty("forge.verboseMissingModelLogging", "false"));
 
     public ModelLoader(IResourceManager manager, TextureMap map, BlockModelShapes shapes)
     {
@@ -164,7 +160,7 @@ public class ModelLoader extends ModelBakery
                 return v1.toString().compareTo(v2.toString());
             }
         });
-        blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
+        ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
         for(ModelResourceLocation variant : variants)
         {
             loadVariants(ImmutableList.of(variant));
@@ -233,7 +229,7 @@ public class ModelLoader extends ModelBakery
             itemVariants.addAll(getVariantNames(item));
         }
         Collections.sort(itemVariants);
-        itemBar = ProgressManager.push("ModelLoader: items", itemVariants.size());
+        ProgressBar itemBar = ProgressManager.push("ModelLoader: items", itemVariants.size());
         for(String s : itemVariants)
         {
             ResourceLocation file = getItemLocation(s);
@@ -476,7 +472,7 @@ public class ModelLoader extends ModelBakery
 
             if(hasItemModel(model))
             {
-                for(String s : (List<String>)ItemModelGenerator.LAYERS)
+                for(String s : ItemModelGenerator.LAYERS)
                 {
                     String r = model.resolveTextureName(s);
                     ResourceLocation loc = new ResourceLocation(r);
@@ -495,7 +491,7 @@ public class ModelLoader extends ModelBakery
                     }
                 }
             }
-            for(String s : (Iterable<String>)model.textures.values())
+            for(String s : model.textures.values())
             {
                 if(!s.startsWith("#"))
                 {
@@ -556,7 +552,7 @@ public class ModelLoader extends ModelBakery
                     if(rot == null) rot = new BlockPartRotation(new org.lwjgl.util.vector.Vector3f(), EnumFacing.Axis.Y, 0, false);
                     part = new BlockPart(part.positionFrom, part.positionTo, part.mapFaces, rot, part.shade);
                 }
-                for(Map.Entry<EnumFacing, BlockPartFace> e : (Iterable<Map.Entry<EnumFacing, BlockPartFace>>)part.mapFaces.entrySet())
+                for(Map.Entry<EnumFacing, BlockPartFace> e : part.mapFaces.entrySet())
                 {
                     TextureAtlasSprite textureatlassprite1 = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName(e.getValue().texture)));
 
@@ -604,16 +600,16 @@ public class ModelLoader extends ModelBakery
                 return this;
 
             List<BlockPart> elements = Lists.newArrayList(); //We have to duplicate this so we can edit it below.
-            for (BlockPart part : (List<BlockPart>)this.model.getElements())
+            for (BlockPart part : this.model.getElements())
             {
                 elements.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade));
             }
 
-            ModelBlock neweModel = new ModelBlock(this.model.getParentLocation(), elements,
+            ModelBlock newModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
                 model.func_181682_g());
-            neweModel.name = this.model.name;
-            neweModel.parent = this.model.parent;
+            newModel.name = this.model.name;
+            newModel.parent = this.model.parent;
 
             Set<String> removed = Sets.newHashSet();
 
@@ -622,29 +618,29 @@ public class ModelLoader extends ModelBakery
                 if ("".equals(e.getValue()))
                 {
                     removed.add(e.getKey());
-                    neweModel.textures.remove(e.getKey());
+                    newModel.textures.remove(e.getKey());
                 }
                 else
-                    neweModel.textures.put(e.getKey(), e.getValue());
+                    newModel.textures.put(e.getKey(), e.getValue());
             }
 
             // Map the model's texture references as if it was the parent of a model with the retexture map as its textures.
             Map<String, String> remapped = Maps.newHashMap();
 
-            for (Entry<String, String> e : (Set<Entry<String, String>>)neweModel.textures.entrySet())
+            for (Entry<String, String> e : newModel.textures.entrySet())
             {
                 if (e.getValue().startsWith("#"))
                 {
                     String key = e.getValue().substring(1);
-                    if (neweModel.textures.containsKey(key))
-                        remapped.put(e.getKey(), (String)neweModel.textures.get(key));
+                    if (newModel.textures.containsKey(key))
+                        remapped.put(e.getKey(), newModel.textures.get(key));
                 }
             }
 
-            neweModel.textures.putAll(remapped);
+            newModel.textures.putAll(remapped);
 
             //Remove any faces that use a null texture, this is for performance reasons, also allows some cool layering stuff.
-            for (BlockPart part : (List<BlockPart>)neweModel.getElements())
+            for (BlockPart part : newModel.getElements())
             {
                 Iterator<Entry<EnumFacing, BlockPartFace>> itr = part.mapFaces.entrySet().iterator();
                 while (itr.hasNext())
@@ -655,7 +651,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new VanillaModelWrapper(location, neweModel, animation);
+            return new VanillaModelWrapper(location, newModel, animation);
         }
 
         @Override
@@ -732,7 +728,7 @@ public class ModelLoader extends ModelBakery
         {
             this.variants = variants.getVariants();
             ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
-            for (Variant v : (List<Variant>)variants.getVariants())
+            for (Variant v : variants.getVariants())
             {
                 ResourceLocation loc = v.getModelLocation();
                 locations.add(loc);
@@ -948,6 +944,26 @@ public class ModelLoader extends ModelBakery
     {
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
         Map<String, Integer> modelErrors = Maps.newHashMap();
+        Multimap<ModelResourceLocation, IBlockState> reverseBlockMap = null;
+        Multimap<ModelResourceLocation, String> reverseItemMap = null;
+        if(enableVerboseMissingInfo)
+        {
+            reverseBlockMap = HashMultimap.create();
+            for(Map.Entry<IBlockState, ModelResourceLocation> entry : blockModelShapes.getBlockStateMapper().putAllStateModelLocations().entrySet())
+            {
+                reverseBlockMap.put(entry.getValue(), entry.getKey());
+            }
+            reverseItemMap = HashMultimap.create();
+            for(Item item : GameData.getItemRegistry().typeSafeIterable())
+            {
+                for(String s : getVariantNames(item))
+                {
+                    ModelResourceLocation memory = getInventoryVariant(s);
+                    reverseItemMap.put(memory, item.getRegistryName());
+                }
+            }
+        }
+
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())
         {
             // ignoring pure ResourceLocation arguments, all things we care about pass ModelResourceLocation
@@ -963,7 +979,36 @@ public class ModelLoader extends ModelBakery
                     errorCount++;
                     if(errorCount < 5)
                     {
-                        FMLLog.getLogger().error("Exception loading model for variant " + entry.getKey(), entry.getValue());
+                        String errorMsg = "Exception loading model for variant " + entry.getKey();
+                        if(enableVerboseMissingInfo)
+                        {
+                            Collection<IBlockState> blocks = reverseBlockMap.get(location);
+                            if(!blocks.isEmpty())
+                            {
+                                if(blocks.size() == 1)
+                                {
+                                    errorMsg += " for blockstate \"" + blocks.iterator().next() + "\"";
+                                }
+                                else
+                                {
+                                    errorMsg += " for blockstates [\"" + Joiner.on("\", \"").join(blocks) + "\"]";
+                                }
+                            }
+                            Collection<String> items = reverseItemMap.get(location);
+                            if(!items.isEmpty())
+                            {
+                                if(!blocks.isEmpty()) errorMsg += " and";
+                                if(items.size() == 1)
+                                {
+                                    errorMsg += " for item \"" + items.iterator().next() + "\"";
+                                }
+                                else
+                                {
+                                    errorMsg += " for items [\"" + Joiner.on("\", \"").join(items) + "\"]";
+                                }
+                            }
+                        }
+                        FMLLog.getLogger().error(errorMsg, entry.getValue());
                     }
                     modelErrors.put(domain, errorCount);
                 }
@@ -997,7 +1042,7 @@ public class ModelLoader extends ModelBakery
         {
             if(e.getValue() >= 5)
             {
-                FMLLog.severe("Supressed additional %s model loading errors for domain %s", e.getValue(), e.getKey());
+                FMLLog.severe("Suppressed additional %s model loading errors for domain %s", e.getValue(), e.getKey());
             }
         }
         isLoading = false;
