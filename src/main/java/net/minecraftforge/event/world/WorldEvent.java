@@ -103,7 +103,7 @@ public class WorldEvent extends Event
             this.type = type;
             if (oldList != null)
             {
-                this.list = oldList;
+                this.list = new ArrayList<SpawnListEntry>(oldList);
             }
             else
             {
