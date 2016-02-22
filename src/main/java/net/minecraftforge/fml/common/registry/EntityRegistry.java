@@ -476,4 +476,16 @@ public class EntityRegistry
         }
         return false;
     }
+
+    /**
+     * Register the instance of IExtendedProperties into the entity's collection.
+     * @param entity The entity to register the properties to.
+     * @param identifier The identifier which you can use to retrieve these properties for the entity.
+     * @param properties The instanceof IExtendedProperties to register
+     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
+     */
+    public <E extends Entity> String registerExtendedEntityProperties(E entity, String identifier, net.minecraftforge.common.IExtendedEntityProperties<E> properties)
+    {
+        return entity.registerExtendedProperties(identifier, properties);
+    }
 }

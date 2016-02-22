@@ -10,7 +10,7 @@ import net.minecraft.world.World;
  * @author cpw, mithion
  *
  */
-public interface IExtendedEntityProperties {
+public interface IExtendedEntityProperties<E extends Entity> {
     /**
      * Called when the entity that this class is attached to is saved.
      * Any custom entity data  that needs saving should be saved here.
@@ -35,5 +35,5 @@ public interface IExtendedEntityProperties {
      * @param entity  The entity that this extended properties is attached to
      * @param world  The world in which the entity exists
      */
-    public void init(Entity entity, World world);
+    public void init(E entity, World world);
 }

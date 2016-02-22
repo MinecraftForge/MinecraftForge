@@ -144,7 +144,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2353,4 +2411,209 @@
+@@ -2353,4 +2411,211 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
@@ -266,7 +266,9 @@
 +     * @param identifier The identifier which you can use to retrieve these properties for the entity.
 +     * @param properties The instanceof IExtendedProperties to register
 +     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
++     * @deprecated use {@link net.minecraftforge.fml.common.registry.EntityRegistry#registerExtendedEntityProperties(Entity, String, net.minecraftforge.common.IExtendedEntityProperties)} instead.
 +     */
++    @Deprecated
 +    public String registerExtendedProperties(String identifier, net.minecraftforge.common.IExtendedEntityProperties properties)
 +    {
 +        if (identifier == null)
@@ -287,7 +289,7 @@
 +            identifier = String.format("%s%d", baseIdentifier, identifierModCount++);
 +        }
 +
-+        if (baseIdentifier != identifier)
++        if (!baseIdentifier.equals(identifier))
 +        {
 +            net.minecraftforge.fml.common.FMLLog.info("An attempt was made to register exended properties using an existing key.  The duplicate identifier (%s) has been remapped to %s.", baseIdentifier, identifier);
 +        }
