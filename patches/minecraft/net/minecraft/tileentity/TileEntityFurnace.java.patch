@@ -1,5 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
+@@ -141,9 +141,9 @@
+             }
+         }
+ 
+-        this.field_145956_a = p_145839_1_.func_74765_d("BurnTime");
+-        this.field_174906_k = p_145839_1_.func_74765_d("CookTime");
+-        this.field_174905_l = p_145839_1_.func_74765_d("CookTimeTotal");
++        this.field_145956_a = p_145839_1_.func_74762_e("BurnTime");
++        this.field_174906_k = p_145839_1_.func_74762_e("CookTime");
++        this.field_174905_l = p_145839_1_.func_74762_e("CookTimeTotal");
+         this.field_145963_i = func_145952_a(this.field_145957_n[1]);
+ 
+         if (p_145839_1_.func_150297_b("CustomName", 8))
+@@ -155,9 +155,9 @@
+     public void func_145841_b(NBTTagCompound p_145841_1_)
+     {
+         super.func_145841_b(p_145841_1_);
+-        p_145841_1_.func_74777_a("BurnTime", (short)this.field_145956_a);
+-        p_145841_1_.func_74777_a("CookTime", (short)this.field_174906_k);
+-        p_145841_1_.func_74777_a("CookTimeTotal", (short)this.field_174905_l);
++        p_145841_1_.func_74768_a("BurnTime", this.field_145956_a);
++        p_145841_1_.func_74768_a("CookTime", this.field_174906_k);
++        p_145841_1_.func_74768_a("CookTimeTotal", this.field_174905_l);
+         NBTTagList nbttaglist = new NBTTagList();
+ 
+         for (int i = 0; i < this.field_145957_n.length; ++i)
 @@ -223,8 +223,7 @@
  
                              if (this.field_145957_n[1].field_77994_a == 0)
