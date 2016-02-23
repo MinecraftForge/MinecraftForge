@@ -60,7 +60,7 @@
          this.field_72984_F.func_76319_b();
          this.func_147488_Z();
      }
-@@ -217,6 +237,7 @@
+@@ -217,12 +237,14 @@
      public BiomeGenBase.SpawnListEntry func_175734_a(EnumCreatureType p_175734_1_, BlockPos p_175734_2_)
      {
          List<BiomeGenBase.SpawnListEntry> list = this.func_72863_F().func_177458_a(p_175734_1_, p_175734_2_);
@@ -68,7 +68,14 @@
          return list != null && !list.isEmpty() ? (BiomeGenBase.SpawnListEntry)WeightedRandom.func_76271_a(this.field_73012_v, list) : null;
      }
  
-@@ -268,10 +289,7 @@
+     public boolean func_175732_a(EnumCreatureType p_175732_1_, BiomeGenBase.SpawnListEntry p_175732_2_, BlockPos p_175732_3_)
+     {
+         List<BiomeGenBase.SpawnListEntry> list = this.func_72863_F().func_177458_a(p_175732_1_, p_175732_3_);
++        list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(this, p_175732_1_, p_175732_3_, list);
+         return list != null && !list.isEmpty() ? list.contains(p_175732_2_) : false;
+     }
+ 
+@@ -268,10 +290,7 @@
  
      private void func_73051_P()
      {

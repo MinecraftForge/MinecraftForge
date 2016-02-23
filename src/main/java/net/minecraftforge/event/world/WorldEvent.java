@@ -87,6 +87,10 @@ public class WorldEvent extends Event
 
     /**
      * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
+     * If an entry is added to the list, it needs to be a globally unique instance.
+     * The event is called in WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos) as well as
+     * WorldServer#canCreatureTypeSpawnHere(EnumCreatureType creatureType, BiomeGenBase.SpawnListEntry spawnListEntry, BlockPos pos)
+     * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */
     @Cancelable
