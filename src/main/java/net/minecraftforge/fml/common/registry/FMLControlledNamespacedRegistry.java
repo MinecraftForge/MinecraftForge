@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -463,7 +464,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             getExistingDelegate(thing).setResourceName(name);
         }
-        this.dummiedLocations.remove(name);
+
+        if (this.dummiedLocations.remove(name) && DEBUG)
+        {
+            FMLLog.fine("Registry Dummy Remove: %s", name);
+        }
 
         if (DEBUG)
         {
@@ -474,6 +479,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     void markDummy(ResourceLocation rl, Integer id, I thing)
     {
+        if (DEBUG)
+        {
+            FMLLog.finer("Registry Dummy Add: %s %d -> %s", rl, id, thing);
+        }
         this.dummiedLocations.add(rl);
         this.addObjectRaw(id, rl, thing);
     }
@@ -705,6 +714,10 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     public void loadDummied(Set<ResourceLocation> dummied)
     {
+        if (DEBUG && dummied.size() > 0)
+        {
+            FMLLog.fine("Registry Dummy Load: [%s]", Joiner.on(", ").join(dummied));
+        }
         this.dummiedLocations.addAll(dummied);
     }
 

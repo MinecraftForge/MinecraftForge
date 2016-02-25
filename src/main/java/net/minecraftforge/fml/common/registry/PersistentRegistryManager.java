@@ -174,6 +174,10 @@ public class PersistentRegistryManager
             else if (isLocalWorld)
             {
                 // Carry on, we resuscitated the block
+                if (FMLControlledNamespacedRegistry.DEBUG)
+                {
+                    FMLLog.log(Level.DEBUG, "Registry: Resuscitating dummy block %s", dummy);
+                }
             }
             else
             {
@@ -324,10 +328,11 @@ public class PersistentRegistryManager
         newRegistry.loadBlocked(snapshotEntry.blocked);
         missing.put(registryName, Maps.<ResourceLocation, Integer>newLinkedHashMap());
         remaps.put(registryName, Maps.<ResourceLocation, Integer[]>newHashMap());
+        // Load current dummies BEFORE the snapshot is loaded so that add() will remove from the list.
+        // Potentially causes issues from cpw's previous comment. Must keep eye on.
+        newRegistry.loadDummied(snapshotEntry.dummied);
         newRegistry.loadIds(snapshotEntry.ids, missing.get(registryName), remaps.get(registryName), currentRegistry, registryName);
         newRegistry.loadSubstitutions(substitutions);
-        // Load current dummies AFTER the snapshot is loaded
-        newRegistry.loadDummied(snapshotEntry.dummied);
     }
 
     public static boolean isFrozen(FMLControlledNamespacedRegistry<?> registry)
