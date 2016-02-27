@@ -5,6 +5,7 @@ import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
@@ -45,11 +46,18 @@ public class PlayerInteractEvent extends PlayerEvent
     public final World world;
     public final BlockPos pos;
     public final EnumFacing face; // Can be null if unknown
+    public final Vec3 localPos; // Can be null if unknown
 
     public Result useBlock = DEFAULT;
     public Result useItem = DEFAULT;
 
+    @Deprecated
     public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world)
+    {
+        this(player, action, pos, face, world, null);
+    }
+
+    public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world, Vec3 localPos)
     {
         super(player);
         this.action = action;
@@ -57,6 +65,7 @@ public class PlayerInteractEvent extends PlayerEvent
         this.face = face;
         if (face == null) useBlock = DENY;
         this.world = world;
+        this.localPos = localPos;
     }
 
     @Override

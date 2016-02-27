@@ -64,6 +64,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -922,5 +923,18 @@ public class ForgeHooks
             }
         }
         return !event.isCanceled();
+    }
+
+    public static MovingObjectPosition rayTraceEyes(EntityLivingBase entity, double length)
+    {
+        Vec3 startPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        Vec3 endPos = startPos.add(new Vec3(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
+        return entity.worldObj.rayTraceBlocks(startPos, endPos);
+    }
+
+    public static Vec3 rayTraceEyeHitVec(EntityLivingBase entity, double length)
+    {
+        MovingObjectPosition movingObjectPosition = rayTraceEyes(entity, length);
+        return movingObjectPosition == null ? null : movingObjectPosition.hitVec;
     }
 }
