@@ -23,7 +23,7 @@
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
 +        net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_73090_b,
-+                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, field_73092_a, p_180784_1_, p_180784_2_);
++                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, field_73092_a, p_180784_1_, p_180784_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(field_73090_b, getBlockReachDistance() + 1));
 +        if (event.isCanceled())
 +        {
 +            field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180784_1_));
@@ -186,7 +186,7 @@
          {
 -            if (!p_180236_1_.func_70093_af() || p_180236_1_.func_70694_bm() == null)
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(p_180236_1_,
-+                    net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, p_180236_2_, p_180236_4_, p_180236_5_);
++                    net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, p_180236_2_, p_180236_4_, p_180236_5_, new net.minecraft.util.Vec3(p_180236_6_, p_180236_7_, p_180236_8_));
 +            if (event.isCanceled())
              {
 -                IBlockState iblockstate = p_180236_2_.func_180495_p(p_180236_4_);

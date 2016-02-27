@@ -24,6 +24,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -117,9 +118,15 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.newSpeed);
     }
 
+    @Deprecated
     public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face)
     {
-        PlayerInteractEvent event = new PlayerInteractEvent(player, action, pos, face, world);
+        return onPlayerInteract(player, action, world, pos, face, null);
+    }
+
+    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face, Vec3 localPos)
+    {
+        PlayerInteractEvent event = new PlayerInteractEvent(player, action, pos, face, world, localPos);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
