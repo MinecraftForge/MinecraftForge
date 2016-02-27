@@ -147,7 +147,7 @@ public class GameRegistry
     {
         if (Strings.isNullOrEmpty(name))
         {
-            throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
+            throw new IllegalArgumentException("Attempted to register an item with no name: " + item);
         }
         GameData.getMain().registerItem(item, name);
     }
