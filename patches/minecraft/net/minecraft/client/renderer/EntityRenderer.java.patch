@@ -17,6 +17,15 @@
                              {
                                  if (d2 == 0.0D)
                                  {
+@@ -512,7 +513,7 @@
+                 f = f * 60.0F / 70.0F;
+             }
+ 
+-            return f;
++            return net.minecraftforge.client.ForgeHooksClient.getFOVModifier(this, entity, block, p_78481_1_, f);
+         }
+     }
+ 
 @@ -576,14 +577,8 @@
              {
                  BlockPos blockpos = new BlockPos(entity);

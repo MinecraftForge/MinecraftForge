@@ -196,6 +196,12 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.newfov;
     }
+    
+    public static float getFOVModifier(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float fov) {
+        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, block, renderPartialTicks, fov);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getFOV();
+    }
 
     private static int skyX, skyZ;
 
