@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -313,7 +313,7 @@
- 
-         if (this.itemToRender != null)
-         {
--            if (this.itemToRender.getItem() == Items.filled_map)
-+            if (this.itemToRender.getItem() instanceof net.minecraft.item.ItemMap)
-             {
-                 this.renderItemMap(abstractclientplayer, f2, f, f1);
-             }
-@@ -365,6 +365,7 @@
+@@ -444,6 +444,7 @@
          if (this.mc.thePlayer.isEntityInsideOpaqueBlock())
          {
              IBlockState iblockstate = this.mc.theWorld.getBlockState(new BlockPos(this.mc.thePlayer));
@@ -17,21 +8,7 @@
              EntityPlayer entityplayer = this.mc.thePlayer;
  
              for (int i = 0; i < 8; ++i)
-@@ -378,11 +379,13 @@
-                 if (iblockstate1.getBlock().isVisuallyOpaque())
-                 {
-                     iblockstate = iblockstate1;
-+                    overlayPos = blockpos;
-                 }
-             }
- 
-             if (iblockstate.getBlock().getRenderType() != -1)
-             {
-+                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, partialTicks, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
-                 this.func_178108_a(partialTicks, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
-             }
-         }
-@@ -391,11 +394,13 @@
+@@ -470,11 +471,13 @@
          {
              if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
              {
@@ -43,18 +20,5 @@
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(mc.thePlayer, partialTicks))
                  this.renderFireInFirstPerson(partialTicks);
-             }
-         }
-@@ -512,6 +517,12 @@
-         {
-             if (!this.itemToRender.getIsItemStackEqual(itemstack))
-             {
-+                if (!this.itemToRender.getItem().shouldCauseReequipAnimation(this.itemToRender, itemstack, equippedItemSlot != entityplayer.inventory.currentItem))
-+                {
-+                    this.itemToRender = itemstack;
-+                    this.equippedItemSlot = entityplayer.inventory.currentItem;
-+                    return;
-+                }
-                 flag = true;
              }
          }

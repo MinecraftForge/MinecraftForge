@@ -1,24 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -119,7 +119,7 @@
-             }
-         }
- 
--        replaceAllSimilarBlocks(objectCraftStats);
-+        replaceAllSimilarBlocks(objectCraftStats, true);
-     }
- 
-     private static void initMiningStats()
-@@ -141,7 +141,7 @@
-             }
-         }
- 
--        replaceAllSimilarBlocks(mineBlockStatArray);
-+        replaceAllSimilarBlocks(mineBlockStatArray, false);
-     }
- 
-     private static void initStats()
-@@ -165,7 +165,7 @@
+@@ -201,7 +201,7 @@
              }
          }
  
@@ -27,7 +9,7 @@
      }
  
      private static void initItemDepleteStats()
-@@ -184,7 +184,7 @@
+@@ -240,7 +240,7 @@
              }
          }
  
@@ -36,7 +18,7 @@
      }
  
      private static String func_180204_a(Item p_180204_0_)
-@@ -193,28 +193,35 @@
+@@ -249,28 +249,35 @@
          return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
      }
  

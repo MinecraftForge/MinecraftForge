@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -525,8 +525,10 @@
+@@ -547,8 +547,10 @@
  
      public void renderEntities(Entity renderViewEntity, ICamera camera, float partialTicks)
      {
@@ -11,7 +11,7 @@
              --this.renderEntitiesStartupCounter;
          }
          else
-@@ -537,9 +539,12 @@
+@@ -559,9 +561,12 @@
              this.theWorld.theProfiler.startSection("prepare");
              TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRendererObj, this.mc.getRenderViewEntity(), partialTicks);
              this.renderManager.cacheActiveRenderInfo(this.theWorld, this.mc.fontRendererObj, this.mc.getRenderViewEntity(), this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
@@ -24,7 +24,7 @@
              Entity entity = this.mc.getRenderViewEntity();
              double d3 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
              double d4 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;
-@@ -551,11 +556,15 @@
+@@ -573,11 +578,15 @@
              this.mc.entityRenderer.enableLightmap();
              this.theWorld.theProfiler.endStartSection("global");
              List<Entity> list = this.theWorld.getLoadedEntityList();
@@ -40,39 +40,23 @@
                  ++this.countEntitiesRendered;
  
                  if (entity1.isInRangeToRender3d(d0, d1, d2))
-@@ -577,6 +586,7 @@
-                 for (int j = 0; j < list.size(); ++j)
-                 {
-                     Entity entity3 = (Entity)list.get(j);
-+                    if (!entity3.shouldRenderInPass(pass)) continue;
-                     boolean flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping();
-                     boolean flag1 = entity3.isInRangeToRender3d(d0, d1, d2) && (entity3.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(entity3.getEntityBoundingBox()) || entity3.riddenByEntity == this.mc.thePlayer) && entity3 instanceof EntityPlayer;
- 
-@@ -626,6 +636,7 @@
-                             }
- 
-                             entity2 = (Entity)iterator.next();
-+                            if (!entity2.shouldRenderInPass(pass)) continue;
-                             flag2 = this.renderManager.shouldRender(entity2, camera, d0, d1, d2) || entity2.riddenByEntity == this.mc.thePlayer;
- 
-                             if (!flag2)
-@@ -654,6 +665,7 @@
+@@ -672,6 +681,7 @@
              this.theWorld.theProfiler.endStartSection("blockentities");
              RenderHelper.enableStandardItemLighting();
  
 +            TileEntityRendererDispatcher.instance.preDrawBatch();
              for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfos)
              {
-                 List<TileEntity> list1 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
-@@ -662,6 +674,7 @@
+                 List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
+@@ -680,6 +690,7 @@
                  {
-                     for (TileEntity tileentity2 : list1)
+                     for (TileEntity tileentity2 : list3)
                      {
 +                        if (!tileentity2.shouldRenderInPass(pass) || !camera.isBoundingBoxInFrustum(tileentity2.getRenderBoundingBox())) continue;
                          TileEntityRendererDispatcher.instance.renderTileEntity(tileentity2, partialTicks, -1);
                      }
                  }
-@@ -671,9 +684,11 @@
+@@ -689,9 +700,11 @@
              {
                  for (TileEntity tileentity : this.setTileEntities)
                  {
@@ -84,7 +68,7 @@
  
              this.preRenderDamagedBlocks();
  
-@@ -700,7 +715,7 @@
+@@ -718,7 +731,7 @@
  
                  Block block = this.theWorld.getBlockState(blockpos).getBlock();
  
@@ -93,20 +77,7 @@
                  {
                      TileEntityRendererDispatcher.instance.renderTileEntity(tileentity1, partialTicks, destroyblockprogress.getPartialBlockDamage());
                  }
-@@ -1161,6 +1176,12 @@
- 
-     public void renderSky(float partialTicks, int pass)
-     {
-+        net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
-+        if (renderer != null)
-+        {
-+            renderer.render(partialTicks, theWorld, mc);
-+            return;
-+        }
-         if (this.mc.theWorld.provider.getDimensionId() == 1)
-         {
-             this.renderSkyEnd();
-@@ -1378,6 +1399,12 @@
+@@ -1427,6 +1440,12 @@
  
      public void renderClouds(float partialTicks, int pass)
      {
@@ -119,7 +90,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.func_181147_e() == 2)
-@@ -1793,8 +1820,11 @@
+@@ -1854,8 +1873,11 @@
                  double d4 = (double)blockpos.getY() - d1;
                  double d5 = (double)blockpos.getZ() - d2;
                  Block block = this.theWorld.getBlockState(blockpos).getBlock();
@@ -132,21 +103,3 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
-@@ -1949,13 +1979,16 @@
-         if (recordName != null)
-         {
-             ItemRecord itemrecord = ItemRecord.getRecord(recordName);
-+            ResourceLocation resource = null;
- 
-             if (itemrecord != null)
-             {
-                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.getRecordNameLocal());
-+                resource = itemrecord.getRecordResource(recordName);
-             }
- 
--            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(new ResourceLocation(recordName), (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
-+            if (resource == null) resource = new ResourceLocation(recordName);
-+            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(resource, (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
-             this.mapSoundPositions.put(blockPosIn, positionedsoundrecord);
-             this.mc.getSoundHandler().playSound(positionedsoundrecord);
-         }

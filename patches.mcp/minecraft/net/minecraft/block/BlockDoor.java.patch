@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -154,7 +154,7 @@
+@@ -107,7 +107,7 @@
      {
          if (this.blockMaterial == Material.iron)
          {
@@ -9,12 +9,3 @@
          }
          else
          {
-@@ -272,7 +272,7 @@
- 
-     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
-     {
--        return pos.getY() >= 255 ? false : World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
-+        return pos.getY() >= worldIn.getHeight() - 1 ? false : World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
-     }
- 
-     public int getMobilityFlag()

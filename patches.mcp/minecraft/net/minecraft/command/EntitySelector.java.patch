@@ -1,8 +1,8 @@
---- ../src-base/minecraft/net/minecraft/command/PlayerSelector.java
-+++ ../src-work/minecraft/net/minecraft/command/PlayerSelector.java
+--- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
++++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
 @@ -36,9 +36,9 @@
  
- public class PlayerSelector
+ public class EntitySelector
  {
 -    private static final Pattern tokenPattern = Pattern.compile("^@([pare])(?:\\[([\\w=,!-]*)\\])?$");
 +    private static final Pattern tokenPattern = Pattern.compile("^@([pare])(?:\\[([\\w\\.=,!-]*)\\])?$"); // FORGE: allow . in entity selectors

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
-@@ -41,7 +41,7 @@
+@@ -44,7 +44,7 @@
              boolean flag = p_177077_9_.isGui3d();
              int i = this.func_177078_a(itemstack);
              float f = 0.25F;
@@ -9,44 +9,7 @@
              float f2 = p_177077_9_.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GROUND).scale.y;
              GlStateManager.translate((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
  
-@@ -110,7 +110,6 @@
- 
-         for (int j = 0; j < i; ++j)
-         {
--            if (ibakedmodel.isGui3d())
-             {
-                 GlStateManager.pushMatrix();
- 
-@@ -119,25 +118,15 @@
-                     float f = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                     float f1 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                     float f2 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
--                    GlStateManager.translate(f, f1, f2);
-+                    GlStateManager.translate(shouldSpreadItems() ? f : 0.0F, shouldSpreadItems() ? f1 : 0.0F, f2);
-                 }
- 
-+                if (ibakedmodel.isGui3d())
-                 GlStateManager.scale(0.5F, 0.5F, 0.5F);
--                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
-+                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
-                 this.itemRenderer.renderItem(itemstack, ibakedmodel);
-                 GlStateManager.popMatrix();
-             }
--            else
--            {
--                GlStateManager.pushMatrix();
--                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
--                this.itemRenderer.renderItem(itemstack, ibakedmodel);
--                GlStateManager.popMatrix();
--                float f3 = ibakedmodel.getItemCameraTransforms().ground.scale.x;
--                float f4 = ibakedmodel.getItemCameraTransforms().ground.scale.y;
--                float f5 = ibakedmodel.getItemCameraTransforms().ground.scale.z;
--                GlStateManager.translate(0.0F * f3, 0.0F * f4, 0.046875F * f5);
--            }
-         }
- 
-         GlStateManager.popMatrix();
-@@ -157,4 +146,25 @@
+@@ -192,4 +192,25 @@
      {
          return TextureMap.locationBlocksTexture;
      }

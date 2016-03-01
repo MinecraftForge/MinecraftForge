@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemDye.java
-@@ -47,7 +47,7 @@
+@@ -50,7 +50,7 @@
  
              if (enumdyecolor == EnumDyeColor.WHITE)
              {
@@ -28,17 +28,8 @@
          if (iblockstate.getBlock() instanceof IGrowable)
          {
              IGrowable igrowable = (IGrowable)iblockstate.getBlock();
-@@ -132,7 +142,7 @@
- 
-         Block block = worldIn.getBlockState(pos).getBlock();
- 
--        if (block.getMaterial() != Material.air)
-+        if (block.isAir(worldIn, pos))
-         {
-             block.setBlockBoundsBasedOnState(worldIn, pos);
- 
-@@ -144,6 +154,16 @@
-                 worldIn.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)pos.getX() + itemRand.nextFloat()), (double)pos.getY() + (double)itemRand.nextFloat() * block.getBlockBoundsMaxY(), (double)((float)pos.getZ() + itemRand.nextFloat()), d0, d1, d2, new int[0]);
+@@ -142,6 +152,16 @@
+                 worldIn.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)pos.getX() + itemRand.nextFloat()), (double)pos.getY() + (double)itemRand.nextFloat() * iblockstate.func_185900_c(worldIn, pos).maxY, (double)((float)pos.getZ() + itemRand.nextFloat()), d0, d1, d2, new int[0]);
              }
          }
 +        else
@@ -53,4 +44,4 @@
 +        }
      }
  
-     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target)
+     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand p_111207_4_)

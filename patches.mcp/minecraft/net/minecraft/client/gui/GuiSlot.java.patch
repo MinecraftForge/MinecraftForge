@@ -1,24 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiSlot.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiSlot.java
-@@ -181,15 +181,8 @@
-             GlStateManager.disableFog();
-             Tessellator tessellator = Tessellator.getInstance();
-             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
--            this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
--            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
--            float f = 32.0F;
--            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
--            worldrenderer.pos((double)this.left, (double)this.bottom, 0.0D).tex((double)((float)this.left / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
--            worldrenderer.pos((double)this.right, (double)this.bottom, 0.0D).tex((double)((float)this.right / f), (double)((float)(this.bottom + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
--            worldrenderer.pos((double)this.right, (double)this.top, 0.0D).tex((double)((float)this.right / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
--            worldrenderer.pos((double)this.left, (double)this.top, 0.0D).tex((double)((float)this.left / f), (double)((float)(this.top + (int)this.amountScrolled) / f)).color(32, 32, 32, 255).endVertex();
--            tessellator.draw();
-+            // Forge: background rendering moved into separate method.
-+            this.drawContainerBackground(tessellator);
-             int k = this.left + this.width / 2 - this.getListWidth() / 2 + 2;
-             int l = this.top + 4 - (int)this.amountScrolled;
- 
-@@ -458,4 +451,18 @@
+@@ -458,4 +458,18 @@
      {
          return this.slotHeight;
      }

@@ -1,26 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -109,16 +109,7 @@
- 
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+@@ -190,4 +190,16 @@
      {
--        if (!worldIn.isRemote)
--        {
--            TileEntityPiston tileentitypiston = this.getTileEntity(worldIn, pos);
--
--            if (tileentitypiston != null)
--            {
--                IBlockState iblockstate = tileentitypiston.getPistonState();
--                iblockstate.getBlock().dropBlockAsItem(worldIn, pos, iblockstate, 0);
--            }
--        }
-+        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
-     }
- 
-     public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end)
-@@ -282,4 +273,16 @@
-     {
-         return new BlockState(this, new IProperty[] {FACING, TYPE});
+         return new BlockStateContainer(this, new IProperty[] {FACING, TYPE});
      }
 +
 +    @Override

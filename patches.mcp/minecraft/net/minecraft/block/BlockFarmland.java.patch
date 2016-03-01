@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -89,7 +89,7 @@
+@@ -87,7 +87,7 @@
      private boolean hasCrops(World worldIn, BlockPos pos)
      {
          Block block = worldIn.getBlockState(pos.up()).getBlock();

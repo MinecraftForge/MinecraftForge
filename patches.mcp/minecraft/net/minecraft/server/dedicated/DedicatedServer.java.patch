@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -49,6 +49,7 @@
+@@ -56,6 +56,7 @@
      private boolean canSpawnStructures;
      private WorldSettings.GameType gameType;
      private boolean guiIsEnabled;
 +    public static boolean allowPlayerLogins = false;
  
-     public DedicatedServer(File workDir)
+     public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
      {
-@@ -82,6 +83,7 @@
+@@ -89,6 +90,7 @@
          {
              public void run()
              {
@@ -16,7 +16,7 @@
                  BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in));
                  String s4;
  
-@@ -107,6 +109,8 @@
+@@ -114,6 +116,8 @@
              logger.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
@@ -25,23 +25,7 @@
          logger.info("Loading properties");
          this.settings = new PropertyManager(new File("server.properties"));
          this.eula = new ServerEula(new File("eula.txt"));
-@@ -198,6 +202,7 @@
-             }
-             else
-             {
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
-                 this.setConfigManager(new DedicatedPlayerList(this));
-                 long j = System.nanoTime();
- 
-@@ -244,6 +249,7 @@
-                 this.setBuildLimit((this.getBuildLimit() + 8) / 16 * 16);
-                 this.setBuildLimit(MathHelper.clamp_int(this.getBuildLimit(), 64, 256));
-                 this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
-+                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
-                 logger.info("Preparing level \"" + this.getFolderName() + "\"");
-                 this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
-                 long i1 = System.nanoTime() - j;
-@@ -272,7 +278,7 @@
+@@ -282,7 +286,7 @@
                      thread1.start();
                  }
  
@@ -50,11 +34,13 @@
              }
          }
      }
-@@ -621,4 +627,7 @@
-         this.commandManager.executeCommand(RConConsoleSource.getInstance(), command);
-         return RConConsoleSource.getInstance().getLogContents();
+@@ -580,6 +584,9 @@
+         return this.settings.getIntProperty("network-compression-threshold", super.getNetworkCompressionTreshold());
      }
-+
+ 
 +    //Forge: Enable formated text for colors in console.
 +    @Override public void addChatMessage(net.minecraft.util.IChatComponent message) { logger.info(message.getFormattedText()); }
- }
++
+     protected boolean convertFiles() throws IOException
+     {
+         boolean flag = false;

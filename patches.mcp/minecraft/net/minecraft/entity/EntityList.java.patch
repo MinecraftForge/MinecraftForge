@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -88,6 +88,7 @@
+@@ -91,6 +91,7 @@
  
      public static void addMapping(Class <? extends Entity > entityClass, String entityName, int id)
      {
@@ -8,9 +8,9 @@
          if (stringToClassMapping.containsKey(entityName))
          {
              throw new IllegalArgumentException("ID is already registered: " + entityName);
-@@ -151,9 +152,10 @@
-             nbt.removeTag("Type");
-         }
+@@ -148,9 +149,10 @@
+     {
+         Entity entity = null;
  
 +        Class <? extends Entity > oclass = null;
          try
@@ -20,7 +20,7 @@
  
              if (oclass != null)
              {
-@@ -167,7 +169,17 @@
+@@ -164,7 +166,17 @@
  
          if (entity != null)
          {
@@ -38,18 +38,8 @@
          }
          else
          {
-@@ -343,7 +355,9 @@
- 
-     public static class EntityEggInfo
-         {
-+            @Deprecated // This is not always a valid number in the global ID list.
-             public final int spawnedID;
-+            public final String name;
-             public final int primaryColor;
-             public final int secondaryColor;
-             public final StatBase field_151512_d;
-@@ -356,6 +370,17 @@
-                 this.secondaryColor = spotColor;
+@@ -362,6 +374,17 @@
+                 this.secondaryColor = p_i47076_3_;
                  this.field_151512_d = StatList.getStatKillEntity(this);
                  this.field_151513_e = StatList.getStatEntityKilledBy(this);
 +                this.name = EntityList.getStringFromID(id);

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -141,9 +141,9 @@
+@@ -110,9 +110,9 @@
              }
          }
  
@@ -13,7 +13,7 @@
          this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
  
          if (compound.hasKey("CustomName", 8))
-@@ -155,9 +155,9 @@
+@@ -124,9 +124,9 @@
      public void writeToNBT(NBTTagCompound compound)
      {
          super.writeToNBT(compound);
@@ -26,7 +26,7 @@
          NBTTagList nbttaglist = new NBTTagList();
  
          for (int i = 0; i < this.furnaceItemStacks.length; ++i)
-@@ -223,8 +223,7 @@
+@@ -192,8 +192,7 @@
  
                              if (this.furnaceItemStacks[1].stackSize == 0)
                              {
@@ -36,7 +36,7 @@
                              }
                          }
                      }
-@@ -279,7 +278,11 @@
+@@ -248,7 +247,11 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.instance().getSmeltingResult(this.furnaceItemStacks[0]);
@@ -49,7 +49,7 @@
          }
      }
  
-@@ -295,7 +298,7 @@
+@@ -264,7 +267,7 @@
              }
              else if (this.furnaceItemStacks[2].getItem() == itemstack.getItem())
              {
@@ -58,7 +58,7 @@
              }
  
              if (this.furnaceItemStacks[0].getItem() == Item.getItemFromBlock(Blocks.sponge) && this.furnaceItemStacks[0].getMetadata() == 1 && this.furnaceItemStacks[1] != null && this.furnaceItemStacks[1].getItem() == Items.bucket)
-@@ -342,7 +345,15 @@
+@@ -311,7 +314,15 @@
                  }
              }
  
@@ -75,7 +75,7 @@
          }
      }
  
-@@ -451,4 +462,21 @@
+@@ -432,4 +443,21 @@
              this.furnaceItemStacks[i] = null;
          }
      }

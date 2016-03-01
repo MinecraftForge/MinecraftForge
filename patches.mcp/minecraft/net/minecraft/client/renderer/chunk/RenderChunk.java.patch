@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -131,7 +131,9 @@
+@@ -133,7 +133,9 @@
                  return;
              }
  
@@ -11,7 +11,7 @@
              generator.setCompiledChunk(compiledchunk);
          }
          finally
-@@ -158,7 +160,7 @@
+@@ -160,7 +162,7 @@
                      lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
@@ -20,27 +20,16 @@
                  {
                      TileEntity tileentity = iblockaccess.getTileEntity(new BlockPos(blockpos$mutableblockpos));
                      TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.instance.<TileEntity>getSpecialRenderer(tileentity);
-@@ -174,7 +176,9 @@
-                     }
-                 }
+@@ -191,6 +193,7 @@
  
--                EnumWorldBlockLayer enumworldblocklayer1 = block.getBlockLayer();
-+                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
-+                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
-+                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
-                 int j = enumworldblocklayer1.ordinal();
- 
-                 if (block.getRenderType() != -1)
-@@ -189,6 +193,7 @@
- 
-                     aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, iblockaccess, worldrenderer);
+                     aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, iblockaccess, vertexbuffer);
                  }
 +                }
              }
  
-             for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
-@@ -385,6 +390,26 @@
-         return this.needsUpdate;
+             for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
+@@ -413,6 +416,26 @@
+         return this.needsUpdate && this.field_188284_q;
      }
  
 +    /* ======================================== FORGE START =====================================*/

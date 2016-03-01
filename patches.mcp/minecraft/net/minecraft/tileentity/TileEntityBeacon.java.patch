@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -169,7 +169,7 @@
+@@ -179,7 +179,7 @@
                      {
                          Block block = this.worldObj.getBlockState(new BlockPos(j1, i2, k1)).getBlock();
  
@@ -9,7 +9,7 @@
                          {
                              flag1 = false;
                              break;
-@@ -368,7 +368,7 @@
+@@ -371,7 +371,7 @@
  
      public boolean isItemValidForSlot(int index, ItemStack stack)
      {

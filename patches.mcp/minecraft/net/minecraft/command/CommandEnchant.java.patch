@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandEnchant.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandEnchant.java
-@@ -93,7 +93,7 @@
+@@ -85,7 +85,7 @@
                                  {
-                                     Enchantment enchantment2 = Enchantment.getEnchantmentById(l);
+                                     Enchantment enchantment1 = Enchantment.func_185262_c(k);
  
--                                    if (!enchantment2.canApplyTogether(enchantment1))
-+                                    if (!enchantment2.canApplyTogether(enchantment1) || !enchantment1.canApplyTogether(enchantment2)) //Forge BugFix: Let Both enchantments veto being together
+-                                    if (!enchantment.canApplyTogether(enchantment1))
++                                    if (!enchantment.canApplyTogether(enchantment1) || !enchantment1.canApplyTogether(enchantment)) //Forge BugFix: Let Both enchantments veto being together
                                      {
-                                         throw new CommandException("commands.enchant.cantCombine", new Object[] {enchantment1.getTranslatedName(j), enchantment2.getTranslatedName(nbttaglist.getCompoundTagAt(k).getShort("lvl"))});
+                                         throw new CommandException("commands.enchant.cantCombine", new Object[] {enchantment.getTranslatedName(i), enchantment1.getTranslatedName(nbttaglist.getCompoundTagAt(j).getShort("lvl"))});
                                      }

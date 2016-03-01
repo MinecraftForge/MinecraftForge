@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -246,7 +246,7 @@
+@@ -267,7 +267,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
          this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
@@ -9,8 +9,8 @@
          this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
          this.gameController.loadWorld(this.clientWorldController);
          this.gameController.thePlayer.dimension = packetIn.getDimension();
-@@ -750,14 +750,16 @@
-     public void handleChat(S02PacketChat packetIn)
+@@ -785,14 +785,16 @@
+     public void handleChat(SPacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
 +        net.minecraft.util.IChatComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(packetIn.getType(), packetIn.getChatComponent());
@@ -28,21 +28,9 @@
          }
      }
  
-@@ -808,6 +810,11 @@
-         float f = (float)(packetIn.getYaw() * 360) / 256.0F;
-         float f1 = (float)(packetIn.getPitch() * 360) / 256.0F;
-         EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.createEntityByID(packetIn.getEntityType(), this.gameController.theWorld);
-+        if (entitylivingbase == null)
-+        {
-+            net.minecraftforge.fml.common.FMLLog.info("Server attempted to spawn an unknown entity using ID: {0} at ({1}, {2}, {3}) Skipping!", packetIn.getEntityType(), d0, d1, d2);
-+            return;
-+        }
-         entitylivingbase.serverPosX = packetIn.getX();
-         entitylivingbase.serverPosY = packetIn.getY();
-         entitylivingbase.serverPosZ = packetIn.getZ();
-@@ -1133,6 +1140,10 @@
+@@ -1082,6 +1084,10 @@
              {
-                 tileentity.readFromNBT(packetIn.getNbtCompound());
+                 entityplayer.openContainer.putStackInSlot(packetIn.func_149173_d(), packetIn.func_149174_e());
              }
 +            else
 +            {
@@ -51,12 +39,3 @@
          }
      }
  
-@@ -1341,7 +1352,7 @@
- 
-         if (entity instanceof EntityLivingBase)
-         {
--            PotionEffect potioneffect = new PotionEffect(packetIn.getEffectId(), packetIn.getDuration(), packetIn.getAmplifier(), false, packetIn.func_179707_f());
-+            PotionEffect potioneffect = new PotionEffect(packetIn.getEffectId() & 0xff, packetIn.getDuration(), packetIn.getAmplifier(), false, packetIn.func_179707_f());
-             potioneffect.setPotionDurationMax(packetIn.func_149429_c());
-             ((EntityLivingBase)entity).addPotionEffect(potioneffect);
-         }

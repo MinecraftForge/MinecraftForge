@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -38,7 +38,7 @@
- 
-     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
-     {
--        return this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
-+        return super.canBlockStay(worldIn, pos, state);
-     }
- 
-     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-@@ -54,9 +54,11 @@
+@@ -58,9 +58,11 @@
          super.updateTick(worldIn, pos, state, rand);
      }
  
@@ -22,11 +13,10 @@
          {
              int i = 1;
  
-@@ -107,4 +109,24 @@
-     {
-         return new BlockState(this, new IProperty[] {AGE});
+@@ -106,6 +108,26 @@
+         return ((Integer)state.getValue(AGE)).intValue();
      }
-+
+ 
 +    @Override
 +    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
@@ -46,4 +36,7 @@
 +
 +        return ret;
 +    }
- }
++
+     protected BlockStateContainer createBlockState()
+     {
+         return new BlockStateContainer(this, new IProperty[] {AGE});

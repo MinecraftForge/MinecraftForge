@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
-@@ -295,6 +295,21 @@
-         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()).withProperty(POWERED, Boolean.valueOf(false)).withProperty(MODE, BlockRedstoneComparator.Mode.COMPARE);
+@@ -310,6 +310,21 @@
+         return this.getDefaultState().withProperty(field_185512_D, placer.getHorizontalFacing().getOpposite()).withProperty(POWERED, Boolean.valueOf(false)).withProperty(MODE, BlockRedstoneComparator.Mode.COMPARE);
      }
  
 +    @Override

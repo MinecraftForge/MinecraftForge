@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -121,6 +121,7 @@
+@@ -171,6 +171,7 @@
      public void setAttackTarget(EntityLivingBase entitylivingbaseIn)
      {
          this.attackTarget = entitylivingbaseIn;
@@ -8,7 +8,7 @@
      }
  
      public boolean canAttackClass(Class <? extends EntityLivingBase > cls)
-@@ -498,10 +499,22 @@
+@@ -699,10 +700,22 @@
  
      protected void despawnEntity()
      {
@@ -31,8 +31,8 @@
          else
          {
              Entity entity = this.worldObj.getClosestPlayerToEntity(this, -1.0D);
-@@ -621,7 +634,6 @@
-         return this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this) && this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox()).isEmpty() && !this.worldObj.isAnyLiquid(this.getEntityBoundingBox());
+@@ -835,7 +848,6 @@
+         return !this.worldObj.isAnyLiquid(this.getEntityBoundingBox()) && this.worldObj.func_184144_a(this, this.getEntityBoundingBox()).isEmpty() && this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this);
      }
  
 -    @SideOnly(Side.CLIENT)

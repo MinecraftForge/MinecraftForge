@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/audio/SoundManager.java
 +++ ../src-work/minecraft/net/minecraft/client/audio/SoundManager.java
-@@ -69,6 +69,7 @@
+@@ -76,6 +76,7 @@
          {
              SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
@@ -8,34 +8,11 @@
          }
          catch (SoundSystemException soundsystemexception)
          {
-@@ -80,6 +81,7 @@
-     {
+@@ -100,6 +101,7 @@
+ 
          this.unloadSoundSystem();
          this.loadSoundSystem();
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
      }
  
      private synchronized void loadSoundSystem()
-@@ -316,6 +318,9 @@
-             }
-             else
-             {
-+                sound = net.minecraftforge.client.ForgeHooksClient.playSound(this, sound);
-+                if (sound == null) return;
-+
-                 SoundEventAccessorComposite soundeventaccessorcomposite = this.sndHandler.getSound(sound.getSoundLocation());
- 
-                 if (soundeventaccessorcomposite == null)
-@@ -357,10 +362,12 @@
-                             if (soundpoolentry.isStreamingSound())
-                             {
-                                 this.sndSystem.newStreamingSource(false, s, getURLForSoundResource(resourcelocation), resourcelocation.toString(), flag, sound.getXPosF(), sound.getYPosF(), sound.getZPosF(), sound.getAttenuationType().getTypeInt(), f1);
-+                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, sound, s));
-                             }
-                             else
-                             {
-                                 this.sndSystem.newSource(false, s, getURLForSoundResource(resourcelocation), resourcelocation.toString(), flag, sound.getXPosF(), sound.getYPosF(), sound.getZPosF(), sound.getAttenuationType().getTypeInt(), f1);
-+                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, sound, s));
-                             }
- 
-                             logger.debug(LOG_MARKER, "Playing sound {} for event {} as channel {}", new Object[] {soundpoolentry.getSoundPoolEntryLocation(), soundeventaccessorcomposite.getSoundEventLocation(), s});

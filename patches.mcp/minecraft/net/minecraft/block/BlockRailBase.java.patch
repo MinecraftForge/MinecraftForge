@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
-@@ -31,7 +31,7 @@
+@@ -32,7 +32,7 @@
      public static boolean isRailBlock(IBlockState state)
      {
          Block block = state.getBlock();
@@ -9,7 +9,7 @@
      }
  
      protected BlockRailBase(boolean isPowered)
-@@ -175,6 +175,81 @@
+@@ -160,6 +160,81 @@
  
      public abstract IProperty<BlockRailBase.EnumRailDirection> getShapeProperty();
  
@@ -91,7 +91,7 @@
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -245,6 +320,7 @@
+@@ -230,6 +305,7 @@
          private IBlockState state;
          private final boolean isPowered;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
@@ -99,17 +99,7 @@
  
          public Rail(World worldIn, BlockPos pos, IBlockState state)
          {
-@@ -253,7 +329,8 @@
-             this.state = state;
-             this.block = (BlockRailBase)state.getBlock();
-             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(BlockRailBase.this.getShapeProperty());
--            this.isPowered = this.block.isPowered;
-+            this.isPowered = !this.block.isFlexibleRail(worldIn, pos);
-+            canMakeSlopes = this.block.canMakeSlopes(worldIn, pos);
-             this.func_180360_a(blockrailbase$enumraildirection);
-         }
- 
-@@ -439,7 +516,7 @@
+@@ -429,7 +505,7 @@
                  }
              }
  
@@ -118,7 +108,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
                  {
-@@ -452,7 +529,7 @@
+@@ -442,7 +518,7 @@
                  }
              }
  
@@ -127,7 +117,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos3.up()))
                  {
-@@ -595,7 +672,7 @@
+@@ -585,7 +661,7 @@
                  }
              }
  
@@ -136,7 +126,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
                  {
-@@ -608,7 +685,7 @@
+@@ -598,7 +674,7 @@
                  }
              }
  

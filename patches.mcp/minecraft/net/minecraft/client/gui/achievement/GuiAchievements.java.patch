@@ -11,30 +11,15 @@
      public GuiAchievements(GuiScreen parentScreenIn, StatFileWriter statFileWriterIn)
      {
          this.parentScreen = parentScreenIn;
-@@ -57,6 +61,14 @@
-         int j = 141;
-         this.field_146569_s = this.field_146567_u = this.field_146565_w = (double)(AchievementList.openInventory.displayColumn * 24 - i / 2 - 12);
-         this.field_146568_t = this.field_146566_v = this.field_146573_x = (double)(AchievementList.openInventory.displayRow * 24 - j / 2);
-+        minecraftAchievements.clear();
-+        for (Achievement achievement : AchievementList.achievementList)
-+        {
-+            if (!net.minecraftforge.common.AchievementPage.isAchievementInPages(achievement))
-+            {
-+                minecraftAchievements.add(achievement);
-+            }
-+        }
-     }
- 
-     public void initGui()
-@@ -64,6 +76,7 @@
-         this.mc.getNetHandler().addToSendQueue(new C16PacketClientStatus(C16PacketClientStatus.EnumState.REQUEST_STATS));
+@@ -64,6 +68,7 @@
+         this.mc.getNetHandler().addToSendQueue(new CPacketClientStatus(CPacketClientStatus.State.REQUEST_STATS));
          this.buttonList.clear();
          this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.format("gui.done", new Object[0])));
 +        this.buttonList.add(button = new GuiButton(2, (width - field_146555_f) / 2 + 24, height / 2 + 74, 125, 20, net.minecraftforge.common.AchievementPage.getTitle(currentPage)));
      }
  
      protected void actionPerformed(GuiButton button) throws IOException
-@@ -74,6 +87,16 @@
+@@ -74,6 +79,16 @@
              {
                  this.mc.displayGuiScreen(this.parentScreen);
              }
@@ -51,7 +36,7 @@
          }
      }
  
-@@ -257,7 +280,9 @@
+@@ -257,7 +272,9 @@
          GlStateManager.depthFunc(518);
          GlStateManager.pushMatrix();
          GlStateManager.translate((float)i1, (float)j1, -200.0F);
@@ -62,35 +47,7 @@
          GlStateManager.enableTexture2D();
          GlStateManager.disableLighting();
          GlStateManager.enableRescaleNormal();
-@@ -331,11 +356,12 @@
-         GlStateManager.depthFunc(515);
-         this.mc.getTextureManager().bindTexture(ACHIEVEMENT_BACKGROUND);
- 
--        for (int j5 = 0; j5 < AchievementList.achievementList.size(); ++j5)
-+        java.util.List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : net.minecraftforge.common.AchievementPage.getAchievementPage(currentPage).getAchievements());
-+        for (int j5 = 0; j5 < achievementList.size(); ++j5)
-         {
--            Achievement achievement1 = (Achievement)AchievementList.achievementList.get(j5);
-+            Achievement achievement1 = achievementList.get(j5);
- 
--            if (achievement1.parentAchievement != null)
-+            if (achievement1.parentAchievement != null && achievementList.contains(achievement1.parentAchievement))
-             {
-                 int k5 = achievement1.displayColumn * 24 - i + 11;
-                 int l5 = achievement1.displayRow * 24 - j + 11;
-@@ -389,9 +415,9 @@
-         GlStateManager.enableRescaleNormal();
-         GlStateManager.enableColorMaterial();
- 
--        for (int i6 = 0; i6 < AchievementList.achievementList.size(); ++i6)
-+        for (int i6 = 0; i6 < achievementList.size(); ++i6)
-         {
--            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(i6);
-+            Achievement achievement2 = achievementList.get(i6);
-             int l6 = achievement2.displayColumn * 24 - i;
-             int j7 = achievement2.displayRow * 24 - j;
- 
-@@ -432,6 +458,7 @@
+@@ -432,6 +449,7 @@
  
                  this.mc.getTextureManager().bindTexture(ACHIEVEMENT_BACKGROUND);
  
@@ -98,7 +55,7 @@
                  if (achievement2.getSpecial())
                  {
                      this.drawTexturedModalRect(l6 - 2, j7 - 2, 26, 202, 26, 26);
-@@ -440,6 +467,7 @@
+@@ -440,6 +458,7 @@
                  {
                      this.drawTexturedModalRect(l6 - 2, j7 - 2, 0, 202, 26, 26);
                  }
@@ -106,7 +63,7 @@
  
                  if (!this.statFileWriter.canUnlockAchievement(achievement2))
                  {
-@@ -448,7 +476,7 @@
+@@ -448,7 +467,7 @@
                      this.itemRender.func_175039_a(false);
                  }
  
@@ -114,4 +71,4 @@
 +                GlStateManager.disableLighting(); //Forge: Make sure Lighting is disabled. Fixes MC-33065
                  GlStateManager.enableCull();
                  this.itemRender.renderItemAndEffectIntoGUI(achievement2.theItemStack, l6 + 3, j7 + 3);
-                 GlStateManager.blendFunc(770, 771);
+                 GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

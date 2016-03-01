@@ -1,33 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -111,6 +111,12 @@
-             }
-         }
- 
-+        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
-+        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, pos, mc.thePlayer))
-+        {
-+            return false;
-+        }
-+
-         if (this.currentGameType.isCreative() && this.mc.thePlayer.getHeldItem() != null && this.mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)
-         {
-             return false;
-@@ -128,13 +134,7 @@
-             else
-             {
-                 world.playAuxSFX(2001, pos, Block.getStateId(iblockstate));
--                boolean flag = world.setBlockToAir(pos);
- 
--                if (flag)
--                {
--                    block1.onBlockDestroyedByPlayer(world, pos, iblockstate);
--                }
--
-                 this.currentBlock = new BlockPos(this.currentBlock.getX(), -1, this.currentBlock.getZ());
- 
-                 if (!this.currentGameType.isCreative())
-@@ -152,6 +152,12 @@
+@@ -167,6 +167,12 @@
                      }
                  }
  
@@ -40,48 +13,3 @@
                  return flag;
              }
          }
-@@ -356,11 +362,19 @@
-         {
-             if (this.currentGameType != WorldSettings.GameType.SPECTATOR)
-             {
-+
-+                if (heldStack != null &&
-+                    heldStack.getItem() != null &&
-+                    heldStack.getItem().onItemUseFirst(heldStack, player, worldIn, hitPos, side, f, f1, f2))
-+                {
-+                    return true;
-+                }
-+
-                 IBlockState iblockstate = worldIn.getBlockState(hitPos);
- 
--                if ((!player.isSneaking() || player.getHeldItem() == null) && iblockstate.getBlock().onBlockActivated(worldIn, hitPos, iblockstate, player, side, f, f1, f2))
-+                if ((!player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem().doesSneakBypassUse(worldIn, hitPos, player)))
-                 {
--                    flag = true;
-+                    flag = iblockstate.getBlock().onBlockActivated(worldIn, hitPos, iblockstate, player, side, f, f1, f2);
-                 }
- 
-                 if (!flag && heldStack != null && heldStack.getItem() instanceof ItemBlock)
-@@ -393,7 +407,9 @@
-                 }
-                 else
-                 {
--                    return heldStack.onItemUse(player, worldIn, hitPos, side, f, f1, f2);
-+                    if (!heldStack.onItemUse(player, worldIn, hitPos, side, f, f1, f2)) return false;
-+                    if (heldStack.stackSize <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, heldStack);
-+                    return true;
-                 }
-             }
-             else
-@@ -420,9 +436,10 @@
-             {
-                 playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = itemstack;
- 
--                if (itemstack.stackSize == 0)
-+                if (itemstack.stackSize <= 0)
-                 {
-                     playerIn.inventory.mainInventory[playerIn.inventory.currentItem] = null;
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(playerIn, itemstack);
-                 }
- 
-                 return true;

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -175,8 +175,11 @@
+@@ -176,8 +176,11 @@
          GlStateManager.translate(0.0F, 0.0F, 32.0F);
          this.zLevel = 200.0F;
          this.itemRender.zLevel = 200.0F;
@@ -13,9 +13,9 @@
          this.zLevel = 0.0F;
          this.itemRender.zLevel = 0.0F;
      }
-@@ -239,13 +242,12 @@
+@@ -240,13 +243,12 @@
  
-         if (itemstack == null)
+         if (itemstack == null && slotIn.canBeHovered())
          {
 -            String s1 = slotIn.getSlotTexture();
 +            TextureAtlasSprite textureatlassprite = slotIn.getBackgroundSprite();
@@ -30,7 +30,7 @@
                  this.drawTexturedModalRect(i, j, textureatlassprite, 16, 16);
                  GlStateManager.enableLighting();
                  flag1 = true;
-@@ -326,6 +328,7 @@
+@@ -327,6 +329,7 @@
              int j = this.guiLeft;
              int k = this.guiTop;
              boolean flag1 = mouseX < j || mouseY < k || mouseX >= j + this.xSize || mouseY >= k + this.ySize;
@@ -38,7 +38,7 @@
              int l = -1;
  
              if (slot != null)
-@@ -463,10 +466,12 @@
+@@ -464,10 +467,12 @@
  
      protected void mouseReleased(int mouseX, int mouseY, int state)
      {
@@ -51,7 +51,7 @@
          int k = -1;
  
          if (slot != null)
-@@ -685,4 +690,16 @@
+@@ -686,4 +691,16 @@
              this.mc.thePlayer.closeScreen();
          }
      }

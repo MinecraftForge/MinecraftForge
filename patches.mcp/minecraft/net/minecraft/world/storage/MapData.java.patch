@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
-@@ -21,7 +21,7 @@
- {
-     public int xCenter;
-     public int zCenter;
--    public byte dimension;
-+    public int dimension; //FML byte -> int
-     public byte scale;
-     public byte[] colors = new byte[16384];
-     public List<MapData.MapInfo> playersArrayList = Lists.<MapData.MapInfo>newArrayList();
-@@ -44,7 +44,17 @@
+@@ -45,7 +45,17 @@
  
      public void readFromNBT(NBTTagCompound nbt)
      {
@@ -28,7 +19,7 @@
          this.xCenter = nbt.getInteger("xCenter");
          this.zCenter = nbt.getInteger("zCenter");
          this.scale = nbt.getByte("scale");
-@@ -85,7 +95,7 @@
+@@ -96,7 +106,7 @@
  
      public void writeToNBT(NBTTagCompound nbt)
      {
@@ -37,7 +28,7 @@
          nbt.setInteger("xCenter", this.xCenter);
          nbt.setInteger("zCenter", this.zCenter);
          nbt.setByte("scale", this.scale);
-@@ -164,7 +174,7 @@
+@@ -176,7 +186,7 @@
              rotation = rotation + (rotation < 0.0D ? -8.0D : 8.0D);
              b2 = (byte)((int)(rotation * 16.0D / 360.0D));
  

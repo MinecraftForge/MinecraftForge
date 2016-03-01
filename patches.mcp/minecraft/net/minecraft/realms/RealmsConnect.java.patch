@@ -8,12 +8,3 @@
                      inetaddress = InetAddress.getByName(p_connect_1_);
  
                      if (RealmsConnect.this.aborted)
-@@ -59,7 +60,7 @@
-                         return;
-                     }
- 
--                    RealmsConnect.this.connection.sendPacket(new C00Handshake(47, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN));
-+                    RealmsConnect.this.connection.sendPacket(new C00Handshake(47, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN, true));
- 
-                     if (RealmsConnect.this.aborted)
-                     {

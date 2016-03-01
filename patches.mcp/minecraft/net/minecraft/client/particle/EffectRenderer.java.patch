@@ -1,23 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/particle/EffectRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/particle/EffectRenderer.java
-@@ -133,6 +133,7 @@
- 
-     public void addEffect(EntityFX effect)
-     {
-+        if (effect == null) return; //Forge: Prevent modders from being bad and adding nulls causing untraceable NPEs.
-         int i = effect.getFXLayer();
-         int j = effect.getAlpha() != 1.0F ? 0 : 1;
- 
-@@ -351,7 +352,7 @@
- 
-     public void addBlockDestroyEffects(BlockPos pos, IBlockState state)
-     {
--        if (state.getBlock().getMaterial() != Material.air)
-+        if (!state.getBlock().isAir(worldObj, pos) && !state.getBlock().addDestroyEffects(worldObj, pos, this))
-         {
-             state = state.getBlock().getActualState(state, this.worldObj, pos);
-             int i = 4;
-@@ -457,4 +458,13 @@
+@@ -460,4 +460,13 @@
  
          return "" + i;
      }

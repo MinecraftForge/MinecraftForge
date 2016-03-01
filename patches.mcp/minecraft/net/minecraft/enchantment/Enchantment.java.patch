@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -61,7 +61,7 @@
- 
-         if (enchantmentsList[enchID] != null)
-         {
--            throw new IllegalArgumentException("Duplicate enchantment id!");
-+            throw new IllegalArgumentException("Duplicate enchantment id! " + this.getClass() + " and " + enchantmentsList[enchID].getClass() + " Enchantment ID:" + enchID);
-         }
-         else
-         {
-@@ -139,7 +139,7 @@
+@@ -118,7 +118,7 @@
  
      public boolean canApply(ItemStack stack)
      {
@@ -18,49 +9,3 @@
      }
  
      public void onEntityDamaged(EntityLivingBase user, Entity target, int level)
-@@ -150,6 +150,45 @@
-     {
-     }
- 
-+    /**
-+     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
-+     * applies for <i>all possible</i> enchantments.
-+     * @param stack
-+     * @return
-+     */
-+    public boolean canApplyAtEnchantingTable(ItemStack stack)
-+    {
-+        return this.type.canEnchantItem(stack.getItem());
-+    }
-+
-+    private static final java.lang.reflect.Field bookSetter = Enchantment.class.getDeclaredFields()[1];
-+    /**
-+     * Add to the list of enchantments applicable by the anvil from a book
-+     *
-+     * @param enchantment
-+     */
-+    public static void addToBookList(Enchantment enchantment)
-+    {
-+        try
-+        {
-+            net.minecraftforge.common.util.EnumHelper.setFailsafeFieldValue(bookSetter, null,
-+                com.google.common.collect.ObjectArrays.concat(enchantmentsBookList, enchantment));
-+        }
-+        catch (Exception e)
-+        {
-+            throw new RuntimeException(e); //Rethrow see what happens
-+        }
-+    }
-+
-+    /**
-+     * Is this enchantment allowed to be enchanted on books via Enchantment Table
-+     * @return false to disable the vanilla feature
-+     */
-+    public boolean isAllowedOnBooks()
-+    {
-+        return true;
-+    }
-+
-     static
-     {
-         List<Enchantment> list = Lists.<Enchantment>newArrayList();

@@ -1,29 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntitySheep.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySheep.java
-@@ -35,7 +35,7 @@
+@@ -42,7 +42,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class EntitySheep extends EntityAnimal
 +public class EntitySheep extends EntityAnimal implements net.minecraftforge.common.IShearable
  {
+     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
      private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new Container()
-     {
-@@ -140,11 +140,12 @@
-         }
-     }
- 
-+    @SuppressWarnings("unused")
-     public boolean interact(EntityPlayer player)
-     {
-         ItemStack itemstack = player.inventory.getCurrentItem();
- 
--        if (itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild())
-+        if (false && itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild()) //Forge: Moved to onSheared
-         {
-             if (!this.worldObj.isRemote)
-             {
-@@ -327,4 +328,19 @@
+@@ -356,4 +356,19 @@
          DYE_TO_RGB.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
          DYE_TO_RGB.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
      }

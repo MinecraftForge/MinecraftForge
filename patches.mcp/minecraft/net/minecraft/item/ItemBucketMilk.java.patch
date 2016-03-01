@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -23,7 +23,7 @@
+@@ -27,7 +27,7 @@
  
          if (!worldIn.isRemote)
          {
@@ -8,4 +8,4 @@
 +            playerIn.curePotionEffects(stack);
          }
  
-         playerIn.triggerAchievement(StatList.objectUseStats[Item.getIdFromItem(this)]);
+         if (playerIn instanceof EntityPlayer)

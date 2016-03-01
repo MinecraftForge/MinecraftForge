@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
-@@ -58,34 +58,40 @@
+@@ -59,34 +59,40 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
@@ -48,4 +48,4 @@
 +        return 0;
      }
  
-     public int getDamageValue(World worldIn, BlockPos pos)
+     public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)

@@ -1,34 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -37,7 +37,7 @@
-             if (list.size() > 0)
-             {
-                 EntityLivingBase entitylivingbase = (EntityLivingBase)list.get(0);
--                int l = entitylivingbase instanceof EntityPlayer ? 1 : 0;
-+                int l = 0;// Forge: We fix the indexes. Mojang Stop hard coding this!
-                 int i1 = EntityLiving.getArmorPosition(stack);
-                 ItemStack itemstack = stack.copy();
-                 itemstack.stackSize = 1;
-@@ -190,7 +190,7 @@
- 
-         if (itemstack == null)
-         {
--            playerIn.setCurrentItemOrArmor(i, itemStackIn.copy());
-+            playerIn.setCurrentItemOrArmor(i + 1, itemStackIn.copy()); //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
-             itemStackIn.stackSize = 0;
-         }
- 
-@@ -210,6 +210,9 @@
-         private final int[] damageReductionAmountArray;
-         private final int enchantability;
- 
-+        //Added by forge for custom Armor materials.
-+        public Item customCraftingMaterial = null;
-+
-         private ArmorMaterial(String name, int maxDamage, int[] reductionAmounts, int enchantability)
-         {
-             this.name = name;
-@@ -235,7 +238,15 @@
+@@ -267,7 +267,15 @@
  
          public Item getRepairItem()
          {

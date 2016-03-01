@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -79,7 +79,7 @@
-     {
-         IBlockState iblockstate = worldIn.getBlockState(pos.down());
-         Block block = iblockstate.getBlock();
--        return block != Blocks.ice && block != Blocks.packed_ice ? (block.getMaterial() == Material.leaves ? true : (block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() >= 7 ? true : block.isOpaqueCube() && block.blockMaterial.blocksMovement())) : false;
-+        return block != Blocks.ice && block != Blocks.packed_ice ? (block.isLeaves(worldIn, pos.down()) ? true : (block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() >= 7 ? true : block.isOpaqueCube() && block.blockMaterial.blocksMovement())) : false;
-     }
- 
-     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
-@@ -91,7 +91,6 @@
+@@ -85,7 +85,6 @@
      {
          if (!this.canPlaceBlockAt(worldIn, pos))
          {
@@ -17,18 +8,7 @@
              worldIn.setBlockToAir(pos);
              return false;
          }
-@@ -103,9 +102,8 @@
- 
-     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
-     {
--        spawnAsEntity(worldIn, pos, new ItemStack(Items.snowball, ((Integer)state.getValue(LAYERS)).intValue() + 1, 0));
-+        super.harvestBlock(worldIn, player, pos, state, te);
-         worldIn.setBlockToAir(pos);
--        player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
-     }
- 
-     public Item getItemDropped(IBlockState state, Random rand, int fortune)
-@@ -115,14 +113,13 @@
+@@ -109,14 +108,13 @@
  
      public int quantityDropped(Random random)
      {
@@ -44,10 +24,12 @@
              worldIn.setBlockToAir(pos);
          }
      }
-@@ -152,4 +149,6 @@
-     {
-         return new BlockState(this, new IProperty[] {LAYERS});
+@@ -150,6 +148,8 @@
+         return ((Integer)state.getValue(LAYERS)).intValue() - 1;
      }
-+
+ 
 +    @Override public int quantityDropped(IBlockState state, int fortune, Random random){ return ((Integer)state.getValue(LAYERS)) + 1; }
- }
++
+     protected BlockStateContainer createBlockState()
+     {
+         return new BlockStateContainer(this, new IProperty[] {LAYERS});

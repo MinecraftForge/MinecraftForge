@@ -1,20 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -123,12 +123,11 @@
-                         if (j3 == 1)
-                         {
-                             worldIn.setBlockState(blockpos2, Blocks.chest.correctFacing(worldIn, blockpos2, Blocks.chest.getDefaultState()), 2);
--                            List<WeightedRandomChestContent> list = WeightedRandomChestContent.func_177629_a(CHESTCONTENT, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(rand)});
-                             TileEntity tileentity1 = worldIn.getTileEntity(blockpos2);
- 
-                             if (tileentity1 instanceof TileEntityChest)
-                             {
--                                WeightedRandomChestContent.generateChestContents(rand, list, (TileEntityChest)tileentity1, 8);
-+                                WeightedRandomChestContent.generateChestContents(rand, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, rand), (TileEntityChest)tileentity1, 8);
-                             }
- 
-                             break;
-@@ -159,6 +158,12 @@
+@@ -154,6 +154,12 @@
  
      private String pickMobSpawner(Random p_76543_1_)
      {

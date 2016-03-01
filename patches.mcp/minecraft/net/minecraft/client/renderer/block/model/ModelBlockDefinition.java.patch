@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
-@@ -29,7 +29,7 @@
+@@ -31,7 +31,7 @@
  
      public static ModelBlockDefinition parseFromReader(Reader p_178331_0_)
      {
@@ -8,22 +8,4 @@
 +        return net.minecraftforge.client.model.BlockStateLoader.load(p_178331_0_, GSON);
      }
  
-     public ModelBlockDefinition(Collection<ModelBlockDefinition.Variants> p_i46221_1_)
-@@ -155,11 +155,17 @@
-                 return this.modelLocation;
-             }
- 
-+            @Deprecated
-             public ModelRotation getRotation()
-             {
-                 return this.modelRotation;
-             }
- 
-+            public net.minecraftforge.client.model.IModelState getState()
-+            {
-+                return this.modelRotation;
-+            }
-+
-             public boolean isUvLocked()
-             {
-                 return this.uvLock;
+     public ModelBlockDefinition(Map<String, VariantList> p_i46572_1_, Multipart p_i46572_2_)

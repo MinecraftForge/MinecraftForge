@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
-@@ -91,12 +91,16 @@
+@@ -92,12 +92,16 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);

@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src-work/minecraft/net/minecraft/world/Explosion.java
-@@ -38,6 +38,7 @@
-     private final float explosionSize;
-     private final List<BlockPos> affectedBlockPositions;
-     private final Map<EntityPlayer, Vec3> playerKnockbackMap;
-+    private final Vec3 position;
- 
-     @SideOnly(Side.CLIENT)
-     public Explosion(World worldIn, Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_)
-@@ -65,6 +66,7 @@
+@@ -67,6 +67,7 @@
          this.explosionZ = p_i45754_7_;
          this.isFlaming = p_i45754_10_;
          this.isSmoking = p_i45754_11_;
@@ -16,24 +8,16 @@
      }
  
      public void doExplosionA()
-@@ -99,7 +101,7 @@
+@@ -101,7 +102,7 @@
  
-                             if (iblockstate.getBlock().getMaterial() != Material.air)
+                             if (iblockstate.func_185904_a() != Material.air)
                              {
 -                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance((Entity)null);
 +                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(worldObj, blockpos, (Entity)null, this);
                                  f -= (f2 + 0.3F) * 0.3F;
                              }
  
-@@ -126,6 +128,7 @@
-         int j2 = MathHelper.floor_double(this.explosionZ - (double)f3 - 1.0D);
-         int j1 = MathHelper.floor_double(this.explosionZ + (double)f3 + 1.0D);
-         List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
-+        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, f3);
-         Vec3 vec3 = new Vec3(this.explosionX, this.explosionY, this.explosionZ);
- 
-         for (int k2 = 0; k2 < list.size(); ++k2)
-@@ -213,8 +216,7 @@
+@@ -227,8 +228,7 @@
                          block.dropBlockAsItemWithChance(this.worldObj, blockpos, this.worldObj.getBlockState(blockpos), 1.0F / this.explosionSize, 0);
                      }
  
@@ -43,7 +27,7 @@
                  }
              }
          }
-@@ -250,4 +252,6 @@
+@@ -264,4 +264,6 @@
      {
          return this.affectedBlockPositions;
      }

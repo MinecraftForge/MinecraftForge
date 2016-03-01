@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureMineshaftPieces.java
-@@ -32,6 +32,12 @@
+@@ -31,6 +31,12 @@
          MapGenStructureIO.registerStructureComponent(StructureMineshaftPieces.Stairs.class, "MSStairs");
      }
  
@@ -13,21 +13,3 @@
      private static StructureComponent func_175892_a(List<StructureComponent> listIn, Random rand, int x, int y, int z, EnumFacing facing, int type)
      {
          int i = rand.nextInt(100);
-@@ -351,14 +357,15 @@
-                         this.randomlyPlaceBlock(worldIn, structureBoundingBoxIn, randomIn, 0.05F, 1, 2, k1 - 1, Blocks.torch.getStateFromMeta(EnumFacing.UP.getIndex()));
-                         this.randomlyPlaceBlock(worldIn, structureBoundingBoxIn, randomIn, 0.05F, 1, 2, k1 + 1, Blocks.torch.getStateFromMeta(EnumFacing.UP.getIndex()));
- 
-+                        net.minecraftforge.common.ChestGenHooks info = net.minecraftforge.common.ChestGenHooks.getInfo(net.minecraftforge.common.ChestGenHooks.MINESHAFT_CORRIDOR);
-                         if (randomIn.nextInt(100) == 0)
-                         {
--                            this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 2, 0, k1 - 1, WeightedRandomChestContent.func_177629_a(StructureMineshaftPieces.CHEST_CONTENT_WEIGHT_LIST, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 3 + randomIn.nextInt(4));
-+                            this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 2, 0, k1 - 1, info.getItems(randomIn), info.getCount(randomIn));
-                         }
- 
-                         if (randomIn.nextInt(100) == 0)
-                         {
--                            this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 0, 0, k1 + 1, WeightedRandomChestContent.func_177629_a(StructureMineshaftPieces.CHEST_CONTENT_WEIGHT_LIST, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 3 + randomIn.nextInt(4));
-+                            this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 0, 0, k1 + 1, info.getItems(randomIn), info.getCount(randomIn));
-                         }
- 
-                         if (this.hasSpiders && !this.spawnerPlaced)

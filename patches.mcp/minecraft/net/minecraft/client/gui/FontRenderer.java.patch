@@ -17,25 +17,7 @@
      }
  
      private void readFontTexture()
-@@ -105,7 +106,7 @@
- 
-         try
-         {
--            bufferedimage = TextureUtil.readBufferedImage(Minecraft.getMinecraft().getResourceManager().getResource(this.locationFontTexture).getInputStream());
-+            bufferedimage = TextureUtil.readBufferedImage(getResourceInputStream(this.locationFontTexture));
-         }
-         catch (IOException ioexception)
-         {
-@@ -165,7 +166,7 @@
- 
-         try
-         {
--            inputstream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("font/glyph_sizes.bin")).getInputStream();
-+            inputstream = getResourceInputStream(new ResourceLocation("font/glyph_sizes.bin"));
-             inputstream.read(this.glyphWidth);
-         }
-         catch (IOException ioexception)
-@@ -196,7 +197,7 @@
+@@ -202,7 +203,7 @@
          int i = ch % 16 * 8;
          int j = ch / 16 * 8;
          int k = italic ? 1 : 0;
@@ -43,8 +25,8 @@
 +        bindTexture(this.locationFontTexture);
          int l = this.charWidth[ch];
          float f = (float)l - 0.01F;
-         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-@@ -224,7 +225,7 @@
+         GlStateManager.func_187447_r(5);
+@@ -230,7 +231,7 @@
  
      private void loadGlyphTexture(int page)
      {
@@ -53,7 +35,7 @@
      }
  
      protected float renderUnicodeChar(char ch, boolean italic)
-@@ -271,7 +272,7 @@
+@@ -279,7 +280,7 @@
  
      public int drawString(String text, float x, float y, int color, boolean dropShadow)
      {
@@ -62,7 +44,7 @@
          this.resetStyles();
          int i;
  
-@@ -341,7 +342,7 @@
+@@ -349,7 +350,7 @@
  
                      int j1 = this.colorCode[i1];
                      this.textColor = j1;
@@ -71,7 +53,7 @@
                  }
                  else if (i1 == 16)
                  {
-@@ -370,7 +371,7 @@
+@@ -378,7 +379,7 @@
                      this.strikethroughStyle = false;
                      this.underlineStyle = false;
                      this.italicStyle = false;
@@ -80,7 +62,7 @@
                  }
  
                  ++i;
-@@ -398,7 +399,7 @@
+@@ -406,7 +407,7 @@
                      c0 = c1;
                  }
  
@@ -89,7 +71,7 @@
                  boolean flag = (c0 == 0 || j == -1 || this.unicodeFlag) && shadow;
  
                  if (flag)
-@@ -436,7 +437,16 @@
+@@ -444,7 +445,16 @@
  
                      ++f;
                  }
@@ -106,7 +88,7 @@
                  if (this.strikethroughStyle)
                  {
                      Tessellator tessellator = Tessellator.getInstance();
-@@ -509,7 +519,7 @@
+@@ -517,7 +527,7 @@
              this.blue = (float)(color >> 8 & 255) / 255.0F;
              this.green = (float)(color & 255) / 255.0F;
              this.alpha = (float)(color >> 24 & 255) / 255.0F;
@@ -115,19 +97,7 @@
              this.posX = x;
              this.posY = y;
              this.renderStringAtPos(text, dropShadow);
-@@ -588,11 +598,6 @@
-                 int j = this.glyphWidth[character] >>> 4;
-                 int k = this.glyphWidth[character] & 15;
- 
--                if (k > 7)
--                {
--                    k = 15;
--                    j = 0;
--                }
- 
-                 ++k;
-                 return (k - j) / 2 + 1;
-@@ -846,6 +851,26 @@
+@@ -848,6 +858,26 @@
          return this.bidiFlag;
      }
  
@@ -153,4 +123,4 @@
 +
      public int getColorCode(char character)
      {
-         return this.colorCode["0123456789abcdef".indexOf(character)];
+         int i = "0123456789abcdef".indexOf(character);

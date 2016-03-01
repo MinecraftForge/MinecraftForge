@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
-@@ -205,6 +205,8 @@
-                     }
-                 }
- 
-+                WorldType.worldTypes[this.selectedIndex].onGUICreateWorldPress();
-+
-                 WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.getByName(this.gameMode);
-                 WorldSettings worldsettings = new WorldSettings(i, worldsettings$gametype, this.field_146341_s, this.field_146337_w, WorldType.worldTypes[this.selectedIndex]);
-                 worldsettings.setWorldName(this.chunkProviderSettingsJson);
-@@ -312,14 +314,7 @@
+@@ -311,14 +311,7 @@
              }
              else if (button.id == 8)
              {
@@ -25,7 +16,7 @@
              }
          }
      }
-@@ -371,7 +366,7 @@
+@@ -370,7 +363,7 @@
              this.btnBonusItems.visible = this.field_146344_y;
              this.btnMapType.visible = this.field_146344_y;
              this.btnAllowCommands.visible = this.field_146344_y;

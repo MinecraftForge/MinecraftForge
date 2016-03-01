@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -94,7 +94,7 @@
+@@ -91,7 +91,7 @@
                      pos = pos.offset(EnumFacing.Plane.HORIZONTAL.random(rand));
                      Block block = worldIn.getBlockState(pos.down()).getBlock();
  
@@ -9,7 +9,7 @@
                      {
                          worldIn.setBlockState(pos, this.crop.getDefaultState());
                      }
-@@ -148,8 +148,12 @@
+@@ -109,8 +109,12 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
@@ -23,7 +23,7 @@
          {
              Item item = this.getSeedItem();
  
-@@ -159,13 +163,14 @@
+@@ -120,13 +124,14 @@
  
                  for (int j = 0; j < 3; ++j)
                  {

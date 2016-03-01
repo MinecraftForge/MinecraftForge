@@ -1,34 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFire.java
-@@ -41,18 +41,24 @@
-         int j = pos.getY();
-         int k = pos.getZ();
- 
--        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down()))
-+        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down(), EnumFacing.UP))
-         {
-             boolean flag = (i + j + k & 1) == 1;
-             boolean flag1 = (i / 2 + j / 2 + k / 2 & 1) == 1;
-             int l = 0;
- 
--            if (this.canCatchFire(worldIn, pos.up()))
-+            if (this.canCatchFire(worldIn, pos.up(), EnumFacing.DOWN))
-             {
-                 l = flag ? 1 : 2;
-             }
- 
--            return state.withProperty(NORTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.north()))).withProperty(EAST, Boolean.valueOf(this.canCatchFire(worldIn, pos.east()))).withProperty(SOUTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.south()))).withProperty(WEST, Boolean.valueOf(this.canCatchFire(worldIn, pos.west()))).withProperty(UPPER, Integer.valueOf(l)).withProperty(FLIP, Boolean.valueOf(flag1)).withProperty(ALT, Boolean.valueOf(flag));
-+            return state.withProperty(NORTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.north(), EnumFacing.SOUTH)))
-+                        .withProperty(EAST, Boolean.valueOf(this.canCatchFire(worldIn, pos.east(),  EnumFacing.EAST )))
-+                        .withProperty(SOUTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.south(), EnumFacing.NORTH)))
-+                        .withProperty(WEST, Boolean.valueOf(this.canCatchFire(worldIn, pos.west(),  EnumFacing.EAST )))
-+                        .withProperty(UPPER, Integer.valueOf(l))
-+                        .withProperty(FLIP, Boolean.valueOf(flag1))
-+                        .withProperty(ALT, Boolean.valueOf(flag));
-         }
-         else
-         {
-@@ -108,6 +114,7 @@
+@@ -90,6 +90,7 @@
  
      public void setFireInfo(Block blockIn, int encouragement, int flammability)
      {
@@ -36,22 +8,7 @@
          this.encouragements.put(blockIn, Integer.valueOf(encouragement));
          this.flammabilities.put(blockIn, Integer.valueOf(flammability));
      }
-@@ -147,13 +154,8 @@
-             }
- 
-             Block block = worldIn.getBlockState(pos.down()).getBlock();
--            boolean flag = block == Blocks.netherrack;
-+            boolean flag = block.isFireSource(worldIn, pos.down(), EnumFacing.UP);
- 
--            if (worldIn.provider instanceof WorldProviderEnd && block == Blocks.bedrock)
--            {
--                flag = true;
--            }
--
-             if (!flag && worldIn.isRaining() && this.canDie(worldIn, pos))
-             {
-                 worldIn.setBlockToAir(pos);
-@@ -182,7 +184,7 @@
+@@ -164,7 +165,7 @@
                          return;
                      }
  
@@ -60,7 +17,7 @@
                      {
                          worldIn.setBlockToAir(pos);
                          return;
-@@ -197,12 +199,12 @@
+@@ -179,12 +180,12 @@
                      j = -50;
                  }
  
@@ -79,7 +36,7 @@
  
                  for (int k = -1; k <= 1; ++k)
                  {
-@@ -261,22 +263,30 @@
+@@ -243,22 +244,30 @@
          return false;
      }
  
@@ -111,7 +68,7 @@
          if (random.nextInt(chance) < i)
          {
              IBlockState iblockstate = worldIn.getBlockState(pos);
-@@ -308,7 +318,7 @@
+@@ -290,7 +299,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
@@ -120,7 +77,7 @@
              {
                  return true;
              }
-@@ -329,7 +339,7 @@
+@@ -311,7 +320,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.values())
              {
@@ -129,7 +86,7 @@
              }
  
              return i;
-@@ -341,9 +351,10 @@
+@@ -323,9 +332,10 @@
          return false;
      }
  
@@ -141,57 +98,9 @@
      }
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
-@@ -382,9 +393,9 @@
-             worldIn.playSound((double)((float)pos.getX() + 0.5F), (double)((float)pos.getY() + 0.5F), (double)((float)pos.getZ() + 0.5F), "fire.fire", 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F, false);
-         }
- 
--        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down()))
-+        if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()) && !Blocks.fire.canCatchFire(worldIn, pos.down(), EnumFacing.UP))
-         {
--            if (Blocks.fire.canCatchFire(worldIn, pos.west()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.west(), EnumFacing.EAST))
-             {
-                 for (int j = 0; j < 2; ++j)
-                 {
-@@ -395,7 +406,7 @@
-                 }
-             }
- 
--            if (Blocks.fire.canCatchFire(worldIn, pos.east()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.east(), EnumFacing.WEST))
-             {
-                 for (int k = 0; k < 2; ++k)
-                 {
-@@ -406,7 +417,7 @@
-                 }
-             }
- 
--            if (Blocks.fire.canCatchFire(worldIn, pos.north()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.north(), EnumFacing.SOUTH))
-             {
-                 for (int l = 0; l < 2; ++l)
-                 {
-@@ -417,7 +428,7 @@
-                 }
-             }
- 
--            if (Blocks.fire.canCatchFire(worldIn, pos.south()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.south(), EnumFacing.NORTH))
-             {
-                 for (int i1 = 0; i1 < 2; ++i1)
-                 {
-@@ -428,7 +439,7 @@
-                 }
-             }
- 
--            if (Blocks.fire.canCatchFire(worldIn, pos.up()))
-+            if (Blocks.fire.canCatchFire(worldIn, pos.up(), EnumFacing.DOWN))
-             {
-                 for (int j1 = 0; j1 < 2; ++j1)
-                 {
-@@ -476,4 +487,19 @@
+@@ -458,4 +468,19 @@
      {
-         return new BlockState(this, new IProperty[] {AGE, NORTH, EAST, SOUTH, WEST, UPPER, FLIP, ALT});
+         return new BlockStateContainer(this, new IProperty[] {AGE, NORTH, EAST, SOUTH, WEST, UPPER});
      }
 +
 +    /*================================= Forge Start ======================================*/

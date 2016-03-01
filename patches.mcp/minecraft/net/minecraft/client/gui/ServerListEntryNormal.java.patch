@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/ServerListEntryNormal.java
 @@ -82,7 +82,7 @@
-         boolean flag1 = this.field_148301_e.version < 47;
+         boolean flag1 = this.field_148301_e.version < 107;
          boolean flag2 = flag || flag1;
          this.mc.fontRendererObj.drawString(this.field_148301_e.serverName, x + 32 + 3, y + 1, 16777215);
 -        List<String> list = this.mc.fontRendererObj.listFormattedStringToWidth(this.field_148301_e.serverMOTD, listWidth - 32 - 2);

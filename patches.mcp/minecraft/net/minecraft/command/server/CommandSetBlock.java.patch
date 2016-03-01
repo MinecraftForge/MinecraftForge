@@ -1,20 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSetBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSetBlock.java
-@@ -52,6 +52,8 @@
-                 i = parseInt(args[4], 0, 15);
+@@ -54,6 +54,8 @@
+                 i = parseInt(p_184881_3_[4], 0, 15);
              }
  
 +            IBlockState state = block.getStateFromMeta(i);
 +
-             World world = sender.getEntityWorld();
+             World world = p_184881_2_.getEntityWorld();
  
              if (!world.isBlockLoaded(blockpos))
-@@ -63,7 +65,7 @@
+@@ -65,7 +67,7 @@
                  NBTTagCompound nbttagcompound = new NBTTagCompound();
                  boolean flag = false;
  
--                if (args.length >= 7 && block.hasTileEntity())
-+                if (args.length >= 7 && block.hasTileEntity(state))
+-                if (p_184881_3_.length >= 7 && block.hasTileEntity())
++                if (p_184881_3_.length >= 7 && block.hasTileEntity(state))
                  {
-                     String s = getChatComponentFromNthArg(sender, args, 6).getUnformattedText();
+                     String s = getChatComponentFromNthArg(p_184881_2_, p_184881_3_, 6).getUnformattedText();
  

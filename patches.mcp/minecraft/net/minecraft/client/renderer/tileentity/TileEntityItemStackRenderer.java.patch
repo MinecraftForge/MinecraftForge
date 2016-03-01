@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
-@@ -78,6 +78,7 @@
+@@ -98,6 +98,7 @@
              {
                  TileEntityRendererDispatcher.instance.renderTileEntityAt(this.field_147718_c, 0.0D, 0.0D, 0.0D, 0.0F);
              }

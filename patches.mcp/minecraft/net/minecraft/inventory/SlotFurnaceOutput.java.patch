@@ -8,4 +8,4 @@
 +
          if (stack.getItem() == Items.iron_ingot)
          {
-             this.thePlayer.triggerAchievement(AchievementList.acquireIron);
+             this.thePlayer.triggerAchievement(AchievementList.field_187987_k);

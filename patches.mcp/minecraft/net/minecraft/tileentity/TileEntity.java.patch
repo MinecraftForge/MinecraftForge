@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -17,7 +17,7 @@
+@@ -18,7 +18,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
  {
      private static final Logger logger = LogManager.getLogger();
      private static Map < String, Class <? extends TileEntity >> nameToClassMap = Maps. < String, Class <? extends TileEntity >> newHashMap();
-@@ -59,6 +59,8 @@
+@@ -60,6 +60,8 @@
      public void readFromNBT(NBTTagCompound compound)
      {
          this.pos = new BlockPos(compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z"));
@@ -18,7 +18,7 @@
      }
  
      public void writeToNBT(NBTTagCompound compound)
-@@ -75,6 +77,8 @@
+@@ -76,6 +78,8 @@
              compound.setInteger("x", this.pos.getX());
              compound.setInteger("y", this.pos.getY());
              compound.setInteger("z", this.pos.getZ());
@@ -27,37 +27,7 @@
          }
      }
  
-@@ -82,9 +86,10 @@
-     {
-         TileEntity tileentity = null;
- 
-+        Class <? extends TileEntity > oclass = null;
-         try
-         {
--            Class <? extends TileEntity > oclass = (Class)nameToClassMap.get(nbt.getString("id"));
-+            oclass = (Class)nameToClassMap.get(nbt.getString("id"));
- 
-             if (oclass != null)
-             {
-@@ -102,7 +107,17 @@
-         }
-         else
-         {
-+            try
-+            {
-             logger.warn("Skipping BlockEntity with id " + nbt.getString("id"));
-+            }
-+            catch (Exception ex)
-+            {
-+                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, ex,
-+                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        nbt.getString("id"), oclass.getName());
-+                tileentity = null;
-+            }
-         }
- 
-         return tileentity;
-@@ -134,7 +149,6 @@
+@@ -144,7 +148,6 @@
          }
      }
  
@@ -65,11 +35,10 @@
      public double getDistanceSq(double x, double y, double z)
      {
          double d0 = (double)this.pos.getX() + 0.5D - x;
-@@ -279,4 +293,183 @@
-         addMapping(TileEntityFlowerPot.class, "FlowerPot");
-         addMapping(TileEntityBanner.class, "Banner");
+@@ -271,6 +274,185 @@
+         return false;
      }
-+
+ 
 +    // -- BEGIN FORGE PATCHES --
 +    /**
 +     * Called when you receive a TileEntityData packet for the location this
@@ -248,4 +217,7 @@
 +        this.writeToNBT(ret);
 +        return ret;
 +    }
- }
++
+     static
+     {
+         addMapping(TileEntityFurnace.class, "Furnace");

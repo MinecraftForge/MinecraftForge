@@ -1,29 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
-@@ -85,22 +85,7 @@
- 
-     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
-     {
--        TileEntity tileentity = worldIn.getTileEntity(pos);
--
--        if (tileentity instanceof TileEntityBanner)
-         {
--            ItemStack itemstack = new ItemStack(Items.banner, 1, ((TileEntityBanner)tileentity).getBaseColor());
--            NBTTagCompound nbttagcompound = new NBTTagCompound();
--            tileentity.writeToNBT(nbttagcompound);
--            nbttagcompound.removeTag("x");
--            nbttagcompound.removeTag("y");
--            nbttagcompound.removeTag("z");
--            nbttagcompound.removeTag("id");
--            itemstack.setTagInfo("BlockEntityTag", nbttagcompound);
--            spawnAsEntity(worldIn, pos, itemstack);
--        }
--        else
--        {
-             super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
-         }
-     }
-@@ -133,6 +118,28 @@
+@@ -138,6 +138,28 @@
          }
      }
  
@@ -51,4 +28,4 @@
 +
      public static class BlockBannerHanging extends BlockBanner
          {
-             public BlockBannerHanging()
+             protected static final AxisAlignedBB field_185551_d = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 0.78125D, 1.0D);

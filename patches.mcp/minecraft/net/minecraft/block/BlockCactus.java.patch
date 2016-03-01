@@ -8,21 +8,11 @@
 +public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
  {
      public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
- 
-@@ -109,7 +109,7 @@
-         }
- 
-         Block block = worldIn.getBlockState(pos.down()).getBlock();
--        return block == Blocks.cactus || block == Blocks.sand;
-+        return block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this);
+     protected static final AxisAlignedBB field_185593_b = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
+@@ -135,6 +135,18 @@
+         return ((Integer)state.getValue(AGE)).intValue();
      }
  
-     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
-@@ -137,4 +137,16 @@
-     {
-         return new BlockState(this, new IProperty[] {AGE});
-     }
-+
 +    @Override
 +    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
@@ -34,4 +24,7 @@
 +    {
 +        return getDefaultState();
 +    }
- }
++
+     protected BlockStateContainer createBlockState()
+     {
+         return new BlockStateContainer(this, new IProperty[] {AGE});

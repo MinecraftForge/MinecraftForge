@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -70,6 +70,8 @@
+@@ -69,6 +69,8 @@
                      playerIn.addExperienceLevel(-ContainerRepair.this.maximumCost);
                  }
  
@@ -9,7 +9,7 @@
                  ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
  
                  if (ContainerRepair.this.materialCost > 0)
-@@ -94,7 +96,7 @@
+@@ -93,7 +95,7 @@
                  ContainerRepair.this.maximumCost = 0;
                  IBlockState iblockstate = worldIn.getBlockState(blockPosIn);
  
@@ -18,25 +18,24 @@
                  {
                      int l = ((Integer)iblockstate.getValue(BlockAnvil.DAMAGE)).intValue();
                      ++l;
-@@ -172,6 +174,7 @@
+@@ -163,6 +165,7 @@
  
              if (itemstack2 != null)
              {
-+                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, i2)) return;
-                 flag = itemstack2.getItem() == Items.enchanted_book && Items.enchanted_book.getEnchantments(itemstack2).tagCount() > 0;
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) return;
+                 boolean flag = itemstack2.getItem() == Items.enchanted_book && !Items.enchanted_book.getEnchantments(itemstack2).hasNoTags();
  
                  if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2))
-@@ -264,7 +267,8 @@
-                             {
-                                 int i4 = ((Integer)iterator.next()).intValue();
+@@ -235,7 +238,7 @@
  
--                                if (i4 != i5 && !enchantment.canApplyTogether(Enchantment.getEnchantmentById(i4)))
-+                                Enchantment e2 = Enchantment.getEnchantmentById(i4);
-+                                if (i4 != i5 && !(enchantment.canApplyTogether(e2) && e2.canApplyTogether(enchantment))) //Forge BugFix: Let Both enchantments veto being together
+                             for (Enchantment enchantment : map.keySet())
+                             {
+-                                if (enchantment != enchantment1 && !enchantment1.canApplyTogether(enchantment))
++                                if (enchantment != enchantment1 && !(enchantment1.canApplyTogether(enchantment) && enchantment.canApplyTogether(enchantment1)))  //Forge BugFix: Let Both enchantments veto being together
                                  {
                                      flag1 = false;
-                                     ++l1;
-@@ -315,6 +319,8 @@
+                                     ++i;
+@@ -279,6 +282,8 @@
                  }
              }
  

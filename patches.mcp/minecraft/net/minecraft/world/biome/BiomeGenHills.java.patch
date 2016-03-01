@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
-@@ -40,28 +40,20 @@
+@@ -37,28 +37,20 @@
      public void decorate(World worldIn, Random rand, BlockPos pos)
      {
          super.decorate(worldIn, rand, pos);
@@ -36,9 +36,9 @@
      }
  
      public void genTerrainBlocks(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int p_180622_4_, int p_180622_5_, double p_180622_6_)
-@@ -97,4 +89,23 @@
-     {
-         return (new BiomeGenHills(p_180277_1_, false)).mutateHills(this);
+@@ -86,4 +78,23 @@
+         EXTRA_TREES,
+         MUTATED;
      }
 +
 +    private static class EmeraldGenerator extends WorldGenerator

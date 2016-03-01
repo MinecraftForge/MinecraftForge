@@ -1,39 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
-@@ -18,7 +18,7 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
--public abstract class BlockLeaves extends BlockLeavesBase
-+public abstract class BlockLeaves extends BlockLeavesBase implements net.minecraftforge.common.IShearable
- {
-     public static final PropertyBool DECAYABLE = PropertyBool.create("decayable");
-     public static final PropertyBool CHECK_DECAY = PropertyBool.create("check_decay");
-@@ -75,9 +75,9 @@
-                         BlockPos blockpos = pos.add(j1, k1, l1);
-                         IBlockState iblockstate = worldIn.getBlockState(blockpos);
- 
--                        if (iblockstate.getBlock().getMaterial() == Material.leaves && !((Boolean)iblockstate.getValue(CHECK_DECAY)).booleanValue())
-+                        if (iblockstate.getBlock().isLeaves(worldIn, blockpos))
-                         {
--                            worldIn.setBlockState(blockpos, iblockstate.withProperty(CHECK_DECAY, Boolean.valueOf(true)), 4);
-+                            iblockstate.getBlock().beginLeavesDecay(worldIn, blockpos);
-                         }
-                     }
-                 }
-@@ -117,9 +117,9 @@
-                             {
-                                 Block block = worldIn.getBlockState(blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)).getBlock();
- 
--                                if (block != Blocks.log && block != Blocks.log2)
-+                                if (!block.canSustainLeaves(worldIn, blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)))
-                                 {
--                                    if (block.getMaterial() == Material.leaves)
-+                                    if (block.isLeaves(worldIn, blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)))
-                                     {
-                                         this.surroundings[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
-                                     }
-@@ -226,40 +226,7 @@
+@@ -205,40 +205,7 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -75,11 +42,10 @@
      }
  
      protected void dropApple(World worldIn, BlockPos pos, IBlockState state, int chance)
-@@ -296,4 +263,48 @@
-     }
+@@ -274,6 +241,50 @@
  
      public abstract BlockPlanks.EnumType getWoodType(int meta);
-+
+ 
 +    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
 +    @Override public boolean isLeaves(IBlockAccess world, BlockPos pos){ return true; }
 +
@@ -123,4 +89,7 @@
 +        return ret;
 +    }
 +
- }
++
+     @SideOnly(Side.CLIENT)
+     public boolean shouldSideBeRendered(IBlockState worldIn, IBlockAccess pos, BlockPos side, EnumFacing p_176225_4_)
+     {

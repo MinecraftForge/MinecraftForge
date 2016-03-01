@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
-@@ -5,8 +5,9 @@
+@@ -6,8 +6,9 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
  @SideOnly(Side.CLIENT)

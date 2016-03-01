@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSeedFood.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSeedFood.java
-@@ -6,7 +6,7 @@
- import net.minecraft.util.EnumFacing;
+@@ -8,7 +8,7 @@
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
 -public class ItemSeedFood extends ItemFood
@@ -9,17 +9,8 @@
  {
      private Block crops;
      private Block soilId;
-@@ -28,7 +28,7 @@
-         {
-             return false;
-         }
--        else if (worldIn.getBlockState(pos).getBlock() == this.soilId && worldIn.isAirBlock(pos.up()))
-+        else if (worldIn.getBlockState(pos).getBlock().canSustainPlant(worldIn, pos, EnumFacing.UP, this) && worldIn.isAirBlock(pos.up()))
-         {
-             worldIn.setBlockState(pos.up(), this.crops.getDefaultState());
-             --stack.stackSize;
-@@ -39,4 +39,16 @@
-             return false;
+@@ -33,4 +33,16 @@
+             return EnumActionResult.FAIL;
          }
      }
 +

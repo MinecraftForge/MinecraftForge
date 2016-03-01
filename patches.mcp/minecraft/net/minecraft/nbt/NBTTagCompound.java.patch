@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
-@@ -395,6 +395,7 @@
+@@ -454,6 +454,7 @@
  
      private static byte readType(DataInput input, NBTSizeTracker sizeTracker) throws IOException
      {
@@ -8,7 +8,7 @@
          return input.readByte();
      }
  
-@@ -405,6 +406,7 @@
+@@ -464,6 +465,7 @@
  
      static NBTBase readNBT(byte id, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException
      {

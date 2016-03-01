@@ -1,17 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -49,7 +49,7 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -76,7 +76,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
 -public abstract class Entity implements ICommandSender
 +public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
+     private static final Logger field_184243_a = LogManager.getLogger();
      private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-     private static int nextEntityID;
-@@ -129,6 +129,15 @@
-     protected UUID entityUniqueID;
-     private final CommandResultStats cmdResultStats;
+@@ -195,8 +195,20 @@
+         this.dataWatcher.func_187214_a(field_184242_az, "");
+         this.dataWatcher.func_187214_a(field_184234_aB, Boolean.valueOf(false));
+         this.entityInit();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, worldIn);
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
  
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -25,35 +30,8 @@
      public int getEntityId()
      {
          return this.entityId;
-@@ -172,6 +181,9 @@
-         this.dataWatcher.addObject(2, "");
-         this.dataWatcher.addObject(4, Byte.valueOf((byte)0));
-         this.entityInit();
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, worldIn);
-+        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-     }
- 
-     protected abstract void entityInit();
-@@ -996,12 +1008,12 @@
-         IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
-         Block block = iblockstate.getBlock();
- 
-+        Boolean result = block.isEntityInsideMaterial(this.worldObj, blockpos, iblockstate, this, d0, materialIn, true);
-+        if (result != null) return result;
-+
-         if (block.getMaterial() == materialIn)
-         {
--            float f = BlockLiquid.getLiquidHeightPercent(iblockstate.getBlock().getMetaFromState(iblockstate)) - 0.11111111F;
--            float f1 = (float)(blockpos.getY() + 1) - f;
--            boolean flag = d0 < (double)f1;
--            return !flag && this instanceof EntityPlayer ? false : flag;
-+            return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(materialIn, this, blockpos);
-         }
-         else
-         {
-@@ -1356,6 +1368,23 @@
-                 tagCompund.setBoolean("Silent", this.isSilent());
+@@ -1534,6 +1546,23 @@
+                 tagCompund.setTag("Tags", nbttaglist);
              }
  
 +            if (customEntityData != null) tagCompund.setTag("ForgeData", customEntityData);
@@ -75,39 +53,8 @@
 +
              this.writeEntityToNBT(tagCompund);
  
-             if (this.ridingEntity != null)
-@@ -1438,6 +1467,30 @@
-             this.setAlwaysRenderNameTag(tagCompund.getBoolean("CustomNameVisible"));
-             this.cmdResultStats.readStatsFromNBT(tagCompund);
-             this.setSilent(tagCompund.getBoolean("Silent"));
-+
-+            if (tagCompund.hasKey("ForgeData")) customEntityData = tagCompund.getCompoundTag("ForgeData");
-+            for (String identifier : this.extendedProperties.keySet())
-+            {
-+                try
-+                {
-+                    net.minecraftforge.common.IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.loadNBTData(tagCompund);
-+                }
-+                catch (Throwable t)
-+                {
-+                    net.minecraftforge.fml.common.FMLLog.severe("Failed to load extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
-+
-+            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly TODO: Remove in 1.9
-+            if (tagCompund.hasKey("PersistentIDMSB") && tagCompund.hasKey("PersistentIDLSB"))
-+            {
-+                this.entityUniqueID = new UUID(tagCompund.getLong("PersistentIDMSB"), tagCompund.getLong("PersistentIDLSB"));
-+            }
-+
-+            if (this.capabilities != null && tagCompund.hasKey("ForgeCaps")) this.capabilities.deserializeNBT(tagCompund.getCompoundTag("ForgeCaps"));
-+
-             this.readEntityFromNBT(tagCompund);
- 
-             if (this.shouldSetPosAfterLoading())
-@@ -1512,7 +1565,10 @@
+             if (this.func_184207_aI())
+@@ -1715,7 +1744,10 @@
          {
              EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)offsetY, this.posZ, itemStackIn);
              entityitem.setDefaultPickupDelay();
@@ -119,23 +66,15 @@
              return entityitem;
          }
          else
-@@ -1655,6 +1711,7 @@
- 
-     public void mountEntity(Entity entityIn)
-     {
-+        if(!(this instanceof EntityLivingBase) && !net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entityIn, true)){ return; }
-         this.entityRiderPitchDelta = 0.0D;
-         this.entityRiderYawDelta = 0.0D;
- 
-@@ -2049,6 +2106,7 @@
+@@ -2279,6 +2311,7 @@
      {
          if (!this.worldObj.isRemote && !this.isDead)
          {
 +            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionId)) return;
              this.worldObj.theProfiler.startSection("changeDimension");
-             MinecraftServer minecraftserver = MinecraftServer.getServer();
+             MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.dimension;
-@@ -2092,7 +2150,7 @@
+@@ -2372,7 +2405,7 @@
  
      public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn)
      {
@@ -144,11 +83,10 @@
      }
  
      public boolean verifyExplosion(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
-@@ -2353,4 +2411,209 @@
- 
+@@ -2662,6 +2695,211 @@
          EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
-+
+ 
 +    /* ================================== Forge Start =====================================*/
 +    /**
 +     * Returns a NBTTagCompound that can be used to store custom data for this entity.
@@ -353,4 +291,7 @@
 +        return ret;
 +    }
 +    /* ================================== Forge End =====================================*/
- }
++
+     public void func_184178_b(EntityPlayerMP p_184178_1_)
+     {
+     }

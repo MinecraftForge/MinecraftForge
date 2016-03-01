@@ -1,18 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -38,8 +38,9 @@
- public class Block
- {
-     private static final ResourceLocation AIR_ID = new ResourceLocation("air");
--    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> blockRegistry = new RegistryNamespacedDefaultedByKey(AIR_ID);
--    public static final ObjectIntIdentityMap<IBlockState> BLOCK_STATE_IDS = new ObjectIntIdentityMap();
-+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation,Block> blockRegistry = net.minecraftforge.fml.common.registry.GameData.getBlockRegistry();
-+    @Deprecated //Modders: DO NOT use this! Use GameRegistry
-+    public static final ObjectIntIdentityMap<IBlockState> BLOCK_STATE_IDS = net.minecraftforge.fml.common.registry.GameData.getBlockStateIDMap();
-     private CreativeTabs displayOnCreativeTab;
-     public static final Block.SoundType soundTypeStone = new Block.SoundType("stone", 1.0F, 1.0F);
-     public static final Block.SoundType soundTypeWood = new Block.SoundType("wood", 1.0F, 1.0F);
-@@ -119,6 +120,9 @@
+@@ -70,6 +70,9 @@
      private IBlockState defaultBlockState;
      private String unlocalizedName;
  
@@ -22,7 +10,7 @@
      public static int getIdFromBlock(Block blockIn)
      {
          return blockRegistry.getIDForObject(blockIn);
-@@ -132,7 +136,8 @@
+@@ -83,7 +86,8 @@
  
      public static Block getBlockById(int id)
      {
@@ -32,16 +20,16 @@
      }
  
      public static IBlockState getStateById(int id)
-@@ -303,7 +308,7 @@
+@@ -268,7 +272,7 @@
  
-     public boolean isReplaceable(World worldIn, BlockPos pos)
+     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
      {
 -        return false;
 +        return getMaterial().isReplaceable();
      }
  
      public Block setHardness(float hardness)
-@@ -340,9 +345,10 @@
+@@ -305,9 +309,10 @@
          return this.needsRandomTick;
      }
  
@@ -52,33 +40,8 @@
 +        return hasTileEntity(getDefaultState());
      }
  
-     public final void setBlockBounds(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
-@@ -359,13 +365,13 @@
-     public int getMixedBrightnessForBlock(IBlockAccess worldIn, BlockPos pos)
-     {
-         Block block = worldIn.getBlockState(pos).getBlock();
--        int i = worldIn.getCombinedLight(pos, block.getLightValue());
-+        int i = worldIn.getCombinedLight(pos, block.getLightValue(worldIn, pos));
- 
-         if (i == 0 && block instanceof BlockSlab)
-         {
-             pos = pos.down();
-             block = worldIn.getBlockState(pos).getBlock();
--            return worldIn.getCombinedLight(pos, block.getLightValue());
-+            return worldIn.getCombinedLight(pos, block.getLightValue(worldIn, pos));
-         }
-         else
-         {
-@@ -376,7 +382,7 @@
-     @SideOnly(Side.CLIENT)
-     public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
-     {
--        return side == EnumFacing.DOWN && this.minY > 0.0D ? true : (side == EnumFacing.UP && this.maxY < 1.0D ? true : (side == EnumFacing.NORTH && this.minZ > 0.0D ? true : (side == EnumFacing.SOUTH && this.maxZ < 1.0D ? true : (side == EnumFacing.WEST && this.minX > 0.0D ? true : (side == EnumFacing.EAST && this.maxX < 1.0D ? true : !worldIn.getBlockState(pos).getBlock().isOpaqueCube())))));
-+        return side == EnumFacing.DOWN && this.minY > 0.0D ? true : (side == EnumFacing.UP && this.maxY < 1.0D ? true : (side == EnumFacing.NORTH && this.minZ > 0.0D ? true : (side == EnumFacing.SOUTH && this.maxZ < 1.0D ? true : (side == EnumFacing.WEST && this.minX > 0.0D ? true : (side == EnumFacing.EAST && this.maxX < 1.0D ? true : !worldIn.getBlockState(pos).getBlock().doesSideBlockRendering(worldIn, pos, side))))));
-     }
- 
-     public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
-@@ -453,6 +459,10 @@
+     public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
+@@ -472,6 +477,10 @@
  
      public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -89,17 +52,7 @@
      }
  
      public int quantityDropped(Random random)
-@@ -467,8 +477,7 @@
- 
-     public float getPlayerRelativeBlockHardness(EntityPlayer playerIn, World worldIn, BlockPos pos)
-     {
--        float f = this.getBlockHardness(worldIn, pos);
--        return f < 0.0F ? 0.0F : (!playerIn.canHarvestBlock(this) ? playerIn.getToolDigEfficiency(this) / f / 100.0F : playerIn.getToolDigEfficiency(this) / f / 30.0F);
-+        return net.minecraftforge.common.ForgeHooks.blockStrength(worldIn.getBlockState(pos), playerIn, worldIn, pos);
-     }
- 
-     public final void dropBlockAsItem(World worldIn, BlockPos pos, IBlockState state, int forture)
-@@ -478,20 +487,16 @@
+@@ -497,20 +506,16 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -125,7 +78,7 @@
                  }
              }
          }
-@@ -499,8 +504,13 @@
+@@ -518,8 +523,13 @@
  
      public static void spawnAsEntity(World worldIn, BlockPos pos, ItemStack stack)
      {
@@ -140,7 +93,7 @@
              float f = 0.5F;
              double d0 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -687,7 +697,7 @@
+@@ -588,7 +598,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -148,47 +101,8 @@
 +        return worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos);
      }
  
-     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
-@@ -799,25 +809,35 @@
-         player.triggerAchievement(StatList.mineBlockStatArray[getIdFromBlock(this)]);
-         player.addExhaustion(0.025F);
- 
--        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(player))
-+        if (this.canSilkHarvest(worldIn, pos, worldIn.getBlockState(pos), player) && EnchantmentHelper.getSilkTouchModifier(player))
-         {
-+            java.util.ArrayList<ItemStack> items = new java.util.ArrayList<ItemStack>();
-             ItemStack itemstack = this.createStackedBlock(state);
- 
-             if (itemstack != null)
-             {
--                spawnAsEntity(worldIn, pos, itemstack);
-+                items.add(itemstack);
-             }
-+
-+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, worldIn.getBlockState(pos), 0, 1.0f, true, player);
-+            for (ItemStack stack : items)
-+            {
-+                spawnAsEntity(worldIn, pos, stack);
-+            }
-         }
-         else
-         {
-+            harvesters.set(player);
-             int i = EnchantmentHelper.getFortuneModifier(player);
-             this.dropBlockAsItem(worldIn, pos, state, i);
-+            harvesters.set(null);
-         }
-     }
- 
-+    @Deprecated //Forge: State sensitive version
-     protected boolean canSilkHarvest()
-     {
--        return this.isFullCube() && !this.isBlockContainer;
-+        return this.isFullCube() && !this.hasTileEntity(silk_check_state.get());
-     }
- 
-     protected ItemStack createStackedBlock(IBlockState state)
-@@ -1010,6 +1030,1147 @@
+     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand side, ItemStack hitX, EnumFacing hitY, float hitZ, float p_180639_9_, float p_180639_10_)
+@@ -844,6 +854,1147 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  

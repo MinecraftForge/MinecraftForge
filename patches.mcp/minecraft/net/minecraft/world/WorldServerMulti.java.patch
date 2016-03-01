@@ -30,9 +30,9 @@
      }
  
      public World init()
-@@ -58,12 +61,12 @@
-         this.mapStorage = this.delegate.getMapStorage();
+@@ -59,12 +62,12 @@
          this.worldScoreboard = this.delegate.getScoreboard();
+         this.field_184151_B = this.delegate.func_184146_ak();
          String s = VillageCollection.fileNameForProvider(this.provider);
 -        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, s);
 +        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.loadData(VillageCollection.class, s);
@@ -45,11 +45,10 @@
          }
          else
          {
-@@ -73,4 +76,12 @@
- 
+@@ -75,6 +78,14 @@
          return this;
      }
-+
+ 
 +
 +    @Override
 +    public void flush()
@@ -57,4 +56,7 @@
 +        super.flush();
 +        this.delegate.getWorldBorder().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
 +    }
- }
++
+     public void func_184166_c()
+     {
+         this.provider.func_186057_q();

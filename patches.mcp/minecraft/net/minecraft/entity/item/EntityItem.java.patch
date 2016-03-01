@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -29,6 +29,11 @@
+@@ -37,6 +37,11 @@
      private String owner;
      public float hoverStart;
  
@@ -12,7 +12,7 @@
      public EntityItem(World worldIn, double x, double y, double z)
      {
          super(worldIn);
-@@ -46,6 +51,7 @@
+@@ -54,6 +59,7 @@
      {
          this(worldIn, x, y, z);
          this.setEntityItemStack(stack);
@@ -20,7 +20,7 @@
      }
  
      protected boolean canTriggerWalking()
-@@ -69,6 +75,8 @@
+@@ -77,6 +83,8 @@
  
      public void onUpdate()
      {
@@ -29,7 +29,7 @@
          if (this.getEntityItem() == null)
          {
              this.setDead();
-@@ -129,8 +137,16 @@
+@@ -137,8 +145,16 @@
  
              this.handleWaterMovement();
  
@@ -47,15 +47,15 @@
                  this.setDead();
              }
          }
-@@ -271,6 +287,7 @@
-         tagCompound.setShort("Health", (short)((byte)this.health));
+@@ -279,6 +295,7 @@
+         tagCompound.setShort("Health", (short)this.health);
          tagCompound.setShort("Age", (short)this.age);
          tagCompound.setShort("PickupDelay", (short)this.delayBeforeCanPickup);
 +        tagCompound.setInteger("Lifespan", lifespan);
  
          if (this.getThrower() != null)
          {
-@@ -311,20 +328,23 @@
+@@ -319,20 +336,23 @@
          NBTTagCompound nbttagcompound = tagCompund.getCompoundTag("Item");
          this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound));
  
@@ -84,15 +84,15 @@
              {
                  if (itemstack.getItem() == Item.getItemFromBlock(Blocks.log))
                  {
-@@ -361,6 +381,7 @@
+@@ -369,6 +389,7 @@
                      }
                  }
  
 +                net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerItemPickupEvent(entityIn, this);
                  if (!this.isSilent())
                  {
-                     this.worldObj.playSoundAtEntity(entityIn, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-@@ -402,11 +423,6 @@
+                     this.worldObj.func_184148_a((EntityPlayer)null, entityIn.posX, entityIn.posY, entityIn.posZ, SoundEvents.field_187638_cR, SoundCategory.PLAYERS, 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+@@ -414,11 +435,6 @@
  
          if (itemstack == null)
          {
@@ -104,7 +104,7 @@
              return new ItemStack(Blocks.stone);
          }
          else
-@@ -480,6 +496,6 @@
+@@ -492,6 +508,6 @@
      public void func_174870_v()
      {
          this.setInfinitePickupDelay();

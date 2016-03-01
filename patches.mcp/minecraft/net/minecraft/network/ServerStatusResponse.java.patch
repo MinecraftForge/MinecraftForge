@@ -1,23 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
 +++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
 @@ -29,6 +29,7 @@
-     public void setServerDescription(IChatComponent motd)
+     public void setServerDescription(ITextComponent motd)
      {
          this.serverMotd = motd;
 +        invalidateJson();
      }
  
-     public ServerStatusResponse.PlayerCountData getPlayerCountData()
+     public ServerStatusResponse.Players getPlayerCountData()
 @@ -39,6 +40,7 @@
-     public void setPlayerCountData(ServerStatusResponse.PlayerCountData countData)
+     public void setPlayerCountData(ServerStatusResponse.Players countData)
      {
          this.playerCount = countData;
 +        invalidateJson();
      }
  
-     public ServerStatusResponse.MinecraftProtocolVersionIdentifier getProtocolVersionInfo()
+     public ServerStatusResponse.Version getProtocolVersionInfo()
 @@ -49,11 +51,13 @@
-     public void setProtocolVersionInfo(ServerStatusResponse.MinecraftProtocolVersionIdentifier protocolVersionData)
+     public void setProtocolVersionInfo(ServerStatusResponse.Version protocolVersionData)
      {
          this.protocolVersion = protocolVersionData;
 +        invalidateJson();
@@ -30,7 +30,7 @@
      }
  
      public String getFavicon()
-@@ -215,6 +219,7 @@
+@@ -176,6 +180,7 @@
                      serverstatusresponse.setFavicon(JsonUtils.getString(jsonobject, "favicon"));
                  }
  
@@ -38,7 +38,7 @@
                  return serverstatusresponse;
              }
  
-@@ -242,7 +247,47 @@
+@@ -203,10 +208,50 @@
                      jsonobject.addProperty("favicon", p_serialize_1_.getFavicon());
                  }
  
@@ -46,7 +46,7 @@
                  return jsonobject;
              }
          }
-+
+ 
 +    private java.util.concurrent.Semaphore mutex = new java.util.concurrent.Semaphore(1);
 +    private String json = null;
 +    /**
@@ -85,4 +85,7 @@
 +    {
 +        this.json = null;
 +    }
- }
++
+     public static class Version
+         {
+             private final String name;

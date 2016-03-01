@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSkull.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSkull.java
-@@ -121,10 +121,6 @@
-         return tileentity instanceof TileEntitySkull ? ((TileEntitySkull)tileentity).getSkullType() : super.getDamageValue(worldIn, pos);
+@@ -116,10 +116,6 @@
+         return new ItemStack(Items.skull, 1, i);
      }
  
 -    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
@@ -11,7 +11,7 @@
      public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player)
      {
          if (player.capabilities.isCreativeMode)
-@@ -132,13 +128,18 @@
+@@ -127,13 +123,18 @@
              state = state.withProperty(NODROP, Boolean.valueOf(true));
              worldIn.setBlockState(pos, state, 4);
          }
@@ -31,16 +31,7 @@
          {
              if (!((Boolean)state.getValue(NODROP)).booleanValue())
              {
-@@ -147,7 +148,7 @@
-                 if (tileentity instanceof TileEntitySkull)
-                 {
-                     TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
--                    ItemStack itemstack = new ItemStack(Items.skull, 1, this.getDamageValue(worldIn, pos));
-+                    ItemStack itemstack = new ItemStack(Items.skull, 1, tileentityskull.getSkullType());
- 
-                     if (tileentityskull.getSkullType() == 3 && tileentityskull.getPlayerProfile() != null)
-                     {
-@@ -157,12 +158,11 @@
+@@ -152,12 +153,11 @@
                          itemstack.getTagCompound().setTag("SkullOwner", nbttagcompound);
                      }
  

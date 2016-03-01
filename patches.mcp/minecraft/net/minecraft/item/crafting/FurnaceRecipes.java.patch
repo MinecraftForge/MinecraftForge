@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -72,6 +72,7 @@
+@@ -73,6 +73,7 @@
  
      public void addSmeltingRecipe(ItemStack input, ItemStack stack, float experience)
      {
@@ -8,7 +8,7 @@
          this.smeltingList.put(input, stack);
          this.experienceList.put(stack, Float.valueOf(experience));
      }
-@@ -101,6 +102,9 @@
+@@ -102,6 +103,9 @@
  
      public float getSmeltingExperience(ItemStack stack)
      {

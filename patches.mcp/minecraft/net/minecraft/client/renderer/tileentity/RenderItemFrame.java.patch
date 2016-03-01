@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/RenderItemFrame.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/RenderItemFrame.java
-@@ -99,15 +99,18 @@
+@@ -105,15 +105,18 @@
              GlStateManager.disableLighting();
              int i = itemFrame.getRotation();
  
@@ -21,9 +21,9 @@
                  this.renderManager.renderEngine.bindTexture(mapBackgroundTextures);
                  GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
                  float f = 0.0078125F;
-@@ -165,6 +168,7 @@
-                     textureatlassprite.updateAnimation();
-                 }
+@@ -142,6 +145,7 @@
+                 RenderHelper.disableStandardItemLighting();
+                 GlStateManager.popAttrib();
              }
 +            }
  

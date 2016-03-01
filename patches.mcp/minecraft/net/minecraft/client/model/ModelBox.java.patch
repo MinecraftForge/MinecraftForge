@@ -8,11 +8,3 @@
  public class ModelBox
  {
      private PositionTextureVertex[] vertexPositions;
-@@ -81,6 +80,7 @@
-         }
-     }
- 
-+    @SideOnly(Side.CLIENT)
-     public void render(WorldRenderer renderer, float scale)
-     {
-         for (int i = 0; i < this.quadList.length; ++i)

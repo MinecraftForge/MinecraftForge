@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityLockable.java
 @@ -47,4 +47,25 @@
      {
-         return (IChatComponent)(this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName(), new Object[0]));
+         return (ITextComponent)(this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName(), new Object[0]));
      }
 +
 +    private net.minecraftforge.items.IItemHandler itemHandler;

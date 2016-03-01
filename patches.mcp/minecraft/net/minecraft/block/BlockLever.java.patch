@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLever.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
-@@ -237,6 +237,12 @@
-         return new BlockState(this, new IProperty[] {FACING, POWERED});
+@@ -295,6 +295,12 @@
+         return new BlockStateContainer(this, new IProperty[] {FACING, POWERED});
      }
  
 +

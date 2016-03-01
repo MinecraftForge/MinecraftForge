@@ -1,90 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -36,7 +36,7 @@
-     public String getItemStackDisplayName(ItemStack stack)
-     {
-         String s = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
--        String s1 = EntityList.getStringFromID(stack.getMetadata());
-+        String s1 = ItemMonsterPlacer.getEntityName(stack);
- 
-         if (s1 != null)
-         {
-@@ -49,7 +49,7 @@
-     @SideOnly(Side.CLIENT)
-     public int getColorFromItemStack(ItemStack stack, int renderPass)
-     {
--        EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(stack.getMetadata()));
-+        EntityList.EntityEggInfo entitylist$entityegginfo = ItemMonsterPlacer.getEggInfo(stack);
-         return entitylist$entityegginfo != null ? (renderPass == 0 ? entitylist$entityegginfo.primaryColor : entitylist$entityegginfo.secondaryColor) : 16777215;
-     }
- 
-@@ -74,7 +74,7 @@
-                 if (tileentity instanceof TileEntityMobSpawner)
-                 {
-                     MobSpawnerBaseLogic mobspawnerbaselogic = ((TileEntityMobSpawner)tileentity).getSpawnerBaseLogic();
--                    mobspawnerbaselogic.setEntityName(EntityList.getStringFromID(stack.getMetadata()));
-+                    mobspawnerbaselogic.setEntityName(ItemMonsterPlacer.getEntityName(stack));
-                     tileentity.markDirty();
-                     worldIn.markBlockForUpdate(pos);
- 
-@@ -90,12 +90,12 @@
-             pos = pos.offset(side);
-             double d0 = 0.0D;
- 
--            if (side == EnumFacing.UP && iblockstate instanceof BlockFence)
-+            if (side == EnumFacing.UP && iblockstate.getBlock() instanceof BlockFence) //Forge: Fix Vanilla bug comparing state instead of block
-             {
-                 d0 = 0.5D;
+@@ -193,8 +193,31 @@
+                 return new ActionResult(EnumActionResult.PASS, itemStackIn);
              }
- 
--            Entity entity = spawnCreature(worldIn, stack.getMetadata(), (double)pos.getX() + 0.5D, (double)pos.getY() + d0, (double)pos.getZ() + 0.5D);
-+            Entity entity = spawnCreature(worldIn, ItemMonsterPlacer.getEntityName(stack), (double)pos.getX() + 0.5D, (double)pos.getY() + d0, (double)pos.getZ() + 0.5D);
- 
-             if (entity != null)
-             {
-@@ -146,7 +146,7 @@
- 
-                     if (worldIn.getBlockState(blockpos).getBlock() instanceof BlockLiquid)
-                     {
--                        Entity entity = spawnCreature(worldIn, itemStackIn.getMetadata(), (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D);
-+                        Entity entity = spawnCreature(worldIn, ItemMonsterPlacer.getEntityName(itemStackIn), (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D);
- 
-                         if (entity != null)
-                         {
-@@ -170,19 +170,29 @@
-         }
-     }
- 
-+    @Deprecated // Use string version below.
-     public static Entity spawnCreature(World worldIn, int entityID, double x, double y, double z)
-     {
-         if (!EntityList.entityEggs.containsKey(Integer.valueOf(entityID)))
-         {
-             return null;
-         }
-+        return spawnCreature(worldIn, EntityList.getStringFromID(entityID), x, y, z);
-+    }
-+
-+    public static Entity spawnCreature(World worldIn, String name, double x, double y, double z)
-+    {
-+        if (!EntityList.stringToClassMapping.containsKey(name))
-+        {
-+            return null;
-+        }
-         else
-         {
-             Entity entity = null;
- 
-             for (int i = 0; i < 1; ++i)
-             {
--                entity = EntityList.createEntityByID(entityID, worldIn);
-+                entity = EntityList.createEntityByName(name, worldIn);
- 
-                 if (entity instanceof EntityLivingBase)
-                 {
-@@ -207,5 +217,28 @@
-         {
-             subItems.add(new ItemStack(itemIn, 1, entitylist$entityegginfo.spawnedID));
          }
 +
 +        for (String name : net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().keySet())
@@ -96,7 +14,7 @@
 +            subItems.add(stack);
 +        }
      }
-+
+ 
 +    public static String getEntityName(ItemStack stack)
 +    {
 +        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("entity_name", 8))
@@ -110,4 +28,7 @@
 +            return net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(stack.getTagCompound().getString("entity_name"));
 +        return (EntityList.EntityEggInfo)EntityList.entityEggs.get(stack.getMetadata());
 +    }
- }
++
+     public static Entity spawnCreature(World worldIn, String entityID, double x, double y, double z)
+     {
+         if (entityID != null && EntityList.entityEggs.containsKey(entityID))

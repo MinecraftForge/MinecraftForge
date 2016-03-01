@@ -1,6 +1,6 @@
---- ../src-base/minecraft/net/minecraft/network/play/client/C17PacketCustomPayload.java
-+++ ../src-work/minecraft/net/minecraft/network/play/client/C17PacketCustomPayload.java
-@@ -47,7 +47,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketCustomPayload.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketCustomPayload.java
+@@ -46,7 +46,11 @@
      public void writePacketData(PacketBuffer buf) throws IOException
      {
          buf.writeString(this.channel);
@@ -11,4 +11,4 @@
 +        }
      }
  
-     public void processPacket(INetHandlerPlayServer handler)
+     public void processPacket(INetHandlerPlayClient handler)

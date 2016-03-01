@@ -9,10 +9,10 @@
 +                if (!net.minecraftforge.fml.client.FMLClientHandler.instance().handleLoadingScreen(scaledresolution)) //FML Don't render while FML's pre-screen is rendering
 +                {
                  Tessellator tessellator = Tessellator.getInstance();
-                 WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+                 VertexBuffer vertexbuffer = tessellator.getWorldRenderer();
                  this.mc.getTextureManager().bindTexture(Gui.optionsBackground);
 @@ -174,6 +178,12 @@
-                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                 GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                  this.mc.fontRendererObj.drawStringWithShadow(this.currentlyDisplayedText, (float)((k - this.mc.fontRendererObj.getStringWidth(this.currentlyDisplayedText)) / 2), (float)(l / 2 - 4 - 16), 16777215);
                  this.mc.fontRendererObj.drawStringWithShadow(this.message, (float)((k - this.mc.fontRendererObj.getStringWidth(this.message)) / 2), (float)(l / 2 - 4 + 8), 16777215);
 +                }

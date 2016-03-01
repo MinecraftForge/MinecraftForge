@@ -1,49 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -21,7 +21,7 @@
- 
- public class Potion
- {
--    public static final Potion[] potionTypes = new Potion[32];
-+    public static final Potion[] potionTypes = new Potion[256];
-     private static final Map<ResourceLocation, Potion> field_180150_I = Maps.<ResourceLocation, Potion>newHashMap();
-     public static final Potion field_180151_b = null;
-     public static final Potion moveSpeed = (new Potion(1, new ResourceLocation("speed"), false, 8171462)).setPotionName("potion.moveSpeed").setIconIndex(0, 0).registerPotionAttributeModifier(SharedMonsterAttributes.movementSpeed, "91AEAA56-376B-4498-935B-2F7F68070635", 0.20000000298023224D, 2);
-@@ -64,10 +64,10 @@
-     private double effectiveness;
-     private boolean usable;
- 
-+    @Deprecated // use the Constructor without potion ID or everything will explode.
-     protected Potion(int potionID, ResourceLocation location, boolean badEffect, int potionColor)
-     {
--        this.id = potionID;
--        potionTypes[potionID] = this;
-+        net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().register(potionID, location, this);
-         field_180150_I.put(location, this);
-         this.isBadEffect = badEffect;
- 
-@@ -83,14 +83,18 @@
-         this.liquidColor = potionColor;
-     }
- 
-+    protected Potion(ResourceLocation location, boolean badEffect, int potionColor) {
-+        this(-1, location, badEffect, potionColor);
-+    }
-+
-     public static Potion getPotionFromResourceLocation(String location)
-     {
--        return (Potion)field_180150_I.get(new ResourceLocation(location));
-+        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().getObject(new ResourceLocation(location));
-     }
- 
-     public static Set<ResourceLocation> getPotionLocations()
-     {
--        return field_180150_I.keySet();
-+        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().getKeys();
-     }
- 
-     protected Potion setIconIndex(int p_76399_1_, int p_76399_2_)
-@@ -230,7 +234,6 @@
+@@ -195,7 +195,6 @@
          return this.statusIconIndex;
      }
  
@@ -51,11 +8,10 @@
      public boolean isBadEffect()
      {
          return this.isBadEffect;
-@@ -310,4 +313,34 @@
-     {
+@@ -266,7 +265,37 @@
          return modifier.getAmount() * (double)(p_111183_1_ + 1);
      }
-+
+ 
 +    /* ======================================== FORGE START =====================================*/
 +
 +    /**
@@ -83,6 +39,10 @@
 +     * @param effect the active PotionEffect
 +     * @param mc the Minecraft instance, for convenience
 +     */
-+    @SideOnly(Side.CLIENT)
+     @SideOnly(Side.CLIENT)
 +    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
- }
++
++    @SideOnly(Side.CLIENT)
+     public boolean func_188408_i()
+     {
+         return this.field_188415_h;

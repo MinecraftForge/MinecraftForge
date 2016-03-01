@@ -1,25 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -138,6 +138,10 @@
- 
-     public BiomeGenBase(int id)
-     {
-+        this(id, true);
-+    }
-+    public BiomeGenBase(int id, boolean register)
-+    {
-         this.minHeight = height_Default.rootHeight;
-         this.maxHeight = height_Default.variation;
-         this.temperature = 0.5F;
-@@ -152,6 +156,7 @@
-         this.worldGeneratorBigTree = new WorldGenBigTree(false);
-         this.worldGeneratorSwamp = new WorldGenSwamp();
-         this.biomeID = id;
-+        if (register)
-         biomeList[id] = this;
-         this.theBiomeDecorator = this.createBiomeDecorator();
-         this.spawnableCreatureList.add(new BiomeGenBase.SpawnListEntry(EntitySheep.class, 12, 4, 4));
-@@ -168,11 +173,12 @@
+@@ -128,11 +128,12 @@
          this.spawnableMonsterList.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.spawnableWaterCreatureList.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.spawnableCaveCreatureList.add(new BiomeGenBase.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -32,8 +13,8 @@
 +        return getModdedBiomeDecorator(new BiomeDecorator());
      }
  
-     public BiomeGenBase setTemperatureRainfall(float temperatureIn, float rainfallIn)
-@@ -342,7 +348,7 @@
+     public boolean func_185363_b()
+@@ -228,7 +229,7 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -41,8 +22,8 @@
 +        return getModdedBiomeGrassColor(ColorizerGrass.getGrassColor(d0, d1));
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -350,7 +356,7 @@
+     public final void generateBiomeTerrain(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int p_180628_4_, int p_180628_5_, double p_180628_6_)
+@@ -321,7 +322,7 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
          double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -50,89 +31,4 @@
 +        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(d0, d1));
      }
  
-     public boolean isSnowyBiome()
-@@ -497,6 +503,84 @@
-         }
-     }
- 
-+    /* ========================================= FORGE START ======================================*/
-+    protected List<FlowerEntry> flowers = new java.util.ArrayList<FlowerEntry>();
-+
-+    public BiomeDecorator getModdedBiomeDecorator(BiomeDecorator original)
-+    {
-+        return new net.minecraftforge.event.terraingen.DeferredBiomeDecorator(original);
-+    }
-+
-+    public int getWaterColorMultiplier()
-+    {
-+        net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor(this, waterColorMultiplier);
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
-+    }
-+
-+    public int getModdedBiomeGrassColor(int original)
-+    {
-+        net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor(this, original);
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
-+    }
-+
-+    public int getModdedBiomeFoliageColor(int original)
-+    {
-+        net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor(this, original);
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
-+    }
-+
-+    /**
-+     * Weighted random holder class used to hold possible flowers
-+     * that can spawn in this biome when bonemeal is used on grass.
-+     */
-+    public static class FlowerEntry extends WeightedRandom.Item
-+    {
-+        public final net.minecraft.block.state.IBlockState state;
-+        public FlowerEntry(net.minecraft.block.state.IBlockState state, int weight)
-+        {
-+            super(weight);
-+            this.state = state;
-+        }
-+    }
-+
-+    /**
-+     * Adds the default flowers, as of 1.7, it is 2 yellow, and 1 red. I chose 10 to allow some wiggle room in the numbers.
-+     */
-+    public void addDefaultFlowers()
-+    {
-+        addFlower(Blocks.yellow_flower.getDefaultState().withProperty(Blocks.yellow_flower.getTypeProperty(), BlockFlower.EnumFlowerType.DANDELION), 20);
-+        addFlower(Blocks.red_flower.getDefaultState().withProperty(Blocks.red_flower.getTypeProperty(), BlockFlower.EnumFlowerType.POPPY), 20);
-+    }
-+
-+    /** Register a new plant to be planted when bonemeal is used on grass.
-+     * @param state The block to place.
-+     * @param weight The weight of the plant, where red flowers are
-+     *               10 and yellow flowers are 20.
-+     */
-+    public void addFlower(IBlockState state, int weight)
-+    {
-+        this.flowers.add(new FlowerEntry(state, weight));
-+    }
-+
-+    public void plantFlower(World world, Random rand, BlockPos pos)
-+    {
-+        FlowerEntry flower = (FlowerEntry)WeightedRandom.getRandomItem(rand, flowers);
-+        if (flower == null || flower.state == null ||
-+            (flower.state.getBlock() instanceof net.minecraft.block.BlockBush &&
-+              !((net.minecraft.block.BlockBush)flower.state.getBlock()).canBlockStay(world, pos, flower.state)))
-+        {
-+            return;
-+        }
-+
-+        world.setBlockState(pos, flower.state, 3);
-+    }
-+
-+
-+    /* ========================================= FORGE END ======================================*/
-+
-     static
-     {
-         plains.createMutation();
+     public Class <? extends BiomeGenBase > getBiomeClass()

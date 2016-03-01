@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -25,7 +25,7 @@
+@@ -26,7 +26,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,21 +9,7 @@
  {
      public static final PropertyBool UP = PropertyBool.create("up");
      public static final PropertyBool NORTH = PropertyBool.create("north");
-@@ -387,13 +387,7 @@
- 
-     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
-     {
--        if (!worldIn.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.shears)
-         {
--            player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
--            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.vine, 1, 0));
--        }
--        else
--        {
-             super.harvestBlock(worldIn, player, pos, state, te);
-         }
-     }
-@@ -474,4 +468,14 @@
+@@ -457,4 +457,14 @@
  
          return i;
      }

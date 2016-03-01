@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -48,6 +48,8 @@
+@@ -49,6 +49,8 @@
      private Slot field_147064_C;
      private boolean field_147057_D;
      private CreativeCrafting field_147059_E;
@@ -9,16 +9,7 @@
  
      public GuiContainerCreative(EntityPlayer p_i1088_1_)
      {
-@@ -175,7 +177,7 @@
-                 return;
-             }
- 
--            if (itemstack1 != null && itemstack2 != null && itemstack1.isItemEqual(itemstack2))
-+            if (itemstack1 != null && itemstack2 != null && itemstack1.isItemEqual(itemstack2) && ItemStack.areItemStackTagsEqual(itemstack1, itemstack2)) //Forge: Bugfix, Compare NBT data, allow for deletion of enchanted books, MC-12770
-             {
-                 if (clickedButton == 0)
-                 {
-@@ -259,6 +261,13 @@
+@@ -258,6 +260,13 @@
              this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[i]);
              this.field_147059_E = new CreativeCrafting(this.mc);
              this.mc.thePlayer.inventoryContainer.onCraftGuiOpened(this.field_147059_E);
@@ -32,7 +23,7 @@
          }
          else
          {
-@@ -280,7 +289,7 @@
+@@ -279,7 +288,7 @@
  
      protected void keyTyped(char typedChar, int keyCode) throws IOException
      {
@@ -41,7 +32,7 @@
          {
              if (GameSettings.isKeyDown(this.mc.gameSettings.keyBindChat))
              {
-@@ -318,6 +327,14 @@
+@@ -317,6 +326,14 @@
          GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
          guicontainercreative$containercreative.itemList.clear();
  
@@ -56,21 +47,7 @@
          for (Item item : Item.itemRegistry)
          {
              if (item != null && item.getCreativeTab() != null)
-@@ -325,7 +342,13 @@
-                 item.getSubItems(item, (CreativeTabs)null, guicontainercreative$containercreative.itemList);
-             }
-         }
-+        updateFilteredItems(guicontainercreative$containercreative);
-+    }
- 
-+    //split from above for custom search tabs
-+    private void updateFilteredItems(GuiContainerCreative.ContainerCreative guicontainercreative$containercreative)
-+    {
-+        if (CreativeTabs.creativeTabArray[selectedTabIndex] == CreativeTabs.tabAllSearch) // FORGE: Only add enchanted books to the regular search
-         for (Enchantment enchantment : Enchantment.enchantmentsBookList)
-         {
-             if (enchantment != null && enchantment.type != null)
-@@ -333,7 +356,6 @@
+@@ -332,7 +349,6 @@
                  Items.enchanted_book.getAll(enchantment, guicontainercreative$containercreative.itemList);
              }
          }
@@ -78,7 +55,7 @@
          Iterator<ItemStack> iterator = guicontainercreative$containercreative.itemList.iterator();
          String s1 = this.searchField.getText().toLowerCase();
  
-@@ -365,7 +387,7 @@
+@@ -364,7 +380,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -87,7 +64,7 @@
          {
              GlStateManager.disableBlend();
              this.fontRendererObj.drawString(I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]), 8, 6, 4210752);
-@@ -400,7 +422,7 @@
+@@ -399,7 +415,7 @@
  
              for (CreativeTabs creativetabs : CreativeTabs.creativeTabArray)
              {
@@ -96,7 +73,7 @@
                  {
                      this.setCurrentCreativeTab(creativetabs);
                      return;
-@@ -413,11 +435,13 @@
+@@ -412,11 +428,13 @@
  
      private boolean needsScrollBars()
      {
@@ -110,7 +87,7 @@
          int i = selectedTabIndex;
          selectedTabIndex = p_147050_1_.getTabIndex();
          GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.inventorySlots;
-@@ -483,12 +507,14 @@
+@@ -487,12 +505,14 @@
  
          if (this.searchField != null)
          {
@@ -126,7 +103,7 @@
                  this.updateCreativeSearch();
              }
              else
-@@ -558,20 +584,43 @@
+@@ -562,20 +582,43 @@
          }
  
          super.drawScreen(mouseX, mouseY, partialTicks);
@@ -171,7 +148,7 @@
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
          GlStateManager.disableLighting();
      }
-@@ -633,16 +682,35 @@
+@@ -637,16 +680,35 @@
          RenderHelper.enableGUIStandardItemLighting();
          CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -208,7 +185,7 @@
          this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.getBackgroundImageName()));
          this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
          this.searchField.drawTextBox();
-@@ -657,6 +725,14 @@
+@@ -661,6 +723,14 @@
              this.drawTexturedModalRect(i, j + (int)((float)(k - j - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -223,7 +200,7 @@
          this.func_147051_a(creativetabs);
  
          if (creativetabs == CreativeTabs.tabInventory)
-@@ -667,6 +743,14 @@
+@@ -671,6 +741,14 @@
  
      protected boolean func_147049_a(CreativeTabs p_147049_1_, int p_147049_2_, int p_147049_3_)
      {
@@ -238,7 +215,7 @@
          int i = p_147049_1_.getTabColumn();
          int j = 28 * i;
          int k = 0;
-@@ -763,6 +847,8 @@
+@@ -767,6 +845,8 @@
          }
  
          GlStateManager.disableLighting();
@@ -247,7 +224,7 @@
          this.drawTexturedModalRect(l, i1, j, k, 28, j1);
          this.zLevel = 100.0F;
          this.itemRender.zLevel = 100.0F;
-@@ -789,6 +875,15 @@
+@@ -793,6 +873,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
          }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
-@@ -192,7 +192,12 @@
+@@ -204,7 +204,12 @@
          this.playerRenderer = new RenderPlayer(this);
          this.skinMap.put("default", this.playerRenderer);
          this.skinMap.put("slim", new RenderPlayer(this, true));
@@ -13,15 +13,3 @@
  
      public void setRenderPosition(double renderPosXIn, double renderPosYIn, double renderPosZIn)
      {
-@@ -241,9 +246,9 @@
-             IBlockState iblockstate = worldIn.getBlockState(new BlockPos(livingPlayerIn));
-             Block block = iblockstate.getBlock();
- 
--            if (block == Blocks.bed)
-+            if (block.isBed(worldIn, new BlockPos(livingPlayerIn), (EntityLivingBase)livingPlayerIn))
-             {
--                int i = ((EnumFacing)iblockstate.getValue(BlockBed.FACING)).getHorizontalIndex();
-+                int i = block.getBedDirection(worldIn, new BlockPos(livingPlayerIn)).getHorizontalIndex();
-                 this.playerViewY = (float)(i * 90 + 180);
-                 this.playerViewX = 0.0F;
-             }

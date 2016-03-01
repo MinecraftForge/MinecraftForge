@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiButton.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiButton.java
-@@ -21,6 +21,7 @@
+@@ -22,6 +22,7 @@
      public boolean enabled;
      public boolean visible;
      protected boolean hovered;
@@ -8,7 +8,7 @@
  
      public GuiButton(int buttonId, int x, int y, String buttonText)
      {
-@@ -74,6 +75,11 @@
+@@ -75,6 +76,11 @@
              this.mouseDragged(mc, mouseX, mouseY);
              int j = 14737632;
  

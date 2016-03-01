@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -402,4 +402,30 @@
+@@ -398,4 +398,30 @@
      {
          return "TextureAtlasSprite{name=\'" + this.iconName + '\'' + ", frameCount=" + this.framesTextureData.size() + ", rotated=" + this.rotated + ", x=" + this.originX + ", y=" + this.originY + ", height=" + this.height + ", width=" + this.width + ", u0=" + this.minU + ", u1=" + this.maxU + ", v0=" + this.minV + ", v1=" + this.maxV + '}';
      }

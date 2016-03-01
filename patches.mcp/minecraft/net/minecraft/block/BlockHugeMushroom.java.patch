@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockHugeMushroom.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockHugeMushroom.java
-@@ -79,6 +79,20 @@
-         return new BlockState(this, new IProperty[] {VARIANT});
+@@ -221,6 +221,20 @@
+         return new BlockStateContainer(this, new IProperty[] {VARIANT});
      }
  
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)

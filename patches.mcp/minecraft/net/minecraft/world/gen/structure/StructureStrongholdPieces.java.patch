@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStrongholdPieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStrongholdPieces.java
-@@ -240,6 +240,12 @@
+@@ -244,6 +244,12 @@
              {
              }
  
@@ -13,17 +13,8 @@
              public ChestCorridor(int p_i45582_1_, Random p_i45582_2_, StructureBoundingBox p_i45582_3_, EnumFacing p_i45582_4_)
              {
                  super(p_i45582_1_);
-@@ -296,7 +302,7 @@
-                     if (!this.hasMadeChest && structureBoundingBoxIn.isVecInside(new BlockPos(this.getXWithOffset(3, 3), this.getYWithOffset(2), this.getZWithOffset(3, 3))))
-                     {
-                         this.hasMadeChest = true;
--                        this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 3, 2, 3, WeightedRandomChestContent.func_177629_a(strongholdChestContents, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 2 + randomIn.nextInt(2));
-+                        this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 3, 2, 3, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CORRIDOR, randomIn), net.minecraftforge.common.ChestGenHooks.getCount(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CORRIDOR, randomIn));
-                     }
- 
-                     return true;
-@@ -592,6 +598,12 @@
-             private static final List<WeightedRandomChestContent> strongholdLibraryChestContents = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.book, 0, 1, 3, 20), new WeightedRandomChestContent(Items.paper, 0, 2, 7, 20), new WeightedRandomChestContent(Items.map, 0, 1, 1, 1), new WeightedRandomChestContent(Items.compass, 0, 1, 1, 1)});
+@@ -599,6 +605,12 @@
+         {
              private boolean isLargeRoom;
  
 +            static
@@ -35,24 +26,8 @@
              public Library()
              {
              }
-@@ -736,12 +748,13 @@
-                         this.setBlockState(worldIn, Blocks.torch.getDefaultState(), i1, 8, j1 + 1, structureBoundingBoxIn);
-                     }
- 
--                    this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 3, 3, 5, WeightedRandomChestContent.func_177629_a(strongholdLibraryChestContents, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn, 1, 5, 2)}), 1 + randomIn.nextInt(4));
-+                    net.minecraftforge.common.ChestGenHooks info = net.minecraftforge.common.ChestGenHooks.getInfo(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_LIBRARY);
-+                    this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 3, 3, 5, info.getItems(randomIn), info.getCount(randomIn));
- 
-                     if (this.isLargeRoom)
-                     {
-                         this.setBlockState(worldIn, Blocks.air.getDefaultState(), 12, 9, 1, structureBoundingBoxIn);
--                        this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 12, 8, 1, WeightedRandomChestContent.func_177629_a(strongholdLibraryChestContents, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn, 1, 5, 2)}), 1 + randomIn.nextInt(4));
-+                        this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 12, 8, 1, info.getItems(randomIn), info.getCount(randomIn));
-                     }
- 
-                     return true;
-@@ -1013,6 +1026,12 @@
-             private static final List<WeightedRandomChestContent> strongholdRoomCrossingChestContents = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.iron_ingot, 0, 1, 5, 10), new WeightedRandomChestContent(Items.gold_ingot, 0, 1, 3, 5), new WeightedRandomChestContent(Items.redstone, 0, 4, 9, 5), new WeightedRandomChestContent(Items.coal, 0, 3, 8, 10), new WeightedRandomChestContent(Items.bread, 0, 1, 3, 15), new WeightedRandomChestContent(Items.apple, 0, 1, 3, 15), new WeightedRandomChestContent(Items.iron_pickaxe, 0, 1, 1, 1)});
+@@ -1025,6 +1037,12 @@
+         {
              protected int roomType;
  
 +            static
@@ -64,12 +39,3 @@
              public RoomCrossing()
              {
              }
-@@ -1151,7 +1170,7 @@
-                             this.setBlockState(worldIn, Blocks.ladder.getStateFromMeta(this.getMetadataWithOffset(Blocks.ladder, EnumFacing.WEST.getIndex())), 9, 1, 3, structureBoundingBoxIn);
-                             this.setBlockState(worldIn, Blocks.ladder.getStateFromMeta(this.getMetadataWithOffset(Blocks.ladder, EnumFacing.WEST.getIndex())), 9, 2, 3, structureBoundingBoxIn);
-                             this.setBlockState(worldIn, Blocks.ladder.getStateFromMeta(this.getMetadataWithOffset(Blocks.ladder, EnumFacing.WEST.getIndex())), 9, 3, 3, structureBoundingBoxIn);
--                            this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 3, 4, 8, WeightedRandomChestContent.func_177629_a(strongholdRoomCrossingChestContents, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 1 + randomIn.nextInt(4));
-+                            this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 3, 4, 8, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CROSSING, randomIn), net.minecraftforge.common.ChestGenHooks.getCount(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CROSSING, randomIn));
-                     }
- 
-                     return true;

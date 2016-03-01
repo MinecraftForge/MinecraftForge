@@ -18,15 +18,6 @@
                  return this.chunkArray[i][j].getLightFor(p_175629_1_, pos);
              }
          }
-@@ -150,7 +154,7 @@
- 
-     public boolean isAirBlock(BlockPos pos)
-     {
--        return this.getBlockState(pos).getBlock().getMaterial() == Material.air;
-+        return this.getBlockState(pos).getBlock().isAir(this, pos);
-     }
- 
-     @SideOnly(Side.CLIENT)
 @@ -160,6 +164,7 @@
          {
              int i = (pos.getX() >> 4) - this.chunkX;
@@ -35,7 +26,7 @@
              return this.chunkArray[i][j].getLightFor(p_175628_1_, pos);
          }
          else
-@@ -179,4 +184,16 @@
+@@ -178,4 +183,16 @@
      {
          return this.worldObj.getWorldType();
      }

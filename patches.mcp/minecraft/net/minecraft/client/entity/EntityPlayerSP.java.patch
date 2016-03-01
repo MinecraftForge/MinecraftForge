@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -345,6 +345,15 @@
+@@ -400,6 +400,15 @@
          this.mc.ingameGUI.getChatGUI().printChatMessage(chatComponent);
      }
  
@@ -16,7 +16,7 @@
      protected boolean pushOutOfBlocks(double x, double y, double z)
      {
          if (this.noClip)
-@@ -357,30 +366,34 @@
+@@ -412,30 +421,34 @@
              double d0 = x - (double)blockpos.getX();
              double d1 = z - (double)blockpos.getZ();
  
@@ -56,16 +56,3 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
-@@ -448,6 +461,12 @@
- 
-     public void playSound(String name, float volume, float pitch)
-     {
-+        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, name, volume, pitch);
-+        if (event.isCanceled() || event.name == null) return;
-+        name = event.name;
-+        volume = event.newVolume;
-+        pitch = event.newPitch;
-+
-         this.worldObj.playSound(this.posX, this.posY, this.posZ, name, volume, pitch, false);
-     }
- 

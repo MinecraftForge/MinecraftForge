@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMagmaCube.java
-@@ -103,6 +103,7 @@
+@@ -86,6 +86,7 @@
      {
          this.motionY = (double)(0.42F + (float)this.getSlimeSize() * 0.1F);
          this.isAirBorne = true;

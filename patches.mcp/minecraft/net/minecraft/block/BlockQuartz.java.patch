@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockQuartz.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockQuartz.java
-@@ -90,6 +90,26 @@
-         return new BlockState(this, new IProperty[] {VARIANT});
+@@ -113,6 +113,26 @@
+         return new BlockStateContainer(this, new IProperty[] {VARIANT});
      }
  
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)

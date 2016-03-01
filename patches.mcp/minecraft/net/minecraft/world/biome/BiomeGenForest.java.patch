@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
-@@ -201,4 +201,20 @@
-             };
+@@ -147,6 +147,22 @@
          }
      }
-+
+ 
 +    @Override
 +    public void addDefaultFlowers()
 +    {
@@ -20,4 +19,7 @@
 +            addFlower(net.minecraft.init.Blocks.red_flower.getDefaultState().withProperty(net.minecraft.init.Blocks.red_flower.getTypeProperty(), type), 10);
 +        }
 +    }
- }
++
+     public Class <? extends BiomeGenBase > getBiomeClass()
+     {
+         return BiomeGenForest.class;

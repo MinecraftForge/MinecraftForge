@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -38,7 +38,10 @@
+@@ -105,7 +105,10 @@
  
      public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
      {
@@ -12,24 +12,9 @@
      }
  
      public Item getItemDropped(IBlockState state, Random rand, int fortune)
-@@ -64,10 +67,10 @@
- 
-     public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
+@@ -182,4 +185,11 @@
      {
--        boolean flag = this.canPaneConnectToBlock(worldIn.getBlockState(pos.north()).getBlock());
--        boolean flag1 = this.canPaneConnectToBlock(worldIn.getBlockState(pos.south()).getBlock());
--        boolean flag2 = this.canPaneConnectToBlock(worldIn.getBlockState(pos.west()).getBlock());
--        boolean flag3 = this.canPaneConnectToBlock(worldIn.getBlockState(pos.east()).getBlock());
-+        boolean flag = this.canPaneConnectTo(worldIn, pos, EnumFacing.NORTH);
-+        boolean flag1 = this.canPaneConnectTo(worldIn, pos, EnumFacing.SOUTH);
-+        boolean flag2 = this.canPaneConnectTo(worldIn, pos, EnumFacing.WEST);
-+        boolean flag3 = this.canPaneConnectTo(worldIn, pos, EnumFacing.EAST);
- 
-         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
-         {
-@@ -186,4 +189,11 @@
-     {
-         return new BlockState(this, new IProperty[] {NORTH, EAST, WEST, SOUTH});
+         return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, WEST, SOUTH});
      }
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)

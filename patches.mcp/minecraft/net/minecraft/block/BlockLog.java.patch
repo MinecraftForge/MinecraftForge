@@ -1,19 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLog.java
-@@ -33,9 +33,9 @@
-             {
-                 IBlockState iblockstate = worldIn.getBlockState(blockpos);
- 
--                if (iblockstate.getBlock().getMaterial() == Material.leaves && !((Boolean)iblockstate.getValue(BlockLeaves.CHECK_DECAY)).booleanValue())
-+                if (iblockstate.getBlock().isLeaves(worldIn, blockpos))
-                 {
--                    worldIn.setBlockState(blockpos, iblockstate.withProperty(BlockLeaves.CHECK_DECAY, Boolean.valueOf(true)), 4);
-+                    iblockstate.getBlock().beginLeavesDecay(worldIn, blockpos);
-                 }
-             }
+@@ -69,6 +69,9 @@
          }
-@@ -46,6 +46,9 @@
-         return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(LOG_AXIS, BlockLog.EnumAxis.fromFacingAxis(facing.getAxis()));
      }
  
 +    @Override public boolean canSustainLeaves(net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }

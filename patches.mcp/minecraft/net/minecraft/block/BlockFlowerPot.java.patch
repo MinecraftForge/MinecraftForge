@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
-@@ -169,13 +169,6 @@
+@@ -148,13 +148,6 @@
  
      public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -14,8 +14,8 @@
          super.breakBlock(worldIn, pos, state);
      }
  
-@@ -395,6 +388,31 @@
-         return EnumWorldBlockLayer.CUTOUT;
+@@ -374,6 +367,31 @@
+         return BlockRenderLayer.CUTOUT;
      }
  
 +

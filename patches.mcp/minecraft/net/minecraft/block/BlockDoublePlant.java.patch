@@ -9,7 +9,7 @@
  {
      public static final PropertyEnum<BlockDoublePlant.EnumPlantType> VARIANT = PropertyEnum.<BlockDoublePlant.EnumPlantType>create("variant", BlockDoublePlant.EnumPlantType.class);
      public static final PropertyEnum<BlockDoublePlant.EnumBlockHalf> HALF = PropertyEnum.<BlockDoublePlant.EnumBlockHalf>create("half", BlockDoublePlant.EnumBlockHalf.class);
-@@ -90,6 +90,8 @@
+@@ -88,6 +88,8 @@
              Block block = (Block)(flag ? this : worldIn.getBlockState(blockpos).getBlock());
              Block block1 = (Block)(flag ? worldIn.getBlockState(blockpos1).getBlock() : this);
  
@@ -18,7 +18,7 @@
              if (block == this)
              {
                  worldIn.setBlockState(blockpos, Blocks.air.getDefaultState(), 2);
-@@ -98,17 +100,13 @@
+@@ -96,17 +98,13 @@
              if (block1 == this)
              {
                  worldIn.setBlockState(blockpos1, Blocks.air.getDefaultState(), 3);
@@ -37,24 +37,7 @@
          if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER)
          {
              return worldIn.getBlockState(pos.down()).getBlock() == this;
-@@ -158,7 +156,6 @@
- 
-     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
-     {
--        if (worldIn.isRemote || player.getCurrentEquippedItem() == null || player.getCurrentEquippedItem().getItem() != Items.shears || state.getValue(HALF) != BlockDoublePlant.EnumBlockHalf.LOWER || !this.onHarvest(worldIn, pos, state, player))
-         {
-             super.harvestBlock(worldIn, player, pos, state, te);
-         }
-@@ -221,8 +218,6 @@
-         else
-         {
-             player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
--            int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).getMeta();
--            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 2, i));
-             return true;
-         }
-     }
-@@ -293,6 +288,32 @@
+@@ -284,6 +282,32 @@
          return Block.EnumOffsetType.XZ;
      }
  

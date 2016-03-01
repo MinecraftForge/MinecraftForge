@@ -1,30 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -167,7 +167,7 @@
-                 {
-                     Block block = this.getBlock0(j, l - 1, k);
- 
--                    if (block.getLightOpacity() != 0)
-+                    if (getBlockLightOpacity(j, l - 1, k) != 0)
-                     {
-                         this.heightMap[k << 4 | j] = l;
- 
-@@ -440,12 +440,12 @@
- 
-     public int getBlockLightOpacity(BlockPos pos)
-     {
--        return this.getBlock(pos).getLightOpacity();
-+        return this.getBlock(pos).getLightOpacity(worldObj, pos);
-     }
- 
-     private int getBlockLightOpacity(int x, int y, int z)
-     {
--        return this.getBlock0(x, y, z).getLightOpacity();
-+        return getBlockLightOpacity(new BlockPos((xPosition << 4) + x, y, (zPosition << 4) + z));
-     }
- 
-     private Block getBlock0(int x, int y, int z)
-@@ -607,6 +607,7 @@
+@@ -534,6 +534,7 @@
          {
              Block block = state.getBlock();
              Block block1 = iblockstate.getBlock();
@@ -32,7 +8,7 @@
              ExtendedBlockStorage extendedblockstorage = this.storageArrays[j >> 4];
              boolean flag = false;
  
-@@ -623,14 +624,19 @@
+@@ -550,14 +551,19 @@
  
              extendedblockstorage.set(i, j & 15, k, state);
  
@@ -54,17 +30,7 @@
                      this.worldObj.removeTileEntity(pos);
                  }
              }
-@@ -647,8 +653,7 @@
-                 }
-                 else
-                 {
--                    int j1 = block.getLightOpacity();
--                    int k1 = block1.getLightOpacity();
-+                    int j1 = block.getLightOpacity(this.worldObj, pos);
- 
-                     if (j1 > 0)
-                     {
-@@ -668,28 +673,18 @@
+@@ -595,28 +601,18 @@
                      }
                  }
  
@@ -95,7 +61,7 @@
                          this.worldObj.setTileEntity(pos, tileentity1);
                      }
  
-@@ -792,6 +787,7 @@
+@@ -719,6 +715,7 @@
              k = this.entityLists.length - 1;
          }
  
@@ -103,29 +69,7 @@
          entityIn.addedToChunk = true;
          entityIn.chunkCoordX = this.xPosition;
          entityIn.chunkCoordY = k;
-@@ -830,13 +826,20 @@
-     private TileEntity createNewTileEntity(BlockPos pos)
-     {
-         Block block = this.getBlock(pos);
--        return !block.hasTileEntity() ? null : ((ITileEntityProvider)block).createNewTileEntity(this.worldObj, this.getBlockMetadata(pos));
-+        IBlockState state = block.getStateFromMeta(this.getBlockMetadata(pos));
-+        return !block.hasTileEntity(state) ? null : block.createTileEntity(this.worldObj, state);
-     }
- 
-     public TileEntity getTileEntity(BlockPos pos, Chunk.EnumCreateEntityType p_177424_2_)
-     {
-         TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(pos);
- 
-+        if (tileentity != null && tileentity.isInvalid())
-+        {
-+            chunkTileEntityMap.remove(pos);
-+            tileentity = null;
-+        }
-+
-         if (tileentity == null)
-         {
-             if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-@@ -846,14 +849,9 @@
+@@ -774,14 +771,9 @@
              }
              else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
              {
@@ -141,16 +85,7 @@
  
          return tileentity;
      }
-@@ -873,7 +871,7 @@
-         tileEntityIn.setWorldObj(this.worldObj);
-         tileEntityIn.setPos(pos);
- 
--        if (this.getBlock(pos) instanceof ITileEntityProvider)
-+        if (this.getBlock(pos).hasTileEntity(getBlock(pos).getStateFromMeta(this.getBlockMetadata(pos))))
-         {
-             if (this.chunkTileEntityMap.containsKey(pos))
-             {
-@@ -882,6 +880,7 @@
+@@ -810,6 +802,7 @@
  
              tileEntityIn.validate();
              this.chunkTileEntityMap.put(pos, tileEntityIn);
@@ -158,7 +93,7 @@
          }
      }
  
-@@ -910,8 +909,9 @@
+@@ -838,8 +831,9 @@
                  entity.onChunkLoad();
              }
  
@@ -169,7 +104,7 @@
      }
  
      public void onChunkUnload()
-@@ -927,6 +927,7 @@
+@@ -855,6 +849,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
@@ -177,7 +112,7 @@
      }
  
      public void setChunkModified()
-@@ -936,8 +937,8 @@
+@@ -864,8 +859,8 @@
  
      public void getEntitiesWithinAABBForEntity(Entity entityIn, AxisAlignedBB aabb, List<Entity> listToFill, Predicate <? super Entity > p_177414_4_)
      {
@@ -188,7 +123,7 @@
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
  
-@@ -976,8 +977,8 @@
+@@ -904,8 +899,8 @@
  
      public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class <? extends T > entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate <? super T > p_177430_4_)
      {
@@ -199,33 +134,7 @@
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
  
-@@ -1137,8 +1138,10 @@
-         while (!this.tileEntityPosQueue.isEmpty())
-         {
-             BlockPos blockpos = (BlockPos)this.tileEntityPosQueue.poll();
-+            Block block = this.getBlock(blockpos);
-+            IBlockState state = block.getStateFromMeta(this.getBlockMetadata(blockpos));
- 
--            if (this.getTileEntity(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.getBlock(blockpos).hasTileEntity())
-+            if (this.getTileEntity(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && block.hasTileEntity(state))
-             {
-                 TileEntity tileentity = this.createNewTileEntity(blockpos);
-                 this.worldObj.setTileEntity(blockpos, tileentity);
-@@ -1200,6 +1203,13 @@
-     @SideOnly(Side.CLIENT)
-     public void fillChunk(byte[] p_177439_1_, int p_177439_2_, boolean p_177439_3_)
-     {
-+        for(TileEntity tileEntity : chunkTileEntityMap.values())
-+        {
-+            tileEntity.updateContainingBlockInfo();
-+            tileEntity.getBlockMetadata();
-+            tileEntity.getBlockType();
-+        }
-+
-         int i = 0;
-         boolean flag = !this.worldObj.provider.getHasNoSky();
- 
-@@ -1267,10 +1277,16 @@
+@@ -1162,10 +1157,16 @@
          this.isTerrainPopulated = true;
          this.generateHeightMap();
  
@@ -241,8 +150,8 @@
 +        for (TileEntity te : invalidList) te.invalidate();
      }
  
-     public BiomeGenBase getBiome(BlockPos pos, WorldChunkManager chunkManager)
-@@ -1583,4 +1599,20 @@
+     public BiomeGenBase getBiome(BlockPos pos, BiomeProvider chunkManager)
+@@ -1481,4 +1482,20 @@
          QUEUED,
          CHECK;
      }

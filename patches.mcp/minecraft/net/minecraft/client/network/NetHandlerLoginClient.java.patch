@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
-@@ -104,7 +104,10 @@
+@@ -106,7 +106,10 @@
      {
          this.gameProfile = packetIn.getProfile();
          this.networkManager.setConnectionState(EnumConnectionState.PLAY);
@@ -11,4 +11,4 @@
 +        net.minecraftforge.fml.client.FMLClientHandler.instance().setPlayClient(nhpc);
      }
  
-     public void onDisconnect(IChatComponent reason)
+     public void onDisconnect(ITextComponent reason)
