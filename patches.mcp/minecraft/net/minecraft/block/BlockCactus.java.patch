@@ -9,6 +9,17 @@
  {
      public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
      protected static final AxisAlignedBB field_185593_b = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
+@@ -110,8 +110,8 @@
+             }
+         }
+ 
+-        Block block = worldIn.getBlockState(pos.down()).getBlock();
+-        return block == Blocks.cactus || block == Blocks.sand && !worldIn.getBlockState(pos.up()).func_185904_a().isLiquid();
++        IBlockState state = worldIn.getBlockState(pos.down());
++        return state.getBlock().canSustainPlant(state, worldIn, pos, EnumFacing.UP, this) && !worldIn.getBlockState(pos.up()).func_185904_a().isLiquid();
+     }
+ 
+     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 @@ -135,6 +135,18 @@
          return ((Integer)state.getValue(AGE)).intValue();
      }

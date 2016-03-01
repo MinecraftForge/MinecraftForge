@@ -36,9 +36,9 @@
 +        return super.removedByPlayer(world, pos, player, willHarvest);
 +    }
 +    @Override
-+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
++    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack tool)
 +    {
-+        super.harvestBlock(world, player, pos, state, te);
++        super.harvestBlock(world, player, pos, state, te, tool);
 +        world.setBlockToAir(pos);
 +    }
 +    /*===========================FORGE END==========================================*/

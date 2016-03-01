@@ -9,6 +9,45 @@
      }
  
      protected BlockRailBase(boolean isPowered)
+@@ -65,7 +65,7 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos.down()).func_185896_q();
++        return worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos, EnumFacing.UP);
+     }
+ 
+     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+@@ -88,24 +88,24 @@
+             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(this.getShapeProperty());
+             boolean flag = false;
+ 
+-            if (!worldIn.getBlockState(pos.down()).func_185896_q())
++            if (!worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos.down(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+ 
+-            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !worldIn.getBlockState(pos.east()).func_185896_q())
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !worldIn.getBlockState(pos.east()).isSideSolid(worldIn, pos.east(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+-            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !worldIn.getBlockState(pos.west()).func_185896_q())
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !worldIn.getBlockState(pos.west()).isSideSolid(worldIn, pos.west(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+-            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !worldIn.getBlockState(pos.north()).func_185896_q())
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !worldIn.getBlockState(pos.north()).isSideSolid(worldIn, pos.north(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
+-            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !worldIn.getBlockState(pos.south()).func_185896_q())
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !worldIn.getBlockState(pos.south()).isSideSolid(worldIn, pos.south(), EnumFacing.UP))
+             {
+                 flag = true;
+             }
 @@ -160,6 +160,81 @@
  
      public abstract IProperty<BlockRailBase.EnumRailDirection> getShapeProperty();
@@ -75,7 +114,7 @@
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
 +        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        for (IProperty prop : state.getProperties().keySet())
 +        {
 +            if (prop.getName().equals("shape"))
 +            {
@@ -99,7 +138,17 @@
  
          public Rail(World worldIn, BlockPos pos, IBlockState state)
          {
-@@ -429,7 +505,7 @@
+@@ -238,7 +314,8 @@
+             this.state = state;
+             this.block = (BlockRailBase)state.getBlock();
+             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(this.block.getShapeProperty());
+-            this.isPowered = this.block.isPowered;
++            this.isPowered = !this.block.isFlexibleRail(worldIn, pos);
++            this.canMakeSlopes = this.block.canMakeSlopes(worldIn, pos);
+             this.func_180360_a(blockrailbase$enumraildirection);
+         }
+ 
+@@ -429,7 +506,7 @@
                  }
              }
  
@@ -108,7 +157,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
                  {
-@@ -442,7 +518,7 @@
+@@ -442,7 +519,7 @@
                  }
              }
  
@@ -117,7 +166,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos3.up()))
                  {
-@@ -585,7 +661,7 @@
+@@ -585,7 +662,7 @@
                  }
              }
  
@@ -126,7 +175,7 @@
              {
                  if (BlockRailBase.isRailBlock(this.world, blockpos.up()))
                  {
-@@ -598,7 +674,7 @@
+@@ -598,7 +675,7 @@
                  }
              }
  

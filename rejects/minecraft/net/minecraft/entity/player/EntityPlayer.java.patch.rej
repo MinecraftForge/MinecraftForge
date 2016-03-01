@@ -68,34 +68,6 @@
          }
      }
 ++++ END PATCH
-++++ REJECTED PATCH 13
- 
-     public void joinEntityItemWithWorld(EntityItem itemIn)
-     {
-+        if (captureDrops)
-+        {
-+            capturedDrops.add(itemIn);
-+            return;
-+        }
-+
-         this.worldObj.spawnEntityInWorld(itemIn);
-     }
- 
-+    @Deprecated //Use location sensitive version below
-     public float getToolDigEfficiency(Block p_180471_1_)
-     {
--        float f = this.inventory.getStrVsBlock(p_180471_1_);
-+        return getBreakSpeed(p_180471_1_.getDefaultState(), new BlockPos(0, -1, 0));
-+    }
- 
-+    public float getBreakSpeed(IBlockState state, BlockPos pos)
-+    {
-+        ItemStack stack = inventory.getCurrentItem();
-+        float f = (stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, state));
-         if (f > 1.0F)
-         {
-             int i = EnchantmentHelper.getEfficiencyModifier(this);
-++++ END PATCH
 ++++ REJECTED PATCH 14
              f /= 5.0F;
          }

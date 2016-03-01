@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
-@@ -59,34 +59,40 @@
+@@ -59,34 +59,39 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
@@ -8,9 +8,8 @@
 -        if (this.getItemDropped(state, worldIn.rand, fortune) != Item.getItemFromBlock(this))
 +    }
 +    @Override
-+    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        IBlockState state = world.getBlockState(pos);
 +        Random rand = world instanceof World ? ((World)world).rand : new Random();
 +        if (this.getItemDropped(state, rand, fortune) != Item.getItemFromBlock(this))
          {

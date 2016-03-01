@@ -5,11 +5,11 @@
      }
  
 +    @Override
-+    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face)
-+	{
-+        if ( isOpaqueCube() )
++    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
++    {
++        if ( state.func_185914_p() )
 +            return true;
-+        
++
 +        // face is on the block being rendered, not this block.
 +        EnumBlockHalf side = world.getBlockState(pos).getValue(HALF);
 +        return (side == EnumBlockHalf.TOP && face == EnumFacing.DOWN) || (side == EnumBlockHalf.BOTTOM && face == EnumFacing.UP);
@@ -18,3 +18,19 @@
      public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
      {
          IBlockState iblockstate = super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(HALF, BlockSlab.EnumBlockHalf.BOTTOM);
+@@ -77,13 +88,14 @@
+         {
+             return false;
+         }
+-        else
++        else if (false) // Forge: Additional logic breaks doesSideBlockRendering and is no longer useful.
+         {
+             IBlockState iblockstate = pos.getBlockState(side.offset(p_176225_4_));
+             boolean flag = func_185675_i(iblockstate) && iblockstate.getValue(HALF) == BlockSlab.EnumBlockHalf.TOP;
+             boolean flag1 = func_185675_i(worldIn) && worldIn.getValue(HALF) == BlockSlab.EnumBlockHalf.TOP;
+             return flag1 ? (p_176225_4_ == EnumFacing.DOWN ? true : (p_176225_4_ == EnumFacing.UP && super.shouldSideBeRendered(worldIn, pos, side, p_176225_4_) ? true : !func_185675_i(iblockstate) || !flag)) : (p_176225_4_ == EnumFacing.UP ? true : (p_176225_4_ == EnumFacing.DOWN && super.shouldSideBeRendered(worldIn, pos, side, p_176225_4_) ? true : !func_185675_i(iblockstate) || flag));
+         }
++        return super.shouldSideBeRendered(worldIn, pos, side, p_176225_4_);
+     }
+ 
+     @SideOnly(Side.CLIENT)

@@ -9,6 +9,15 @@
  {
      public static final PropertyBool UP = PropertyBool.create("up");
      public static final PropertyBool NORTH = PropertyBool.create("north");
+@@ -342,7 +342,7 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack p_180657_6_)
+     {
+-        if (!worldIn.isRemote && p_180657_6_ != null && p_180657_6_.getItem() == Items.shears)
++        if (false && !worldIn.isRemote && p_180657_6_ != null && p_180657_6_.getItem() == Items.shears) // Forge: Noop, Covered by IShearable
+         {
+             player.triggerAchievement(StatList.func_188055_a(this));
+             spawnAsEntity(worldIn, pos, new ItemStack(Blocks.vine, 1, 0));
 @@ -457,4 +457,14 @@
  
          return i;

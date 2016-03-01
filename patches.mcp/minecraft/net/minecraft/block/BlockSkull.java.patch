@@ -31,6 +31,15 @@
          {
              if (!((Boolean)state.getValue(NODROP)).booleanValue())
              {
+@@ -142,7 +143,7 @@
+                 if (tileentity instanceof TileEntitySkull)
+                 {
+                     TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
+-                    ItemStack itemstack = this.func_185473_a(worldIn, pos, state);
++                    ItemStack itemstack = new ItemStack(Items.skull, 1, tileentityskull.getSkullType());
+ 
+                     if (tileentityskull.getSkullType() == 3 && tileentityskull.getPlayerProfile() != null)
+                     {
 @@ -152,12 +153,11 @@
                          itemstack.getTagCompound().setTag("SkullOwner", nbttagcompound);
                      }

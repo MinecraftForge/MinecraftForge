@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
+@@ -73,7 +73,7 @@
+     {
+         IBlockState iblockstate = worldIn.getBlockState(pos.down());
+         Block block = iblockstate.getBlock();
+-        return block != Blocks.ice && block != Blocks.packed_ice ? (iblockstate.func_185904_a() == Material.leaves ? true : (block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() >= 7 ? true : iblockstate.func_185914_p() && iblockstate.func_185904_a().blocksMovement())) : false;
++        return block != Blocks.ice && block != Blocks.packed_ice ? (iblockstate.getBlock().isLeaves(iblockstate, worldIn, pos.down()) ? true : (block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() >= 7 ? true : iblockstate.func_185914_p() && iblockstate.func_185904_a().blocksMovement())) : false;
+     }
+ 
+     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
 @@ -85,7 +85,6 @@
      {
          if (!this.canPlaceBlockAt(worldIn, pos))
@@ -8,7 +17,18 @@
              worldIn.setBlockToAir(pos);
              return false;
          }
-@@ -109,14 +108,13 @@
+@@ -97,9 +96,8 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack p_180657_6_)
+     {
+-        spawnAsEntity(worldIn, pos, new ItemStack(Items.snowball, ((Integer)state.getValue(LAYERS)).intValue() + 1, 0));
++        super.harvestBlock(worldIn, player, pos, state, te, p_180657_6_);
+         worldIn.setBlockToAir(pos);
+-        player.triggerAchievement(StatList.func_188055_a(this));
+     }
+ 
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+@@ -109,14 +107,13 @@
  
      public int quantityDropped(Random random)
      {
@@ -24,7 +44,7 @@
              worldIn.setBlockToAir(pos);
          }
      }
-@@ -150,6 +148,8 @@
+@@ -150,6 +147,8 @@
          return ((Integer)state.getValue(LAYERS)).intValue() - 1;
      }
  

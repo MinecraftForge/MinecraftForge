@@ -1,15 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -91,7 +91,7 @@
+@@ -89,9 +89,10 @@
+                     }
+ 
                      pos = pos.offset(EnumFacing.Plane.HORIZONTAL.random(rand));
-                     Block block = worldIn.getBlockState(pos.down()).getBlock();
+-                    Block block = worldIn.getBlockState(pos.down()).getBlock();
++                    IBlockState soil = worldIn.getBlockState(pos.down());
++                    Block block = soil.getBlock();
  
 -                    if (worldIn.getBlockState(pos).getBlock().blockMaterial == Material.air && (block == Blocks.farmland || block == Blocks.dirt || block == Blocks.grass))
-+                    if (worldIn.isAirBlock(pos) && (block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this) || block == Blocks.dirt || block == Blocks.grass))
++                    if (worldIn.isAirBlock(pos) && (block.canSustainPlant(soil, worldIn, pos.down(), EnumFacing.UP, this) || block == Blocks.dirt || block == Blocks.grass))
                      {
                          worldIn.setBlockState(pos, this.crop.getDefaultState());
                      }
-@@ -109,8 +109,12 @@
+@@ -109,8 +110,12 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
@@ -23,7 +27,7 @@
          {
              Item item = this.getSeedItem();
  
-@@ -120,13 +124,14 @@
+@@ -120,13 +125,14 @@
  
                  for (int j = 0; j < 3; ++j)
                  {

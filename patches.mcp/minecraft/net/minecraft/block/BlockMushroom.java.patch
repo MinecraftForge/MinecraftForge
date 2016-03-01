@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockMushroom.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMushroom.java
+@@ -78,7 +78,7 @@
+         if (pos.getY() >= 0 && pos.getY() < 256)
+         {
+             IBlockState iblockstate = worldIn.getBlockState(pos.down());
+-            return iblockstate.getBlock() == Blocks.mycelium ? true : (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL ? true : worldIn.getLight(pos) < 13 && this.func_185514_i(iblockstate));
++            return iblockstate.getBlock() == Blocks.mycelium ? true : (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL ? true : worldIn.getLight(pos) < 13 && iblockstate.getBlock().canSustainPlant(iblockstate, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this));
+         }
+         else
+         {

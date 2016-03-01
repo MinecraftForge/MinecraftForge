@@ -87,7 +87,33 @@
      }
  
      public EntityItem dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
-@@ -845,6 +868,16 @@
+@@ -746,15 +769,24 @@
+ 
+     protected ItemStack func_184816_a(EntityItem p_184816_1_)
+     {
++        if (captureDrops) capturedDrops.add(p_184816_1_);
++        else // Forge: Don't indent to keep patch smaller.
+         this.worldObj.spawnEntityInWorld(p_184816_1_);
+         ItemStack itemstack = p_184816_1_.getEntityItem();
+         return itemstack;
+     }
+ 
++    @Deprecated //Use location sensitive version below
+     public float func_184813_a(IBlockState p_184813_1_)
+     {
+-        float f = this.inventory.func_184438_a(p_184813_1_);
++        return getBreakSpeed(p_184813_1_, new BlockPos(0, -1, 0));
++    }
+ 
++    public float getBreakSpeed(IBlockState state, BlockPos pos)
++    {
++        ItemStack stack = this.inventory.getCurrentItem();
++        float f = (stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, state));
++
+         if (f > 1.0F)
+         {
+             int i = EnchantmentHelper.func_185293_e(this);
+@@ -845,6 +877,16 @@
              this.spawnForced = tagCompund.getBoolean("SpawnForced");
          }
  
@@ -104,7 +130,7 @@
          this.foodStats.readNBT(tagCompund);
          this.capabilities.readCapabilitiesFromNBT(tagCompund);
  
-@@ -877,6 +910,23 @@
+@@ -877,6 +919,23 @@
              tagCompound.setBoolean("SpawnForced", this.spawnForced);
          }
  
@@ -128,7 +154,7 @@
          this.foodStats.writeNBT(tagCompound);
          this.capabilities.writeCapabilitiesToNBT(tagCompound);
          tagCompound.setTag("EnderItems", this.theInventoryEnderChest.saveInventoryToNBT());
-@@ -884,6 +934,7 @@
+@@ -884,6 +943,7 @@
  
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
@@ -136,7 +162,7 @@
          if (this.isEntityInvulnerable(source))
          {
              return false;
-@@ -1123,6 +1174,7 @@
+@@ -1123,6 +1183,7 @@
  
      public void attackTargetEntityWithCurrentItem(Entity targetEntity)
      {
@@ -144,7 +170,7 @@
          if (targetEntity.canAttackWithItem())
          {
              if (!targetEntity.hitByEntity(this))
-@@ -1410,6 +1462,8 @@
+@@ -1410,6 +1471,8 @@
  
      public EntityPlayer.EnumStatus trySleep(BlockPos bedLocation)
      {
@@ -153,7 +179,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1514,13 +1568,14 @@
+@@ -1514,13 +1577,14 @@
  
      public void wakeUpPlayer(boolean p_70999_1_, boolean updateWorldFlag, boolean setSpawn)
      {
@@ -171,7 +197,7 @@
  
              if (blockpos == null)
              {
-@@ -1529,6 +1584,10 @@
+@@ -1529,6 +1593,10 @@
  
              this.setPosition((double)((float)blockpos.getX() + 0.5F), (double)((float)blockpos.getY() + 0.1F), (double)((float)blockpos.getZ() + 0.5F));
          }
@@ -182,7 +208,7 @@
  
          this.sleeping = false;
  
-@@ -1547,14 +1606,14 @@
+@@ -1547,14 +1615,14 @@
  
      private boolean isInBed()
      {
@@ -199,7 +225,7 @@
          {
              if (!forceSpawn)
              {
-@@ -1618,16 +1677,24 @@
+@@ -1618,16 +1686,24 @@
  
      public BlockPos getBedLocation()
      {
@@ -226,7 +252,7 @@
          if (pos != null)
          {
              this.spawnChunk = pos;
-@@ -1822,6 +1889,10 @@
+@@ -1822,6 +1898,10 @@
  
              super.fall(distance, damageMultiplier);
          }
@@ -237,7 +263,7 @@
      }
  
      protected void resetHeight()
-@@ -2009,6 +2080,10 @@
+@@ -2009,6 +2089,10 @@
              this.field_181016_an = oldPlayer.field_181016_an;
              this.field_181017_ao = oldPlayer.field_181017_ao;
              this.field_181018_ap = oldPlayer.field_181018_ap;
@@ -248,7 +274,7 @@
          }
          else if (this.worldObj.getGameRules().getBoolean("keepInventory") || oldPlayer.isSpectator())
          {
-@@ -2129,7 +2204,7 @@
+@@ -2129,7 +2213,7 @@
  
      public float getEyeHeight()
      {
@@ -257,7 +283,7 @@
  
          if (this.isPlayerSleeping())
          {
-@@ -2340,6 +2415,136 @@
+@@ -2340,6 +2424,136 @@
          return (float)this.getEntityAttribute(SharedMonsterAttributes.field_188792_h).getAttributeValue();
      }
  

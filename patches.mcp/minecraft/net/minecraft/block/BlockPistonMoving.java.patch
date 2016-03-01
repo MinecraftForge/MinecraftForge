@@ -1,6 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -190,4 +190,16 @@
+@@ -110,7 +110,7 @@
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+-        if (!worldIn.isRemote)
++        if (false && !worldIn.isRemote) // Forge: Noop this out
+         {
+             TileEntityPiston tileentitypiston = this.func_185589_c(worldIn, pos);
+ 
+@@ -120,6 +120,7 @@
+                 iblockstate.getBlock().dropBlockAsItem(worldIn, pos, iblockstate, 0);
+             }
+         }
++        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+     }
+ 
+     public RayTraceResult collisionRayTrace(IBlockState worldIn, World pos, BlockPos start, Vec3d end, Vec3d p_180636_5_)
+@@ -190,4 +191,16 @@
      {
          return new BlockStateContainer(this, new IProperty[] {FACING, TYPE});
      }
@@ -8,7 +25,7 @@
 +    @Override
 +    public java.util.List<net.minecraft.item.ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        TileEntityPiston tileentitypiston = this.getTileEntity(world, pos);
++        TileEntityPiston tileentitypiston = this.func_185589_c(world, pos);
 +        if (tileentitypiston != null)
 +        {
 +            IBlockState pushed = tileentitypiston.getPistonState();

@@ -1,6 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFire.java
-@@ -90,6 +90,7 @@
+@@ -37,7 +37,15 @@
+ 
+     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+     {
+-        return !worldIn.getBlockState(pos.down()).func_185896_q() && !Blocks.fire.canCatchFire(worldIn, pos.down()) ? state.withProperty(NORTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.north()))).withProperty(EAST, Boolean.valueOf(this.canCatchFire(worldIn, pos.east()))).withProperty(SOUTH, Boolean.valueOf(this.canCatchFire(worldIn, pos.south()))).withProperty(WEST, Boolean.valueOf(this.canCatchFire(worldIn, pos.west()))).withProperty(UPPER, Boolean.valueOf(this.canCatchFire(worldIn, pos.up()))) : this.getDefaultState();
++        if (!worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos.down(), EnumFacing.UP) && !Blocks.fire.canCatchFire(worldIn, pos.down(), EnumFacing.UP))
++        {
++            return state.withProperty(NORTH, this.canCatchFire(worldIn, pos.north(), EnumFacing.SOUTH))
++                        .withProperty(EAST,  this.canCatchFire(worldIn, pos.east(), EnumFacing.WEST))
++                        .withProperty(SOUTH, this.canCatchFire(worldIn, pos.south(), EnumFacing.NORTH))
++                        .withProperty(WEST,  this.canCatchFire(worldIn, pos.west(), EnumFacing.EAST))
++                        .withProperty(UPPER, this.canCatchFire(worldIn, pos.up(), EnumFacing.DOWN));
++        }
++        return this.getDefaultState();
+     }
+ 
+     protected BlockFire()
+@@ -90,6 +98,7 @@
  
      public void setFireInfo(Block blockIn, int encouragement, int flammability)
      {
@@ -8,7 +25,31 @@
          this.encouragements.put(blockIn, Integer.valueOf(encouragement));
          this.flammabilities.put(blockIn, Integer.valueOf(flammability));
      }
-@@ -164,7 +165,7 @@
+@@ -129,13 +138,8 @@
+             }
+ 
+             Block block = worldIn.getBlockState(pos.down()).getBlock();
+-            boolean flag = block == Blocks.netherrack;
++            boolean flag = block.isFireSource(worldIn, pos.down(), EnumFacing.UP);
+ 
+-            if (worldIn.provider instanceof WorldProviderEnd && block == Blocks.bedrock)
+-            {
+-                flag = true;
+-            }
+-
+             int i = ((Integer)state.getValue(AGE)).intValue();
+ 
+             if (!flag && worldIn.isRaining() && this.canDie(worldIn, pos) && rand.nextFloat() < 0.2F + (float)i * 0.03F)
+@@ -156,7 +160,7 @@
+                 {
+                     if (!this.canNeighborCatchFire(worldIn, pos))
+                     {
+-                        if (!worldIn.getBlockState(pos.down()).func_185896_q() || i > 3)
++                        if (!worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos.down(), EnumFacing.UP) || i > 3)
+                         {
+                             worldIn.setBlockToAir(pos);
+                         }
+@@ -164,7 +168,7 @@
                          return;
                      }
  
@@ -17,7 +58,7 @@
                      {
                          worldIn.setBlockToAir(pos);
                          return;
-@@ -179,12 +180,12 @@
+@@ -179,12 +183,12 @@
                      j = -50;
                  }
  
@@ -36,7 +77,7 @@
  
                  for (int k = -1; k <= 1; ++k)
                  {
-@@ -243,22 +244,30 @@
+@@ -243,22 +247,30 @@
          return false;
      }
  
@@ -68,7 +109,7 @@
          if (random.nextInt(chance) < i)
          {
              IBlockState iblockstate = worldIn.getBlockState(pos);
-@@ -290,7 +299,7 @@
+@@ -290,7 +302,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
@@ -77,7 +118,7 @@
              {
                  return true;
              }
-@@ -311,7 +320,7 @@
+@@ -311,7 +323,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.values())
              {
@@ -86,7 +127,7 @@
              }
  
              return i;
-@@ -323,9 +332,10 @@
+@@ -323,9 +335,10 @@
          return false;
      }
  
@@ -98,7 +139,55 @@
      }
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
-@@ -458,4 +468,19 @@
+@@ -364,9 +377,9 @@
+             pos.func_184134_a((double)((float)state.getX() + 0.5F), (double)((float)state.getY() + 0.5F), (double)((float)state.getZ() + 0.5F), SoundEvents.field_187643_bs, SoundCategory.BLOCKS, 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F, false);
+         }
+ 
+-        if (!pos.getBlockState(state.down()).func_185896_q() && !Blocks.fire.canCatchFire(pos, state.down()))
++        if (!pos.getBlockState(state.down()).isSideSolid(pos, state.down(), EnumFacing.UP) && !Blocks.fire.canCatchFire(pos, state.down(), EnumFacing.UP))
+         {
+-            if (Blocks.fire.canCatchFire(pos, state.west()))
++            if (Blocks.fire.canCatchFire(pos, state.west(), EnumFacing.EAST))
+             {
+                 for (int j = 0; j < 2; ++j)
+                 {
+@@ -377,7 +390,7 @@
+                 }
+             }
+ 
+-            if (Blocks.fire.canCatchFire(pos, state.east()))
++            if (Blocks.fire.canCatchFire(pos, state.east(), EnumFacing.WEST))
+             {
+                 for (int k = 0; k < 2; ++k)
+                 {
+@@ -388,7 +401,7 @@
+                 }
+             }
+ 
+-            if (Blocks.fire.canCatchFire(pos, state.north()))
++            if (Blocks.fire.canCatchFire(pos, state.north(), EnumFacing.SOUTH))
+             {
+                 for (int l = 0; l < 2; ++l)
+                 {
+@@ -399,7 +412,7 @@
+                 }
+             }
+ 
+-            if (Blocks.fire.canCatchFire(pos, state.south()))
++            if (Blocks.fire.canCatchFire(pos, state.south(), EnumFacing.NORTH))
+             {
+                 for (int i1 = 0; i1 < 2; ++i1)
+                 {
+@@ -410,7 +423,7 @@
+                 }
+             }
+ 
+-            if (Blocks.fire.canCatchFire(pos, state.up()))
++            if (Blocks.fire.canCatchFire(pos, state.up(), EnumFacing.DOWN))
+             {
+                 for (int j1 = 0; j1 < 2; ++j1)
+                 {
+@@ -458,4 +471,19 @@
      {
          return new BlockStateContainer(this, new IProperty[] {AGE, NORTH, EAST, SOUTH, WEST, UPPER});
      }

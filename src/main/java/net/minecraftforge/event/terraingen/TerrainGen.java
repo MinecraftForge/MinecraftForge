@@ -2,7 +2,7 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 import net.minecraftforge.fml.common.eventhandler.Event.*;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;

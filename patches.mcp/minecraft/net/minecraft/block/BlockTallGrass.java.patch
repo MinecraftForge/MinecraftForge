@@ -9,6 +9,15 @@
  {
      public static final PropertyEnum<BlockTallGrass.EnumType> TYPE = PropertyEnum.<BlockTallGrass.EnumType>create("type", BlockTallGrass.EnumType.class);
      protected static final AxisAlignedBB field_185522_c = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
+@@ -41,7 +41,7 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return this.func_185514_i(worldIn.getBlockState(pos.down()));
++        return super.canBlockStay(worldIn, pos, state);
+     }
+ 
+     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
 @@ -51,7 +51,7 @@
  
      public Item getItemDropped(IBlockState state, Random rand, int fortune)
@@ -18,6 +27,15 @@
      }
  
      public int quantityDroppedWithBonus(int fortune, Random random)
+@@ -61,7 +61,7 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack p_180657_6_)
+     {
+-        if (!worldIn.isRemote && p_180657_6_ != null && p_180657_6_.getItem() == Items.shears)
++        if (false && !worldIn.isRemote && p_180657_6_ != null && p_180657_6_.getItem() == Items.shears) // Forge: Noop Taken care of by IShearable
+         {
+             player.triggerAchievement(StatList.func_188055_a(this));
+             spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 1, ((BlockTallGrass.EnumType)state.getValue(TYPE)).getMeta()));
 @@ -181,4 +181,22 @@
              }
          }

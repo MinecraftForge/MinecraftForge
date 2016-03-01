@@ -7,7 +7,7 @@
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
 +        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        for (IProperty prop : (java.util.Set<IProperty<?>>)state.getProperties().keySet())
 +        {
 +            if (prop.getName().equals("variant"))
 +            {

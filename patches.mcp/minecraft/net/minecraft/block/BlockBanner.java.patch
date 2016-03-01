@@ -1,6 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
-@@ -138,6 +138,28 @@
+@@ -104,14 +104,7 @@
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+-        ItemStack itemstack = this.func_185549_e(worldIn, pos, state);
+-
+-        if (itemstack != null)
+         {
+-            spawnAsEntity(worldIn, pos, itemstack);
+-        }
+-        else
+-        {
+             super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         }
+     }
+@@ -138,6 +131,28 @@
          }
      }
  

@@ -9,7 +9,29 @@
  {
      protected static final AxisAlignedBB field_185515_b = new AxisAlignedBB(0.30000001192092896D, 0.0D, 0.30000001192092896D, 0.699999988079071D, 0.6000000238418579D, 0.699999988079071D);
  
-@@ -90,6 +90,35 @@
+@@ -37,7 +37,8 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return super.canPlaceBlockAt(worldIn, pos) && this.func_185514_i(worldIn.getBlockState(pos.down()));
++        IBlockState soil = worldIn.getBlockState(pos.down());
++        return super.canPlaceBlockAt(worldIn, pos) && soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     protected boolean func_185514_i(IBlockState p_185514_1_)
+@@ -67,6 +68,11 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
++        if (state.getBlock() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++        {
++            IBlockState soil = worldIn.getBlockState(pos.down());
++            return soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
++        }
+         return this.func_185514_i(worldIn.getBlockState(pos.down()));
+     }
+ 
+@@ -90,6 +96,35 @@
          return false;
      }
  

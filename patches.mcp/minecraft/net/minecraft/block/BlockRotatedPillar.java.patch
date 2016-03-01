@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRotatedPillar.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRotatedPillar.java
-@@ -28,6 +28,20 @@
+@@ -28,6 +28,21 @@
          super(p_i46385_1_, p_i46385_2_);
      }
  
-+    public boolean rotateBlock(net.minecraft.world.World world, net.minecraft.util.BlockPos pos, EnumFacing axis)
++    @Override
++    public boolean rotateBlock(net.minecraft.world.World world, BlockPos pos, EnumFacing axis)
 +    {
 +        net.minecraft.block.state.IBlockState state = world.getBlockState(pos);
 +        for (net.minecraft.block.properties.IProperty<?> prop : state.getProperties().keySet())

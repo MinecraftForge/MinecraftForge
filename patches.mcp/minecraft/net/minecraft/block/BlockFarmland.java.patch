@@ -5,7 +5,7 @@
      {
          Block block = worldIn.getBlockState(pos.up()).getBlock();
 -        return block instanceof BlockCrops || block instanceof BlockStem;
-+        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(worldIn, pos, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
++        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(worldIn.getBlockState(pos), worldIn, pos, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
      }
  
      private boolean hasWater(World worldIn, BlockPos pos)

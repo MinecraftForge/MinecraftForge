@@ -5,7 +5,7 @@
                  IBlockState iblockstate = worldIn.getBlockState(blockpos.add(i, 0, j));
  
 -                if (iblockstate.getBlock() == Blocks.farmland)
-+                if (iblockstate.getBlock().canSustainPlant(worldIn, blockpos.add(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)blockIn))
++                if (iblockstate.getBlock().canSustainPlant(iblockstate, worldIn, blockpos.add(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)blockIn))
                  {
                      f1 = 1.0F;
  
@@ -14,7 +14,17 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -174,6 +174,28 @@
+@@ -161,7 +161,8 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return (worldIn.getLight(pos) >= 8 || worldIn.canSeeSky(pos)) && this.func_185514_i(worldIn.getBlockState(pos.down()));
++        IBlockState soil = worldIn.getBlockState(pos.down());
++        return (worldIn.getLight(pos) >= 8 || worldIn.canSeeSky(pos)) && soil.getBlock().canSustainPlant(soil, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     protected Item getSeed()
+@@ -174,11 +175,33 @@
          return Items.wheat;
      }
  
@@ -43,3 +53,9 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, 0);
+ 
+-        if (!worldIn.isRemote)
++        if (false && !worldIn.isRemote) // Forge: NOP all this.
+         {
+             int i = this.func_185527_x(state);
+ 

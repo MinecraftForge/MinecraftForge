@@ -9,3 +9,12 @@
          }
          else
          {
+@@ -219,7 +219,7 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return pos.getY() >= 255 ? false : worldIn.getBlockState(pos.down()).func_185896_q() && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
++        return pos.getY() >= worldIn.getHeight() - 1 ? false : worldIn.getBlockState(pos.down()).isSideSolid(worldIn,  pos.down(), EnumFacing.UP) && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
+     }
+ 
+     public EnumPushReaction getMobilityFlag(IBlockState p_149656_1_)

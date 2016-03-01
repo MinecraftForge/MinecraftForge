@@ -37,7 +37,24 @@
          if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER)
          {
              return worldIn.getBlockState(pos.down()).getBlock() == this;
-@@ -284,6 +282,32 @@
+@@ -149,7 +147,6 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack p_180657_6_)
+     {
+-        if (worldIn.isRemote || p_180657_6_ == null || p_180657_6_.getItem() != Items.shears || state.getValue(HALF) != BlockDoublePlant.EnumBlockHalf.LOWER || !this.onHarvest(worldIn, pos, state, player))
+         {
+             super.harvestBlock(worldIn, player, pos, state, te, p_180657_6_);
+         }
+@@ -212,8 +209,6 @@
+         else
+         {
+             player.triggerAchievement(StatList.func_188055_a(this));
+-            int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).getMeta();
+-            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 2, i));
+             return true;
+         }
+     }
+@@ -284,6 +279,32 @@
          return Block.EnumOffsetType.XZ;
      }
  

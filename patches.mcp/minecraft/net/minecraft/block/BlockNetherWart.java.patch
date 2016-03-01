@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
+@@ -42,7 +42,7 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return this.func_185514_i(worldIn.getBlockState(pos.down()));
++        return super.canBlockStay(worldIn, pos, state);
+     }
+ 
+     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
 @@ -58,9 +58,11 @@
          super.updateTick(worldIn, pos, state, rand);
      }

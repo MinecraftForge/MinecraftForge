@@ -20,7 +20,7 @@
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
 +    {
 +        BlockPos off = pos.offset(dir);
-+        Block block = world.getBlockState(off).getBlock();
-+        return canPaneConnectToBlock(block) || block.isSideSolid(world, off, dir.getOpposite());
++        IBlockState state = world.getBlockState(off);
++        return canPaneConnectToBlock(state.getBlock()) || state.isSideSolid(world, off, dir.getOpposite());
 +    }
  }

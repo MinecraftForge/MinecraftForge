@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
- 
-     public static boolean canFallInto(World worldIn, BlockPos pos)
-     {
-+        if (worldIn.isAirBlock(pos)) return true;
-         Block block = worldIn.getBlockState(pos).getBlock();
-         Material material = block.blockMaterial;
-         return block == Blocks.fire || material == Material.air || material == Material.water || material == Material.lava;
-++++ END PATCH

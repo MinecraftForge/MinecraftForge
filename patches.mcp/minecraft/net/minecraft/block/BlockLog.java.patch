@@ -1,10 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLog.java
+@@ -34,9 +34,9 @@
+             {
+                 IBlockState iblockstate = worldIn.getBlockState(blockpos);
+ 
+-                if (iblockstate.func_185904_a() == Material.leaves && !((Boolean)iblockstate.getValue(BlockLeaves.CHECK_DECAY)).booleanValue())
++                if (iblockstate.getBlock().isLeaves(iblockstate, worldIn, blockpos))
+                 {
+-                    worldIn.setBlockState(blockpos, iblockstate.withProperty(BlockLeaves.CHECK_DECAY, Boolean.valueOf(true)), 4);
++                    iblockstate.getBlock().beginLeavesDecay(iblockstate, worldIn, blockpos);
+                 }
+             }
+         }
 @@ -69,6 +69,9 @@
          }
      }
  
-+    @Override public boolean canSustainLeaves(net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
++    @Override public boolean canSustainLeaves(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
 +    @Override public boolean isWood(net.minecraft.world.IBlockAccess world, BlockPos pos){ return true; }
 +
      public static enum EnumAxis implements IStringSerializable

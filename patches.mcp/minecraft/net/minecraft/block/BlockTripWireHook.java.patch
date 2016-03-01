@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTripWireHook.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
+@@ -77,14 +77,14 @@
+ 
+     public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side)
+     {
+-        return side.getAxis().isHorizontal() && worldIn.getBlockState(pos.offset(side.getOpposite())).func_185915_l();
++        return side.getAxis().isHorizontal() && worldIn.getBlockState(pos.offset(side.getOpposite())).isSideSolid(worldIn, pos.offset(side.getOpposite()), side);
+     }
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+         for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+         {
+-            if (worldIn.getBlockState(pos.offset(enumfacing)).func_185915_l())
++            if (worldIn.getBlockState(pos.offset(enumfacing)).isSideSolid(worldIn, pos.offset(enumfacing), enumfacing.getOpposite()))
+             {
+                 return true;
+             }
+@@ -118,7 +118,7 @@
+             {
+                 EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
+ 
+-                if (!worldIn.getBlockState(pos.offset(enumfacing.getOpposite())).func_185915_l())
++                if (!worldIn.getBlockState(pos.offset(enumfacing.getOpposite())).isSideSolid(worldIn, pos.offset(enumfacing.getOpposite()), enumfacing))
+                 {
+                     this.dropBlockAsItem(worldIn, pos, state, 0);
+                     worldIn.setBlockToAir(pos);

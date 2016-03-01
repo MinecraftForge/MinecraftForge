@@ -43,3 +43,5 @@ net/minecraft/item/ItemMonsterPlacer.spawnCreature(Lnet/minecraft/world/World;Lj
 
 net/minecraft/stats/StatList.mergeStatBases([Lnet/minecraft/stats/StatBase;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Z)V=|p_151180_0_,p_151180_1_,p_151180_2_,useItemIds
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/item/Item;IILnet/minecraft/nbt/NBTTagCompound;)V=|p_i1881_1_,p_i1881_2_,p_i1881_3_,capNBT
+
+net/minecraft/block/BlockRedstoneWire.canConnectTo(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/EnumFacing;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)Z=p_176343_0_,p_176343_1_,world,pos

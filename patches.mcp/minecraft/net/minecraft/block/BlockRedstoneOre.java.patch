@@ -8,9 +8,9 @@
  
 -        if (this.getItemDropped(state, worldIn.rand, fortune) != Item.getItemFromBlock(this))
 +    @Override
-+    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        if (this.getItemDropped(world.getBlockState(pos), RANDOM, fortune) != Item.getItemFromBlock(this))
++        if (this.getItemDropped(state, RANDOM, fortune) != Item.getItemFromBlock(this))
          {
 -            int i = 1 + worldIn.rand.nextInt(5);
 -            this.dropXpOnBlockBreak(worldIn, pos, i);

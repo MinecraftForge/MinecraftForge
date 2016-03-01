@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockOldLeaf.java
++++ ../src-work/minecraft/net/minecraft/block/BlockOldLeaf.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.stats.StatList;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.math.BlockPos;
++import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -103,11 +104,16 @@
+         if (!worldIn.isRemote && p_180657_6_ != null && p_180657_6_.getItem() == Items.shears)
+         {
+             player.triggerAchievement(StatList.func_188055_a(this));
+-            spawnAsEntity(worldIn, pos, new ItemStack(Item.getItemFromBlock(this), 1, ((BlockPlanks.EnumType)state.getValue(VARIANT)).getMetadata()));
+         }
+         else
+         {
+             super.harvestBlock(worldIn, player, pos, state, te, p_180657_6_);
+         }
+     }
++
++    @Override
++    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    {
++        return java.util.Arrays.asList(new ItemStack(this, 1, world.getBlockState(pos).getValue(VARIANT).getMetadata()));
++    }
+ }
