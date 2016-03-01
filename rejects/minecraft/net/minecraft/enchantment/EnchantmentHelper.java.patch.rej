@@ -1,0 +1,23 @@
+++++ REJECTED PATCH 3
+ 
+                             for (EnchantmentData enchantmentdata1 : list)
+                             {
+-                                if (!enchantmentdata1.enchantmentobj.canApplyTogether(Enchantment.getEnchantmentById(integer.intValue())))
++                                Enchantment e1 = enchantmentdata1.enchantmentobj;
++                                Enchantment e2 = Enchantment.getEnchantmentById(integer.intValue());
++                                if (!e1.canApplyTogether(e2) || !e2.canApplyTogether(e1)) //Forge BugFix: Let Both enchantments veto being together
+                                 {
+                                     flag = false;
+                                     break;
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+         for (Enchantment enchantment : Enchantment.enchantmentsBookList)
+         {
+-            if (enchantment != null && (enchantment.type.canEnchantItem(item) || flag))
++            if (enchantment == null) continue;
++            if (enchantment.canApplyAtEnchantingTable(p_77505_1_) || (flag && enchantment.isAllowedOnBooks()))
+             {
+                 for (int i = enchantment.getMinLevel(); i <= enchantment.getMaxLevel(); ++i)
+                 {
+++++ END PATCH

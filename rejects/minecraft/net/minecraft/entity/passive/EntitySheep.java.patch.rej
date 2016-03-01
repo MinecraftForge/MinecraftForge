@@ -1,0 +1,15 @@
+++++ REJECTED PATCH 2
+         }
+     }
+ 
++    @SuppressWarnings("unused")
+     public boolean interact(EntityPlayer player)
+     {
+         ItemStack itemstack = player.inventory.getCurrentItem();
+ 
+-        if (itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild())
++        if (false && itemstack != null && itemstack.getItem() == Items.shears && !this.getSheared() && !this.isChild()) //Forge: Moved to onSheared
+         {
+             if (!this.worldObj.isRemote)
+             {
+++++ END PATCH

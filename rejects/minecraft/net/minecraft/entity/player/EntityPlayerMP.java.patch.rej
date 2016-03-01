@@ -1,0 +1,55 @@
+++++ REJECTED PATCH 1
+     public int ping;
+     public boolean playerConqueredTheEnd;
+ 
++    @SuppressWarnings("unused")
+     public EntityPlayerMP(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager)
+     {
+         super(worldIn, profile);
+         interactionManager.thisPlayerMP = this;
+         this.theItemInWorldManager = interactionManager;
+-        BlockPos blockpos = worldIn.getSpawnPoint();
++        BlockPos blockpos = worldIn.provider.getRandomizedSpawnPoint();
+ 
+-        if (!worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
++        if (false && !worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
+         {
+             int i = Math.max(5, server.getSpawnProtectionSize() - 6);
+             int j = MathHelper.floor_double(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
+++++ END PATCH
+++++ REJECTED PATCH 3
+                 for (Chunk chunk1 : list)
+                 {
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk1);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk1.getChunkCoordIntPair(), this));
+                 }
+             }
+         }
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+         if (this.worldObj.getGameRules().getBoolean("showDeathMessages"))
+         {
+             Team team = this.getTeam();
+++++ END PATCH
+++++ REJECTED PATCH 6
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(EntityList.getEntityID(entitylivingbase)));
++            if (entitylist$entityegginfo == null) entitylist$entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.getEntityString(entitylivingbase));
+ 
+             if (entitylist$entityegginfo != null)
+             {
+++++ END PATCH
+++++ REJECTED PATCH 7
+ 
+     public void travelToDimension(int dimensionId)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionId)) return;
+         if (this.dimension == 1 && dimensionId == 1)
+         {
+             this.triggerAchievement(AchievementList.theEnd2);
+++++ END PATCH

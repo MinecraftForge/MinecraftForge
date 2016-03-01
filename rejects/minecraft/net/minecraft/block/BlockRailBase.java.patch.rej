@@ -1,0 +1,11 @@
+++++ REJECTED PATCH 4
+             this.state = state;
+             this.block = (BlockRailBase)state.getBlock();
+             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(BlockRailBase.this.getShapeProperty());
+-            this.isPowered = this.block.isPowered;
++            this.isPowered = !this.block.isFlexibleRail(worldIn, pos);
++            canMakeSlopes = this.block.canMakeSlopes(worldIn, pos);
+             this.func_180360_a(blockrailbase$enumraildirection);
+         }
+ 
+++++ END PATCH

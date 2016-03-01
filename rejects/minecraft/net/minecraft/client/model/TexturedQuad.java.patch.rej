@@ -1,0 +1,12 @@
+++++ REJECTED PATCH 1
+ import net.minecraft.client.renderer.WorldRenderer;
+ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+ import net.minecraft.util.Vec3;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-@SideOnly(Side.CLIENT)
+ public class TexturedQuad
+ {
+     public PositionTextureVertex[] vertexPositions;
+++++ END PATCH

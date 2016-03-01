@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 1
+         }
+ 
+         currentLocale.loadLocaleDataFiles(resourceManager, list);
++        net.minecraftforge.fml.common.registry.LanguageRegistry.instance().mergeLanguageTable(currentLocale.properties, this.currentLanguage);
+         StringTranslate.replaceWith(currentLocale.properties);
+     }
+ 
+++++ END PATCH

@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 2
+         }
+ 
+         Block block = worldIn.getBlockState(pos.down()).getBlock();
+-        return block == Blocks.cactus || block == Blocks.sand;
++        return block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this);
+     }
+ 
+     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+++++ END PATCH

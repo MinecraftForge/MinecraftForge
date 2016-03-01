@@ -1,0 +1,18 @@
+++++ REJECTED PATCH 4
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 this.setConfigManager(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+++++ END PATCH
+++++ REJECTED PATCH 5
+                 this.setBuildLimit((this.getBuildLimit() + 8) / 16 * 16);
+                 this.setBuildLimit(MathHelper.clamp_int(this.getBuildLimit(), 64, 256));
+                 this.settings.setProperty("max-build-height", Integer.valueOf(this.getBuildLimit()));
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+                 logger.info("Preparing level \"" + this.getFolderName() + "\"");
+                 this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+++++ END PATCH

@@ -1,0 +1,117 @@
+++++ REJECTED PATCH 1
+ 
+     public ChunkProviderGenerate(World worldIn, long p_i45636_2_, boolean p_i45636_4_, String p_i45636_5_)
+     {
++        {
++            caveGenerator = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(caveGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.CAVE);
++            strongholdGenerator = (MapGenStronghold)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(strongholdGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD);
++            villageGenerator = (MapGenVillage)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(villageGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE);
++            mineshaftGenerator = (MapGenMineshaft)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(mineshaftGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.MINESHAFT);
++            scatteredFeatureGenerator = (MapGenScatteredFeature)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(scatteredFeatureGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.SCATTERED_FEATURE);
++            ravineGenerator = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(ravineGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.RAVINE);
++            oceanMonumentGenerator = (StructureOceanMonument)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(oceanMonumentGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.OCEAN_MONUMENT);
++        }
+         this.worldObj = worldIn;
+         this.mapFeaturesEnabled = p_i45636_4_;
+         this.field_177475_o = worldIn.getWorldInfo().getTerrainType();
+++++ END PATCH
+++++ REJECTED PATCH 2
+             this.field_177476_s = this.settings.useLavaOceans ? Blocks.lava : Blocks.water;
+             worldIn.setSeaLevel(this.settings.seaLevel);
+         }
++
++        NoiseGenerator[] noiseGens = {field_147431_j, field_147432_k, field_147429_l, field_147430_m, noiseGen5, noiseGen6, mobSpawnerNoise};
++        noiseGens = net.minecraftforge.event.terraingen.TerrainGen.getModdedNoiseGenerators(worldIn, this.rand, noiseGens);
++        this.field_147431_j = (NoiseGeneratorOctaves)noiseGens[0];
++        this.field_147432_k = (NoiseGeneratorOctaves)noiseGens[1];
++        this.field_147429_l = (NoiseGeneratorOctaves)noiseGens[2];
++        this.field_147430_m = (NoiseGeneratorPerlin)noiseGens[3];
++        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
++        this.noiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
++        this.mobSpawnerNoise = (NoiseGeneratorOctaves)noiseGens[6];
+     }
+ 
+     public void setBlocksInChunk(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_)
+++++ END PATCH
+++++ REJECTED PATCH 3
+ 
+     public void replaceBlocksForBiome(int p_180517_1_, int p_180517_2_, ChunkPrimer p_180517_3_, BiomeGenBase[] p_180517_4_)
+     {
++        net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks event = new net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks(this, p_180517_1_, p_180517_2_, p_180517_3_, this.worldObj);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return;
++
+         double d0 = 0.03125D;
+         this.stoneNoise = this.field_147430_m.func_151599_a(this.stoneNoise, (double)(p_180517_1_ * 16), (double)(p_180517_2_ * 16), 16, 16, d0 * 2.0D, d0 * 2.0D, 1.0D);
+ 
+++++ END PATCH
+++++ REJECTED PATCH 4
+         boolean flag = false;
+         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_73153_2_, p_73153_3_);
+ 
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Pre(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag));
++
+         if (this.settings.useMineShafts && this.mapFeaturesEnabled)
+         {
+             this.mineshaftGenerator.generateStructure(this.worldObj, this.rand, chunkcoordintpair);
+++++ END PATCH
+++++ REJECTED PATCH 5
+             this.oceanMonumentGenerator.generateStructure(this.worldObj, this.rand, chunkcoordintpair);
+         }
+ 
+-        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && this.settings.useWaterLakes && !flag && this.rand.nextInt(this.settings.waterLakeChance) == 0)
++        if (biomegenbase != BiomeGenBase.desert && biomegenbase != BiomeGenBase.desertHills && this.settings.useWaterLakes && !flag && this.rand.nextInt(this.settings.waterLakeChance) == 0
++                && net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.LAKE))
+         {
+             int i1 = this.rand.nextInt(16) + 8;
+             int j1 = this.rand.nextInt(256);
+++++ END PATCH
+++++ REJECTED PATCH 6
+             (new WorldGenLakes(Blocks.water)).generate(this.worldObj, this.rand, blockpos.add(i1, j1, k1));
+         }
+ 
+-        if (!flag && this.rand.nextInt(this.settings.lavaLakeChance / 10) == 0 && this.settings.useLavaLakes)
++        if (!flag && this.rand.nextInt(this.settings.lavaLakeChance / 10) == 0 && this.settings.useLavaLakes &&
++                net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.LAVA))
+         {
+             int i2 = this.rand.nextInt(16) + 8;
+             int l2 = this.rand.nextInt(this.rand.nextInt(248) + 8);
+++++ END PATCH
+++++ REJECTED PATCH 7
+ 
+         if (this.settings.useDungeons)
+         {
+-            for (int j2 = 0; j2 < this.settings.dungeonChance; ++j2)
++            boolean doGen = net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.DUNGEON);
++            for (int j2 = 0; doGen && j2 < this.settings.dungeonChance; ++j2)
+             {
+                 int i3 = this.rand.nextInt(16) + 8;
+                 int l3 = this.rand.nextInt(256);
+++++ END PATCH
+++++ REJECTED PATCH 8
+         }
+ 
+         biomegenbase.decorate(this.worldObj, this.rand, new BlockPos(i, 0, j));
++        if (net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.ANIMALS))
++        {
+         SpawnerAnimals.performWorldGenSpawning(this.worldObj, biomegenbase, i + 8, j + 8, 16, 16, this.rand);
++        }
+         blockpos = blockpos.add(8, 0, 8);
+ 
+-        for (int k2 = 0; k2 < 16; ++k2)
++        boolean doGen = net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.ICE);
++        for (int k2 = 0; doGen && k2 < 16; ++k2)
+         {
+             for (int j3 = 0; j3 < 16; ++j3)
+             {
+++++ END PATCH
+++++ REJECTED PATCH 9
+             }
+         }
+ 
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Post(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, flag));
++
+         BlockFalling.fallInstantly = false;
+     }
+ 
+++++ END PATCH

@@ -1,0 +1,58 @@
+++++ REJECTED PATCH 2
+             worldinfo.setWorldName(p_71247_2_);
+         }
+ 
+-        for (int i = 0; i < this.worldServers.length; ++i)
+-        {
+-            int j = 0;
++        WorldServer overWorld = (isDemo() ? (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init() :
++                                            (WorldServer)(new WorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init());
++        overWorld.initialize(this.theWorldSettings);
+ 
+-            if (i == 1)
++        for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs())
++        {
++            WorldServer world = (dim == 0 ? overWorld : (WorldServer)(new WorldServerMulti(this, isavehandler, dim, overWorld, this.theProfiler)).init());
++            world.addWorldAccess(new WorldManager(this, world));
++            if (!this.isSinglePlayer())
+             {
+-                j = -1;
++                world.getWorldInfo().setGameType(getGameType());
+             }
+-
+-            if (i == 2)
+-            {
+-                j = 1;
+-            }
+-
+-            if (i == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.worldServers[i] = (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                }
+-                else
+-                {
+-                    this.worldServers[i] = (WorldServer)(new WorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                }
+-
+-                this.worldServers[i].initialize(this.theWorldSettings);
+-            }
+-            else
+-            {
+-                this.worldServers[i] = (WorldServer)(new WorldServerMulti(this, isavehandler, j, this.worldServers[0], this.theProfiler)).init();
+-            }
+-
+-            this.worldServers[i].addWorldAccess(new WorldManager(this, this.worldServers[i]));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
+         }
+ 
+-        this.getConfigurationManager().setPlayerManager(this.worldServers);
++        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
+ 
+-        if (this.worldServers[0].getWorldInfo().getDifficulty() == null)
++        if (overWorld.getWorldInfo().getDifficulty() == null)
+         {
+             this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
+         }
+++++ END PATCH

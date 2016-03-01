@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+                                 {
+                                     Enchantment enchantment2 = Enchantment.getEnchantmentById(l);
+ 
+-                                    if (!enchantment2.canApplyTogether(enchantment1))
++                                    if (!enchantment2.canApplyTogether(enchantment1) || !enchantment1.canApplyTogether(enchantment2)) //Forge BugFix: Let Both enchantments veto being together
+                                     {
+                                         throw new CommandException("commands.enchant.cantCombine", new Object[] {enchantment1.getTranslatedName(j), enchantment2.getTranslatedName(nbttaglist.getCompoundTagAt(k).getShort("lvl"))});
+                                     }
+++++ END PATCH

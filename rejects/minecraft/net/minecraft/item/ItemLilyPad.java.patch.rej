@@ -1,0 +1,16 @@
+++++ REJECTED PATCH 1
+ 
+                 if (iblockstate.getBlock().getMaterial() == Material.water && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0 && worldIn.isAirBlock(blockpos1))
+                 {
++                    // special case for handling block placement with water lilies
++                    net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(worldIn, blockpos1);
+                     worldIn.setBlockState(blockpos1, Blocks.waterlily.getDefaultState());
++                    if (net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(playerIn, blocksnapshot, net.minecraft.util.EnumFacing.UP).isCanceled())
++                    {
++                        blocksnapshot.restore(true, false);
++                        return itemStackIn;
++                    }
+ 
+                     if (!playerIn.capabilities.isCreativeMode)
+                     {
+++++ END PATCH

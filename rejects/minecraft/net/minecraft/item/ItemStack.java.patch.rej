@@ -1,0 +1,101 @@
+++++ REJECTED PATCH 4
+ 
+     public ItemStack splitStack(int amount)
+     {
+-        ItemStack itemstack = new ItemStack(this.item, amount, this.itemDamage);
++        ItemStack itemstack = new ItemStack(this.item, amount, this.itemDamage, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+ 
+         if (this.stackTagCompound != null)
+         {
+++++ END PATCH
+++++ REJECTED PATCH 5
+ 
+     public Item getItem()
+     {
+-        return this.item;
++        return this.delegate != null ? this.delegate.get() : null;
+     }
+ 
+     public boolean onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+     {
++        if (!worldIn.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
+         boolean flag = this.getItem().onItemUse(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
+ 
+         if (flag)
+++++ END PATCH
+++++ REJECTED PATCH 6
+             nbt.setTag("tag", this.stackTagCompound);
+         }
+ 
++        if (this.capabilities != null) nbt.setTag("ForgeCaps", this.capabilities.serializeNBT());
++
+         return nbt;
+     }
+ 
+     public void readFromNBT(NBTTagCompound nbt)
+     {
++        this.capNBT = nbt.hasKey("ForgeCaps") ? nbt.getCompoundTag("ForgeCaps") : null;
+         if (nbt.hasKey("id", 8))
+         {
+-            this.item = Item.getByNameOrId(nbt.getString("id"));
++            this.setItem(Item.getByNameOrId(nbt.getString("id")));
+         }
+         else
+         {
+-            this.item = Item.getItemById(nbt.getShort("id"));
++            this.setItem(Item.getItemById(nbt.getShort("id")));
+         }
++        this.capNBT = null;
+ 
+         this.stackSize = nbt.getByte("Count");
+         this.itemDamage = nbt.getShort("Damage");
+++++ END PATCH
+++++ REJECTED PATCH 9
+ 
+     public boolean isItemDamaged()
+     {
+-        return this.isItemStackDamageable() && this.itemDamage > 0;
++        return this.isItemStackDamageable() && getItem().isDamaged(this);
+     }
+ 
+     public int getItemDamage()
+     {
+-        return this.itemDamage;
++        return getItem().getDamage(this);
+     }
+ 
+     public int getMetadata()
+     {
+-        return this.itemDamage;
++        return getItem().getMetadata(this);
+     }
+ 
+     public void setItemDamage(int meta)
+     {
+-        this.itemDamage = meta;
+-
+-        if (this.itemDamage < 0)
+-        {
+-            this.itemDamage = 0;
+-        }
++        getItem().setDamage(this, meta);
+     }
+ 
+     public int getMaxDamage()
+     {
+-        return this.item.getMaxDamage();
++        return this.item.getMaxDamage(this);
+     }
+ 
+     public boolean attemptDamageItem(int amount, Random rand)
+++++ END PATCH
+++++ REJECTED PATCH 14
+         }
+         else
+         {
+-            multimap = this.getItem().getItemAttributeModifiers();
++            multimap = this.getItem().getAttributeModifiers(this);
+         }
+ 
+         return multimap;
+++++ END PATCH

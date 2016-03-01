@@ -1,0 +1,24 @@
+++++ REJECTED PATCH 1
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+-
+-        if (!worldIn.isRemote)
+-        {
+-            if (((Integer)state.getValue(AGE)).intValue() >= 7 && worldIn.rand.nextInt(50) == 0)
+-            {
+-                spawnAsEntity(worldIn, pos, new ItemStack(Items.poisonous_potato));
+-            }
+-        }
+     }
++    @Override
++    public java.util.List<net.minecraft.item.ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        java.util.Random rand = world instanceof World ? ((World)world).rand : new java.util.Random();
++        if (((Integer)state.getValue(AGE)) >= 7 && rand.nextInt(50) == 0)
++            ret.add(new ItemStack(Items.poisonous_potato));
++        return ret;
++    }
+ }
+++++ END PATCH

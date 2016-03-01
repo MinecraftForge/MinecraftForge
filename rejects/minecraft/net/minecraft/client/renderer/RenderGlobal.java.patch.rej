@@ -1,0 +1,51 @@
+++++ REJECTED PATCH 4
+                 for (int j = 0; j < list.size(); ++j)
+                 {
+                     Entity entity3 = (Entity)list.get(j);
++                    if (!entity3.shouldRenderInPass(pass)) continue;
+                     boolean flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping();
+                     boolean flag1 = entity3.isInRangeToRender3d(d0, d1, d2) && (entity3.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(entity3.getEntityBoundingBox()) || entity3.riddenByEntity == this.mc.thePlayer) && entity3 instanceof EntityPlayer;
+ 
+++++ END PATCH
+++++ REJECTED PATCH 5
+                             }
+ 
+                             entity2 = (Entity)iterator.next();
++                            if (!entity2.shouldRenderInPass(pass)) continue;
+                             flag2 = this.renderManager.shouldRender(entity2, camera, d0, d1, d2) || entity2.riddenByEntity == this.mc.thePlayer;
+ 
+                             if (!flag2)
+++++ END PATCH
+++++ REJECTED PATCH 10
+ 
+     public void renderSky(float partialTicks, int pass)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.getDimensionId() == 1)
+         {
+             this.renderSkyEnd();
+++++ END PATCH
+++++ REJECTED PATCH 13
+         if (recordName != null)
+         {
+             ItemRecord itemrecord = ItemRecord.getRecord(recordName);
++            ResourceLocation resource = null;
+ 
+             if (itemrecord != null)
+             {
+                 this.mc.ingameGUI.setRecordPlayingMessage(itemrecord.getRecordNameLocal());
++                resource = itemrecord.getRecordResource(recordName);
+             }
+ 
+-            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(new ResourceLocation(recordName), (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
++            if (resource == null) resource = new ResourceLocation(recordName);
++            PositionedSoundRecord positionedsoundrecord = PositionedSoundRecord.create(resource, (float)blockPosIn.getX(), (float)blockPosIn.getY(), (float)blockPosIn.getZ());
+             this.mapSoundPositions.put(blockPosIn, positionedsoundrecord);
+             this.mc.getSoundHandler().playSound(positionedsoundrecord);
+         }
+++++ END PATCH

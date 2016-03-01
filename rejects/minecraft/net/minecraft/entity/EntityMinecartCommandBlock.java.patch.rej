@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 1
+ 
+     public boolean interactFirst(EntityPlayer playerIn)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, playerIn))) return true;
+         this.commandBlockLogic.tryOpenEditCommandBlock(playerIn);
+         return false;
+     }
+++++ END PATCH

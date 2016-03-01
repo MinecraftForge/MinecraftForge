@@ -1,0 +1,63 @@
+++++ REJECTED PATCH 2
+ 
+                 for (int i = 0; i < 3; ++i)
+                 {
+-                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() == Items.potionitem)
++                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                     {
+                         int j = this.brewingItemStacks[i].getMetadata();
+                         int k = this.getPotionResult(j, itemstack);
+++++ END PATCH
+++++ REJECTED PATCH 3
+         }
+         else
+         {
+-            return false;
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(brewingItemStacks, brewingItemStacks[3], outputSlots);
+         }
+     }
+ 
+     private void brewPotions()
+     {
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(brewingItemStacks)) return;
+         if (this.canBrew())
+         {
++            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(brewingItemStacks, brewingItemStacks[3], outputSlots);
+             ItemStack itemstack = this.brewingItemStacks[3];
+ 
++            if (false) { // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
+             for (int i = 0; i < 3; ++i)
+             {
+-                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() == Items.potionitem)
++                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                 {
+                     int j = this.brewingItemStacks[i].getMetadata();
+                     int k = this.getPotionResult(j, itemstack);
+++++ END PATCH
+++++ REJECTED PATCH 4
+                     }
+                 }
+             }
++            }
+ 
+-            if (itemstack.getItem().hasContainerItem())
++            if (itemstack.getItem().hasContainerItem(itemstack))
+             {
+-                this.brewingItemStacks[3] = new ItemStack(itemstack.getItem().getContainerItem());
++                this.brewingItemStacks[3] = itemstack.getItem().getContainerItem(itemstack);
+             }
+             else
+             {
+++++ END PATCH
+++++ REJECTED PATCH 6
+ 
+     public boolean isItemValidForSlot(int index, ItemStack stack)
+     {
+-        return index == 3 ? stack.getItem().isPotionIngredient(stack) : stack.getItem() == Items.potionitem || stack.getItem() == Items.glass_bottle;
++        if (index == 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack)) return true;
++        else if (index != 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack)) return true;
++        return false;
+     }
+ 
+     public boolean[] func_174902_m()
+++++ END PATCH

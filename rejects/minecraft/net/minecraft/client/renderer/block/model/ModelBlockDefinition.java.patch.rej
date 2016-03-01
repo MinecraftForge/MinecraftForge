@@ -1,0 +1,19 @@
+++++ REJECTED PATCH 2
+                 return this.modelLocation;
+             }
+ 
++            @Deprecated
+             public ModelRotation getRotation()
+             {
+                 return this.modelRotation;
+             }
+ 
++            public net.minecraftforge.client.model.IModelState getState()
++            {
++                return this.modelRotation;
++            }
++
+             public boolean isUvLocked()
+             {
+                 return this.uvLock;
+++++ END PATCH

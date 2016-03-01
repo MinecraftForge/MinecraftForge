@@ -1,0 +1,289 @@
+++++ REJECTED PATCH 10
+         this.posX = d19 + d1 * d18;
+         this.posZ = d20 + d2 * d18;
+         this.setPosition(this.posX, this.posY, this.posZ);
+-        double d22 = this.motionX;
+-        double d23 = this.motionZ;
++        this.moveMinecartOnRail(p_180460_1_);
+ 
+-        if (this.riddenByEntity != null)
+-        {
+-            d22 *= 0.75D;
+-            d23 *= 0.75D;
+-        }
+-
+-        double d13 = this.getMaximumSpeed();
+-        d22 = MathHelper.clamp_double(d22, -d13, d13);
+-        d23 = MathHelper.clamp_double(d23, -d13, d13);
+-        this.moveEntity(d22, 0.0D, d23);
+-
+         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - p_180460_1_.getX() == aint[0][0] && MathHelper.floor_double(this.posZ) - p_180460_1_.getZ() == aint[0][2])
+         {
+             this.setPosition(this.posX, this.posY + (double)aint[0][1], this.posZ);
+++++ END PATCH
+++++ REJECTED PATCH 12
+ 
+     public void applyEntityCollision(Entity entityIn)
+     {
++
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartCollisionEvent(this, entityIn));
++        if (getCollisionHandler() != null)
++        {
++            getCollisionHandler().onEntityCollision(this, entityIn);
++            return;
++        }
+         if (!this.worldObj.isRemote)
+         {
+             if (!entityIn.noClip && !this.noClip)
+             {
+                 if (entityIn != this.riddenByEntity)
+                 {
+-                    if (entityIn instanceof EntityLivingBase && !(entityIn instanceof EntityPlayer) && !(entityIn instanceof EntityIronGolem) && this.getMinecartType() == EntityMinecart.EnumMinecartType.RIDEABLE && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && entityIn.ridingEntity == null)
++                    if (entityIn instanceof EntityLivingBase && !(entityIn instanceof EntityPlayer) && !(entityIn instanceof EntityIronGolem) && canBeRidden() && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && entityIn.ridingEntity == null)
+                     {
+                         entityIn.mountEntity(this);
+                     }
+++++ END PATCH
+++++ REJECTED PATCH 13
+                             double d7 = entityIn.motionX + this.motionX;
+                             double d8 = entityIn.motionZ + this.motionZ;
+ 
+-                            if (((EntityMinecart)entityIn).getMinecartType() == EntityMinecart.EnumMinecartType.FURNACE && this.getMinecartType() != EntityMinecart.EnumMinecartType.FURNACE)
++                            if (((EntityMinecart)entityIn).isPoweredCart() && !isPoweredCart())
+                             {
+                                 this.motionX *= 0.20000000298023224D;
+                                 this.motionZ *= 0.20000000298023224D;
+++++ END PATCH
+++++ REJECTED PATCH 14
+                                 entityIn.motionX *= 0.949999988079071D;
+                                 entityIn.motionZ *= 0.949999988079071D;
+                             }
+-                            else if (((EntityMinecart)entityIn).getMinecartType() != EntityMinecart.EnumMinecartType.FURNACE && this.getMinecartType() == EntityMinecart.EnumMinecartType.FURNACE)
++                            else if (((EntityMinecart)entityIn).isPoweredCart() && isPoweredCart())
+                             {
+                                 entityIn.motionX *= 0.20000000298023224D;
+                                 entityIn.motionZ *= 0.20000000298023224D;
+++++ END PATCH
+++++ REJECTED PATCH 15
+         }
+     }
+ 
++    /* =================================== FORGE START ===========================================*/
++    private BlockPos getCurrentRailPosition()
++    {
++        int x = MathHelper.floor_double(this.posX);
++        int y = MathHelper.floor_double(this.posY);
++        int z = MathHelper.floor_double(this.posZ);
++
++        if (BlockRailBase.isRailBlock(this.worldObj, new BlockPos(x, y - 1, z))) y--;
++        return new BlockPos(x, y, z);
++    }
++
++    protected double getMaxSpeed()
++    {
++        if (!canUseRail()) return getMaximumSpeed();
++        BlockPos pos = this.getCurrentRailPosition();
++        IBlockState state = this.worldObj.getBlockState(pos);
++        if (!BlockRailBase.isRailBlock(state)) return getMaximumSpeed();
++
++        float railMaxSpeed = ((BlockRailBase)state.getBlock()).getRailMaxSpeed(worldObj, this, pos);
++        return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
++    }
++
++    /**
++     * Moved to allow overrides.
++     * This code handles minecart movement and speed capping when on a rail.
++     */
++    public void moveMinecartOnRail(BlockPos pos)
++    {
++        double mX = this.motionX;
++        double mZ = this.motionZ;
++
++        if (this.riddenByEntity != null)
++        {
++            mX *= 0.75D;
++            mZ *= 0.75D;
++        }
++
++        double max = this.getMaxSpeed();
++        mX = MathHelper.clamp_double(mX, -max, max);
++        mZ = MathHelper.clamp_double(mZ, -max, max);
++        this.moveEntity(mX, 0.0D, mZ);
++    }
++
++    /**
++     * Gets the current global Minecart Collision handler if none
++     * is registered, returns null
++     * @return The collision handler or null
++     */
++    public static net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler()
++    {
++        return collisionHandler;
++    }
++
++    /**
++     * Sets the global Minecart Collision handler, overwrites any
++     * that is currently set.
++     * @param handler The new handler
++     */
++    public static void setCollisionHandler(net.minecraftforge.common.IMinecartCollisionHandler handler)
++    {
++        collisionHandler = handler;
++    }
++
++    /**
++     * This function returns an ItemStack that represents this cart.
++     * This should be an ItemStack that can be used by the player to place the cart,
++     * but is not necessary the item the cart drops when destroyed.
++     * @return An ItemStack that can be used to place the cart.
++     */
++    public ItemStack getCartItem()
++    {
++        if (this instanceof EntityMinecartFurnace)
++        {
++            return new ItemStack(Items.furnace_minecart);
++        }
++        else if (this instanceof EntityMinecartChest)
++        {
++            return new ItemStack(Items.chest_minecart);
++        }
++        else if (this instanceof EntityMinecartTNT)
++        {
++            return new ItemStack(Items.tnt_minecart);
++        }
++        else if (this instanceof EntityMinecartHopper)
++        {
++            return new ItemStack(Items.hopper_minecart);
++        }
++        else if (this instanceof EntityMinecartCommandBlock)
++        {
++            return new ItemStack(Items.command_block_minecart);
++        }
++        return new ItemStack(Items.minecart);
++    }
++
++    /**
++     * Returns true if this cart can currently use rails.
++     * This function is mainly used to gracefully detach a minecart from a rail.
++     * @return True if the minecart can use rails.
++     */
++    public boolean canUseRail()
++    {
++        return canUseRail;
++    }
++
++    /**
++     * Set whether the minecart can use rails.
++     * This function is mainly used to gracefully detach a minecart from a rail.
++     * @param use Whether the minecart can currently use rails.
++     */
++    public void setCanUseRail(boolean use)
++    {
++        canUseRail = use;
++    }
++
++    /**
++     * Return false if this cart should not call onMinecartPass() and should ignore Powered Rails.
++     * @return True if this cart should call onMinecartPass().
++     */
++    public boolean shouldDoRailFunctions()
++    {
++        return true;
++    }
++
++    /**
++     * Returns true if this cart is self propelled.
++     * @return True if powered.
++     */
++    public boolean isPoweredCart()
++    {
++        return getMinecartType() == EntityMinecart.EnumMinecartType.FURNACE;
++    }
++
++    /**
++     * Returns true if this cart can be ridden by an Entity.
++     * @return True if this cart can be ridden.
++     */
++    public boolean canBeRidden()
++    {
++        return this.getMinecartType() == EntityMinecart.EnumMinecartType.RIDEABLE;
++    }
++
++    /**
++     * Getters/setters for physics variables
++     */
++
++    /**
++     * Returns the carts max speed when traveling on rails. Carts going faster
++     * than 1.1 cause issues with chunk loading. Carts cant traverse slopes or
++     * corners at greater than 0.5 - 0.6. This value is compared with the rails
++     * max speed and the carts current speed cap to determine the carts current
++     * max speed. A normal rail's max speed is 0.4.
++     *
++     * @return Carts max speed.
++     */
++    public float getMaxCartSpeedOnRail()
++    {
++        return 1.2f;
++    }
++
++    /**
++     * Returns the current speed cap for the cart when traveling on rails. This
++     * functions differs from getMaxCartSpeedOnRail() in that it controls
++     * current movement and cannot be overridden. The value however can never be
++     * higher than getMaxCartSpeedOnRail().
++     *
++     * @return
++     */
++    public final float getCurrentCartSpeedCapOnRail()
++    {
++        return currentSpeedRail;
++    }
++
++    public final void setCurrentCartSpeedCapOnRail(float value)
++    {
++        value = Math.min(value, getMaxCartSpeedOnRail());
++        currentSpeedRail = value;
++    }
++
++    public float getMaxSpeedAirLateral()
++    {
++        return maxSpeedAirLateral;
++    }
++
++    public void setMaxSpeedAirLateral(float value)
++    {
++        maxSpeedAirLateral = value;
++    }
++
++    public float getMaxSpeedAirVertical()
++    {
++        return maxSpeedAirVertical;
++    }
++
++    public void setMaxSpeedAirVertical(float value)
++    {
++        maxSpeedAirVertical = value;
++    }
++
++    public double getDragAir()
++    {
++        return dragAir;
++    }
++
++    public void setDragAir(double value)
++    {
++        dragAir = value;
++    }
++
++    public double getSlopeAdjustment()
++    {
++        return 0.0078125D;
++    }
++
++    /* =================================== FORGE END ===========================================*/
++
+     public static enum EnumMinecartType
+     {
+         RIDEABLE(0, "MinecartRideable"),
+++++ END PATCH

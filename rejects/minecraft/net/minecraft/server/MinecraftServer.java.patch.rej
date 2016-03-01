@@ -1,0 +1,46 @@
+++++ REJECTED PATCH 1
+     @SideOnly(Side.SERVER)
+     private String hostname;
+     private int serverPort = -1;
+-    public WorldServer[] worldServers;
++    public WorldServer[] worldServers = new WorldServer[0];
+     private ServerConfigurationManager serverConfigManager;
+     private boolean serverRunning = true;
+     private boolean serverStopped;
+++++ END PATCH
+++++ REJECTED PATCH 6
+ 
+     public void stopServer()
+     {
+-        if (!this.worldIsBeingDeleted)
++        if (!this.worldIsBeingDeleted && net.minecraftforge.fml.common.Loader.instance().hasReachedState(net.minecraftforge.fml.common.LoaderState.SERVER_STARTED) && !serverStopped) // make sure the save is valid and we don't save twice
+         {
+             logger.info("Stopping server");
+ 
+++++ END PATCH
+++++ REJECTED PATCH 7
+                 for (int i = 0; i < this.worldServers.length; ++i)
+                 {
+                     WorldServer worldserver = this.worldServers[i];
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver));
+                     worldserver.flush();
+                 }
++
++                WorldServer[] tmp = worldServers;
++                for (WorldServer world : tmp)
++                {
++                    net.minecraftforge.common.DimensionManager.setWorld(world.provider.getDimensionId(), null);
++                }
+             }
+ 
+             if (this.usageSnooper.isSnooperRunning())
+++++ END PATCH
+++++ REJECTED PATCH 22
+ 
+             if (worldserver != null)
+             {
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver));
+                 worldserver.flush();
+             }
+         }
+++++ END PATCH

@@ -1,0 +1,60 @@
+++++ REJECTED PATCH 1
+     double[] noiseData3;
+     double[] noiseData4;
+     double[] noiseData5;
++    // temporary variables used during event handling
++    private int chunkX = 0;
++    private int chunkZ = 0;
+ 
+     public ChunkProviderEnd(World worldIn, long p_i2007_2_)
+     {
+++++ END PATCH
+++++ REJECTED PATCH 2
+         this.noiseGen3 = new NoiseGeneratorOctaves(this.endRNG, 8);
+         this.noiseGen4 = new NoiseGeneratorOctaves(this.endRNG, 10);
+         this.noiseGen5 = new NoiseGeneratorOctaves(this.endRNG, 16);
++
++        NoiseGenerator[] noiseGens = {noiseGen1, noiseGen2, noiseGen3, noiseGen4, noiseGen5};
++        noiseGens = net.minecraftforge.event.terraingen.TerrainGen.getModdedNoiseGenerators(worldIn, this.endRNG, noiseGens);
++        this.noiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
++        this.noiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
++        this.noiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
++        this.noiseGen4 = (NoiseGeneratorOctaves)noiseGens[3];
++        this.noiseGen5 = (NoiseGeneratorOctaves)noiseGens[4];
+     }
+ 
+     public void func_180520_a(int p_180520_1_, int p_180520_2_, ChunkPrimer p_180520_3_)
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+     public Chunk provideChunk(int x, int z)
+     {
++        chunkX = x; chunkZ = z;
+         this.endRNG.setSeed((long)x * 341873128712L + (long)z * 132897987541L);
+         ChunkPrimer chunkprimer = new ChunkPrimer();
+         this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, x * 16, z * 16, 16, 16);
+++++ END PATCH
+++++ REJECTED PATCH 5
+ 
+     private double[] initializeNoiseField(double[] p_73187_1_, int p_73187_2_, int p_73187_3_, int p_73187_4_, int p_73187_5_, int p_73187_6_, int p_73187_7_)
+     {
++        net.minecraftforge.event.terraingen.ChunkProviderEvent.InitNoiseField event = new net.minecraftforge.event.terraingen.ChunkProviderEvent.InitNoiseField(this, p_73187_1_, p_73187_2_, p_73187_3_, p_73187_4_, p_73187_5_, p_73187_6_, p_73187_7_);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.noisefield;
++
+         if (p_73187_1_ == null)
+         {
+             p_73187_1_ = new double[p_73187_5_ * p_73187_6_ * p_73187_7_];
+++++ END PATCH
+++++ REJECTED PATCH 6
+     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+     {
+         BlockFalling.fallInstantly = true;
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Pre(p_73153_1_, endWorld, endWorld.rand, p_73153_2_, p_73153_3_, false));
+         BlockPos blockpos = new BlockPos(p_73153_2_ * 16, 0, p_73153_3_ * 16);
+         this.endWorld.getBiomeGenForCoords(blockpos.add(16, 0, 16)).decorate(this.endWorld, this.endWorld.rand, blockpos);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Post(p_73153_1_, endWorld, endWorld.rand, p_73153_2_, p_73153_3_, false));
+         BlockFalling.fallInstantly = false;
+     }
+ 
+++++ END PATCH

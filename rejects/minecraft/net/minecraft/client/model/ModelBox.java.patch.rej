@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 2
+         }
+     }
+ 
++    @SideOnly(Side.CLIENT)
+     public void render(WorldRenderer renderer, float scale)
+     {
+         for (int i = 0; i < this.quadList.length; ++i)
+++++ END PATCH

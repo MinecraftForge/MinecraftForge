@@ -1,0 +1,108 @@
+++++ REJECTED PATCH 1
+     private static final List<WeightedRandomChestContent> bonusChestContent = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.stick, 0, 1, 3, 10), new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.planks), 0, 1, 3, 10), new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.log), 0, 1, 3, 10), new WeightedRandomChestContent(Items.stone_axe, 0, 1, 1, 3), new WeightedRandomChestContent(Items.wooden_axe, 0, 1, 1, 5), new WeightedRandomChestContent(Items.stone_pickaxe, 0, 1, 1, 3), new WeightedRandomChestContent(Items.wooden_pickaxe, 0, 1, 1, 5), new WeightedRandomChestContent(Items.apple, 0, 2, 3, 5), new WeightedRandomChestContent(Items.bread, 0, 2, 3, 3), new WeightedRandomChestContent(Item.getItemFromBlock(Blocks.log2), 0, 1, 3, 10)});
+     private List<NextTickListEntry> pendingTickListEntriesThisTick = Lists.<NextTickListEntry>newArrayList();
+ 
++    /** Stores the recently processed (lighting) chunks */
++    protected Set<ChunkCoordIntPair> doneChunks = new java.util.HashSet<ChunkCoordIntPair>();
++    public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
++    private static boolean initChest = false;
++    public static void fillChestHook()
++    {
++        if (!initChest)
++            net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.BONUS_CHEST, bonusChestContent, 10, 10);
++        initChest = true;
++    }
++
+     public WorldServer(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn)
+     {
+         super(saveHandlerIn, info, WorldProvider.getProviderForDimension(dimensionId), profilerIn, false);
+         this.mcServer = server;
+         this.theEntityTracker = new EntityTracker(this);
+         this.thePlayerManager = new PlayerManager(this);
++        // Guarantee the dimension ID was not reset by the provider
++        int providerDim = this.provider.dimensionId;
+         this.provider.registerWorld(this);
++        this.provider.dimensionId = providerDim;
+         this.chunkProvider = this.createChunkProvider();
++        perWorldStorage = new MapStorage(new net.minecraftforge.common.WorldSpecificSaveHandler((WorldServer)this, saveHandlerIn));
+         this.worldTeleporter = new Teleporter(this);
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
+         this.getWorldBorder().setSize(server.getMaxWorldSize());
++        net.minecraftforge.common.DimensionManager.setWorld(dimensionId, this);
+     }
+ 
+     public World init()
+     {
+         this.mapStorage = new MapStorage(this.saveHandler);
+         String s = VillageCollection.fileNameForProvider(this.provider);
+-        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, s);
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.loadData(VillageCollection.class, s);
+ 
+         if (villagecollection == null)
+         {
+             this.villageCollectionObj = new VillageCollection(this);
+-            this.mapStorage.setData(s, this.villageCollectionObj);
++            this.perWorldStorage.setData(s, this.villageCollectionObj);
+         }
+         else
+         {
+++++ END PATCH
+++++ REJECTED PATCH 5
+                 chunk.func_150804_b(false);
+                 this.theProfiler.endStartSection("thunder");
+ 
+-                if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
++                if (this.provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
+                 {
+                     this.updateLCG = this.updateLCG * 3 + 1013904223;
+                     int i1 = this.updateLCG >> 2;
+++++ END PATCH
+++++ REJECTED PATCH 12
+ 
+     protected void createBonusChest()
+     {
+-        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(bonusChestContent, 10);
++        WorldGeneratorBonusChest worldgeneratorbonuschest = net.minecraftforge.common.ForgeHooks.getBonusChest(rand);
+ 
+         for (int i = 0; i < 10; ++i)
+         {
+++++ END PATCH
+++++ REJECTED PATCH 13
+             }
+ 
+             this.chunkProvider.saveChunks(p_73044_1_, progressCallback);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
+ 
+             for (Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a()))
+             {
+++++ END PATCH
+++++ REJECTED PATCH 16
+             this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.getDimensionId());
+         }
+ 
++        /* The function in use here has been replaced in order to only send the weather info to players in the correct dimension,
++         * rather than to all players on the server. This is what causes the client-side rain, as the
++         * client believes that it has started raining locally, rather than in another dimension.
++         */
+         if (flag != this.isRaining())
+         {
+             if (flag)
+             {
+-                this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new S2BPacketChangeGameState(2, 0.0F));
++                this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(2, 0.0F), this.provider.dimensionId);
+             }
+             else
+             {
+-                this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new S2BPacketChangeGameState(1, 0.0F));
++                this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(1, 0.0F), this.provider.dimensionId);
+             }
+ 
+-            this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new S2BPacketChangeGameState(7, this.rainingStrength));
+-            this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new S2BPacketChangeGameState(8, this.thunderingStrength));
++            this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
++            this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
+         }
+     }
+ 
+++++ END PATCH

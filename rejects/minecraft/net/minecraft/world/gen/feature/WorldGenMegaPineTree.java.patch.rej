@@ -1,0 +1,63 @@
+++++ REJECTED PATCH 1
+             {
+                 Block block = worldIn.getBlockState(position.up(j)).getBlock();
+ 
+-                if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
++                if (isAirLeaves(worldIn,position.up(j)))
+                 {
+                     this.setBlockAndNotifyAdequately(worldIn, position.up(j), this.woodMetadata);
+                 }
+ 
+                 if (j < i - 1)
+                 {
+-                    block = worldIn.getBlockState(position.add(1, j, 0)).getBlock();
+-
+-                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
++                    if (isAirLeaves(worldIn,position.add(1, j, 0)))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 0), this.woodMetadata);
+                     }
+ 
+-                    block = worldIn.getBlockState(position.add(1, j, 1)).getBlock();
+-
+-                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
++                    if (isAirLeaves(worldIn,position.add(1, j, 1)))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 1), this.woodMetadata);
+                     }
+ 
+-                    block = worldIn.getBlockState(position.add(0, j, 1)).getBlock();
+-
+-                    if (block.getMaterial() == Material.air || block.getMaterial() == Material.leaves)
++                    if (isAirLeaves(worldIn,position.add(0, j, 1)))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, position.add(0, j, 1), this.woodMetadata);
+                     }
+++++ END PATCH
+++++ REJECTED PATCH 2
+             BlockPos blockpos = p_175934_2_.up(i);
+             Block block = worldIn.getBlockState(blockpos).getBlock();
+ 
+-            if (block == Blocks.grass || block == Blocks.dirt)
++            if (block.canSustainPlant(worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling)))
+             {
+                 this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181635_g);
+                 break;
+             }
+ 
+-            if (block.getMaterial() != Material.air && i < 0)
++            if (!block.isAir(worldIn, blockpos) && i < 0)
+             {
+                 break;
+             }
+         }
+     }
++
++    //Helper macro
++    private boolean isAirLeaves(World world, BlockPos pos)
++    {
++        net.minecraft.block.Block block = world.getBlockState(pos).getBlock();
++        return block.isAir(world, pos) || block.isLeaves(world, pos);
++    }
+ }
+++++ END PATCH

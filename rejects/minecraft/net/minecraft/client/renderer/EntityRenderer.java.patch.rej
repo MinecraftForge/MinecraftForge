@@ -1,0 +1,74 @@
+++++ REJECTED PATCH 2
+ 
+                         if (d3 < d2 || d2 == 0.0D)
+                         {
+-                            if (entity1 == entity.ridingEntity)
++                            if (entity1 == entity.ridingEntity && !entity.canRiderInteract())
+                             {
+                                 if (d2 == 0.0D)
+                                 {
+++++ END PATCH
+++++ REJECTED PATCH 4
+             {
+                 BlockPos blockpos = new BlockPos(entity);
+                 IBlockState iblockstate = this.mc.theWorld.getBlockState(blockpos);
+-                Block block = iblockstate.getBlock();
++                net.minecraftforge.client.ForgeHooksClient.orientBedCamera(this.mc.theWorld, blockpos, iblockstate, entity);
+ 
+-                if (block == Blocks.bed)
+-                {
+-                    int j = ((EnumFacing)iblockstate.getValue(BlockBed.FACING)).getHorizontalIndex();
+-                    GlStateManager.rotate((float)(j * 90), 0.0F, 1.0F, 0.0F);
+-                }
+-
+                 GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, -1.0F, 0.0F);
+                 GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, -1.0F, 0.0F, 0.0F);
+             }
+++++ END PATCH
+++++ REJECTED PATCH 9
+                 EntityPlayer entityplayer = (EntityPlayer)entity;
+                 GlStateManager.disableAlpha();
+                 this.mc.mcProfiler.endStartSection("outline");
++                if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, entityplayer.getHeldItem(), partialTicks))
+                 renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
+                 GlStateManager.enableAlpha();
+             }
+++++ END PATCH
+++++ REJECTED PATCH 10
+             EntityPlayer entityplayer1 = (EntityPlayer)entity;
+             GlStateManager.disableAlpha();
+             this.mc.mcProfiler.endStartSection("outline");
++            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer1, mc.objectMouseOver, 0, entityplayer1.getHeldItem(), partialTicks))
+             renderglobal.drawSelectionBox(entityplayer1, this.mc.objectMouseOver, 0, partialTicks);
+             GlStateManager.enableAlpha();
+         }
+++++ END PATCH
+++++ REJECTED PATCH 11
+         GlStateManager.shadeModel(7425);
+         this.mc.mcProfiler.endStartSection("translucent");
+         renderglobal.renderBlockLayer(EnumWorldBlockLayer.TRANSLUCENT, (double)partialTicks, pass, entity);
++        if (!this.debugView) //Only render if render pass 0 happens as well.
++        {
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
++            renderglobal.renderEntities(entity, icamera, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
++        }
+         GlStateManager.shadeModel(7424);
+         GlStateManager.depthMask(true);
+         GlStateManager.enableCull();
+++++ END PATCH
+++++ REJECTED PATCH 15
+         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.mc.theWorld, entity, partialTicks);
+ 
++        float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, entity, block, partialTicks, 0.1F);
++        if (hook >= 0)
++            GlStateManager.setFogDensity(hook);
++        else
+         if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).isPotionActive(Potion.blindness))
+         {
+             float f1 = 5.0F;
+++++ END PATCH

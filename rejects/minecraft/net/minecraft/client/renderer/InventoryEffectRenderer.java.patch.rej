@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 2
+             for (PotionEffect potioneffect : this.mc.thePlayer.getActivePotionEffects())
+             {
+                 Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
++                if(!potion.shouldRender(potioneffect)) continue;
+                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                 this.mc.getTextureManager().bindTexture(inventoryBackground);
+                 this.drawTexturedModalRect(i, j, 0, 166, 140, 32);
+++++ END PATCH

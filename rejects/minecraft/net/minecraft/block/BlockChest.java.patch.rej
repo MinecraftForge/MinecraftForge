@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+ 
+     private boolean isBelowSolidBlock(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos.up()).getBlock().isNormalCube();
++        return worldIn.isSideSolid(pos.up(), EnumFacing.DOWN, false);
+     }
+ 
+     private boolean isOcelotSittingOnChest(World worldIn, BlockPos pos)
+++++ END PATCH

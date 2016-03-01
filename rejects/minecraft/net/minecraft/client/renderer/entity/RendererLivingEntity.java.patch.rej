@@ -1,0 +1,68 @@
+++++ REJECTED PATCH 1
+     protected List<LayerRenderer<T>> layerRenderers = Lists.<LayerRenderer<T>>newArrayList();
+     protected boolean renderOutlines = false;
+ 
++    public static float NAME_TAG_RANGE = 64.0f;
++    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
++
+     public RendererLivingEntity(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn)
+     {
+         super(renderManagerIn);
+++++ END PATCH
+++++ REJECTED PATCH 2
+ 
+     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
+     {
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre(entity, this, x, y, z))) return;
+         GlStateManager.pushMatrix();
+         GlStateManager.disableCull();
+         this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
+-        this.mainModel.isRiding = entity.isRiding();
++        boolean shouldSit = entity.isRiding() && (entity.ridingEntity != null && entity.ridingEntity.shouldRiderSit());
++        this.mainModel.isRiding = shouldSit;
+         this.mainModel.isChild = entity.isChild();
+ 
+         try
+++++ END PATCH
+++++ REJECTED PATCH 3
+             float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+             float f2 = f1 - f;
+ 
+-            if (entity.isRiding() && entity.ridingEntity instanceof EntityLivingBase)
++            if (shouldSit && entity.ridingEntity instanceof EntityLivingBase)
+             {
+                 EntityLivingBase entitylivingbase = (EntityLivingBase)entity.ridingEntity;
+                 f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
+++++ END PATCH
+++++ REJECTED PATCH 4
+         {
+             super.doRender(entity, x, y, z, entityYaw, partialTicks);
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post(entity, this, x, y, z));
+     }
+ 
+     protected boolean setScoreTeamColor(T entityLivingBaseIn)
+++++ END PATCH
+++++ REJECTED PATCH 5
+ 
+     public void renderName(T entity, double x, double y, double z)
+     {
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Pre(entity, this, x, y, z))) return;
+         if (this.canRenderName(entity))
+         {
+             double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
+-            float f = entity.isSneaking() ? 32.0F : 64.0F;
++            float f = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
+ 
+             if (d0 < (double)(f * f))
+             {
+++++ END PATCH
+++++ REJECTED PATCH 6
+                 }
+             }
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Post(entity, this, x, y, z));
+     }
+ 
+     protected boolean canRenderName(T entity)
+++++ END PATCH

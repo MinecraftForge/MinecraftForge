@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+         worldIn.setItemData(s, mapdata);
+         mapdata.scale = 0;
+         mapdata.calculateMapCenter(playerIn.posX, playerIn.posZ, mapdata.scale);
+-        mapdata.dimension = (byte)worldIn.provider.getDimensionId();
++        mapdata.dimension = worldIn.provider.getDimensionId();
+         mapdata.markDirty();
+         --itemStackIn.stackSize;
+ 
+++++ END PATCH

@@ -1,0 +1,11 @@
+++++ REJECTED PATCH 1
+                 {
+                     BlockPos blockpos1 = blockpos.offset(enumfacing, k).up(l);
+                     Block block = this.worldObj.getBlockState(blockpos1).getBlock();
++                    
++                    if ( block.isSideSolid( this.worldObj, blockpos1, this.facingDirection ))
++                        continue;
+ 
+                     if (!block.getMaterial().isSolid() && !BlockRedstoneDiode.isRedstoneRepeaterBlockID(block))
+                     {
+++++ END PATCH

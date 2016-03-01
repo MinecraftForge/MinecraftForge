@@ -1,0 +1,24 @@
+++++ REJECTED PATCH 1
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+-        TileEntity tileentity = worldIn.getTileEntity(pos);
+-
+-        if (tileentity instanceof TileEntityBanner)
+         {
+-            ItemStack itemstack = new ItemStack(Items.banner, 1, ((TileEntityBanner)tileentity).getBaseColor());
+-            NBTTagCompound nbttagcompound = new NBTTagCompound();
+-            tileentity.writeToNBT(nbttagcompound);
+-            nbttagcompound.removeTag("x");
+-            nbttagcompound.removeTag("y");
+-            nbttagcompound.removeTag("z");
+-            nbttagcompound.removeTag("id");
+-            itemstack.setTagInfo("BlockEntityTag", nbttagcompound);
+-            spawnAsEntity(worldIn, pos, itemstack);
+-        }
+-        else
+-        {
+             super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         }
+     }
+++++ END PATCH

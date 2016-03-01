@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 2
+ 
+     protected static boolean isBiomeOceanic(int p_151618_0_)
+     {
+-        return p_151618_0_ == BiomeGenBase.ocean.biomeID || p_151618_0_ == BiomeGenBase.deepOcean.biomeID || p_151618_0_ == BiomeGenBase.frozenOcean.biomeID;
++        return net.minecraftforge.common.BiomeManager.oceanBiomes.contains(BiomeGenBase.getBiome(p_151618_0_));
+     }
+ 
+     protected int selectRandom(int... p_151619_1_)
+++++ END PATCH

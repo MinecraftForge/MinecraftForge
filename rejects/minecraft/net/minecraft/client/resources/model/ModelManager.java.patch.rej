@@ -1,0 +1,13 @@
+++++ REJECTED PATCH 1
+ 
+     public void onResourceManagerReload(IResourceManager resourceManager)
+     {
+-        ModelBakery modelbakery = new ModelBakery(resourceManager, this.texMap, this.modelProvider);
++        ModelBakery modelbakery = new net.minecraftforge.client.model.ModelLoader(resourceManager, this.texMap, this.modelProvider);
+         this.modelRegistry = modelbakery.setupModelRegistry();
+         this.defaultModel = (IBakedModel)this.modelRegistry.getObject(ModelBakery.MODEL_MISSING);
++        net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.modelRegistry, modelbakery);
+         this.modelProvider.reloadModels();
+     }
+ 
+++++ END PATCH

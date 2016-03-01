@@ -1,0 +1,35 @@
+++++ REJECTED PATCH 1
+         player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
+         player.addExhaustion(0.025F);
+ 
+-        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(player))
++        if (this.canSilkHarvest(worldIn, pos, worldIn.getBlockState(pos), player) && EnchantmentHelper.getSilkTouchModifier(player))
+         {
++            java.util.List<ItemStack> items = new java.util.ArrayList<ItemStack>();
+             ItemStack itemstack = this.createStackedBlock(state);
+ 
+-            if (itemstack != null)
+-            {
+-                spawnAsEntity(worldIn, pos, itemstack);
+-            }
++            if (itemstack != null) items.add(itemstack);
++
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, worldIn.getBlockState(pos), 0, 1.0f, true, player);
++
++            for (ItemStack is : items)
++                spawnAsEntity(worldIn, pos, is);
+         }
+         else
+         {
+++++ END PATCH
+++++ REJECTED PATCH 2
+             }
+ 
+             int i = EnchantmentHelper.getFortuneModifier(player);
++            harvesters.set(player);
+             this.dropBlockAsItem(worldIn, pos, state, i);
++            harvesters.set(null);
+             Material material = worldIn.getBlockState(pos.down()).getBlock().getMaterial();
+ 
+             if (material.blocksMovement() || material.isLiquid())
+++++ END PATCH

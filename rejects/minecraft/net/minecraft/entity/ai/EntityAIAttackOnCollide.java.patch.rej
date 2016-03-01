@@ -1,0 +1,56 @@
+++++ REJECTED PATCH 1
+     private double targetX;
+     private double targetY;
+     private double targetZ;
++    private int failedPathFindingPenalty = 0;
++    private boolean canPenalize = false;
+ 
+     public EntityAIAttackOnCollide(EntityCreature creature, Class <? extends Entity > targetClass, double speedIn, boolean useLongMemory)
+     {
+++++ END PATCH
+++++ REJECTED PATCH 2
+         }
+         else
+         {
++            if (canPenalize)
++            {
++                if (--this.delayCounter <= 0)
++                {
++                    this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
++                    this.targetX = 4 + this.attacker.getRNG().nextInt(7);
++                    return this.entityPathEntity != null;
++                }
++                else
++                {
++                    return true;
++                }
++            }
+             this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
+             return this.entityPathEntity != null;
+         }
+++++ END PATCH
+++++ REJECTED PATCH 3
+             this.targetZ = entitylivingbase.posZ;
+             this.delayCounter = 4 + this.attacker.getRNG().nextInt(7);
+ 
++            if (this.canPenalize)
++            {
++                this.targetX += failedPathFindingPenalty;
++                if (this.attacker.getNavigator().getPath() != null)
++                {
++                    net.minecraft.pathfinding.PathPoint finalPathPoint = this.attacker.getNavigator().getPath().getFinalPathPoint();
++                    if (finalPathPoint != null && entitylivingbase.getDistanceSq(finalPathPoint.xCoord, finalPathPoint.yCoord, finalPathPoint.zCoord) < 1)
++                        failedPathFindingPenalty = 0;
++                    else
++                        failedPathFindingPenalty += 10;
++                }
++                else
++                {
++                    failedPathFindingPenalty += 10;
++                }
++            }
++
+             if (d0 > 1024.0D)
+             {
+                 this.delayCounter += 10;
+++++ END PATCH

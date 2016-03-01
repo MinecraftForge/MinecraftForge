@@ -1,0 +1,21 @@
+++++ REJECTED PATCH 1
+         return false;
+     }
+ 
++    @Override
++    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face)
++	{
++        if ( isOpaqueCube() )
++            return true;
++        
++        // face is on the block being rendered, not this block.
++        IBlockState iblockstate = world.getBlockState(pos);
++        EnumHalf half = iblockstate.getValue(HALF);
++        EnumFacing side = iblockstate.getValue(FACING);
++        return side == face.getOpposite() || (half == EnumHalf.TOP && face == EnumFacing.DOWN) || (half == EnumHalf.BOTTOM && face == EnumFacing.UP);
++    }
++
+     public boolean isFullCube()
+     {
+         return false;
+++++ END PATCH

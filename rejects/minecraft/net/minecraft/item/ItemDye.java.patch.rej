@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 3
+ 
+         Block block = worldIn.getBlockState(pos).getBlock();
+ 
+-        if (block.getMaterial() != Material.air)
++        if (block.isAir(worldIn, pos))
+         {
+             block.setBlockBoundsBasedOnState(worldIn, pos);
+ 
+++++ END PATCH

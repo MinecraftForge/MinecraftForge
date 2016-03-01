@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+     {
+         public int getColorAtPos(BiomeGenBase p_180283_1_, BlockPos blockPosition)
+         {
+-            return p_180283_1_.waterColorMultiplier;
++            return p_180283_1_.getWaterColorMultiplier();
+         }
+     };
+ 
+++++ END PATCH

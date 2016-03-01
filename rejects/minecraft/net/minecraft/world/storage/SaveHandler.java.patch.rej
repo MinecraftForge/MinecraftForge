@@ -1,0 +1,57 @@
+++++ REJECTED PATCH 1
+     {
+         File file1 = new File(this.worldDirectory, "level.dat");
+ 
++        WorldInfo worldInfo = null;
++
+         if (file1.exists())
+         {
+             try
+             {
+                 NBTTagCompound nbttagcompound2 = CompressedStreamTools.readCompressed(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound3 = nbttagcompound2.getCompoundTag("Data");
+-                return new WorldInfo(nbttagcompound3);
++                worldInfo = new WorldInfo(nbttagcompound3);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound2);
++                return worldInfo;
+             }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++            {
++                throw e;
++            }
+             catch (Exception exception1)
+             {
+                 exception1.printStackTrace();
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
+         file1 = new File(this.worldDirectory, "level.dat_old");
+ 
+         if (file1.exists())
+++++ END PATCH
+++++ REJECTED PATCH 2
+             {
+                 NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
+-                return new WorldInfo(nbttagcompound1);
++                worldInfo = new WorldInfo(nbttagcompound1);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                return worldInfo;
++             }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++            {
++                throw e;
+             }
+             catch (Exception exception)
+             {
+++++ END PATCH
+++++ REJECTED PATCH 5
+             }
+ 
+             file1.renameTo(file2);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(player, this.playersDirectory, player.getUniqueID().toString());
+         }
+         catch (Exception var5)
+         {
+++++ END PATCH

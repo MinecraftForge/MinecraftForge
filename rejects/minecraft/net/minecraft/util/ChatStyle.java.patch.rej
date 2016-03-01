@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 1
+         return this;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String getFormattingCode()
+     {
+         if (this.isEmpty())
+++++ END PATCH

@@ -1,0 +1,70 @@
+++++ REJECTED PATCH 1
+ 
+     public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+     {
++        return makeBakedQuad(posFrom, posTo, face, sprite, facing, (net.minecraftforge.client.model.ITransformation)modelRotationIn, partRotation, uvLocked, shade);
++    }
++
++    public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
++    {
+         int[] aint = this.makeQuadVertexData(face, sprite, facing, this.getPositionsDiv16(posFrom, posTo), modelRotationIn, partRotation, uvLocked, shade);
+         EnumFacing enumfacing = getFacingFromVertexData(aint);
+ 
+++++ END PATCH
+++++ REJECTED PATCH 2
+             this.func_178408_a(aint, enumfacing);
+         }
+ 
++        net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, enumfacing);
+         return new BakedQuad(aint, face.tintIndex, enumfacing);
+     }
+ 
+     private int[] makeQuadVertexData(BlockPartFace partFace, TextureAtlasSprite sprite, EnumFacing facing, float[] p_178405_4_, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+     {
++        return makeQuadVertexData(partFace, sprite, facing, p_178405_4_, modelRotationIn, partRotation, uvLocked, shade);
++    }
++
++    private int[] makeQuadVertexData(BlockPartFace partFace, TextureAtlasSprite sprite, EnumFacing facing, float[] p_178405_4_, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
++    {
+         int[] aint = new int[28];
+ 
+         for (int i = 0; i < 4; ++i)
+++++ END PATCH
+++++ REJECTED PATCH 3
+ 
+     private void fillVertexData(int[] faceData, int vertexIndex, EnumFacing facing, BlockPartFace partFace, float[] p_178402_5_, TextureAtlasSprite sprite, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
+     {
+-        EnumFacing enumfacing = modelRotationIn.rotateFace(facing);
++        fillVertexData(faceData, vertexIndex, facing, partFace, p_178402_5_, sprite, modelRotationIn, partRotation, uvLocked, shade);
++    }
++
++    private void fillVertexData(int[] faceData, int vertexIndex, EnumFacing facing, BlockPartFace partFace, float[] p_178402_5_, TextureAtlasSprite sprite, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
++    {
++        EnumFacing enumfacing = modelRotationIn.rotate(facing);
+         int i = shade ? this.getFaceShadeColor(enumfacing) : -1;
+         EnumFaceDirection.VertexInformation enumfacedirection$vertexinformation = EnumFaceDirection.getFacing(facing).func_179025_a(vertexIndex);
+         Vector3f vector3f = new Vector3f(p_178402_5_[enumfacedirection$vertexinformation.field_179184_a], p_178402_5_[enumfacedirection$vertexinformation.field_179182_b], p_178402_5_[enumfacedirection$vertexinformation.field_179183_c]);
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+     public int rotateVertex(Vector3f position, EnumFacing facing, int vertexIndex, ModelRotation modelRotationIn, boolean uvLocked)
+     {
++        return rotateVertex(position, facing, vertexIndex, modelRotationIn, uvLocked);
++    }
++
++    public int rotateVertex(Vector3f position, EnumFacing facing, int vertexIndex, net.minecraftforge.client.model.ITransformation modelRotationIn, boolean uvLocked)
++    {
+         if (modelRotationIn == ModelRotation.X0_Y0)
+         {
+             return vertexIndex;
+         }
+         else
+         {
+-            this.rotateScale(position, new Vector3f(0.5F, 0.5F, 0.5F), modelRotationIn.getMatrix4d(), new Vector3f(1.0F, 1.0F, 1.0F));
+-            return modelRotationIn.rotateVertex(facing, vertexIndex);
++            net.minecraftforge.client.ForgeHooksClient.transform(position, modelRotationIn.getMatrix());
++            return modelRotationIn.rotate(facing, vertexIndex);
+         }
+     }
+ 
+++++ END PATCH

@@ -1,0 +1,26 @@
+++++ REJECTED PATCH 1
+             if (entityplayermp == null)
+             {
+                 this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.field_181025_l);
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getConfigurationManager(), this.networkManager, this.field_181025_l);
+                 this.field_181025_l = null;
+             }
+         }
+ 
+-        if (this.connectionTimer++ == 600)
++        if (this.connectionTimer++ == net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.LOGIN_TIMEOUT)
+         {
+             this.closeConnection("Took too long to log in");
+         }
+++++ END PATCH
+++++ REJECTED PATCH 2
+             }
+             else
+             {
+-                this.server.getConfigurationManager().initializeConnectionToPlayer(this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getConfigurationManager(), this.networkManager, this.server.getConfigurationManager().createPlayerForUser(this.loginGameProfile));
+             }
+         }
+     }
+++++ END PATCH

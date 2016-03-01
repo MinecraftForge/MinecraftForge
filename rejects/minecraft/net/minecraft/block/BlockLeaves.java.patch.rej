@@ -1,0 +1,36 @@
+++++ REJECTED PATCH 1
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public abstract class BlockLeaves extends BlockLeavesBase
++public abstract class BlockLeaves extends BlockLeavesBase implements net.minecraftforge.common.IShearable
+ {
+     public static final PropertyBool DECAYABLE = PropertyBool.create("decayable");
+     public static final PropertyBool CHECK_DECAY = PropertyBool.create("check_decay");
+++++ END PATCH
+++++ REJECTED PATCH 2
+                         BlockPos blockpos = pos.add(j1, k1, l1);
+                         IBlockState iblockstate = worldIn.getBlockState(blockpos);
+ 
+-                        if (iblockstate.getBlock().getMaterial() == Material.leaves && !((Boolean)iblockstate.getValue(CHECK_DECAY)).booleanValue())
++                        if (iblockstate.getBlock().isLeaves(worldIn, blockpos))
+                         {
+-                            worldIn.setBlockState(blockpos, iblockstate.withProperty(CHECK_DECAY, Boolean.valueOf(true)), 4);
++                            iblockstate.getBlock().beginLeavesDecay(worldIn, blockpos);
+                         }
+                     }
+                 }
+++++ END PATCH
+++++ REJECTED PATCH 3
+                             {
+                                 Block block = worldIn.getBlockState(blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)).getBlock();
+ 
+-                                if (block != Blocks.log && block != Blocks.log2)
++                                if (!block.canSustainLeaves(worldIn, blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)))
+                                 {
+-                                    if (block.getMaterial() == Material.leaves)
++                                    if (block.isLeaves(worldIn, blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)))
+                                     {
+                                         this.surroundings[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
+                                     }
+++++ END PATCH

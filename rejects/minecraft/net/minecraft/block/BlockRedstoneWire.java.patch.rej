@@ -1,0 +1,59 @@
+++++ REJECTED PATCH 1
+         BlockPos blockpos = pos.offset(direction);
+         Block block = worldIn.getBlockState(pos.offset(direction)).getBlock();
+ 
+-        if (!canConnectTo(worldIn.getBlockState(blockpos), direction) && (block.isBlockNormalCube() || !canConnectUpwardsTo(worldIn.getBlockState(blockpos.down()))))
++        if (!canRestoneConnect(worldIn, blockpos, direction) && (block.isBlockNormalCube() || !canRestoneConnect(worldIn, blockpos.down(), null)))
+         {
+             Block block1 = worldIn.getBlockState(pos.up()).getBlock();
+-            return !block1.isBlockNormalCube() && block.isBlockNormalCube() && canConnectUpwardsTo(worldIn.getBlockState(blockpos.up())) ? BlockRedstoneWire.EnumAttachPosition.UP : BlockRedstoneWire.EnumAttachPosition.NONE;
++            return !block1.isBlockNormalCube() && block.isBlockNormalCube() && canRestoneConnect(worldIn, blockpos.up(), null) ? BlockRedstoneWire.EnumAttachPosition.UP : BlockRedstoneWire.EnumAttachPosition.NONE;
+         }
+         else
+         {
+++++ END PATCH
+++++ REJECTED PATCH 2
+         Block block = iblockstate.getBlock();
+         boolean flag = block.isNormalCube();
+         boolean flag1 = worldIn.getBlockState(pos.up()).getBlock().isNormalCube();
+-        return !flag1 && flag && canConnectUpwardsTo(worldIn, blockpos.up()) ? true : (canConnectTo(iblockstate, side) ? true : (block == Blocks.powered_repeater && iblockstate.getValue(BlockRedstoneDiode.FACING) == side ? true : !flag && canConnectUpwardsTo(worldIn, blockpos.down())));
++        return !flag1 && flag && canRestoneConnect(worldIn, blockpos.up(), null) ? true : (canRestoneConnect(worldIn, blockpos, side) ? true : (block == Blocks.powered_repeater && iblockstate.getValue(BlockRedstoneDiode.FACING) == side ? true : !flag && canRestoneConnect(worldIn, blockpos.down(), null)));
+     }
+ 
+-    protected static boolean canConnectUpwardsTo(IBlockAccess worldIn, BlockPos pos)
++    protected static boolean canRestoneConnect(IBlockAccess world, BlockPos pos, EnumFacing side)
+     {
+-        return canConnectUpwardsTo(worldIn.getBlockState(pos));
+-    }
+-
+-    protected static boolean canConnectUpwardsTo(IBlockState state)
+-    {
+-        return canConnectTo(state, (EnumFacing)null);
+-    }
+-
+-    protected static boolean canConnectTo(IBlockState blockState, EnumFacing side)
+-    {
+-        Block block = blockState.getBlock();
+-
+-        if (block == Blocks.redstone_wire)
++        IBlockState state = world.getBlockState(pos);
++        if (state.getBlock() == Blocks.redstone_wire)
+         {
+             return true;
+         }
+-        else if (Blocks.unpowered_repeater.isAssociated(block))
++        else if (Blocks.unpowered_repeater.isAssociated(state.getBlock()))
+         {
+-            EnumFacing enumfacing = (EnumFacing)blockState.getValue(BlockRedstoneRepeater.FACING);
+-            return enumfacing == side || enumfacing.getOpposite() == side;
++            EnumFacing direction = (EnumFacing)state.getValue(BlockRedstoneRepeater.FACING);
++            return direction == side || direction.getOpposite() == side;
+         }
+         else
+         {
+-            return block.canProvidePower() && side != null;
++            return state.getBlock().canConnectRedstone(world, pos, side);
+         }
+     }
+ 
+++++ END PATCH

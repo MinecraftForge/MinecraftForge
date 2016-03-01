@@ -1,0 +1,16 @@
+++++ REJECTED PATCH 1
+     {
+         Block block;
+ 
+-        while (((block = worldIn.getBlockState(position).getBlock()).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && position.getY() > 0)
++        do
+         {
++            block = worldIn.getBlockState(position).getBlock();
++            if (!block.isAir(worldIn, position) && !block.isLeaves(worldIn, position)) break;
+             position = position.down();
+-        }
++        } while (position.getY() > 0);
+ 
+         for (int i = 0; i < 128; ++i)
+         {
+++++ END PATCH

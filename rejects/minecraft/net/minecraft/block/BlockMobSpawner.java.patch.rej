@@ -1,0 +1,18 @@
+++++ REJECTED PATCH 1
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+-        int i = 15 + worldIn.rand.nextInt(15) + worldIn.rand.nextInt(15);
+-        this.dropXpOnBlockBreak(worldIn, pos, i);
+     }
+ 
++    @Override
++    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    {
++        return 15 + RANDOM.nextInt(15) + RANDOM.nextInt(15);
++    }
++
+     public boolean isOpaqueCube()
+     {
+         return false;
+++++ END PATCH

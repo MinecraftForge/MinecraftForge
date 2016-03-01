@@ -1,0 +1,32 @@
+++++ REJECTED PATCH 4
+     {
+         TileEntity tileentity = null;
+ 
++        Class <? extends TileEntity > oclass = null;
+         try
+         {
+-            Class <? extends TileEntity > oclass = (Class)nameToClassMap.get(nbt.getString("id"));
++            oclass = (Class)nameToClassMap.get(nbt.getString("id"));
+ 
+             if (oclass != null)
+             {
+++++ END PATCH
+++++ REJECTED PATCH 5
+         }
+         else
+         {
++            try
++            {
+             logger.warn("Skipping BlockEntity with id " + nbt.getString("id"));
++            }
++            catch (Exception ex)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, ex,
++                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        nbt.getString("id"), oclass.getName());
++                tileentity = null;
++            }
+         }
+ 
+         return tileentity;
+++++ END PATCH

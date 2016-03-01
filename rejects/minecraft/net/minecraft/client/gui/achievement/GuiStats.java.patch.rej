@@ -1,0 +1,62 @@
+++++ REJECTED PATCH 1
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.List;
++
++import net.minecraft.block.Block;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.audio.PositionedSoundRecord;
+ import net.minecraft.client.gui.GuiButton;
+++++ END PATCH
+++++ REJECTED PATCH 2
+             for (StatCrafting statcrafting : StatList.objectMineStats)
+             {
+                 boolean flag = false;
+-                int i = Item.getIdFromItem(statcrafting.func_150959_a());
++                int i = Block.getIdFromBlock(Block.getBlockFromItem(statcrafting.func_150959_a()));
++                int itemId = Item.getIdFromItem(statcrafting.func_150959_a());
+ 
+                 if (GuiStats.this.field_146546_t.readStat(statcrafting) > 0)
+                 {
+                     flag = true;
+                 }
+-                else if (StatList.objectUseStats[i] != null && GuiStats.this.field_146546_t.readStat(StatList.objectUseStats[i]) > 0)
++                else if (StatList.objectUseStats[itemId] != null && GuiStats.this.field_146546_t.readStat(StatList.objectUseStats[itemId]) > 0)
+                 {
+                     flag = true;
+                 }
+-                else if (StatList.objectCraftStats[i] != null && GuiStats.this.field_146546_t.readStat(StatList.objectCraftStats[i]) > 0)
++                else if (StatList.objectCraftStats[itemId] != null && GuiStats.this.field_146546_t.readStat(StatList.objectCraftStats[itemId]) > 0)
+                 {
+                     flag = true;
+                 }
+++++ END PATCH
+++++ REJECTED PATCH 3
+             {
+                 public int compare(StatCrafting p_compare_1_, StatCrafting p_compare_2_)
+                 {
+-                    int j = Item.getIdFromItem(p_compare_1_.func_150959_a());
+-                    int k = Item.getIdFromItem(p_compare_2_.func_150959_a());
++                    int j;
++                    int k;
++                    if (StatsBlock.this.field_148217_o == 2) {
++                        j = Block.getIdFromBlock(Block.getBlockFromItem(p_compare_1_.func_150959_a()));
++                        k = Block.getIdFromBlock(Block.getBlockFromItem(p_compare_2_.func_150959_a()));
++                    } else {
++                        j = Item.getIdFromItem(p_compare_1_.func_150959_a());
++                        k = Item.getIdFromItem(p_compare_2_.func_150959_a());
++                    }
+                     StatBase statbase = null;
+                     StatBase statbase1 = null;
+ 
+++++ END PATCH
+++++ REJECTED PATCH 5
+         protected void drawSlot(int entryID, int p_180791_2_, int p_180791_3_, int p_180791_4_, int mouseXIn, int mouseYIn)
+         {
+             EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)this.field_148222_l.get(entryID);
+-            String s = I18n.format("entity." + EntityList.getStringFromID(entitylist$entityegginfo.spawnedID) + ".name", new Object[0]);
++            String s = I18n.format("entity." + entitylist$entityegginfo.name + ".name", new Object[0]);
+             int i = GuiStats.this.field_146546_t.readStat(entitylist$entityegginfo.field_151512_d);
+             int j = GuiStats.this.field_146546_t.readStat(entitylist$entityegginfo.field_151513_e);
+             String s1 = I18n.format("stat.entityKills", new Object[] {Integer.valueOf(i), s});
+++++ END PATCH

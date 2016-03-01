@@ -1,0 +1,20 @@
+++++ REJECTED PATCH 2
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 boolean flag = false;
+ 
+-                if (args.length >= 10 && block.hasTileEntity())
++                if (args.length >= 10 && block.hasTileEntity(state))
+                 {
+                     String s = getChatComponentFromNthArg(sender, args, 9).getUnformattedText();
+ 
+++++ END PATCH
+++++ REJECTED PATCH 3
+                                             continue;
+                                         }
+                                     }
+-                                    else if (args[8].equals("replace") && !block.hasTileEntity())
++                                    else if (args[8].equals("replace") && !block.hasTileEntity(state))
+                                     {
+                                         if (args.length > 9)
+                                         {
+++++ END PATCH

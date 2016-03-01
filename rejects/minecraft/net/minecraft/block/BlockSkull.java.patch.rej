@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 3
+                 if (tileentity instanceof TileEntitySkull)
+                 {
+                     TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
+-                    ItemStack itemstack = new ItemStack(Items.skull, 1, this.getDamageValue(worldIn, pos));
++                    ItemStack itemstack = new ItemStack(Items.skull, 1, tileentityskull.getSkullType());
+ 
+                     if (tileentityskull.getSkullType() == 3 && tileentityskull.getPlayerProfile() != null)
+                     {
+++++ END PATCH

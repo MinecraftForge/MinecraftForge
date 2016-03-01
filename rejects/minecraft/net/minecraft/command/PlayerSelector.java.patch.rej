@@ -1,0 +1,13 @@
+++++ REJECTED PATCH 1
+ 
+ public class PlayerSelector
+ {
+-    private static final Pattern tokenPattern = Pattern.compile("^@([pare])(?:\\[([\\w=,!-]*)\\])?$");
++    private static final Pattern tokenPattern = Pattern.compile("^@([pare])(?:\\[([\\w\\.=,!-]*)\\])?$"); // FORGE: allow . in entity selectors
+     private static final Pattern intListPattern = Pattern.compile("\\G([-!]?[\\w-]*)(?:$|,)");
+-    private static final Pattern keyValueListPattern = Pattern.compile("\\G(\\w+)=([-!]?[\\w-]*)(?:$|,)");
++    private static final Pattern keyValueListPattern = Pattern.compile("\\G(\\w+)=([-!]?[\\w\\.-]*)(?:$|,)"); // FORGE: allow . in entity selectors
+     private static final Set<String> WORLD_BINDING_ARGS = Sets.newHashSet(new String[] {"x", "y", "z", "dx", "dy", "dz", "rm", "r"});
+ 
+     public static EntityPlayerMP matchOnePlayer(ICommandSender sender, String token)
+++++ END PATCH

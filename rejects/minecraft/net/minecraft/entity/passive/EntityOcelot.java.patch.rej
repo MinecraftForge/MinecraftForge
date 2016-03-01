@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+ 
+             Block block = this.worldObj.getBlockState(blockpos.down()).getBlock();
+ 
+-            if (block == Blocks.grass || block.getMaterial() == Material.leaves)
++            if (block == Blocks.grass || block.isLeaves(worldObj, blockpos.down()))
+             {
+                 return true;
+             }
+++++ END PATCH

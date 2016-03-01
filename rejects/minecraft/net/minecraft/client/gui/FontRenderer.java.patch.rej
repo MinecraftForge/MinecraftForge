@@ -1,0 +1,33 @@
+++++ REJECTED PATCH 3
+ 
+         try
+         {
+-            bufferedimage = TextureUtil.readBufferedImage(Minecraft.getMinecraft().getResourceManager().getResource(this.locationFontTexture).getInputStream());
++            bufferedimage = TextureUtil.readBufferedImage(getResourceInputStream(this.locationFontTexture));
+         }
+         catch (IOException ioexception)
+         {
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+         try
+         {
+-            inputstream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("font/glyph_sizes.bin")).getInputStream();
++            inputstream = getResourceInputStream(new ResourceLocation("font/glyph_sizes.bin"));
+             inputstream.read(this.glyphWidth);
+         }
+         catch (IOException ioexception)
+++++ END PATCH
+++++ REJECTED PATCH 13
+                 int j = this.glyphWidth[character] >>> 4;
+                 int k = this.glyphWidth[character] & 15;
+ 
+-                if (k > 7)
+-                {
+-                    k = 15;
+-                    j = 0;
+-                }
+ 
+                 ++k;
+                 return (k - j) / 2 + 1;
+++++ END PATCH

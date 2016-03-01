@@ -1,0 +1,144 @@
+++++ REJECTED PATCH 1
+     private final WorldGenHellLava field_177472_y = new WorldGenHellLava(Blocks.flowing_lava, false);
+     private final GeneratorBushFeature field_177471_z = new GeneratorBushFeature(Blocks.brown_mushroom);
+     private final GeneratorBushFeature field_177465_A = new GeneratorBushFeature(Blocks.red_mushroom);
+-    private final MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
+-    private final MapGenBase netherCaveGenerator = new MapGenCavesHell();
++    private final MapGenNetherBridge genNetherBridge;
++    private final MapGenBase netherCaveGenerator;
+     double[] noiseData1;
+     double[] noiseData2;
+     double[] noiseData3;
+++++ END PATCH
+++++ REJECTED PATCH 2
+ 
+     public ChunkProviderHell(World worldIn, boolean p_i45637_2_, long p_i45637_3_)
+     {
++        this.genNetherBridge = (MapGenNetherBridge) net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(new MapGenNetherBridge(), net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE);
++        this.netherCaveGenerator = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(new MapGenCavesHell(), net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE);
+         this.worldObj = worldIn;
+         this.field_177466_i = p_i45637_2_;
+         this.hellRNG = new Random(p_i45637_3_);
+-        this.netherNoiseGen1 = new NoiseGeneratorOctaves(this.hellRNG, 16);
+-        this.netherNoiseGen2 = new NoiseGeneratorOctaves(this.hellRNG, 16);
+-        this.netherNoiseGen3 = new NoiseGeneratorOctaves(this.hellRNG, 8);
+-        this.slowsandGravelNoiseGen = new NoiseGeneratorOctaves(this.hellRNG, 4);
+-        this.netherrackExculsivityNoiseGen = new NoiseGeneratorOctaves(this.hellRNG, 4);
+-        this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.hellRNG, 10);
+-        this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.hellRNG, 16);
++        NoiseGeneratorOctaves netherNoiseGen1 = new NoiseGeneratorOctaves(this.hellRNG, 16);
++        NoiseGeneratorOctaves netherNoiseGen2 = new NoiseGeneratorOctaves(this.hellRNG, 16);
++        NoiseGeneratorOctaves netherNoiseGen3 = new NoiseGeneratorOctaves(this.hellRNG, 8);
++        NoiseGeneratorOctaves slowsandGravelNoiseGen = new NoiseGeneratorOctaves(this.hellRNG, 4);
++        NoiseGeneratorOctaves netherrackExculsivityNoiseGen = new NoiseGeneratorOctaves(this.hellRNG, 4);
++        NoiseGeneratorOctaves netherNoiseGen6 = new NoiseGeneratorOctaves(this.hellRNG, 10);
++        NoiseGeneratorOctaves netherNoiseGen7 = new NoiseGeneratorOctaves(this.hellRNG, 16);
++        NoiseGenerator[] noiseGens = new NoiseGenerator[] {
++                netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, slowsandGravelNoiseGen, netherrackExculsivityNoiseGen, netherNoiseGen6, netherNoiseGen7
++        };
++        noiseGens = net.minecraftforge.event.terraingen.TerrainGen.getModdedNoiseGenerators(worldIn, this.hellRNG, noiseGens);
++        this.netherNoiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
++        this.netherNoiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
++        this.netherNoiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
++        this.slowsandGravelNoiseGen = (NoiseGeneratorOctaves)noiseGens[3];
++        this.netherrackExculsivityNoiseGen = (NoiseGeneratorOctaves)noiseGens[4];
++        this.netherNoiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
++        this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
+         worldIn.setSeaLevel(63);
+     }
+ 
+++++ END PATCH
+++++ REJECTED PATCH 3
+ 
+     public void func_180516_b(int p_180516_1_, int p_180516_2_, ChunkPrimer p_180516_3_)
+     {
++        net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks event = new net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks(this, p_180516_1_, p_180516_2_, p_180516_3_, this.worldObj);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return;
++
+         int i = this.worldObj.getSeaLevel() + 1;
+         double d0 = 0.03125D;
+         this.slowsandNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.slowsandNoise, p_180516_1_ * 16, p_180516_2_ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+     private double[] initializeNoiseField(double[] p_73164_1_, int p_73164_2_, int p_73164_3_, int p_73164_4_, int p_73164_5_, int p_73164_6_, int p_73164_7_)
+     {
++        net.minecraftforge.event.terraingen.ChunkProviderEvent.InitNoiseField event = new net.minecraftforge.event.terraingen.ChunkProviderEvent.InitNoiseField(this, p_73164_1_, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.noisefield;
++
+         if (p_73164_1_ == null)
+         {
+             p_73164_1_ = new double[p_73164_5_ * p_73164_6_ * p_73164_7_];
+++++ END PATCH
+++++ REJECTED PATCH 5
+     public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+     {
+         BlockFalling.fallInstantly = true;
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Pre(p_73153_1_, worldObj, hellRNG, p_73153_2_, p_73153_3_, false));
+         BlockPos blockpos = new BlockPos(p_73153_2_ * 16, 0, p_73153_3_ * 16);
+         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_73153_2_, p_73153_3_);
+         this.genNetherBridge.generateStructure(this.worldObj, this.hellRNG, chunkcoordintpair);
+ 
+-        for (int i = 0; i < 8; ++i)
++        boolean doGen = net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, hellRNG, p_73153_2_, p_73153_3_, false, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.NETHER_LAVA);
++        for (int i = 0; doGen && i < 8; ++i)
+         {
+             this.field_177472_y.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16) + 8, this.hellRNG.nextInt(120) + 4, this.hellRNG.nextInt(16) + 8));
+         }
+ 
+-        for (int j = 0; j < this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1) + 1; ++j)
++        doGen = net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, hellRNG, p_73153_2_, p_73153_3_, false, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.FIRE);
++        for (int j = 0; doGen && j < this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1) + 1; ++j)
+         {
+             this.field_177470_t.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16) + 8, this.hellRNG.nextInt(120) + 4, this.hellRNG.nextInt(16) + 8));
+         }
+ 
+-        for (int k = 0; k < this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1); ++k)
++        doGen = net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, hellRNG, p_73153_2_, p_73153_3_, false, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.GLOWSTONE);
++        for (int k = 0; doGen && k < this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1); ++k)
+         {
+             this.field_177469_u.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16) + 8, this.hellRNG.nextInt(120) + 4, this.hellRNG.nextInt(16) + 8));
+         }
+ 
+-        for (int l = 0; l < 10; ++l)
++        for (int l = 0; doGen && l < 10; ++l)
+         {
+             this.field_177468_v.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16) + 8, this.hellRNG.nextInt(128), this.hellRNG.nextInt(16) + 8));
+         }
+ 
+-        if (this.hellRNG.nextBoolean())
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Pre(worldObj, hellRNG, blockpos));
++
++        doGen = net.minecraftforge.event.terraingen.TerrainGen.decorate(worldObj, hellRNG, blockpos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SHROOM);
++        if (doGen && this.hellRNG.nextBoolean())
+         {
+             this.field_177471_z.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16) + 8, this.hellRNG.nextInt(128), this.hellRNG.nextInt(16) + 8));
+         }
+ 
+-        if (this.hellRNG.nextBoolean())
++        if (doGen && this.hellRNG.nextBoolean())
+         {
+             this.field_177465_A.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16) + 8, this.hellRNG.nextInt(128), this.hellRNG.nextInt(16) + 8));
+         }
+ 
+-        for (int i1 = 0; i1 < 16; ++i1)
++        doGen = net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldObj, hellRNG, field_177467_w, blockpos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.QUARTZ);
++        for (int i1 = 0; doGen && i1 < 16; ++i1)
+         {
+             this.field_177467_w.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16), this.hellRNG.nextInt(108) + 10, this.hellRNG.nextInt(16)));
+         }
+ 
+-        for (int j1 = 0; j1 < 16; ++j1)
++        doGen = net.minecraftforge.event.terraingen.TerrainGen.populate(p_73153_1_, worldObj, hellRNG, p_73153_2_, p_73153_3_, false, net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.NETHER_LAVA2);
++        for (int j1 = 0; doGen && j1 < 16; ++j1)
+         {
+             this.field_177473_x.generate(this.worldObj, this.hellRNG, blockpos.add(this.hellRNG.nextInt(16), this.hellRNG.nextInt(108) + 10, this.hellRNG.nextInt(16)));
+         }
+ 
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.PopulateChunkEvent.Post(p_73153_1_, worldObj, hellRNG, p_73153_2_, p_73153_3_, false));
+         BlockFalling.fallInstantly = false;
+     }
+ 
+++++ END PATCH

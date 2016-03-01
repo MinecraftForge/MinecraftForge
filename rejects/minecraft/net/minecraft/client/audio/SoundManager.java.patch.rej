@@ -1,0 +1,25 @@
+++++ REJECTED PATCH 3
+             }
+             else
+             {
++                sound = net.minecraftforge.client.ForgeHooksClient.playSound(this, sound);
++                if (sound == null) return;
++
+                 SoundEventAccessorComposite soundeventaccessorcomposite = this.sndHandler.getSound(sound.getSoundLocation());
+ 
+                 if (soundeventaccessorcomposite == null)
+++++ END PATCH
+++++ REJECTED PATCH 4
+                             if (soundpoolentry.isStreamingSound())
+                             {
+                                 this.sndSystem.newStreamingSource(false, s, getURLForSoundResource(resourcelocation), resourcelocation.toString(), flag, sound.getXPosF(), sound.getYPosF(), sound.getZPosF(), sound.getAttenuationType().getTypeInt(), f1);
++                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, sound, s));
+                             }
+                             else
+                             {
+                                 this.sndSystem.newSource(false, s, getURLForSoundResource(resourcelocation), resourcelocation.toString(), flag, sound.getXPosF(), sound.getYPosF(), sound.getZPosF(), sound.getAttenuationType().getTypeInt(), f1);
++                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, sound, s));
+                             }
+ 
+                             logger.debug(LOG_MARKER, "Playing sound {} for event {} as channel {}", new Object[] {soundpoolentry.getSoundPoolEntryLocation(), soundeventaccessorcomposite.getSoundEventLocation(), s});
+++++ END PATCH

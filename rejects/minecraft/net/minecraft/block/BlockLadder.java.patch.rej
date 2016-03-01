@@ -1,0 +1,23 @@
+++++ REJECTED PATCH 1
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos.west()).getBlock().isNormalCube() ? true : (worldIn.getBlockState(pos.east()).getBlock().isNormalCube() ? true : (worldIn.getBlockState(pos.north()).getBlock().isNormalCube() ? true : worldIn.getBlockState(pos.south()).getBlock().isNormalCube()));
++        return worldIn.isSideSolid(pos.west(), EnumFacing.EAST, true) ||
++               worldIn.isSideSolid(pos.east(), EnumFacing.WEST, true) ||
++               worldIn.isSideSolid(pos.north(), EnumFacing.SOUTH, true) ||
++               worldIn.isSideSolid(pos.south(), EnumFacing.NORTH, true);
+     }
+ 
+     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+++++ END PATCH
+++++ REJECTED PATCH 2
+ 
+     protected boolean canBlockStay(World worldIn, BlockPos pos, EnumFacing facing)
+     {
+-        return worldIn.getBlockState(pos.offset(facing.getOpposite())).getBlock().isNormalCube();
++        return worldIn.isSideSolid(pos.offset(facing.getOpposite()), facing, true);
+     }
+ 
+     public IBlockState getStateFromMeta(int meta)
+++++ END PATCH

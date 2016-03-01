@@ -1,0 +1,34 @@
+++++ REJECTED PATCH 3
+ 
+                     int k2 = k + j2;
+                     BlockPos blockpos1 = new BlockPos(k1, k2, l1);
+-                    Material material = worldIn.getBlockState(blockpos1).getBlock().getMaterial();
++                    state = worldIn.getBlockState(blockpos1);
+ 
+-                    if (material == Material.air || material == Material.leaves)
++                    if (state.getBlock().isAir(worldIn, blockpos1) || state.getBlock().isLeaves(worldIn, blockpos1))
+                     {
+                         this.func_181639_b(worldIn, blockpos1);
+                         this.func_181639_b(worldIn, blockpos1.east());
+++++ END PATCH
+++++ REJECTED PATCH 5
+     private void func_150526_a(World worldIn, int p_150526_2_, int p_150526_3_, int p_150526_4_)
+     {
+         BlockPos blockpos = new BlockPos(p_150526_2_, p_150526_3_, p_150526_4_);
+-        Block block = worldIn.getBlockState(blockpos).getBlock();
++        net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
+ 
+-        if (block.getMaterial() == Material.air)
++        if (state.getBlock().isAir(worldIn, blockpos))
+         {
+             this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181641_b);
+         }
+     }
++
++    //Just a helper macro
++    private void onPlantGrow(World world, BlockPos pos, BlockPos source)
++    {
++        world.getBlockState(pos).getBlock().onPlantGrow(world, pos, source);
++    }
+ }
+++++ END PATCH

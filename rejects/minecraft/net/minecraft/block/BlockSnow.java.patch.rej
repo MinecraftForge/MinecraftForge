@@ -1,0 +1,22 @@
+++++ REJECTED PATCH 1
+     {
+         IBlockState iblockstate = worldIn.getBlockState(pos.down());
+         Block block = iblockstate.getBlock();
+-        return block != Blocks.ice && block != Blocks.packed_ice ? (block.getMaterial() == Material.leaves ? true : (block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() >= 7 ? true : block.isOpaqueCube() && block.blockMaterial.blocksMovement())) : false;
++        return block != Blocks.ice && block != Blocks.packed_ice ? (block.isLeaves(worldIn, pos.down()) ? true : (block == this && ((Integer)iblockstate.getValue(LAYERS)).intValue() >= 7 ? true : block.isOpaqueCube() && block.blockMaterial.blocksMovement())) : false;
+     }
+ 
+     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
+++++ END PATCH
+++++ REJECTED PATCH 3
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+     {
+-        spawnAsEntity(worldIn, pos, new ItemStack(Items.snowball, ((Integer)state.getValue(LAYERS)).intValue() + 1, 0));
++        super.harvestBlock(worldIn, player, pos, state, te);
+         worldIn.setBlockToAir(pos);
+-        player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
+     }
+ 
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+++++ END PATCH

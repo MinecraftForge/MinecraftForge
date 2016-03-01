@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+                 ichatcomponent.appendText(" ");
+             }
+ 
+-            IChatComponent ichatcomponent1 = new ChatComponentText(args[i]);
++            IChatComponent ichatcomponent1 = net.minecraftforge.common.ForgeHooks.newChatWithLinks(args[i]); // Forge: links for messages
+ 
+             if (p_147176_3_)
+             {
+++++ END PATCH

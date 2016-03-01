@@ -1,0 +1,36 @@
+++++ REJECTED PATCH 2
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return (worldIn.getLight(pos) >= 8 || worldIn.canSeeSky(pos)) && this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
++        return (worldIn.getLight(pos) >= 8 || worldIn.canSeeSky(pos)) && worldIn.getBlockState(pos.down()).getBlock().canSustainPlant(worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     protected Item getSeed()
+++++ END PATCH
+++++ REJECTED PATCH 3
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, 0);
+-
+-        if (!worldIn.isRemote)
+-        {
+-            int i = ((Integer)state.getValue(AGE)).intValue();
+-
+-            if (i >= 7)
+-            {
+-                int j = 3 + fortune;
+-
+-                for (int k = 0; k < j; ++k)
+-                {
+-                    if (worldIn.rand.nextInt(15) <= i)
+-                    {
+-                        spawnAsEntity(worldIn, pos, new ItemStack(this.getSeed(), 1, 0));
+-                    }
+-                }
+-            }
+-        }
+     }
+ 
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+++++ END PATCH

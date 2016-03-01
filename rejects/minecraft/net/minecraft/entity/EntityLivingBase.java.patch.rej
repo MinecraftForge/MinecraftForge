@@ -1,0 +1,76 @@
+++++ REJECTED PATCH 1
+                 }
+ 
+                 int i = (int)(150.0D * d0);
++                if ( !block.addLandingEffects( (WorldServer)this.worldObj, pos, iblockstate, this, i ) )
+                 ((WorldServer)this.worldObj).spawnParticle(EnumParticleTypes.BLOCK_DUST, this.posX, this.posY, this.posZ, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.getStateId(iblockstate)});
+             }
+         }
+++++ END PATCH
+++++ REJECTED PATCH 2
+                     }
+                 }
+ 
+-                if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity instanceof EntityLivingBase)
++                if (!this.worldObj.isRemote && this.isRiding() && this.ridingEntity != null && ridingEntity.shouldDismountInWater(this))
+                 {
+                     this.mountEntity((Entity)null);
+                 }
+++++ END PATCH
+++++ REJECTED PATCH 5
+         return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void removePotionEffectClient(int potionId)
+     {
+         this.activePotionsMap.remove(Integer.valueOf(potionId));
+++++ END PATCH
+++++ REJECTED PATCH 9
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+         Entity entity = cause.getEntity();
+         EntityLivingBase entitylivingbase = this.func_94060_bK();
+ 
+++++ END PATCH
+++++ REJECTED PATCH 10
+                 i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
+             }
+ 
++            captureDrops = true;
++            capturedDrops.clear();
++
+             if (this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
+             {
+                 this.dropFewItems(this.recentlyHit > 0, i);
+++++ END PATCH
+++++ REJECTED PATCH 12
+         int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
+         int k = MathHelper.floor_double(this.posZ);
+         Block block = this.worldObj.getBlockState(new BlockPos(i, j, k)).getBlock();
+-        return (block == Blocks.ladder || block == Blocks.vine) && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).isSpectator());
++        return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(block, worldObj, new BlockPos(i, j, k), this);
+     }
+ 
+     public boolean isEntityAlive()
+++++ END PATCH
+++++ REJECTED PATCH 16
+ 
+     public void dismountEntity(Entity p_110145_1_)
+     {
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_110145_1_, false)){ return; }
+         double d0 = p_110145_1_.posX;
+         double d1 = p_110145_1_.getEntityBoundingBox().minY + (double)p_110145_1_.height;
+         double d2 = p_110145_1_.posZ;
+++++ END PATCH
+++++ REJECTED PATCH 19
+ 
+     public void mountEntity(Entity entityIn)
+     {
++        if(!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entityIn, true)){ return; }
+         if (this.ridingEntity != null && entityIn == null)
+         {
+             if (!this.worldObj.isRemote)
+++++ END PATCH

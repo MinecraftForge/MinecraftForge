@@ -1,0 +1,9 @@
+++++ REJECTED PATCH 1
+ 
+     String getUnformattedText();
+ 
+-    @SideOnly(Side.CLIENT)
+     String getFormattedText();
+ 
+     List<IChatComponent> getSiblings();
+++++ END PATCH
