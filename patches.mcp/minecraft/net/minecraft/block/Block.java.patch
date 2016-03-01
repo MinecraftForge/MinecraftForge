@@ -1267,7 +1267,7 @@
 +     * Queries if this block should render in a given layer.
 +     * ISmartBlockModel can use MinecraftForgeClient.getRenderLayer to alter their model based on layer
 +     */
-+    public boolean canRenderInLayer(EnumWorldBlockLayer layer)
++    public boolean canRenderInLayer(BlockRenderLayer layer)
 +    {
 +        return getBlockLayer() == layer;
 +    }

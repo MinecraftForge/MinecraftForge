@@ -20,7 +20,18 @@
                  {
                      TileEntity tileentity = iblockaccess.getTileEntity(new BlockPos(blockpos$mutableblockpos));
                      TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.instance.<TileEntity>getSpecialRenderer(tileentity);
-@@ -191,6 +193,7 @@
+@@ -176,7 +178,9 @@
+                     }
+                 }
+ 
+-                BlockRenderLayer blockrenderlayer1 = block.getBlockLayer();
++                for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
++                	 if(!block.canRenderInLayer(blockrenderlayer1)) continue;
++                	 net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
+                 int j = blockrenderlayer1.ordinal();
+ 
+                 if (block.getDefaultState().func_185901_i() != EnumBlockRenderType.INVISIBLE)
+@@ -191,6 +195,7 @@
  
                      aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, iblockaccess, vertexbuffer);
                  }
@@ -28,7 +39,7 @@
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -413,6 +416,26 @@
+@@ -413,6 +418,26 @@
          return this.needsUpdate && this.field_188284_q;
      }
  

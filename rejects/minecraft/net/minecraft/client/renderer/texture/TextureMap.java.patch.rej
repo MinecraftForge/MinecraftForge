@@ -1,60 +1,3 @@
-++++ REJECTED PATCH 4
-         int j = Integer.MAX_VALUE;
-         int k = 1 << this.mipmapLevels;
- 
-+        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
-+        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
-+        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.mapRegisteredSprites.size());
-+
-+        if(!skipFirst)
-         for (Entry<String, TextureAtlasSprite> entry : this.mapRegisteredSprites.entrySet())
-         {
-             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
-             ResourceLocation resourcelocation = new ResourceLocation(textureatlassprite.getIconName());
-             ResourceLocation resourcelocation1 = this.completeResourceLocation(resourcelocation, 0);
-+            bar.step(resourcelocation1.getResourcePath());
- 
-+            if (textureatlassprite.hasCustomLoader(resourceManager, resourcelocation))
-+            {
-+                if (!textureatlassprite.load(resourceManager, resourcelocation))
-+                {
-+                    j = Math.min(j, Math.min(textureatlassprite.getIconWidth(), textureatlassprite.getIconHeight()));
-+                    stitcher.addSprite(textureatlassprite);
-+                }
-+                continue;
-+            }
-+
-             try
-             {
-                 IResource iresource = resourceManager.getResource(resourcelocation1);
-++++ END PATCH
-++++ REJECTED PATCH 5
-             }
-             catch (RuntimeException runtimeexception)
-             {
--                logger.error((String)("Unable to parse metadata from " + resourcelocation1), (Throwable)runtimeexception);
-+                //logger.error((String)("Unable to parse metadata from " + resourcelocation1), (Throwable)runtimeexception);
-+                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation1, runtimeexception.getMessage());
-                 continue;
-             }
-             catch (IOException ioexception1)
-             {
--                logger.error((String)("Using missing texture, unable to load " + resourcelocation1), (Throwable)ioexception1);
-+                //logger.error((String)("Using missing texture, unable to load " + resourcelocation1), (Throwable)ioexception1);
-+                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation1);
-                 continue;
-             }
- 
-++++ END PATCH
-++++ REJECTED PATCH 6
-             stitcher.addSprite(textureatlassprite);
-         }
- 
-+        net.minecraftforge.fml.common.ProgressManager.pop(bar);
-         int j1 = Math.min(j, k);
-         int k1 = MathHelper.calculateLogBaseTwo(j1);
- 
-++++ END PATCH
 ++++ REJECTED PATCH 7
              this.mipmapLevels = k1;
          }
@@ -67,17 +10,4 @@
              try
              {
                  textureatlassprite1.generateMipmaps(this.mipmapLevels);
-++++ END PATCH
-++++ REJECTED PATCH 9
-         }
- 
-         logger.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
-+        bar.step("Allocating GL texture");
-         TextureUtil.allocateTextureImpl(this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
-         Map<String, TextureAtlasSprite> map = Maps.<String, TextureAtlasSprite>newHashMap(this.mapRegisteredSprites);
- 
-+        bar.step("Uploading GL texture");
-         for (TextureAtlasSprite textureatlassprite2 : stitcher.getStichSlots())
-         {
-             String s = textureatlassprite2.getIconName();
 ++++ END PATCH

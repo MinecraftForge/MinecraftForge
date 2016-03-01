@@ -1,4 +1,6 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/client/renderer/VertexBuffer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/VertexBuffer.java
+@@ -510,15 +510,15 @@
                  break;
              case USHORT:
              case SHORT:
@@ -20,22 +22,13 @@
          }
  
          this.nextVertexFormatIndex();
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -609,4 +609,9 @@
+             return this.stateVertexFormat;
          }
      }
- 
-+    public void checkAndGrow()
-+    {
-+        this.growBuffer(vertexFormat.getNextOffset()/* / 4 * 4 */);
-+    }
 +
 +    public boolean isColorDisabled()
 +    {
-+        return noColor;
++    	return noColor;
 +    }
-+
-     @SideOnly(Side.CLIENT)
-     public class State
-     {
-++++ END PATCH
+ }

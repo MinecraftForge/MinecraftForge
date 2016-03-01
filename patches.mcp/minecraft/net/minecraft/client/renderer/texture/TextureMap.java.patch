@@ -40,11 +40,62 @@
      }
  
      private void initMissingImage()
-@@ -139,9 +152,13 @@
+@@ -88,12 +101,26 @@
+         int j = Integer.MAX_VALUE;
+         int k = 1 << this.mipmapLevels;
+ 
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
++        net.minecraftforge.fml.common.FMLLog.info("Max texture size: %d", i);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", skipFirst ? 0 : this.mapRegisteredSprites.size());
++
++        if(!skipFirst)
+         for (Entry<String, TextureAtlasSprite> entry : this.mapRegisteredSprites.entrySet())
+         {
+             TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)entry.getValue();
+             ResourceLocation resourcelocation = this.func_184396_a(textureatlassprite);
++            bar.step(resourcelocation.getResourcePath());
+             IResource iresource = null;
+ 
++            if (textureatlassprite.hasCustomLoader(resourceManager, resourcelocation))
++            {
++            	if (textureatlassprite.load(resourceManager, resourcelocation))
++            	{
++            		continue;
++            	}
++            }
++            else
+             try
+             {
+                 PngSizeInfo pngsizeinfo = PngSizeInfo.func_188532_a(resourceManager.getResource(resourcelocation));
+@@ -103,12 +130,14 @@
+             }
+             catch (RuntimeException runtimeexception)
+             {
+-                logger.error((String)("Unable to parse metadata from " + resourcelocation), (Throwable)runtimeexception);
++                //logger.error((String)("Unable to parse metadata from " + resourcelocation), (Throwable)runtimeexception);
++            	net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation, runtimeexception.getMessage());
+                 continue;
+             }
+             catch (IOException ioexception)
+             {
+-                logger.error((String)("Using missing texture, unable to load " + resourcelocation), (Throwable)ioexception);
++                //logger.error((String)("Using missing texture, unable to load " + resourcelocation), (Throwable)ioexception);
++            	net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation);
+                 continue;
+             }
+             finally
+@@ -128,6 +157,7 @@
+             stitcher.addSprite(textureatlassprite);
+         }
+ 
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
+         int l = Math.min(j, k);
+         int i1 = MathHelper.calculateLogBaseTwo(l);
+ 
+@@ -139,9 +169,12 @@
  
          this.missingImage.generateMipmaps(this.mipmapLevels);
          stitcher.addSprite(this.missingImage);
-+        net.minecraftforge.fml.common.ProgressManager.pop(bar);
 +        skipFirst = false;
 +        bar = net.minecraftforge.fml.common.ProgressManager.push("Texture creation", 3);
  
@@ -54,9 +105,21 @@
              stitcher.doStitch();
          }
          catch (StitcherException stitcherexception)
-@@ -253,6 +270,13 @@
-             crashreportcategory.addCrashSection("Mipmap levels", Integer.valueOf(this.mipmapLevels));
-             throw new ReportedException(crashreport);
+@@ -150,9 +183,11 @@
+         }
+ 
+         logger.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
++        bar.step("Allocating GL texture");
+         TextureUtil.allocateTextureImpl(this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
+         Map<String, TextureAtlasSprite> map = Maps.<String, TextureAtlasSprite>newHashMap(this.mapRegisteredSprites);
+ 
++        bar.step("Uploading GL texture");
+         for (TextureAtlasSprite textureatlassprite1 : stitcher.getStichSlots())
+         {
+             if (textureatlassprite1 == this.missingImage || this.func_184397_a(resourceManager, textureatlassprite1))
+@@ -185,6 +220,13 @@
+         {
+             textureatlassprite2.copyFrom(this.missingImage);
          }
 +
 +        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
@@ -67,8 +130,8 @@
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
-     private ResourceLocation func_184396_a(TextureAtlasSprite p_184396_1_)
-@@ -317,4 +341,37 @@
+     private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
+@@ -317,4 +359,37 @@
      {
          return this.missingImage;
      }
