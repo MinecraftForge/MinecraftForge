@@ -1,8 +1,0 @@
-++++ REJECTED PATCH 1
- 
-     TextureAtlasSprite getParticleTexture();
- 
-+    @Deprecated
-     ItemCameraTransforms getItemCameraTransforms();
- }
-++++ END PATCH

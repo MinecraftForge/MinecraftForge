@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
+@@ -20,7 +20,9 @@
+ 
+     TextureAtlasSprite getParticleTexture();
+ 
++    @Deprecated
+     ItemCameraTransforms getItemCameraTransforms();
+ 
++    @Deprecated
+     ItemOverrideList func_188617_f();
+ }

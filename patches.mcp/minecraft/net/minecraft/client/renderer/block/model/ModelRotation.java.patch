@@ -1,4 +1,6 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelRotation.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelRotation.java
+@@ -10,7 +10,7 @@
  import org.lwjgl.util.vector.Vector3f;
  
  @SideOnly(Side.CLIENT)
@@ -7,8 +9,7 @@
  {
      X0_Y0(0, 0),
      X0_Y90(0, 90),
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -116,4 +116,9 @@
              mapRotations.put(Integer.valueOf(modelrotation.combinedXY), modelrotation);
          }
      }
@@ -18,4 +19,3 @@
 +    public EnumFacing rotate(EnumFacing facing) { return rotateFace(facing); }
 +    public int rotate(EnumFacing facing, int vertexIndex) { return rotateVertex(facing, vertexIndex); }
  }
-++++ END PATCH
