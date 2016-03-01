@@ -49,6 +49,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -100,7 +101,7 @@ public class ForgeHooksClient
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
-    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, String type)
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EntityEquipmentSlot slot, String type)
     {
         String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
         return result != null ? result : _default;
@@ -119,9 +120,9 @@ public class ForgeHooksClient
         }
     }
 
-    public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, RayTraceResult target, int subID, ItemStack currentItem, float partialTicks)
+    public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, RayTraceResult target, int subID, float partialTicks)
     {
-        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, currentItem, partialTicks));
+        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, partialTicks));
     }
 
     public static void dispatchRenderLast(RenderGlobal context, float partialTicks)
@@ -164,9 +165,9 @@ public class ForgeHooksClient
         renderLayer.set(layer);
     }
 
-    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
+    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot slot, ModelBiped _default)
     {
-        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID, _default);
+        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
         return model == null ? _default : model;
     }
 
@@ -203,8 +204,8 @@ public class ForgeHooksClient
         return fovUpdateEvent.newfov;
     }
 
-    public static float getFOVModifier(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float fov) {
-        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, block, renderPartialTicks, fov);
+    public static float getFOVModifier(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float fov) {
+        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, state, renderPartialTicks, fov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
     }
@@ -318,16 +319,16 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
     }
 
-    public static float getFogDensity(EntityRenderer renderer, Entity entity, Block block, float partial, float density)
+    public static float getFogDensity(EntityRenderer renderer, Entity entity, IBlockState state, float partial, float density)
     {
-        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(renderer, entity, block, partial, density);
+        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(renderer, entity, state, partial, density);
         if (MinecraftForge.EVENT_BUS.post(event)) return event.density;
         return -1;
     }
 
-    public static void onFogRender(EntityRenderer renderer, Entity entity, Block block, float partial, int mode, float distance)
+    public static void onFogRender(EntityRenderer renderer, Entity entity, IBlockState state, float partial, int mode, float distance)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, block, partial, mode, distance));
+        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, state, partial, mode, distance));
     }
 
     /*

@@ -40,7 +40,15 @@
                  ++this.countEntitiesRendered;
  
                  if (entity1.isInRangeToRender3d(d0, d1, d2))
-@@ -672,6 +681,7 @@
+@@ -599,6 +608,7 @@
+                 {
+                     for (Entity entity2 : classinheritancemultimap)
+                     {
++                    	if(!entity2.shouldRenderInPass(pass)) continue;
+                         boolean flag = this.renderManager.shouldRender(entity2, camera, d0, d1, d2) || entity2.func_184215_y(this.mc.thePlayer);
+ 
+                         if (flag)
+@@ -672,6 +682,7 @@
              this.theWorld.theProfiler.endStartSection("blockentities");
              RenderHelper.enableStandardItemLighting();
  
@@ -48,7 +56,7 @@
              for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfos)
              {
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
-@@ -680,6 +690,7 @@
+@@ -680,6 +691,7 @@
                  {
                      for (TileEntity tileentity2 : list3)
                      {
@@ -56,7 +64,7 @@
                          TileEntityRendererDispatcher.instance.renderTileEntity(tileentity2, partialTicks, -1);
                      }
                  }
-@@ -689,9 +700,11 @@
+@@ -689,9 +701,11 @@
              {
                  for (TileEntity tileentity : this.setTileEntities)
                  {
@@ -68,7 +76,7 @@
  
              this.preRenderDamagedBlocks();
  
-@@ -718,7 +731,7 @@
+@@ -718,7 +732,7 @@
  
                  Block block = this.theWorld.getBlockState(blockpos).getBlock();
  
@@ -77,7 +85,21 @@
                  {
                      TileEntityRendererDispatcher.instance.renderTileEntity(tileentity1, partialTicks, destroyblockprogress.getPartialBlockDamage());
                  }
-@@ -1427,6 +1440,12 @@
+@@ -1210,6 +1224,13 @@
+ 
+     public void renderSky(float partialTicks, int pass)
+     {
++    	net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, theWorld, mc);
++            return;
++        }
++
+         if (this.mc.theWorld.provider.func_186058_p().func_186068_a() == 1)
+         {
+             this.renderSkyEnd();
+@@ -1427,6 +1448,12 @@
  
      public void renderClouds(float partialTicks, int pass)
      {
@@ -90,7 +112,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.func_181147_e() == 2)
-@@ -1854,8 +1873,11 @@
+@@ -1854,8 +1881,11 @@
                  double d4 = (double)blockpos.getY() - d1;
                  double d5 = (double)blockpos.getZ() - d2;
                  Block block = this.theWorld.getBlockState(blockpos).getBlock();

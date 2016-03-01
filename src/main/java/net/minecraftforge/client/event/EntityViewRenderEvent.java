@@ -1,6 +1,7 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -12,20 +13,40 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  */
 public abstract class EntityViewRenderEvent extends Event
 {
-    public final EntityRenderer renderer;
-    public final Entity entity;
-    public final Block block;
-    public final double renderPartialTicks;
+    private final EntityRenderer renderer;
+    private final Entity entity;
+    private final IBlockState state;
+    private final double renderPartialTicks;
 
-    public EntityViewRenderEvent(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks)
+    public EntityViewRenderEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks)
     {
         this.renderer = renderer;
         this.entity = entity;
-        this.block = block;
+        this.state = state;
         this.renderPartialTicks = renderPartialTicks;
     }
 
-    /**
+    public EntityRenderer getRenderer()
+    {
+	    return renderer;
+	}
+
+    public Entity getEntity()
+    {
+        return entity;
+    }
+
+    public IBlockState getState()
+    {
+        return state;
+    }
+
+    public double getRenderPartialTicks()
+    {
+        return renderPartialTicks;
+    }
+
+	/**
      * Event that allows any feature to customize the fog density the player sees.
      * NOTE: In order to make this event have an effect, you must cancel the event
      */
@@ -34,9 +55,9 @@ public abstract class EntityViewRenderEvent extends Event
     {
         public float density;
 
-        public FogDensity(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float density)
+        public FogDensity(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float density)
         {
-            super(renderer, entity, block, renderPartialTicks);
+            super(renderer, entity, state, renderPartialTicks);
             this.density = density;
         }
     }
@@ -50,9 +71,9 @@ public abstract class EntityViewRenderEvent extends Event
         public final int fogMode;
         public final float farPlaneDistance;
 
-        public RenderFogEvent(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, int fogMode, float farPlaneDistance)
+        public RenderFogEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, int fogMode, float farPlaneDistance)
         {
-            super(renderer, entity, block, renderPartialTicks);
+            super(renderer, entity, state, renderPartialTicks);
             this.fogMode = fogMode;
             this.farPlaneDistance = farPlaneDistance;
         }
@@ -68,9 +89,9 @@ public abstract class EntityViewRenderEvent extends Event
         public float green;
         public float blue;
 
-        public FogColors(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float red, float green, float blue)
+        public FogColors(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
         {
-            super(renderer, entity, block, renderPartialTicks);
+            super(renderer, entity, state, renderPartialTicks);
             this.red = red;
             this.green = green;
             this.blue = blue;
@@ -86,9 +107,9 @@ public abstract class EntityViewRenderEvent extends Event
         public float pitch;
         public float roll;
 
-        public CameraSetup(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float yaw, float pitch, float roll)
+        public CameraSetup(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float yaw, float pitch, float roll)
         {
-            super(renderer, entity, block, renderPartialTicks);
+            super(renderer, entity, state, renderPartialTicks);
             this.yaw = yaw;
             this.pitch = pitch;
             this.roll = roll;
@@ -103,8 +124,8 @@ public abstract class EntityViewRenderEvent extends Event
     {
         private float fov;
         
-        public FOVModifier(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float fov) {
-            super(renderer, entity, block, renderPartialTicks);
+        public FOVModifier(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float fov) {
+            super(renderer, entity, state, renderPartialTicks);
             this.setFOV(fov);
         }
 
