@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
+@@ -197,9 +197,11 @@
+ 
+     public static void allocateTextureImpl(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
+     {
++        synchronized (net.minecraftforge.fml.client.SplashProgress.class)
++        {
+         deleteTexture(p_180600_0_);
+         bindTexture(p_180600_0_);
+-
++        }
+         if (p_180600_1_ >= 0)
+         {
+             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, p_180600_1_);

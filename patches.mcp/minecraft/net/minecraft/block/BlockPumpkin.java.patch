@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPumpkin.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPumpkin.java
+@@ -115,7 +115,7 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos).getBlock().blockMaterial.isReplaceable() && World.doesBlockHaveSolidTopSurface(worldIn, pos.down());
++        return worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos) && World.doesBlockHaveSolidTopSurface(worldIn, pos.down());
+     }
+ 
+     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)

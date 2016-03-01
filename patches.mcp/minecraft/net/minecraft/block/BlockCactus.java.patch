@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockCactus extends Block
++public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
+ {
+     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
+ 
+@@ -109,7 +109,7 @@
+         }
+ 
+         Block block = worldIn.getBlockState(pos.down()).getBlock();
+-        return block == Blocks.cactus || block == Blocks.sand;
++        return block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this);
+     }
+ 
+     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+@@ -137,4 +137,16 @@
+     {
+         return new BlockState(this, new IProperty[] {AGE});
+     }
++
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return net.minecraftforge.common.EnumPlantType.Desert;
++    }
++
++    @Override
++    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return getDefaultState();
++    }
+ }

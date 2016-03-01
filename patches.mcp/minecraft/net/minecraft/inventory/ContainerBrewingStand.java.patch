@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -154,7 +154,7 @@
+ 
+         public boolean isItemValid(ItemStack stack)
+         {
+-            return stack != null ? stack.getItem().isPotionIngredient(stack) : false;
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
+         }
+ 
+         public int getSlotStackLimit()
+@@ -185,7 +185,7 @@
+ 
+             public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack)
+             {
+-                if (stack.getItem() == Items.potionitem && stack.getMetadata() > 0)
++                if (stack.getItem() instanceof net.minecraft.item.ItemPotion && stack.getMetadata() > 0)
+                 {
+                     this.player.triggerAchievement(AchievementList.potion);
+                 }
+@@ -195,7 +195,7 @@
+ 
+             public static boolean canHoldPotion(ItemStack stack)
+             {
+-                return stack != null && (stack.getItem() == Items.potionitem || stack.getItem() == Items.glass_bottle);
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
+             }
+         }
+ }

@@ -1,0 +1,97 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+@@ -104,7 +104,7 @@
+ 
+     private boolean canBrew()
+     {
+-        if (this.brewingItemStacks[3] != null && this.brewingItemStacks[3].stackSize > 0)
++        if (this.brewingItemStacks[3] != null && this.brewingItemStacks[3].stackSize > 0 && false) // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
+         {
+             ItemStack itemstack = this.brewingItemStacks[3];
+ 
+@@ -118,7 +118,7 @@
+ 
+                 for (int i = 0; i < 3; ++i)
+                 {
+-                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() == Items.potionitem)
++                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                     {
+                         int j = this.brewingItemStacks[i].getMetadata();
+                         int k = this.getPotionResult(j, itemstack);
+@@ -145,19 +145,22 @@
+         }
+         else
+         {
+-            return false;
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(brewingItemStacks, brewingItemStacks[3], outputSlots);
+         }
+     }
+ 
+     private void brewPotions()
+     {
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(brewingItemStacks)) return;
+         if (this.canBrew())
+         {
++            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(brewingItemStacks, brewingItemStacks[3], outputSlots);
+             ItemStack itemstack = this.brewingItemStacks[3];
+ 
++            if (false) { // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
+             for (int i = 0; i < 3; ++i)
+             {
+-                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() == Items.potionitem)
++                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                 {
+                     int j = this.brewingItemStacks[i].getMetadata();
+                     int k = this.getPotionResult(j, itemstack);
+@@ -177,10 +180,11 @@
+                     }
+                 }
+             }
++            }
+ 
+-            if (itemstack.getItem().hasContainerItem())
++            if (itemstack.getItem().hasContainerItem(itemstack))
+             {
+-                this.brewingItemStacks[3] = new ItemStack(itemstack.getItem().getContainerItem());
++                this.brewingItemStacks[3] = itemstack.getItem().getContainerItem(itemstack);
+             }
+             else
+             {
+@@ -191,6 +195,7 @@
+                     this.brewingItemStacks[3] = null;
+                 }
+             }
++            net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(brewingItemStacks);
+         }
+     }
+ 
+@@ -310,7 +315,9 @@
+ 
+     public boolean isItemValidForSlot(int index, ItemStack stack)
+     {
+-        return index == 3 ? stack.getItem().isPotionIngredient(stack) : stack.getItem() == Items.potionitem || stack.getItem() == Items.glass_bottle;
++        if (index == 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack)) return true;
++        else if (index != 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack)) return true;
++        return false;
+     }
+ 
+     public boolean[] func_174902_m()
+@@ -386,4 +393,18 @@
+             this.brewingItemStacks[i] = null;
+         }
+     }
++
++    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.UP)
++                return (T) handlerInput;
++            else
++                return (T) handlerOutput;
++        return super.getCapability(capability, facing);
++    }
+ }

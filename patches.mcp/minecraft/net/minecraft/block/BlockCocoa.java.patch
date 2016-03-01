@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
+@@ -137,6 +137,13 @@
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
++        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
++    }
++
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> dropped = super.getDrops(world, pos, state, fortune);
+         int i = ((Integer)state.getValue(AGE)).intValue();
+         int j = 1;
+ 
+@@ -147,8 +154,9 @@
+ 
+         for (int k = 0; k < j; ++k)
+         {
+-            spawnAsEntity(worldIn, pos, new ItemStack(Items.dye, 1, EnumDyeColor.BROWN.getDyeDamage()));
++            dropped.add(new ItemStack(Items.dye, 1, EnumDyeColor.BROWN.getDyeDamage()));
+         }
++        return dropped;
+     }
+ 
+     @SideOnly(Side.CLIENT)

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/IChatComponent.java
++++ ../src-work/minecraft/net/minecraft/util/IChatComponent.java
+@@ -31,7 +31,6 @@
+ 
+     String getUnformattedText();
+ 
+-    @SideOnly(Side.CLIENT)
+     String getFormattedText();
+ 
+     List<IChatComponent> getSiblings();

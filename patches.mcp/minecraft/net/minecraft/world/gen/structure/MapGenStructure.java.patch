@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
+@@ -217,12 +217,12 @@
+     {
+         if (this.structureData == null)
+         {
+-            this.structureData = (MapGenStructureData)worldIn.loadItemData(MapGenStructureData.class, this.getStructureName());
++            this.structureData = (MapGenStructureData)worldIn.getPerWorldStorage().loadData(MapGenStructureData.class, this.getStructureName());
+ 
+             if (this.structureData == null)
+             {
+                 this.structureData = new MapGenStructureData(this.getStructureName());
+-                worldIn.setItemData(this.getStructureName(), this.structureData);
++                worldIn.getPerWorldStorage().setData(this.getStructureName(), this.structureData);
+             }
+             else
+             {

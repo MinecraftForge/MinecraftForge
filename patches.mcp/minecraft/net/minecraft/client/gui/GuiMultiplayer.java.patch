@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
+@@ -40,6 +40,7 @@
+     public GuiMultiplayer(GuiScreen parentScreen)
+     {
+         this.parentScreen = parentScreen;
++        net.minecraftforge.fml.client.FMLClientHandler.instance().setupServerList();
+     }
+ 
+     public void initGui()
+@@ -372,7 +373,7 @@
+ 
+     private void connectToServer(ServerData server)
+     {
+-        this.mc.displayGuiScreen(new GuiConnecting(this, this.mc, server));
++        net.minecraftforge.fml.client.FMLClientHandler.instance().connectToServer(this, server);
+     }
+ 
+     public void selectServer(int index)

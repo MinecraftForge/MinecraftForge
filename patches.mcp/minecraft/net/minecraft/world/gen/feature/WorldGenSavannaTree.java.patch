@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSavannaTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSavannaTree.java
+@@ -52,7 +52,7 @@
+                     {
+                         if (j >= 0 && j < 256)
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(blockpos$mutableblockpos.set(l, j, i1)).getBlock()))
++                            if (!this.isReplaceable(worldIn,blockpos$mutableblockpos.set(l, j, i1)))
+                             {
+                                 flag = false;
+                             }
+@@ -71,11 +71,13 @@
+             }
+             else
+             {
+-                Block block = worldIn.getBlockState(position.down()).getBlock();
++                BlockPos down = position.down();
++                Block block = worldIn.getBlockState(down).getBlock();
++                boolean isSoil = block.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-                if ((block == Blocks.grass || block == Blocks.dirt) && position.getY() < 256 - i - 1)
++                if (isSoil && position.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, position.down());
++                    block.onPlantGrow(worldIn, down, position);
+                     EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(rand);
+                     int k2 = i - rand.nextInt(4) - 1;
+                     int l2 = 3 - rand.nextInt(3);
+@@ -95,9 +97,9 @@
+                         }
+ 
+                         BlockPos blockpos = new BlockPos(i3, i2, j1);
+-                        Material material = worldIn.getBlockState(blockpos).getBlock().getMaterial();
++                        block = worldIn.getBlockState(blockpos).getBlock();
+ 
+-                        if (material == Material.air || material == Material.leaves)
++                        if (block.isAir(worldIn, blockpos) || block.isLeaves(worldIn, blockpos))
+                         {
+                             this.func_181642_b(worldIn, blockpos);
+                             k1 = i2;
+@@ -149,9 +151,9 @@
+                                 i3 += enumfacing1.getFrontOffsetX();
+                                 j1 += enumfacing1.getFrontOffsetZ();
+                                 BlockPos blockpos1 = new BlockPos(i3, j2, j1);
+-                                Material material1 = worldIn.getBlockState(blockpos1).getBlock().getMaterial();
++                                block = worldIn.getBlockState(blockpos1).getBlock();
+ 
+-                                if (material1 == Material.air || material1 == Material.leaves)
++                                if (block.isAir(worldIn, blockpos2) || block.isLeaves(worldIn, blockpos2))
+                                 {
+                                     this.func_181642_b(worldIn, blockpos1);
+                                     k1 = j2;
+@@ -209,9 +211,9 @@
+ 
+     private void func_175924_b(World worldIn, BlockPos p_175924_2_)
+     {
+-        Material material = worldIn.getBlockState(p_175924_2_).getBlock().getMaterial();
++        Block block = worldIn.getBlockState(p_175924_2_).getBlock();
+ 
+-        if (material == Material.air || material == Material.leaves)
++        if (block.isAir(worldIn, p_175924_2_) || block.isLeaves(worldIn, p_175924_2_))
+         {
+             this.setBlockAndNotifyAdequately(worldIn, p_175924_2_, field_181644_b);
+         }

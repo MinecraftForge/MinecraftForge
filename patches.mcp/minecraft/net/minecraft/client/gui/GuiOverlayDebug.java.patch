@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiOverlayDebug.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiOverlayDebug.java
+@@ -176,6 +176,9 @@
+         long l = j - k;
+         List<String> list = Lists.newArrayList(new String[] {String.format("Java: %s %dbit", new Object[]{System.getProperty("java.version"), Integer.valueOf(this.mc.isJava64bit() ? 64 : 32)}), String.format("Mem: % 2d%% %03d/%03dMB", new Object[]{Long.valueOf(l * 100L / i), Long.valueOf(bytesToMb(l)), Long.valueOf(bytesToMb(i))}), String.format("Allocated: % 2d%% %03dMB", new Object[]{Long.valueOf(j * 100L / i), Long.valueOf(bytesToMb(j))}), "", String.format("CPU: %s", new Object[]{OpenGlHelper.getCpu()}), "", String.format("Display: %dx%d (%s)", new Object[]{Integer.valueOf(Display.getWidth()), Integer.valueOf(Display.getHeight()), GL11.glGetString(GL11.GL_VENDOR)}), GL11.glGetString(GL11.GL_RENDERER), GL11.glGetString(GL11.GL_VERSION)});
+ 
++        list.add("");
++        list.addAll(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(false));
++
+         if (this.isReducedDebug())
+         {
+             return list;

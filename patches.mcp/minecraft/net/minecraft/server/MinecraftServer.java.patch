@@ -1,0 +1,289 @@
+--- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
+@@ -98,7 +98,7 @@
+     @SideOnly(Side.SERVER)
+     private String hostname;
+     private int serverPort = -1;
+-    public WorldServer[] worldServers;
++    public WorldServer[] worldServers = new WorldServer[0];
+     private ServerConfigurationManager serverConfigManager;
+     private boolean serverRunning = true;
+     private boolean serverStopped;
+@@ -115,7 +115,8 @@
+     private int buildLimit;
+     private int maxPlayerIdleMinutes = 0;
+     public final long[] tickTimeArray = new long[100];
+-    public long[][] timeOfLastDimensionTick;
++    //public long[][] timeOfLastDimensionTick;
++    public java.util.Hashtable<Integer, long[]> worldTickTimes = new java.util.Hashtable<Integer, long[]>();
+     private KeyPair serverKeyPair;
+     private String serverOwner;
+     private String folderName;
+@@ -227,8 +228,6 @@
+     {
+         this.convertMapIfNeeded(p_71247_1_);
+         this.setUserMessage("menu.loadingLevel");
+-        this.worldServers = new WorldServer[3];
+-        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
+         ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(p_71247_1_, true);
+         this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
+         WorldInfo worldinfo = isavehandler.loadWorldInfo();
+@@ -259,47 +258,21 @@
+             worldsettings = new WorldSettings(worldinfo);
+         }
+ 
+-        for (int i = 0; i < this.worldServers.length; ++i)
++        WorldServer overWorld = (WorldServer)(isDemo() ? new DemoWorldServer(this, isavehandler, worldinfo, 0, theProfiler).init() : new WorldServer(this, isavehandler, worldinfo, 0, theProfiler).init());
++        overWorld.initialize(worldsettings);
++        for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs())
+         {
+-            int j = 0;
++            WorldServer world = (dim == 0 ? overWorld : (WorldServer)new WorldServerMulti(this, isavehandler, dim, overWorld, theProfiler).init());
++            world.addWorldAccess(new WorldManager(this, world));
+ 
+-            if (i == 1)
+-            {
+-                j = -1;
+-            }
+-
+-            if (i == 2)
+-            {
+-                j = 1;
+-            }
+-
+-            if (i == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.worldServers[i] = (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                }
+-                else
+-                {
+-                    this.worldServers[i] = (WorldServer)(new WorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                }
+-
+-                this.worldServers[i].initialize(worldsettings);
+-            }
+-            else
+-            {
+-                this.worldServers[i] = (WorldServer)(new WorldServerMulti(this, isavehandler, j, this.worldServers[0], this.theProfiler)).init();
+-            }
+-
+-            this.worldServers[i].addWorldAccess(new WorldManager(this, this.worldServers[i]));
+-
+             if (!this.isSinglePlayer())
+             {
+-                this.worldServers[i].getWorldInfo().setGameType(this.getGameType());
++                world.getWorldInfo().setGameType(this.getGameType());
+             }
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
+         }
+ 
+-        this.serverConfigManager.setPlayerManager(this.worldServers);
++        this.serverConfigManager.setPlayerManager(new WorldServer[]{ overWorld });
+         this.setDifficultyForAllWorlds(this.getDifficulty());
+         this.initialWorldChunkLoad();
+     }
+@@ -314,7 +287,7 @@
+         this.setUserMessage("menu.generatingTerrain");
+         int j1 = 0;
+         logger.info("Preparing start region for level " + j1);
+-        WorldServer worldserver = this.worldServers[j1];
++        WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(j1);
+         BlockPos blockpos = worldserver.getSpawnPoint();
+         long k1 = getCurrentTimeMillis();
+ 
+@@ -403,7 +376,7 @@
+ 
+     public void stopServer()
+     {
+-        if (!this.worldIsBeingDeleted)
++        if (!this.worldIsBeingDeleted && net.minecraftforge.fml.common.Loader.instance().hasReachedState(net.minecraftforge.fml.common.LoaderState.SERVER_STARTED) && !serverStopped) // make sure the save is valid and we don't save twice
+         {
+             logger.info("Stopping server");
+ 
+@@ -427,8 +400,15 @@
+                 for (int i = 0; i < this.worldServers.length; ++i)
+                 {
+                     WorldServer worldserver = this.worldServers[i];
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver));
+                     worldserver.flush();
+                 }
++
++                WorldServer[] tmp = worldServers;
++                for (WorldServer world : tmp)
++                {
++                    net.minecraftforge.common.DimensionManager.setWorld(world.provider.getDimensionId(), null);
++                }
+             }
+ 
+             if (this.usageSnooper.isSnooperRunning())
+@@ -460,6 +440,7 @@
+         {
+             if (this.startServer())
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarted();
+                 this.currentTime = getCurrentTimeMillis();
+                 long i = 0L;
+                 this.statusResponse.setServerDescription(new ChatComponentText(this.motd));
+@@ -504,12 +485,20 @@
+                     Thread.sleep(Math.max(1L, 50L - i));
+                     this.serverIsRunning = true;
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopping();
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+                 this.finalTick((CrashReport)null);
+             }
+         }
++        catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++        {
++            // ignore silently
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
++        }
+         catch (Throwable throwable1)
+         {
+             logger.error("Encountered an unexpected exception", throwable1);
+@@ -535,14 +524,15 @@
+                 logger.error("We were unable to save this crash report to disk.");
+             }
+ 
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.finalTick(crashreport);
+         }
+         finally
+         {
+             try
+             {
+-                this.serverStopped = true;
+                 this.stopServer();
++                this.serverStopped = true;
+             }
+             catch (Throwable throwable)
+             {
+@@ -550,6 +540,8 @@
+             }
+             finally
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
++                this.serverStopped = true;
+                 this.systemExitNow();
+             }
+         }
+@@ -599,6 +591,7 @@
+     public void tick()
+     {
+         long i = System.nanoTime();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreServerTick();
+         ++this.tickCounter;
+ 
+         if (this.startProfiling)
+@@ -625,6 +618,7 @@
+ 
+             Collections.shuffle(Arrays.asList(agameprofile));
+             this.statusResponse.getPlayerCountData().setPlayers(agameprofile);
++            this.statusResponse.invalidateJson();
+         }
+ 
+         if (this.tickCounter % 900 == 0)
+@@ -652,6 +646,7 @@
+ 
+         this.theProfiler.endSection();
+         this.theProfiler.endSection();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostServerTick();
+     }
+ 
+     public void updateTimeLightAndEntities()
+@@ -667,14 +662,17 @@
+         }
+ 
+         this.theProfiler.endStartSection("levels");
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
+ 
+-        for (int j = 0; j < this.worldServers.length; ++j)
++        Integer[] ids = net.minecraftforge.common.DimensionManager.getIDs(this.tickCounter % 200 == 0);
++        for (int x = 0; x < ids.length; x++)
+         {
++            int id = ids[x];
+             long i = System.nanoTime();
+ 
+-            if (j == 0 || this.getAllowNether())
++            if (id == 0 || this.getAllowNether())
+             {
+-                WorldServer worldserver = this.worldServers[j];
++                WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(id);
+                 this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
+ 
+                 if (this.tickCounter % 20 == 0)
+@@ -685,6 +683,7 @@
+                 }
+ 
+                 this.theProfiler.startSection("tick");
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreWorldTick(worldserver);
+ 
+                 try
+                 {
+@@ -708,6 +707,7 @@
+                     throw new ReportedException(crashreport1);
+                 }
+ 
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostWorldTick(worldserver);
+                 this.theProfiler.endSection();
+                 this.theProfiler.startSection("tracker");
+                 worldserver.getEntityTracker().updateTrackedEntities();
+@@ -715,9 +715,11 @@
+                 this.theProfiler.endSection();
+             }
+ 
+-            this.timeOfLastDimensionTick[j][this.tickCounter % 100] = System.nanoTime() - i;
++            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - i;
+         }
+ 
++        this.theProfiler.endStartSection("dim_unloading");
++        net.minecraftforge.common.DimensionManager.unloadWorlds(worldTickTimes);
+         this.theProfiler.endStartSection("connection");
+         this.getNetworkSystem().networkTick();
+         this.theProfiler.endStartSection("players");
+@@ -739,6 +741,7 @@
+ 
+     public void startServerThread()
+     {
++        net.minecraftforge.fml.common.StartupQuery.reset();
+         this.serverThread = new Thread(this, "Server thread");
+         this.serverThread.start();
+     }
+@@ -755,7 +758,13 @@
+ 
+     public WorldServer worldServerForDimension(int dimension)
+     {
+-        return dimension == -1 ? this.worldServers[1] : (dimension == 1 ? this.worldServers[2] : this.worldServers[0]);
++        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(dimension);
++        if (ret == null)
++        {
++            net.minecraftforge.common.DimensionManager.initDimension(dimension);
++            ret = net.minecraftforge.common.DimensionManager.getWorld(dimension);
++        }
++        return ret;
+     }
+ 
+     public String getMinecraftVersion()
+@@ -785,7 +794,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().getModName();
+     }
+ 
+     public CrashReport addServerInfoToCrashReport(CrashReport report)
+@@ -996,6 +1005,7 @@
+ 
+             if (worldserver != null)
+             {
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver));
+                 worldserver.flush();
+             }
+         }

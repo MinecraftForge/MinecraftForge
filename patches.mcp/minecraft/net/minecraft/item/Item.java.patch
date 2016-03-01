@@ -1,0 +1,779 @@
+--- ../src-base/minecraft/net/minecraft/item/Item.java
++++ ../src-work/minecraft/net/minecraft/item/Item.java
+@@ -48,8 +48,8 @@
+ 
+ public class Item
+ {
+-    public static final RegistryNamespaced<ResourceLocation, Item> itemRegistry = new RegistryNamespaced();
+-    private static final Map<Block, Item> BLOCK_TO_ITEM = Maps.<Block, Item>newHashMap();
++    public static final RegistryNamespaced<ResourceLocation, Item> itemRegistry = net.minecraftforge.fml.common.registry.GameData.getItemRegistry();
++    private static final Map<Block, Item> BLOCK_TO_ITEM = net.minecraftforge.fml.common.registry.GameData.getBlockItemMap();
+     protected static final UUID itemModifierUUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+     private CreativeTabs tabToDisplayOn;
+     protected static Random itemRand = new Random();
+@@ -61,6 +61,9 @@
+     private String potionEffect;
+     private String unlocalizedName;
+ 
++    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate =
++            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)itemRegistry).getDelegate(this, Item.class);
++
+     public static int getIdFromItem(Item itemIn)
+     {
+         return itemIn == null ? 0 : itemRegistry.getIDForObject(itemIn);
+@@ -126,6 +129,7 @@
+         return stack;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version below.
+     public int getItemStackLimit()
+     {
+         return this.maxStackSize;
+@@ -239,6 +243,7 @@
+         return this.containerItem;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version below.
+     public boolean hasContainerItem()
+     {
+         return this.containerItem != null;
+@@ -316,7 +321,7 @@
+ 
+     public boolean isItemTool(ItemStack stack)
+     {
+-        return this.getItemStackLimit() == 1 && this.isDamageable();
++        return this.getItemStackLimit(stack) == 1 && this.isDamageable();
+     }
+ 
+     protected MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+@@ -334,6 +339,10 @@
+         float f6 = f3 * f4;
+         float f7 = f2 * f4;
+         double d3 = 5.0D;
++        if (playerIn instanceof net.minecraft.entity.player.EntityPlayerMP)
++        {
++            d3 = ((net.minecraft.entity.player.EntityPlayerMP)playerIn).theItemInWorldManager.getBlockReachDistance();
++        }
+         Vec3 vec31 = vec3.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
+         return worldIn.rayTraceBlocks(vec3, vec31, useLiquids, !useLiquids, false);
+     }
+@@ -371,11 +380,670 @@
+         return false;
+     }
+ 
++    @Deprecated // Use ItemStack sensitive version below.
+     public Multimap<String, AttributeModifier> getItemAttributeModifiers()
+     {
+         return HashMultimap.<String, AttributeModifier>create();
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * ItemStack sensitive version of getItemAttributeModifiers
++     */
++    public Multimap<String, AttributeModifier> getAttributeModifiers(ItemStack stack)
++    {
++        return this.getItemAttributeModifiers();
++    }
++
++    /**
++     * Called when a player drops the item into the world,
++     * returning false from this will prevent the item from
++     * being removed from the players inventory and spawning
++     * in the world
++     *
++     * @param player The player that dropped the item
++     * @param item The item stack, before the item is removed.
++     */
++    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
++    {
++        return true;
++    }
++
++    /**
++     * Allow the item one last chance to modify its name used for the
++     * tool highlight useful for adding something extra that can't be removed
++     * by a user in the displayed name, such as a mode of operation.
++     *
++     * @param item the ItemStack for the item.
++     * @param the name that will be displayed unless it is changed in this method.
++     */
++    public String getHighlightTip( ItemStack item, String displayName )
++    {
++        return displayName;
++    }
++
++    /**
++     * This is called when the item is used, before the block is activated.
++     * @param stack The Item Stack
++     * @param player The Player that used the item
++     * @param world The Current World
++     * @param pos Target position
++     * @param side The side of the target hit
++     * @return Return true to prevent any further processing.
++     */
++    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
++    {
++        return false;
++    }
++
++    /**
++     * Metadata-sensitive version of getStrVsBlock
++     * @param itemstack The Item Stack
++     * @param state The block state
++     * @return The damage strength
++     */
++    public float getDigSpeed(ItemStack itemstack, net.minecraft.block.state.IBlockState state)
++    {
++        return getStrVsBlock(itemstack, state.getBlock());
++    }
++
++
++    protected boolean canRepair = true;
++    /**
++     * Called by CraftingManager to determine if an item is reparable.
++     * @return True if reparable
++     */
++    public boolean isRepairable()
++    {
++        return canRepair && isDamageable();
++    }
++
++    /**
++     * Call to disable repair recipes.
++     * @return The current Item instance
++     */
++    public Item setNoRepair()
++    {
++        canRepair = false;
++        return this;
++    }
++
++    /**
++     * Called before a block is broken.  Return true to prevent default block harvesting.
++     *
++     * Note: In SMP, this is called on both client and server sides!
++     *
++     * @param itemstack The current ItemStack
++     * @param pos Block's position in world
++     * @param player The Player that is wielding the item
++     * @return True to prevent harvesting, false to continue as normal
++     */
++    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player)
++    {
++        return false;
++    }
++
++    /**
++     * Called each tick while using an item.
++     * @param stack The Item being used
++     * @param player The Player using the item
++     * @param count The amount of time in tick the item has been used for continuously
++     */
++    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
++    {
++    }
++
++    /**
++     * Called when the player Left Clicks (attacks) an entity.
++     * Processed before damage is done, if return value is true further processing is canceled
++     * and the entity is not attacked.
++     *
++     * @param stack The Item being used
++     * @param player The player that is attacking
++     * @param entity The entity being attacked
++     * @return True to cancel the rest of the interaction.
++     */
++    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
++    {
++        return false;
++    }
++
++    /**
++     * Player, Render pass, and item usage sensitive version of getIconIndex.
++     *
++     * @param stack The item stack to get the icon for.
++     * @param player The player holding the item
++     * @param useRemaining The ticks remaining for the active item.
++     * @return Null to use default model, or a custom ModelResourceLocation for the stage of use.
++     */
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
++    {
++        return null;
++    }
++
++    /**
++     * ItemStack sensitive version of getContainerItem.
++     * Returns a full ItemStack instance of the result.
++     *
++     * @param itemStack The current ItemStack
++     * @return The resulting ItemStack
++     */
++    public ItemStack getContainerItem(ItemStack itemStack)
++    {
++        if (!hasContainerItem(itemStack))
++        {
++            return null;
++        }
++        return new ItemStack(getContainerItem());
++    }
++
++    /**
++     * ItemStack sensitive version of hasContainerItem
++     * @param stack The current item stack
++     * @return True if this item has a 'container'
++     */
++    public boolean hasContainerItem(ItemStack stack)
++    {
++        return hasContainerItem();
++    }
++
++    /**
++     * Retrieves the normal 'lifespan' of this item when it is dropped on the ground as a EntityItem.
++     * This is in ticks, standard result is 6000, or 5 mins.
++     *
++     * @param itemStack The current ItemStack
++     * @param world The world the entity is in
++     * @return The normal lifespan in ticks.
++     */
++    public int getEntityLifespan(ItemStack itemStack, World world)
++    {
++        return 6000;
++    }
++
++    /**
++     * Determines if this Item has a special entity for when they are in the world.
++     * Is called when a EntityItem is spawned in the world, if true and Item#createCustomEntity
++     * returns non null, the EntityItem will be destroyed and the new Entity will be added to the world.
++     *
++     * @param stack The current item stack
++     * @return True of the item has a custom entity, If true, Item#createCustomEntity will be called
++     */
++    public boolean hasCustomEntity(ItemStack stack)
++    {
++        return false;
++    }
++
++    /**
++     * This function should return a new entity to replace the dropped item.
++     * Returning null here will not kill the EntityItem and will leave it to function normally.
++     * Called when the item it placed in a world.
++     *
++     * @param world The world object
++     * @param location The EntityItem object, useful for getting the position of the entity
++     * @param itemstack The current item stack
++     * @return A new Entity object to spawn or null
++     */
++    public Entity createEntity(World world, Entity location, ItemStack itemstack)
++    {
++        return null;
++    }
++
++    /**
++     * Called by the default implemetation of EntityItem's onUpdate method, allowing for cleaner
++     * control over the update of the item without having to write a subclass.
++     *
++     * @param entityItem The entity Item
++     * @return Return true to skip any further update code.
++     */
++    public boolean onEntityItemUpdate(net.minecraft.entity.item.EntityItem entityItem)
++    {
++        return false;
++    }
++
++    /**
++     * Gets a list of tabs that items belonging to this class can display on,
++     * combined properly with getSubItems allows for a single item to span
++     * many sub-items across many tabs.
++     *
++     * @return A list of all tabs that this item could possibly be one.
++     */
++    public CreativeTabs[] getCreativeTabs()
++    {
++        return new CreativeTabs[]{ getCreativeTab() };
++    }
++
++    /**
++     * Determines the base experience for a player when they remove this item from a furnace slot.
++     * This number must be between 0 and 1 for it to be valid.
++     * This number will be multiplied by the stack size to get the total experience.
++     *
++     * @param item The item stack the player is picking up.
++     * @return The amount to award for each item.
++     */
++    public float getSmeltingExperience(ItemStack item)
++    {
++        return -1; //-1 will default to the old lookups.
++    }
++
++    /**
++     * Return the correct icon for rendering based on the supplied ItemStack and render pass.
++     *
++     * Defers to {@link #getIconFromDamageForRenderPass(int, int)}
++     * @param stack to render for
++     * @param pass the multi-render pass
++     * @return the icon
++     * /
++    public IIcon getIcon(ItemStack stack, int pass)
++    {
++        return func_77618_c(stack.getMetadata(), pass);
++    }
++    */
++
++    /**
++     * Generates the base Random item for a specific instance of the chest gen,
++     * Enchanted books use this to pick a random enchantment.
++     *
++     * @param chest The chest category to generate for
++     * @param rnd World RNG
++     * @param original Original result registered with the chest gen hooks.
++     * @return New values to use as the random item, typically this will be original
++     */
++    public net.minecraft.util.WeightedRandomChestContent getChestGenBase(net.minecraftforge.common.ChestGenHooks chest, Random rnd, net.minecraft.util.WeightedRandomChestContent original)
++    {
++        if (this instanceof ItemEnchantedBook)
++        {
++            return ((ItemEnchantedBook)this).getRandom(rnd,
++                    original.minStackSize,
++                    original.maxStackSize, original.itemWeight);
++        }
++        return original;
++    }
++
++    /**
++     *
++     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param player The Player that is wielding the item
++     * @return
++     */
++    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player)
++    {
++        return false;
++    }
++
++    /**
++     * Called to tick armor in the armor slot. Override to do something
++     */
++    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack){}
++
++    /**
++     * Determines if the specific ItemStack can be placed in the specified armor slot.
++     *
++     * @param stack The ItemStack
++     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
++     * @param entity The entity trying to equip the armor
++     * @return True if the given ItemStack can be inserted in the slot
++     */
++    public boolean isValidArmor(ItemStack stack, int armorType, Entity entity)
++    {
++        if (this instanceof ItemArmor)
++        {
++            return ((ItemArmor)this).armorType == armorType;
++        }
++
++        if (armorType == 0)
++        {
++            return this == Item.getItemFromBlock(Blocks.pumpkin) || this == Items.skull;
++        }
++
++        return false;
++    }
++
++    /**
++     * Allow or forbid the specific book/item combination as an anvil enchant
++     *
++     * @param stack The item
++     * @param book The book
++     * @return if the enchantment is allowed
++     */
++    public boolean isBookEnchantable(ItemStack stack, ItemStack book)
++    {
++        return true;
++    }
++
++    /**
++     * Called by RenderBiped and RenderPlayer to determine the armor texture that
++     * should be use for the currently equipped item.
++     * This will only be called on instances of ItemArmor.
++     *
++     * Returning null from this function will use the default value.
++     *
++     * @param stack ItemStack for the equipped armor
++     * @param entity The entity wearing the armor
++     * @param slot The slot the armor is in
++     * @param type The subtype, can be null or "overlay"
++     * @return Path of texture to bind, or null to use default
++     */
++    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
++    {
++        return null;
++    }
++
++    /**
++     * Returns the font renderer used to render tooltips and overlays for this item.
++     * Returning null will use the standard font renderer.
++     *
++     * @param stack The current item stack
++     * @return A instance of FontRenderer or null to use default
++     */
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
++    {
++        return null;
++    }
++
++    /**
++     * @deprecated Use 4-argument version.
++     */
++    // remove 1.9
++    @SideOnly(Side.CLIENT)
++    @Deprecated
++    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot)
++    {
++        return null;
++    }
++
++    /**
++     * Override this method to have an item handle its own armor rendering.
++     *
++     * @param  entityLiving  The entity wearing the armor
++     * @param  itemStack  The itemStack to render the model of
++     * @param  armorSlot  0=head, 1=torso, 2=legs, 3=feet
++     * @param _default Original armor model. Will have attributes set.
++     * @return  A ModelBiped to render instead of the default
++     */
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot, net.minecraft.client.model.ModelBiped _default)
++    {
++        return getArmorModel(entityLiving, itemStack, armorSlot);
++    }
++
++    /**
++     * Called when a entity tries to play the 'swing' animation.
++     *
++     * @param entityLiving The entity swinging the item.
++     * @param stack The Item stack
++     * @return True to cancel any further processing by EntityLiving
++     */
++    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
++    {
++        return false;
++    }
++
++    /**
++     * Called when the client starts rendering the HUD, for whatever item the player currently has as a helmet.
++     * This is where pumpkins would render there overlay.
++     *
++     * @param stack The ItemStack that is equipped
++     * @param player Reference to the current client entity
++     * @param resolution Resolution information about the current viewport and configured GUI Scale
++     * @param partialTicks Partial ticks for the renderer, useful for interpolation
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderHelmetOverlay(ItemStack stack, EntityPlayer player, net.minecraft.client.gui.ScaledResolution resolution, float partialTicks){}
++
++    /**
++     * Return the itemDamage represented by this ItemStack. Defaults to the itemDamage field on ItemStack, but can be overridden here for other sources such as NBT.
++     *
++     * @param stack The itemstack that is damaged
++     * @return the damage value
++     */
++    public int getDamage(ItemStack stack)
++    {
++        return stack.itemDamage;
++    }
++
++    /**
++     * This used to be 'display damage' but its really just 'aux' data in the ItemStack, usually shares the same variable as damage.
++     * @param stack
++     * @return
++     */
++    public int getMetadata(ItemStack stack)
++    {
++        return stack.itemDamage;
++    }
++
++    /**
++     * Determines if the durability bar should be rendered for this item.
++     * Defaults to vanilla stack.isDamaged behavior.
++     * But modders can use this for any data they wish.
++     *
++     * @param stack The current Item Stack
++     * @return True if it should render the 'durability' bar.
++     */
++    public boolean showDurabilityBar(ItemStack stack)
++    {
++        return stack.isItemDamaged();
++    }
++
++    /**
++     * Queries the percentage of the 'Durability' bar that should be drawn.
++     *
++     * @param stack The current ItemStack
++     * @return 1.0 for 100% 0 for 0%
++     */
++    public double getDurabilityForDisplay(ItemStack stack)
++    {
++        return (double)stack.getItemDamage() / (double)stack.getMaxDamage();
++    }
++
++    /**
++     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in this item,
++     * but can be overridden here for other sources such as NBT.
++     *
++     * @param stack The itemstack that is damaged
++     * @return the damage value
++     */
++    public int getMaxDamage(ItemStack stack)
++    {
++        return getMaxDamage();
++    }
++
++    /**
++     * Return if this itemstack is damaged. Note only called if {@link #isDamageable()} is true.
++     * @param stack the stack
++     * @return if the stack is damaged
++     */
++    public boolean isDamaged(ItemStack stack)
++    {
++        return stack.itemDamage > 0;
++    }
++
++    /**
++     * Set the damage for this itemstack. Note, this method is responsible for zero checking.
++     * @param stack the stack
++     * @param damage the new damage value
++     */
++    public void setDamage(ItemStack stack, int damage)
++    {
++        stack.itemDamage = damage;
++
++        if (stack.itemDamage < 0)
++        {
++            stack.itemDamage = 0;
++        }
++    }
++
++    /**
++     * ItemStack sensitive version of {@link #canHarvestBlock(Block)}
++     * @param par1Block The block trying to harvest
++     * @param itemStack The itemstack used to harvest the block
++     * @return true if can harvest the block
++     */
++    public boolean canHarvestBlock(Block par1Block, ItemStack itemStack)
++    {
++        return canHarvestBlock(par1Block);
++    }
++
++    /**
++     * Gets the maximum number of items that this stack should be able to hold.
++     * This is a ItemStack (and thus NBT) sensitive version of Item.getItemStackLimit()
++     *
++     * @param stack The ItemStack
++     * @return THe maximum number this item can be stacked to
++     */
++    public int getItemStackLimit(ItemStack stack)
++    {
++        return this.getItemStackLimit();
++    }
++
++    private java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
++    /**
++     * Sets or removes the harvest level for the specified tool class.
++     *
++     * @param toolClass Class
++     * @param level Harvest level:
++     *     Wood:    0
++     *     Stone:   1
++     *     Iron:    2
++     *     Diamond: 3
++     *     Gold:    0
++     */
++    public void setHarvestLevel(String toolClass, int level)
++    {
++        if (level < 0)
++            toolClasses.remove(toolClass);
++        else
++            toolClasses.put(toolClass, level);
++    }
++
++    public java.util.Set<String> getToolClasses(ItemStack stack)
++    {
++        return toolClasses.keySet();
++    }
++
++    /**
++     * Queries the harvest level of this item stack for the specifred tool class,
++     * Returns -1 if this tool is not of the specified type
++     *
++     * @param stack This item stack instance
++     * @param toolClass Tool Class
++     * @return Harvest level, or -1 if not the specified tool type.
++     */
++    public int getHarvestLevel(ItemStack stack, String toolClass)
++    {
++        Integer ret = toolClasses.get(toolClass);
++        return ret == null ? -1 : ret;
++    }
++
++    /**
++     * ItemStack sensitive version of getItemEnchantability
++     *
++     * @param stack The ItemStack
++     * @return the item echantability value
++     */
++    public int getItemEnchantability(ItemStack stack)
++    {
++        return getItemEnchantability();
++    }
++
++    /**
++     * Whether this Item can be used as a payment to activate the vanilla beacon.
++     * @param stack the ItemStack
++     * @return true if this Item can be used
++     */
++    public boolean isBeaconPayment(ItemStack stack)
++    {
++        return this == Items.emerald || this == Items.diamond || this == Items.gold_ingot || this == Items.iron_ingot;
++    }
++
++
++    /**
++     * Determine if the player switching between these two item stacks
++     * @param oldStack The old stack that was equipped
++     * @param newStack The new stack
++     * @param slotChanged If the current equipped slot was changed,
++     *                    Vanilla does not play the animation if you switch between two
++     *                    slots that hold the exact same item.
++     * @return True to play the item change animation
++     */
++    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
++    {
++        return !ItemStack.areItemStacksEqual(oldStack, newStack);
++    }
++
++
++    private ResourceLocation registryName = null;
++    /**
++     * Sets a unique name for this Item. This should be used for uniquely identify the instance of the Item.
++     * This is the valid replacement for the atrocious 'getUnlocalizedName().substring(6)' stuff that everyone does.
++     * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
++     *
++     * The supplied name will be prefixed with the currently active mod's modId.
++     * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
++     *
++     * If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.
++     *
++     * Returns 'this' to allow for chaining.
++     *
++     * @param name Unique registry name
++     * @return This instance
++     */
++    public final Item setRegistryName(String name)
++    {
++        if (getRegistryName() != null)
++            throw new IllegalStateException("Attempted to set registry name on block with exisiting registry name! New: " + name + " Old: " + getRegistryName());
++        int index = name.lastIndexOf(':');
++        String oldPrefix = index == -1 ? "" : name.substring(0, index);
++        name = index == -1 ? name : name.substring(index + 1);
++        net.minecraftforge.fml.common.ModContainer mc = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
++        String prefix = mc == null ? "minecraft" : mc.getModId();
++        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
++        {
++            net.minecraftforge.fml.common.FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", oldPrefix, name);
++            prefix = oldPrefix;
++        }
++        this.registryName = new ResourceLocation(prefix, name);
++        return this;
++    }
++    public final Item setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
++    public final Item setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
++
++    /**
++     * A unique identifier for this block, if this block is registered in the game registry it will return that name.
++     * Otherwise it will return the name set in setRegistryName().
++     * If neither are valid null is returned.
++     *
++     * @return Unique identifier or null.
++     */
++    public final String getRegistryName()
++    {
++        if (delegate.getResourceName() != null) return delegate.getResourceName().toString();
++        return registryName != null ? registryName.toString() : null;
++    }
++
++    /**
++     * Called from ItemStack.setItem, will hold extra data for the life of this ItemStack.
++     * Can be retrieved from stack.getCapabilities()
++     * The NBT can be null if this is not called from readNBT or if the item the stack is
++     * changing FROM is different then this item, or the previous item had no capabilities.
++     *
++     * This is called BEFORE the stacks item is set so you can use stack.getItem() to see the OLD item.
++     * Remember that getItem CAN return null.
++     *
++     * @param stack The ItemStack
++     * @param nbt NBT of this item serialized, or null.
++     * @return A holder instance associated with this ItemStack where you can hold capabilities for the life of this item.
++     */
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
++    {
++        return null;
++    }
++    /* ======================================== FORGE END   =====================================*/
++
+     public static void registerItems()
+     {
+         registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
+@@ -855,6 +1523,10 @@
+         private final float damageVsEntity;
+         private final int enchantability;
+ 
++        //Added by forge for custom Tool materials.
++        @Deprecated public Item customCraftingMaterial = null; // Remote in 1.8.1
++        private ItemStack repairMaterial = null;
++
+         private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
+         {
+             this.harvestLevel = harvestLevel;
+@@ -889,9 +1561,36 @@
+             return this.enchantability;
+         }
+ 
++        @Deprecated // Use getRepairItemStack below
+         public Item getRepairItem()
+         {
+-            return this == WOOD ? Item.getItemFromBlock(Blocks.planks) : (this == STONE ? Item.getItemFromBlock(Blocks.cobblestone) : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == EMERALD ? Items.diamond : null))));
++            switch (this)
++            {
++                case WOOD:    return Item.getItemFromBlock(Blocks.planks);
++                case STONE:   return Item.getItemFromBlock(Blocks.cobblestone);
++                case GOLD:    return Items.gold_ingot;
++                case IRON:    return Items.iron_ingot;
++                case EMERALD: return Items.diamond;
++                default:      return customCraftingMaterial;
++            }
+         }
++
++        public ToolMaterial setRepairItem(ItemStack stack)
++        {
++            if (this.repairMaterial != null || customCraftingMaterial != null) throw new RuntimeException("Can not change already set repair material");
++            if (this == WOOD || this == STONE || this == GOLD || this == IRON || this == EMERALD) throw new RuntimeException("Can not change vanilla tool repair materials");
++            this.repairMaterial = stack;
++            this.customCraftingMaterial = stack.getItem();
++            return this;
++        }
++
++        public ItemStack getRepairItemStack()
++        {
++            if (repairMaterial != null) return repairMaterial;
++            Item ret = this.getRepairItem();
++            if (ret == null) return null;
++            repairMaterial = new ItemStack(ret, 1, net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++            return repairMaterial;
++        }
+     }
+ }

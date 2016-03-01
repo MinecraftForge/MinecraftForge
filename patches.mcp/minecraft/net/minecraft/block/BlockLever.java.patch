@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLever.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
+@@ -237,6 +237,12 @@
+         return new BlockState(this, new IProperty[] {FACING, POWERED});
+     }
+ 
++
++    private boolean canAttach(World world, BlockPos pos, EnumFacing side)
++    {
++        return world.isSideSolid(pos, side);
++    }
++
+     public static enum EnumOrientation implements IStringSerializable
+     {
+         DOWN_X(0, "down_x", EnumFacing.DOWN),

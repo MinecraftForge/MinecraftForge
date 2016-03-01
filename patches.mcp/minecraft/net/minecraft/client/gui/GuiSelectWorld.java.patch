@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiSelectWorld.java
+@@ -186,7 +186,7 @@
+ 
+             if (this.mc.getSaveLoader().canLoadWorld(s))
+             {
+-                this.mc.launchIntegratedServer(s, s1, (WorldSettings)null);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().tryLoadExistingWorld(this, s, s1);
+             }
+         }
+     }

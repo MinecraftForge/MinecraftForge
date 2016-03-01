@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/network/NetHandlerHandshakeMemory.java
++++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerHandshakeMemory.java
+@@ -23,6 +23,7 @@
+ 
+     public void processHandshake(C00Handshake packetIn)
+     {
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(packetIn, this.networkManager)) return;
+         this.networkManager.setConnectionState(packetIn.getRequestedState());
+         this.networkManager.setNetHandler(new NetHandlerLoginServer(this.mcServer, this.networkManager));
+     }

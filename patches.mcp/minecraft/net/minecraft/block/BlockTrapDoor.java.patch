@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
+@@ -25,6 +25,8 @@
+ 
+ public class BlockTrapDoor extends Block
+ {
++    /** Set this to allow trapdoors to remain free-floating */
++    public static boolean disableValidation = false;
+     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+     public static final PropertyBool OPEN = PropertyBool.create("open");
+     public static final PropertyEnum<BlockTrapDoor.DoorHalf> HALF = PropertyEnum.<BlockTrapDoor.DoorHalf>create("half", BlockTrapDoor.DoorHalf.class);
+@@ -140,9 +142,10 @@
+     {
+         if (!worldIn.isRemote)
+         {
++            EnumFacing direction = (EnumFacing)state.getValue(FACING);
+             BlockPos blockpos = pos.offset(((EnumFacing)state.getValue(FACING)).getOpposite());
+ 
+-            if (!isValidSupportBlock(worldIn.getBlockState(blockpos).getBlock()))
++            if (!(isValidSupportBlock(worldIn.getBlockState(blockpos).getBlock()) || worldIn.isSideSolid(blockpos, direction, true)))
+             {
+                 worldIn.setBlockToAir(pos);
+                 this.dropBlockAsItem(worldIn, pos, state, 0);
+@@ -186,7 +189,10 @@
+ 
+     public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side)
+     {
+-        return !side.getAxis().isVertical() && isValidSupportBlock(worldIn.getBlockState(pos.offset(side.getOpposite())).getBlock());
++        if (disableValidation) return true;
++        EnumFacing dir = side.getOpposite();
++        pos = pos.offset(dir);
++        return !side.getAxis().isVertical() && (isValidSupportBlock(worldIn.getBlockState(pos).getBlock()) || worldIn.isSideSolid(pos, side, true));
+     }
+ 
+     protected static EnumFacing getFacing(int meta)
+@@ -223,6 +229,7 @@
+ 
+     private static boolean isValidSupportBlock(Block blockIn)
+     {
++        if (disableValidation) return true;
+         return blockIn.blockMaterial.isOpaque() && blockIn.isFullCube() || blockIn == Blocks.glowstone || blockIn instanceof BlockSlab || blockIn instanceof BlockStairs;
+     }
+ 

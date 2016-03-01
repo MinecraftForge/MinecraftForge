@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
+@@ -72,6 +72,7 @@
+ 
+     public void addSmeltingRecipe(ItemStack input, ItemStack stack, float experience)
+     {
++        if (getSmeltingResult(input) != null) { net.minecraftforge.fml.common.FMLLog.info("Ignored smelting recipe with conflicting input: " + input + " = " + stack); return; }
+         this.smeltingList.put(input, stack);
+         this.experienceList.put(stack, Float.valueOf(experience));
+     }
+@@ -101,6 +102,9 @@
+ 
+     public float getSmeltingExperience(ItemStack stack)
+     {
++        float ret = stack.getItem().getSmeltingExperience(stack);
++        if (ret != -1) return ret;
++
+         for (Entry<ItemStack, Float> entry : this.experienceList.entrySet())
+         {
+             if (this.compareItemStacks(stack, (ItemStack)entry.getKey()))

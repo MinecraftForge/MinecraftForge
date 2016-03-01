@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockReed.java
++++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockReed extends Block
++public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
+ {
+     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
+ 
+@@ -65,6 +65,7 @@
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+         Block block = worldIn.getBlockState(pos.down()).getBlock();
++        if (block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this)) return true;
+ 
+         if (block == this)
+         {
+@@ -164,4 +165,15 @@
+     {
+         return new BlockState(this, new IProperty[] {AGE});
+     }
++
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(IBlockAccess world, BlockPos pos)
++    {
++        return net.minecraftforge.common.EnumPlantType.Beach;
++    }
++    @Override
++    public IBlockState getPlant(IBlockAccess world, BlockPos pos)
++    {
++        return this.getDefaultState();
++    }
+ }

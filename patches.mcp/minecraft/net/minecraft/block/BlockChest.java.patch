@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockChest.java
++++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
+@@ -527,7 +527,7 @@
+ 
+     private boolean isBelowSolidBlock(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos.up()).getBlock().isNormalCube();
++        return worldIn.isSideSolid(pos.up(), EnumFacing.DOWN, false);
+     }
+ 
+     private boolean isOcelotSittingOnChest(World worldIn, BlockPos pos)

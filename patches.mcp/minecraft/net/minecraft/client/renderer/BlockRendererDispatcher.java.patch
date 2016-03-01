@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -24,7 +24,7 @@
+ {
+     private BlockModelShapes blockModelShapes;
+     private final GameSettings gameSettings;
+-    private final BlockModelRenderer blockModelRenderer = new BlockModelRenderer();
++    private final BlockModelRenderer blockModelRenderer = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer();
+     private final ChestRenderer chestRenderer = new ChestRenderer();
+     private final BlockFluidRenderer fluidRenderer = new BlockFluidRenderer();
+ 
+@@ -48,6 +48,24 @@
+         {
+             state = block.getActualState(state, blockAccess, pos);
+             IBakedModel ibakedmodel = this.blockModelShapes.getModelForState(state);
++
++            if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartBlockModel)
++            {
++                IBlockState extendedState = block.getExtendedState(state, blockAccess, pos);
++                for ( net.minecraft.util.EnumWorldBlockLayer layer : net.minecraft.util.EnumWorldBlockLayer.values() )
++                {
++                    if ( block.canRenderInLayer( layer ) )
++                    {
++                        net.minecraftforge.client.ForgeHooksClient.setRenderLayer(layer);
++
++                        IBakedModel targetLayer = ((net.minecraftforge.client.model.ISmartBlockModel)ibakedmodel).handleBlockState(extendedState);
++                        IBakedModel damageModel = (new SimpleBakedModel.Builder(targetLayer, texture)).makeBakedModel();
++                        this.blockModelRenderer.renderModel(blockAccess, damageModel, state, pos, Tessellator.getInstance().getWorldRenderer());
++                    }
++                }
++                return;
++            }
++
+             IBakedModel ibakedmodel1 = (new SimpleBakedModel.Builder(ibakedmodel, texture)).makeBakedModel();
+             this.blockModelRenderer.renderModel(blockAccess, ibakedmodel1, state, pos, Tessellator.getInstance().getWorldRenderer());
+         }
+@@ -128,6 +146,12 @@
+             ibakedmodel = ((WeightedBakedModel)ibakedmodel).getAlternativeModel(MathHelper.getPositionRandom(pos));
+         }
+ 
++        if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartBlockModel)
++        {
++            IBlockState extendedState = block.getExtendedState(state, worldIn, pos);
++            ibakedmodel = ((net.minecraftforge.client.model.ISmartBlockModel)ibakedmodel).handleBlockState(extendedState);
++        }
++
+         return ibakedmodel;
+     }
+ 

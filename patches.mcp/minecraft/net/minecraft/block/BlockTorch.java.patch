@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
+@@ -63,7 +63,7 @@
+         else
+         {
+             Block block = worldIn.getBlockState(pos).getBlock();
+-            return block instanceof BlockFence || block == Blocks.glass || block == Blocks.cobblestone_wall || block == Blocks.stained_glass;
++            return block.canPlaceTorchOnTop(worldIn, pos);
+         }
+     }
+ 
+@@ -84,7 +84,7 @@
+     {
+         BlockPos blockpos = pos.offset(facing.getOpposite());
+         boolean flag = facing.getAxis().isHorizontal();
+-        return flag && worldIn.isBlockNormalCube(blockpos, true) || facing.equals(EnumFacing.UP) && this.canPlaceOn(worldIn, blockpos);
++        return flag && worldIn.isSideSolid(blockpos, facing, true) || facing.equals(EnumFacing.UP) && this.canPlaceOn(worldIn, blockpos);
+     }
+ 
+     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+@@ -97,7 +97,7 @@
+         {
+             for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+             {
+-                if (worldIn.isBlockNormalCube(pos.offset(enumfacing.getOpposite()), true))
++                if (worldIn.isSideSolid(pos.offset(enumfacing.getOpposite()), enumfacing, true))
+                 {
+                     return this.getDefaultState().withProperty(FACING, enumfacing);
+                 }
+@@ -130,7 +130,7 @@
+             EnumFacing enumfacing1 = enumfacing.getOpposite();
+             boolean flag = false;
+ 
+-            if (enumfacing$axis.isHorizontal() && !worldIn.isBlockNormalCube(pos.offset(enumfacing1), true))
++            if (enumfacing$axis.isHorizontal() && !worldIn.isSideSolid(pos.offset(enumfacing1), enumfacing, true))
+             {
+                 flag = true;
+             }

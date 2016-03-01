@@ -1,0 +1,79 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeaturePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeaturePieces.java
+@@ -40,6 +40,12 @@
+             {
+             }
+ 
++            static
++            {
++                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.PYRAMID_DESERT_CHEST, itemsToGenerateInTemple, 2, 7);
++                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.PYRAMID_DESERT_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++            }
++
+             public DesertPyramid(Random p_i2062_1_, int p_i2062_2_, int p_i2062_3_)
+             {
+                 super(p_i2062_1_, p_i2062_2_, 64, p_i2062_3_, 21, 15, 21);
+@@ -258,7 +264,7 @@
+                     {
+                         int l1 = enumfacing.getFrontOffsetX() * 2;
+                         int i2 = enumfacing.getFrontOffsetZ() * 2;
+-                        this.field_74940_h[enumfacing.getHorizontalIndex()] = this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 10 + l1, -11, 10 + i2, WeightedRandomChestContent.func_177629_a(itemsToGenerateInTemple, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 2 + randomIn.nextInt(5));
++                        this.field_74940_h[enumfacing.getHorizontalIndex()] = this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 10 + l1, -11, 10 + i2, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.PYRAMID_DESERT_CHEST, randomIn), net.minecraftforge.common.ChestGenHooks.getCount(net.minecraftforge.common.ChestGenHooks.PYRAMID_DESERT_CHEST, randomIn));
+                     }
+                 }
+ 
+@@ -362,6 +368,13 @@
+             private static final List<WeightedRandomChestContent> field_175815_j = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.arrow, 0, 2, 7, 30)});
+             private static ComponentScatteredFeaturePieces.JunglePyramid.Stones junglePyramidsRandomScatteredStones = new ComponentScatteredFeaturePieces.JunglePyramid.Stones();
+ 
++            static
++            {
++                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_DISPENSER, field_175815_j, 2, 2);
++                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_CHEST, field_175816_i, 2, 7);
++                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++            }
++
+             public JunglePyramid()
+             {
+             }
+@@ -518,9 +531,12 @@
+                     this.setBlockState(worldIn, Blocks.redstone_wire.getDefaultState(), 4, -3, 1, structureBoundingBoxIn);
+                     this.setBlockState(worldIn, Blocks.mossy_cobblestone.getDefaultState(), 3, -3, 1, structureBoundingBoxIn);
+ 
++                    net.minecraftforge.common.ChestGenHooks dispenser = net.minecraftforge.common.ChestGenHooks.getInfo(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
++                    net.minecraftforge.common.ChestGenHooks chest = net.minecraftforge.common.ChestGenHooks.getInfo(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_CHEST);
++
+                     if (!this.field_74945_j)
+                     {
+-                        this.field_74945_j = this.generateDispenserContents(worldIn, structureBoundingBoxIn, randomIn, 3, -2, 1, EnumFacing.NORTH.getIndex(), field_175815_j, 2);
++                        this.field_74945_j = this.generateDispenserContents(worldIn, structureBoundingBoxIn, randomIn, 3, -2, 1, EnumFacing.NORTH.getIndex(), dispenser.getItems(randomIn), dispenser.getCount(randomIn));
+                     }
+ 
+                     this.setBlockState(worldIn, Blocks.vine.getStateFromMeta(15), 3, -2, 2, structureBoundingBoxIn);
+@@ -537,7 +553,7 @@
+ 
+                     if (!this.field_74946_k)
+                     {
+-                        this.field_74946_k = this.generateDispenserContents(worldIn, structureBoundingBoxIn, randomIn, 9, -2, 3, EnumFacing.WEST.getIndex(), field_175815_j, 2);
++                        this.field_74946_k = this.generateDispenserContents(worldIn, structureBoundingBoxIn, randomIn, 9, -2, 3, EnumFacing.WEST.getIndex(), dispenser.getItems(randomIn), dispenser.getCount(randomIn));
+                     }
+ 
+                     this.setBlockState(worldIn, Blocks.vine.getStateFromMeta(15), 8, -1, 3, structureBoundingBoxIn);
+@@ -545,7 +561,7 @@
+ 
+                     if (!this.field_74947_h)
+                     {
+-                        this.field_74947_h = this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 8, -3, 3, WeightedRandomChestContent.func_177629_a(field_175816_i, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 2 + randomIn.nextInt(5));
++                        this.field_74947_h = this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 8, -3, 3, chest.getItems(randomIn), chest.getCount(randomIn));
+                     }
+ 
+                     this.setBlockState(worldIn, Blocks.mossy_cobblestone.getDefaultState(), 9, -3, 2, structureBoundingBoxIn);
+@@ -578,7 +594,7 @@
+ 
+                     if (!this.field_74948_i)
+                     {
+-                        this.field_74948_i = this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 9, -3, 10, WeightedRandomChestContent.func_177629_a(field_175816_i, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(randomIn)}), 2 + randomIn.nextInt(5));
++                        this.field_74948_i = this.generateChestContents(worldIn, structureBoundingBoxIn, randomIn, 9, -3, 10, chest.getItems(randomIn), chest.getCount(randomIn));
+                     }
+ 
+                     return true;

@@ -1,0 +1,90 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
+@@ -123,14 +123,15 @@
+     public int ping;
+     public boolean playerConqueredTheEnd;
+ 
++    @SuppressWarnings("unused")
+     public EntityPlayerMP(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager)
+     {
+         super(worldIn, profile);
+         interactionManager.thisPlayerMP = this;
+         this.theItemInWorldManager = interactionManager;
+-        BlockPos blockpos = worldIn.getSpawnPoint();
++        BlockPos blockpos = worldIn.provider.getRandomizedSpawnPoint();
+ 
+-        if (!worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
++        if (false && !worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
+         {
+             int i = Math.max(5, server.getSpawnProtectionSize() - 6);
+             int j = MathHelper.floor_double(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
+@@ -223,7 +224,7 @@
+ 
+         this.openContainer.detectAndSendChanges();
+ 
+-        if (!this.worldObj.isRemote && !this.openContainer.canInteractWith(this))
++        if (!this.worldObj.isRemote && !net.minecraftforge.common.ForgeHooks.canInteractWith(this, this.openContainer))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
+@@ -294,6 +295,7 @@
+                 for (Chunk chunk1 : list)
+                 {
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk1);
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk1.getChunkCoordIntPair(), this));
+                 }
+             }
+         }
+@@ -424,6 +426,7 @@
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+         if (this.worldObj.getGameRules().getBoolean("showDeathMessages"))
+         {
+             Team team = this.getTeam();
+@@ -447,7 +450,20 @@
+ 
+         if (!this.worldObj.getGameRules().getBoolean("keepInventory"))
+         {
++            captureDrops = true;
++            capturedDrops.clear();
++
+             this.inventory.dropAllItems();
++
++            captureDrops = false;
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, cause, capturedDrops, recentlyHit > 0);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
++                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
++                {
++                    joinEntityItemWithWorld(item);
++                }
++            }
+         }
+ 
+         for (ScoreObjective scoreobjective : this.worldObj.getScoreboard().getObjectivesFromCriteria(IScoreObjectiveCriteria.deathCount))
+@@ -461,6 +477,7 @@
+         if (entitylivingbase != null)
+         {
+             EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.entityEggs.get(Integer.valueOf(EntityList.getEntityID(entitylivingbase)));
++            if (entitylist$entityegginfo == null) entitylist$entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.getEntityString(entitylivingbase));
+ 
+             if (entitylist$entityegginfo != null)
+             {
+@@ -528,6 +545,7 @@
+ 
+     public void travelToDimension(int dimensionId)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionId)) return;
+         if (this.dimension == 1 && dimensionId == 1)
+         {
+             this.triggerAchievement(AchievementList.theEnd2);
+@@ -831,6 +849,7 @@
+     {
+         if (stat != null)
+         {
++            if (stat.isAchievement() && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.AchievementEvent(this, (net.minecraft.stats.Achievement) stat))) return;
+             this.statsFile.increaseStat(this, stat, amount);
+ 
+             for (ScoreObjective scoreobjective : this.getWorldScoreboard().getObjectivesFromCriteria(stat.func_150952_k()))

@@ -1,0 +1,89 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
+@@ -25,7 +25,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockDoublePlant extends BlockBush implements IGrowable
++public class BlockDoublePlant extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
+ {
+     public static final PropertyEnum<BlockDoublePlant.EnumPlantType> VARIANT = PropertyEnum.<BlockDoublePlant.EnumPlantType>create("variant", BlockDoublePlant.EnumPlantType.class);
+     public static final PropertyEnum<BlockDoublePlant.EnumBlockHalf> HALF = PropertyEnum.<BlockDoublePlant.EnumBlockHalf>create("half", BlockDoublePlant.EnumBlockHalf.class);
+@@ -90,6 +90,8 @@
+             Block block = (Block)(flag ? this : worldIn.getBlockState(blockpos).getBlock());
+             Block block1 = (Block)(flag ? worldIn.getBlockState(blockpos1).getBlock() : this);
+ 
++            if (!flag) this.dropBlockAsItem(worldIn, pos, state, 0); //Forge move above the setting to air.
++
+             if (block == this)
+             {
+                 worldIn.setBlockState(blockpos, Blocks.air.getDefaultState(), 2);
+@@ -98,17 +100,13 @@
+             if (block1 == this)
+             {
+                 worldIn.setBlockState(blockpos1, Blocks.air.getDefaultState(), 3);
+-
+-                if (!flag)
+-                {
+-                    this.dropBlockAsItem(worldIn, blockpos1, state, 0);
+-                }
+             }
+         }
+     }
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
++        if (state.getBlock() != this) return super.canBlockStay(worldIn, pos, state); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
+         if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER)
+         {
+             return worldIn.getBlockState(pos.down()).getBlock() == this;
+@@ -158,7 +156,6 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+     {
+-        if (worldIn.isRemote || player.getCurrentEquippedItem() == null || player.getCurrentEquippedItem().getItem() != Items.shears || state.getValue(HALF) != BlockDoublePlant.EnumBlockHalf.LOWER || !this.onHarvest(worldIn, pos, state, player))
+         {
+             super.harvestBlock(worldIn, player, pos, state, te);
+         }
+@@ -221,8 +218,6 @@
+         else
+         {
+             player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
+-            int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).getMeta();
+-            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 2, i));
+             return true;
+         }
+     }
+@@ -293,6 +288,32 @@
+         return Block.EnumOffsetType.XZ;
+     }
+ 
++    @Override
++    public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos)
++    {
++        IBlockState state = world.getBlockState(pos);
++        EnumPlantType type = (EnumPlantType)state.getValue(VARIANT);
++        return state.getValue(HALF) == EnumBlockHalf.LOWER && (type == EnumPlantType.FERN || type == EnumPlantType.GRASS);
++    }
++    @Override
++    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    {
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        EnumPlantType type = (EnumPlantType)world.getBlockState(pos).getValue(VARIANT);
++        if (type == EnumPlantType.FERN) ret.add(new ItemStack(Blocks.tallgrass, 2, BlockTallGrass.EnumType.FERN.getMeta()));
++        if (type == EnumPlantType.GRASS) ret.add(new ItemStack(Blocks.tallgrass, 2, BlockTallGrass.EnumType.GRASS.getMeta()));
++        return ret;
++    }
++    @Override
++    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
++    {
++        //Forge: Break both parts on the client to prevent the top part flickering as default type for a few frames.
++        IBlockState state = world.getBlockState(pos);
++        if (state.getBlock() ==  this && state.getValue(HALF) == EnumBlockHalf.LOWER && world.getBlockState(pos.up()).getBlock() == this)
++            world.setBlockToAir(pos.up());
++        return world.setBlockToAir(pos);
++    }
++
+     public static enum EnumBlockHalf implements IStringSerializable
+     {
+         UPPER,

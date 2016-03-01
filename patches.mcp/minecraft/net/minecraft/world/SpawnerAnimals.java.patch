@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/world/SpawnerAnimals.java
++++ ../src-work/minecraft/net/minecraft/world/SpawnerAnimals.java
+@@ -69,14 +69,15 @@
+             {
+                 if ((!enumcreaturetype.getPeacefulCreature() || spawnPeacefulMobs) && (enumcreaturetype.getPeacefulCreature() || spawnHostileMobs) && (!enumcreaturetype.getAnimal() || p_77192_4_))
+                 {
+-                    int j4 = worldServerIn.countEntities(enumcreaturetype.getCreatureClass());
++                    int j4 = worldServerIn.countEntities(enumcreaturetype, true);
+                     int k4 = enumcreaturetype.getMaxNumberOfCreature() * i / MOB_COUNT_DIV;
+ 
+                     if (j4 <= k4)
+                     {
++                        java.util.ArrayList<ChunkCoordIntPair> shuffled = com.google.common.collect.Lists.newArrayList(this.eligibleChunksForSpawning);
++                        java.util.Collections.shuffle(shuffled);
+                         label374:
+-
+-                        for (ChunkCoordIntPair chunkcoordintpair1 : this.eligibleChunksForSpawning)
++                        for (ChunkCoordIntPair chunkcoordintpair1 : shuffled)
+                         {
+                             BlockPos blockpos = getRandomChunkPosition(worldServerIn, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
+                             int k1 = blockpos.getX();
+@@ -134,8 +135,10 @@
+ 
+                                                 entityliving.setLocationAndAngles((double)f, (double)i3, (double)f1, worldServerIn.rand.nextFloat() * 360.0F, 0.0F);
+ 
+-                                                if (entityliving.getCanSpawnHere() && entityliving.isNotColliding())
++                                                net.minecraftforge.fml.common.eventhandler.Event.Result canSpawn = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, worldServerIn, f, i3, f1);
++                                                if (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW || (canSpawn == net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT && (entityliving.getCanSpawnHere() && entityliving.isNotColliding())))
+                                                 {
++                                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldServerIn, f, l3, f1))
+                                                     ientitylivingdata = entityliving.onInitialSpawn(worldServerIn.getDifficultyForLocation(new BlockPos(entityliving)), ientitylivingdata);
+ 
+                                                     if (entityliving.isNotColliding())
+@@ -144,7 +147,7 @@
+                                                         worldServerIn.spawnEntityInWorld(entityliving);
+                                                     }
+ 
+-                                                    if (j2 >= entityliving.getMaxSpawnedInChunk())
++                                                    if (i2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
+                                                     {
+                                                         continue label374;
+                                                     }
+@@ -193,7 +196,7 @@
+             {
+                 BlockPos blockpos = pos.down();
+ 
+-                if (!World.doesBlockHaveSolidTopSurface(worldIn, blockpos))
++                if (!worldIn.getBlockState(blockpos).getBlock().canCreatureSpawn(worldIn, blockpos, spawnPlacementTypeIn))
+                 {
+                     return false;
+                 }

@@ -1,0 +1,251 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -17,7 +17,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class TileEntity
++public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     private static final Logger logger = LogManager.getLogger();
+     private static Map < String, Class <? extends TileEntity >> nameToClassMap = Maps. < String, Class <? extends TileEntity >> newHashMap();
+@@ -59,6 +59,8 @@
+     public void readFromNBT(NBTTagCompound compound)
+     {
+         this.pos = new BlockPos(compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z"));
++        if (compound.hasKey("ForgeData")) this.customTileData = compound.getCompoundTag("ForgeData");
++        if (this.capabilities != null && compound.hasKey("ForgeCaps")) this.capabilities.deserializeNBT(compound.getCompoundTag("ForgeCaps"));
+     }
+ 
+     public void writeToNBT(NBTTagCompound compound)
+@@ -75,6 +77,8 @@
+             compound.setInteger("x", this.pos.getX());
+             compound.setInteger("y", this.pos.getY());
+             compound.setInteger("z", this.pos.getZ());
++            if (this.customTileData != null) compound.setTag("ForgeData", this.customTileData);
++            if (this.capabilities != null) compound.setTag("ForgeCaps", this.capabilities.serializeNBT());
+         }
+     }
+ 
+@@ -82,9 +86,10 @@
+     {
+         TileEntity tileentity = null;
+ 
++        Class <? extends TileEntity > oclass = null;
+         try
+         {
+-            Class <? extends TileEntity > oclass = (Class)nameToClassMap.get(nbt.getString("id"));
++            oclass = (Class)nameToClassMap.get(nbt.getString("id"));
+ 
+             if (oclass != null)
+             {
+@@ -102,7 +107,17 @@
+         }
+         else
+         {
++            try
++            {
+             logger.warn("Skipping BlockEntity with id " + nbt.getString("id"));
++            }
++            catch (Exception ex)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, ex,
++                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        nbt.getString("id"), oclass.getName());
++                tileentity = null;
++            }
+         }
+ 
+         return tileentity;
+@@ -134,7 +149,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public double getDistanceSq(double x, double y, double z)
+     {
+         double d0 = (double)this.pos.getX() + 0.5D - x;
+@@ -279,4 +293,183 @@
+         addMapping(TileEntityFlowerPot.class, "FlowerPot");
+         addMapping(TileEntityBanner.class, "Banner");
+     }
++
++    // -- BEGIN FORGE PATCHES --
++    /**
++     * Called when you receive a TileEntityData packet for the location this
++     * TileEntity is currently in. On the client, the NetworkManager will always
++     * be the remote server. On the server, it will be whomever is responsible for
++     * sending the packet.
++     *
++     * @param net The NetworkManager the packet originated from
++     * @param pkt The data packet
++     */
++    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.S35PacketUpdateTileEntity pkt)
++    {
++    }
++
++    /**
++     * Called when the chunk this TileEntity is on is Unloaded.
++     */
++    public void onChunkUnload()
++    {
++    }
++
++    private boolean isVanilla = getClass().getName().startsWith("net.minecraft.");
++    /**
++     * Called from Chunk.setBlockIDWithMetadata and Chunk.fillChunk, determines if this tile entity should be re-created when the ID, or Metadata changes.
++     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
++     *
++     * @param world Current world
++     * @param pos Tile's world position
++     * @param oldState The old ID of the block
++     * @param newState The new ID of the block (May be the same)
++     * @return true forcing the invalidation of the existing TE, false not to invalidate the existing TE
++     */
++    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
++    {
++        return isVanilla ? (oldState.getBlock() != newSate.getBlock()) : oldState != newSate;
++    }
++
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
++    }
++
++    /**
++     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
++     */
++    public static final net.minecraft.util.AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
++    /**
++     * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
++     * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
++     * at this location.
++     *
++     * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
++     */
++    @SideOnly(Side.CLIENT)
++    public net.minecraft.util.AxisAlignedBB getRenderBoundingBox()
++    {
++        net.minecraft.util.AxisAlignedBB bb = INFINITE_EXTENT_AABB;
++        Block type = getBlockType();
++        if (type == Blocks.enchanting_table)
++        {
++            bb = new net.minecraft.util.AxisAlignedBB(getPos(), getPos().add(1, 1, 1));
++        }
++        else if (type == Blocks.chest || type == Blocks.trapped_chest)
++        {
++            bb = new net.minecraft.util.AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
++        }
++        else if (type != null && type != Blocks.beacon)
++        {
++            net.minecraft.util.AxisAlignedBB cbb = null;
++            try
++            {
++                cbb = type.getCollisionBoundingBox(worldObj, getPos(), worldObj.getBlockState(getPos()));
++            }
++            catch (Exception e)
++            {
++                // We have to capture any exceptions that may occur here because BUKKIT servers like to send
++                // the tile entity data BEFORE the chunk data, you know, the OPPOSITE of what vanilla does!
++                // So we can not GARENTEE that the world state is the real state for the block...
++                // So, once again in the long line of US having to accommodate BUKKIT breaking things,
++                // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
++                // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
++                cbb = new net.minecraft.util.AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(1, 1, 1));
++            }
++            if (cbb != null) bb = cbb;
++        }
++        return bb;
++    }
++
++    /**
++     * Checks if this tile entity knows how to render its 'breaking' overlay effect.
++     * If this returns true, The TileEntitySpecialRenderer will be called again with break progress set.
++     * @return True to re-render tile with breaking effect.
++     */
++    public boolean canRenderBreaking()
++    {
++        Block block = this.getBlockType();
++        return (block instanceof net.minecraft.block.BlockChest ||
++                block instanceof net.minecraft.block.BlockEnderChest ||
++                block instanceof net.minecraft.block.BlockSign ||
++                block instanceof net.minecraft.block.BlockSkull);
++    }
++
++    private NBTTagCompound customTileData;
++
++    /**
++     * Gets a {@link NBTTagCompound} that can be used to store custom data for this tile entity.
++     * It will be written, and read from disc, so it persists over world saves.
++     *
++     * @return A compound tag for custom data
++     */
++    public NBTTagCompound getTileData()
++    {
++        if (this.customTileData == null)
++        {
++            this.customTileData = new NBTTagCompound();
++        }
++        return this.customTileData;
++    }
++
++    /**
++     * Determines if the player can overwrite the NBT data of this tile entity while they place it using a ItemStack.
++     * Added as a fix for MC-75630 - Exploit with signs and command blocks
++     * @return True to prevent NBT copy, false to allow.
++     */
++    public boolean restrictNBTCopy()
++    {
++        return this instanceof TileEntityCommandBlock ||
++               this instanceof TileEntityMobSpawner ||
++               this instanceof TileEntitySign;
++    }
++
++
++    /**
++     * Called from the Chunk when this is first added to the world. Override instead of adding
++     * if (firstTick) stuff in update. Happens after validate and after it has been placed into the Chunk tileEntity
++     * map.
++     */
++    public void onLoad()
++    {
++        // NOOP
++    }
++
++    /**
++     * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
++     * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
++     */
++    public boolean hasFastRenderer()
++    {
++        return false;
++    }
++
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    public TileEntity()
++    {
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
++    }
++
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.readFromNBT(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        this.writeToNBT(ret);
++        return ret;
++    }
+ }

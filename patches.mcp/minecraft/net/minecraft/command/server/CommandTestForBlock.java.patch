@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandTestForBlock.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandTestForBlock.java
+@@ -70,7 +70,7 @@
+                     NBTTagCompound nbttagcompound = new NBTTagCompound();
+                     boolean flag = false;
+ 
+-                    if (args.length >= 6 && block.hasTileEntity())
++                    if (args.length >= 6 && block.hasTileEntity(block.getStateFromMeta(i)))
+                     {
+                         String s = getChatComponentFromNthArg(sender, args, 5).getUnformattedText();
+ 

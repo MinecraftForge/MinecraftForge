@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
+@@ -111,7 +111,7 @@
+         if (this.onGround && !this.wasOnGround)
+         {
+             int i = this.getSlimeSize();
+-
++            if (spawnCustomParticles()) { i = 0; } // don't spawn particles if it's handled by the implementation itself
+             for (int j = 0; j < i * 8; ++j)
+             {
+                 float f = this.rand.nextFloat() * (float)Math.PI * 2.0F;
+@@ -271,7 +271,7 @@
+         BlockPos blockpos = new BlockPos(MathHelper.floor_double(this.posX), 0, MathHelper.floor_double(this.posZ));
+         Chunk chunk = this.worldObj.getChunkFromBlockCoords(blockpos);
+ 
+-        if (this.worldObj.getWorldInfo().getTerrainType() == WorldType.FLAT && this.rand.nextInt(4) != 1)
++        if (this.worldObj.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, worldObj))
+         {
+             return false;
+         }
+@@ -336,6 +336,14 @@
+         return super.onInitialSpawn(difficulty, livingdata);
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Called when the slime spawns particles on landing, see onUpdate.
++     * Return true to prevent the spawning of the default particles.
++     */
++    protected boolean spawnCustomParticles() { return false; }
++    /* ======================================== FORGE END   =====================================*/
++
+     static class AISlimeAttack extends EntityAIBase
+         {
+             private EntitySlime slime;

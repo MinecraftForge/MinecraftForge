@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockMycelium.java
++++ ../src-work/minecraft/net/minecraft/block/BlockMycelium.java
+@@ -39,7 +39,7 @@
+     {
+         if (!worldIn.isRemote)
+         {
+-            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity() > 2)
++            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getBlock().getLightOpacity(worldIn, pos.up()) > 2)
+             {
+                 worldIn.setBlockState(pos, Blocks.dirt.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
+             }
+@@ -53,7 +53,7 @@
+                         IBlockState iblockstate = worldIn.getBlockState(blockpos);
+                         Block block = worldIn.getBlockState(blockpos.up()).getBlock();
+ 
+-                        if (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && block.getLightOpacity() <= 2)
++                        if (iblockstate.getBlock() == Blocks.dirt && iblockstate.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && block.getLightOpacity(worldIn, blockpos.up()) <= 2)
+                         {
+                             worldIn.setBlockState(blockpos, this.getDefaultState());
+                         }

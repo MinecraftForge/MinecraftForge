@@ -1,0 +1,99 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
+@@ -141,9 +141,9 @@
+             }
+         }
+ 
+-        this.furnaceBurnTime = compound.getShort("BurnTime");
+-        this.cookTime = compound.getShort("CookTime");
+-        this.totalCookTime = compound.getShort("CookTimeTotal");
++        this.furnaceBurnTime = compound.getInteger("BurnTime");
++        this.cookTime = compound.getInteger("CookTime");
++        this.totalCookTime = compound.getInteger("CookTimeTotal");
+         this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+ 
+         if (compound.hasKey("CustomName", 8))
+@@ -155,9 +155,9 @@
+     public void writeToNBT(NBTTagCompound compound)
+     {
+         super.writeToNBT(compound);
+-        compound.setShort("BurnTime", (short)this.furnaceBurnTime);
+-        compound.setShort("CookTime", (short)this.cookTime);
+-        compound.setShort("CookTimeTotal", (short)this.totalCookTime);
++        compound.setInteger("BurnTime", this.furnaceBurnTime);
++        compound.setInteger("CookTime", this.cookTime);
++        compound.setInteger("CookTimeTotal", this.totalCookTime);
+         NBTTagList nbttaglist = new NBTTagList();
+ 
+         for (int i = 0; i < this.furnaceItemStacks.length; ++i)
+@@ -223,8 +223,7 @@
+ 
+                             if (this.furnaceItemStacks[1].stackSize == 0)
+                             {
+-                                Item item = this.furnaceItemStacks[1].getItem().getContainerItem();
+-                                this.furnaceItemStacks[1] = item != null ? new ItemStack(item) : null;
++                                this.furnaceItemStacks[1] = furnaceItemStacks[1].getItem().getContainerItem(furnaceItemStacks[1]);
+                             }
+                         }
+                     }
+@@ -279,7 +278,11 @@
+         else
+         {
+             ItemStack itemstack = FurnaceRecipes.instance().getSmeltingResult(this.furnaceItemStacks[0]);
+-            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize())));
++            if (itemstack == null) return false;
++            if (this.furnaceItemStacks[2] == null) return true;
++            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
++            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
++            return result <= getInventoryStackLimit() && result <= this.furnaceItemStacks[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
+         }
+     }
+ 
+@@ -295,7 +298,7 @@
+             }
+             else if (this.furnaceItemStacks[2].getItem() == itemstack.getItem())
+             {
+-                ++this.furnaceItemStacks[2].stackSize;
++                this.furnaceItemStacks[2].stackSize += itemstack.stackSize; // Forge BugFix: Results may have multiple items
+             }
+ 
+             if (this.furnaceItemStacks[0].getItem() == Item.getItemFromBlock(Blocks.sponge) && this.furnaceItemStacks[0].getMetadata() == 1 && this.furnaceItemStacks[1] != null && this.furnaceItemStacks[1].getItem() == Items.bucket)
+@@ -342,7 +345,15 @@
+                 }
+             }
+ 
+-            return item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equals("WOOD") ? 200 : (item instanceof ItemSword && ((ItemSword)item).getToolMaterialName().equals("WOOD") ? 200 : (item instanceof ItemHoe && ((ItemHoe)item).getMaterialName().equals("WOOD") ? 200 : (item == Items.stick ? 100 : (item == Items.coal ? 1600 : (item == Items.lava_bucket ? 20000 : (item == Item.getItemFromBlock(Blocks.sapling) ? 100 : (item == Items.blaze_rod ? 2400 : 0)))))));
++            if (item instanceof ItemTool && ((ItemTool)item).getToolMaterialName().equals("WOOD")) return 200;
++            if (item instanceof ItemSword && ((ItemSword)item).getToolMaterialName().equals("WOOD")) return 200;
++            if (item instanceof ItemHoe && ((ItemHoe)item).getMaterialName().equals("WOOD")) return 200;
++            if (item == Items.stick) return 100;
++            if (item == Items.coal) return 1600;
++            if (item == Items.lava_bucket) return 20000;
++            if (item == Item.getItemFromBlock(Blocks.sapling)) return 100;
++            if (item == Items.blaze_rod) return 2400;
++            return net.minecraftforge.fml.common.registry.GameRegistry.getFuelValue(p_145952_0_);
+         }
+     }
+ 
+@@ -451,4 +462,21 @@
+             this.furnaceItemStacks[i] = null;
+         }
+     }
++
++    net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++    net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.WEST);
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.DOWN)
++                return (T) handlerBottom;
++            else if (facing == EnumFacing.UP)
++                return (T) handlerTop;
++            else
++                return (T) handlerSide;
++        return super.getCapability(capability, facing);
++    }
+ }

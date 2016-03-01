@@ -1,0 +1,92 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatList.java
++++ ../src-work/minecraft/net/minecraft/stats/StatList.java
+@@ -119,7 +119,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(objectCraftStats);
++        replaceAllSimilarBlocks(objectCraftStats, true);
+     }
+ 
+     private static void initMiningStats()
+@@ -141,7 +141,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(mineBlockStatArray);
++        replaceAllSimilarBlocks(mineBlockStatArray, false);
+     }
+ 
+     private static void initStats()
+@@ -165,7 +165,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(objectUseStats);
++        replaceAllSimilarBlocks(objectUseStats, true);
+     }
+ 
+     private static void initItemDepleteStats()
+@@ -184,7 +184,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(objectBreakStats);
++        replaceAllSimilarBlocks(objectBreakStats, true);
+     }
+ 
+     private static String func_180204_a(Item p_180204_0_)
+@@ -193,28 +193,35 @@
+         return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
+     }
+ 
+-    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_)
++    private static void replaceAllSimilarBlocks(StatBase[] p_75924_0_, boolean useItemIds)
+     {
+-        mergeStatBases(p_75924_0_, Blocks.water, Blocks.flowing_water);
+-        mergeStatBases(p_75924_0_, Blocks.lava, Blocks.flowing_lava);
+-        mergeStatBases(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin);
+-        mergeStatBases(p_75924_0_, Blocks.lit_furnace, Blocks.furnace);
+-        mergeStatBases(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore);
+-        mergeStatBases(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater);
+-        mergeStatBases(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator);
+-        mergeStatBases(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch);
+-        mergeStatBases(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp);
+-        mergeStatBases(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab);
+-        mergeStatBases(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab);
+-        mergeStatBases(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2);
+-        mergeStatBases(p_75924_0_, Blocks.grass, Blocks.dirt);
+-        mergeStatBases(p_75924_0_, Blocks.farmland, Blocks.dirt);
++        mergeStatBases(p_75924_0_, Blocks.water, Blocks.flowing_water, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.lava, Blocks.flowing_lava, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.lit_pumpkin, Blocks.pumpkin, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.lit_furnace, Blocks.furnace, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.lit_redstone_ore, Blocks.redstone_ore, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.powered_repeater, Blocks.unpowered_repeater, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.powered_comparator, Blocks.unpowered_comparator, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.redstone_torch, Blocks.unlit_redstone_torch, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.lit_redstone_lamp, Blocks.redstone_lamp, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.double_stone_slab, Blocks.stone_slab, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.double_wooden_slab, Blocks.wooden_slab, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.double_stone_slab2, Blocks.stone_slab2, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.grass, Blocks.dirt, useItemIds);
++        mergeStatBases(p_75924_0_, Blocks.farmland, Blocks.dirt, useItemIds);
+     }
+ 
+-    private static void mergeStatBases(StatBase[] statBaseIn, Block p_151180_1_, Block p_151180_2_)
++    private static void mergeStatBases(StatBase[] statBaseIn, Block p_151180_1_, Block p_151180_2_, boolean useItemIds)
+     {
+-        int i = Block.getIdFromBlock(p_151180_1_);
+-        int j = Block.getIdFromBlock(p_151180_2_);
++        int i;
++        int j;
++        if (useItemIds) {
++            i = Item.getIdFromItem(Item.getItemFromBlock(p_151180_1_));
++            j = Item.getIdFromItem(Item.getItemFromBlock(p_151180_2_));
++        } else {
++            i = Block.getIdFromBlock(p_151180_1_);
++            j = Block.getIdFromBlock(p_151180_2_);
++        }
+ 
+         if (statBaseIn[i] != null && statBaseIn[j] == null)
+         {

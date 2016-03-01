@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
+@@ -28,11 +28,18 @@
+ 
+         for (BiomeGenBase biomegenbase : BiomeGenBase.getBiomeGenArray())
+         {
+-            if (biomegenbase != null && biomegenbase.minHeight > 0.0F)
++            if (biomegenbase != null && biomegenbase.minHeight > 0.0F && !net.minecraftforge.common.BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
+             {
+                 this.field_151546_e.add(biomegenbase);
+             }
+         }
++        for (BiomeGenBase biome : net.minecraftforge.common.BiomeManager.strongHoldBiomes)
++        {
++            if (!this.field_151546_e.contains(biome))
++            {
++                this.field_151546_e.add(biome);
++            }
++        }
+     }
+ 
+     public MapGenStronghold(Map<String, String> p_i2068_1_)

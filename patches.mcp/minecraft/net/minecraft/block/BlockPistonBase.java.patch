@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
+@@ -189,7 +189,7 @@
+                     }
+                 }
+ 
+-                if (!flag1 && block.getMaterial() != Material.air && canPush(block, worldIn, blockpos, enumfacing.getOpposite(), false) && (block.getMobilityFlag() == 0 || block == Blocks.piston || block == Blocks.sticky_piston))
++                if (!flag1 && !block.isAir(worldIn, blockpos) && canPush(block, worldIn, blockpos, enumfacing.getOpposite(), false) && (block.getMobilityFlag() == 0 || block == Blocks.piston || block == Blocks.sticky_piston))
+                 {
+                     this.doMove(worldIn, pos, enumfacing, false);
+                 }
+@@ -333,7 +333,7 @@
+                     return false;
+                 }
+ 
+-                return !(blockIn instanceof ITileEntityProvider);
++                return !(blockIn.hasTileEntity(worldIn.getBlockState(pos)));
+             }
+             else
+             {
+@@ -371,7 +371,9 @@
+             {
+                 BlockPos blockpos = (BlockPos)list1.get(j);
+                 Block block = worldIn.getBlockState(blockpos).getBlock();
+-                block.dropBlockAsItem(worldIn, blockpos, worldIn.getBlockState(blockpos), 0);
++                //With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
++                float chance = block instanceof BlockSnow ? -1.0f : 1.0f;
++                block.dropBlockAsItemWithChance(worldIn, blockpos, worldIn.getBlockState(blockpos), chance, 0);
+                 worldIn.setBlockToAir(blockpos);
+                 --i;
+                 ablock[i] = block;

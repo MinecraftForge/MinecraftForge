@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/FallbackResourceManager.java
++++ ../src-work/minecraft/net/minecraft/client/resources/FallbackResourceManager.java
+@@ -67,6 +67,7 @@
+         throw new FileNotFoundException(location.toString());
+     }
+ 
++    @SuppressWarnings("resource")
+     protected InputStream getInputStream(ResourceLocation location, IResourcePack resourcePack) throws IOException
+     {
+         InputStream inputstream = resourcePack.getInputStream(location);

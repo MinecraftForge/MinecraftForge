@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/network/OldServerPinger.java
++++ ../src-work/minecraft/net/minecraft/client/network/OldServerPinger.java
+@@ -150,6 +150,7 @@
+                         server.setBase64EncodedIconData((String)null);
+                     }
+ 
++                    net.minecraftforge.fml.client.FMLClientHandler.instance().bindServerListData(server, serverstatusresponse);
+                     this.field_175092_e = Minecraft.getSystemTime();
+                     networkmanager.sendPacket(new C01PacketPing(this.field_175092_e));
+                     this.field_147403_d = true;

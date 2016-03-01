@@ -1,0 +1,105 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -104,20 +104,29 @@
+     {
+         File file1 = new File(this.worldDirectory, "level.dat");
+ 
++        WorldInfo worldInfo = null;
++
+         if (file1.exists())
+         {
+             try
+             {
+                 NBTTagCompound nbttagcompound2 = CompressedStreamTools.readCompressed(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound3 = nbttagcompound2.getCompoundTag("Data");
+-                return new WorldInfo(nbttagcompound3);
++                worldInfo = new WorldInfo(nbttagcompound3);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound2);
++                return worldInfo;
+             }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++            {
++                throw e;
++            }
+             catch (Exception exception1)
+             {
+                 exception1.printStackTrace();
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
+         file1 = new File(this.worldDirectory, "level.dat_old");
+ 
+         if (file1.exists())
+@@ -126,7 +135,13 @@
+             {
+                 NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
+                 NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("Data");
+-                return new WorldInfo(nbttagcompound1);
++                worldInfo = new WorldInfo(nbttagcompound1);
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, nbttagcompound);
++                return worldInfo;
++             }
++            catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e)
++            {
++                throw e;
+             }
+             catch (Exception exception)
+             {
+@@ -143,6 +158,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.setTag("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.worldDirectory, "level.dat_new");
+@@ -181,6 +198,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.setTag("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.worldDirectory, "level.dat_new");
+@@ -229,6 +248,7 @@
+             }
+ 
+             file1.renameTo(file2);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(player, this.playersDirectory, player.getUniqueID().toString());
+         }
+         catch (Exception var5)
+         {
+@@ -259,6 +279,7 @@
+             player.readFromNBT(nbttagcompound);
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(player, playersDirectory, player.getUniqueID().toString());
+         return nbttagcompound;
+     }
+ 
+@@ -300,4 +321,22 @@
+     {
+         return this.saveDirectoryName;
+     }
++
++    public NBTTagCompound getPlayerNBT(net.minecraft.entity.player.EntityPlayerMP player)
++    {
++        try
++        {
++            File file1 = new File(this.playersDirectory, player.getUniqueID().toString() + ".dat");
++
++            if (file1.exists() && file1.isFile())
++            {
++                return CompressedStreamTools.readCompressed(new FileInputStream(file1));
++            }
++        }
++        catch (Exception exception)
++        {
++            logger.warn("Failed to load player data for " + player.getName());
++        }
++        return null;
++    }
+ }

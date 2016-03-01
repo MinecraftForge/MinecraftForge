@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/WorldChunkManager.java
++++ ../src-work/minecraft/net/minecraft/world/biome/WorldChunkManager.java
+@@ -16,6 +16,7 @@
+ 
+ public class WorldChunkManager
+ {
++    public static List<BiomeGenBase> allowedBiomes = Lists.newArrayList(BiomeGenBase.forest, BiomeGenBase.plains, BiomeGenBase.taiga, BiomeGenBase.taigaHills, BiomeGenBase.forestHills, BiomeGenBase.jungle, BiomeGenBase.jungleHills);
+     private GenLayer genBiomes;
+     private GenLayer biomeIndexLayer;
+     private BiomeCache biomeCache;
+@@ -27,13 +28,7 @@
+         this.biomeCache = new BiomeCache(this);
+         this.field_180301_f = "";
+         this.biomesToSpawnIn = Lists.<BiomeGenBase>newArrayList();
+-        this.biomesToSpawnIn.add(BiomeGenBase.forest);
+-        this.biomesToSpawnIn.add(BiomeGenBase.plains);
+-        this.biomesToSpawnIn.add(BiomeGenBase.taiga);
+-        this.biomesToSpawnIn.add(BiomeGenBase.taigaHills);
+-        this.biomesToSpawnIn.add(BiomeGenBase.forestHills);
+-        this.biomesToSpawnIn.add(BiomeGenBase.jungle);
+-        this.biomesToSpawnIn.add(BiomeGenBase.jungleHills);
++        this.biomesToSpawnIn.addAll(allowedBiomes);
+     }
+ 
+     public WorldChunkManager(long seed, WorldType p_i45744_3_, String p_i45744_4_)
+@@ -41,6 +36,7 @@
+         this();
+         this.field_180301_f = p_i45744_4_;
+         GenLayer[] agenlayer = GenLayer.initializeAllBiomeGenerators(seed, p_i45744_3_, p_i45744_4_);
++        agenlayer = getModdedBiomeGenerators(p_i45744_3_, seed, agenlayer);
+         this.genBiomes = agenlayer[0];
+         this.biomeIndexLayer = agenlayer[1];
+     }
+@@ -249,4 +245,11 @@
+     {
+         this.biomeCache.cleanupCache();
+     }
++
++    public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original)
++    {
++        net.minecraftforge.event.terraingen.WorldTypeEvent.InitBiomeGens event = new net.minecraftforge.event.terraingen.WorldTypeEvent.InitBiomeGens(worldType, seed, original);
++        net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS.post(event);
++        return event.newBiomeGens;
++    }
+ }

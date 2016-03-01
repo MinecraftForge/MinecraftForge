@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySign.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySign.java
+@@ -61,7 +61,7 @@
+             }
+             public boolean canCommandSenderUseCommand(int permLevel, String commandName)
+             {
+-                return true;
++                return permLevel <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
+             }
+             public BlockPos getPosition()
+             {

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
+@@ -55,6 +55,7 @@
+         Chunk chunk = new Chunk(this.worldObj, p_73158_1_, p_73158_2_);
+         this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(p_73158_1_, p_73158_2_), chunk);
+         this.chunkListing.add(chunk);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
+         chunk.setChunkLoaded(true);
+         return chunk;
+     }

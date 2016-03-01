@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -34,6 +34,11 @@
+ 
+     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+     {
++        if (worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos) && side != EnumFacing.DOWN)
++        {
++            side = EnumFacing.UP;
++            pos = pos.down();
++        }
+         if (side == EnumFacing.DOWN)
+         {
+             return false;
+@@ -46,7 +51,7 @@
+ 
+             if (!flag)
+             {
+-                if (!worldIn.getBlockState(pos).getBlock().getMaterial().isSolid())
++                if (!worldIn.getBlockState(pos).getBlock().getMaterial().isSolid() && !worldIn.isSideSolid(pos, side, true))
+                 {
+                     return false;
+                 }
+@@ -66,6 +71,7 @@
+             {
+                 if (!worldIn.isRemote)
+                 {
++                    if (!Blocks.skull.canPlaceBlockOnSide(worldIn, pos, side)) return false;
+                     worldIn.setBlockState(pos, Blocks.skull.getDefaultState().withProperty(BlockSkull.FACING, side), 3);
+                     int i = 0;
+ 

@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
+@@ -198,12 +198,14 @@
+ 
+     protected boolean teleportTo(double x, double y, double z)
+     {
++        net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, x, y, z, 0);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false;
+         double d0 = this.posX;
+         double d1 = this.posY;
+         double d2 = this.posZ;
+-        this.posX = x;
+-        this.posY = y;
+-        this.posZ = z;
++        this.posX = event.targetX;
++        this.posY = event.targetY;
++        this.posZ = event.targetZ;
+         boolean flag = false;
+         BlockPos blockpos = new BlockPos(this.posX, this.posY, this.posZ);
+ 
+@@ -364,6 +366,18 @@
+         }
+     }
+ 
++    /*===================================== Forge Start ==============================*/
++    public static void setCarriable(Block block, boolean canCarry)
++    {
++        if (canCarry) carriableBlocks.add(block);
++        else          carriableBlocks.remove(block);
++    }
++    public static boolean getCarriable(Block block)
++    {
++        return carriableBlocks.contains(block);
++    }
++    /*===================================== Forge End ==============================*/
++
+     public boolean isScreaming()
+     {
+         return this.dataWatcher.getWatchableObjectByte(18) > 0;

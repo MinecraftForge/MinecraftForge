@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
++++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
+@@ -994,6 +994,7 @@
+ 
+     public void saveOptions()
+     {
++        if (net.minecraftforge.fml.client.FMLClientHandler.instance().isLoading()) return;
+         try
+         {
+             PrintWriter printwriter = new PrintWriter(new FileWriter(this.optionsFile));

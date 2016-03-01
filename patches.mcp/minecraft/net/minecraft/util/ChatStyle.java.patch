@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/ChatStyle.java
++++ ../src-work/minecraft/net/minecraft/util/ChatStyle.java
+@@ -229,7 +229,6 @@
+         return this;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String getFormattingCode()
+     {
+         if (this.isEmpty())

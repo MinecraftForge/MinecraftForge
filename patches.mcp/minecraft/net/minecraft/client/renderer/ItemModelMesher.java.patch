@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
+@@ -50,6 +50,11 @@
+             }
+         }
+ 
++        if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartItemModel)
++        {
++            ibakedmodel = ((net.minecraftforge.client.model.ISmartItemModel)ibakedmodel).handleItemState(stack);
++        }
++
+         if (ibakedmodel == null)
+         {
+             ibakedmodel = this.modelManager.getMissingModel();

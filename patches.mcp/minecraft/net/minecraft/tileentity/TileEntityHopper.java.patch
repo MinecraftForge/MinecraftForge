@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
+@@ -260,6 +260,7 @@
+ 
+     private boolean transferItemsOut()
+     {
++        if (net.minecraftforge.items.VanillaInventoryCodeHooks.insertHook(this)) { return true; }
+         IInventory iinventory = this.getInventoryForHopperTransfer();
+ 
+         if (iinventory == null)
+@@ -366,6 +367,7 @@
+ 
+     public static boolean captureDroppedItems(IHopper p_145891_0_)
+     {
++        if (net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_145891_0_)) { return true; }
+         IInventory iinventory = getHopperInventory(p_145891_0_);
+ 
+         if (iinventory != null)
+@@ -515,17 +517,31 @@
+ 
+             if (itemstack == null)
+             {
++                //Forge: BUGFIX: Again, make things respect max stack sizes.
++                int max = Math.min(stack.getMaxStackSize(), inventoryIn.getInventoryStackLimit());
++                if (max >= stack.stackSize)
++                {
+                 inventoryIn.setInventorySlotContents(index, stack);
+                 stack = null;
++                }
++                else
++                {
++                    inventoryIn.setInventorySlotContents(index, stack.splitStack(max));
++                }
+                 flag = true;
+             }
+             else if (canCombine(itemstack, stack))
+             {
+-                int i = stack.getMaxStackSize() - itemstack.stackSize;
++                //Forge: BUGFIX: Again, make things respect max stack sizes.
++                int max = Math.min(stack.getMaxStackSize(), inventoryIn.getInventoryStackLimit());
++                if (max > itemstack.stackSize)
++                {
++                int i = max - itemstack.stackSize;
+                 int j = Math.min(stack.stackSize, i);
+                 stack.stackSize -= j;
+                 itemstack.stackSize += j;
+                 flag = j > 0;
++                }
+             }
+ 
+             if (flag)
+@@ -668,4 +684,10 @@
+             this.inventory[i] = null;
+         }
+     }
++
++
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler()
++    {
++        return new net.minecraftforge.items.VanillaHopperItemHandler(this);
++    }
+ }

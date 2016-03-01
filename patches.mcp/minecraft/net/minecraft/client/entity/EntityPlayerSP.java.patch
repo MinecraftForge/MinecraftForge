@@ -1,0 +1,71 @@
+--- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
++++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
+@@ -345,6 +345,15 @@
+         this.mc.ingameGUI.getChatGUI().printChatMessage(chatComponent);
+     }
+ 
++    private boolean isHeadspaceFree(BlockPos pos, int height)
++    {
++        for (int y = 0; y < height; y++)
++        {
++            if (isOpenBlockSpace(pos.add(0, y, 0))) return false;
++        }
++        return true;
++    }
++
+     protected boolean pushOutOfBlocks(double x, double y, double z)
+     {
+         if (this.noClip)
+@@ -357,30 +366,34 @@
+             double d0 = x - (double)blockpos.getX();
+             double d1 = z - (double)blockpos.getZ();
+ 
+-            if (!this.isOpenBlockSpace(blockpos))
++            int entHeight = Math.max(Math.round(this.height), 1);
++
++            boolean inTranslucentBlock = this.isHeadspaceFree(blockpos, entHeight);
++
++            if (inTranslucentBlock)
+             {
+                 int i = -1;
+                 double d2 = 9999.0D;
+ 
+-                if (this.isOpenBlockSpace(blockpos.west()) && d0 < d2)
++                if (!this.isHeadspaceFree(blockpos.west(), entHeight) && d0 < d2)
+                 {
+                     d2 = d0;
+                     i = 0;
+                 }
+ 
+-                if (this.isOpenBlockSpace(blockpos.east()) && 1.0D - d0 < d2)
++                if (!this.isHeadspaceFree(blockpos.east(), entHeight) && 1.0D - d0 < d2)
+                 {
+                     d2 = 1.0D - d0;
+                     i = 1;
+                 }
+ 
+-                if (this.isOpenBlockSpace(blockpos.north()) && d1 < d2)
++                if (!this.isHeadspaceFree(blockpos.north(), entHeight) && d1 < d2)
+                 {
+                     d2 = d1;
+                     i = 4;
+                 }
+ 
+-                if (this.isOpenBlockSpace(blockpos.south()) && 1.0D - d1 < d2)
++                if (!this.isHeadspaceFree(blockpos.south(), entHeight) && 1.0D - d1 < d2)
+                 {
+                     d2 = 1.0D - d1;
+                     i = 5;
+@@ -448,6 +461,12 @@
+ 
+     public void playSound(String name, float volume, float pitch)
+     {
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, name, volume, pitch);
++        if (event.isCanceled() || event.name == null) return;
++        name = event.name;
++        volume = event.newVolume;
++        pitch = event.newPitch;
++
+         this.worldObj.playSound(this.posX, this.posY, this.posZ, name, volume, pitch, false);
+     }
+ 

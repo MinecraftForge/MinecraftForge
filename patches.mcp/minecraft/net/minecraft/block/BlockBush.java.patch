@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBush.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBush.java
+@@ -13,7 +13,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockBush extends Block
++public class BlockBush extends Block implements net.minecraftforge.common.IPlantable
+ {
+     protected BlockBush()
+     {
+@@ -36,7 +36,7 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return super.canPlaceBlockAt(worldIn, pos) && this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
++        return super.canPlaceBlockAt(worldIn, pos) && worldIn.getBlockState(pos.down()).getBlock().canSustainPlant(worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     protected boolean canPlaceBlockOn(Block ground)
+@@ -66,7 +66,10 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
++        BlockPos down = pos.down();
++        Block soil = worldIn.getBlockState(down).getBlock();
++        if (state.getBlock() != this) return this.canPlaceBlockOn(soil); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++        return soil.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
+@@ -89,4 +92,33 @@
+     {
+         return EnumWorldBlockLayer.CUTOUT;
+     }
++
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        if (this == Blocks.wheat)          return net.minecraftforge.common.EnumPlantType.Crop;
++        if (this == Blocks.carrots)        return net.minecraftforge.common.EnumPlantType.Crop;
++        if (this == Blocks.potatoes)       return net.minecraftforge.common.EnumPlantType.Crop;
++        if (this == Blocks.melon_stem)     return net.minecraftforge.common.EnumPlantType.Crop;
++        if (this == Blocks.pumpkin_stem)   return net.minecraftforge.common.EnumPlantType.Crop;
++        if (this == Blocks.deadbush)       return net.minecraftforge.common.EnumPlantType.Desert;
++        if (this == Blocks.waterlily)      return net.minecraftforge.common.EnumPlantType.Water;
++        if (this == Blocks.red_mushroom)   return net.minecraftforge.common.EnumPlantType.Cave;
++        if (this == Blocks.brown_mushroom) return net.minecraftforge.common.EnumPlantType.Cave;
++        if (this == Blocks.nether_wart)    return net.minecraftforge.common.EnumPlantType.Nether;
++        if (this == Blocks.sapling)        return net.minecraftforge.common.EnumPlantType.Plains;
++        if (this == Blocks.tallgrass)      return net.minecraftforge.common.EnumPlantType.Plains;
++        if (this == Blocks.double_plant)   return net.minecraftforge.common.EnumPlantType.Plains;
++        if (this == Blocks.red_flower)     return net.minecraftforge.common.EnumPlantType.Plains;
++        if (this == Blocks.yellow_flower)  return net.minecraftforge.common.EnumPlantType.Plains;
++        return net.minecraftforge.common.EnumPlantType.Plains;
++    }
++
++    @Override
++    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        IBlockState state = world.getBlockState(pos);
++        if (state.getBlock() != this) return getDefaultState();
++        return state;
++    }
+ }

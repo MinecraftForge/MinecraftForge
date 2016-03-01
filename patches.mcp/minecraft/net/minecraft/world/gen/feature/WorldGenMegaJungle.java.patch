@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaJungle.java
+@@ -55,7 +55,7 @@
+             {
+                 BlockPos blockpos = position.up(i2);
+ 
+-                if (this.func_150523_a(worldIn.getBlockState(blockpos).getBlock()))
++                if (this.isAirLeaves(worldIn,blockpos))
+                 {
+                     this.setBlockAndNotifyAdequately(worldIn, blockpos, this.woodMetadata);
+ 
+@@ -70,7 +70,7 @@
+                 {
+                     BlockPos blockpos1 = blockpos.east();
+ 
+-                    if (this.func_150523_a(worldIn.getBlockState(blockpos1).getBlock()))
++                    if (this.isAirLeaves(worldIn,blockpos1))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, blockpos1, this.woodMetadata);
+ 
+@@ -83,7 +83,7 @@
+ 
+                     BlockPos blockpos2 = blockpos.south().east();
+ 
+-                    if (this.func_150523_a(worldIn.getBlockState(blockpos2).getBlock()))
++                    if (this.isAirLeaves(worldIn,blockpos2))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, blockpos2, this.woodMetadata);
+ 
+@@ -96,7 +96,7 @@
+ 
+                     BlockPos blockpos3 = blockpos.south();
+ 
+-                    if (this.func_150523_a(worldIn.getBlockState(blockpos3).getBlock()))
++                    if (this.isAirLeaves(worldIn,blockpos3))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, blockpos3, this.woodMetadata);
+ 
+@@ -130,4 +130,11 @@
+             this.func_175925_a(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
+         }
+     }
++
++    //Helper macro
++    private boolean isAirLeaves(World world, BlockPos pos)
++    {
++        net.minecraft.block.Block block = world.getBlockState(pos).getBlock();
++        return block.isAir(world, pos) || block.isLeaves(world, pos);
++    }
+ }

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
+@@ -199,6 +199,7 @@
+         {
+             if (this.delayBeforeCanPickup == 0 && entityIn.xpCooldown == 0)
+             {
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(entityIn, this))) return;
+                 entityIn.xpCooldown = 2;
+                 this.worldObj.playSoundAtEntity(entityIn, "random.orb", 0.1F, 0.5F * ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.8F));
+                 entityIn.onItemPickup(this, 1);

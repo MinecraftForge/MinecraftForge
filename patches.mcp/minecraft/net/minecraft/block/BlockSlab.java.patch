@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSlab.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSlab.java
+@@ -91,6 +91,17 @@
+         return this.isDouble();
+     }
+ 
++    @Override
++    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face)
++	{
++        if ( isOpaqueCube() )
++            return true;
++        
++        // face is on the block being rendered, not this block.
++        EnumBlockHalf side = world.getBlockState(pos).getValue(HALF);
++        return (side == EnumBlockHalf.TOP && face == EnumFacing.DOWN) || (side == EnumBlockHalf.BOTTOM && face == EnumFacing.UP);
++    }
++
+     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+     {
+         IBlockState iblockstate = super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(HALF, BlockSlab.EnumBlockHalf.BOTTOM);
+@@ -118,15 +129,8 @@
+         {
+             return false;
+         }
+-        else
+-        {
+-            BlockPos blockpos = pos.offset(side.getOpposite());
+-            IBlockState iblockstate = worldIn.getBlockState(pos);
+-            IBlockState iblockstate1 = worldIn.getBlockState(blockpos);
+-            boolean flag = isSlab(iblockstate.getBlock()) && iblockstate.getValue(HALF) == BlockSlab.EnumBlockHalf.TOP;
+-            boolean flag1 = isSlab(iblockstate1.getBlock()) && iblockstate1.getValue(HALF) == BlockSlab.EnumBlockHalf.TOP;
+-            return flag1 ? (side == EnumFacing.DOWN ? true : (side == EnumFacing.UP && super.shouldSideBeRendered(worldIn, pos, side) ? true : !isSlab(iblockstate.getBlock()) || !flag)) : (side == EnumFacing.UP ? true : (side == EnumFacing.DOWN && super.shouldSideBeRendered(worldIn, pos, side) ? true : !isSlab(iblockstate.getBlock()) || flag));
+-        }
++        // additional logic breaks doesSideBlockRendering and is no longer useful.
++        return super.shouldSideBeRendered(worldIn, pos, side);
+     }
+ 
+     @SideOnly(Side.CLIENT)

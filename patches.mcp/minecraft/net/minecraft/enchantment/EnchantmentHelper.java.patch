@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
++++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
+@@ -296,7 +296,7 @@
+     public static int calcItemStackEnchantability(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
+     {
+         Item item = p_77514_3_.getItem();
+-        int i = item.getItemEnchantability();
++        int i = item.getItemEnchantability(p_77514_3_);
+ 
+         if (i <= 0)
+         {
+@@ -345,7 +345,7 @@
+     public static List<EnchantmentData> buildEnchantmentList(Random randomIn, ItemStack itemStackIn, int p_77513_2_)
+     {
+         Item item = itemStackIn.getItem();
+-        int i = item.getItemEnchantability();
++        int i = item.getItemEnchantability(itemStackIn);
+ 
+         if (i <= 0)
+         {
+@@ -387,7 +387,9 @@
+ 
+                             for (EnchantmentData enchantmentdata1 : list)
+                             {
+-                                if (!enchantmentdata1.enchantmentobj.canApplyTogether(Enchantment.getEnchantmentById(integer.intValue())))
++                                Enchantment e1 = enchantmentdata1.enchantmentobj;
++                                Enchantment e2 = Enchantment.getEnchantmentById(integer.intValue());
++                                if (!e1.canApplyTogether(e2) || !e2.canApplyTogether(e1)) //Forge BugFix: Let Both enchantments veto being together
+                                 {
+                                     flag = false;
+                                     break;
+@@ -421,7 +423,8 @@
+ 
+         for (Enchantment enchantment : Enchantment.enchantmentsBookList)
+         {
+-            if (enchantment != null && (enchantment.type.canEnchantItem(item) || flag))
++            if (enchantment == null) continue;
++            if (enchantment.canApplyAtEnchantingTable(p_77505_1_) || (flag && enchantment.isAllowedOnBooks()))
+             {
+                 for (int i = enchantment.getMinLevel(); i <= enchantment.getMaxLevel(); ++i)
+                 {

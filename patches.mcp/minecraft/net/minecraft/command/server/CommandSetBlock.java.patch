@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandSetBlock.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandSetBlock.java
+@@ -52,6 +52,8 @@
+                 i = parseInt(args[4], 0, 15);
+             }
+ 
++            IBlockState state = block.getStateFromMeta(i);
++
+             World world = sender.getEntityWorld();
+ 
+             if (!world.isBlockLoaded(blockpos))
+@@ -63,7 +65,7 @@
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 boolean flag = false;
+ 
+-                if (args.length >= 7 && block.hasTileEntity())
++                if (args.length >= 7 && block.hasTileEntity(state))
+                 {
+                     String s = getChatComponentFromNthArg(sender, args, 6).getUnformattedText();
+ 

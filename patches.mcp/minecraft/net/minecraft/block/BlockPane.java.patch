@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPane.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
+@@ -38,7 +38,10 @@
+ 
+     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+     {
+-        return state.withProperty(NORTH, Boolean.valueOf(this.canPaneConnectToBlock(worldIn.getBlockState(pos.north()).getBlock()))).withProperty(SOUTH, Boolean.valueOf(this.canPaneConnectToBlock(worldIn.getBlockState(pos.south()).getBlock()))).withProperty(WEST, Boolean.valueOf(this.canPaneConnectToBlock(worldIn.getBlockState(pos.west()).getBlock()))).withProperty(EAST, Boolean.valueOf(this.canPaneConnectToBlock(worldIn.getBlockState(pos.east()).getBlock())));
++        return state.withProperty(NORTH, canPaneConnectTo(worldIn, pos, EnumFacing.NORTH))
++                .withProperty(SOUTH, canPaneConnectTo(worldIn, pos, EnumFacing.SOUTH))
++                .withProperty(WEST, canPaneConnectTo(worldIn, pos, EnumFacing.WEST))
++                .withProperty(EAST, canPaneConnectTo(worldIn, pos, EnumFacing.EAST));
+     }
+ 
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+@@ -64,10 +67,10 @@
+ 
+     public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity)
+     {
+-        boolean flag = this.canPaneConnectToBlock(worldIn.getBlockState(pos.north()).getBlock());
+-        boolean flag1 = this.canPaneConnectToBlock(worldIn.getBlockState(pos.south()).getBlock());
+-        boolean flag2 = this.canPaneConnectToBlock(worldIn.getBlockState(pos.west()).getBlock());
+-        boolean flag3 = this.canPaneConnectToBlock(worldIn.getBlockState(pos.east()).getBlock());
++        boolean flag = this.canPaneConnectTo(worldIn, pos, EnumFacing.NORTH);
++        boolean flag1 = this.canPaneConnectTo(worldIn, pos, EnumFacing.SOUTH);
++        boolean flag2 = this.canPaneConnectTo(worldIn, pos, EnumFacing.WEST);
++        boolean flag3 = this.canPaneConnectTo(worldIn, pos, EnumFacing.EAST);
+ 
+         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
+         {
+@@ -186,4 +189,11 @@
+     {
+         return new BlockState(this, new IProperty[] {NORTH, EAST, WEST, SOUTH});
+     }
++
++    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
++    {
++        BlockPos off = pos.offset(dir);
++        Block block = world.getBlockState(off).getBlock();
++        return canPaneConnectToBlock(block) || block.isSideSolid(world, off, dir.getOpposite());
++    }
+ }

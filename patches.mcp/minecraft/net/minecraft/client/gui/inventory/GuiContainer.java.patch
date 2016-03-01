@@ -1,0 +1,70 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
+@@ -175,8 +175,11 @@
+         GlStateManager.translate(0.0F, 0.0F, 32.0F);
+         this.zLevel = 200.0F;
+         this.itemRender.zLevel = 200.0F;
++        net.minecraft.client.gui.FontRenderer font = null;
++        if (stack != null) font = stack.getItem().getFontRenderer(stack);
++        if (font == null) font = fontRendererObj;
+         this.itemRender.renderItemAndEffectIntoGUI(stack, x, y);
+-        this.itemRender.renderItemOverlayIntoGUI(this.fontRendererObj, stack, x, y - (this.draggedStack == null ? 0 : 8), altText);
++        this.itemRender.renderItemOverlayIntoGUI(font, stack, x, y - (this.draggedStack == null ? 0 : 8), altText);
+         this.zLevel = 0.0F;
+         this.itemRender.zLevel = 0.0F;
+     }
+@@ -239,13 +242,12 @@
+ 
+         if (itemstack == null)
+         {
+-            String s1 = slotIn.getSlotTexture();
++            TextureAtlasSprite textureatlassprite = slotIn.getBackgroundSprite();
+ 
+-            if (s1 != null)
++            if (textureatlassprite != null)
+             {
+-                TextureAtlasSprite textureatlassprite = this.mc.getTextureMapBlocks().getAtlasSprite(s1);
+                 GlStateManager.disableLighting();
+-                this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
++                this.mc.getTextureManager().bindTexture(slotIn.getBackgroundLocation());
+                 this.drawTexturedModalRect(i, j, textureatlassprite, 16, 16);
+                 GlStateManager.enableLighting();
+                 flag1 = true;
+@@ -326,6 +328,7 @@
+             int j = this.guiLeft;
+             int k = this.guiTop;
+             boolean flag1 = mouseX < j || mouseY < k || mouseX >= j + this.xSize || mouseY >= k + this.ySize;
++            if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+             int l = -1;
+ 
+             if (slot != null)
+@@ -463,10 +466,12 @@
+ 
+     protected void mouseReleased(int mouseX, int mouseY, int state)
+     {
++        super.mouseReleased(mouseX, mouseY, state); //Forge, Call parent to release buttons
+         Slot slot = this.getSlotAtPosition(mouseX, mouseY);
+         int i = this.guiLeft;
+         int j = this.guiTop;
+         boolean flag = mouseX < i || mouseY < j || mouseX >= i + this.xSize || mouseY >= j + this.ySize;
++        if (slot != null) flag = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+         int k = -1;
+ 
+         if (slot != null)
+@@ -685,4 +690,16 @@
+             this.mc.thePlayer.closeScreen();
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    /**
++     * Returns the slot that is currently displayed under the mouse.
++     */
++    public Slot getSlotUnderMouse()
++    {
++        return this.theSlot;
++    }
++
++    /* ======================================== FORGE END   =====================================*/
+ }

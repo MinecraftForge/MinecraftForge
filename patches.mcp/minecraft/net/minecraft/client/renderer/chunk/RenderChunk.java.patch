@@ -1,0 +1,68 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -131,7 +131,9 @@
+                 return;
+             }
+ 
+-            iblockaccess = new RegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
++            RegionRenderCache cache = createRegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
++            net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(world, position, cache);
++            iblockaccess = cache;
+             generator.setCompiledChunk(compiledchunk);
+         }
+         finally
+@@ -158,7 +160,7 @@
+                     lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
+                 }
+ 
+-                if (block.hasTileEntity())
++                if (block.hasTileEntity(iblockstate))
+                 {
+                     TileEntity tileentity = iblockaccess.getTileEntity(new BlockPos(blockpos$mutableblockpos));
+                     TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.instance.<TileEntity>getSpecialRenderer(tileentity);
+@@ -174,7 +176,9 @@
+                     }
+                 }
+ 
+-                EnumWorldBlockLayer enumworldblocklayer1 = block.getBlockLayer();
++                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
++                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
++                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
+                 int j = enumworldblocklayer1.ordinal();
+ 
+                 if (block.getRenderType() != -1)
+@@ -189,6 +193,7 @@
+ 
+                     aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, iblockaccess, worldrenderer);
+                 }
++                }
+             }
+ 
+             for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
+@@ -385,6 +390,26 @@
+         return this.needsUpdate;
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Creates a new RegionRenderCache instance.<br>
++     * Extending classes can change the behavior of the cache, allowing to visually change
++     * blocks (schematics etc).
++     *
++     * @see RegionRenderCache
++     * @param world The world to cache.
++     * @param from The starting position of the chunk minus one on each axis.
++     * @param to The ending position of the chunk plus one on each axis.
++     * @param subtract Padding used internally by the RegionRenderCache constructor to make
++     *                 the cache a 20x20x20 cube, for a total of 8000 states in the cache.
++     * @return new RegionRenderCache instance
++     */
++    protected RegionRenderCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
++    {
++        return new RegionRenderCache(world, from, to, subtract);
++    }
++    /* ========================================= FORGE END ======================================*/
++
+     public BlockPos getBlockPosOffset16(EnumFacing p_181701_1_)
+     {
+         return (BlockPos)this.mapEnumFacing.get(p_181701_1_);

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
+@@ -18,6 +18,7 @@
+ 
+     public boolean interactFirst(EntityPlayer playerIn)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, playerIn))) return true;
+         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != playerIn)
+         {
+             return true;

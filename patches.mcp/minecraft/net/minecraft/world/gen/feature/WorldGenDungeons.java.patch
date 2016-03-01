@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
+@@ -123,12 +123,11 @@
+                         if (j3 == 1)
+                         {
+                             worldIn.setBlockState(blockpos2, Blocks.chest.correctFacing(worldIn, blockpos2, Blocks.chest.getDefaultState()), 2);
+-                            List<WeightedRandomChestContent> list = WeightedRandomChestContent.func_177629_a(CHESTCONTENT, new WeightedRandomChestContent[] {Items.enchanted_book.getRandom(rand)});
+                             TileEntity tileentity1 = worldIn.getTileEntity(blockpos2);
+ 
+                             if (tileentity1 instanceof TileEntityChest)
+                             {
+-                                WeightedRandomChestContent.generateChestContents(rand, list, (TileEntityChest)tileentity1, 8);
++                                WeightedRandomChestContent.generateChestContents(rand, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, rand), (TileEntityChest)tileentity1, 8);
+                             }
+ 
+                             break;
+@@ -159,6 +158,12 @@
+ 
+     private String pickMobSpawner(Random p_76543_1_)
+     {
+-        return SPAWNERTYPES[p_76543_1_.nextInt(SPAWNERTYPES.length)];
++        return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_76543_1_);
+     }
++
++    static
++    {
++        net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, CHESTCONTENT, 8, 8);
++        net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++    }
+ }

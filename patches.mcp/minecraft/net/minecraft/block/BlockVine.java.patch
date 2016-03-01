@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockVine.java
++++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
+@@ -25,7 +25,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockVine extends Block
++public class BlockVine extends Block implements net.minecraftforge.common.IShearable
+ {
+     public static final PropertyBool UP = PropertyBool.create("up");
+     public static final PropertyBool NORTH = PropertyBool.create("north");
+@@ -387,13 +387,7 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+     {
+-        if (!worldIn.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.shears)
+         {
+-            player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
+-            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.vine, 1, 0));
+-        }
+-        else
+-        {
+             super.harvestBlock(worldIn, player, pos, state, te);
+         }
+     }
+@@ -474,4 +468,14 @@
+ 
+         return i;
+     }
++    /*************************FORGE START***********************************/
++    @Override public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity){ return true; }
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
++    @Override
++    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    {
++        return java.util.Arrays.asList(new ItemStack(this, 1));
++    }
++    /*************************FORGE END***********************************/
++
+ }

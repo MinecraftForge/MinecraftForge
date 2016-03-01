@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
+@@ -40,28 +40,20 @@
+     public void decorate(World worldIn, Random rand, BlockPos pos)
+     {
+         super.decorate(worldIn, rand, pos);
+-        int i = 3 + rand.nextInt(6);
++        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Pre(worldIn, rand, pos));
++        WorldGenerator emeralds = new EmeraldGenerator();
++        if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, rand, emeralds, pos, net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.EMERALD))
++            emeralds.generate(worldIn, rand, pos);
+ 
+-        for (int j = 0; j < i; ++j)
++        for (int i = 0; i < 7; ++i)
+         {
+-            int k = rand.nextInt(16);
+-            int l = rand.nextInt(28) + 4;
+-            int i1 = rand.nextInt(16);
+-            BlockPos blockpos = pos.add(k, l, i1);
+-
+-            if (worldIn.getBlockState(blockpos).getBlock() == Blocks.stone)
+-            {
+-                worldIn.setBlockState(blockpos, Blocks.emerald_ore.getDefaultState(), 2);
+-            }
+-        }
+-
+-        for (i = 0; i < 7; ++i)
+-        {
+             int j1 = rand.nextInt(16);
+             int k1 = rand.nextInt(64);
+             int l1 = rand.nextInt(16);
++            if (net.minecraftforge.event.terraingen.TerrainGen.generateOre(worldIn, rand, theWorldGenerator, pos.add(j1, k1, l1), net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.SILVERFISH))
+             this.theWorldGenerator.generate(worldIn, rand, pos.add(j1, k1, l1));
+         }
++        net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS.post(new net.minecraftforge.event.terraingen.OreGenEvent.Post(worldIn, rand, pos));
+     }
+ 
+     public void genTerrainBlocks(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int p_180622_4_, int p_180622_5_, double p_180622_6_)
+@@ -97,4 +89,23 @@
+     {
+         return (new BiomeGenHills(p_180277_1_, false)).mutateHills(this);
+     }
++
++    private static class EmeraldGenerator extends WorldGenerator
++    {
++        @Override
++        public boolean generate(World worldIn, Random rand, BlockPos pos)
++        {
++            int count = 3 + rand.nextInt(6);
++            for (int i = 0; i < count; i++)
++            {
++                BlockPos blockpos = pos.add(rand.nextInt(16), rand.nextInt(28) + 4, rand.nextInt(16));
++
++                if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockHelper.forBlock(Blocks.stone)))
++                {
++                    worldIn.setBlockState(blockpos, Blocks.emerald_ore.getDefaultState(), 2);
++                }
++            }
++            return true;
++        }
++    }
+ }

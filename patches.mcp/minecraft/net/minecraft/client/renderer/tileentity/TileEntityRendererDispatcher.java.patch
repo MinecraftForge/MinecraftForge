@@ -1,0 +1,79 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
+@@ -102,11 +102,14 @@
+     {
+         if (tileentityIn.getDistanceSq(this.entityX, this.entityY, this.entityZ) < tileentityIn.getMaxRenderDistanceSquared())
+         {
++            if(!tileentityIn.hasFastRenderer())
++            {
+             int i = this.worldObj.getCombinedLight(tileentityIn.getPos(), 0);
+             int j = i % 65536;
+             int k = i / 65536;
+             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)j / 1.0F, (float)k / 1.0F);
+             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
++            }
+             BlockPos blockpos = tileentityIn.getPos();
+             this.renderTileEntityAt(tileentityIn, (double)blockpos.getX() - staticPlayerX, (double)blockpos.getY() - staticPlayerY, (double)blockpos.getZ() - staticPlayerZ, partialTicks, destroyStage);
+         }
+@@ -125,6 +128,11 @@
+         {
+             try
+             {
++                if(tileEntityIn.hasFastRenderer())
++                {
++                    tileentityspecialrenderer.renderTileEntityFast(tileEntityIn, x, y, z, partialTicks, destroyStage, batchBuffer.getWorldRenderer());
++                }
++                else
+                 tileentityspecialrenderer.renderTileEntityAt(tileEntityIn, x, y, z, partialTicks, destroyStage);
+             }
+             catch (Throwable throwable)
+@@ -146,4 +154,49 @@
+     {
+         return this.fontRenderer;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Buffer used for batched TESRs
++     */
++    private net.minecraft.client.renderer.Tessellator batchBuffer = new net.minecraft.client.renderer.Tessellator(0x200000);
++
++    /**
++     * Prepare for a batched TESR rendering.
++     * You probably shouldn't call this manually.
++     */
++    public void preDrawBatch()
++    {
++        batchBuffer.getWorldRenderer().begin(org.lwjgl.opengl.GL11.GL_QUADS, net.minecraft.client.renderer.vertex.DefaultVertexFormats.BLOCK);
++    }
++
++    /**
++     * Render all TESRs batched so far.
++     * You probably shouldn't call this manually.
++     */
++    public void drawBatch(int pass)
++    {
++        renderEngine.bindTexture(net.minecraft.client.renderer.texture.TextureMap.locationBlocksTexture);
++        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
++        GlStateManager.blendFunc(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
++        GlStateManager.enableBlend();
++        GlStateManager.disableCull();
++
++        if (net.minecraft.client.Minecraft.isAmbientOcclusionEnabled())
++        {
++            GlStateManager.shadeModel(org.lwjgl.opengl.GL11.GL_SMOOTH);
++        }
++        else
++        {
++            GlStateManager.shadeModel(org.lwjgl.opengl.GL11.GL_FLAT);
++        }
++
++        if(pass > 0)
++        {
++            batchBuffer.getWorldRenderer().sortVertexData((float)staticPlayerX, (float)staticPlayerY, (float)staticPlayerZ);
++        }
++        batchBuffer.draw();
++
++        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
++    }
+ }

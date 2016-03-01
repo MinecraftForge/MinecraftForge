@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCrops.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCrops.java
+@@ -81,11 +81,11 @@
+                 float f1 = 0.0F;
+                 IBlockState iblockstate = worldIn.getBlockState(blockpos.add(i, 0, j));
+ 
+-                if (iblockstate.getBlock() == Blocks.farmland)
++                if (iblockstate.getBlock().canSustainPlant(worldIn, blockpos.add(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)blockIn))
+                 {
+                     f1 = 1.0F;
+ 
+-                    if (((Integer)iblockstate.getValue(BlockFarmland.MOISTURE)).intValue() > 0)
++                    if (iblockstate.getBlock().isFertile(worldIn, blockpos.add(i, 0, j)))
+                     {
+                         f1 = 3.0F;
+                     }
+@@ -126,7 +126,7 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return (worldIn.getLight(pos) >= 8 || worldIn.canSeeSky(pos)) && this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
++        return (worldIn.getLight(pos) >= 8 || worldIn.canSeeSky(pos)) && worldIn.getBlockState(pos.down()).getBlock().canSustainPlant(worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+     }
+ 
+     protected Item getSeed()
+@@ -142,24 +142,6 @@
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, 0);
+-
+-        if (!worldIn.isRemote)
+-        {
+-            int i = ((Integer)state.getValue(AGE)).intValue();
+-
+-            if (i >= 7)
+-            {
+-                int j = 3 + fortune;
+-
+-                for (int k = 0; k < j; ++k)
+-                {
+-                    if (worldIn.rand.nextInt(15) <= i)
+-                    {
+-                        spawnAsEntity(worldIn, pos, new ItemStack(this.getSeed(), 1, 0));
+-                    }
+-                }
+-            }
+-        }
+     }
+ 
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+@@ -202,4 +184,26 @@
+     {
+         return new BlockState(this, new IProperty[] {AGE});
+     }
++
++    @Override
++    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        int age = ((Integer)state.getValue(AGE)).intValue();
++        Random rand = world instanceof World ? ((World)world).rand : new Random();
++
++        if (age >= 7)
++        {
++            int k = 3 + fortune;
++
++            for (int i = 0; i < 3 + fortune; ++i)
++            {
++                if (rand.nextInt(15) <= age)
++                {
++                    ret.add(new ItemStack(this.getSeed(), 1, 0));
++                }
++            }
++        }
++        return ret;
++    }
+ }

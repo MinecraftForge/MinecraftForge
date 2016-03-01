@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockButton.java
++++ ../src-work/minecraft/net/minecraft/block/BlockButton.java
+@@ -74,8 +74,7 @@
+ 
+     protected static boolean func_181088_a(World p_181088_0_, BlockPos p_181088_1_, EnumFacing p_181088_2_)
+     {
+-        BlockPos blockpos = p_181088_1_.offset(p_181088_2_);
+-        return p_181088_2_ == EnumFacing.DOWN ? World.doesBlockHaveSolidTopSurface(p_181088_0_, blockpos) : p_181088_0_.getBlockState(blockpos).getBlock().isNormalCube();
++        return p_181088_2_ == EnumFacing.DOWN && World.doesBlockHaveSolidTopSurface(p_181088_0_, p_181088_1_.down()) ? true : p_181088_0_.isSideSolid(p_181088_1_.offset(p_181088_2_), p_181088_2_.getOpposite());
+     }
+ 
+     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)

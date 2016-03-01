@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
+@@ -20,18 +20,12 @@
+     {
+         File file1 = this.getWorldDirectory();
+ 
+-        if (provider instanceof WorldProviderHell)
++        if (provider.getSaveFolder() != null)
+         {
+-            File file3 = new File(file1, "DIM-1");
++            File file3 = new File(file1, provider.getSaveFolder());
+             file3.mkdirs();
+             return new AnvilChunkLoader(file3);
+         }
+-        else if (provider instanceof WorldProviderEnd)
+-        {
+-            File file2 = new File(file1, "DIM1");
+-            file2.mkdirs();
+-            return new AnvilChunkLoader(file2);
+-        }
+         else
+         {
+             return new AnvilChunkLoader(file1);

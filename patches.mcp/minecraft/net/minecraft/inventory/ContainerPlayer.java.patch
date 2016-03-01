@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -43,7 +43,8 @@
+                 }
+                 public boolean isItemValid(ItemStack stack)
+                 {
+-                    return stack == null ? false : (stack.getItem() instanceof ItemArmor ? ((ItemArmor)stack.getItem()).armorType == k_f : (stack.getItem() != Item.getItemFromBlock(Blocks.pumpkin) && stack.getItem() != Items.skull ? false : k_f == 0));
++                    if (stack == null) return false;
++                    return stack.getItem().isValidArmor(stack, k_f, thePlayer);
+                 }
+                 @SideOnly(Side.CLIENT)
+                 public String getSlotTexture()

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
+@@ -279,7 +279,7 @@
+ 
+             Block block = this.worldObj.getBlockState(blockpos.down()).getBlock();
+ 
+-            if (block == Blocks.grass || block.getMaterial() == Material.leaves)
++            if (block == Blocks.grass || block.isLeaves(worldObj, blockpos.down()))
+             {
+                 return true;
+             }

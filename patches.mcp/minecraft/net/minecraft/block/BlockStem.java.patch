@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStem.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
+@@ -94,7 +94,7 @@
+                     pos = pos.offset(EnumFacing.Plane.HORIZONTAL.random(rand));
+                     Block block = worldIn.getBlockState(pos.down()).getBlock();
+ 
+-                    if (worldIn.getBlockState(pos).getBlock().blockMaterial == Material.air && (block == Blocks.farmland || block == Blocks.dirt || block == Blocks.grass))
++                    if (worldIn.isAirBlock(pos) && (block.canSustainPlant(worldIn, pos.down(), EnumFacing.UP, this) || block == Blocks.dirt || block == Blocks.grass))
+                     {
+                         worldIn.setBlockState(pos, this.crop.getDefaultState());
+                     }
+@@ -148,8 +148,12 @@
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
++    }
+ 
+-        if (!worldIn.isRemote)
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
+         {
+             Item item = this.getSeedItem();
+ 
+@@ -159,13 +163,14 @@
+ 
+                 for (int j = 0; j < 3; ++j)
+                 {
+-                    if (worldIn.rand.nextInt(15) <= i)
++                    if (RANDOM.nextInt(15) <= i)
+                     {
+-                        spawnAsEntity(worldIn, pos, new ItemStack(item));
++                        ret.add(new ItemStack(item));
+                     }
+                 }
+             }
+         }
++        return ret;
+     }
+ 
+     protected Item getSeedItem()

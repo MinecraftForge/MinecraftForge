@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragon.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
+@@ -479,9 +479,9 @@
+                     BlockPos blockpos = new BlockPos(k1, l1, i2);
+                     Block block = this.worldObj.getBlockState(blockpos).getBlock();
+ 
+-                    if (block.getMaterial() != Material.air)
++                    if (!block.isAir(worldObj, new BlockPos(k1, l1, i2)))
+                     {
+-                        if (block != Blocks.barrier && block != Blocks.obsidian && block != Blocks.end_stone && block != Blocks.bedrock && block != Blocks.command_block && this.worldObj.getGameRules().getBoolean("mobGriefing"))
++                        if (block.canEntityDestroy(worldObj, new BlockPos(k1, l1, i2), this) && this.worldObj.getGameRules().getBoolean("mobGriefing"))
+                         {
+                             flag1 = this.worldObj.setBlockToAir(blockpos) || flag1;
+                         }

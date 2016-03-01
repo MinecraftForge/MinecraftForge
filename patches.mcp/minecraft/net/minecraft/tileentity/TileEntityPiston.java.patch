@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityPiston.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityPiston.java
+@@ -148,7 +148,8 @@
+             if (this.worldObj.getBlockState(this.pos).getBlock() == Blocks.piston_extension)
+             {
+                 this.worldObj.setBlockState(this.pos, this.pistonState, 3);
+-                this.worldObj.notifyBlockOfStateChange(this.pos, this.pistonState.getBlock());
++                if(!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(worldObj, pos, worldObj.getBlockState(pos), java.util.EnumSet.noneOf(EnumFacing.class)).isCanceled())
++                    this.worldObj.notifyBlockOfStateChange(this.pos, this.pistonState.getBlock());
+             }
+         }
+     }
+@@ -166,7 +167,8 @@
+             if (this.worldObj.getBlockState(this.pos).getBlock() == Blocks.piston_extension)
+             {
+                 this.worldObj.setBlockState(this.pos, this.pistonState, 3);
+-                this.worldObj.notifyBlockOfStateChange(this.pos, this.pistonState.getBlock());
++                if(!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(worldObj, pos, worldObj.getBlockState(pos), java.util.EnumSet.noneOf(EnumFacing.class)).isCanceled())
++                    this.worldObj.notifyBlockOfStateChange(this.pos, this.pistonState.getBlock());
+             }
+         }
+         else

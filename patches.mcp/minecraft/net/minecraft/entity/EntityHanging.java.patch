@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityHanging.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityHanging.java
+@@ -123,6 +123,9 @@
+                 {
+                     BlockPos blockpos1 = blockpos.offset(enumfacing, k).up(l);
+                     Block block = this.worldObj.getBlockState(blockpos1).getBlock();
++                    
++                    if ( block.isSideSolid( this.worldObj, blockpos1, this.facingDirection ))
++                        continue;
+ 
+                     if (!block.getMaterial().isSolid() && !BlockRedstoneDiode.isRedstoneRepeaterBlockID(block))
+                     {

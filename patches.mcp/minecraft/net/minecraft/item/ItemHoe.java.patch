@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemHoe.java
++++ ../src-work/minecraft/net/minecraft/item/ItemHoe.java
+@@ -34,10 +34,13 @@
+         }
+         else
+         {
++            int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(stack, playerIn, worldIn, pos);
++            if (hook != 0) return hook > 0;
++
+             IBlockState iblockstate = worldIn.getBlockState(pos);
+             Block block = iblockstate.getBlock();
+ 
+-            if (side != EnumFacing.DOWN && worldIn.getBlockState(pos.up()).getBlock().getMaterial() == Material.air)
++            if (side != EnumFacing.DOWN && worldIn.isAirBlock(pos.up()))
+             {
+                 if (block == Blocks.grass)
+                 {

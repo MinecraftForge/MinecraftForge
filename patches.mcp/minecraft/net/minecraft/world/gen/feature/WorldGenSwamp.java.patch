@@ -1,0 +1,94 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
+@@ -60,7 +60,7 @@
+                         {
+                             Block block = worldIn.getBlockState(blockpos$mutableblockpos.set(l, j, i1)).getBlock();
+ 
+-                            if (block.getMaterial() != Material.air && block.getMaterial() != Material.leaves)
++                            if (!block.isAir(worldIn, blockpos$mutableblockpos.set(l, j, i1)) && !block.isLeaves(worldIn, blockpos$mutableblockpos.set(l, j, i1)))
+                             {
+                                 if (block != Blocks.water && block != Blocks.flowing_water)
+                                 {
+@@ -86,11 +86,13 @@
+             }
+             else
+             {
+-                Block block1 = worldIn.getBlockState(position.down()).getBlock();
++                BlockPos down = position.down();
++                Block block1 = worldIn.getBlockState(down).getBlock();
++                boolean isSoil = block1.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-                if ((block1 == Blocks.grass || block1 == Blocks.dirt) && position.getY() < 256 - i - 1)
++                if (isSoil && position.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, position.down());
++                    block1.onPlantGrow(worldIn, position.down(),position);
+ 
+                     for (int l1 = position.getY() - 3 + i; l1 <= position.getY() + i; ++l1)
+                     {
+@@ -109,7 +111,7 @@
+                                 {
+                                     BlockPos blockpos = new BlockPos(k3, l1, j1);
+ 
+-                                    if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
++                                    if (worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
+                                     {
+                                         this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181649_b);
+                                     }
+@@ -120,9 +122,10 @@
+ 
+                     for (int i2 = 0; i2 < i; ++i2)
+                     {
+-                        Block block2 = worldIn.getBlockState(position.up(i2)).getBlock();
++                        BlockPos upN = position.up(i2);
++                        Block block2 = worldIn.getBlockState(upN).getBlock();
+ 
+-                        if (block2.getMaterial() == Material.air || block2.getMaterial() == Material.leaves || block2 == Blocks.flowing_water || block2 == Blocks.water)
++                        if (block2.isAir(worldIn, upN) || block2.isLeaves(worldIn, upN) || block2 == Blocks.flowing_water || block2 == Blocks.water)
+                         {
+                             this.setBlockAndNotifyAdequately(worldIn, position.up(i2), field_181648_a);
+                         }
+@@ -140,29 +143,29 @@
+                             {
+                                 blockpos$mutableblockpos1.set(i4, j2, j4);
+ 
+-                                if (worldIn.getBlockState(blockpos$mutableblockpos1).getBlock().getMaterial() == Material.leaves)
++                                if (worldIn.getBlockState(blockpos$mutableblockpos1).getBlock().isLeaves(worldIn, blockpos$mutableblockpos1))
+                                 {
+                                     BlockPos blockpos3 = blockpos$mutableblockpos1.west();
+                                     BlockPos blockpos4 = blockpos$mutableblockpos1.east();
+                                     BlockPos blockpos1 = blockpos$mutableblockpos1.north();
+                                     BlockPos blockpos2 = blockpos$mutableblockpos1.south();
+ 
+-                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos3).getBlock().getMaterial() == Material.air)
++                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos3).getBlock().isAir(worldIn,blockpos3))
+                                     {
+                                         this.func_181647_a(worldIn, blockpos3, BlockVine.EAST);
+                                     }
+ 
+-                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos4).getBlock().getMaterial() == Material.air)
++                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos4).getBlock().isAir(worldIn,blockpos4))
+                                     {
+                                         this.func_181647_a(worldIn, blockpos4, BlockVine.WEST);
+                                     }
+ 
+-                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos1).getBlock().getMaterial() == Material.air)
++                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos1).getBlock().isAir(worldIn,blockpos1))
+                                     {
+                                         this.func_181647_a(worldIn, blockpos1, BlockVine.SOUTH);
+                                     }
+ 
+-                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos2).getBlock().getMaterial() == Material.air)
++                                    if (rand.nextInt(4) == 0 && worldIn.getBlockState(blockpos2).getBlock().isAir(worldIn,blockpos2))
+                                     {
+                                         this.func_181647_a(worldIn, blockpos2, BlockVine.NORTH);
+                                     }
+@@ -191,7 +194,7 @@
+         this.setBlockAndNotifyAdequately(p_181647_1_, p_181647_2_, iblockstate);
+         int i = 4;
+ 
+-        for (p_181647_2_ = p_181647_2_.down(); p_181647_1_.getBlockState(p_181647_2_).getBlock().getMaterial() == Material.air && i > 0; --i)
++        for (p_181647_2_ = p_181647_2_.down(); p_181647_1_.getBlockState(p_181647_2_).getBlock().isAir(p_181647_1_,p_181647_2_) && i > 0; --i)
+         {
+             this.setBlockAndNotifyAdequately(p_181647_1_, p_181647_2_, iblockstate);
+             p_181647_2_ = p_181647_2_.down();

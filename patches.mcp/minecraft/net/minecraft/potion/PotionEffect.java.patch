@@ -1,0 +1,91 @@
+--- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
++++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
+@@ -18,6 +18,8 @@
+     @SideOnly(Side.CLIENT)
+     private boolean isPotionDurationMax;
+     private boolean showParticles;
++    /** List of ItemStack that can cure the potion effect **/
++    private java.util.List<net.minecraft.item.ItemStack> curativeItems;
+ 
+     public PotionEffect(int id, int effectDuration)
+     {
+@@ -36,6 +38,8 @@
+         this.amplifier = effectAmplifier;
+         this.isAmbient = ambient;
+         this.showParticles = showParticles;
++        this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++        this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.milk_bucket));
+     }
+ 
+     public PotionEffect(PotionEffect other)
+@@ -45,6 +49,7 @@
+         this.amplifier = other.amplifier;
+         this.isAmbient = other.isAmbient;
+         this.showParticles = other.showParticles;
++        this.curativeItems = other.curativeItems;
+     }
+ 
+     public void combine(PotionEffect other)
+@@ -190,7 +195,7 @@
+ 
+     public static PotionEffect readCustomPotionEffectFromNBT(NBTTagCompound nbt)
+     {
+-        int i = nbt.getByte("Id");
++        int i = nbt.getByte("Id") & 0xff;
+ 
+         if (i >= 0 && i < Potion.potionTypes.length && Potion.potionTypes[i] != null)
+         {
+@@ -223,4 +228,53 @@
+     {
+         return this.isPotionDurationMax;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /***
++     * Returns a list of curative items for the potion effect
++     * @return The list (ItemStack) of curative items for the potion effect
++     */
++    public java.util.List<net.minecraft.item.ItemStack> getCurativeItems()
++    {
++        return this.curativeItems;
++    }
++
++    /***
++     * Checks the given ItemStack to see if it is in the list of curative items for the potion effect
++     * @param stack The ItemStack being checked against the list of curative items for the potion effect
++     * @return true if the given ItemStack is in the list of curative items for the potion effect, false otherwise
++     */
++    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
++    {
++        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
++        {
++            if (curativeItem.isItemEqual(stack))
++            {
++                return true;
++            }
++        }
++
++        return false;
++    }
++
++    /***
++     * Sets the array of curative items for the potion effect
++     * @param curativeItems The list of ItemStacks being set to the potion effect
++     */
++    public void setCurativeItems(java.util.List<net.minecraft.item.ItemStack> curativeItems)
++    {
++        this.curativeItems = curativeItems;
++    }
++
++    /***
++     * Adds the given stack to list of curative items for the potion effect
++     * @param stack The ItemStack being added to the curative item list
++     */
++    public void addCurativeItem(net.minecraft.item.ItemStack stack)
++    {
++        if (!this.isCurativeItem(stack))
++        {
++            this.curativeItems.add(stack);
++        }
++    }
+ }

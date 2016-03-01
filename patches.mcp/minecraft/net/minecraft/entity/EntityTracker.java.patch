@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityTracker.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityTracker.java
+@@ -56,6 +56,8 @@
+ 
+     public void trackEntity(Entity p_72786_1_)
+     {
++        if (net.minecraftforge.fml.common.registry.EntityRegistry.instance().tryTrackingEntity(this, p_72786_1_)) return;
++
+         if (p_72786_1_ instanceof EntityPlayerMP)
+         {
+             this.trackEntity(p_72786_1_, 512, 2);
+@@ -331,4 +333,23 @@
+             }
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++
++    // don't expose the EntityTrackerEntry directly so mods can't mess with the data in there as easily
++    /**
++     * Get all players tracking the given Entity. The Entity must be part of the World that this Tracker belongs to.
++     * @param entity the Entity
++     * @return all players tracking the Entity
++     */
++    public Set<? extends net.minecraft.entity.player.EntityPlayer> getTrackingPlayers(Entity entity)
++    {
++        EntityTrackerEntry entry = (EntityTrackerEntry) trackedEntityHashTable.lookup(entity.getEntityId());
++        if (entry == null)
++            return java.util.Collections.emptySet();
++        else
++            return java.util.Collections.unmodifiableSet(entry.trackingPlayers);
++    }
++
++    /* ======================================== FORGE END   =====================================*/
+ }

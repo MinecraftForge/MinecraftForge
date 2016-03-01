@@ -1,0 +1,111 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/MapGenRavine.java
++++ ../src-work/minecraft/net/minecraft/world/gen/MapGenRavine.java
+@@ -128,7 +128,7 @@
+                                 {
+                                     IBlockState iblockstate = p_180707_5_.getBlockState(j1, l1, k1);
+ 
+-                                    if (iblockstate.getBlock() == Blocks.flowing_water || iblockstate.getBlock() == Blocks.water)
++                                    if (isOceanBlock(p_180707_5_, j1, l1, k1, p_180707_3_, p_180707_4_))
+                                     {
+                                         flag2 = true;
+                                     }
+@@ -165,28 +165,12 @@
+                                         {
+                                             IBlockState iblockstate1 = p_180707_5_.getBlockState(j3, j2, i2);
+ 
+-                                            if (iblockstate1.getBlock() == Blocks.grass)
++                                            if (isTopBlock(p_180707_5_, j3, j2, i2, p_180707_3_, p_180707_4_))
+                                             {
+                                                 flag = true;
+                                             }
+ 
+-                                            if (iblockstate1.getBlock() == Blocks.stone || iblockstate1.getBlock() == Blocks.dirt || iblockstate1.getBlock() == Blocks.grass)
+-                                            {
+-                                                if (j2 - 1 < 10)
+-                                                {
+-                                                    p_180707_5_.setBlockState(j3, j2, i2, Blocks.flowing_lava.getDefaultState());
+-                                                }
+-                                                else
+-                                                {
+-                                                    p_180707_5_.setBlockState(j3, j2, i2, Blocks.air.getDefaultState());
+-
+-                                                    if (flag && p_180707_5_.getBlockState(j3, j2 - 1, i2).getBlock() == Blocks.dirt)
+-                                                    {
+-                                                        blockpos$mutableblockpos.set(j3 + p_180707_3_ * 16, 0, i2 + p_180707_4_ * 16);
+-                                                        p_180707_5_.setBlockState(j3, j2 - 1, i2, this.worldObj.getBiomeGenForCoords(blockpos$mutableblockpos).topBlock);
+-                                                    }
+-                                                }
+-                                            }
++                                            digBlock(p_180707_5_, j3, j2, i2, p_180707_3_, p_180707_4_, flag);
+                                         }
+                                     }
+                                 }
+@@ -221,4 +205,68 @@
+             }
+         }
+     }
++    protected boolean isOceanBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ)
++    {
++        net.minecraft.block.Block block = data.getBlockState(x, y, z).getBlock();
++        return block== Blocks.flowing_water || block == Blocks.water;
++    }
++
++    //Exception biomes to make sure we generate like vanilla
++    private boolean isExceptionBiome(net.minecraft.world.biome.BiomeGenBase biome)
++    {
++        if (biome == net.minecraft.world.biome.BiomeGenBase.beach) return true;
++        if (biome == net.minecraft.world.biome.BiomeGenBase.desert) return true;
++        if (biome == net.minecraft.world.biome.BiomeGenBase.mushroomIsland) return true;
++        if (biome == net.minecraft.world.biome.BiomeGenBase.mushroomIslandShore) return true;
++        return false;
++    }
++
++    //Determine if the block at the specified location is the top block for the biome, we take into account
++    //Vanilla bugs to make sure that we generate the map the same way vanilla does.
++    private boolean isTopBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ)
++    {
++        net.minecraft.world.biome.BiomeGenBase biome = worldObj.getBiomeGenForCoords(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
++        IBlockState state = data.getBlockState(x, y, z);
++        return (isExceptionBiome(biome) ? state.getBlock() == Blocks.grass : state.getBlock() == biome.topBlock);
++    }
++
++    /**
++     * Digs out the current block, default implementation removes stone, filler, and top block
++     * Sets the block to lava if y is less then 10, and air other wise.
++     * If setting to air, it also checks to see if we've broken the surface and if so
++     * tries to make the floor the biome's top block
++     *
++     * @param data Block data array
++     * @param index Pre-calculated index into block data
++     * @param x local X position
++     * @param y local Y position
++     * @param z local Z position
++     * @param chunkX Chunk X position
++     * @param chunkZ Chunk Y position
++     * @param foundTop True if we've encountered the biome's top block. Ideally if we've broken the surface.
++     */
++    protected void digBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)
++    {
++        net.minecraft.world.biome.BiomeGenBase biome = worldObj.getBiomeGenForCoords(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
++        IBlockState state = data.getBlockState(x, y, z);
++        IBlockState top = isExceptionBiome(biome) ? Blocks.grass.getDefaultState() : biome.topBlock;
++        IBlockState filler = isExceptionBiome(biome) ? Blocks.dirt.getDefaultState() : biome.fillerBlock;
++
++        if (state.getBlock() == Blocks.stone || state.getBlock() == top.getBlock() || state.getBlock() == filler.getBlock())
++        {
++            if (y < 10)
++            {
++                data.setBlockState(x, y, z, Blocks.lava.getDefaultState());
++            }
++            else
++            {
++                data.setBlockState(x, y, z, Blocks.air.getDefaultState());
++
++                if (foundTop && data.getBlockState(x, y - 1, z).getBlock() == filler.getBlock())
++                {
++                    data.setBlockState(x, y - 1, z, top.getBlock().getDefaultState());
++                }
++            }
++        }
++    }
+ }

@@ -1,0 +1,107 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
+@@ -143,7 +143,8 @@
+             }
+         }
+ 
+-        this.drawHoveringText(list, x, y);
++        FontRenderer font = stack.getItem().getFontRenderer(stack);
++        this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
+     }
+ 
+     protected void drawCreativeTabHoveringText(String tabName, int mouseX, int mouseY)
+@@ -153,6 +154,11 @@
+ 
+     protected void drawHoveringText(List<String> textLines, int x, int y)
+     {
++        drawHoveringText(textLines, x, y, fontRendererObj);   
++    }
++
++    protected void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font)
++    {
+         if (!textLines.isEmpty())
+         {
+             GlStateManager.disableRescaleNormal();
+@@ -163,7 +169,7 @@
+ 
+             for (String s : textLines)
+             {
+-                int j = this.fontRendererObj.getStringWidth(s);
++                int j = font.getStringWidth(s);
+ 
+                 if (j > i)
+                 {
+@@ -208,7 +214,7 @@
+             for (int k1 = 0; k1 < textLines.size(); ++k1)
+             {
+                 String s1 = (String)textLines.get(k1);
+-                this.fontRendererObj.drawStringWithShadow(s1, (float)l1, (float)i2, -1);
++                font.drawStringWithShadow(s1, (float)l1, (float)i2, -1);
+ 
+                 if (k1 == 0)
+                 {
+@@ -436,6 +442,7 @@
+         {
+             this.mc.ingameGUI.getChatGUI().addToSentMessages(msg);
+         }
++        if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.thePlayer, msg) != 0) return;
+ 
+         this.mc.thePlayer.sendChatMessage(msg);
+     }
+@@ -450,9 +457,15 @@
+ 
+                 if (guibutton.mousePressed(this.mc, mouseX, mouseY))
+                 {
++                    net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre event = new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.buttonList);
++                    if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++                        break;
++                    guibutton = event.button;
+                     this.selectedButton = guibutton;
+                     guibutton.playPressSound(this.mc.getSoundHandler());
+                     this.actionPerformed(guibutton);
++                    if (this.equals(this.mc.currentScreen))
++                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post(this, event.button, this.buttonList));
+                 }
+             }
+         }
+@@ -482,8 +495,12 @@
+         this.fontRendererObj = mc.fontRendererObj;
+         this.width = width;
+         this.height = height;
++        if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.buttonList)))
++        {
+         this.buttonList.clear();
+         this.initGui();
++        }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.buttonList));
+     }
+ 
+     public void func_183500_a(int p_183500_1_, int p_183500_2_)
+@@ -502,7 +519,9 @@
+         {
+             while (Mouse.next())
+             {
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre(this))) continue;
+                 this.handleMouseInput();
++                if (this.equals(this.mc.currentScreen)) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Post(this));
+             }
+         }
+ 
+@@ -510,7 +529,9 @@
+         {
+             while (Keyboard.next())
+             {
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Pre(this))) continue;
+                 this.handleKeyboardInput();
++                if (this.equals(this.mc.currentScreen)) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Post(this));
+             }
+         }
+     }
+@@ -570,6 +591,7 @@
+     public void drawDefaultBackground()
+     {
+         this.drawWorldBackground(0);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+     }
+ 
+     public void drawWorldBackground(int tint)

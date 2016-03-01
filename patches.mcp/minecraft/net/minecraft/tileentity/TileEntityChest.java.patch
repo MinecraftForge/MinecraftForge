@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
+@@ -186,6 +186,7 @@
+     {
+         super.updateContainingBlockInfo();
+         this.adjacentChestChecked = false;
++        doubleChestHandler = null;
+     }
+ 
+     @SuppressWarnings("incomplete-switch")
+@@ -468,4 +469,24 @@
+             this.chestContents[i] = null;
+         }
+     }
++
++    public net.minecraftforge.items.VanillaDoubleChestItemHandler doubleChestHandler;
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if(doubleChestHandler == null || doubleChestHandler.needsRefresh())
++                doubleChestHandler = net.minecraftforge.items.VanillaDoubleChestItemHandler.get(this);
++            if (doubleChestHandler != null && doubleChestHandler != net.minecraftforge.items.VanillaDoubleChestItemHandler.NO_ADJACENT_CHESTS_INSTANCE)
++                return (T) doubleChestHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    public net.minecraftforge.items.IItemHandler getSingleChestHandler()
++    {
++        return super.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
++    }
+ }

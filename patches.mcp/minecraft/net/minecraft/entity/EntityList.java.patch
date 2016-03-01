@@ -1,0 +1,68 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityList.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
+@@ -88,6 +88,7 @@
+ 
+     public static void addMapping(Class <? extends Entity > entityClass, String entityName, int id)
+     {
++        if (id < 0 || id > 255) throw new IllegalArgumentException("Attempted to register a entity with invalid ID: " + id + " Name: " + entityName + " Class: " + entityClass);
+         if (stringToClassMapping.containsKey(entityName))
+         {
+             throw new IllegalArgumentException("ID is already registered: " + entityName);
+@@ -151,9 +152,10 @@
+             nbt.removeTag("Type");
+         }
+ 
++        Class <? extends Entity > oclass = null;
+         try
+         {
+-            Class <? extends Entity > oclass = (Class)stringToClassMapping.get(nbt.getString("id"));
++            oclass = stringToClassMapping.get(nbt.getString("id"));
+ 
+             if (oclass != null)
+             {
+@@ -167,7 +169,17 @@
+ 
+         if (entity != null)
+         {
++            try
++            {
+             entity.readFromNBT(nbt);
++            }
++            catch (Exception e)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        nbt.getString("id"), oclass.getName());
++                entity = null;
++            }
+         }
+         else
+         {
+@@ -343,7 +355,9 @@
+ 
+     public static class EntityEggInfo
+         {
++            @Deprecated // This is not always a valid number in the global ID list.
+             public final int spawnedID;
++            public final String name;
+             public final int primaryColor;
+             public final int secondaryColor;
+             public final StatBase field_151512_d;
+@@ -356,6 +370,17 @@
+                 this.secondaryColor = spotColor;
+                 this.field_151512_d = StatList.getStatKillEntity(this);
+                 this.field_151513_e = StatList.getStatEntityKilledBy(this);
++                this.name = EntityList.getStringFromID(id);
+             }
++
++            public EntityEggInfo(String name, int primaryColor, int secondaryColor)
++            {
++                this.spawnedID = -1;
++                this.name = name;
++                this.primaryColor = primaryColor;
++                this.secondaryColor = secondaryColor;
++                this.field_151512_d = (new StatBase("stat.killEntity."     + name, new net.minecraft.util.ChatComponentTranslation("stat.entityKill",     new net.minecraft.util.ChatComponentTranslation("entity." + name + ".name")))).registerStat();
++                this.field_151513_e = (new StatBase("stat.entityKilledBy." + name, new net.minecraft.util.ChatComponentTranslation("stat.entityKilledBy", new net.minecraft.util.ChatComponentTranslation("entity." + name + ".name")))).registerStat();
++            }
+         }
+ }

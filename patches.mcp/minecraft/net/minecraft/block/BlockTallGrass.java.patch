@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTallGrass.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTallGrass.java
+@@ -23,7 +23,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class BlockTallGrass extends BlockBush implements IGrowable
++public class BlockTallGrass extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable
+ {
+     public static final PropertyEnum<BlockTallGrass.EnumType> TYPE = PropertyEnum.<BlockTallGrass.EnumType>create("type", BlockTallGrass.EnumType.class);
+ 
+@@ -43,7 +43,7 @@
+ 
+     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        return this.canPlaceBlockOn(worldIn.getBlockState(pos.down()).getBlock());
++        return super.canBlockStay(worldIn, pos, state);
+     }
+ 
+     public boolean isReplaceable(World worldIn, BlockPos pos)
+@@ -53,7 +53,7 @@
+ 
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+     {
+-        return rand.nextInt(8) == 0 ? Items.wheat_seeds : null;
++        return null;
+     }
+ 
+     public int quantityDroppedWithBonus(int fortune, Random random)
+@@ -63,13 +63,7 @@
+ 
+     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+     {
+-        if (!worldIn.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.shears)
+         {
+-            player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
+-            spawnAsEntity(worldIn, pos, new ItemStack(Blocks.tallgrass, 1, ((BlockTallGrass.EnumType)state.getValue(TYPE)).getMeta()));
+-        }
+-        else
+-        {
+             super.harvestBlock(worldIn, player, pos, state, te);
+         }
+     }
+@@ -204,4 +198,22 @@
+             }
+         }
+     }
++
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
++    @Override
++    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    {
++        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        ret.add(new ItemStack(Blocks.tallgrass, 1, ((BlockTallGrass.EnumType)world.getBlockState(pos).getValue(TYPE)).getMeta()));
++        return ret;
++    }
++    @Override
++    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        if (RANDOM.nextInt(8) != 0) return ret;
++        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM);
++        if (seed != null) ret.add(seed);
++        return ret;
++    }
+ }

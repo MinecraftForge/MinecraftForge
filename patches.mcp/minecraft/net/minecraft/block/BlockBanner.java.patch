@@ -1,0 +1,54 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
+@@ -85,22 +85,7 @@
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+-        TileEntity tileentity = worldIn.getTileEntity(pos);
+-
+-        if (tileentity instanceof TileEntityBanner)
+         {
+-            ItemStack itemstack = new ItemStack(Items.banner, 1, ((TileEntityBanner)tileentity).getBaseColor());
+-            NBTTagCompound nbttagcompound = new NBTTagCompound();
+-            tileentity.writeToNBT(nbttagcompound);
+-            nbttagcompound.removeTag("x");
+-            nbttagcompound.removeTag("y");
+-            nbttagcompound.removeTag("z");
+-            nbttagcompound.removeTag("id");
+-            itemstack.setTagInfo("BlockEntityTag", nbttagcompound);
+-            spawnAsEntity(worldIn, pos, itemstack);
+-        }
+-        else
+-        {
+             super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+         }
+     }
+@@ -133,6 +118,28 @@
+         }
+     }
+ 
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        TileEntity te = world.getTileEntity(pos);
++
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        if (te instanceof TileEntityBanner)
++        {
++            TileEntityBanner banner = (TileEntityBanner)te;
++            ItemStack item = new ItemStack(Items.banner, 1, banner.getBaseColor());
++            NBTTagCompound nbt = new NBTTagCompound();
++            TileEntityBanner.func_181020_a(nbt, banner.getBaseColor(), banner.func_181021_d());
++            item.setTagInfo("BlockEntityTag", nbt);
++            ret.add(item);
++        }
++        else
++        {
++            ret.add(new ItemStack(Items.banner, 1, 0));
++        }
++        return ret;
++    }
++
+     public static class BlockBannerHanging extends BlockBanner
+         {
+             public BlockBannerHanging()

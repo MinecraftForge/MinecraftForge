@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityAgeable.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityAgeable.java
+@@ -31,7 +31,7 @@
+         {
+             if (!this.worldObj.isRemote)
+             {
+-                Class <? extends Entity > oclass = EntityList.getClassFromID(itemstack.getMetadata());
++                Class <? extends Entity > oclass = EntityList.stringToClassMapping.get(net.minecraft.item.ItemMonsterPlacer.getEntityName(itemstack));
+ 
+                 if (oclass != null && this.getClass() == oclass)
+                 {

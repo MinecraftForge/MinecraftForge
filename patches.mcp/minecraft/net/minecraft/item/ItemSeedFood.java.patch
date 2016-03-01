@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSeedFood.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSeedFood.java
+@@ -6,7 +6,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
+ 
+-public class ItemSeedFood extends ItemFood
++public class ItemSeedFood extends ItemFood implements net.minecraftforge.common.IPlantable
+ {
+     private Block crops;
+     private Block soilId;
+@@ -28,7 +28,7 @@
+         {
+             return false;
+         }
+-        else if (worldIn.getBlockState(pos).getBlock() == this.soilId && worldIn.isAirBlock(pos.up()))
++        else if (worldIn.getBlockState(pos).getBlock().canSustainPlant(worldIn, pos, EnumFacing.UP, this) && worldIn.isAirBlock(pos.up()))
+         {
+             worldIn.setBlockState(pos.up(), this.crops.getDefaultState());
+             --stack.stackSize;
+@@ -39,4 +39,16 @@
+             return false;
+         }
+     }
++
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return net.minecraftforge.common.EnumPlantType.Crop;
++    }
++
++    @Override
++    public net.minecraft.block.state.IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return this.crops.getDefaultState();
++    }
+ }

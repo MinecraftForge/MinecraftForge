@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSword.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSword.java
+@@ -101,7 +101,9 @@
+ 
+     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+     {
+-        return this.material.getRepairItem() == repair.getItem() ? true : super.getIsRepairable(toRepair, repair);
++        ItemStack mat = this.material.getRepairItemStack();
++        if (mat != null && net.minecraftforge.oredict.OreDictionary.itemMatches(mat, repair, false)) return true;
++        return super.getIsRepairable(toRepair, repair);
+     }
+ 
+     public Multimap<String, AttributeModifier> getItemAttributeModifiers()

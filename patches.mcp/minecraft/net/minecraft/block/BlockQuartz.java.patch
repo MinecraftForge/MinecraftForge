@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockQuartz.java
++++ ../src-work/minecraft/net/minecraft/block/BlockQuartz.java
+@@ -90,6 +90,26 @@
+         return new BlockState(this, new IProperty[] {VARIANT});
+     }
+ 
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        IBlockState state = world.getBlockState(pos);
++        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        {
++            if (prop.getName().equals("variant") && prop.getValueClass() == EnumType.class)
++            {
++                EnumType current = (EnumType)state.getValue(prop);
++                EnumType next = current == EnumType.LINES_X ? EnumType.LINES_Y :
++                                current == EnumType.LINES_Y ? EnumType.LINES_Z :
++                                current == EnumType.LINES_Z ? EnumType.LINES_X : current;
++                if (next == current)
++                    return false;
++                world.setBlockState(pos, state.withProperty(prop, next));
++                return true;
++            }
++        }
++        return false;
++    }
++
+     public static enum EnumType implements IStringSerializable
+     {
+         DEFAULT(0, "default", "default"),

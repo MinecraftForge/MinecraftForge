@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
++++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
+@@ -65,6 +65,7 @@
+         return alreadyRegistered;
+     }
+ 
++    @SuppressWarnings("unused")
+     static void registerDispenserBehaviors()
+     {
+         BlockDispenser.dispenseBehaviorRegistry.putObject(Items.arrow, new BehaviorProjectileDispense()
+@@ -135,7 +136,7 @@
+                 double d0 = source.getX() + (double)enumfacing.getFrontOffsetX();
+                 double d1 = (double)((float)source.getBlockPos().getY() + 0.2F);
+                 double d2 = source.getZ() + (double)enumfacing.getFrontOffsetZ();
+-                Entity entity = ItemMonsterPlacer.spawnCreature(source.getWorld(), stack.getMetadata(), d0, d1, d2);
++                Entity entity = ItemMonsterPlacer.spawnCreature(source.getWorld(), ItemMonsterPlacer.getEntityName(stack), d0, d1, d2);
+ 
+                 if (entity instanceof EntityLivingBase && stack.hasDisplayName())
+                 {

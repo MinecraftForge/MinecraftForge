@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
+@@ -78,6 +78,7 @@
+             {
+                 TileEntityRendererDispatcher.instance.renderTileEntityAt(this.field_147718_c, 0.0D, 0.0D, 0.0D, 0.0F);
+             }
++            else if (block != Blocks.chest) net.minecraftforge.client.ForgeHooksClient.renderTileItem(itemStackIn.getItem(), itemStackIn.getMetadata());
+             else
+             {
+                 TileEntityRendererDispatcher.instance.renderTileEntityAt(this.field_147717_b, 0.0D, 0.0D, 0.0D, 0.0F);

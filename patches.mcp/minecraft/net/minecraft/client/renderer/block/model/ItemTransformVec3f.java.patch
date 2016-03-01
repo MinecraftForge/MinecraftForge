@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemTransformVec3f.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemTransformVec3f.java
+@@ -13,9 +13,14 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.lwjgl.util.vector.Vector3f;
+ 
++/*
++ * @deprecated use {@link net.minecraftforge.client.model.IModelState} and {@link net.minecraftforge.client.model.TRSRTransformation}
++ */
+ @SideOnly(Side.CLIENT)
+-public class ItemTransformVec3f
++@Deprecated
++public class ItemTransformVec3f implements net.minecraftforge.client.model.IModelState
+ {
++    public com.google.common.base.Optional<net.minecraftforge.client.model.TRSRTransformation> apply(com.google.common.base.Optional<? extends net.minecraftforge.client.model.IModelPart> part) { return net.minecraftforge.client.ForgeHooksClient.applyTransform(this, part); }
+     public static final ItemTransformVec3f DEFAULT = new ItemTransformVec3f(new Vector3f(), new Vector3f(), new Vector3f(1.0F, 1.0F, 1.0F));
+     public final Vector3f rotation;
+     public final Vector3f translation;

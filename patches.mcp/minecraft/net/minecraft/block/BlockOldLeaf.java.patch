@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockOldLeaf.java
++++ ../src-work/minecraft/net/minecraft/block/BlockOldLeaf.java
+@@ -142,11 +142,17 @@
+         if (!worldIn.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.shears)
+         {
+             player.triggerAchievement(StatList.mineBlockStatArray[Block.getIdFromBlock(this)]);
+-            spawnAsEntity(worldIn, pos, new ItemStack(Item.getItemFromBlock(this), 1, ((BlockPlanks.EnumType)state.getValue(VARIANT)).getMetadata()));
+         }
+         else
+         {
+             super.harvestBlock(worldIn, player, pos, state, te);
+         }
+     }
++
++    @Override
++    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    {
++        IBlockState state = world.getBlockState(pos);
++        return new java.util.ArrayList(java.util.Arrays.asList(new ItemStack(this, 1, ((BlockPlanks.EnumType)state.getValue(VARIANT)).getMetadata())));
++    }
+ }
