@@ -15,14 +15,14 @@
              {
 -                Block block = worldIn.getBlockState(position.down()).getBlock();
 +                BlockPos down = position.down();
-+                Block block = worldIn.getBlockState(down).getBlock();
-+                boolean isSoil = block.canSustainPlant(worldIn, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling);
++                IBlockState state = worldIn.getBlockState(down);
++                boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling);
  
 -                if ((block == Blocks.grass || block == Blocks.dirt) && position.getY() < 256 - i - 1)
 +                if (isSoil && position.getY() < 256 - i - 1)
                  {
 -                    this.func_175921_a(worldIn, position.down());
-+                    block.onPlantGrow(worldIn, down, position);
++                    state.getBlock().onPlantGrow(worldIn, down, position);
                      int k2 = 0;
  
                      for (int l2 = position.getY() + i; l2 >= position.getY() + j; --l2)

@@ -4,10 +4,10 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.BlockModelRenderer;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.util.BlockPos;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.ForgeModContainer;
@@ -32,20 +32,20 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     };
 
-    private final ThreadLocal<WorldRendererConsumer> wrFlat = new ThreadLocal<WorldRendererConsumer>();
-    private final ThreadLocal<WorldRendererConsumer> wrSmooth = new ThreadLocal<WorldRendererConsumer>();
-    private final ThreadLocal<WorldRenderer> lastRendererFlat = new ThreadLocal<WorldRenderer>();
-    private final ThreadLocal<WorldRenderer> lastRendererSmooth = new ThreadLocal<WorldRenderer>();
+    private final ThreadLocal<VertexBufferConsumer> wrFlat = new ThreadLocal<VertexBufferConsumer>();
+    private final ThreadLocal<VertexBufferConsumer> wrSmooth = new ThreadLocal<VertexBufferConsumer>();
+    private final ThreadLocal<VertexBuffer> lastRendererFlat = new ThreadLocal<VertexBuffer>();
+    private final ThreadLocal<VertexBuffer> lastRendererSmooth = new ThreadLocal<VertexBuffer>();
 
     @Override
-    public boolean renderModelStandard(IBlockAccess world, IBakedModel model, Block block, BlockPos pos, WorldRenderer wr, boolean checkSides)
+    public boolean renderModelStandard(IBlockAccess world, IBakedModel model, Block block, BlockPos pos, VertexBuffer wr, boolean checkSides)
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
             if(wr != lastRendererFlat.get())
             {
                 lastRendererFlat.set(wr);
-                WorldRendererConsumer newCons = new WorldRendererConsumer(wr);
+                VertexBufferConsumer newCons = new VertexBufferConsumer(wr);
                 wrFlat.set(newCons);
                 lighterFlat.get().setParent(newCons);
             }
@@ -59,14 +59,14 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelAmbientOcclusion(IBlockAccess world, IBakedModel model, Block block, BlockPos pos, WorldRenderer wr, boolean checkSides)
+    public boolean renderModelAmbientOcclusion(IBlockAccess world, IBakedModel model, Block block, BlockPos pos, VertexBuffer wr, boolean checkSides)
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
             if(wr != lastRendererSmooth.get())
             {
                 lastRendererSmooth.set(wr);
-                WorldRendererConsumer newCons = new WorldRendererConsumer(wr);
+                VertexBufferConsumer newCons = new VertexBufferConsumer(wr);
                 wrSmooth.set(newCons);
                 lighterSmooth.get().setParent(newCons);
             }
@@ -79,7 +79,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, IBlockAccess world, IBakedModel model, Block block, BlockPos pos, WorldRenderer wr, boolean checkSides)
+    public static boolean render(VertexLighterFlat lighter, IBlockAccess world, IBakedModel model, Block block, BlockPos pos, VertexBuffer wr, boolean checkSides)
     {
         lighter.setWorld(world);
         lighter.setBlock(block);

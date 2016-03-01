@@ -13,9 +13,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -113,7 +113,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 	protected int temperature = 295;
 
     protected int tickRate = 20;
-    protected EnumWorldBlockLayer renderLayer = EnumWorldBlockLayer.TRANSLUCENT;
+    protected BlockRenderLayer renderLayer = BlockRenderLayer.TRANSLUCENT;
     protected int maxScaledLight = 0;
 
     protected final String fluidName;
@@ -185,7 +185,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return this;
     }
 
-    public BlockFluidBase setRenderLayer(EnumWorldBlockLayer renderLayer)
+    public BlockFluidBase setRenderLayer(BlockRenderLayer renderLayer)
     {
         this.renderLayer = renderLayer;
         return this;
@@ -404,7 +404,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer()
+    public BlockRenderLayer getBlockLayer()
     {
         return this.renderLayer;
     }

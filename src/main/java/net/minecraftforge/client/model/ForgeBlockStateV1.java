@@ -17,7 +17,7 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.BlockStateLoader.Marker;

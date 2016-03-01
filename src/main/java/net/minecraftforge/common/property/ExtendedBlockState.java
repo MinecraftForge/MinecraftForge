@@ -7,7 +7,7 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 
 import com.google.common.base.Optional;
@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
-public class ExtendedBlockState extends BlockState
+public class ExtendedBlockState extends BlockStateContainer
 {
     private final ImmutableSet<IUnlistedProperty<?>> unlistedProperties;
 
@@ -32,7 +32,7 @@ public class ExtendedBlockState extends BlockState
         }
         this.unlistedProperties = builder.build();
     }
-    
+
     public Collection<IUnlistedProperty<?>> getUnlistedProperties()
     {
         return unlistedProperties;
@@ -143,13 +143,13 @@ public class ExtendedBlockState extends BlockState
             this.normalMap = map;
             super.buildPropertyValueTable(map);
         }
-        
+
         private ExtendedStateImplementation setMap(@SuppressWarnings("rawtypes") Map<Map<IProperty, Comparable>, BlockState.StateImplementation> map)
         {
             this.normalMap = map;
             return this;
         }
-        
+
         public IBlockState getClean()
         {
             return this.normalMap.get(getProperties());

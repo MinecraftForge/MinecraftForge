@@ -6,7 +6,7 @@
              BlockPos blockpos = position.down();
 -            Block block = worldIn.getBlockState(blockpos).getBlock();
 +            net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
-+            boolean isSoil = state.getBlock().canSustainPlant(worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
++            boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
  
 -            if (block != Blocks.grass && block != Blocks.dirt)
 +            if (!(isSoil && position.getY() < 256 - i - 1))

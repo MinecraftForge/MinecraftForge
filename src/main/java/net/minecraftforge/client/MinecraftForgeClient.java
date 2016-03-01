@@ -9,8 +9,8 @@ import java.util.BitSet;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.client.renderer.RegionRenderCache;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,7 +26,7 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
-    public static EnumWorldBlockLayer getRenderLayer()
+    public static BlockRenderLayer getRenderLayer()
     {
         return ForgeHooksClient.renderLayer.get();
     }

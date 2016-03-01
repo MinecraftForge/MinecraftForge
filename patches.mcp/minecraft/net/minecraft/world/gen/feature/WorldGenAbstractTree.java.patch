@@ -8,6 +8,6 @@
 +    public boolean isReplaceable(World world, BlockPos pos)
 +    {
 +        net.minecraft.block.state.IBlockState state = world.getBlockState(pos);
-+        return state.getBlock().isAir(world, pos) || state.getBlock().isLeaves(world, pos) || state.getBlock().isWood(world, pos) || func_150523_a(state.getBlock());
++        return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos) || state.getBlock().isWood(world, pos) || func_150523_a(state.getBlock());
 +    }
  }

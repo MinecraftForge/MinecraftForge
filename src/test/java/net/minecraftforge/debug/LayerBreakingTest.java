@@ -14,12 +14,12 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ISmartBlockModel;
@@ -133,9 +133,9 @@ public class LayerBreakingTest
         }
 
         @Override
-        public boolean canRenderInLayer(EnumWorldBlockLayer layer)
+        public boolean canRenderInLayer(BlockRenderLayer layer)
         {
-            return layer == EnumWorldBlockLayer.SOLID || layer == EnumWorldBlockLayer.TRANSLUCENT;
+            return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
         }
     };
 
@@ -196,7 +196,7 @@ public class LayerBreakingTest
                 solid = new TestBakedModel(models.getModelForState(Blocks.cobblestone.getDefaultState()).getParticleTexture(), false);
             }
 
-            if (net.minecraftforge.client.MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.SOLID)
+            if (net.minecraftforge.client.MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID)
             {
                 return solid;
             }

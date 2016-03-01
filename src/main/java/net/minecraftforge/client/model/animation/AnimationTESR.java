@@ -5,10 +5,10 @@ import java.util.concurrent.TimeUnit;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.IModelState;
@@ -47,7 +47,7 @@ public class AnimationTESR<T extends TileEntity & IAnimationProvider> extends Fa
         return modelCache.getUnchecked(Pair.of(state, modelState));
     }
 
-    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, WorldRenderer renderer)
+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, VertexBuffer renderer)
     {
         if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();

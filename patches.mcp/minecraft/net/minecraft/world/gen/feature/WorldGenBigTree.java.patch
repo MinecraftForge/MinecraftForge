@@ -31,7 +31,7 @@
 -        Block block = this.world.getBlockState(this.basePos.down()).getBlock();
 +        BlockPos down = this.basePos.down();
 +        net.minecraft.block.state.IBlockState state = this.world.getBlockState(down);
-+        boolean isSoil = state.getBlock().canSustainPlant(this.world, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
++        boolean isSoil = state.getBlock().canSustainPlant(state, this.world, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
  
 -        if (block != Blocks.dirt && block != Blocks.grass && block != Blocks.farmland)
 +        if (!isSoil)

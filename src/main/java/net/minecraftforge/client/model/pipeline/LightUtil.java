@@ -1,7 +1,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -240,8 +240,8 @@ public class LightUtil
         if(tessellator == null)
         {
             Tessellator tes = Tessellator.getInstance();
-            WorldRenderer wr = tes.getWorldRenderer();
-            tessellator = new WorldRendererConsumer(wr);
+            VertexBuffer wr = tes.getVertexBuffer();
+            tessellator = new VertexBufferConsumer(wr);
         }
         return tessellator;
     }
@@ -257,16 +257,16 @@ public class LightUtil
     }
 
     // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(WorldRenderer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColorSlow(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
-        if(wr == Tessellator.getInstance().getWorldRenderer())
+        if(wr == Tessellator.getInstance().getVertexBuffer())
         {
             cons = getItemConsumer();
         }
         else
         {
-            cons = new ItemConsumer(new WorldRendererConsumer(wr));
+            cons = new ItemConsumer(new VertexBufferConsumer(wr));
         }
         float b = (float)(auxColor & 0xFF) / 0xFF;
         float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
@@ -277,7 +277,7 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(WorldRenderer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         wr.addVertexData(quad.getVertexData());
         if(quad instanceof IColoredBakedQuad)

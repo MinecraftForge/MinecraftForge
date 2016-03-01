@@ -17,21 +17,21 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -86,26 +86,26 @@ public class ModelLoaderRegistryDebug
         B3DLoader.instance.addDomain(MODID.toLowerCase());
         Item item = Item.getItemFromBlock(CustomModelBlock.instance);
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + CustomModelBlock.name, "inventory"));
-        
+
         OBJLoader.instance.addDomain(MODID.toLowerCase());
         Item item2 = Item.getItemFromBlock(OBJTesseractBlock.instance);
         ModelLoader.setCustomModelResourceLocation(item2, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJTesseractBlock.name, "inventory"));
-        
+
         Item item3 = Item.getItemFromBlock(OBJVertexColoring1.instance);
         ModelLoader.setCustomModelResourceLocation(item3, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJVertexColoring1.name, "inventory"));
-        
+
         Item item4 = Item.getItemFromBlock(OBJDirectionEye.instance);
         ModelLoader.setCustomModelResourceLocation(item4, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJDirectionEye.name, "inventory"));
-        
+
         Item item5 = Item.getItemFromBlock(OBJVertexColoring2.instance);
         ModelLoader.setCustomModelResourceLocation(item5, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJVertexColoring2.name, "inventory"));
-        
+
         Item item6 = Item.getItemFromBlock(OBJDirectionBlock.instance);
         ModelLoader.setCustomModelResourceLocation(item6, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJDirectionBlock.name, "inventory"));
-        
+
         Item item7 = Item.getItemFromBlock(OBJCustomDataBlock.instance);
         ModelLoader.setCustomModelResourceLocation(item7, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJCustomDataBlock.name, "inventory"));
-        
+
         Item item8 = Item.getItemFromBlock(OBJDynamicEye.instance);
         ModelLoader.setCustomModelResourceLocation(item8, 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + OBJDynamicEye.name, "inventory"));
     }
@@ -127,10 +127,10 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean isOpaqueCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
@@ -140,19 +140,19 @@ public class ModelLoaderRegistryDebug
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
-        
+
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
             return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
         }
-        
+
         @Override
         public int getMetaFromState(IBlockState state)
         {
             return ((EnumFacing) state.getValue(FACING)).getIndex();
         }
-        
+
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -174,13 +174,13 @@ public class ModelLoaderRegistryDebug
             }
             return false;
         }
-        
+
         @Override
-        public BlockState createBlockState()
+        public BlockStateContainer createBlockState()
         {
             return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{B3DLoader.B3DFrameProperty.instance});
         }
-        
+
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
             if (MathHelper.abs((float)entityIn.posX - (float)clickedBlock.getX()) < 2.0F && MathHelper.abs((float)entityIn.posZ - (float)clickedBlock.getZ()) < 2.0F)
@@ -217,29 +217,29 @@ public class ModelLoaderRegistryDebug
         public static final OBJTesseractBlock instance = new OBJTesseractBlock();
         public static final String name = "OBJTesseractBlock";
         private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
-        
+
         private OBJTesseractBlock()
         {
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
         }
-        
+
         @Override
         public TileEntity createNewTileEntity(World worldIn, int meta)
         {
             return new OBJTesseractTileEntity();
         }
-        
-        @Override
-        public boolean isOpaqueCube() { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
+
+        @Override
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
-        
+
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -247,7 +247,7 @@ public class ModelLoaderRegistryDebug
             OBJModel.OBJState retState = new OBJModel.OBJState(tileEntity == null ? Lists.newArrayList(OBJModel.Group.ALL) : tileEntity.visible, true);
             return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
         }
-        
+
         @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
         {
@@ -262,7 +262,7 @@ public class ModelLoaderRegistryDebug
             {
                 model = ModelLoaderRegistry.getMissingModel();
             }
-            
+
             if (player.isSneaking())
             {
                 tileEntity.decrement();
@@ -275,7 +275,7 @@ public class ModelLoaderRegistryDebug
                     tileEntity.increment();
                 }
             }
-            
+
             if (world.isRemote)
             {
                 OBJBakedModel objBaked = (OBJBakedModel) Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(state, world, pos);
@@ -284,25 +284,25 @@ public class ModelLoaderRegistryDebug
             world.markBlockRangeForRenderUpdate(pos, pos);
             return false;
         }
-        
+
         @Override
         public boolean hasTileEntity(IBlockState state)
         {
             return true;
         }
     }
-    
+
     public static class OBJTesseractTileEntity extends TileEntity
     {
         private int counter = 1;
         private int max = 2;
         public List<String> visible = new ArrayList<String>();
-        
+
         public OBJTesseractTileEntity()
         {
             this.visible.add(OBJModel.Group.ALL);
         }
-        
+
         public void increment()
         {
             if (this.visible.contains(OBJModel.Group.ALL)) this.visible.remove(OBJModel.Group.ALL);
@@ -313,10 +313,10 @@ public class ModelLoaderRegistryDebug
             }
             this.counter++;
             this.visible.add(Integer.toString(this.counter));
-            ChatComponentText text = new ChatComponentText("" + this.counter);
+            TextComponentString text = new TextComponentString("" + this.counter);
             if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
-        
+
         public void decrement()
         {
             if (this.visible.contains(OBJModel.Group.ALL)) this.visible.remove(OBJModel.Group.ALL);
@@ -327,10 +327,10 @@ public class ModelLoaderRegistryDebug
             }
             this.visible.remove(Integer.toString(this.counter));
             this.counter--;
-            ChatComponentText text = new ChatComponentText("" + this.counter);
+            TextComponentString text = new TextComponentString("" + this.counter);
             if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
-        
+
         public void reset()
         {
             this.counter = 1;
@@ -338,25 +338,25 @@ public class ModelLoaderRegistryDebug
             this.visible.clear();
             this.visible.add(Integer.toString(this.counter));
         }
-        
+
         public int getMax()
         {
             return this.max;
         }
-        
+
         public void setMax(int max)
         {
             this.max = max;
         }
-        
+
         public void setToMax()
         {
             this.counter = this.max;
         }
     }
-    
+
     /**
-     * This block demonstrates how to utilize the vertex coloring feature 
+     * This block demonstrates how to utilize the vertex coloring feature
      * of the OBJ loader. See 'vertex_coloring.obj' and 'vertex_coloring.mtl' in
      * 'test/resources/assets/forgedebugmodelloaderregistry/models/block/', to properly
      * utilize this feature an obj file must have 1 'usemtl' key before every vertex as shown,
@@ -369,28 +369,28 @@ public class ModelLoaderRegistryDebug
     {
         public static final OBJVertexColoring1 instance = new OBJVertexColoring1();
         public static final String name = "OBJVertexColoring1";
-        
+
         private OBJVertexColoring1()
         {
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(name);
         }
-        
-        @Override
-        public boolean isOpaqueCube() { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
+
+        @Override
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
     }
-    
+
     /**
      * This block demonstrates how to use IProperties and IUnlistedProperties together
      * in the same ExtendedBlockState. Similar to pistons, this block will face the player
-     * when placed. Unlike pistons, however; this block's model is an eyeball, because 
+     * when placed. Unlike pistons, however; this block's model is an eyeball, because
      * the OBJ loader can load spheres.
      * @author shadekiller666
      *
@@ -401,7 +401,7 @@ public class ModelLoaderRegistryDebug
         public static final OBJDirectionEye instance = new OBJDirectionEye();
         public static final String name = "OBJDirectionEye";
         private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {FACING}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
-        
+
         private OBJDirectionEye()
         {
             super(Material.iron);
@@ -409,47 +409,47 @@ public class ModelLoaderRegistryDebug
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(name);
         }
-        
+
         @Override
         public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
-        
+
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
             return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
         }
-        
+
         @Override
         public int getMetaFromState(IBlockState state)
         {
             return ((EnumFacing) state.getValue(FACING)).getIndex();
         }
-        
+
         @Override
         @SideOnly(Side.CLIENT)
         public IBlockState getStateForEntityRender(IBlockState state)
         {
             return this.getDefaultState().withProperty(FACING, EnumFacing.NORTH);
         }
-        
+
         @Override
-        public BlockState createBlockState()
+        public BlockStateContainer createBlockState()
         {
             return new ExtendedBlockState(this, new IProperty[] {FACING}, new IUnlistedProperty[] {OBJModel.OBJProperty.instance});
         }
-        
-        @Override
-        public boolean isOpaqueCube() { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
+
+        @Override
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
-        
+
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -458,7 +458,7 @@ public class ModelLoaderRegistryDebug
             OBJModel.OBJState retState = new OBJModel.OBJState(Arrays.asList(new String[]{OBJModel.Group.ALL}), true, transform);
             return ((IExtendedBlockState) state).withProperty(OBJModel.OBJProperty.instance, retState);
         }
-        
+
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
             if (MathHelper.abs((float)entityIn.posX - (float)clickedBlock.getX()) < 2.0F && MathHelper.abs((float)entityIn.posZ - (float)clickedBlock.getZ()) < 2.0F)
@@ -479,9 +479,9 @@ public class ModelLoaderRegistryDebug
             return entityIn.getHorizontalFacing();
         }
     }
-    
+
     /**
-     * This block uses the same model as CustomModelBlock3 does, but 
+     * This block uses the same model as CustomModelBlock3 does, but
      * this class allows the player to cycle the colors of each vertex to black
      * and then back to the original color when right clicking on the block.
      * @author shadekiller666
@@ -489,22 +489,22 @@ public class ModelLoaderRegistryDebug
      */
     public static class OBJVertexColoring2 extends Block implements ITileEntityProvider
     {
-        public static final OBJVertexColoring2 instance = new OBJVertexColoring2(); 
+        public static final OBJVertexColoring2 instance = new OBJVertexColoring2();
         public static final String name = "OBJVertexColoring2";
-        
+
         private OBJVertexColoring2()
         {
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(name);
         }
-        
+
         @Override
         public TileEntity createNewTileEntity(World worldIn, int meta)
         {
             return new OBJVertexColoring2TileEntity();
         }
-        
+
         @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
         {
@@ -515,7 +515,7 @@ public class ModelLoaderRegistryDebug
             return false;
         }
     }
-    
+
     public static class OBJVertexColoring2TileEntity extends TileEntity
     {
         private int index = 0;
@@ -523,9 +523,9 @@ public class ModelLoaderRegistryDebug
         private List<Vector4f> colorList = new ArrayList<Vector4f>();
         private boolean hasFilledList = false;
         private boolean shouldIncrement = true;
-        
+
         public OBJVertexColoring2TileEntity() {}
-        
+
         public void cycleColors()
         {
             if (this.worldObj.isRemote)
@@ -577,7 +577,7 @@ public class ModelLoaderRegistryDebug
             }
         }
     }
-    
+
     /**
      * This block is a debug block that faces the player when placed, like a piston.
      * @author shadekiller666
@@ -589,7 +589,7 @@ public class ModelLoaderRegistryDebug
         public static final OBJDirectionBlock instance = new OBJDirectionBlock();
         public static final String name = "OBJDirectionBlock";
         public ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
-        
+
         private OBJDirectionBlock()
         {
             super(Material.iron);
@@ -597,34 +597,34 @@ public class ModelLoaderRegistryDebug
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
         }
-        
-        @Override
-        public boolean isOpaqueCube() { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
+
+        @Override
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
-        
+
         @Override
         public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
         {
             return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
         }
-        
+
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
             return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
         }
-        
+
         @Override
         public int getMetaFromState(IBlockState state)
         {
             return ((EnumFacing) state.getValue(FACING)).getIndex();
         }
-        
+
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -634,13 +634,13 @@ public class ModelLoaderRegistryDebug
             OBJModel.OBJState newState = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true, transform);
             return ((IExtendedBlockState) state).withProperty(OBJModel.OBJProperty.instance, newState);
         }
-        
+
         @Override
-        public BlockState createBlockState()
+        public BlockStateContainer createBlockState()
         {
             return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
         }
-        
+
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
             if (MathHelper.abs((float)entityIn.posX - (float)clickedBlock.getX()) < 2.0F && MathHelper.abs((float)entityIn.posZ - (float)clickedBlock.getZ()) < 2.0F)
@@ -661,7 +661,7 @@ public class ModelLoaderRegistryDebug
             return entityIn.getHorizontalFacing().getOpposite();
         }
     }
-    
+
     /**
      * This block is a testing block that will be used to test the use
      * of "custom" data defined in a forge blockstate json. WIP, ignore for now.
@@ -676,7 +676,7 @@ public class ModelLoaderRegistryDebug
         public static final PropertyBool EAST = PropertyBool.create("east");
         public static final OBJCustomDataBlock instance = new OBJCustomDataBlock();
         public static final String name = "OBJCustomDataBlock";
-        
+
         private OBJCustomDataBlock()
         {
             super(Material.iron);
@@ -684,44 +684,44 @@ public class ModelLoaderRegistryDebug
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
         }
-        
+
         @Override
-        public boolean isOpaqueCube()
+        public boolean isOpaqueCube(IBlockState state)
         {
             return false;
         }
-        
+
         @Override
-        public boolean isFullCube()
+        public boolean isFullCube(IBlockState state)
         {
             return false;
         }
-        
+
         @Override
         public int getMetaFromState(IBlockState state)
         {
             return 0;
         }
-        
+
         public boolean canConnectTo(IBlockAccess world, BlockPos pos)
         {
             Block block = world.getBlockState(pos).getBlock();
             return block instanceof OBJCustomDataBlock;
         }
-        
+
         @Override
         public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
             return state.withProperty(NORTH, this.canConnectTo(world, pos.north())).withProperty(SOUTH, this.canConnectTo(world, pos.south())).withProperty(WEST, this.canConnectTo(world, pos.west())).withProperty(EAST, this.canConnectTo(world, pos.east()));
         }
-        
+
         @Override
-        public BlockState createBlockState()
+        public BlockStateContainer createBlockState()
         {
-            return new BlockState(this, new IProperty[]{NORTH, SOUTH, WEST, EAST});
+            return new BlockStateContainer(this, new IProperty[]{NORTH, SOUTH, WEST, EAST});
         }
     }
-    
+
     /**
      * This block uses the same model as CustomModelBlock4, but instead of facing the
      * player when placed, this one ALWAYS faces the player. I know, creepy right?
@@ -739,31 +739,31 @@ public class ModelLoaderRegistryDebug
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
         }
-        
+
         @Override
         public TileEntity createNewTileEntity(World worldIn, int meta)
         {
             return new OBJDynamicEyeTileEntity();
         }
-        
+
         @Override
-        public boolean isOpaqueCube()
+        public boolean isOpaqueCube(IBlockState state)
         {
             return false;
         }
-        
+
         @Override
-        public boolean isFullCube()
+        public boolean isFullCube(IBlockState state)
         {
             return false;
         }
-        
+
         @Override
         public boolean hasTileEntity(IBlockState state)
         {
             return true;
         }
-        
+
         @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
@@ -777,23 +777,23 @@ public class ModelLoaderRegistryDebug
             }
             return state;
         }
-        
+
         @Override
-        public BlockState createBlockState()
+        public BlockStateContainer createBlockState()
         {
             return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {OBJModel.OBJProperty.instance});
         }
     }
-    
+
     public static class OBJDynamicEyeTileEntity extends TileEntity implements ITickable
     {
         public OBJModel.OBJState state;
-        
+
         public OBJDynamicEyeTileEntity()
         {
             this.state = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true);
         }
-        
+
         @Override
         public void update()
         {

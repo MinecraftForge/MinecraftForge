@@ -2,7 +2,7 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 @Cancelable
 public class PlayerSetSpawnEvent extends PlayerEvent

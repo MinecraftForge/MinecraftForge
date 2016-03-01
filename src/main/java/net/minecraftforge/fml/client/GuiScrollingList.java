@@ -20,7 +20,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import org.lwjgl.input.Mouse;
@@ -263,7 +263,7 @@ public abstract class GuiScrollingList
         this.applyScrollLimits();
 
         Tessellator tess = Tessellator.getInstance();
-        WorldRenderer worldr = tess.getWorldRenderer();
+        VertexBuffer worldr = tess.getVertexBuffer();
 
         ScaledResolution res = new ScaledResolution(client);
         double scaleW = client.displayWidth / res.getScaledWidth_double();
@@ -390,12 +390,12 @@ public abstract class GuiScrollingList
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos(right, top, 0.0D).color(r1, g1, b1, a1).endVertex();
-        worldrenderer.pos(left,  top, 0.0D).color(r1, g1, b1, a1).endVertex();
-        worldrenderer.pos(left,  bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
-        worldrenderer.pos(right, bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
+        VertexBuffer VertexBuffer = tessellator.getVertexBuffer();
+        VertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        VertexBuffer.pos(right, top, 0.0D).color(r1, g1, b1, a1).endVertex();
+        VertexBuffer.pos(left,  top, 0.0D).color(r1, g1, b1, a1).endVertex();
+        VertexBuffer.pos(left,  bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
+        VertexBuffer.pos(right, bottom, 0.0D).color(r2, g2, b2, a2).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();

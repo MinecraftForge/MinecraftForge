@@ -44,7 +44,7 @@
 +    //Helper macro
 +    private boolean isAirLeaves(World world, BlockPos pos)
 +    {
-+        net.minecraft.block.Block block = world.getBlockState(pos).getBlock();
-+        return block.isAir(world, pos) || block.isLeaves(world, pos);
++        IBlockState state = world.getBlockState(pos);
++        return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos);
 +    }
  }

@@ -2,7 +2,7 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.

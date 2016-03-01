@@ -1,23 +1,23 @@
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 /**
  * Assumes VertexFormatElement is present in the WorlRenderer's vertex format.
  */
-public class WorldRendererConsumer implements IVertexConsumer
+public class VertexBufferConsumer implements IVertexConsumer
 {
     private static final float[] dummyColor = new float[]{ 1, 1, 1, 1 };
-    private final WorldRenderer renderer;
+    private final VertexBuffer renderer;
     private final int[] quadData;
     private int v = 0;
     private BlockPos offset = BlockPos.ORIGIN;
 
-    public WorldRendererConsumer(WorldRenderer renderer)
+    public VertexBufferConsumer(VertexBuffer renderer)
     {
         super();
         this.renderer = renderer;

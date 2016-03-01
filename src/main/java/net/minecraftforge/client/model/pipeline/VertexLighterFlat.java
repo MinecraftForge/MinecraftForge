@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 
@@ -154,7 +154,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 switch(element.getUsage())
                 {
                     case POSITION:
-                        // position adding moved to WorldRendererConsumer due to x and z not fitting completely into a float
+                        // position adding moved to VertexBufferConsumer due to x and z not fitting completely into a float
                         /*float[] pos = new float[4];
                         System.arraycopy(position[v], 0, pos, 0, position[v].length);
                         pos[0] += blockInfo.getBlockPos().getX();

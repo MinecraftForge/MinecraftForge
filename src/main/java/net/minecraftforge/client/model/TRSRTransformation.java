@@ -9,7 +9,7 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
-import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3i;
 

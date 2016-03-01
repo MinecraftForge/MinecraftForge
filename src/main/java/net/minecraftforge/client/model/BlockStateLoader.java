@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
-import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 

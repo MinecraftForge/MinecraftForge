@@ -263,7 +263,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 
-    public static IChatComponent onClientChat(byte type, IChatComponent message)
+    public static ITextComponent onClientChat(byte type, ITextComponent message)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.message;

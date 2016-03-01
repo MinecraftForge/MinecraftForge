@@ -1,7 +1,7 @@
 package net.minecraftforge.client.model;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 
 public interface ISmartItemModel extends IBakedModel
 {

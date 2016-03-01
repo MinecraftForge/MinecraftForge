@@ -34,14 +34,14 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.TextComponentString;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.ForgeHooks;
@@ -451,7 +451,7 @@ public class GuiModList extends GuiScreen
     {
         private ResourceLocation logoPath;
         private Dimension logoDims;
-        private List<IChatComponent> lines = null;
+        private List<ITextComponent> lines = null;
 
         public Info(int width, List<String> lines, ResourceLocation logoPath, Dimension logoDims)
         {
@@ -475,9 +475,9 @@ public class GuiModList extends GuiScreen
         @Override protected void drawBackground() {}
         @Override protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) { }
 
-        private List<IChatComponent> resizeContent(List<String> lines)
+        private List<ITextComponent> resizeContent(List<String> lines)
         {
-            List<IChatComponent> ret = new ArrayList<IChatComponent>();
+            List<ITextComponent> ret = new ArrayList<ITextComponent>();
             for (String line : lines)
             {
                 if (line == null)
@@ -486,7 +486,7 @@ public class GuiModList extends GuiScreen
                     continue;
                 }
 
-                IChatComponent chat = ForgeHooks.newChatWithLinks(line, false);
+                ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
                 ret.addAll(GuiUtilRenderComponents.func_178908_a(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
             }
             return ret;
@@ -524,7 +524,7 @@ public class GuiModList extends GuiScreen
             {
                 GlStateManager.enableBlend();
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
-                WorldRenderer wr = tess.getWorldRenderer();
+                VertexBuffer wr = tess.getVertexBuffer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
                 wr.begin(7, DefaultVertexFormats.POSITION_TEX);
                 wr.pos(offset,                  top + logoDims.height, zLevel).tex(0, 1).endVertex();
@@ -536,7 +536,7 @@ public class GuiModList extends GuiScreen
                 top += logoDims.height + 10;
             }
 
-            for (IChatComponent line : lines)
+            for (ITextComponent line : lines)
             {
                 if (line != null)
                 {
@@ -563,14 +563,14 @@ public class GuiModList extends GuiScreen
             if (lineIdx >= lines.size())
                 return;
 
-            IChatComponent line = lines.get(lineIdx);
+            ITextComponent line = lines.get(lineIdx);
             if (line != null)
             {
                 int k = -4;
-                for (IChatComponent part : (Iterable<IChatComponent>)line) {
-                    if (!(part instanceof ChatComponentText))
+                for (ITextComponent part : (Iterable<ITextComponent>)line) {
+                    if (!(part instanceof TextComponentString))
                         continue;
-                    k += GuiModList.this.fontRendererObj.getStringWidth(((ChatComponentText)part).getChatComponentText_TextValue());
+                    k += GuiModList.this.fontRendererObj.getStringWidth(((TextComponentString)part).getTextComponentString_TextValue());
                     if (k >= x)
                     {
                         GuiModList.this.handleComponentClick(part);

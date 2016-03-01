@@ -4,7 +4,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>
@@ -39,7 +39,7 @@ public class ServerChatEvent extends Event
         this.component = component;
     }
 
-    public void setComponent(IChatComponent e)
+    public void setComponent(ITextComponent e)
     {
         if (e instanceof ChatComponentTranslation)
             this.component = (ChatComponentTranslation)e;
@@ -47,7 +47,7 @@ public class ServerChatEvent extends Event
             this.component = new ChatComponentTranslation("%s", e);
     }
 
-    public IChatComponent getComponent()
+    public ITextComponent getComponent()
     {
         return this.component;
     }

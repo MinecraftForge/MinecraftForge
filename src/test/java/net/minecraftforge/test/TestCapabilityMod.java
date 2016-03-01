@@ -4,8 +4,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,8 +45,8 @@ public class TestCapabilityMod
     public void onInteract(PlayerInteractEvent event)
     {
         if (event.action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) return;
-        if (event.entityPlayer.getHeldItem() == null) return;
-        if (event.entityPlayer.getHeldItem().getItem() != Items.stick) return;
+        if (event.entityPlayer.inventory.getCurrentItem() == null) return;
+        if (event.entityPlayer.inventory.getCurrentItem().getItem() != Items.stick) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
         TileEntity te = event.world.getTileEntity(event.pos);
@@ -58,7 +58,7 @@ public class TestCapabilityMod
         }
         if (event.world.getBlockState(event.pos).getBlock() == Blocks.dirt)
         {
-            event.entityPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "" + EnumChatFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
+            event.entityPlayer.addChatMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
             event.setCanceled(true);
         }
     }

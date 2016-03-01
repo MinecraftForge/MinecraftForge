@@ -9,11 +9,13 @@
                          {
                              flag = false;
                          }
-@@ -79,13 +79,14 @@
+@@ -78,14 +78,15 @@
+     private boolean func_175927_a(BlockPos p_175927_1_, World worldIn)
      {
          BlockPos blockpos = p_175927_1_.down();
-         Block block = worldIn.getBlockState(blockpos).getBlock();
-+        boolean isSoil = block.canSustainPlant(worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+-        Block block = worldIn.getBlockState(blockpos).getBlock();
++        IBlockState state = worldIn.getBlockState(blockpos);
++        boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
  
 -        if ((block == Blocks.grass || block == Blocks.dirt) && p_175927_1_.getY() >= 2)
 +        if (isSoil && p_175927_1_.getY() >= 2)

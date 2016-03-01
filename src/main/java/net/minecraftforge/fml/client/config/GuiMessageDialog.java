@@ -4,13 +4,13 @@ import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 
 public class GuiMessageDialog extends GuiDisconnected
 {
     protected String buttonText;
 
-    public GuiMessageDialog(GuiScreen nextScreen, String title, IChatComponent message, String buttonText)
+    public GuiMessageDialog(GuiScreen nextScreen, String title, ITextComponent message, String buttonText)
     {
         super(nextScreen, title, message);
         this.buttonText = buttonText;

@@ -14,10 +14,10 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.common.FMLLog;
@@ -34,11 +34,11 @@ import com.google.gson.JsonParser;
 
 public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
 {
-    public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.<Optional<EnumWorldBlockLayer>, ModelResourceLocation>of());
+    public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.<Optional<BlockRenderLayer>, ModelResourceLocation>of());
 
-    private final ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models;
+    private final ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models;
 
-    public MultiLayerModel(ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models)
+    public MultiLayerModel(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models)
     {
         this.models = models;
     }
@@ -55,10 +55,10 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
         return ImmutableList.of();
     }
 
-    private static ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> buildModels(ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    private static ImmutableMap<Optional<BlockRenderLayer>, IFlexibleBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        ImmutableMap.Builder<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> builder = ImmutableMap.builder();
-        for(Optional<EnumWorldBlockLayer> key : models.keySet())
+        ImmutableMap.Builder<Optional<BlockRenderLayer>, IFlexibleBakedModel> builder = ImmutableMap.builder();
+        for(Optional<BlockRenderLayer> key : models.keySet())
         {
             IModel model;
             try
@@ -96,14 +96,14 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
     @Override
     public IModel process(ImmutableMap<String, String> customData)
     {
-        ImmutableMap.Builder<Optional<EnumWorldBlockLayer>, ModelResourceLocation> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<Optional<BlockRenderLayer>, ModelResourceLocation> builder = ImmutableMap.builder();
         for(String key : customData.keySet())
         {
             if("base".equals(key))
             {
-                builder.put(Optional.<EnumWorldBlockLayer>absent(), getLocation(customData.get(key)));
+                builder.put(Optional.<BlockRenderLayer>absent(), getLocation(customData.get(key)));
             }
-            for(EnumWorldBlockLayer layer : EnumWorldBlockLayer.values())
+            for(BlockRenderLayer layer : BlockRenderLayer.values())
             {
                 if(layer.toString().equals(key))
                 {
@@ -111,7 +111,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
                 }
             }
         }
-        ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models = builder.build();
+        ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models = builder.build();
         if(models.isEmpty()) return instance;
         return new MultiLayerModel(models);
     }
@@ -129,7 +129,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
 
     public static class MultiLayerBakedModel implements IFlexibleBakedModel, ISmartBlockModel, IPerspectiveAwareModel
     {
-        private final ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> models;
+        private final ImmutableMap<Optional<BlockRenderLayer>, IFlexibleBakedModel> models;
         private final VertexFormat format;
         private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;;
         private final IFlexibleBakedModel base;
@@ -145,7 +145,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
         };
 
         @Deprecated // remove 1.9
-        public MultiLayerBakedModel(ImmutableMap<Optional<EnumWorldBlockLayer>, ModelResourceLocation> models, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
+        public MultiLayerBakedModel(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
         {
             this(
                 buildModels(models, TRSRTransformation.identity(), format, defaultTextureGetter),
@@ -155,7 +155,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
             );
         }
 
-        public MultiLayerBakedModel(ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> models, IFlexibleBakedModel missing, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
+        public MultiLayerBakedModel(ImmutableMap<Optional<BlockRenderLayer>, IFlexibleBakedModel> models, IFlexibleBakedModel missing, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> cameraTransforms)
         {
             this.models = models;
             this.format = format;
@@ -178,7 +178,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
             quads = quadBuilder.build();
         }
 
-        private static ImmutableList<BakedQuad> buildQuads(ImmutableMap<Optional<EnumWorldBlockLayer>, IFlexibleBakedModel> models, Optional<EnumFacing> side)
+        private static ImmutableList<BakedQuad> buildQuads(ImmutableMap<Optional<BlockRenderLayer>, IFlexibleBakedModel> models, Optional<EnumFacing> side)
         {
             ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
             for(IBakedModel model : models.values())
@@ -240,7 +240,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
         @Override
         public IBakedModel handleBlockState(IBlockState state)
         {
-            Optional<EnumWorldBlockLayer> layer = Optional.of(MinecraftForgeClient.getRenderLayer());
+            Optional<BlockRenderLayer> layer = Optional.of(MinecraftForgeClient.getRenderLayer());
             if(!models.containsKey(layer))
             {
                 return missing;
