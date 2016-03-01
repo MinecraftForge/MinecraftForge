@@ -13,7 +13,7 @@
  
      private void registerVariantNames()
      {
-+    	this.variantNames.clear(); //FML clear this to prevent double ups.
++        this.variantNames.clear(); //FML clear this to prevent double ups.
          this.variantNames.put(Item.getItemFromBlock(Blocks.stone), Lists.newArrayList(new String[] {"stone", "granite", "granite_smooth", "diorite", "diorite_smooth", "andesite", "andesite_smooth"}));
          this.variantNames.put(Item.getItemFromBlock(Blocks.dirt), Lists.newArrayList(new String[] {"dirt", "coarse_dirt", "podzol"}));
          this.variantNames.put(Item.getItemFromBlock(Blocks.planks), Lists.newArrayList(new String[] {"oak_planks", "spruce_planks", "birch_planks", "jungle_planks", "acacia_planks", "dark_oak_planks"}));
@@ -50,7 +50,7 @@
  
      private IBakedModel bakeModel(ModelBlock modelBlockIn, ModelRotation modelRotationIn, boolean uvLocked)
      {
-+    	return bakeModel(modelBlockIn, (net.minecraftforge.client.model.ITransformation)modelRotationIn, uvLocked);
++        return bakeModel(modelBlockIn, (net.minecraftforge.client.model.ITransformation)modelRotationIn, uvLocked);
 +    }
 +
 +    protected IBakedModel bakeModel(ModelBlock modelBlockIn, net.minecraftforge.client.model.ITransformation modelRotationIn, boolean uvLocked)
@@ -78,7 +78,7 @@
  
      private BakedQuad makeBakedQuad(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, ModelRotation p_177589_5_, boolean p_177589_6_)
      {
-+    	return makeBakedQuad(p_177589_1_, p_177589_2_, p_177589_3_, p_177589_4_, (net.minecraftforge.client.model.ITransformation)p_177589_5_, p_177589_6_);
++        return makeBakedQuad(p_177589_1_, p_177589_2_, p_177589_3_, p_177589_4_, (net.minecraftforge.client.model.ITransformation)p_177589_5_, p_177589_6_);
 +    }
 +
 +    protected BakedQuad makeBakedQuad(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, net.minecraftforge.client.model.ITransformation p_177589_5_, boolean p_177589_6_)

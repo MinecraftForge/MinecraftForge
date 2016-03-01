@@ -14,7 +14,7 @@
  
      public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
      {
-+    	if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(entity, this, x, y, z))) return;
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(entity, this, x, y, z))) return;
          GlStateManager.pushMatrix();
          GlStateManager.disableCull();
          this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
@@ -45,7 +45,7 @@
  
      public void renderName(T entity, double x, double y, double z)
      {
-+    	if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Pre<T>(entity, this, x, y, z))) return;
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Pre<T>(entity, this, x, y, z))) return;
          if (this.canRenderName(entity))
          {
              double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);

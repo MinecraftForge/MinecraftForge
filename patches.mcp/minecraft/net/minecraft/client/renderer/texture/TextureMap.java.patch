@@ -58,10 +58,10 @@
  
 +            if (textureatlassprite.hasCustomLoader(resourceManager, resourcelocation))
 +            {
-+            	if (textureatlassprite.load(resourceManager, resourcelocation))
-+            	{
-+            		continue;
-+            	}
++                if (textureatlassprite.load(resourceManager, resourcelocation))
++                {
++                    continue;
++                }
 +            }
 +            else
              try
@@ -73,14 +73,14 @@
              {
 -                logger.error((String)("Unable to parse metadata from " + resourcelocation), (Throwable)runtimeexception);
 +                //logger.error((String)("Unable to parse metadata from " + resourcelocation), (Throwable)runtimeexception);
-+            	net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation, runtimeexception.getMessage());
++                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation, runtimeexception.getMessage());
                  continue;
              }
              catch (IOException ioexception)
              {
 -                logger.error((String)("Using missing texture, unable to load " + resourcelocation), (Throwable)ioexception);
 +                //logger.error((String)("Using missing texture, unable to load " + resourcelocation), (Throwable)ioexception);
-+            	net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation);
                  continue;
              }
              finally

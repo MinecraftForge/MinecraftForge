@@ -23,8 +23,8 @@
                  {
                      case MODEL:
 -                        return this.blockModelRenderer.renderModel(blockAccess, this.func_184389_a(state), state, pos, worldRendererIn, true);
-+                    	IBakedModel model = this.func_184389_a(state);
-+                    	state = state.getBlock().getExtendedState(state, blockAccess, pos);
++                        IBakedModel model = this.func_184389_a(state);
++                        state = state.getBlock().getExtendedState(state, blockAccess, pos);
 +                        return this.blockModelRenderer.renderModel(blockAccess, model, state, pos, worldRendererIn, true);
                      case ENTITYBLOCK_ANIMATED:
                          return false;

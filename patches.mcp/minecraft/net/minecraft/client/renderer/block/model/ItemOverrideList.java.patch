@@ -26,15 +26,15 @@
 +
 +    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
 +    {
-+    	net.minecraft.item.Item item = stack.getItem();
-+    	if (item != null && item.func_185040_i())
-+    	{
-+    		ResourceLocation location = func_188021_a(stack, world, entity);
-+    		if (location != null)
-+    		{
-+    			return Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(location, "inventory"));
-+    		}
-+    	}
-+		return originalModel;
++        net.minecraft.item.Item item = stack.getItem();
++        if (item != null && item.func_185040_i())
++        {
++            ResourceLocation location = func_188021_a(stack, world, entity);
++            if (location != null)
++            {
++                return Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(location, "inventory"));
++            }
++        }
++        return originalModel;
 +    }
  }

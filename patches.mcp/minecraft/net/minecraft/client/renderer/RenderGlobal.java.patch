@@ -44,7 +44,7 @@
                  {
                      for (Entity entity2 : classinheritancemultimap)
                      {
-+                    	if(!entity2.shouldRenderInPass(pass)) continue;
++                        if(!entity2.shouldRenderInPass(pass)) continue;
                          boolean flag = this.renderManager.shouldRender(entity2, camera, d0, d1, d2) || entity2.func_184215_y(this.mc.thePlayer);
  
                          if (flag)
@@ -89,7 +89,7 @@
  
      public void renderSky(float partialTicks, int pass)
      {
-+    	net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
++        net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
 +        if (renderer != null)
 +        {
 +            renderer.render(partialTicks, theWorld, mc);

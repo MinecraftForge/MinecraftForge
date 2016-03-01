@@ -27,7 +27,7 @@
  
              if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
              {
-+            	if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, partialTicks, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, partialTicks, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
                  this.func_178108_a(partialTicks, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
              }
          }

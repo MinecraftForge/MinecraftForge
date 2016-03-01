@@ -72,7 +72,7 @@
              {
 -                int j = (int)Math.round(13.0D - (double)stack.getItemDamage() * 13.0D / (double)stack.getMaxDamage());
 -                int i = (int)Math.round(255.0D - (double)stack.getItemDamage() * 255.0D / (double)stack.getMaxDamage());
-+            	double health = stack.getItem().getDurabilityForDisplay(stack);
++                double health = stack.getItem().getDurabilityForDisplay(stack);
 +                int j = (int)Math.round(13.0D - health * 13.0D);
 +                int i = (int)Math.round(255.0D - health * 255.0D);
                  GlStateManager.disableLighting();

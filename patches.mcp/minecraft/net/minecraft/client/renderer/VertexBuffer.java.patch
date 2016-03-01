@@ -29,6 +29,6 @@
 +
 +    public boolean isColorDisabled()
 +    {
-+    	return noColor;
++        return noColor;
 +    }
  }

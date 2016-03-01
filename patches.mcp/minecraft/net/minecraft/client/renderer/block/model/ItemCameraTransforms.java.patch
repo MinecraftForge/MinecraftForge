@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
-@@ -12,10 +12,13 @@
+@@ -12,6 +12,9 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.lwjgl.util.vector.Quaternion;
  
@@ -10,11 +10,6 @@
  @SideOnly(Side.CLIENT)
  public class ItemCameraTransforms
  {
--    public static final ItemCameraTransforms DEFAULT = new ItemCameraTransforms();
-+	public static final ItemCameraTransforms DEFAULT = new ItemCameraTransforms();
-     public static float field_181690_b = 0.0F;
-     public static float field_181691_c = 0.0F;
-     public static float field_181692_d = 0.0F;
 @@ -39,6 +42,7 @@
          this(ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT);
      }

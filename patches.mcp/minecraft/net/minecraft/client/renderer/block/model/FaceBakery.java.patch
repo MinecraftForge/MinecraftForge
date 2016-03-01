@@ -4,7 +4,7 @@
  
      public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, ModelRotation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
      {
-+    	return makeBakedQuad(posFrom, posTo, face, sprite, facing, (net.minecraftforge.client.model.ITransformation)modelRotationIn, partRotation, uvLocked, shade);
++        return makeBakedQuad(posFrom, posTo, face, sprite, facing, (net.minecraftforge.client.model.ITransformation)modelRotationIn, partRotation, uvLocked, shade);
 +    }
 +
 +    public BakedQuad makeBakedQuad(Vector3f posFrom, Vector3f posTo, BlockPartFace face, TextureAtlasSprite sprite, EnumFacing facing, net.minecraftforge.client.model.ITransformation modelRotationIn, BlockPartRotation partRotation, boolean uvLocked, boolean shade)
@@ -14,7 +14,7 @@
          if (uvLocked)
          {
 -            blockfaceuv = this.func_188010_a(face.blockFaceUV, facing, modelRotationIn);
-+        	// TODO fix uvlock for custom rotations
++            // TODO fix uvlock for custom rotations
 +            //blockfaceuv = this.func_188010_a(face.blockFaceUV, facing, modelRotationIn);
          }
  
@@ -35,7 +35,7 @@
  
      private int[] func_188012_a(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, EnumFacing p_188012_3_, float[] p_188012_4_, ModelRotation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_)
      {
-+    	return makeQuadVertexData(p_188012_1_, p_188012_2_, p_188012_3_, p_188012_4_, (net.minecraftforge.client.model.ITransformation)p_188012_5_, p_188012_6_, p_188012_7_);
++        return makeQuadVertexData(p_188012_1_, p_188012_2_, p_188012_3_, p_188012_4_, (net.minecraftforge.client.model.ITransformation)p_188012_5_, p_188012_6_, p_188012_7_);
 +    }
 +
 +    private int[] makeQuadVertexData(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, EnumFacing p_188012_3_, float[] p_188012_4_, net.minecraftforge.client.model.ITransformation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_)
@@ -54,7 +54,7 @@
      private void func_188015_a(int[] p_188015_1_, int p_188015_2_, EnumFacing p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, ModelRotation p_188015_7_, BlockPartRotation p_188015_8_, boolean p_188015_9_)
      {
 -        EnumFacing enumfacing = p_188015_7_.rotateFace(p_188015_3_);
-+    	fillVertexData(p_188015_1_, p_188015_2_, p_188015_3_, p_188015_4_, p_188015_5_, p_188015_6_, (net.minecraftforge.client.model.ITransformation)p_188015_7_, p_188015_8_, p_188015_9_);
++        fillVertexData(p_188015_1_, p_188015_2_, p_188015_3_, p_188015_4_, p_188015_5_, p_188015_6_, (net.minecraftforge.client.model.ITransformation)p_188015_7_, p_188015_8_, p_188015_9_);
 +    }
 +
 +    private void fillVertexData(int[] p_188015_1_, int p_188015_2_, EnumFacing p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, net.minecraftforge.client.model.ITransformation p_188015_7_, BlockPartRotation p_188015_8_, boolean p_188015_9_)
@@ -73,7 +73,7 @@
  
      public int func_188011_a(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, ModelRotation p_188011_4_)
      {
-+    	return rotateVertex(p_188011_1_, p_188011_2_, p_188011_3_, (net.minecraftforge.client.model.ITransformation)p_188011_4_);
++        return rotateVertex(p_188011_1_, p_188011_2_, p_188011_3_, (net.minecraftforge.client.model.ITransformation)p_188011_4_);
 +    }
 +
 +    public int rotateVertex(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, net.minecraftforge.client.model.ITransformation p_188011_4_)
@@ -86,7 +86,7 @@
          {
 -            this.rotateScale(p_188011_1_, new Vector3f(0.5F, 0.5F, 0.5F), p_188011_4_.getMatrix4d(), new Vector3f(1.0F, 1.0F, 1.0F));
 -            return p_188011_4_.rotateVertex(p_188011_2_, p_188011_3_);
-+        	net.minecraftforge.client.ForgeHooksClient.transform(p_188011_1_, p_188011_4_.getMatrix());
++            net.minecraftforge.client.ForgeHooksClient.transform(p_188011_1_, p_188011_4_.getMatrix());
 +            return p_188011_4_.rotate(p_188011_2_, p_188011_3_);
          }
      }
