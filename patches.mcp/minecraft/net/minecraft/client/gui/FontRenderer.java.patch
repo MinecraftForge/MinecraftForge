@@ -17,6 +17,24 @@
      }
  
      private void readFontTexture()
+@@ -106,7 +107,7 @@
+ 
+         try
+         {
+-            iresource = Minecraft.getMinecraft().getResourceManager().getResource(this.locationFontTexture);
++            iresource = getResource(this.locationFontTexture);
+             bufferedimage = TextureUtil.readBufferedImage(iresource.getInputStream());
+         }
+         catch (IOException ioexception)
+@@ -171,7 +172,7 @@
+ 
+         try
+         {
+-            iresource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("font/glyph_sizes.bin"));
++            iresource = getResource(new ResourceLocation("font/glyph_sizes.bin"));
+             iresource.getInputStream().read(this.glyphWidth);
+         }
+         catch (IOException ioexception)
 @@ -202,7 +203,7 @@
          int i = ch % 16 * 8;
          int j = ch / 16 * 8;
@@ -116,9 +134,9 @@
 +        renderEngine.bindTexture(location);
 +    }
 +
-+    protected InputStream getResourceInputStream(ResourceLocation location) throws IOException
++    protected IResource getResource(ResourceLocation location) throws IOException
 +    {
-+        return Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream();
++        return Minecraft.getMinecraft().getResourceManager().getResource(location);
 +    }
 +
      public int getColorCode(char character)

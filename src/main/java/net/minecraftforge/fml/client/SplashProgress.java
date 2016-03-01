@@ -75,9 +75,12 @@ import javax.imageio.stream.ImageInputStream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.DefaultResourcePack;
 import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.FolderResourcePack;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.SimpleResource;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
@@ -806,9 +809,10 @@ public class SplashProgress
         }
 
         @Override
-        protected InputStream getResourceInputStream(ResourceLocation location) throws IOException
+        protected IResource getResource(ResourceLocation location) throws IOException
         {
-            return Minecraft.getMinecraft().mcDefaultResourcePack.getInputStream(location);
+            DefaultResourcePack pack = Minecraft.getMinecraft().mcDefaultResourcePack;
+            return new SimpleResource(pack.getPackName(), location, pack.getInputStream(location), null, null);
         }
     }
 
