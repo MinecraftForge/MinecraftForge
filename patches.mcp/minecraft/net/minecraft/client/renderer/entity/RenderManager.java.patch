@@ -13,3 +13,15 @@
  
      public void setRenderPosition(double renderPosXIn, double renderPosYIn, double renderPosZIn)
      {
+@@ -253,9 +258,9 @@
+             IBlockState iblockstate = worldIn.getBlockState(new BlockPos(livingPlayerIn));
+             Block block = iblockstate.getBlock();
+ 
+-            if (block == Blocks.bed)
++            if (block.isBed(worldIn, new BlockPos(livingPlayerIn), (EntityLivingBase)livingPlayerIn))
+             {
+-                int i = ((EnumFacing)iblockstate.getValue(BlockBed.field_185512_D)).getHorizontalIndex();
++                int i = block.getBedDirection(worldIn, new BlockPos(livingPlayerIn)).getHorizontalIndex();
+                 this.playerViewY = (float)(i * 90 + 180);
+                 this.playerViewX = 0.0F;
+             }

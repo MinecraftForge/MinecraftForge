@@ -9,7 +9,53 @@
              float f2 = p_177077_9_.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GROUND).scale.y;
              GlStateManager.translate((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
  
-@@ -192,4 +192,25 @@
+@@ -114,16 +114,13 @@
+         GlStateManager.pushMatrix();
+         IBakedModel ibakedmodel = this.itemRenderer.func_184393_a(itemstack, entity.worldObj, (EntityLivingBase)null);
+         int j = this.func_177077_a(entity, x, y, z, partialTicks, ibakedmodel);
+-        float f = ibakedmodel.getItemCameraTransforms().ground.scale.x;
+-        float f1 = ibakedmodel.getItemCameraTransforms().ground.scale.y;
+-        float f2 = ibakedmodel.getItemCameraTransforms().ground.scale.z;
+         boolean flag1 = ibakedmodel.isGui3d();
+ 
+         if (!flag1)
+         {
+-            float f3 = -0.0F * (float)(j - 1) * 0.5F * f;
+-            float f4 = -0.0F * (float)(j - 1) * 0.5F * f1;
+-            float f5 = -0.09375F * (float)(j - 1) * 0.5F * f2;
++            float f3 = -0.0F * (float)(j - 1) * 0.5F;
++            float f4 = -0.0F * (float)(j - 1) * 0.5F;
++            float f5 = -0.09375F * (float)(j - 1) * 0.5F;
+             GlStateManager.translate(f3, f4, f5);
+         }
+ 
+@@ -144,10 +141,10 @@
+                     float f7 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                     float f9 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                     float f6 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+-                    GlStateManager.translate(f7, f9, f6);
++                    GlStateManager.translate(shouldSpreadItems() ? f7 : 0, shouldSpreadItems() ? f9 : 0, f6);
+                 }
+ 
+-                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
+                 this.itemRenderer.renderItem(itemstack, ibakedmodel);
+                 GlStateManager.popMatrix();
+             }
+@@ -162,10 +159,10 @@
+                     GlStateManager.translate(f8, f10, 0.0F);
+                 }
+ 
+-                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
+                 this.itemRenderer.renderItem(itemstack, ibakedmodel);
+                 GlStateManager.popMatrix();
+-                GlStateManager.translate(0.0F * f, 0.0F * f1, 0.09375F * f2);
++                GlStateManager.translate(0.0F, 0.0F, 0.09375F);
+             }
+         }
+ 
+@@ -192,4 +189,25 @@
      {
          return TextureMap.locationBlocksTexture;
      }

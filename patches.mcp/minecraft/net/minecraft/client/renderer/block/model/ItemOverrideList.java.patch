@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemOverrideList.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemOverrideList.java
+@@ -1,7 +1,10 @@
+ package net.minecraft.client.renderer.block.model;
+ 
+ import com.google.common.collect.Lists;
++
+ import java.util.List;
++
++import net.minecraft.client.Minecraft;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+@@ -27,6 +30,7 @@
+         }
+     }
+ 
++    @Deprecated
+     public ResourceLocation func_188021_a(ItemStack p_188021_1_, World p_188021_2_, EntityLivingBase p_188021_3_)
+     {
+         if (!this.field_188023_b.isEmpty())
+@@ -42,4 +46,18 @@
+ 
+         return null;
+     }
++
++    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
++    {
++    	net.minecraft.item.Item item = stack.getItem();
++    	if (item != null && item.func_185040_i())
++    	{
++    		ResourceLocation location = func_188021_a(stack, world, entity);
++    		if (location != null)
++    		{
++    			return Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(location, "inventory"));
++    		}
++    	}
++		return originalModel;
++    }
+ }
