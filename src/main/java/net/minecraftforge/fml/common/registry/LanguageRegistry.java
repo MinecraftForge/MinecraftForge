@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StringTranslate;
+import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -241,7 +241,7 @@ public class LanguageRegistry
         }
     }
 
-    public void injectLanguage(String language, HashMap<String, String> parsedLangFile)
+    public void injectLanguage(String language, Map<String, String> parsedLangFile)
     {
 
         Properties p = modLanguageData.get(language);
@@ -285,11 +285,11 @@ public class LanguageRegistry
                 String lang = matcher.group(2);
                 //FMLLog.fine("Injecting found translation data for lang %s in zip file %s at %s into language system", lang, source.getName(), ze.getName());
                 added.add(lang);
-                LanguageRegistry.instance().injectLanguage(lang, StringTranslate.parseLangFile(zf.getInputStream(ze)));
+                LanguageRegistry.instance().injectLanguage(lang, LanguageMap.parseLangFile(zf.getInputStream(ze)));
                 // Ensure en_US is available to StringTranslate on the server
                 if ("en_US".equals(lang) && side == Side.SERVER)
                 {
-                    StringTranslate.inject(zf.getInputStream(ze));
+                    LanguageMap.inject(zf.getInputStream(ze));
                 }
             }
         }
@@ -312,11 +312,11 @@ public class LanguageRegistry
             {
                 String lang = matcher.group(2);
                 FMLLog.fine("Injecting found translation assets for lang %s at %s into language system", lang, currPath);
-                LanguageRegistry.instance().injectLanguage(lang, StringTranslate.parseLangFile(new FileInputStream(file)));
+                LanguageRegistry.instance().injectLanguage(lang, LanguageMap.parseLangFile(new FileInputStream(file)));
                 // Ensure en_US is available to StringTranslate on the server
                 if ("en_US".equals(lang) && side == Side.SERVER)
                 {
-                    StringTranslate.inject(new FileInputStream(file));
+                    LanguageMap.inject(new FileInputStream(file));
                 }
             }
         }

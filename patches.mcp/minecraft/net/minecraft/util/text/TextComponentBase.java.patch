@@ -1,4 +1,6 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/util/text/TextComponentBase.java
++++ ../src-work/minecraft/net/minecraft/util/text/TextComponentBase.java
+@@ -74,7 +74,6 @@
          return stringbuilder.toString();
      }
  
@@ -6,4 +8,3 @@
      public final String getFormattedText()
      {
          StringBuilder stringbuilder = new StringBuilder();
-++++ END PATCH

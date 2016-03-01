@@ -1,5 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
+@@ -155,7 +155,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(field_188066_af);
++        replaceAllSimilarBlocks(field_188066_af, true);
+     }
+ 
+     private static void initMiningStats()
+@@ -177,7 +177,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(field_188065_ae);
++        replaceAllSimilarBlocks(field_188065_ae, false);
+     }
+ 
+     private static void initStats()
 @@ -201,7 +201,7 @@
              }
          }
@@ -9,6 +27,15 @@
      }
  
      private static void initItemDepleteStats()
+@@ -220,7 +220,7 @@
+             }
+         }
+ 
+-        replaceAllSimilarBlocks(objectBreakStats);
++        replaceAllSimilarBlocks(objectBreakStats, true);
+     }
+ 
+     private static void func_188054_f()
 @@ -240,7 +240,7 @@
              }
          }

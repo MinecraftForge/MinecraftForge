@@ -1,4 +1,6 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/util/math/BlockPos.java
++++ ../src-work/minecraft/net/minecraft/util/math/BlockPos.java
+@@ -270,6 +270,21 @@
          };
      }
  
@@ -20,13 +22,20 @@
      public static final class MutableBlockPos extends BlockPos
          {
              private int x;
-++++ END PATCH
-++++ REJECTED PATCH 2
-                 this.z = zIn;
-                 return this;
+@@ -333,6 +348,8 @@
+             {
+                 return new BlockPos(this);
+             }
++
++            @Override public BlockPos getImmutable() { return new BlockPos(this); }
+         }
+ 
+     public static final class PooledMutableBlockPos extends BlockPos
+@@ -443,5 +460,7 @@
+             {
+                 return this.func_185343_d(this.field_185347_c + p_185341_1_.getFrontOffsetX(), this.field_185348_d + p_185341_1_.getFrontOffsetY(), this.field_185349_e + p_185341_1_.getFrontOffsetZ());
              }
 +
 +            @Override public BlockPos getImmutable() { return new BlockPos(this); }
          }
  }
-++++ END PATCH

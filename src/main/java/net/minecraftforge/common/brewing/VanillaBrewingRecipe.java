@@ -1,11 +1,8 @@
 package net.minecraftforge.common.brewing;
 
-import java.util.List;
-
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemPotion;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionHelper;
 
 /**
@@ -21,7 +18,8 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public boolean isInput(ItemStack stack)
     {
-        return stack.getItem() instanceof ItemPotion || stack.getItem() == Items.glass_bottle;
+        Item item = stack.getItem();
+        return item == Items.potionitem || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.glass_bottle;
     }
 
     /**
@@ -30,7 +28,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public boolean isIngredient(ItemStack stack)
     {
-        return stack.getItem().isPotionIngredient(stack);
+        return PotionHelper.func_185205_a(stack);
     }
 
     /**
@@ -41,34 +39,14 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
-        if (ingredient != null && input != null && input.getItem() instanceof ItemPotion && isIngredient(ingredient))
+        if (ingredient != null && input != null && isIngredient(ingredient))
         {
-            int inputMeta = input.getMetadata();
-            int outputMeta = PotionHelper.applyIngredient(inputMeta, ingredient.getItem().getPotionEffect(ingredient));
-            if (inputMeta == outputMeta)
+            ItemStack result = PotionHelper.func_185212_d(ingredient, input);
+            if (result != input)
             {
-                return null;
+                return result;
             }
-
-            List<PotionEffect> oldEffects = Items.potionitem.getEffects(inputMeta);
-            List<PotionEffect> newEffects = Items.potionitem.getEffects(outputMeta);
-
-            boolean hasResult = false;
-            if ((inputMeta <= 0 || oldEffects != newEffects) && (oldEffects == null || !oldEffects.equals(newEffects) && newEffects != null))
-            {
-                hasResult = true;
-            }
-            else if (!ItemPotion.isSplash(inputMeta) && ItemPotion.isSplash(outputMeta))
-            {
-                hasResult = true;
-            }
-
-            if (hasResult)
-            {
-                ItemStack output = input.copy();
-                output.setItemDamage(outputMeta);
-                return output;
-            }
+            return null;
         }
 
         return null;

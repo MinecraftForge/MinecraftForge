@@ -1,8 +1,10 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/util/text/translation/LanguageMap.java
++++ ../src-work/minecraft/net/minecraft/util/text/translation/LanguageMap.java
+@@ -23,9 +23,29 @@
  
-     public StringTranslate()
+     public LanguageMap()
      {
-+        InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
++        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
 +        inject(this, inputstream);
 +    }
 +
@@ -11,26 +13,25 @@
 +        inject(instance, inputstream);
 +    }
 +
-+    private static void inject(StringTranslate inst, InputStream inputstream)
++    private static void inject(LanguageMap inst, InputStream inputstream)
 +    {
-+        java.util.HashMap<String, String> map = parseLangFile(inputstream);
++        Map<String, String> map = parseLangFile(inputstream);
 +        inst.languageList.putAll(map);
 +        inst.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
 +    }
 +
-+    public static java.util.HashMap<String,String> parseLangFile(InputStream inputstream)
++    public static Map<String, String> parseLangFile(InputStream inputstream)
 +    {
-+        java.util.HashMap<String,String> table = Maps.newHashMap();
++        Map<String, String> table = Maps.newHashMap();
          try
          {
--            InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
+-            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
 +            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
 +            if (inputstream == null) return table;
  
              for (String s : IOUtils.readLines(inputstream, Charsets.UTF_8))
              {
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -37,17 +57,18 @@
                      {
                          String s1 = astring[0];
                          String s2 = numericVariablePattern.matcher(astring[1]).replaceAll("%$1s");
@@ -42,13 +43,12 @@
  
 -            this.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
          }
--        catch (IOException var7)
-+        catch (Exception var7)
+         catch (IOException var7)
          {
              ;
          }
++        catch (Exception ex) {}
 +        return table;
      }
  
-     static StringTranslate getInstance()
-++++ END PATCH
+     static LanguageMap getInstance()

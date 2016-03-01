@@ -34,7 +34,7 @@
          this.username = usernameIn;
          this.playerID = playerIDIn;
          this.token = tokenIn;
-@@ -49,11 +66,13 @@
+@@ -49,14 +66,29 @@
          try
          {
              UUID uuid = UUIDTypeAdapter.fromString(this.getPlayerID());
@@ -50,3 +50,19 @@
          }
      }
  
++    /* ======================================== FORGE START ===================================== */
++    //For internal use only. Modders should never need to use this.
++    public void setProperties(com.mojang.authlib.properties.PropertyMap properties)
++    {
++        if(this.properties == null) this.properties = properties;
++    }
++
++    public boolean hasCachedProperties()
++    {
++        return properties != null;
++    }
++    /* ========================================= FORGE END ====================================== */
++
+     @SideOnly(Side.CLIENT)
+     public static enum Type
+     {
