@@ -58,16 +58,16 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
         GlStateManager.pushMatrix();
         GlStateManager.rotate(180, 0, 0, 1);
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getVertexBuffer();
+        VertexBuffer VertexBuffer = tessellator.getWorldRenderer();
         VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         VertexBuffer.setTranslation(-0.5, -1.5, -0.5);
 
         lighter.setParent(new VertexBufferConsumer(VertexBuffer));
         lighter.setWorld(entity.worldObj);
-        lighter.setBlock(Blocks.air);
+        lighter.setState(Blocks.air.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = bakedModel.getGeneralQuads();
+        List<BakedQuad> quads = bakedModel.func_188616_a(null, null, 0);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -79,7 +79,7 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = bakedModel.getFaceQuads(side);
+            quads = bakedModel.func_188616_a(null, side, 0);
             if(!quads.isEmpty())
             {
                 if(empty) lighter.updateBlockInfo();

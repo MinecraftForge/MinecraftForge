@@ -6,10 +6,13 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.model.VariantList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -20,6 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -55,11 +59,11 @@ public class BlockStateLoader
             {
                 case 1: // Version 1
                     ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
-                    List<ModelBlockDefinition.Variants> variants = Lists.newArrayList();
+                    Map<String, VariantList> variants = Maps.newHashMap();
 
                     for (Entry<String, Collection<ForgeBlockStateV1.Variant>> entry : v1.variants.asMap().entrySet())
                     {   // Convert Version1 variants into vanilla variants for the ModelBlockDefinition.
-                        List<ModelBlockDefinition.Variant> mcVars = Lists.newArrayList();
+                        List<Variant> mcVars = Lists.newArrayList();
                         for (ForgeBlockStateV1.Variant var : entry.getValue())
                         {
                             boolean uvLock = var.getUvLock().or(false);
@@ -68,14 +72,14 @@ public class BlockStateLoader
                             int weight = var.getWeight().or(1);
 
                             if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0 && var.getState().orNull() instanceof ModelRotation)
-                                mcVars.add(new ModelBlockDefinition.Variant(var.getModel(), (ModelRotation)var.getState().get(), uvLock, weight));
+                                mcVars.add(new Variant(var.getModel(), (ModelRotation)var.getState().get(), uvLock, weight));
                             else
                                 mcVars.add(new ForgeVariant(var.getModel(), var.getState().or(TRSRTransformation.identity()), uvLock, smooth, gui3d, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
                         }
-                        variants.add(new ModelBlockDefinition.Variants(entry.getKey(), mcVars));
+                        variants.put(entry.getKey(), new VariantList(mcVars));
                     }
 
-                    return new ModelBlockDefinition(variants);
+                    return new ModelBlockDefinition(variants, null);
 
                 default: //Unknown version.. try loading it as normal.
                     return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);
@@ -128,7 +132,7 @@ public class BlockStateLoader
         public ImmutableMap<String, String> getCustomData() { return customData; }
     }
 
-    private static class ForgeVariant extends ModelBlockDefinition.Variant implements ISmartVariant
+    private static class ForgeVariant extends Variant implements ISmartVariant
     {
         private final ImmutableMap<String, String> textures;
         private final ImmutableMap<String, SubModel> parts;
@@ -211,7 +215,7 @@ public class BlockStateLoader
                 models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.getTextures(), part.getCustomData()), partState));
             }
 
-            return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());
+            return new MultiModel(func_188046_a(), hasBase ? base : null, baseTr, models.build());
         }
 
         @Override

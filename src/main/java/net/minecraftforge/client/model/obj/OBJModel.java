@@ -53,7 +53,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-@SuppressWarnings("deprecation")
 public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel>
 {
     //private Gson GSON = new GsonBuilder().create();
@@ -95,7 +94,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
     }
 
     @Override
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
         builder.put(ModelLoader.White.loc.toString(), ModelLoader.White.instance);
@@ -1300,7 +1299,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public class OBJBakedModel implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
+    public class OBJBakedModel implements IPerspectiveAwareModel
     {
         private final OBJModel model;
         private IModelState state;
@@ -1323,12 +1322,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             this.quads = null;
         }
 
-        @Override
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
-            return Collections.emptyList();
-        }
-
+        // FIXME: merge with getQuads
         @Override
         public List<BakedQuad> getGeneralQuads()
         {
@@ -1479,7 +1473,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
 
         @Override
-        public boolean isBuiltInRenderer()
+        public boolean func_188618_c()
         {
             return false;
         }
@@ -1496,18 +1490,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             return ItemCameraTransforms.DEFAULT;
         }
 
-        @Override
-        public VertexFormat getFormat()
-        {
-            return format;
-        }
-
-        @Override
-        public IBakedModel handleItemState(ItemStack stack)
-        {
-            return this;
-        }
-
+        // FIXME: merge with getQuads
         @Override
         public OBJBakedModel handleBlockState(IBlockState state)
         {
@@ -1591,7 +1574,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
 
         @Override
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }

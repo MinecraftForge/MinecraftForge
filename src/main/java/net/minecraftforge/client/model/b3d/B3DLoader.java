@@ -16,6 +16,7 @@ import javax.vecmath.Vector3f;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -24,7 +25,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.animation.IClip;
@@ -127,65 +128,11 @@ public class B3DLoader implements ICustomModelLoader
         }
         B3DModel model = cache.get(file);
         if(model == null) return ModelLoaderRegistry.getMissingModel();
-        if(modelLocation instanceof B3DMeshLocation)
-        {
-            String mesh = ((B3DMeshLocation)modelLocation).getMesh();
-            if(!model.getMeshes().containsKey(mesh))
-            {
-                FMLLog.severe("No mesh named %s in model %s, skipping", mesh, modelLocation);
-                return ModelLoaderRegistry.getMissingModel();
-            }
-            return new ModelWrapper(modelLocation, model, ImmutableSet.of(mesh), 1);
-        }
         if(!(model.getRoot().getKind() instanceof Mesh))
         {
-            return new ModelWrapper(modelLocation, model, ImmutableSet.<String>of(), 1);
+            return new ModelWrapper(modelLocation, model, ImmutableSet.<String>of(), true, true, 1);
         }
-        return new ModelWrapper(modelLocation, model, ImmutableSet.of(((Node<Mesh>)model.getRoot()).getName()), 1);
-    }
-
-    /**
-     * @deprecated Use json or IModelCustomData.process
-     */
-    @Deprecated
-    public static class B3DMeshLocation extends ResourceLocation
-    {
-        public final String mesh;
-
-        public B3DMeshLocation(String domain, String path, String mesh)
-        {
-            super(domain, path);
-            this.mesh = mesh;
-        }
-
-        public String getMesh()
-        {
-            return mesh;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((mesh == null) ? 0 : mesh.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (this == obj) return true;
-            if (!super.equals(obj)) return false;
-            if (getClass() != obj.getClass()) return false;
-            B3DMeshLocation other = (B3DMeshLocation) obj;
-            if (mesh == null)
-            {
-                if (other.mesh != null) return false;
-            }
-            else if (!mesh.equals(other.mesh)) return false;
-            return true;
-        }
+        return new ModelWrapper(modelLocation, model, ImmutableSet.of(((Node<Mesh>)model.getRoot()).getName()), true, true, 1);
     }
 
     public static class B3DState implements IModelState
@@ -454,166 +401,6 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    /**
-     * @deprecated Use ModelWrapper, this will be removed in 1.9
-     */
-    @Deprecated
-    public static class Wrapper extends PartWrapper<Mesh> implements IRetexturableModel<Wrapper>, IModelCustomData<Wrapper>
-    {
-        private final ResourceLocation location;
-        private final ImmutableSet<String> meshes;
-        private final ImmutableMap<String, ResourceLocation> textures;
-
-        public Wrapper(ResourceLocation location, List<Texture> textures, B3DModel.Node<Mesh> mesh)
-        {
-            this(location, ImmutableSet.<String>of(), buildTextures(textures), mesh);
-        }
-
-        public Wrapper(ResourceLocation location, ImmutableMap<String, ResourceLocation> textures, B3DModel.Node<Mesh> mesh)
-        {
-            this(location, ImmutableSet.<String>of(), textures, mesh);
-        }
-
-        public Wrapper(ResourceLocation location, ImmutableSet<String> meshes, List<Texture> textures, B3DModel.Node<Mesh> mesh)
-        {
-            this(location, meshes, buildTextures(textures), mesh);
-        }
-
-        public Wrapper(ResourceLocation location, ImmutableSet<String> meshes, ImmutableMap<String, ResourceLocation> textures, B3DModel.Node<Mesh> mesh)
-        {
-            super(mesh);
-            this.location = location;
-            this.meshes = meshes;
-            this.textures = textures;
-        }
-
-        private static ImmutableMap<String, ResourceLocation> buildTextures(List<Texture> textures)
-        {
-            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
-
-            for(Texture t : textures)
-            {
-                String path = t.getPath();
-                String location = getLocation(path);
-                if(!location.startsWith("#")) location = "#" + location;
-                builder.put(path, new ResourceLocation(location));
-            }
-            return builder.build();
-        }
-
-        private static String getLocation(String path)
-        {
-            if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
-            return path;
-        }
-
-        public Collection<ResourceLocation> getDependencies()
-        {
-            // no dependencies for in-file models
-            // FIXME maybe add child meshes
-            return Collections.emptyList();
-        }
-
-        public Collection<ResourceLocation> getTextures()
-        {
-            return Collections2.filter(textures.values(), new Predicate<ResourceLocation>()
-            {
-                public boolean apply(ResourceLocation loc)
-                {
-                    return !loc.getResourcePath().startsWith("#");
-                }
-            });
-        }
-
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-        {
-            ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-            TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
-            for(Map.Entry<String, ResourceLocation> e : textures.entrySet())
-            {
-                if(e.getValue().getResourcePath().startsWith("#"))
-                {
-                    FMLLog.severe("unresolved texture '%s' for b3d model '%s'", e.getValue().getResourcePath(), location);
-                    builder.put(e.getKey(), missing);
-                }
-                else
-                {
-                    builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue()));
-                }
-            }
-            builder.put("missingno", missing);
-            return new BakedWrapper(getNode(), state, format, meshes, builder.build());
-        }
-
-        public ResourceLocation getLocation()
-        {
-            return location;
-        }
-
-        public ImmutableMap<String, ResourceLocation> getTextureMap()
-        {
-            return textures;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((location == null) ? 0 : location.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            Wrapper other = (Wrapper) obj;
-            if (location == null)
-            {
-                if (other.location != null) return false;
-            }
-            else if (!location.equals(other.location)) return false;
-            return true;
-        }
-
-        @Override
-        public IModel retexture(ImmutableMap<String, String> textures)
-        {
-            ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
-            for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
-            {
-                String path = e.getKey();
-                String loc = getLocation(path);
-                if(textures.containsKey(loc))
-                {
-                    String newLoc = textures.get(loc);
-                    if(newLoc == null) newLoc = getLocation(path);
-                    builder.put(e.getKey(), new ResourceLocation(newLoc));
-                }
-                else
-                {
-                    builder.put(e);
-                }
-            }
-            return new Wrapper(location, builder.build(), getNode());
-        }
-
-        @Override
-        public IModel process(ImmutableMap<String, String> customData)
-        {
-            return this;
-        }
-
-        @Override
-        public IModelState getDefaultState()
-        {
-            return new B3DState(getNode().getAnimation(), 1);
-        }
-    }
-
     public static class ModelWrapper implements IRetexturableModel<ModelWrapper>, IModelCustomData<ModelWrapper>, IModelSimpleProperties<ModelWrapper>, IAnimatedModel
     {
         private final ResourceLocation modelLocation;
@@ -624,21 +411,9 @@ public class B3DLoader implements ICustomModelLoader
         private final boolean gui3d;
         private final int defaultKey;
 
-        @Deprecated // remove in 1.9
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, int defaultKey)
-        {
-            this(modelLocation, model, meshes, true, true, defaultKey);
-        }
-
         public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey)
         {
             this(modelLocation, model, meshes, smooth, gui3d, defaultKey, buildTextures(model.getTextures()));
-        }
-
-        @Deprecated // remove in 1.9
-        public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, int defaultKey, ImmutableMap<String, ResourceLocation> textures)
-        {
-            this(modelLocation, model, meshes, true, true, defaultKey, textures);
         }
 
         public ModelWrapper(ResourceLocation modelLocation, B3DModel model, ImmutableSet<String> meshes, boolean smooth, boolean gui3d, int defaultKey, ImmutableMap<String, ResourceLocation> textures)
@@ -691,7 +466,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
             TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
@@ -730,7 +505,7 @@ public class B3DLoader implements ICustomModelLoader
                     builder.put(e);
                 }
             }
-            return new ModelWrapper(modelLocation, model, meshes, defaultKey, builder.build());
+            return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, defaultKey, builder.build());
         }
 
         @Override
@@ -741,7 +516,7 @@ public class B3DLoader implements ICustomModelLoader
                 JsonElement e = new JsonParser().parse(data.get("mesh"));
                 if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isString())
                 {
-                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), defaultKey, textures);
+                    return new ModelWrapper(modelLocation, model, ImmutableSet.of(e.getAsString()), smooth, gui3d, defaultKey, textures);
                 }
                 else if (e.isJsonArray())
                 {
@@ -758,7 +533,7 @@ public class B3DLoader implements ICustomModelLoader
                             return this;
                         }
                     }
-                    return new ModelWrapper(modelLocation, model, builder.build(), defaultKey, textures);
+                    return new ModelWrapper(modelLocation, model, builder.build(), smooth, gui3d, defaultKey, textures);
                 }
                 else
                 {
@@ -771,7 +546,7 @@ public class B3DLoader implements ICustomModelLoader
                 JsonElement e = new JsonParser().parse(data.get("key"));
                 if(e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber())
                 {
-                    return new ModelWrapper(modelLocation, model, meshes, e.getAsNumber().intValue(), textures);
+                    return new ModelWrapper(modelLocation, model, meshes, smooth, gui3d, e.getAsNumber().intValue(), textures);
                 }
                 else
                 {
@@ -817,7 +592,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
+    private static class BakedWrapper implements IPerspectiveAwareModel
     {
         private final Node<?> node;
         private final IModelState state;
@@ -829,12 +604,6 @@ public class B3DLoader implements ICustomModelLoader
         private final LoadingCache<Integer, BakedWrapper> cache;
 
         private ImmutableList<BakedQuad> quads;
-
-        @Deprecated // remove in 1.9
-        public BakedWrapper(Node<?> node, IModelState state, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures)
-        {
-            this(node, state, true, true, format, meshes, textures);
-        }
 
         public BakedWrapper(final Node<?> node, final IModelState state, final boolean smooth, final boolean gui3d, final VertexFormat format, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
@@ -857,12 +626,6 @@ public class B3DLoader implements ICustomModelLoader
                 }));
         }
 
-        @Deprecated // remove in 1.9
-        public BakedWrapper(Node<?> node, IModelState state, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, BakedWrapper> cache)
-        {
-            this(node, state, true, true, format, meshes, textures, cache);
-        }
-
         public BakedWrapper(Node<?> node, IModelState state, boolean smooth, boolean gui3d, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, BakedWrapper> cache)
         {
             this.node = node;
@@ -875,11 +638,8 @@ public class B3DLoader implements ICustomModelLoader
             this.cache = cache;
         }
 
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
-            return Collections.emptyList();
-        }
-
+        // FIXME merge with handleBlockState
+        @Override
         public List<BakedQuad> getGeneralQuads()
         {
             if(quads == null)
@@ -887,7 +647,7 @@ public class B3DLoader implements ICustomModelLoader
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                 for(Node<?> child : node.getNodes().values())
                 {
-                    builder.addAll(new BakedWrapper(child, state, format, meshes, textures).getGeneralQuads());
+                    builder.addAll(new BakedWrapper(child, state, smooth, gui3d, format, meshes, textures).getGeneralQuads());
                 }
                 if(node.getKind() instanceof Mesh && meshes.contains(node.getName()))
                 {
@@ -996,7 +756,7 @@ public class B3DLoader implements ICustomModelLoader
             return gui3d;
         }
 
-        public boolean isBuiltInRenderer()
+        public boolean func_188618_c()
         {
             return false;
         }
@@ -1012,6 +772,7 @@ public class B3DLoader implements ICustomModelLoader
             return ItemCameraTransforms.DEFAULT;
         }
 
+        // FIXME merge with getQuads
         @Override
         public BakedWrapper handleBlockState(IBlockState state)
         {
@@ -1040,7 +801,7 @@ public class B3DLoader implements ICustomModelLoader
                             return cache.getUnchecked(s.getFrame());
                         }
                         B3DState newState = new B3DState(newAnimation, s.getFrame(), s.getNextFrame(), s.getProgress(), parent);
-                        return new BakedWrapper(node, newState, format, meshes, textures);
+                        return new BakedWrapper(node, newState, smooth, gui3d, format, meshes, textures);
                     }
                 }
                 else if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
@@ -1055,25 +816,14 @@ public class B3DLoader implements ICustomModelLoader
                     IModelState newState = exState.getValue(Properties.AnimationProperty);
                     if(newState != null)
                     {
-                        return new BakedWrapper(node, new ModelStateComposition(parent, newState), format, meshes, textures);
+                        return new BakedWrapper(node, new ModelStateComposition(parent, newState), smooth, gui3d, format, meshes, textures);
                     }
                 }
             }
             return this;
         }
 
-        public VertexFormat getFormat()
-        {
-            return format;
-        }
-
-        public BakedWrapper handleItemState(ItemStack stack)
-        {
-            // TODO specify how to get B3DState from ItemStack
-            return this;
-        }
-
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }

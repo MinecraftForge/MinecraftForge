@@ -11,7 +11,7 @@ import javax.vecmath.Vector4f;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.math.Vec3i;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;

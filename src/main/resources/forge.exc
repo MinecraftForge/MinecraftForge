@@ -45,3 +45,4 @@ net/minecraft/stats/StatList.mergeStatBases([Lnet/minecraft/stats/StatBase;Lnet/
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/item/Item;IILnet/minecraft/nbt/NBTTagCompound;)V=|p_i1881_1_,p_i1881_2_,p_i1881_3_,capNBT
 
 net/minecraft/block/BlockRedstoneWire.canConnectTo(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/EnumFacing;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)Z=p_176343_0_,p_176343_1_,world,pos
+net/minecraft/client/renderer/block/model/BakedQuad.<init>([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/vertex/VertexFormat)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,format

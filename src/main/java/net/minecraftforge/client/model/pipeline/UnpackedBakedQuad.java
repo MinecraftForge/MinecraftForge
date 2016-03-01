@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.IColoredBakedQuad;
@@ -13,9 +14,9 @@ public class UnpackedBakedQuad extends BakedQuad
     protected final VertexFormat format;
     protected boolean packed = false;
 
-    public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, VertexFormat format)
+    public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, VertexFormat format)
     {
-        super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation);
+        super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation, texture, format);
         this.unpackedData = unpackedData;
         this.format = format;
     }
@@ -69,9 +70,9 @@ public class UnpackedBakedQuad extends BakedQuad
 
     public static class Colored extends UnpackedBakedQuad implements IColoredBakedQuad
     {
-        public Colored(float[][][] unpackedData, int tint, EnumFacing orientation, VertexFormat format)
+        public Colored(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, VertexFormat format)
         {
-            super(unpackedData, tint, orientation, format);
+            super(unpackedData, tint, orientation, texture, format);
         }
     }
 
@@ -81,6 +82,7 @@ public class UnpackedBakedQuad extends BakedQuad
         private final float[][][] unpackedData;
         private int tint = -1;
         private EnumFacing orientation;
+        private TextureAtlasSprite texture;
         private boolean isColored = false;
 
         private int vertices = 0;
@@ -106,6 +108,11 @@ public class UnpackedBakedQuad extends BakedQuad
         public void setQuadOrientation(EnumFacing orientation)
         {
             this.orientation = orientation;
+        }
+
+        public void setTexture(TextureAtlasSprite texture)
+        {
+            this.texture = texture;
         }
 
         public void setQuadColored()
@@ -146,9 +153,9 @@ public class UnpackedBakedQuad extends BakedQuad
             }
             if(isColored)
             {
-                return new Colored(unpackedData, tint, orientation, format);
+                return new Colored(unpackedData, tint, orientation, texture, format);
             }
-            return new UnpackedBakedQuad(unpackedData, tint, orientation, format);
+            return new UnpackedBakedQuad(unpackedData, tint, orientation, texture, format);
         }
     }
 }

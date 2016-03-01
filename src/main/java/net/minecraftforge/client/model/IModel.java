@@ -2,6 +2,7 @@ package net.minecraftforge.client.model;
 
 import java.util.Collection;
 
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
@@ -36,7 +37,7 @@ public interface IModel
      * format argument (some attributes can be replaced with padding),
      * if there's no such info in this model.
      */
-    IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter);
+    IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter);
 
     /*
      * Default state this model will be baked with.

@@ -1,7 +1,6 @@
 package net.minecraftforge.client.model;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +9,12 @@ import java.util.Set;
 
 import javax.vecmath.Matrix4f;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
@@ -23,30 +25,30 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-@SuppressWarnings("deprecation")
+// TODO: Switch to vanilla class, or to something similar
+@Deprecated
 public class MultiModel implements IModel
 {
-    public static class Baked implements IFlexibleBakedModel, IPerspectiveAwareModel
+    public static class Baked implements IPerspectiveAwareModel
     {
-        protected final IFlexibleBakedModel base;
-        protected final ImmutableMap<String, IFlexibleBakedModel> parts;
+        protected final IBakedModel base;
+        protected final ImmutableMap<String, IBakedModel> parts;
 
-        protected final IFlexibleBakedModel internalBase;
-        protected ImmutableList<BakedQuad> general;
-        protected ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> faces;
+        protected final IBakedModel internalBase;
+        protected ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
         protected final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
 
-        public Baked(IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
+        public Baked(IBakedModel base, ImmutableMap<String, IBakedModel> parts)
         {
             this(null, false, base, parts);
         }
 
-        public Baked(ResourceLocation location, boolean perspective, IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
+        public Baked(ResourceLocation location, boolean perspective, IBakedModel base, ImmutableMap<String, IBakedModel> parts)
         {
             this.base = base;
             this.parts = parts;
@@ -55,7 +57,7 @@ public class MultiModel implements IModel
                 internalBase = base;
             else
             {
-                Iterator<IFlexibleBakedModel> iter = parts.values().iterator();
+                Iterator<IBakedModel> iter = parts.values().iterator();
                 if (iter.hasNext())
                     internalBase = iter.next();
                 else
@@ -69,8 +71,8 @@ public class MultiModel implements IModel
                 ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
                 for(TransformType type : TransformType.values())
                 {
-                    Pair<? extends IFlexibleBakedModel, Matrix4f> p = perBase.handlePerspective(type);
-                    IFlexibleBakedModel newBase = p.getLeft();
+                    Pair<? extends IBakedModel, Matrix4f> p = perBase.handlePerspective(type);
+                    IBakedModel newBase = p.getLeft();
                     builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
                 }
                 transforms = builder.build();
@@ -94,9 +96,9 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public boolean isBuiltInRenderer()
+        public boolean func_188618_c()
         {
-            return internalBase.isBuiltInRenderer();
+            return internalBase.func_188618_c();
         }
 
         @Override
@@ -112,65 +114,63 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
+        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
         {
-            if(faces == null)
+            if(quads == null)
             {
-                // Create map of each face's quads.
-                EnumMap<EnumFacing, ImmutableList<BakedQuad>> faces = Maps.newEnumMap(EnumFacing.class);
+                ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> builder = ImmutableMap.builder();
 
                 for (EnumFacing face : EnumFacing.values())
                 {
-                    ImmutableList.Builder<BakedQuad> faceQuads = ImmutableList.builder();
+                    ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
                     if (base != null)
-                        faceQuads.addAll(base.getFaceQuads(face));
-                    for (IFlexibleBakedModel bakedPart : parts.values())
-                        faceQuads.addAll(bakedPart.getFaceQuads(face));
-                    faces.put(face, faceQuads.build());
+                    {
+                        quads.addAll(base.func_188616_a(null, face, 0));
+                    }
+                    for (IBakedModel bakedPart : parts.values())
+                    {
+                        quads.addAll(bakedPart.func_188616_a(null, face, 0));
+                    }
+                    builder.put(Optional.of(face), quads.build());
                 }
-                this.faces = Maps.immutableEnumMap(faces);
-            }
-            return faces.get(side);
-        }
-
-        @Override
-        public List<BakedQuad> getGeneralQuads()
-        {
-            if(general == null)
-            {
-                // Create list of general quads.
-                ImmutableList.Builder<BakedQuad> genQuads = ImmutableList.builder();
+                ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
                 if (base != null)
-                    genQuads.addAll(base.getGeneralQuads());
-                for (IFlexibleBakedModel bakedPart : parts.values())
-                    genQuads.addAll(bakedPart.getGeneralQuads());
-                general = genQuads.build();
+                {
+                    quads.addAll(base.func_188616_a(null, null, 0));
+                }
+                for (IBakedModel bakedPart : parts.values())
+                {
+                    quads.addAll(bakedPart.func_188616_a(null, null, 0));
+                }
+                builder.put(Optional.absent(), quads.build());
+                this.quads = builder.build();
             }
-            return general;
+            return quads.get(Optional.fromNullable(side));
         }
 
-        @Override
-        public VertexFormat getFormat()
-        {
-            return internalBase.getFormat();
-        }
-
-        public IFlexibleBakedModel getBaseModel()
+        public IBakedModel getBaseModel()
         {
             return base;
         }
 
-        public Map<String, IFlexibleBakedModel> getParts()
+        public Map<String, IBakedModel> getParts()
         {
             return parts;
         }
 
         @Override
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             if(transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
             return Pair.of(p.getLeft(), p.getRight().getMatrix());
+        }
+
+        @Override
+        public ItemOverrideList func_188617_f()
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -231,14 +231,14 @@ public class MultiModel implements IModel
     }
 
     @Override
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        IFlexibleBakedModel bakedBase = null;
+        IBakedModel bakedBase = null;
 
         if (base != null)
             bakedBase = base.bake(state, format, bakedTextureGetter);
 
-        ImmutableMap.Builder<String, IFlexibleBakedModel> mapBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, IBakedModel> mapBuilder = ImmutableMap.builder();
 
         for (Entry<String, Pair<IModel, IModelState>> entry : parts.entrySet())
         {

@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 /**
- * Assumes VertexFormatElement is present in the WorlRenderer's vertex format.
+ * Assumes VertexFormatElement is present in the VertexBuffer's vertex format.
  */
 public class VertexBufferConsumer implements IVertexConsumer
 {

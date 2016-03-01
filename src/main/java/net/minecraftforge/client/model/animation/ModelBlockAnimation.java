@@ -13,7 +13,7 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.block.model.BlockPart;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Interpolation;
