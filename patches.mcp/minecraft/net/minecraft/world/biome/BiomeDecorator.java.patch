@@ -84,6 +84,15 @@
          for (int k4 = 0; k4 < this.reedsPerChunk; ++k4)
          {
              int i9 = p_150513_3_.nextInt(16) + 8;
+@@ -291,7 +303,7 @@
+                 this.reedGen.generate(p_150513_2_, p_150513_3_, this.field_180294_c.add(j9, i19, i13));
+             }
+         }
+-
++        } // End of Reed generation
+         if (p_150513_3_.nextInt(32) == 0)
+         {
+             int i5 = p_150513_3_.nextInt(16) + 8;
 @@ -305,6 +317,7 @@
              }
          }
