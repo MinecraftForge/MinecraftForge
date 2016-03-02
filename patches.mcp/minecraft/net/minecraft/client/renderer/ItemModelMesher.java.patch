@@ -1,14 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
-@@ -50,6 +50,11 @@
-             }
-         }
+@@ -32,7 +32,9 @@
  
-+        if(ibakedmodel instanceof net.minecraftforge.client.model.ISmartItemModel)
-+        {
-+            ibakedmodel = ((net.minecraftforge.client.model.ISmartItemModel)ibakedmodel).handleItemState(stack);
-+        }
-+
-         if (ibakedmodel == null)
-         {
-             ibakedmodel = this.modelManager.getMissingModel();
+     public TextureAtlasSprite getParticleIcon(Item item, int meta)
+     {
+-        return this.getItemModel(new ItemStack(item, 1, meta)).getParticleTexture();
++        ItemStack stack = new ItemStack(item, 1, meta);
++        IBakedModel model = this.getItemModel(stack);
++        return model.func_188617_f().handleItemState(model, stack, null, null).getParticleTexture();
+     }
+ 
+     public IBakedModel getItemModel(ItemStack stack)

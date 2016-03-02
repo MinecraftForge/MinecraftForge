@@ -40,8 +40,8 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.util.TextComponentString;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.ForgeHooks;
@@ -53,7 +53,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
-import static net.minecraft.util.EnumChatFormatting.*;
+import static net.minecraft.util.text.TextFormatting.*;
 
 import org.apache.logging.log4j.Level;
 
@@ -524,13 +524,13 @@ public class GuiModList extends GuiScreen
             {
                 GlStateManager.enableBlend();
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
-                VertexBuffer wr = tess.getVertexBuffer();
+                VertexBuffer wr = tess.getWorldRenderer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
                 wr.begin(7, DefaultVertexFormats.POSITION_TEX);
-                wr.pos(offset,                  top + logoDims.height, zLevel).tex(0, 1).endVertex();
-                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
-                wr.pos(offset + logoDims.width, top,                   zLevel).tex(1, 0).endVertex();
-                wr.pos(offset,                  top,                   zLevel).tex(0, 0).endVertex();
+                wr.pos(offset,                  top + logoDims.height, zLevel).func_187315_a(0, 1).endVertex();
+                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).func_187315_a(1, 1).endVertex();
+                wr.pos(offset + logoDims.width, top,                   zLevel).func_187315_a(1, 0).endVertex();
+                wr.pos(offset,                  top,                   zLevel).func_187315_a(0, 0).endVertex();
                 tess.draw();
                 GlStateManager.disableBlend();
                 top += logoDims.height + 10;
@@ -570,7 +570,7 @@ public class GuiModList extends GuiScreen
                 for (ITextComponent part : (Iterable<ITextComponent>)line) {
                     if (!(part instanceof TextComponentString))
                         continue;
-                    k += GuiModList.this.fontRendererObj.getStringWidth(((TextComponentString)part).getTextComponentString_TextValue());
+                    k += GuiModList.this.fontRendererObj.getStringWidth(((TextComponentString)part).getChatComponentText_TextValue());
                     if (k >= x)
                     {
                         GuiModList.this.handleComponentClick(part);

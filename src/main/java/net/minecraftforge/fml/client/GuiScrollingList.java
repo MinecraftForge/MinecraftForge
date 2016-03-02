@@ -263,7 +263,7 @@ public abstract class GuiScrollingList
         this.applyScrollLimits();
 
         Tessellator tess = Tessellator.getInstance();
-        VertexBuffer worldr = tess.getVertexBuffer();
+        VertexBuffer worldr = tess.getWorldRenderer();
 
         ScaledResolution res = new ScaledResolution(client);
         double scaleW = client.displayWidth / res.getScaledWidth_double();
@@ -284,10 +284,10 @@ public abstract class GuiScrollingList
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float scale = 32.0F;
             worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldr.pos(this.left,  this.bottom, 0.0D).tex(this.left  / scale, (this.bottom + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            worldr.pos(this.right, this.bottom, 0.0D).tex(this.right / scale, (this.bottom + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            worldr.pos(this.right, this.top,    0.0D).tex(this.right / scale, (this.top    + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            worldr.pos(this.left,  this.top,    0.0D).tex(this.left  / scale, (this.top    + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.left,  this.bottom, 0.0D).func_187315_a(this.left  / scale, (this.bottom + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.right, this.bottom, 0.0D).func_187315_a(this.right / scale, (this.bottom + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.right, this.top,    0.0D).func_187315_a(this.right / scale, (this.top    + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.pos(this.left,  this.top,    0.0D).func_187315_a(this.left  / scale, (this.top    + (int)this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
             tess.draw();
         }
 
@@ -311,14 +311,14 @@ public abstract class GuiScrollingList
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GlStateManager.disableTexture2D();
                     worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                    worldr.pos(min,     slotTop + slotBuffer + 2, 0).tex(0, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-                    worldr.pos(max,     slotTop + slotBuffer + 2, 0).tex(1, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-                    worldr.pos(max,     slotTop              - 2, 0).tex(1, 0).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-                    worldr.pos(min,     slotTop              - 2, 0).tex(0, 0).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-                    worldr.pos(min + 1, slotTop + slotBuffer + 1, 0).tex(0, 1).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-                    worldr.pos(max - 1, slotTop + slotBuffer + 1, 0).tex(1, 1).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-                    worldr.pos(max - 1, slotTop              - 1, 0).tex(1, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-                    worldr.pos(min + 1, slotTop              - 1, 0).tex(0, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(min,     slotTop + slotBuffer + 2, 0).func_187315_a(0, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(max,     slotTop + slotBuffer + 2, 0).func_187315_a(1, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(max,     slotTop              - 2, 0).func_187315_a(1, 0).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(min,     slotTop              - 2, 0).func_187315_a(0, 0).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+                    worldr.pos(min + 1, slotTop + slotBuffer + 1, 0).func_187315_a(0, 1).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(max - 1, slotTop + slotBuffer + 1, 0).func_187315_a(1, 1).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(max - 1, slotTop              - 1, 0).func_187315_a(1, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+                    worldr.pos(min + 1, slotTop              - 1, 0).func_187315_a(0, 0).color(0x00, 0x00, 0x00, 0xFF).endVertex();
                     tess.draw();
                     GlStateManager.enableTexture2D();
                 }
@@ -347,22 +347,22 @@ public abstract class GuiScrollingList
 
             GlStateManager.disableTexture2D();
             worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldr.pos(scrollBarLeft,  this.bottom, 0.0D).tex(0.0D, 1.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.pos(scrollBarRight, this.bottom, 0.0D).tex(1.0D, 1.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.pos(scrollBarRight, this.top,    0.0D).tex(1.0D, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.pos(scrollBarLeft,  this.top,    0.0D).tex(0.0D, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,  this.bottom, 0.0D).func_187315_a(0.0D, 1.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, this.bottom, 0.0D).func_187315_a(1.0D, 1.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, this.top,    0.0D).func_187315_a(1.0D, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,  this.top,    0.0D).func_187315_a(0.0D, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
             tess.draw();
             worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldr.pos(scrollBarLeft,  barTop + height, 0.0D).tex(0.0D, 1.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.pos(scrollBarRight, barTop + height, 0.0D).tex(1.0D, 1.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.pos(scrollBarRight, barTop,          0.0D).tex(1.0D, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.pos(scrollBarLeft,  barTop,          0.0D).tex(0.0D, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,  barTop + height, 0.0D).func_187315_a(0.0D, 1.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, barTop + height, 0.0D).func_187315_a(1.0D, 1.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarRight, barTop,          0.0D).func_187315_a(1.0D, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,  barTop,          0.0D).func_187315_a(0.0D, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
             tess.draw();
             worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldr.pos(scrollBarLeft,      barTop + height - 1, 0.0D).tex(0.0D, 1.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.pos(scrollBarRight - 1, barTop + height - 1, 0.0D).tex(1.0D, 1.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.pos(scrollBarRight - 1, barTop,              0.0D).tex(1.0D, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.pos(scrollBarLeft,      barTop,              0.0D).tex(0.0D, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,      barTop + height - 1, 0.0D).func_187315_a(0.0D, 1.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarRight - 1, barTop + height - 1, 0.0D).func_187315_a(1.0D, 1.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarRight - 1, barTop,              0.0D).func_187315_a(1.0D, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.pos(scrollBarLeft,      barTop,              0.0D).func_187315_a(0.0D, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
             tess.draw();
         }
 
@@ -390,7 +390,7 @@ public abstract class GuiScrollingList
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getVertexBuffer();
+        VertexBuffer VertexBuffer = tessellator.getWorldRenderer();
         VertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
         VertexBuffer.pos(right, top, 0.0D).color(r1, g1, b1, a1).endVertex();
         VertexBuffer.pos(left,  top, 0.0D).color(r1, g1, b1, a1).endVertex();

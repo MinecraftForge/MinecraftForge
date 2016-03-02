@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -56,12 +56,17 @@
+@@ -56,18 +56,24 @@
      {
          Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.setStitchHolders.toArray(new Stitcher.Holder[this.setStitchHolders.size()]);
          Arrays.sort((Object[])astitcher$holder);
@@ -18,14 +18,13 @@
                  throw new StitcherException(stitcher$holder, s);
              }
          }
-@@ -182,6 +187,7 @@
-             this.stitchSlots.add(stitcher$slot);
-             return true;
-         }
+ 
+         this.currentWidth = MathHelper.roundUpToPowerOfTwo(this.currentWidth);
+         this.currentHeight = MathHelper.roundUpToPowerOfTwo(this.currentHeight);
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
-     @SideOnly(Side.CLIENT)
+     public List<TextureAtlasSprite> getStichSlots()
 @@ -238,7 +244,7 @@
  
              public String toString()
