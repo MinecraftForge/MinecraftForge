@@ -25,7 +25,23 @@
          logger.info("Loading properties");
          this.settings = new PropertyManager(new File("server.properties"));
          this.eula = new ServerEula(new File("eula.txt"));
-@@ -282,7 +286,7 @@
+@@ -205,6 +209,7 @@
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 this.func_184105_a(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+@@ -254,6 +259,7 @@
+                 TileEntitySkull.func_184293_a(this.getPlayerProfileCache());
+                 TileEntitySkull.func_184294_a(this.getMinecraftSessionService());
+                 PlayerProfileCache.func_187320_a(this.isServerInOnlineMode());
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+                 logger.info("Preparing level \"" + this.getFolderName() + "\"");
+                 this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+@@ -282,7 +288,7 @@
                      thread1.start();
                  }
  
@@ -34,7 +50,7 @@
              }
          }
      }
-@@ -580,6 +584,9 @@
+@@ -580,6 +586,9 @@
          return this.settings.getIntProperty("network-compression-threshold", super.getNetworkCompressionTreshold());
      }
  
