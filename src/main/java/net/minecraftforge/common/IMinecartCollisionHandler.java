@@ -1,6 +1,6 @@
 package net.minecraftforge.common;
 
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 
