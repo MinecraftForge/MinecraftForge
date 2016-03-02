@@ -43,15 +43,19 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class HarvestCheck extends PlayerEvent
     {
-        public final Block block;
-        public boolean success;
+        private final IBlockState state;
+        private boolean success;
 
-        public HarvestCheck(EntityPlayer player, Block block, boolean success)
+        public HarvestCheck(EntityPlayer player, IBlockState state, boolean success)
         {
             super(player);
-            this.block = block;
+            this.state = state;
             this.success = success;
         }
+
+        public IBlockState getTargetBlock() { return this.state; }
+        public boolean canHarvest() { return this.success; }
+        public void setCanHarvest(boolean success){ this.success = success; }
     }
 
     /**

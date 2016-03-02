@@ -12,3 +12,11 @@
                  {
                      return;
                  }
+@@ -689,6 +692,7 @@
+         if (itemstack != null && itemstack.stackSize == 0)
+         {
+             this.playerEntity.func_184611_a(enumhand, (ItemStack)null);
++            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.playerEntity, itemstack, enumhand);
+             itemstack = null;
+         }
+     }

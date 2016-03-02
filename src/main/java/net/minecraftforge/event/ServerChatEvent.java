@@ -3,7 +3,6 @@ package net.minecraftforge.event;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.text.ITextComponent;
 
 /**
@@ -26,11 +25,10 @@ import net.minecraft.util.text.ITextComponent;
 @Cancelable
 public class ServerChatEvent extends Event
 {
-    public final String message, username;
-    public final EntityPlayerMP player;
-    @Deprecated //Use methods below
-    public ChatComponentTranslation component;
-    public ServerChatEvent(EntityPlayerMP player, String message, ChatComponentTranslation component)
+    private final String message, username;
+    private final EntityPlayerMP player;
+    private ITextComponent component;
+    public ServerChatEvent(EntityPlayerMP player, String message, ITextComponent component)
     {
         super();
         this.message = message;
@@ -41,14 +39,15 @@ public class ServerChatEvent extends Event
 
     public void setComponent(ITextComponent e)
     {
-        if (e instanceof ChatComponentTranslation)
-            this.component = (ChatComponentTranslation)e;
-        else
-            this.component = new ChatComponentTranslation("%s", e);
+        this.component = e;
     }
 
     public ITextComponent getComponent()
     {
         return this.component;
     }
+
+    public String getMessage() { return this.message; }
+    public String getUsername() { return this.username; }
+    public EntityPlayerMP getPlayer() { return this.player; }
 }

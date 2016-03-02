@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -250,7 +250,7 @@
+@@ -134,14 +134,15 @@
+     public int ping;
+     public boolean playerConqueredTheEnd;
+ 
++    @SuppressWarnings("unused")
+     public EntityPlayerMP(MinecraftServer server, WorldServer worldIn, GameProfile profile, PlayerInteractionManager interactionManager)
+     {
+         super(worldIn, profile);
+         interactionManager.thisPlayerMP = this;
+         this.theItemInWorldManager = interactionManager;
+-        BlockPos blockpos = worldIn.getSpawnPoint();
++        BlockPos blockpos = worldIn.provider.getRandomizedSpawnPoint();
+ 
+-        if (!worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
++        if (false && !worldIn.provider.getHasNoSky() && worldIn.getWorldInfo().getGameType() != WorldSettings.GameType.ADVENTURE)
+         {
+             int i = Math.max(0, server.func_184108_a(worldIn));
+             int j = MathHelper.floor_double(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
+@@ -250,7 +251,7 @@
  
          this.openContainer.detectAndSendChanges();
  
@@ -9,7 +27,15 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -459,7 +459,20 @@
+@@ -433,6 +434,7 @@
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+         boolean flag = this.worldObj.getGameRules().getBoolean("showDeathMessages");
+         this.playerNetServerHandler.sendPacket(new SPacketCombatEvent(this.getCombatTracker(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
+ 
+@@ -459,7 +461,20 @@
  
          if (!this.worldObj.getGameRules().getBoolean("keepInventory") && !this.isSpectator())
          {
@@ -24,13 +50,30 @@
 +            {
 +                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
 +                {
-+                    joinEntityItemWithWorld(item);
++                    this.worldObj.spawnEntityInWorld(item);
 +                }
 +            }
          }
  
          for (ScoreObjective scoreobjective : this.worldObj.getScoreboard().getObjectivesFromCriteria(IScoreCriteria.deathCount))
-@@ -921,6 +934,7 @@
+@@ -540,6 +555,7 @@
+ 
+     public Entity func_184204_a(int p_184204_1_)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return;
+         this.field_184851_cj = true;
+ 
+         if (this.dimension == 1 && p_184204_1_ == 1)
+@@ -697,7 +713,7 @@
+         BlockPos blockpos = new BlockPos(i, j, k);
+         IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
+ 
+-        if (iblockstate.func_185904_a() == Material.air)
++        if (iblockstate.getBlock().isAir(iblockstate, this.worldObj, blockpos))
+         {
+             BlockPos blockpos1 = blockpos.down();
+             IBlockState iblockstate1 = this.worldObj.getBlockState(blockpos1);
+@@ -921,6 +937,7 @@
      {
          if (stat != null)
          {

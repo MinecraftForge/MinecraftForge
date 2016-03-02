@@ -1,6 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -477,6 +477,9 @@
+@@ -398,6 +398,14 @@
+                     this.lastTrackedEntityMotionY = this.trackedEntity.motionY;
+                     this.motionZ = this.trackedEntity.motionZ;
+ 
++                    int posX = MathHelper.floor_double(this.trackedEntity.posX * 32.0D);
++                    int posY = MathHelper.floor_double(this.trackedEntity.posY * 32.0D);
++                    int posZ = MathHelper.floor_double(this.trackedEntity.posZ * 32.0D);
++                    if (posX != this.encodedPosX || posY != this.encodedPosY || posZ != this.encodedPosZ)
++                    {
++                        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.makeEntitySpawnAdjustment(this.trackedEntity, playerMP, this.encodedPosX, this.encodedPosY, this.encodedPosZ);
++                    }
++
+                     if (flag && !(packet instanceof SPacketSpawnMob))
+                     {
+                         playerMP.playerNetServerHandler.sendPacket(new SPacketEntityVelocity(this.trackedEntity.getEntityId(), this.trackedEntity.motionX, this.trackedEntity.motionY, this.trackedEntity.motionZ));
+@@ -438,6 +446,7 @@
+ 
+                     this.trackedEntity.func_184178_b(playerMP);
+                     playerMP.func_184848_d(this.trackedEntity);
++                    net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(trackedEntity, playerMP);
+                 }
+             }
+             else if (this.trackingPlayers.contains(playerMP))
+@@ -445,6 +454,7 @@
+                 this.trackingPlayers.remove(playerMP);
+                 this.trackedEntity.func_184203_c(playerMP);
+                 playerMP.removeEntity(this.trackedEntity);
++                net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(trackedEntity, playerMP);
+             }
+         }
+     }
+@@ -477,6 +487,9 @@
              logger.warn("Fetching addPacket for removed entity");
          }
  

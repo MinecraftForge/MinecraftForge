@@ -152,3 +152,56 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
+@@ -2371,6 +2432,14 @@
+ 
+             if (itemstack == this.field_184627_bm)
+             {
++                field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
++                if (field_184628_bn <= 0)
++                {
++                    this.onItemUseFinish();
++                }
++                else
++                { // Forge Keep unindented to lower patch
++                field_184627_bm.getItem().onUsingTick(field_184627_bm, this, field_184628_bn); //Forge Added
+                 if (this.func_184605_cv() <= 25 && this.func_184605_cv() % 4 == 0)
+                 {
+                     this.func_184584_a(this.field_184627_bm, 5);
+@@ -2380,6 +2449,7 @@
+                 {
+                     this.onItemUseFinish();
+                 }
++                }
+             }
+             else
+             {
+@@ -2394,8 +2464,10 @@
+ 
+         if (itemstack != null && !this.func_184587_cr())
+         {
++            int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.getMaxItemUseDuration());
++            if (duration <= 0) return;
+             this.field_184627_bm = itemstack;
+-            this.field_184628_bn = itemstack.getMaxItemUseDuration();
++            this.field_184628_bn = duration;
+ 
+             if (!this.worldObj.isRemote)
+             {
+@@ -2478,6 +2550,8 @@
+             this.func_184584_a(this.field_184627_bm, 16);
+             ItemStack itemstack = this.field_184627_bm.onItemUseFinish(this.worldObj, this);
+ 
++            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, field_184627_bm, func_184605_cv(), itemstack);
++
+             if (itemstack != null && itemstack.stackSize == 0)
+             {
+                 itemstack = null;
+@@ -2508,6 +2582,8 @@
+         if (this.field_184627_bm != null)
+         {
+             this.field_184627_bm.onPlayerStoppedUsing(this.worldObj, this, this.func_184605_cv());
++            if (!net.minecraftforge.event.ForgeEventFactory.onUseItemStop(this, field_184627_bm, this.func_184605_cv()))
++                this.field_184627_bm.onPlayerStoppedUsing(this.worldObj, this, this.func_184605_cv());
+         }
+ 
+         this.func_184602_cy();

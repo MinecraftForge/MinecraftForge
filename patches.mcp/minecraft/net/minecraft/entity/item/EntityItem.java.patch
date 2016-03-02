@@ -24,7 +24,7 @@
  
      public void onUpdate()
      {
-+        ItemStack stack = this.getDataWatcher().getWatchableObjectItemStack(10);
++        ItemStack stack = this.func_184212_Q().func_187225_a(field_184533_c).orNull();
 +        if (stack != null && stack.getItem() != null && stack.getItem().onEntityItemUpdate(this)) return;
          if (this.getEntityItem() == null)
          {
@@ -34,7 +34,7 @@
              this.handleWaterMovement();
  
 -            if (!this.worldObj.isRemote && this.age >= 6000)
-+            ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
++            ItemStack item = this.func_184212_Q().func_187225_a(field_184533_c).orNull();
 +
 +            if (!this.worldObj.isRemote && this.age >= lifespan)
              {
@@ -63,7 +63,7 @@
 -        {
 -            this.setDead();
 -        }
-+        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
++        ItemStack item = this.func_184212_Q().func_187225_a(field_184533_c).orNull();
 +        if (item == null || item.stackSize <= 0) this.setDead();
 +        if (tagCompund.hasKey("Lifespan")) lifespan = tagCompund.getInteger("Lifespan");
      }

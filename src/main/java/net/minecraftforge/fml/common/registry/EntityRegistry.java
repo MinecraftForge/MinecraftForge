@@ -118,8 +118,6 @@ public class EntityRegistry
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
-    private Map<String, EntityList.EntityEggInfo> entityEggs = Maps.newHashMap();
-    private Map<String, EntityList.EntityEggInfo> entityEggsUn = Collections.unmodifiableMap(entityEggs);
 
     public static EntityRegistry instance()
     {
@@ -198,40 +196,6 @@ public class EntityRegistry
             return;
         }
         entityRegistrations.put(mc, er);
-    }
-
-    /**
-     * Registers a spawn egg for the specified entity class.
-     * The class must already be registered in the EntityList.classToStringMapping.
-     * This can be done either by using the global ID system, or preferably the registerModEntity functions above.
-     * Once registered mob eggs can be created by using minecraft:spawn_egg with NBT entry 'entity_name' with
-     * value of the name this class is registered in the classToStringMapping with.
-     *
-     * @param entityClass The entity class
-     * @param primary Primary egg color
-     * @param secondary Secondary egg color
-     *
-     * @throws IllegalArgumentException if entityClass is not registered in classToStringMapping.
-     *
-     */
-    public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
-    {
-        if (!EntityList.classToStringMapping.containsKey(entityClass))
-            throw new IllegalArgumentException("Entity not registered in classToString map: " + entityClass);
-
-        String name = (String)EntityList.classToStringMapping.get(entityClass);
-        EntityRegistry.instance().entityEggs.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
-        FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
-    }
-
-    /**
-     * Returns a Unmodifiable view of the registered entity eggs list.
-     *
-     * @return An Unmodifiable view of the registered entity eggs list.
-     */
-    public static Map<String, EntityList.EntityEggInfo> getEggs()
-    {
-        return instance().entityEggsUn;
     }
 
     /**

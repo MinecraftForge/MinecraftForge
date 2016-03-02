@@ -21,7 +21,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -42,6 +45,7 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
@@ -61,7 +65,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
@@ -102,11 +105,11 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
+    public static boolean doPlayerHarvestCheck(EntityPlayer player, IBlockState state, boolean success)
     {
-        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
+        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, state, success);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.success;
+        return event.canHarvest();
     }
 
     public static float getBreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
@@ -128,9 +131,9 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack)
+    public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack, EnumHand hand)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
+        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
@@ -212,26 +215,26 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, bolt));
     }
 
-    public static int onItemUseStart(EntityPlayer player, ItemStack item, int duration)
+    public static int onItemUseStart(EntityLivingBase entity, ItemStack item, int duration)
     {
-        PlayerUseItemEvent event = new PlayerUseItemEvent.Start(player, item, duration);
+        LivingEntityUseItemEvent event = new LivingEntityUseItemEvent.Start(entity, item, duration);
         return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
     }
 
-    public static int onItemUseTick(EntityPlayer player, ItemStack item, int duration)
+    public static int onItemUseTick(EntityLivingBase entity, ItemStack item, int duration)
     {
-        PlayerUseItemEvent event = new PlayerUseItemEvent.Tick(player, item, duration);
+        LivingEntityUseItemEvent event = new LivingEntityUseItemEvent.Tick(entity, item, duration);
         return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
     }
 
-    public static boolean onUseItemStop(EntityPlayer player, ItemStack item, int duration)
+    public static boolean onUseItemStop(EntityLivingBase entity, ItemStack item, int duration)
     {
-        return MinecraftForge.EVENT_BUS.post(new PlayerUseItemEvent.Stop(player, item, duration));
+        return MinecraftForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Stop(entity, item, duration));
     }
 
-    public static ItemStack onItemUseFinish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
+    public static ItemStack onItemUseFinish(EntityLivingBase entity, ItemStack item, int duration, ItemStack result)
     {
-        PlayerUseItemEvent.Finish event = new PlayerUseItemEvent.Finish(player, item, duration, result);
+        LivingEntityUseItemEvent.Finish event = new LivingEntityUseItemEvent.Finish(entity, item, duration, result);
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
@@ -294,7 +297,7 @@ public class ForgeEventFactory
         return 0;
     }
 
-    public static ItemStack onBucketUse(EntityPlayer player, World world, ItemStack stack, MovingObjectPosition target)
+    public static ItemStack onBucketUse(EntityPlayer player, World world, ItemStack stack, RayTraceResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, world, target);
         if (MinecraftForge.EVENT_BUS.post(event)) return stack;
@@ -305,10 +308,10 @@ public class ForgeEventFactory
                 return stack;
 
             if (--stack.stackSize <= 0)
-                return event.result;
+                return event.getFilledBucket();
 
-            if (!player.inventory.addItemStackToInventory(event.result))
-                player.dropPlayerItemWithRandomChoice(event.result, false);
+            if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
+                player.dropPlayerItemWithRandomChoice(event.getFilledBucket(), false);
 
             return stack;
         }
@@ -367,9 +370,9 @@ public class ForgeEventFactory
         }
     }
 
-    public static boolean canInteractWith(EntityPlayer player, Entity entity)
+    public static boolean canInteractWith(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
     {
-        return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
+        return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity, item, hand));
     }
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)

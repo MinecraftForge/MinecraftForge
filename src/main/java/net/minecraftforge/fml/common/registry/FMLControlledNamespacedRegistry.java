@@ -21,8 +21,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
 import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;

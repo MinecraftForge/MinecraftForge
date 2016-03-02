@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 1
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
--@SideOnly(Side.CLIENT)
- public interface IBossDisplayData
- {
-     float getMaxHealth();
-++++ END PATCH

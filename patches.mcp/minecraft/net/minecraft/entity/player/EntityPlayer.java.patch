@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -174,6 +174,7 @@
+@@ -93,6 +93,11 @@
+ @SuppressWarnings("incomplete-switch")
+ public abstract class EntityPlayer extends EntityLivingBase
+ {
++    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
++    private java.util.HashMap<Integer, BlockPos> spawnChunkMap = new java.util.HashMap<Integer, BlockPos>();
++    private java.util.HashMap<Integer, Boolean> spawnForcedMap = new java.util.HashMap<Integer, Boolean>();
++    public float eyeHeight = this.getDefaultEyeHeight();
++
+     private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
+     private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
+     protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
+@@ -174,6 +179,7 @@
  
      public void onUpdate()
      {
@@ -8,15 +20,7 @@
          this.noClip = this.isSpectator();
  
          if (this.isSpectator())
-@@ -205,6 +206,7 @@
-                 {
-                     this.wakeUpPlayer(false, true, true);
-                 }
-+                }
-             }
-         }
-         else if (this.sleepTimer > 0)
-@@ -219,7 +221,7 @@
+@@ -219,7 +225,7 @@
  
          super.onUpdate();
  
@@ -25,7 +29,7 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -360,6 +362,7 @@
+@@ -360,6 +366,7 @@
                  this.setSize(f, f1);
              }
          }
@@ -33,7 +37,21 @@
      }
  
      public int getMaxInPortalTime()
-@@ -576,11 +579,15 @@
+@@ -442,11 +449,11 @@
+             this.cameraYaw = 0.0F;
+             this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
+ 
+-            if (this.func_184187_bx() instanceof EntityPig)
++            if (this.func_184187_bx() instanceof EntityLivingBase && ((EntityLivingBase)this.func_94060_bK()).shouldRiderFaceForward(this))
+             {
+                 this.rotationPitch = f1;
+                 this.rotationYaw = f;
+-                this.renderYawOffset = ((EntityPig)this.func_184187_bx()).renderYawOffset;
++                this.renderYawOffset = ((EntityLivingBase)this.func_184187_bx()).renderYawOffset;
+             }
+         }
+     }
+@@ -576,11 +583,15 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -49,7 +67,7 @@
          if (this.getName().equals("Notch"))
          {
              this.dropItem(new ItemStack(Items.apple, 1), true, false);
-@@ -591,6 +598,9 @@
+@@ -591,6 +602,9 @@
              this.inventory.dropAllItems();
          }
  
@@ -59,7 +77,7 @@
          if (cause != null)
          {
              this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * 0.017453292F) * 0.1F);
-@@ -678,12 +688,25 @@
+@@ -678,12 +692,25 @@
  
      public EntityItem dropOneItem(boolean dropAll)
      {
@@ -87,7 +105,7 @@
      }
  
      public EntityItem dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
-@@ -746,15 +769,24 @@
+@@ -746,15 +773,24 @@
  
      protected ItemStack func_184816_a(EntityItem p_184816_1_)
      {
@@ -113,7 +131,23 @@
          if (f > 1.0F)
          {
              int i = EnchantmentHelper.func_185293_e(this);
-@@ -845,6 +877,16 @@
+@@ -804,12 +840,13 @@
+             f /= 5.0F;
+         }
+ 
+-        return f;
++        f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed(this, state, f, pos);
++        return (f < 0 ? 0 : f);
+     }
+ 
+     public boolean func_184823_b(IBlockState p_184823_1_)
+     {
+-        return this.inventory.func_184432_b(p_184823_1_);
++        return net.minecraftforge.event.ForgeEventFactory.doPlayerHarvestCheck(this, p_184823_1_, this.inventory.func_184432_b(p_184823_1_));
+     }
+ 
+     public void readEntityFromNBT(NBTTagCompound tagCompund)
+@@ -845,6 +882,16 @@
              this.spawnForced = tagCompund.getBoolean("SpawnForced");
          }
  
@@ -130,7 +164,7 @@
          this.foodStats.readNBT(tagCompund);
          this.capabilities.readCapabilitiesFromNBT(tagCompund);
  
-@@ -877,6 +919,23 @@
+@@ -877,6 +924,23 @@
              tagCompound.setBoolean("SpawnForced", this.spawnForced);
          }
  
@@ -154,7 +188,7 @@
          this.foodStats.writeNBT(tagCompound);
          this.capabilities.writeCapabilitiesToNBT(tagCompound);
          tagCompound.setTag("EnderItems", this.theInventoryEnderChest.saveInventoryToNBT());
-@@ -884,6 +943,7 @@
+@@ -884,6 +948,7 @@
  
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
@@ -162,7 +196,36 @@
          if (this.isEntityInvulnerable(source))
          {
              return false;
-@@ -1123,6 +1183,7 @@
+@@ -966,6 +1031,7 @@
+             if (this.field_184627_bm.stackSize <= 0)
+             {
+                 EnumHand enumhand = this.func_184600_cs();
++                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.field_184627_bm, enumhand);
+ 
+                 if (enumhand == EnumHand.MAIN_HAND)
+                 {
+@@ -1001,8 +1067,12 @@
+     {
+         if (!this.isEntityInvulnerable(damageSrc))
+         {
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
++            if (damageAmount <= 0) return;
+             damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
+             damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
++            damageAmount = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, inventory.armorInventory, damageSrc, damageAmount);
++            if (damageAmount <= 0) return;
+             float f = damageAmount;
+             damageAmount = Math.max(damageAmount - this.getAbsorptionAmount(), 0.0F);
+             this.setAbsorptionAmount(this.getAbsorptionAmount() - (f - damageAmount));
+@@ -1067,6 +1137,7 @@
+         }
+         else
+         {
++            if (!net.minecraftforge.event.ForgeEventFactory.canInteractWith(this, p_184822_1_, p_184822_2_, p_184822_3_)) return EnumActionResult.PASS;
+             ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.copy() : null;
+ 
+             if (!p_184822_1_.func_184230_a(this, p_184822_2_, p_184822_3_))
+@@ -1123,6 +1194,7 @@
  
      public void attackTargetEntityWithCurrentItem(Entity targetEntity)
      {
@@ -170,7 +233,7 @@
          if (targetEntity.canAttackWithItem())
          {
              if (!targetEntity.hitByEntity(this))
-@@ -1410,6 +1471,8 @@
+@@ -1410,6 +1482,8 @@
  
      public EntityPlayer.EnumStatus trySleep(BlockPos bedLocation)
      {
@@ -179,7 +242,21 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1514,13 +1577,14 @@
+@@ -1449,9 +1523,10 @@
+ 
+         this.setSize(0.2F, 0.2F);
+ 
+-        if (this.worldObj.isBlockLoaded(bedLocation))
+-        {
+-            EnumFacing enumfacing = (EnumFacing)this.worldObj.getBlockState(bedLocation).getValue(BlockHorizontal.field_185512_D);
++        IBlockState state = null;
++        if (this.worldObj.isBlockLoaded(bedLocation)) state = this.worldObj.getBlockState(bedLocation);
++        if (state != null && state.getBlock().isBed(state, this.worldObj, bedLocation, this)) {
++            EnumFacing enumfacing = state.getBlock().getBedDirection(state, this.worldObj, bedLocation);
+             float f = 0.5F;
+             float f1 = 0.5F;
+ 
+@@ -1514,13 +1589,14 @@
  
      public void wakeUpPlayer(boolean p_70999_1_, boolean updateWorldFlag, boolean setSpawn)
      {
@@ -188,16 +265,16 @@
          IBlockState iblockstate = this.worldObj.getBlockState(this.playerLocation);
  
 -        if (this.playerLocation != null && iblockstate.getBlock() == Blocks.bed)
-+        if (this.playerLocation != null && iblockstate.getBlock().isBed(worldObj, playerLocation, this))
++        if (this.playerLocation != null && iblockstate.getBlock().isBed(iblockstate, worldObj, playerLocation, this))
          {
 -            this.worldObj.setBlockState(this.playerLocation, iblockstate.withProperty(BlockBed.OCCUPIED, Boolean.valueOf(false)), 4);
 -            BlockPos blockpos = BlockBed.getSafeExitLocation(this.worldObj, this.playerLocation, 0);
 +            iblockstate.getBlock().setBedOccupied(worldObj, playerLocation, this, false);
-+            BlockPos blockpos = iblockstate.getBlock().getBedSpawnPosition(worldObj, playerLocation, this);
++            BlockPos blockpos = iblockstate.getBlock().getBedSpawnPosition(iblockstate, worldObj, playerLocation, this);
  
              if (blockpos == null)
              {
-@@ -1529,6 +1593,10 @@
+@@ -1529,6 +1605,10 @@
  
              this.setPosition((double)((float)blockpos.getX() + 0.5F), (double)((float)blockpos.getY() + 0.1F), (double)((float)blockpos.getZ() + 0.5F));
          }
@@ -208,7 +285,7 @@
  
          this.sleeping = false;
  
-@@ -1547,14 +1615,14 @@
+@@ -1547,14 +1627,15 @@
  
      private boolean isInBed()
      {
@@ -218,14 +295,37 @@
  
      public static BlockPos getBedSpawnLocation(World worldIn, BlockPos bedLocation, boolean forceSpawn)
      {
-         Block block = worldIn.getBlockState(bedLocation).getBlock();
+-        Block block = worldIn.getBlockState(bedLocation).getBlock();
++        IBlockState state = worldIn.getBlockState(bedLocation);
++        Block block = state.getBlock();
  
 -        if (block != Blocks.bed)
-+        if (!block.isBed(worldIn, bedLocation, null))
++        if (!block.isBed(state, worldIn, bedLocation, null))
          {
              if (!forceSpawn)
              {
-@@ -1618,16 +1686,24 @@
+@@ -1569,16 +1650,17 @@
+         }
+         else
+         {
+-            return BlockBed.getSafeExitLocation(worldIn, bedLocation, 0);
++            return block.getBedSpawnPosition(state, worldIn, bedLocation, null);
+         }
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public float getBedOrientationInDegrees()
+     {
+-        if (this.playerLocation != null)
++        IBlockState state = this.playerLocation == null ? null : this.worldObj.getBlockState(playerLocation);
++        if (state != null && state.getBlock().isBed(state, worldObj, playerLocation, this))
+         {
+-            EnumFacing enumfacing = (EnumFacing)this.worldObj.getBlockState(this.playerLocation).getValue(BlockHorizontal.field_185512_D);
++            EnumFacing enumfacing = state.getBlock().getBedDirection(state, worldObj, playerLocation);
+ 
+             switch (enumfacing)
+             {
+@@ -1618,16 +1700,24 @@
  
      public BlockPos getBedLocation()
      {
@@ -252,7 +352,7 @@
          if (pos != null)
          {
              this.spawnChunk = pos;
-@@ -1822,6 +1898,10 @@
+@@ -1822,6 +1912,10 @@
  
              super.fall(distance, damageMultiplier);
          }
@@ -263,18 +363,38 @@
      }
  
      protected void resetHeight()
-@@ -2009,6 +2089,10 @@
-             this.field_181016_an = oldPlayer.field_181016_an;
-             this.field_181017_ao = oldPlayer.field_181017_ao;
-             this.field_181018_ap = oldPlayer.field_181018_ap;
-+            //Copy and re-init ExtendedProperties when switching dimensions.
-+            this.extendedProperties = oldPlayer.extendedProperties;
-+            for (net.minecraftforge.common.IExtendedEntityProperties p : this.extendedProperties.values())
-+                p.init(this, this.worldObj);
-         }
-         else if (this.worldObj.getGameRules().getBoolean("keepInventory") || oldPlayer.isSpectator())
-         {
-@@ -2129,7 +2213,7 @@
+@@ -2022,6 +2116,18 @@
+         this.xpSeed = oldPlayer.xpSeed;
+         this.theInventoryEnderChest = oldPlayer.theInventoryEnderChest;
+         this.func_184212_Q().func_187227_b(field_184827_bp, oldPlayer.func_184212_Q().func_187225_a(field_184827_bp));
++
++        this.spawnChunkMap = oldPlayer.spawnChunkMap;
++        this.spawnForcedMap = oldPlayer.spawnForcedMap;
++
++        //Copy over a section of the Entity Data from the old player.
++        //Allows mods to specify data that persists after players respawn.
++        NBTTagCompound old = oldPlayer.getEntityData();
++        if (old.hasKey(PERSISTED_NBT_TAG))
++        {
++            getEntityData().setTag(PERSISTED_NBT_TAG, old.getCompoundTag(PERSISTED_NBT_TAG));
++        }
++        net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, oldPlayer, !respawnFromEnd);
+     }
+ 
+     protected boolean canTriggerWalking()
+@@ -2120,7 +2226,10 @@
+ 
+     public ITextComponent getDisplayName()
+     {
+-        ITextComponent itextcomponent = new TextComponentString(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getName()));
++        ITextComponent itextcomponent = new TextComponentString("");
++        if (!prefixes.isEmpty()) for (ITextComponent prefix : prefixes) itextcomponent.appendSibling(prefix);
++        itextcomponent.appendSibling(new TextComponentString(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getName())));
++        if (!suffixes.isEmpty()) for (ITextComponent suffix : suffixes) itextcomponent.appendSibling(suffix);
+         itextcomponent.getChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getName() + " "));
+         itextcomponent.getChatStyle().setChatHoverEvent(this.getHoverEvent());
+         itextcomponent.getChatStyle().setInsertion(this.getName());
+@@ -2129,7 +2238,7 @@
  
      public float getEyeHeight()
      {
@@ -283,7 +403,7 @@
  
          if (this.isPlayerSleeping())
          {
-@@ -2340,6 +2424,136 @@
+@@ -2340,6 +2449,136 @@
          return (float)this.getEntityAttribute(SharedMonsterAttributes.field_188792_h).getAttributeValue();
      }
  
@@ -397,23 +517,23 @@
 +        this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.getName());
 +    }
 +
-+    private final java.util.Collection<net.minecraft.util.IChatComponent> prefixes = new java.util.LinkedList<net.minecraft.util.IChatComponent>();
-+    private final java.util.Collection<net.minecraft.util.IChatComponent> suffixes = new java.util.LinkedList<net.minecraft.util.IChatComponent>();
++    private final java.util.Collection<ITextComponent> prefixes = new java.util.LinkedList<ITextComponent>();
++    private final java.util.Collection<ITextComponent> suffixes = new java.util.LinkedList<ITextComponent>();
 +
 +    /**
 +     * Add a prefix to the player's username in chat
 +     * @param prefix The prefix
 +     */
-+    public void addPrefix(net.minecraft.util.IChatComponent prefix) { prefixes.add(prefix); }
++    public void addPrefix(ITextComponent prefix) { prefixes.add(prefix); }
 +
 +    /**
 +     * Add a suffix to the player's username in chat
 +     * @param suffix The suffix
 +     */
-+    public void addSuffix(net.minecraft.util.IChatComponent suffix) { suffixes.add(suffix); }
++    public void addSuffix(ITextComponent suffix) { suffixes.add(suffix); }
 +
-+    public java.util.Collection<net.minecraft.util.IChatComponent> getPrefixes() { return this.prefixes; }
-+    public java.util.Collection<net.minecraft.util.IChatComponent> getSuffixes() { return this.suffixes; }
++    public java.util.Collection<ITextComponent> getPrefixes() { return this.prefixes; }
++    public java.util.Collection<ITextComponent> getSuffixes() { return this.suffixes; }
 +
 +    /* ======================================== FORGE END  =====================================*/
 +

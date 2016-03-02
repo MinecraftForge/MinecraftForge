@@ -1,14 +1,15 @@
-++++ REJECTED PATCH 1
-     private double targetX;
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIAttackMelee.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIAttackMelee.java
+@@ -21,6 +21,8 @@
      private double targetY;
      private double targetZ;
+     protected final int field_188493_g = 20;
 +    private int failedPathFindingPenalty = 0;
 +    private boolean canPenalize = false;
  
-     public EntityAIAttackOnCollide(EntityCreature creature, Class <? extends Entity > targetClass, double speedIn, boolean useLongMemory)
+     public EntityAIAttackMelee(EntityCreature creature, double speedIn, boolean useLongMemory)
      {
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -45,6 +47,19 @@
          }
          else
          {
@@ -28,8 +29,7 @@
              this.entityPathEntity = this.attacker.getNavigator().getPathToEntityLiving(entitylivingbase);
              return this.entityPathEntity != null;
          }
-++++ END PATCH
-++++ REJECTED PATCH 3
+@@ -89,6 +104,23 @@
              this.targetZ = entitylivingbase.posZ;
              this.delayCounter = 4 + this.attacker.getRNG().nextInt(7);
  
@@ -53,4 +53,3 @@
              if (d0 > 1024.0D)
              {
                  this.delayCounter += 10;
-++++ END PATCH

@@ -1,17 +1,18 @@
-package net.minecraftforge.event.entity.player;
+package net.minecraftforge.event.entity.living;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public abstract class PlayerUseItemEvent extends PlayerEvent
+public abstract class LivingEntityUseItemEvent extends LivingEvent
 {
     public final ItemStack item;
     public int duration;
 
-    private PlayerUseItemEvent(EntityPlayer player, ItemStack item, int duration)
+    private LivingEntityUseItemEvent(EntityLivingBase entity, ItemStack item, int duration)
     {
-        super(player);
+        super(entity);
         this.item = item;
         this.duration = duration;
     }
@@ -28,11 +29,11 @@ public abstract class PlayerUseItemEvent extends PlayerEvent
      *
      */
     @Cancelable
-    public static class Start extends PlayerUseItemEvent
+    public static class Start extends LivingEntityUseItemEvent
     {
-        public Start(EntityPlayer player, ItemStack item, int duration)
+        public Start(EntityLivingBase entity, ItemStack item, int duration)
         {
-            super(player, item, duration);
+            super(entity, item, duration);
         }
     }
 
@@ -43,32 +44,32 @@ public abstract class PlayerUseItemEvent extends PlayerEvent
      *
      */
     @Cancelable
-    public static class Tick extends PlayerUseItemEvent
+    public static class Tick extends LivingEntityUseItemEvent
     {
-        public Tick(EntityPlayer player, ItemStack item, int duration)
+        public Tick(EntityLivingBase entity, ItemStack item, int duration)
         {
-            super(player, item, duration);
+            super(entity, item, duration);
         }
     }
 
     /**
-     * Fired when a player stops using an item without the use duration timing out. 
+     * Fired when a player stops using an item without the use duration timing out.
      * Example:
      *   Stop eating 1/2 way through
      *   Stop defending with sword
      *   Stop drawing bow. This case would fire the arrow
-     *   
+     *
      * Duration on this event is how long the item had left in it's count down before 'finishing'
      *
-     * Canceling this event will prevent the Item from being notified that it has stopped being used, 
+     * Canceling this event will prevent the Item from being notified that it has stopped being used,
      * The only vanilla item this would effect are bows, and it would cause them NOT to fire there arrow.
      */
     @Cancelable
-    public static class Stop extends PlayerUseItemEvent
+    public static class Stop extends LivingEntityUseItemEvent
     {
-        public Stop(EntityPlayer player, ItemStack item, int duration)
+        public Stop(EntityLivingBase entity, ItemStack item, int duration)
         {
-            super(player, item, duration);
+            super(entity, item, duration);
         }
     }
 
@@ -76,18 +77,18 @@ public abstract class PlayerUseItemEvent extends PlayerEvent
      * Fired after an item has fully finished being used.
      * The item has been notified that it was used, and the item/result stacks reflect after that state.
      * This means that when this is fired for a Potion, the potion effect has already been applied.
-     * 
+     *
      * If you wish to cancel those effects, you should cancel one of the above events.
-     * 
+     *
      * The result item stack is the stack that is placed in the player's inventory in replacement of the stack that is currently being used.
      *
      */
-    public static class Finish extends PlayerUseItemEvent
+    public static class Finish extends LivingEntityUseItemEvent
     {
         public ItemStack result;
-        public Finish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
+        public Finish(EntityLivingBase entity, ItemStack item, int duration, ItemStack result)
         {
-            super(player, item, duration);
+            super(entity, item, duration);
             this.result = result;
         }
     }

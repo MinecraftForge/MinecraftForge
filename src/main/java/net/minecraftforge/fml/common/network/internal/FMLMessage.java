@@ -14,7 +14,7 @@ import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -110,12 +110,12 @@ public abstract class FMLMessage {
     }
 
     public static class EntityAdjustMessage extends EntityMessage {
-        int serverX;
-        int serverY;
-        int serverZ;
+        long serverX;
+        long serverY;
+        long serverZ;
 
         public EntityAdjustMessage() {}
-        public EntityAdjustMessage(Entity entity, int serverX, int serverY, int serverZ)
+        public EntityAdjustMessage(Entity entity, long serverX, long serverY, long serverZ)
         {
             super(entity);
             this.serverX = serverX;
@@ -127,9 +127,9 @@ public abstract class FMLMessage {
         void toBytes(ByteBuf buf)
         {
             super.toBytes(buf);
-            buf.writeInt(serverX);
-            buf.writeInt(serverY);
-            buf.writeInt(serverZ);
+            buf.writeLong(serverX);
+            buf.writeLong(serverY);
+            buf.writeLong(serverZ);
         }
 
         @Override

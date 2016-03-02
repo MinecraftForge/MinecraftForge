@@ -322,12 +322,6 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state)
-    {
-        return null;
-    }
-
-    @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return null;

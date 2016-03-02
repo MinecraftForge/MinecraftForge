@@ -188,7 +188,7 @@
      }
  
      protected ItemStack createStackedBlock(IBlockState state)
-@@ -844,6 +864,1160 @@
+@@ -844,6 +864,1180 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  
@@ -567,12 +567,13 @@
 +     * players to sleep in it, though the block has to specifically
 +     * perform the sleeping functionality in it's activated event.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param player The player or camera entity, null in some cases.
 +     * @return True to treat this as a bed
 +     */
-+    public boolean isBed(IBlockAccess world, BlockPos pos, Entity player)
++    public boolean isBed(IBlockState state, IBlockAccess world, BlockPos pos, Entity player)
 +    {
 +        return this == net.minecraft.init.Blocks.bed;
 +    }
@@ -581,12 +582,13 @@
 +     * Returns the position that the player is moved to upon
 +     * waking up, or respawning at the bed.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param player The player or camera entity, null in some cases.
 +     * @return The spawn position
 +     */
-+    public BlockPos getBedSpawnPosition(IBlockAccess world, BlockPos pos, EntityPlayer player)
++    public BlockPos getBedSpawnPosition(IBlockState state, IBlockAccess world, BlockPos pos, EntityPlayer player)
 +    {
 +        if (world instanceof World)
 +            return BlockBed.getSafeExitLocation((World)world, pos, 0);
@@ -616,13 +618,14 @@
 +     * Returns the direction of the block. Same values that
 +     * are returned by BlockDirectional
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @return Bed direction
 +     */
-+    public EnumFacing getBedDirection(IBlockAccess world, BlockPos pos)
++    public EnumFacing getBedDirection(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return (EnumFacing)getActualState(world.getBlockState(pos), world, pos).getValue(BlockDirectional.FACING);
++        return (EnumFacing)getActualState(state, world, pos).getValue(BlockHorizontal.field_185512_D);
 +    }
 +
 +    /**
@@ -990,15 +993,30 @@
 +    /**
 +     * Determines if this block is can be destroyed by the specified entities normal behavior.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @return True to allow the ender dragon to destroy this block
 +     */
-+    public boolean canEntityDestroy(IBlockAccess world, BlockPos pos, Entity entity)
++    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity)
 +    {
 +        if (entity instanceof net.minecraft.entity.boss.EntityDragon)
 +        {
-+            return this != net.minecraft.init.Blocks.barrier && this != net.minecraft.init.Blocks.obsidian && this != net.minecraft.init.Blocks.end_stone && this != net.minecraft.init.Blocks.bedrock && this != net.minecraft.init.Blocks.command_block;
++            return this != net.minecraft.init.Blocks.barrier &&
++                   this != net.minecraft.init.Blocks.obsidian &&
++                   this != net.minecraft.init.Blocks.end_stone &&
++                   this != net.minecraft.init.Blocks.bedrock &&
++                   this != net.minecraft.init.Blocks.end_portal &&
++                   this != net.minecraft.init.Blocks.end_portal_frame &&
++                   this != net.minecraft.init.Blocks.command_block &&
++                   this != net.minecraft.init.Blocks.field_185776_dc &&
++                   this != net.minecraft.init.Blocks.field_185777_dd &&
++                   this != net.minecraft.init.Blocks.iron_bars &&
++                   this != net.minecraft.init.Blocks.field_185775_db;
++        }
++        else if (entity instanceof net.minecraft.entity.boss.EntityWither)
++        {
++            return net.minecraft.entity.boss.EntityWither.func_181033_a(this);
 +        }
 +
 +        return true;
@@ -1031,7 +1049,7 @@
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
 +        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        for (IProperty<?> prop : state.getProperties().keySet())
 +        {
 +            if (prop.getName().equals("facing") || prop.getName().equals("rotation"))
 +            {
@@ -1052,10 +1070,11 @@
 +    public EnumFacing[] getValidRotations(World world, BlockPos pos)
 +    {
 +        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        for (IProperty<?> prop : state.getProperties().keySet())
 +        {
 +            if (prop.getName().equals("facing") && prop.getValueClass() == EnumFacing.class)
 +            {
++                @SuppressWarnings("unchecked")
 +                java.util.Collection<EnumFacing> values = ((java.util.Collection<EnumFacing>)prop.getAllowedValues());
 +                return values.toArray(new EnumFacing[values.size()]);
 +            }
@@ -1082,10 +1101,11 @@
 +     * @param color The color to change to
 +     * @return If the recoloring was successful
 +     */
++    @SuppressWarnings({ "unchecked", "rawtypes" })
 +    public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, net.minecraft.item.EnumDyeColor color)
 +    {
 +        IBlockState state = world.getBlockState(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.getProperties().keySet())
++        for (IProperty prop : state.getProperties().keySet())
 +        {
 +            if (prop.getName().equals("color") && prop.getValueClass() == net.minecraft.item.EnumDyeColor.class)
 +            {

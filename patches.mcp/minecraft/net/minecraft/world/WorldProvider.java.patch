@@ -138,7 +138,7 @@
 +        BlockPos ret = this.worldObj.getSpawnPoint();
 +
 +        boolean isAdventure = worldObj.getWorldInfo().getGameType() == WorldSettings.GameType.ADVENTURE;
-+        int spawnFuzz = terrainType.getSpawnFuzz();
++        int spawnFuzz = this.worldObj instanceof WorldServer ? terrainType.getSpawnFuzz((WorldServer)this.worldObj, this.worldObj.getMinecraftServer()) : 1;
 +        int border = MathHelper.floor_double(worldObj.getWorldBorder().getClosestDistance(ret.getX(), ret.getZ()));
 +        if (border < spawnFuzz) spawnFuzz = border;
 +        if (spawnFuzz < 1) spawnFuzz = 1;

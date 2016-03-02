@@ -38,21 +38,3 @@
          }
          else
          {
-@@ -362,6 +374,17 @@
-                 this.secondaryColor = p_i47076_3_;
-                 this.field_151512_d = StatList.getStatKillEntity(this);
-                 this.field_151513_e = StatList.getStatEntityKilledBy(this);
-+                this.name = EntityList.getStringFromID(id);
-             }
-+
-+            public EntityEggInfo(String name, int primaryColor, int secondaryColor)
-+            {
-+                this.spawnedID = -1;
-+                this.name = name;
-+                this.primaryColor = primaryColor;
-+                this.secondaryColor = secondaryColor;
-+                this.field_151512_d = (new StatBase("stat.killEntity."     + name, new net.minecraft.util.ChatComponentTranslation("stat.entityKill",     new net.minecraft.util.ChatComponentTranslation("entity." + name + ".name")))).registerStat();
-+                this.field_151513_e = (new StatBase("stat.entityKilledBy." + name, new net.minecraft.util.ChatComponentTranslation("stat.entityKilledBy", new net.minecraft.util.ChatComponentTranslation("entity." + name + ".name")))).registerStat();
-+            }
-         }
- }

@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragon.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
+@@ -474,13 +474,13 @@
+                     IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
+                     Block block = iblockstate.getBlock();
+ 
+-                    if (iblockstate.func_185904_a() != Material.air && iblockstate.func_185904_a() != Material.fire)
++                    if (!block.isAir(iblockstate, this.worldObj, blockpos) && iblockstate.func_185904_a() != Material.fire)
+                     {
+                         if (!this.worldObj.getGameRules().getBoolean("mobGriefing"))
+                         {
+                             flag = true;
+                         }
+-                        else if (block != Blocks.barrier && block != Blocks.obsidian && block != Blocks.end_stone && block != Blocks.bedrock && block != Blocks.end_portal && block != Blocks.end_portal_frame)
++                        else if (block.canEntityDestroy(iblockstate, this.worldObj, blockpos, this))
+                         {
+                             if (block != Blocks.command_block && block != Blocks.field_185776_dc && block != Blocks.field_185777_dd && block != Blocks.iron_bars && block != Blocks.field_185775_db)
+                             {

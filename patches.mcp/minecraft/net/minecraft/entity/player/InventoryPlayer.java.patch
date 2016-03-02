@@ -1,7 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -304,6 +304,14 @@
-                 return i;
+@@ -270,13 +270,8 @@
+ 
+             if (itemstack == null)
+             {
+-                itemstack = new ItemStack(item, 0, itemStackIn.getMetadata());
+-
+-                if (itemStackIn.hasTagCompound())
+-                {
+-                    itemstack.setTagCompound((NBTTagCompound)itemStackIn.getTagCompound().copy());
+-                }
+-
++                itemstack = itemStackIn.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
++                itemstack.stackSize = 0;
+                 this.setInventorySlotContents(j, itemstack);
+             }
+ 
+@@ -344,6 +339,14 @@
+                 }
              }
          }
 +
@@ -14,4 +30,4 @@
 +        }
      }
  
-     private int storeItemStack(ItemStack itemStackIn)
+     public boolean addItemStackToInventory(final ItemStack itemStackIn)

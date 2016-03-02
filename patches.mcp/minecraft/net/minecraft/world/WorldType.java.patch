@@ -93,9 +93,9 @@
 +     * Useful for void world types.
 +     * @return Fuzz for entity initial spawn in blocks.
 +     */
-+    public int getSpawnFuzz()
++    public int getSpawnFuzz(WorldServer world, net.minecraft.server.MinecraftServer server)
 +    {
-+        return Math.max(5, net.minecraft.server.MinecraftServer.getServer().getSpawnProtectionSize() - 6);
++        return Math.max(0, server.func_184108_a(world));
 +    }
 +
 +    /**

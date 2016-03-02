@@ -4,6 +4,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 /**
  * EntityInteractEvent is fired when a player interacts with an Entity.<br>
@@ -22,10 +24,18 @@ import net.minecraft.entity.player.EntityPlayer;
 @Cancelable
 public class EntityInteractEvent extends PlayerEvent
 {
-    public final Entity target;
-    public EntityInteractEvent(EntityPlayer player, Entity target)
+    private final Entity target;
+    private final ItemStack item;
+    private final EnumHand hand;
+    public EntityInteractEvent(EntityPlayer player, Entity target, ItemStack item, EnumHand hand)
     {
         super(player);
         this.target = target;
+        this.item = item;
+        this.hand = hand;
     }
+
+    public Entity getTarget() { return this.target; }
+    public ItemStack getItem() { return this.item; }
+    public EnumHand getHand() { return this.hand; }
 }

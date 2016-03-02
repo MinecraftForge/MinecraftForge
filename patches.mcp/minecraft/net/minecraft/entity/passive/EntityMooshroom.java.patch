@@ -9,13 +9,30 @@
  {
      public EntityMooshroom(World worldIn)
      {
-@@ -78,6 +78,35 @@
+@@ -22,6 +22,7 @@
+         this.spawnableBlock = Blocks.mycelium;
+     }
+ 
++    @SuppressWarnings("unused")
+     public boolean func_184645_a(EntityPlayer p_184645_1_, EnumHand p_184645_2_, ItemStack p_184645_3_)
+     {
+         if (p_184645_3_ != null && p_184645_3_.getItem() == Items.bowl && this.getGrowingAge() >= 0 && !p_184645_1_.capabilities.isCreativeMode)
+@@ -37,7 +38,7 @@
+ 
+             return true;
+         }
+-        else if (p_184645_3_ != null && p_184645_3_.getItem() == Items.shears && this.getGrowingAge() >= 0)
++        else if (false && p_184645_3_ != null && p_184645_3_.getItem() == Items.shears && this.getGrowingAge() >= 0) //Forge Disable, Moved to onSheared
+         {
+             this.setDead();
+             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D, new int[0]);
+@@ -78,6 +79,35 @@
          return new EntityMooshroom(this.worldObj);
      }
  
-+    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos){ return getGrowingAge() >= 0; }
++    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.math.BlockPos pos){ return getGrowingAge() >= 0; }
 +    @Override
-+    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos, int fortune)
++    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.math.BlockPos pos, int fortune)
 +    {
 +        this.setDead();
 +        this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D, new int[0]);
@@ -38,7 +55,7 @@
 +            ret.add(new ItemStack(Blocks.red_mushroom));
 +        }
 +
-+        this.playSound("mob.sheep.shear", 1.0F, 1.0F);
++        this.func_184185_a(SoundEvents.field_187784_dt, 1.0F, 1.0F);
 +        return ret;
 +    }
 +

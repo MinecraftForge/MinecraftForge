@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -167,6 +167,12 @@
+@@ -162,11 +162,18 @@
+ 
+                         if (itemstack1.stackSize == 0)
+                         {
++                        	net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.mc.thePlayer, itemstack1, EnumHand.MAIN_HAND);
+                             this.mc.thePlayer.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
+                         }
                      }
                  }
  
@@ -13,3 +19,11 @@
                  return flag;
              }
          }
+@@ -456,6 +463,7 @@
+                     if (itemstack.stackSize == 0)
+                     {
+                         p_187101_1_.func_184611_a(p_187101_4_, (ItemStack)null);
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_4_);
+                     }
+                 }
+ 

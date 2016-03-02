@@ -4,7 +4,7 @@
  
      public boolean func_184230_a(EntityPlayer p_184230_1_, ItemStack p_184230_2_, EnumHand p_184230_3_)
      {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, playerIn))) return true;
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_184230_1_, p_184230_2_, p_184230_3_))) return true;
          if (!this.worldObj.isRemote)
          {
              p_184230_1_.displayGUIChest(this);

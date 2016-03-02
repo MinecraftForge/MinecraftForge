@@ -9,7 +9,19 @@
  {
      private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
      private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new Container()
-@@ -356,4 +356,19 @@
+@@ -171,9 +171,10 @@
+         }
+     }
+ 
++    @SuppressWarnings("unused")
+     public boolean func_184645_a(EntityPlayer p_184645_1_, EnumHand p_184645_2_, ItemStack p_184645_3_)
+     {
+-        if (p_184645_3_ != null && p_184645_3_.getItem() == Items.shears && !this.getSheared() && !this.isChild())
++        if (false && p_184645_3_ != null && p_184645_3_.getItem() == Items.shears && !this.getSheared() && !this.isChild()) //Forge: Moved to onSheared
+         {
+             if (!this.worldObj.isRemote)
+             {
+@@ -356,4 +357,19 @@
          DYE_TO_RGB.put(EnumDyeColor.RED, new float[] {0.6F, 0.2F, 0.2F});
          DYE_TO_RGB.put(EnumDyeColor.BLACK, new float[] {0.1F, 0.1F, 0.1F});
      }
@@ -25,7 +37,7 @@
 +        for (int j = 0; j < i; ++j)
 +            ret.add(new ItemStack(Item.getItemFromBlock(Blocks.wool), 1, this.getFleeceColor().getMetadata()));
 +
-+        this.playSound("mob.sheep.shear", 1.0F, 1.0F);
++        this.func_184185_a(SoundEvents.field_187763_eJ, 1.0F, 1.0F);
 +        return ret;
 +    }
  }
