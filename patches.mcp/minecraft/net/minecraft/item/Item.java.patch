@@ -57,7 +57,7 @@
          Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
      }
-@@ -422,11 +431,642 @@
+@@ -422,11 +431,628 @@
          return false;
      }
  
@@ -186,20 +186,6 @@
 +    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
 +    {
 +        return false;
-+    }
-+
-+    /**
-+     * Player, Render pass, and item usage sensitive version of getIconIndex.
-+     *
-+     * @param stack The item stack to get the icon for.
-+     * @param player The player holding the item
-+     * @param useRemaining The ticks remaining for the active item.
-+     * @return Null to use default model, or a custom ModelResourceLocation for the stage of use.
-+     */
-+    @SideOnly(Side.CLIENT)
-+    public net.minecraft.client.renderer.block.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
-+    {
-+        return null;
 +    }
 +
 +    /**
@@ -700,7 +686,7 @@
      public static void registerItems()
      {
          registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
-@@ -935,6 +1575,10 @@
+@@ -935,6 +1561,10 @@
          private final float damageVsEntity;
          private final int enchantability;
  
@@ -711,7 +697,7 @@
          private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
          {
              this.harvestLevel = harvestLevel;
-@@ -969,9 +1613,36 @@
+@@ -969,9 +1599,36 @@
              return this.enchantability;
          }
  
