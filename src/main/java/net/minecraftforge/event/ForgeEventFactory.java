@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -129,7 +130,7 @@ public class ForgeEventFactory
         return onPlayerInteract(player, action, world, pos, face, null);
     }
 
-    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face, Vec3 localPos)
+    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face, Vec3d localPos)
     {
         PlayerInteractEvent event = new PlayerInteractEvent(player, action, pos, face, world, localPos);
         MinecraftForge.EVENT_BUS.post(event);
@@ -429,7 +430,7 @@ public class ForgeEventFactory
         //Filter entities to only those who are effected, to prevent modders from seeing more then will be hurt.
         /* Enable this if we get issues with modders looping to much.
         Iterator<Entity> itr = list.iterator();
-        Vec3 p = explosion.getPosition();
+        Vec3d p = explosion.getPosition();
         while (itr.hasNext())
         {
             Entity e = itr.next();

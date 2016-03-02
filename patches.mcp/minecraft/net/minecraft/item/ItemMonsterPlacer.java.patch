@@ -9,3 +9,12 @@
              {
                  d0 = 0.5D;
              }
+@@ -147,7 +147,7 @@
+         }
+         else
+         {
+-            RayTraceResult raytraceresult = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, true);
++            RayTraceResult raytraceresult = this.getRayTraceResultFromPlayer(worldIn, playerIn, true);
+ 
+             if (raytraceresult != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK)
+             {

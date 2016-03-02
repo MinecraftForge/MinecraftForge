@@ -142,7 +142,7 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColorBody(Entity entityIn, float partialTicks)
++    public Vec3d getSkyColorBody(Entity entityIn, float partialTicks)
 +    {
          float f = this.getCelestialAngle(partialTicks);
          float f1 = MathHelper.cos(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
@@ -176,7 +176,7 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawCloudsBody(float partialTicks)
++    public Vec3d drawCloudsBody(float partialTicks)
 +    {
          float f = this.getCelestialAngle(partialTicks);
          return f * ((float)Math.PI * 2F);
@@ -271,11 +271,10 @@
                      }
                  }
              }
-@@ -2021,6 +2112,16 @@
-                         blockpos$pooledmutableblockpos.func_185343_d(k1, l1, i2);
+@@ -2022,6 +2113,16 @@
                          IBlockState iblockstate = this.getBlockState(blockpos$pooledmutableblockpos);
                          Block block = iblockstate.getBlock();
-+                        
+ 
 +                        Boolean result = block.isEntityInsideMaterial(this, blockpos$mutableblockpos, iblockstate, entityIn, (double)l, materialIn, false);
 +                        if (result != null && result == true)
 +                        {
@@ -285,9 +284,10 @@
 +                            continue;
 +                        }
 +                        else if (result != null && result == false) continue;
- 
++
                          if (iblockstate.func_185904_a() == materialIn)
                          {
+                             double d0 = (double)((float)(l1 + 1) - BlockLiquid.getLiquidHeightPercent(((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue()));
 @@ -2130,6 +2231,7 @@
      public Explosion newExplosion(Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {

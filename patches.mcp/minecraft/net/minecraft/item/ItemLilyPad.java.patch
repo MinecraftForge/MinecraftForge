@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemLilyPad.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemLilyPad.java
+@@ -25,7 +25,7 @@
+ 
+     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand p_77659_4_)
+     {
+-        RayTraceResult raytraceresult = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, true);
++        RayTraceResult raytraceresult = this.getRayTraceResultFromPlayer(worldIn, playerIn, true);
+ 
+         if (raytraceresult == null)
+         {
 @@ -47,6 +47,15 @@
  
                  if (iblockstate.func_185904_a() == Material.water && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0 && worldIn.isAirBlock(blockpos1))

@@ -16,7 +16,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -340,10 +340,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public Vec3 modifyAcceleration(World world, BlockPos pos, Entity entity, Vec3 vec)
+    public Vec3d modifyAcceleration(World world, BlockPos pos, Entity entity, Vec3d vec)
     {
         if (densityDir > 0) return vec;
-        Vec3 vec_flow = this.getFlowVector(world, pos);
+        Vec3d vec_flow = this.getFlowVector(world, pos);
         return vec.addVector(
                 vec_flow.xCoord * (quantaPerBlock * 4),
                 vec_flow.yCoord * (quantaPerBlock * 4),
@@ -495,7 +495,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         {
             return -1000.0;
         }
-        Vec3 vec = ((BlockFluidBase) block).getFlowVector(world, pos);
+        Vec3d vec = ((BlockFluidBase) block).getFlowVector(world, pos);
         return vec.xCoord == 0.0D && vec.zCoord == 0.0D ? -1000.0D : Math.atan2(vec.zCoord, vec.xCoord) - Math.PI / 2D;
     }
 
@@ -571,9 +571,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return !here.getBlock().getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
     }
 
-    public Vec3 getFlowVector(IBlockAccess world, BlockPos pos)
+    public Vec3d getFlowVector(IBlockAccess world, BlockPos pos)
     {
-        Vec3 vec = new Vec3(0.0D, 0.0D, 0.0D);
+        Vec3d vec = new Vec3d(0.0D, 0.0D, 0.0D);
         int decay = quantaPerBlock - getQuantaValue(world, pos);
 
         for (int side = 0; side < 4; ++side)

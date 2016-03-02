@@ -117,7 +117,7 @@
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
-+    public ItemStack getPickedResult(MovingObjectPosition target)
++    public ItemStack getPickedResult(RayTraceResult target)
 +    {
 +        if (this instanceof net.minecraft.entity.item.EntityPainting)
 +        {

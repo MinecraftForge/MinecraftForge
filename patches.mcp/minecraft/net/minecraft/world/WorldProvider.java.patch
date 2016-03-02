@@ -212,13 +212,13 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
++    public Vector3d getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
 +    {
 +        return worldObj.getSkyColorBody(cameraEntity, partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawClouds(float partialTicks)
++    public Vec3d drawClouds(float partialTicks)
 +    {
 +        return worldObj.drawCloudsBody(partialTicks);
 +    }
