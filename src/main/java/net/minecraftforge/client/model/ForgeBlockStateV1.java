@@ -37,7 +37,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-@SuppressWarnings("deprecation")
 public class ForgeBlockStateV1 extends Marker
 {
     ForgeBlockStateV1.Variant defaults;
@@ -372,7 +371,7 @@ public class ForgeBlockStateV1 extends Marker
 
         protected SubModel asGenericSubModel()
         {
-            return new SubModel(state.or(TRSRTransformation.identity()), uvLock.or(false), getTextures(), model, getCustomData());
+            return new SubModel(state.or(TRSRTransformation.identity()), smooth.or(true), gui3d.or(true), uvLock.or(false), getTextures(), model, getCustomData());
         }
 
         /**

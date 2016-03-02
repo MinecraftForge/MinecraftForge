@@ -12,7 +12,7 @@
 +        return new StateImplementation(block, properties);
 +    }
 +
-+    protected BlockStateContainer(Block blockIn, IProperty[] properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
++    protected BlockStateContainer(Block blockIn, IProperty<?>[] properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
 +    {
          this.block = blockIn;
          Map < String, IProperty<? >> map = Maps. < String, IProperty<? >> newHashMap();

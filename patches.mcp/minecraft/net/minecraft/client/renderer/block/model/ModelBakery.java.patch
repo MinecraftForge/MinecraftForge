@@ -11,7 +11,7 @@
                          }
 @@ -370,6 +370,7 @@
  
-     private void registerVariantNames()
+     protected void registerVariantNames()
      {
 +        this.variantNames.clear(); //FML clear this to prevent double ups.
          this.variantNames.put(Item.getItemFromBlock(Blocks.stone), Lists.newArrayList(new String[] {"stone", "granite", "granite_smooth", "diorite", "diorite_smooth", "andesite", "andesite_smooth"}));
@@ -27,10 +27,10 @@
 +        }
      }
  
-     private List<String> getVariantNames(Item p_177596_1_)
+     protected List<String> getVariantNames(Item p_177596_1_)
 @@ -429,7 +434,7 @@
  
-     private ResourceLocation getItemLocation(String p_177583_1_)
+     protected ResourceLocation getItemLocation(String p_177583_1_)
      {
 -        ResourceLocation resourcelocation = new ResourceLocation(p_177583_1_);
 +        ResourceLocation resourcelocation = new ResourceLocation(p_177583_1_.replaceAll("#.*", ""));

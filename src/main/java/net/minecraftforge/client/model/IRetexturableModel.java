@@ -21,6 +21,5 @@ public interface IRetexturableModel<M extends IRetexturableModel<M>> extends IMo
      * @param textures New
      * @return Model with textures applied.
      */
-    // 1.9: change IModel to M
-    IModel retexture(ImmutableMap<String, String> textures);
+    M retexture(ImmutableMap<String, String> textures);
 }

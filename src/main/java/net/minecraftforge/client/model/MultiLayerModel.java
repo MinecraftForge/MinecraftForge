@@ -93,7 +93,7 @@ public class MultiLayerModel implements IModelCustomData<MultiLayerModel>
     }
 
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
+    public MultiLayerModel process(ImmutableMap<String, String> customData)
     {
         ImmutableMap.Builder<Optional<BlockRenderLayer>, ModelResourceLocation> builder = ImmutableMap.builder();
         for(String key : customData.keySet())

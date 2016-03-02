@@ -108,12 +108,6 @@ public class BlockStateLoader
         private final ResourceLocation model;
         private final ImmutableMap<String, String> customData;
 
-        @Deprecated // remove in 1.9
-        public SubModel(IModelState state, boolean uvLock, ImmutableMap<String, String> textures, ResourceLocation model, ImmutableMap<String, String> customData)
-        {
-            this(state, uvLock, true, true, textures, model, customData);
-        }
-
         public SubModel(IModelState state, boolean uvLock, boolean smooth, boolean gui3d, ImmutableMap<String, String> textures, ResourceLocation model, ImmutableMap<String, String> customData)
         {
             this.state = state;
