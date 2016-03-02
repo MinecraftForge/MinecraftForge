@@ -6,11 +6,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.client.C15PacketClientSettings;
-import net.minecraft.server.management.ItemInWorldManager;
+import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -22,7 +22,7 @@ public class FakePlayer extends EntityPlayerMP
         super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new ItemInWorldManager(world));
     }
 
-    @Override public Vec3 getPositionVector(){ return new Vec3(0, 0, 0); }
+    @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
     @Override public boolean canCommandSenderUseCommand(int i, String s){ return false; }
     @Override public void addChatComponentMessage(ITextComponent chatmessagecomponent){}
     @Override public void addStat(StatBase par1StatBase, int par2){}

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemGlassBottle.java
++++ ../src-work/minecraft/net/minecraft/item/ItemGlassBottle.java
+@@ -44,7 +44,7 @@
+         }
+         else
+         {
+-            RayTraceResult raytraceresult = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, true);
++            RayTraceResult raytraceresult = this.getRayTraceResultFromPlayer(worldIn, playerIn, true);
+ 
+             if (raytraceresult == null)
+             {

@@ -125,3 +125,24 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
+@@ -1882,9 +1912,9 @@
+         }
+     }
+ 
+-    public void drawSelectionBox(EntityPlayer player, RayTraceResult movingObjectPositionIn, int p_72731_3_, float partialTicks)
++    public void drawSelectionBox(EntityPlayer player, RayTraceResult rayTraceResultIn, int p_72731_3_, float partialTicks)
+     {
+-        if (p_72731_3_ == 0 && movingObjectPositionIn.typeOfHit == RayTraceResult.Type.BLOCK)
++        if (p_72731_3_ == 0 && rayTraceResultIn.typeOfHit == RayTraceResult.Type.BLOCK)
+         {
+             GlStateManager.enableBlend();
+             GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+@@ -1892,7 +1922,7 @@
+             GlStateManager.func_187441_d(2.0F);
+             GlStateManager.disableTexture2D();
+             GlStateManager.depthMask(false);
+-            BlockPos blockpos = movingObjectPositionIn.getBlockPos();
++            BlockPos blockpos = rayTraceResultIn.getBlockPos();
+             IBlockState iblockstate = this.theWorld.getBlockState(blockpos);
+ 
+             if (iblockstate.func_185904_a() != Material.air && this.theWorld.getWorldBorder().contains(blockpos))

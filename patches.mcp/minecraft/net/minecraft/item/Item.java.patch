@@ -37,7 +37,7 @@
      public boolean hasContainerItem()
      {
          return this.containerItem != null;
-@@ -367,7 +372,7 @@
+@@ -367,10 +372,10 @@
  
      public boolean isItemTool(ItemStack stack)
      {
@@ -45,7 +45,11 @@
 +        return this.getItemStackLimit(stack) == 1 && this.isDamageable();
      }
  
-     protected RayTraceResult getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+-    protected RayTraceResult getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
++    protected RayTraceResult getRayTraceResultFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+     {
+         float f = playerIn.rotationPitch;
+         float f1 = playerIn.rotationYaw;
 @@ -385,6 +390,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;

@@ -59,6 +59,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -247,7 +248,7 @@ public class ForgeHooks
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
-    public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
+    public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
     {
         /*
             int i = 0;
@@ -255,7 +256,7 @@ public class ForgeHooks
             TileEntity tileentity = null;
             Item item;
 
-            if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
             {
                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
                 Block block = this.theWorld.getBlockState(blockpos).getBlock();
@@ -283,7 +284,7 @@ public class ForgeHooks
             }
             else
             {
-                if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
+                if (this.objectMouseOver.typeOfHit != RayTraceResult.Type.ENTITY || this.objectMouseOver.entityHit == null || !flag)
                 {
                     return;
                 }
@@ -922,16 +923,16 @@ public class ForgeHooks
         return !event.isCanceled();
     }
 
-    public static MovingObjectPosition rayTraceEyes(EntityLivingBase entity, double length)
+    public static RayTraceResult rayTraceEyes(EntityLivingBase entity, double length)
     {
-        Vec3 startPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
-        Vec3 endPos = startPos.add(new Vec3(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
+        Vec3d startPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        Vec3d endPos = startPos.add(new Vec3d(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
         return entity.worldObj.rayTraceBlocks(startPos, endPos);
     }
 
-    public static Vec3 rayTraceEyeHitVec(EntityLivingBase entity, double length)
+    public static Vec3d rayTraceEyeHitVec(EntityLivingBase entity, double length)
     {
-        MovingObjectPosition movingObjectPosition = rayTraceEyes(entity, length);
-        return movingObjectPosition == null ? null : movingObjectPosition.hitVec;
+        RayTraceResult rayTraceResult = rayTraceEyes(entity, length);
+        return rayTraceResult == null ? null : rayTraceResult.hitVec;
     }
 }

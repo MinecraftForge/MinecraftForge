@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemEnderEye.java
++++ ../src-work/minecraft/net/minecraft/item/ItemEnderEye.java
+@@ -81,7 +81,7 @@
+ 
+     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand p_77659_4_)
+     {
+-        RayTraceResult raytraceresult = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, false);
++        RayTraceResult raytraceresult = this.getRayTraceResultFromPlayer(worldIn, playerIn, false);
+ 
+         if (raytraceresult != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK && worldIn.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.end_portal_frame)
+         {

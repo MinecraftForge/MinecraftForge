@@ -4,7 +4,7 @@
          this.explosionZ = p_i45754_7_;
          this.isFlaming = p_i45754_10_;
          this.isSmoking = p_i45754_11_;
-+        this.position = new Vec3(explosionX, explosionY, explosionZ);
++        this.position = new Vec3d(explosionX, explosionY, explosionZ);
      }
  
      public void doExplosionA()
@@ -32,5 +32,5 @@
          return this.affectedBlockPositions;
      }
 +
-+    public Vec3 getPosition(){ return this.position; }
++    public Vec3d getPosition(){ return this.position; }
  }

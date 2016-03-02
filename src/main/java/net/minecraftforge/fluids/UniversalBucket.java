@@ -13,7 +13,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -107,8 +107,8 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         // clicked on a block?
-        MovingObjectPosition mop = this.getMovingObjectPositionFromPlayer(world, player, false);
-        if (mop != null && mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+        RayTraceResult mop = this.getRayTraceResultFromPlayer(world, player, false);
+        if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK)
         {
             BlockPos clickPos = mop.getBlockPos();
             // can we place liquid there?
@@ -214,7 +214,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         // needs to target a block
-        if (event.target == null || event.target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+        if (event.target == null || event.target.typeOfHit != RayTraceResult.Type.BLOCK)
         {
             return;
         }

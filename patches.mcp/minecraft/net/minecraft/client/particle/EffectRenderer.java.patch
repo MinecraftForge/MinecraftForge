@@ -5,7 +5,7 @@
          return "" + i;
      }
 +
-+    public void addBlockHitEffects(BlockPos pos, net.minecraft.util.MovingObjectPosition target)
++    public void addBlockHitEffects(BlockPos pos, net.minecraft.util.math.RayTraceResult target)
 +    {
 +        Block block = worldObj.getBlockState(pos).getBlock();
 +        if (block != null && !block.addHitEffects(worldObj, target, this))

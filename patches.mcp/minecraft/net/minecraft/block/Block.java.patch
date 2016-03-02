@@ -794,12 +794,12 @@
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
-+    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player)
++    public ItemStack getPickBlock(RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 +    {
 +        return getPickBlock(target, world, pos);
 +    }
 +    @Deprecated
-+    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos)
++    public ItemStack getPickBlock(RayTraceResult target, World world, BlockPos pos)
 +    {
 +        Item item = getItem(world, pos);
 +
@@ -852,7 +852,7 @@
 +     * @return True to prevent vanilla digging particles form spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public boolean addHitEffects(World worldObj, MovingObjectPosition target, net.minecraft.client.particle.EffectRenderer effectRenderer)
++    public boolean addHitEffects(World worldObj, RayTraceResult target, net.minecraft.client.particle.EffectRenderer effectRenderer)
 +    {
 +        return false;
 +    }
