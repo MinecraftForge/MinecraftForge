@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -267,7 +267,15 @@
+@@ -235,6 +235,8 @@
+         private final int[] damageReductionAmountArray;
+         private final int enchantability;
+         private final SoundEvent field_185020_j;
++        //Added by forge for custom Armor materials.
++        public Item customCraftingMaterial = null;
+ 
+         private ArmorMaterial(String p_i46796_3_, int p_i46796_4_, int[] p_i46796_5_, int p_i46796_6_, SoundEvent p_i46796_7_)
+         {
+@@ -267,7 +269,15 @@
  
          public Item getRepairItem()
          {

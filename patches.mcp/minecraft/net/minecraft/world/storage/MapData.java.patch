@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
+@@ -21,7 +21,7 @@
+ {
+     public int xCenter;
+     public int zCenter;
+-    public byte dimension;
++    public int dimension;
+     public boolean field_186210_e;
+     public byte scale;
+     public byte[] colors = new byte[16384];
 @@ -45,7 +45,17 @@
  
      public void readFromNBT(NBTTagCompound nbt)

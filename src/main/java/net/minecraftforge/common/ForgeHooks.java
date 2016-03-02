@@ -52,9 +52,15 @@ import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
@@ -540,14 +546,14 @@ public class ForgeHooks
     }
 
     @SuppressWarnings("deprecation")
-    public static ChatComponentTranslation onServerChatEvent(NetHandlerPlayServer net, String raw, ChatComponentTranslation comp)
+    public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
         }
-        return event.component;
+        return event.getComponent();
     }
 
 
@@ -614,7 +620,7 @@ public class ForgeHooks
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
             link.getChatStyle().setChatClickEvent(click);
             link.getChatStyle().setUnderlined(true);
-            link.getChatStyle().setColor(EnumChatFormatting.BLUE);
+            link.getChatStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
                 ichat = link;
             else
@@ -691,7 +697,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static boolean onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public static EnumActionResult onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
     {
         // handle all placement events here
         int meta = itemstack.getItemDamage();
@@ -707,10 +713,10 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        boolean flag = itemstack.getItem().onItemUse(itemstack, player, world, pos, side, hitX, hitY, hitZ);
+        EnumActionResult ret = itemstack.getItem().onItemUse(itemstack, player, world, pos, hand, side, hitX, hitY, hitZ);
         world.captureBlockSnapshots = false;
 
-        if (flag)
+        if (ret == EnumActionResult.SUCCESS)
         {
             // save new item data
             int newMeta = itemstack.getItemDamage();
@@ -743,7 +749,7 @@ public class ForgeHooks
 
             if (placeEvent != null && (placeEvent.isCanceled()))
             {
-                flag = false; // cancel placement
+                ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
                 for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
                 {
@@ -774,12 +780,12 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.pos, null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.objectUseStats[Item.getIdFromItem(itemstack.getItem())], 1);
+                player.triggerAchievement(StatList.func_188060_a(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
 
-        return flag;
+        return ret;
     }
 
     public static boolean onAnvilChange(ContainerRepair container, ItemStack left, ItemStack right, IInventory outputSlot, String name, int baseCost)

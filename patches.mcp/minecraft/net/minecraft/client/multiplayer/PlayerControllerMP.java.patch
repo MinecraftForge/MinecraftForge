@@ -19,8 +19,12 @@
                  return flag;
              }
          }
-@@ -456,6 +463,7 @@
-                     if (itemstack.stackSize == 0)
+@@ -453,9 +460,10 @@
+                 {
+                     p_187101_1_.func_184611_a(p_187101_4_, itemstack);
+ 
+-                    if (itemstack.stackSize == 0)
++                    if (itemstack.stackSize <= 0)
                      {
                          p_187101_1_.func_184611_a(p_187101_4_, (ItemStack)null);
 +                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_4_);

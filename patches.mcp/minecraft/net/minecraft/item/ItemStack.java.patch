@@ -38,7 +38,48 @@
          this.stackSize = amount;
          this.itemDamage = meta;
  
-@@ -196,7 +202,7 @@
+@@ -114,7 +120,7 @@
+     public ItemStack splitStack(int amount)
+     {
+         amount = Math.min(amount, this.stackSize);
+-        ItemStack itemstack = new ItemStack(this.item, amount, this.itemDamage);
++        ItemStack itemstack = new ItemStack(this.item, amount, this.itemDamage, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+ 
+         if (this.stackTagCompound != null)
+         {
+@@ -127,11 +133,12 @@
+ 
+     public Item getItem()
+     {
+-        return this.item;
++        return this.delegate != null ? this.delegate.get() : null;
+     }
+ 
+     public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand side, EnumFacing hitX, float hitY, float hitZ, float p_179546_8_)
+     {
++        if (!worldIn.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, playerIn, worldIn, pos, hitX, hitY, hitZ, p_179546_8_, side);
+         EnumActionResult enumactionresult = this.getItem().onItemUse(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ, p_179546_8_);
+ 
+         if (enumactionresult == EnumActionResult.SUCCESS)
+@@ -169,12 +176,16 @@
+             nbt.setTag("tag", this.stackTagCompound);
+         }
+ 
++        if (this.capabilities != null) nbt.setTag("ForgeCaps", this.capabilities.serializeNBT());
++
+         return nbt;
+     }
+ 
+     public void readFromNBT(NBTTagCompound nbt)
+     {
+-        this.item = Item.getByNameOrId(nbt.getString("id"));
++        this.capNBT = nbt.hasKey("ForgeCaps") ? nbt.getCompoundTag("ForgeCaps") : null;
++        this.setItem(Item.getByNameOrId(nbt.getString("id")));
++        this.capNBT = null;
+         this.stackSize = nbt.getByte("Count");
+         this.itemDamage = nbt.getShort("Damage");
+ 
+@@ -196,7 +207,7 @@
  
      public int getMaxStackSize()
      {
@@ -47,7 +88,7 @@
      }
  
      public boolean isStackable()
-@@ -206,7 +212,7 @@
+@@ -206,7 +217,7 @@
  
      public boolean isItemStackDamageable()
      {
@@ -56,6 +97,44 @@
      }
  
      public boolean getHasSubtypes()
+@@ -216,32 +227,27 @@
+ 
+     public boolean isItemDamaged()
+     {
+-        return this.isItemStackDamageable() && this.itemDamage > 0;
++        return this.isItemStackDamageable() && getItem().isDamaged(this);
+     }
+ 
+     public int getItemDamage()
+     {
+-        return this.itemDamage;
++        return getItem().getDamage(this);
+     }
+ 
+     public int getMetadata()
+     {
+-        return this.itemDamage;
++        return getItem().getMetadata(this);
+     }
+ 
+     public void setItemDamage(int meta)
+     {
+-        this.itemDamage = meta;
+-
+-        if (this.itemDamage < 0)
+-        {
+-            this.itemDamage = 0;
+-        }
++        getItem().setDamage(this, meta);
+     }
+ 
+     public int getMaxDamage()
+     {
+-        return this.item == null ? 0 : this.item.getMaxDamage();
++        return this.item == null ? 0 : this.item.getMaxDamage(this);
+     }
+ 
+     public boolean attemptDamageItem(int amount, Random rand)
 @@ -273,8 +279,8 @@
                  }
              }
@@ -93,6 +172,15 @@
          return list;
      }
  
+@@ -869,7 +876,7 @@
+         }
+         else
+         {
+-            multimap = this.getItem().getItemAttributeModifiers(p_111283_1_);
++            multimap = this.getItem().getAttributeModifiers(p_111283_1_, this);
+         }
+ 
+         return multimap;
 @@ -901,6 +908,18 @@
  
      public void setItem(Item newItem)

@@ -12,7 +12,18 @@
                  {
                      return;
                  }
-@@ -689,6 +692,7 @@
+@@ -670,7 +673,9 @@
+ 
+         if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
+         {
+-            if (this.field_184362_y == null && this.playerEntity.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && !this.serverController.isBlockProtected(worldserver, blockpos, this.playerEntity) && worldserver.getWorldBorder().contains(blockpos))
++            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 3;
++            dist *= dist;
++            if (this.field_184362_y == null && this.playerEntity.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, blockpos, this.playerEntity) && worldserver.getWorldBorder().contains(blockpos))
+             {
+                 this.playerEntity.theItemInWorldManager.func_187251_a(this.playerEntity, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
+             }
+@@ -689,6 +694,7 @@
          if (itemstack != null && itemstack.stackSize == 0)
          {
              this.playerEntity.func_184611_a(enumhand, (ItemStack)null);
@@ -20,3 +31,38 @@
              itemstack = null;
          }
      }
+@@ -703,12 +709,14 @@
+ 
+         if (itemstack != null)
+         {
++            //TODO: Hook interact event here... we don't know the type of itneration tho...
+             this.playerEntity.theItemInWorldManager.func_187250_a(this.playerEntity, worldserver, itemstack, enumhand);
+             itemstack = this.playerEntity.func_184586_b(enumhand);
+ 
+             if (itemstack != null && itemstack.stackSize == 0)
+             {
+                 this.playerEntity.func_184611_a(enumhand, (ItemStack)null);
++                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.playerEntity, itemstack, enumhand);
+                 itemstack = null;
+             }
+         }
+@@ -888,7 +896,9 @@
+             }
+             else
+             {
+-                ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", new Object[] {this.playerEntity.getDisplayName(), s});
++                ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.playerEntity.getDisplayName(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
++                itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
++                if (itextcomponent == null) return;
+                 this.serverController.func_184103_al().sendChatMsgImpl(itextcomponent, false);
+             }
+ 
+@@ -1057,7 +1067,7 @@
+                         return;
+                     }
+ 
+-                    this.playerEntity = this.serverController.func_184103_al().recreatePlayerEntity(this.playerEntity, 0, false);
++                    this.playerEntity = this.serverController.func_184103_al().recreatePlayerEntity(this.playerEntity, playerEntity.dimension, false);
+ 
+                     if (this.serverController.isHardcore())
+                     {

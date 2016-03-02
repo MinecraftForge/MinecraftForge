@@ -16,10 +16,13 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -52,6 +55,8 @@ import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -297,23 +302,23 @@ public class ForgeEventFactory
         return 0;
     }
 
-    public static ItemStack onBucketUse(EntityPlayer player, World world, ItemStack stack, RayTraceResult target)
+    public static ActionResult<ItemStack> onBucketUse(EntityPlayer player, World world, ItemStack stack, RayTraceResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, world, target);
-        if (MinecraftForge.EVENT_BUS.post(event)) return stack;
+        if (MinecraftForge.EVENT_BUS.post(event)) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 
         if (event.getResult() == Result.ALLOW)
         {
             if (player.capabilities.isCreativeMode)
-                return stack;
+                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 
             if (--stack.stackSize <= 0)
-                return event.getFilledBucket();
+                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, event.getFilledBucket());
 
             if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
                 player.dropPlayerItemWithRandomChoice(event.getFilledBucket(), false);
 
-            return stack;
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
         }
         return null;
     }
@@ -519,6 +524,22 @@ public class ForgeEventFactory
             return player.worldObj.getBlockState(player.playerLocation).getBlock().isBed(player.worldObj, player.playerLocation, player);
         else
             return canContinueSleep == Result.ALLOW;
+    }
+
+    public static ActionResult<ItemStack> onArrowNock(ItemStack item, World world, EntityPlayer player, EnumHand hand, boolean hasAmmo)
+    {
+        ArrowNockEvent event = new ArrowNockEvent(player, item, hand, world, hasAmmo);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return new ActionResult<ItemStack>(EnumActionResult.FAIL, item);
+        return event.getAction();
+    }
+
+    public static int onArrowLoose(ItemStack stack, World world, EntityPlayer player, int charge, boolean hasAmmo)
+    {
+        ArrowLooseEvent event = new ArrowLooseEvent(player, stack, world, charge, hasAmmo);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return -1;
+        return event.getCharge();
     }
 
 }

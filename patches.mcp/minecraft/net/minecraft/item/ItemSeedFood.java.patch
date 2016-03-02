@@ -9,7 +9,17 @@
  {
      private Block crops;
      private Block soilId;
-@@ -33,4 +33,16 @@
+@@ -22,7 +22,8 @@
+ 
+     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand side, EnumFacing hitX, float hitY, float hitZ, float p_180614_9_)
+     {
+-        if (hitX == EnumFacing.UP && playerIn.canPlayerEdit(pos.offset(hitX), hitX, stack) && worldIn.getBlockState(pos).getBlock() == this.soilId && worldIn.isAirBlock(pos.up()))
++        net.minecraft.block.state.IBlockState state = worldIn.getBlockState(pos);
++        if (hitX == EnumFacing.UP && playerIn.canPlayerEdit(pos.offset(hitX), hitX, stack) && state.getBlock().canSustainPlant(state, worldIn, pos, EnumFacing.UP, this) && worldIn.isAirBlock(pos.up()))
+         {
+             worldIn.setBlockState(pos.up(), this.crops.getDefaultState(), 11);
+             --stack.stackSize;
+@@ -33,4 +34,16 @@
              return EnumActionResult.FAIL;
          }
      }

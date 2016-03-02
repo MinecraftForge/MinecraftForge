@@ -1,34 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -193,8 +193,31 @@
-                 return new ActionResult(EnumActionResult.PASS, itemStackIn);
-             }
-         }
-+
-+        for (String name : net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().keySet())
-+        {
-+            ItemStack stack = new ItemStack(itemIn);
-+            net.minecraft.nbt.NBTTagCompound nbt = new net.minecraft.nbt.NBTTagCompound();
-+            nbt.setString("entity_name", name);
-+            stack.setTagCompound(nbt);
-+            subItems.add(stack);
-+        }
-     }
+@@ -88,7 +88,7 @@
+             pos = pos.offset(hitX);
+             double d0 = 0.0D;
  
-+    public static String getEntityName(ItemStack stack)
-+    {
-+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("entity_name", 8))
-+            return stack.getTagCompound().getString("entity_name");
-+        return EntityList.getStringFromID(stack.getMetadata());
-+    }
-+
-+    private static EntityList.EntityEggInfo getEggInfo(ItemStack stack)
-+    {
-+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("entity_name", 8))
-+            return net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(stack.getTagCompound().getString("entity_name"));
-+        return (EntityList.EntityEggInfo)EntityList.entityEggs.get(stack.getMetadata());
-+    }
-+
-     public static Entity spawnCreature(World worldIn, String entityID, double x, double y, double z)
-     {
-         if (entityID != null && EntityList.entityEggs.containsKey(entityID))
+-            if (hitX == EnumFacing.UP && iblockstate instanceof BlockFence)
++            if (hitX == EnumFacing.UP && iblockstate.getBlock() instanceof BlockFence) //Forge: Fix Vanilla bug comparing state instead of block
+             {
+                 d0 = 0.5D;
+             }
