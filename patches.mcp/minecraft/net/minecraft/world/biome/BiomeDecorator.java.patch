@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
-@@ -100,6 +100,7 @@
+@@ -47,6 +47,7 @@
+     public WorldGenerator mushroomRedGen = new WorldGenBush(Blocks.red_mushroom);
+     public WorldGenerator bigMushroomGen = new WorldGenBigMushroom();
+     public WorldGenerator reedGen = new WorldGenReed();
++    public WorldGenerator pumpkinGen = new WorldGenPumpkin();
+     public WorldGenerator cactusGen = new WorldGenCactus();
+     public WorldGenerator waterlilyGen = new WorldGenWaterlily();
+     public int waterlilyPerChunk;
+@@ -100,6 +101,7 @@
              this.sandGen.generate(p_150513_2_, p_150513_3_, p_150513_2_.getTopSolidOrLiquidBlock(this.field_180294_c.add(j, 0, k)));
          }
  
@@ -8,7 +16,7 @@
          for (int i1 = 0; i1 < this.clayPerChunk; ++i1)
          {
              int l1 = p_150513_3_.nextInt(16) + 8;
-@@ -107,6 +108,7 @@
+@@ -107,6 +109,7 @@
              this.clayGen.generate(p_150513_2_, p_150513_3_, p_150513_2_.getTopSolidOrLiquidBlock(this.field_180294_c.add(l1, 0, i6)));
          }
  
@@ -16,7 +24,7 @@
          for (int j1 = 0; j1 < this.sandPerChunk; ++j1)
          {
              int i2 = p_150513_3_.nextInt(16) + 8;
-@@ -121,6 +123,7 @@
+@@ -121,6 +124,7 @@
              ++k1;
          }
  
@@ -24,7 +32,7 @@
          for (int j2 = 0; j2 < k1; ++j2)
          {
              int k6 = p_150513_3_.nextInt(16) + 8;
-@@ -135,6 +138,7 @@
+@@ -135,6 +139,7 @@
              }
          }
  
@@ -32,7 +40,7 @@
          for (int k2 = 0; k2 < this.bigMushroomsPerChunk; ++k2)
          {
              int l6 = p_150513_3_.nextInt(16) + 8;
-@@ -142,6 +146,7 @@
+@@ -142,6 +147,7 @@
              this.bigMushroomGen.generate(p_150513_2_, p_150513_3_, p_150513_2_.getHeight(this.field_180294_c.add(l6, 0, k10)));
          }
  
@@ -40,7 +48,7 @@
          for (int l2 = 0; l2 < this.flowersPerChunk; ++l2)
          {
              int i7 = p_150513_3_.nextInt(16) + 8;
-@@ -163,6 +168,7 @@
+@@ -163,6 +169,7 @@
              }
          }
  
@@ -48,7 +56,7 @@
          for (int i3 = 0; i3 < this.grassPerChunk; ++i3)
          {
              int j7 = p_150513_3_.nextInt(16) + 8;
-@@ -176,6 +182,7 @@
+@@ -176,6 +183,7 @@
              }
          }
  
@@ -56,7 +64,7 @@
          for (int j3 = 0; j3 < this.deadBushPerChunk; ++j3)
          {
              int k7 = p_150513_3_.nextInt(16) + 8;
-@@ -189,6 +196,7 @@
+@@ -189,6 +197,7 @@
              }
          }
  
@@ -64,7 +72,7 @@
          for (int k3 = 0; k3 < this.waterlilyPerChunk; ++k3)
          {
              int l7 = p_150513_3_.nextInt(16) + 8;
-@@ -215,6 +223,8 @@
+@@ -215,6 +224,8 @@
              }
          }
  
@@ -73,7 +81,7 @@
          for (int l3 = 0; l3 < this.mushroomsPerChunk; ++l3)
          {
              if (p_150513_3_.nextInt(4) == 0)
-@@ -265,7 +275,9 @@
+@@ -265,7 +276,9 @@
                  this.mushroomRedGen.generate(p_150513_2_, p_150513_3_, this.field_180294_c.add(j4, l15, l8));
              }
          }
@@ -84,24 +92,32 @@
          for (int k4 = 0; k4 < this.reedsPerChunk; ++k4)
          {
              int i9 = p_150513_3_.nextInt(16) + 8;
-@@ -291,7 +303,7 @@
+@@ -291,7 +304,9 @@
                  this.reedGen.generate(p_150513_2_, p_150513_3_, this.field_180294_c.add(j9, i19, i13));
              }
          }
 -
 +        } // End of Reed generation
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(currentWorld, randomGenerator, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.PUMPKIN))
++        {
          if (p_150513_3_.nextInt(32) == 0)
          {
              int i5 = p_150513_3_.nextInt(16) + 8;
-@@ -305,6 +317,7 @@
+@@ -301,10 +316,11 @@
+             if (j13 > 0)
+             {
+                 int k16 = p_150513_3_.nextInt(j13);
+-                (new WorldGenPumpkin()).generate(p_150513_2_, p_150513_3_, this.field_180294_c.add(i5, k16, k9));
++                this.pumpkinGen.generate(p_150513_2_, p_150513_3_, this.field_180294_c.add(i5, k16, k9));
              }
          }
- 
+-
++        } // End of Pumpkin generation
 +        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(currentWorld, randomGenerator, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.CACTUS))
          for (int j5 = 0; j5 < this.cactiPerChunk; ++j5)
          {
              int l9 = p_150513_3_.nextInt(16) + 8;
-@@ -320,6 +333,7 @@
+@@ -320,6 +336,7 @@
  
          if (this.generateLakes)
          {
@@ -109,7 +125,7 @@
              for (int k5 = 0; k5 < 50; ++k5)
              {
                  int i10 = p_150513_3_.nextInt(16) + 8;
-@@ -334,6 +348,7 @@
+@@ -334,6 +351,7 @@
                  }
              }
  
@@ -117,7 +133,7 @@
              for (int l5 = 0; l5 < 20; ++l5)
              {
                  int j10 = p_150513_3_.nextInt(16) + 8;
-@@ -343,6 +358,7 @@
+@@ -343,6 +361,7 @@
                  (new WorldGenLiquids(Blocks.flowing_lava)).generate(p_150513_2_, p_150513_3_, blockpos3);
              }
          }
