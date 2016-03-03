@@ -51,7 +51,7 @@ public class OreDictionary
         initVanillaEntries();
     }
 
-    public static void initVanillaEntries()
+    private static void initVanillaEntries()
     {
         if (!hasInit)
         {
