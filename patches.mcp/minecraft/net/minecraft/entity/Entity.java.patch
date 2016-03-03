@@ -70,7 +70,7 @@
      {
          if (!this.worldObj.isRemote && !this.isDead)
          {
-+            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionId)) return;
++            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return null;
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.dimension;
@@ -83,7 +83,7 @@
      }
  
      public boolean verifyExplosion(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
-@@ -2662,6 +2695,211 @@
+@@ -2662,6 +2695,210 @@
          EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
  
@@ -117,7 +117,7 @@
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
-+    public ItemStack getPickedResult(MovingObjectPosition target)
++    public ItemStack getPickedResult(RayTraceResult target)
 +    {
 +        if (this instanceof net.minecraft.entity.item.EntityPainting)
 +        {
@@ -145,24 +145,23 @@
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityBoat)
 +        {
-+            return new ItemStack(net.minecraft.init.Items.boat);
++            return new ItemStack(((EntityBoat)this).func_184455_j());
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityArmorStand)
 +        {
 +            return new ItemStack(net.minecraft.init.Items.armor_stand);
 +        }
++        else if (this instanceof net.minecraft.entity.item.EntityEnderCrystal)
++        {
++            return new ItemStack(net.minecraft.init.Items.field_185158_cP);
++        }
 +        else
 +        {
-+            int id = EntityList.getEntityID(this);
-+            if (id > 0 && EntityList.entityEggs.containsKey(id))
-+            {
-+                return new ItemStack(net.minecraft.init.Items.spawn_egg, 1, id);
-+            }
 +            String name = EntityList.getEntityString(this);
-+            if (name != null && net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().containsKey(name))
++            if (EntityList.entityEggs.containsKey(name))
 +            {
 +                ItemStack stack = new ItemStack(net.minecraft.init.Items.spawn_egg);
-+                stack.setTagInfo("entity_name", new net.minecraft.nbt.NBTTagString(name));
++                net.minecraft.item.ItemMonsterPlacer.func_185078_a(stack, name);
 +                return stack;
 +            }
 +        }

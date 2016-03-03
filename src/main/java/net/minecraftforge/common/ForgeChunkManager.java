@@ -32,6 +32,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -42,7 +44,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ClassInheritanceMultiMap;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -551,8 +553,8 @@ public class ForgeChunkManager
 
         forcedChunks.remove(world);
         dormantChunkCache.remove(world);
-     // integrated server is shutting down
-        if (!MinecraftServer.getServer().isServerRunning())
+        // integrated server is shutting down
+        if (FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning())
         {
             playerTickets.clear();
             tickets.clear();

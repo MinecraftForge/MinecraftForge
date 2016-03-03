@@ -22,13 +22,23 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLeashKnot;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartContainer;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -39,6 +49,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -55,10 +66,12 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -89,6 +102,7 @@ import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
@@ -247,76 +261,70 @@ public class ForgeHooks
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
-    public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
+    public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
     {
         /*
-            int i = 0;
-            boolean flag1 = false;
             TileEntity tileentity = null;
-            Item item;
+            ItemStack itemstack;
 
-            if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
             {
                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
-                Block block = this.theWorld.getBlockState(blockpos).getBlock();
+                IBlockState iblockstate = this.theWorld.getBlockState(blockpos);
+                Block block = iblockstate.getBlock();
 
-                if (block.getMaterial() == Material.air)
+                if (iblockstate.func_185904_a() == Material.air)
                 {
                     return;
                 }
 
-                item = block.getItem(this.theWorld, blockpos);
+                itemstack = block.func_185473_a(this.theWorld, blockpos, iblockstate);
 
-                if (item == null)
+                if (itemstack == null)
                 {
                     return;
                 }
 
-                if (flag && GuiScreen.isCtrlKeyDown())
+                if (flag && GuiScreen.isCtrlKeyDown() && block.hasTileEntity())
                 {
                     tileentity = this.theWorld.getTileEntity(blockpos);
                 }
-
-                Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
-                i = block1.getDamageValue(this.theWorld, blockpos);
-                flag1 = item.getHasSubtypes();
             }
             else
             {
-                if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
+                if (this.objectMouseOver.typeOfHit != RayTraceResult.Type.ENTITY || this.objectMouseOver.entityHit == null || !flag)
                 {
                     return;
                 }
 
                 if (this.objectMouseOver.entityHit instanceof EntityPainting)
                 {
-                    item = Items.painting;
+                    itemstack = new ItemStack(Items.painting);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
                 {
-                    item = Items.lead;
+                    itemstack = new ItemStack(Items.lead);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
                 {
                     EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
-                    ItemStack itemstack = entityitemframe.getDisplayedItem();
+                    ItemStack itemstack1 = entityitemframe.getDisplayedItem();
 
-                    if (itemstack == null)
+                    if (itemstack1 == null)
                     {
-                        item = Items.item_frame;
+                        itemstack = new ItemStack(Items.item_frame);
                     }
                     else
                     {
-                        item = itemstack.getItem();
-                        i = itemstack.getMetadata();
-                        flag1 = true;
+                        itemstack = ItemStack.copyItemStack(itemstack1);
                     }
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
                 {
                     EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
+                    Item item;
 
-                    switch (entityminecart.getMinecartType())
+                    switch (entityminecart.func_184264_v())
                     {
                         case FURNACE:
                             item = Items.furnace_minecart;
@@ -336,61 +344,56 @@ public class ForgeHooks
                         default:
                             item = Items.minecart;
                     }
+
+                    itemstack = new ItemStack(item);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityBoat)
                 {
-                    item = Items.boat;
+                    itemstack = new ItemStack(((EntityBoat)this.objectMouseOver.entityHit).func_184455_j());
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
                 {
-                    item = Items.armor_stand;
+                    itemstack = new ItemStack(Items.armor_stand);
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityEnderCrystal)
+                {
+                    itemstack = new ItemStack(Items.field_185158_cP);
                 }
                 else
                 {
-                    item = Items.spawn_egg;
-                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
-                    flag1 = true;
+                    String s = EntityList.getEntityString(this.objectMouseOver.entityHit);
 
-                    if (!EntityList.entityEggs.containsKey(Integer.valueOf(i)))
+                    if (!EntityList.entityEggs.containsKey(s))
                     {
                         return;
                     }
+
+                    itemstack = new ItemStack(Items.spawn_egg);
+                    ItemMonsterPlacer.func_185078_a(itemstack, s);
                 }
-            }
-
-            InventoryPlayer inventoryplayer = this.thePlayer.inventory;
-
-            if (tileentity == null)
-            {
-                inventoryplayer.setCurrentItem(item, i, flag1, flag);
-            }
-            else
-            {
-                ItemStack itemstack1 = this.func_181036_a(item, i, tileentity);
-                inventoryplayer.setInventorySlotContents(inventoryplayer.currentItem, itemstack1);
             }
          */
         ItemStack result = null;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;
 
-        if (target.typeOfHit == MovingObjectType.BLOCK)
+        if (target.typeOfHit == RayTraceResult.Type.BLOCK)
         {
             IBlockState state = world.getBlockState(target.getBlockPos());
 
-            if (state.getBlock().isAir(world, target.getBlockPos()))
+            if (state.getBlock().isAir(state, world, target.getBlockPos()))
             {
                 return false;
             }
 
-            if (isCreative && GuiScreen.isCtrlKeyDown())
+            if (isCreative && GuiScreen.isCtrlKeyDown() && state.getBlock().hasTileEntity(state))
                 te = world.getTileEntity(target.getBlockPos());
 
-            result = state.getBlock().getPickBlock(target, world, target.getBlockPos(), player);
+            result = state.getBlock().getPickBlock(state, target, world, target.getBlockPos(), player);
         }
         else
         {
-            if (target.typeOfHit != MovingObjectType.ENTITY || target.entityHit == null || !isCreative)
+            if (target.typeOfHit != RayTraceResult.Type.ENTITY || target.entityHit == null || !isCreative)
             {
                 return false;
             }
@@ -403,44 +406,44 @@ public class ForgeHooks
             return false;
         }
 
+        if (result.getItem() == null)
+        {
+            String s1 = "";
+
+            if (target.typeOfHit == RayTraceResult.Type.BLOCK)
+            {
+                s1 = ((ResourceLocation)Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock())).toString();
+            }
+            else if (target.typeOfHit == RayTraceResult.Type.ENTITY)
+            {
+                s1 = EntityList.getEntityString(target.entityHit);
+            }
+
+            FMLLog.warning("Picking on: [%s] %s gave null item", target.typeOfHit, s1);
+            return true;
+        }
+
         if (te != null)
         {
-            NBTTagCompound nbt = new NBTTagCompound();
-            te.writeToNBT(nbt);
-            result.setTagInfo("BlockEntityTag", nbt);
-
-            NBTTagCompound display = new NBTTagCompound();
-            result.setTagInfo("display", display);
-
-            NBTTagList lore = new NBTTagList();
-            display.setTag("Lore", lore);
-            lore.appendTag(new NBTTagString("(+NBT)"));
+            Minecraft.getMinecraft().func_184119_a(result, te);
         }
 
-        for (int x = 0; x < 9; x++)
+        if (isCreative)
         {
-            ItemStack stack = player.inventory.getStackInSlot(x);
-            if (stack != null && stack.isItemEqual(result) && ItemStack.areItemStackTagsEqual(stack, result))
-            {
-                player.inventory.currentItem = x;
-                return true;
-            }
+            player.inventory.func_184434_a(result);
+            Minecraft.getMinecraft().playerController.sendSlotPacket(player.func_184586_b(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
+            return true;
         }
-
-        if (!isCreative)
+        int slot = player.inventory.func_184429_b(result);
+        if (slot != -1)
         {
-            return false;
+            if (InventoryPlayer.func_184435_e(slot))
+                player.inventory.currentItem = slot;
+            else
+                Minecraft.getMinecraft().playerController.func_187100_a(slot);
+            return true;
         }
-
-        int slot = player.inventory.getFirstEmptyStack();
-        if (slot < 0 || slot >= 9)
-        {
-            slot = player.inventory.currentItem;
-        }
-
-        player.inventory.setInventorySlotContents(slot, result);
-        player.inventory.currentItem = slot;
-        return true;
+        return false;
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine

@@ -55,7 +55,7 @@
      }
  
 +    //Forge: Enable formated text for colors in console.
-+    @Override public void addChatMessage(net.minecraft.util.IChatComponent message) { logger.info(message.getFormattedText()); }
++    @Override public void addChatMessage(net.minecraft.util.text.ITextComponent message) { logger.info(message.getFormattedText()); }
 +
      protected boolean convertFiles() throws IOException
      {
