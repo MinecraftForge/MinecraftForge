@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/audio/SoundManager.java
++++ ../src-work/minecraft/net/minecraft/client/audio/SoundManager.java
+@@ -76,6 +76,7 @@
+         {
+             SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
+             SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundSetupEvent(this));
+         }
+         catch (SoundSystemException soundsystemexception)
+         {
+@@ -100,6 +101,7 @@
+ 
+         this.unloadSoundSystem();
+         this.loadSoundSystem();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
+     }
+ 
+     private synchronized void loadSoundSystem()

@@ -1,0 +1,279 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
+@@ -175,7 +175,7 @@
+                 {
+                     IBlockState iblockstate = this.func_186032_a(j, l - 1, k);
+ 
+-                    if (iblockstate.func_185891_c() != 0)
++                    if (iblockstate.getLightOpacity(this.worldObj, new BlockPos(j, l - 1, k)) != 0)
+                     {
+                         this.heightMap[k << 4 | j] = l;
+ 
+@@ -448,12 +448,12 @@
+ 
+     public int getBlockLightOpacity(BlockPos pos)
+     {
+-        return this.getBlockState(pos).func_185891_c();
++        return this.getBlockState(pos).getLightOpacity(this.worldObj, pos);
+     }
+ 
+     private int getBlockLightOpacity(int x, int y, int z)
+     {
+-        return this.func_186032_a(x, y, z).func_185891_c();
++        return this.func_186032_a(x, y, z).getLightOpacity(this.worldObj, new BlockPos(x, y, z));
+     }
+ 
+     public IBlockState getBlockState(BlockPos pos)
+@@ -534,6 +534,7 @@
+         {
+             Block block = state.getBlock();
+             Block block1 = iblockstate.getBlock();
++            int k1 = iblockstate.getLightOpacity(this.worldObj, pos); // Relocate old light value lookup here, so that it is called before TE is removed.
+             ExtendedBlockStorage extendedblockstorage = this.storageArrays[j >> 4];
+             boolean flag = false;
+ 
+@@ -550,14 +551,19 @@
+ 
+             extendedblockstorage.set(i, j & 15, k, state);
+ 
+-            if (block1 != block)
++            //if (block1 != block)
+             {
+                 if (!this.worldObj.isRemote)
+                 {
++                    if (block1 != block) //Only fire block breaks when the block changes.
+                     block1.breakBlock(this.worldObj, pos, iblockstate);
++                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
++                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state)) this.worldObj.removeTileEntity(pos);
+                 }
+-                else if (block1 instanceof ITileEntityProvider)
++                else if (block1.hasTileEntity(iblockstate))
+                 {
++                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
++                    if (te != null && te.shouldRefresh(this.worldObj, pos, iblockstate, state))
+                     this.worldObj.removeTileEntity(pos);
+                 }
+             }
+@@ -574,8 +580,7 @@
+                 }
+                 else
+                 {
+-                    int j1 = state.func_185891_c();
+-                    int k1 = iblockstate.func_185891_c();
++                    int j1 = state.getLightOpacity(this.worldObj, pos);
+ 
+                     if (j1 > 0)
+                     {
+@@ -595,28 +600,18 @@
+                     }
+                 }
+ 
+-                if (block1 instanceof ITileEntityProvider)
+-                {
+-                    TileEntity tileentity = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+-
+-                    if (tileentity != null)
+-                    {
+-                        tileentity.updateContainingBlockInfo();
+-                    }
+-                }
+-
+                 if (!this.worldObj.isRemote && block1 != block)
+                 {
+                     block.onBlockAdded(this.worldObj, pos, state);
+                 }
+ 
+-                if (block instanceof ITileEntityProvider)
++                if (block.hasTileEntity(state))
+                 {
+                     TileEntity tileentity1 = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
+ 
+                     if (tileentity1 == null)
+                     {
+-                        tileentity1 = ((ITileEntityProvider)block).createNewTileEntity(this.worldObj, block.getMetaFromState(state));
++                        tileentity1 = block.createTileEntity(this.worldObj, state);
+                         this.worldObj.setTileEntity(pos, tileentity1);
+                     }
+ 
+@@ -719,6 +714,7 @@
+             k = this.entityLists.length - 1;
+         }
+ 
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EnteringChunk(entityIn, this.xPosition, this.zPosition, entityIn.chunkCoordX, entityIn.chunkCoordZ));
+         entityIn.addedToChunk = true;
+         entityIn.chunkCoordX = this.xPosition;
+         entityIn.chunkCoordY = k;
+@@ -758,13 +754,19 @@
+     {
+         IBlockState iblockstate = this.getBlockState(pos);
+         Block block = iblockstate.getBlock();
+-        return !block.hasTileEntity() ? null : ((ITileEntityProvider)block).createNewTileEntity(this.worldObj, iblockstate.getBlock().getMetaFromState(iblockstate));
++        return !block.hasTileEntity(iblockstate) ? null : block.createTileEntity(this.worldObj, iblockstate);
+     }
+ 
+     public TileEntity getTileEntity(BlockPos pos, Chunk.EnumCreateEntityType p_177424_2_)
+     {
+         TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(pos);
+ 
++        if (tileentity != null && tileentity.isInvalid())
++        {
++            chunkTileEntityMap.remove(pos);
++            tileentity = null;
++        }
++
+         if (tileentity == null)
+         {
+             if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
+@@ -774,14 +776,9 @@
+             }
+             else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
+             {
+-                this.tileEntityPosQueue.add(pos);
++                this.tileEntityPosQueue.add(pos.getImmutable());
+             }
+         }
+-        else if (tileentity.isInvalid())
+-        {
+-            this.chunkTileEntityMap.remove(pos);
+-            return null;
+-        }
+ 
+         return tileentity;
+     }
+@@ -801,7 +798,7 @@
+         tileEntityIn.setWorldObj(this.worldObj);
+         tileEntityIn.setPos(pos);
+ 
+-        if (this.getBlockState(pos).getBlock() instanceof ITileEntityProvider)
++        if (this.getBlockState(pos).getBlock().hasTileEntity(this.getBlockState(pos)))
+         {
+             if (this.chunkTileEntityMap.containsKey(pos))
+             {
+@@ -810,6 +807,7 @@
+ 
+             tileEntityIn.validate();
+             this.chunkTileEntityMap.put(pos, tileEntityIn);
++            tileEntityIn.onLoad();
+         }
+     }
+ 
+@@ -838,8 +836,9 @@
+                 entity.onChunkLoad();
+             }
+ 
+-            this.worldObj.loadEntities(this.entityLists[i]);
++            this.worldObj.loadEntities(com.google.common.collect.ImmutableList.copyOf(this.entityLists[i]));
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(this));
+     }
+ 
+     public void onChunkUnload()
+@@ -855,6 +854,7 @@
+         {
+             this.worldObj.unloadEntities(this.entityLists[i]);
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
+     }
+ 
+     public void setChunkModified()
+@@ -864,8 +864,8 @@
+ 
+     public void getEntitiesWithinAABBForEntity(Entity entityIn, AxisAlignedBB aabb, List<Entity> listToFill, Predicate <? super Entity > p_177414_4_)
+     {
+-        int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+         i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
+         j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+ 
+@@ -904,8 +904,8 @@
+ 
+     public <T extends Entity> void getEntitiesOfTypeWithinAAAB(Class <? extends T > entityClass, AxisAlignedBB aabb, List<T> listToFill, Predicate <? super T > p_177430_4_)
+     {
+-        int i = MathHelper.floor_double((aabb.minY - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((aabb.maxY + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((aabb.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+         i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
+         j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+ 
+@@ -1050,7 +1050,7 @@
+         {
+             BlockPos blockpos = (BlockPos)this.tileEntityPosQueue.poll();
+ 
+-            if (this.getTileEntity(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.getBlockState(blockpos).getBlock().hasTileEntity())
++            if (this.getTileEntity(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.getBlockState(blockpos).getBlock().hasTileEntity(this.getBlockState(blockpos)))
+             {
+                 TileEntity tileentity = this.createNewTileEntity(blockpos);
+                 this.worldObj.setTileEntity(blockpos, tileentity);
+@@ -1114,6 +1114,13 @@
+     @SideOnly(Side.CLIENT)
+     public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
+     {
++        for(TileEntity tileEntity : chunkTileEntityMap.values())
++        {
++            tileEntity.updateContainingBlockInfo();
++            tileEntity.getBlockMetadata();
++            tileEntity.getBlockType();
++        }
++
+         boolean flag = !this.worldObj.provider.getHasNoSky();
+ 
+         for (int i = 0; i < this.storageArrays.length; ++i)
+@@ -1162,10 +1169,16 @@
+         this.isTerrainPopulated = true;
+         this.generateHeightMap();
+ 
++        List<TileEntity> invalidList = new java.util.ArrayList<TileEntity>();
++
+         for (TileEntity tileentity : this.chunkTileEntityMap.values())
+         {
++            if (tileentity.shouldRefresh(this.worldObj, tileentity.getPos(), tileentity.getBlockType().getStateFromMeta(tileentity.getBlockMetadata()), getBlockState(tileentity.getPos())))
++                invalidList.add(tileentity);
+             tileentity.updateContainingBlockInfo();
+         }
++
++        for (TileEntity te : invalidList) te.invalidate();
+     }
+ 
+     public BiomeGenBase getBiome(BlockPos pos, BiomeProvider chunkManager)
+@@ -1239,7 +1252,7 @@
+                         {
+                             BlockPos blockpos2 = blockpos1.offset(enumfacing);
+ 
+-                            if (this.worldObj.getBlockState(blockpos2).func_185906_d() > 0)
++                            if (this.worldObj.getBlockState(blockpos2).getLightValue(this.worldObj, blockpos2) > 0)
+                             {
+                                 this.worldObj.checkLight(blockpos2);
+                             }
+@@ -1370,7 +1383,7 @@
+         {
+             blockpos$mutableblockpos.set(blockpos$mutableblockpos.getX(), l, blockpos$mutableblockpos.getZ());
+ 
+-            if (this.getBlockState(blockpos$mutableblockpos).func_185906_d() > 0)
++            if (this.getBlockState(blockpos$mutableblockpos).getLightValue(this.worldObj, blockpos$mutableblockpos) > 0)
+             {
+                 this.worldObj.checkLight(blockpos$mutableblockpos);
+             }
+@@ -1481,4 +1494,20 @@
+         QUEUED,
+         CHECK;
+     }
++
++    /**
++     * Removes the tile entity at the specified position, only if it's
++     * marked as invalid.
++     */
++    public void removeInvalidTileEntity(BlockPos pos)
++    {
++        if (isChunkLoaded)
++        {
++            TileEntity entity = (TileEntity)chunkTileEntityMap.get(pos);
++            if (entity != null && entity.isInvalid())
++            {
++                chunkTileEntityMap.remove(pos);
++            }
++        }
++    }
+ }

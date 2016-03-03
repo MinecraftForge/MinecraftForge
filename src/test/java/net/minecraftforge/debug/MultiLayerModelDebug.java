@@ -2,10 +2,10 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -42,9 +42,9 @@ public class MultiLayerModelDebug
                 public boolean isFullCube() { return false; }
 
                 @Override
-                public boolean canRenderInLayer(EnumWorldBlockLayer layer)
+                public boolean canRenderInLayer(BlockRenderLayer layer)
                 {
-                    return layer == EnumWorldBlockLayer.SOLID || layer == EnumWorldBlockLayer.TRANSLUCENT;
+                    return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
                 }
             }, blockName);
         }

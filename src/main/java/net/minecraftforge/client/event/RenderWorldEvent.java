@@ -2,17 +2,17 @@ package net.minecraftforge.client.event;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 //import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.world.ChunkCache;
 
 public abstract class RenderWorldEvent extends Event
 {
-    public final WorldRenderer renderer;
+    public final VertexBuffer renderer;
     public final ChunkCache chunkCache;
     //public final RenderBlocks renderBlocks;
     public final int pass;
 
-    public RenderWorldEvent(WorldRenderer renderer, ChunkCache chunkCache, /*RenderBlocks renderBlocks,*/ int pass)
+    public RenderWorldEvent(VertexBuffer renderer, ChunkCache chunkCache, /*RenderBlocks renderBlocks,*/ int pass)
     {
         this.renderer = renderer;
         this.chunkCache = chunkCache;
@@ -26,7 +26,7 @@ public abstract class RenderWorldEvent extends Event
      */
     public static class Pre extends RenderWorldEvent
     {
-        public Pre(WorldRenderer renderer, ChunkCache chunkCache, /*RenderBlocks renderBlocks,*/ int pass){ super(renderer, chunkCache, /*renderBlocks,*/ pass); }
+        public Pre(VertexBuffer renderer, ChunkCache chunkCache, /*RenderBlocks renderBlocks,*/ int pass){ super(renderer, chunkCache, /*renderBlocks,*/ pass); }
     }
 
     /**
@@ -34,6 +34,6 @@ public abstract class RenderWorldEvent extends Event
      */
     public static class Post extends RenderWorldEvent
     {
-        public Post(WorldRenderer renderer, ChunkCache chunkCache, /*RenderBlocks renderBlocks,*/ int pass){ super(renderer, chunkCache, /*renderBlocks,*/ pass); }
+        public Post(VertexBuffer renderer, ChunkCache chunkCache, /*RenderBlocks renderBlocks,*/ int pass){ super(renderer, chunkCache, /*renderBlocks,*/ pass); }
     }
 }

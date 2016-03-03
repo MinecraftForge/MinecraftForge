@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
+@@ -310,6 +310,21 @@
+         return this.getDefaultState().withProperty(field_185512_D, placer.getHorizontalFacing().getOpposite()).withProperty(POWERED, Boolean.valueOf(false)).withProperty(MODE, BlockRedstoneComparator.Mode.COMPARE);
+     }
+ 
++    @Override
++    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
++    {
++        if (pos.getY() == neighbor.getY() && world instanceof World)
++        {
++            onNeighborBlockChange((World)world, pos, world.getBlockState(pos), world.getBlockState(neighbor).getBlock());
++        }
++    }
++
++    @Override
++    public boolean getWeakChanges(IBlockAccess world, BlockPos pos)
++    {
++        return true;
++    }
++
+     public static enum Mode implements IStringSerializable
+     {
+         COMPARE("compare"),

@@ -6,8 +6,9 @@ import java.util.List;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -53,15 +54,15 @@ public class ClientCommandTest {
         }
 
         @Override
-        public void processCommand(ICommandSender sender, String[] args) throws CommandException
+        public void func_184881_a( MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
         {
             if (args.length > 0)
             {
-                sender.addChatMessage(new ChatComponentText("Input: " + Arrays.toString(args)));
+                sender.addChatMessage(new TextComponentString("Input: " + Arrays.toString(args)));
             }
             else
             {
-                sender.addChatMessage(new ChatComponentText("No arguments."));
+                sender.addChatMessage(new TextComponentString("No arguments."));
             }
         }
     }

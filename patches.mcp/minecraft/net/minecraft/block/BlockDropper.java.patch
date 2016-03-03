@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDropper.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDropper.java
+@@ -43,7 +43,7 @@
+             {
+                 ItemStack itemstack = tileentitydispenser.getStackInSlot(i);
+ 
+-                if (itemstack != null)
++                if (itemstack != null && net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(worldIn, pos, tileentitydispenser, i, itemstack))
+                 {
+                     EnumFacing enumfacing = (EnumFacing)worldIn.getBlockState(pos).getValue(FACING);
+                     BlockPos blockpos = pos.offset(enumfacing);

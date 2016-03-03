@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/realms/RealmsConnect.java
++++ ../src-work/minecraft/net/minecraft/realms/RealmsConnect.java
+@@ -38,6 +38,7 @@
+ 
+                 try
+                 {
++                    net.minecraftforge.fml.client.FMLClientHandler.instance().connectToRealmsServer(p_connect_1_, p_connect_2_);
+                     inetaddress = InetAddress.getByName(p_connect_1_);
+ 
+                     if (RealmsConnect.this.aborted)
+@@ -59,7 +60,7 @@
+                         return;
+                     }
+ 
+-                    RealmsConnect.this.connection.sendPacket(new C00Handshake(107, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN));
++                    RealmsConnect.this.connection.sendPacket(new C00Handshake(107, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN, true));
+ 
+                     if (RealmsConnect.this.aborted)
+                     {

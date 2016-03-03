@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
+@@ -171,6 +171,7 @@
+     public void setAttackTarget(EntityLivingBase entitylivingbaseIn)
+     {
+         this.attackTarget = entitylivingbaseIn;
++        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
+     }
+ 
+     public boolean canAttackClass(Class <? extends EntityLivingBase > cls)
+@@ -699,10 +700,22 @@
+ 
+     protected void despawnEntity()
+     {
++        net.minecraftforge.fml.common.eventhandler.Event.Result result = null;
+         if (this.persistenceRequired)
+         {
+             this.entityAge = 0;
+         }
++        else if ((this.entityAge & 0x1F) == 0x1F && (result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this)) != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT)
++        {
++            if (result == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++            {
++                this.entityAge = 0;
++            }
++            else
++            {
++                this.setDead();
++            }
++        }
+         else
+         {
+             Entity entity = this.worldObj.getClosestPlayerToEntity(this, -1.0D);
+@@ -835,7 +848,6 @@
+         return !this.worldObj.isAnyLiquid(this.getEntityBoundingBox()) && this.worldObj.func_184144_a(this, this.getEntityBoundingBox()).isEmpty() && this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public float getRenderSizeModifier()
+     {
+         return 1.0F;

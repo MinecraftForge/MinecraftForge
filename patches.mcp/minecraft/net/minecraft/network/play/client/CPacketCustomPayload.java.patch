@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketCustomPayload.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketCustomPayload.java
+@@ -47,7 +47,11 @@
+     public void writePacketData(PacketBuffer buf) throws IOException
+     {
+         buf.writeString(this.channel);
++        synchronized(this.data) { //This may be access multiple times, from multiple threads, lets be safe.
++        this.data.markReaderIndex();
+         buf.writeBytes((ByteBuf)this.data);
++        this.data.resetReaderIndex();
++        }
+     }
+ 
+     public void processPacket(INetHandlerPlayServer handler)

@@ -1,0 +1,24 @@
+++++ REJECTED PATCH 3
+                                 {
+                                     BlockPos blockpos = new BlockPos(j3, l2, i2);
+ 
+-                                    if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
++                                    if (worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
+                                     {
+                                         this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181637_b);
+                                     }
+++++ END PATCH
+++++ REJECTED PATCH 4
+ 
+                     for (int i3 = 0; i3 < i - 1; ++i3)
+                     {
+-                        Block block1 = worldIn.getBlockState(position.up(i3)).getBlock();
++                        BlockPos upN = position.up(i3);
++                        Block block1 = worldIn.getBlockState(upN).getBlock();
+ 
+-                        if (block1.getMaterial() == Material.air || block1.getMaterial() == Material.leaves)
++                        if (block1.isAir(worldIn, upN) || block1.isLeaves(worldIn, upN))
+                         {
+                             this.setBlockAndNotifyAdequately(worldIn, position.up(i3), field_181636_a);
+                         }
+++++ END PATCH

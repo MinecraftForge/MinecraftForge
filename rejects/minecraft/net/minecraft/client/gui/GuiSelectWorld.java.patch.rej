@@ -1,0 +1,10 @@
+++++ REJECTED PATCH 1
+ 
+             if (this.mc.getSaveLoader().canLoadWorld(s))
+             {
+-                this.mc.launchIntegratedServer(s, s1, (WorldSettings)null);
++                net.minecraftforge.fml.client.FMLClientHandler.instance().tryLoadExistingWorld(this, s, s1);
+             }
+         }
+     }
+++++ END PATCH

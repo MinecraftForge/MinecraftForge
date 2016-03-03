@@ -1,0 +1,127 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
+@@ -547,8 +547,10 @@
+ 
+     public void renderEntities(Entity renderViewEntity, ICamera camera, float partialTicks)
+     {
++        int pass = net.minecraftforge.client.MinecraftForgeClient.getRenderPass();
+         if (this.renderEntitiesStartupCounter > 0)
+         {
++            if (pass > 0) return;
+             --this.renderEntitiesStartupCounter;
+         }
+         else
+@@ -559,9 +561,12 @@
+             this.theWorld.theProfiler.startSection("prepare");
+             TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.theWorld, this.mc.getTextureManager(), this.mc.fontRendererObj, this.mc.getRenderViewEntity(), partialTicks);
+             this.renderManager.cacheActiveRenderInfo(this.theWorld, this.mc.fontRendererObj, this.mc.getRenderViewEntity(), this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
++            if(pass == 0)
++            {
+             this.countEntitiesTotal = 0;
+             this.countEntitiesRendered = 0;
+             this.countEntitiesHidden = 0;
++            }
+             Entity entity = this.mc.getRenderViewEntity();
+             double d3 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
+             double d4 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;
+@@ -573,11 +578,15 @@
+             this.mc.entityRenderer.enableLightmap();
+             this.theWorld.theProfiler.endStartSection("global");
+             List<Entity> list = this.theWorld.getLoadedEntityList();
++            if (pass == 0)
++            {
+             this.countEntitiesTotal = list.size();
++            }
+ 
+             for (int i = 0; i < this.theWorld.weatherEffects.size(); ++i)
+             {
+                 Entity entity1 = (Entity)this.theWorld.weatherEffects.get(i);
++                if (!entity1.shouldRenderInPass(pass)) continue;
+                 ++this.countEntitiesRendered;
+ 
+                 if (entity1.isInRangeToRender3d(d0, d1, d2))
+@@ -599,6 +608,7 @@
+                 {
+                     for (Entity entity2 : classinheritancemultimap)
+                     {
++                        if(!entity2.shouldRenderInPass(pass)) continue;
+                         boolean flag = this.renderManager.shouldRender(entity2, camera, d0, d1, d2) || entity2.func_184215_y(this.mc.thePlayer);
+ 
+                         if (flag)
+@@ -672,6 +682,7 @@
+             this.theWorld.theProfiler.endStartSection("blockentities");
+             RenderHelper.enableStandardItemLighting();
+ 
++            TileEntityRendererDispatcher.instance.preDrawBatch();
+             for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.renderInfos)
+             {
+                 List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
+@@ -680,6 +691,7 @@
+                 {
+                     for (TileEntity tileentity2 : list3)
+                     {
++                        if (!tileentity2.shouldRenderInPass(pass) || !camera.isBoundingBoxInFrustum(tileentity2.getRenderBoundingBox())) continue;
+                         TileEntityRendererDispatcher.instance.renderTileEntity(tileentity2, partialTicks, -1);
+                     }
+                 }
+@@ -689,9 +701,11 @@
+             {
+                 for (TileEntity tileentity : this.setTileEntities)
+                 {
++                    if (!tileentity.shouldRenderInPass(pass) || !camera.isBoundingBoxInFrustum(tileentity.getRenderBoundingBox())) continue;
+                     TileEntityRendererDispatcher.instance.renderTileEntity(tileentity, partialTicks, -1);
+                 }
+             }
++            TileEntityRendererDispatcher.instance.drawBatch(pass);
+ 
+             this.preRenderDamagedBlocks();
+ 
+@@ -718,7 +732,7 @@
+ 
+                 Block block = this.theWorld.getBlockState(blockpos).getBlock();
+ 
+-                if (tileentity1 != null && (block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockSign || block instanceof BlockSkull))
++                if (tileentity1 != null && tileentity1.shouldRenderInPass(pass) && tileentity1.canRenderBreaking() && camera.isBoundingBoxInFrustum(tileentity1.getRenderBoundingBox()))
+                 {
+                     TileEntityRendererDispatcher.instance.renderTileEntity(tileentity1, partialTicks, destroyblockprogress.getPartialBlockDamage());
+                 }
+@@ -1210,6 +1224,13 @@
+ 
+     public void renderSky(float partialTicks, int pass)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.theWorld.provider.getSkyRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, theWorld, mc);
++            return;
++        }
++
+         if (this.mc.theWorld.provider.func_186058_p().func_186068_a() == 1)
+         {
+             this.renderSkyEnd();
+@@ -1427,6 +1448,12 @@
+ 
+     public void renderClouds(float partialTicks, int pass)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.mc.theWorld.provider.getCloudRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, this.mc.theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.isSurfaceWorld())
+         {
+             if (this.mc.gameSettings.func_181147_e() == 2)
+@@ -1854,8 +1881,11 @@
+                 double d4 = (double)blockpos.getY() - d1;
+                 double d5 = (double)blockpos.getZ() - d2;
+                 Block block = this.theWorld.getBlockState(blockpos).getBlock();
++                TileEntity te = this.theWorld.getTileEntity(blockpos);
++                boolean hasBreak = block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockSign || block instanceof BlockSkull;
++                if (!hasBreak) hasBreak = te != null && te.canRenderBreaking();
+ 
+-                if (!(block instanceof BlockChest) && !(block instanceof BlockEnderChest) && !(block instanceof BlockSign) && !(block instanceof BlockSkull))
++                if (!hasBreak)
+                 {
+                     if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
+                     {

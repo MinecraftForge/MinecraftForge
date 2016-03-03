@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
++++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
+@@ -11,12 +11,13 @@
+ public class WorldServerMulti extends WorldServer
+ {
+     private WorldServer delegate;
++    private IBorderListener borderListener;
+ 
+     public WorldServerMulti(MinecraftServer server, ISaveHandler saveHandlerIn, int dimensionId, WorldServer delegate, Profiler profilerIn)
+     {
+         super(server, saveHandlerIn, new DerivedWorldInfo(delegate.getWorldInfo()), dimensionId, profilerIn);
+         this.delegate = delegate;
+-        delegate.getWorldBorder().addListener(new IBorderListener()
++        this.borderListener = new IBorderListener()
+         {
+             public void onSizeChanged(WorldBorder border, double newSize)
+             {
+@@ -46,11 +47,13 @@
+             {
+                 WorldServerMulti.this.getWorldBorder().setDamageBuffer(newSize);
+             }
+-        });
++        };
++        this.delegate.getWorldBorder().addListener(this.borderListener);
+     }
+ 
+     protected void saveLevel() throws MinecraftException
+     {
++        this.perWorldStorage.saveAllData();
+     }
+ 
+     public World init()
+@@ -59,12 +62,12 @@
+         this.worldScoreboard = this.delegate.getScoreboard();
+         this.field_184151_B = this.delegate.func_184146_ak();
+         String s = VillageCollection.fileNameForProvider(this.provider);
+-        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, s);
++        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.loadData(VillageCollection.class, s);
+ 
+         if (villagecollection == null)
+         {
+             this.villageCollectionObj = new VillageCollection(this);
+-            this.mapStorage.setData(s, this.villageCollectionObj);
++            this.perWorldStorage.setData(s, this.villageCollectionObj);
+         }
+         else
+         {
+@@ -75,6 +78,14 @@
+         return this;
+     }
+ 
++
++    @Override
++    public void flush()
++    {
++        super.flush();
++        this.delegate.getWorldBorder().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
++    }
++
+     public void func_184166_c()
+     {
+         this.provider.func_186057_q();

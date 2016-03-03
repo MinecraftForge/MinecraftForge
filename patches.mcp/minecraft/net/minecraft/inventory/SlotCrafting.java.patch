@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotCrafting.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotCrafting.java
+@@ -107,8 +107,11 @@
+ 
+     public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack)
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerCraftingEvent(playerIn, stack, craftMatrix);
+         this.onCrafting(stack);
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(playerIn);
+         ItemStack[] aitemstack = CraftingManager.getInstance().func_180303_b(this.craftMatrix, playerIn.worldObj);
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
+ 
+         for (int i = 0; i < aitemstack.length; ++i)
+         {

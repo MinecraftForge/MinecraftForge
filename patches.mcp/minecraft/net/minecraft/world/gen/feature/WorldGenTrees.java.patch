@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
+@@ -68,7 +68,7 @@
+                     {
+                         if (j >= 0 && j < 256)
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(blockpos$mutableblockpos.set(l, j, i1)).getBlock()))
++                            if (!this.isReplaceable(worldIn,blockpos$mutableblockpos.set(l, j, i1)))
+                             {
+                                 flag = false;
+                             }

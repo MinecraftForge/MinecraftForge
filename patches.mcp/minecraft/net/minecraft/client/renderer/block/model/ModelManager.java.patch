@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelManager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelManager.java
+@@ -24,9 +24,10 @@
+ 
+     public void onResourceManagerReload(IResourceManager resourceManager)
+     {
+-        ModelBakery modelbakery = new ModelBakery(resourceManager, this.texMap, this.modelProvider);
++        ModelBakery modelbakery = new net.minecraftforge.client.model.ModelLoader(resourceManager, this.texMap, this.modelProvider);
+         this.modelRegistry = modelbakery.setupModelRegistry();
+         this.defaultModel = (IBakedModel)this.modelRegistry.getObject(ModelBakery.MODEL_MISSING);
++        net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.modelRegistry, modelbakery);
+         this.modelProvider.reloadModels();
+     }
+ 

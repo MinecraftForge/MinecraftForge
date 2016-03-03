@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenCanopyTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenCanopyTree.java
+@@ -33,9 +33,10 @@
+         if (k >= 1 && k + i + 1 < 256)
+         {
+             BlockPos blockpos = position.down();
+-            Block block = worldIn.getBlockState(blockpos).getBlock();
++            net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
++            boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-            if (block != Blocks.grass && block != Blocks.dirt)
++            if (!(isSoil && position.getY() < 256 - i - 1))
+             {
+                 return false;
+             }
+@@ -45,10 +46,10 @@
+             }
+             else
+             {
+-                this.func_175921_a(worldIn, blockpos);
+-                this.func_175921_a(worldIn, blockpos.east());
+-                this.func_175921_a(worldIn, blockpos.south());
+-                this.func_175921_a(worldIn, blockpos.south().east());
++                this.onPlantGrow(worldIn, blockpos, position);
++                this.onPlantGrow(worldIn, blockpos.east(), position);
++                this.onPlantGrow(worldIn, blockpos.south(), position);
++                this.onPlantGrow(worldIn, blockpos.south().east(), position);
+                 EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(rand);
+                 int i1 = i - rand.nextInt(4);
+                 int j1 = 2 - rand.nextInt(3);
+@@ -187,7 +188,7 @@
+             {
+                 for (int k1 = -i1; k1 <= i1; ++k1)
+                 {
+-                    if (!this.func_150523_a(p_181638_1_.getBlockState(blockpos$mutableblockpos.set(i + j1, j + l, k + k1)).getBlock()))
++                    if (!this.isReplaceable(p_181638_1_, blockpos$mutableblockpos.set(i + j1, j + l, k + k1)))
+                     {
+                         return false;
+                     }

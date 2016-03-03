@@ -1,0 +1,11 @@
+++++ REJECTED PATCH 4
+ 
+     public static class EntityEggInfo
+         {
++            @Deprecated // This is not always a valid number in the global ID list.
+             public final int spawnedID;
++            public final String name;
+             public final int primaryColor;
+             public final int secondaryColor;
+             public final StatBase field_151512_d;
+++++ END PATCH

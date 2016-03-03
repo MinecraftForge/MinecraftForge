@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
+@@ -92,6 +92,10 @@
+     public static int GL_ARRAY_BUFFER;
+     public static int GL_STATIC_DRAW;
+ 
++    /* Stores the last values sent into setLightmapTextureCoords */
++    public static float lastBrightnessX = 0.0f;
++    public static float lastBrightnessY = 0.0f;
++
+     public static void initializeTextures()
+     {
+         ContextCapabilities contextcapabilities = GLContext.getCapabilities();
+@@ -852,6 +856,12 @@
+         {
+             GL13.glMultiTexCoord2f(target, p_77475_1_, p_77475_2_);
+         }
++
++        if (target == lightmapTexUnit)
++        {
++            lastBrightnessX = p_77475_1_;
++            lastBrightnessY = p_77475_2_;
++        }
+     }
+ 
+     public static void glBlendFunc(int sFactorRGB, int dFactorRGB, int sfactorAlpha, int dfactorAlpha)

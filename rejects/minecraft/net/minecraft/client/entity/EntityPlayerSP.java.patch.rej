@@ -1,0 +1,14 @@
+++++ REJECTED PATCH 3
+ 
+     public void playSound(String name, float volume, float pitch)
+     {
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, name, volume, pitch);
++        if (event.isCanceled() || event.name == null) return;
++        name = event.name;
++        volume = event.newVolume;
++        pitch = event.newPitch;
++
+         this.worldObj.playSound(this.posX, this.posY, this.posZ, name, volume, pitch, false);
+     }
+ 
+++++ END PATCH

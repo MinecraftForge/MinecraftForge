@@ -32,7 +32,7 @@ import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.TextComponentString;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -235,7 +235,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.state = ConnectionState.CONNECTED;
         MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         if (DEBUG_HANDSHAKE)
-            manager.closeChannel(new ChatComponentText("Handshake Complete review log file for details."));
+            manager.closeChannel(new TextComponentString("Handshake Complete review log file for details."));
         scm.initializeConnectionToPlayer(manager, player, serverHandler);
     }
 
@@ -306,19 +306,19 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     @SuppressWarnings("unchecked")
 	private void kickWithMessage(String message)
     {
-        final ChatComponentText chatcomponenttext = new ChatComponentText(message);
+        final TextComponentString TextComponentString = new TextComponentString(message);
         if (side == Side.CLIENT)
         {
-            manager.closeChannel(chatcomponenttext);
+            manager.closeChannel(TextComponentString);
         }
         else
         {
-            manager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<? super Void>>()
+            manager.sendPacket(new S40PacketDisconnect(TextComponentString), new GenericFutureListener<Future<? super Void>>()
             {
                 @Override
                 public void operationComplete(Future<? super Void> result)
                 {
-                    manager.closeChannel(chatcomponenttext);
+                    manager.closeChannel(TextComponentString);
                 }
             }, new GenericFutureListener[0]);
         }

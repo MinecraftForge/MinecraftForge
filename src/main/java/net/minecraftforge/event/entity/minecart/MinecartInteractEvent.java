@@ -3,11 +3,13 @@ package net.minecraftforge.event.entity.minecart;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>
  * This event is fired whenever a player interacts with a minecart in
- * EntityMinecartContainer#interactFirst(EntityPlayer), 
+ * EntityMinecartContainer#interactFirst(EntityPlayer),
  * EntityMinecartEmpty#interactFirst(EntityPlayer)
  * EntityMinecartFurnace#interactFirst(EntityPlayer)
  * EntityMinecartHopper#interactFirst(EntityPlayer).<br>
@@ -24,11 +26,19 @@ import net.minecraft.entity.player.EntityPlayer;
 @Cancelable
 public class MinecartInteractEvent extends MinecartEvent
 {
-    public final EntityPlayer player;
+    private final EntityPlayer player;
+    private final ItemStack item;
+    private final EnumHand hand;
 
-    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player)
+    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, ItemStack item, EnumHand hand)
     {
         super(minecart);
         this.player = player;
+        this.item = item;
+        this.hand = hand;
     }
+
+    public EntityPlayer getPlayer() { return player; }
+    public ItemStack getItem() { return item; }
+    public EnumHand getHand() { return hand; }
 }

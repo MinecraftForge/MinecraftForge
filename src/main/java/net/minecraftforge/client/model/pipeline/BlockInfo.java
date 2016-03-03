@@ -1,16 +1,18 @@
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.Block.EnumOffsetType;
-import net.minecraft.util.BlockPos;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 
 public class BlockInfo
 {
+    private final BlockColors colors;
     private IBlockAccess world;
-    private Block block;
+    private IBlockState state;
     private BlockPos blockPos;
 
     private final boolean[][][] translucent = new boolean[3][3][3];
@@ -25,11 +27,16 @@ public class BlockInfo
     private int cachedTint = -1;
     private int cachedMultiplier = -1;
 
+    public BlockInfo(BlockColors colors)
+    {
+        this.colors = colors;
+    }
+
     public int getColorMultiplier(int tint)
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = block.colorMultiplier(world, blockPos, tint);
+        cachedMultiplier = colors.func_186724_a(state, world, blockPos, tint);
         return cachedMultiplier;
     }
 
@@ -41,12 +48,12 @@ public class BlockInfo
     public void updateShift(boolean ignoreY)
     {
         long rand = 0;
-        if(block.getOffsetType() != EnumOffsetType.NONE)
+        if(state.getBlock().getOffsetType() != EnumOffsetType.NONE)
         {
             rand = MathHelper.getCoordinateRandom(blockPos.getX(), ignoreY ? 0 : blockPos.getY(), blockPos.getZ());
             shx = ((float)((rand >> 16) & 0xF) / 0xF - .5f) * .5f;
             shz = ((float)((rand >> 24) & 0xF) / 0xF - .5f) * .5f;
-            if(block.getOffsetType() == EnumOffsetType.XYZ)
+            if(state.getBlock().getOffsetType() == EnumOffsetType.XYZ)
             {
                 shy = ((float)((rand >> 20) & 0xF) / 0xF - 1) * .2f;
             }
@@ -60,9 +67,9 @@ public class BlockInfo
         cachedMultiplier = -1;
     }
 
-    public void setBlock(Block block)
+    public void setState(IBlockState state)
     {
-        this.block = block;
+        this.state = state;
         cachedTint = -1;
         cachedMultiplier = -1;
     }
@@ -94,16 +101,16 @@ public class BlockInfo
                 for(int z = 0; z <= 2; z++)
                 {
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
-                    Block block = world.getBlockState(pos).getBlock();
-                    translucent[x][y][z] = block.isTranslucent();
+                    IBlockState state = world.getBlockState(pos);
+                    translucent[x][y][z] = state.func_185895_e();
                     //translucent[x][y][z] = world.getBlockState(pos).getBlock().getLightOpacity(world, pos) == 0;
-                    int brightness = this.block.getMixedBrightnessForBlock(world, pos);
+                    int brightness = state.func_185889_a(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
-                    ao[x][y][z] = block.getAmbientOcclusionLightValue();
+                    ao[x][y][z] = state.func_185892_j();
                     if(x == 1 && y == 1 && z == 1)
                     {
-                        full = block.isFullCube();
+                        full = state.func_185917_h();
                     }
                 }
             }
@@ -150,9 +157,9 @@ public class BlockInfo
         return world;
     }
 
-    public Block getBlock()
+    public IBlockState getState()
     {
-        return block;
+        return state;
     }
 
     public BlockPos getBlockPos()

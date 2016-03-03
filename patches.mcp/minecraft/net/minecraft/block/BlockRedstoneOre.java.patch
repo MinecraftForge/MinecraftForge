@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
+@@ -92,12 +92,16 @@
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+         super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
++    }
+ 
+-        if (this.getItemDropped(state, worldIn.rand, fortune) != Item.getItemFromBlock(this))
++    @Override
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    {
++        if (this.getItemDropped(state, RANDOM, fortune) != Item.getItemFromBlock(this))
+         {
+-            int i = 1 + worldIn.rand.nextInt(5);
+-            this.dropXpOnBlockBreak(worldIn, pos, i);
++            return 1 + RANDOM.nextInt(5);
+         }
++        return 0;
+     }
+ 
+     @SideOnly(Side.CLIENT)

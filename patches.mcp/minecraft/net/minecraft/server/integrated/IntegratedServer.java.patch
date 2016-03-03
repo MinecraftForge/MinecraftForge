@@ -1,0 +1,87 @@
+--- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
++++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+@@ -68,8 +68,6 @@
+     protected void loadAllWorlds(String p_71247_1_, String p_71247_2_, long seed, WorldType type, String p_71247_6_)
+     {
+         this.convertMapIfNeeded(p_71247_1_);
+-        this.worldServers = new WorldServer[3];
+-        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
+         ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(p_71247_1_, true);
+         this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
+         WorldInfo worldinfo = isavehandler.loadWorldInfo();
+@@ -83,44 +81,23 @@
+             worldinfo.setWorldName(p_71247_2_);
+         }
+ 
+-        for (int i = 0; i < this.worldServers.length; ++i)
++        WorldServer overWorld = (isDemo() ? (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init() :
++                                            (WorldServer)(new WorldServer(this, isavehandler, worldinfo, 0, this.theProfiler)).init());
++        overWorld.initialize(this.theWorldSettings);
++        for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs())
+         {
+-            int j = 0;
+-
+-            if (i == 1)
++            WorldServer world = (dim == 0 ? overWorld : (WorldServer)(new WorldServerMulti(this, isavehandler, dim, overWorld, this.theProfiler)).init());
++            world.addWorldAccess(new WorldManager(this, world));
++            if (!this.isSinglePlayer())
+             {
+-                j = -1;
++                world.getWorldInfo().setGameType(getGameType());
+             }
+-
+-            if (i == 2)
+-            {
+-                j = 1;
+-            }
+-
+-            if (i == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.worldServers[i] = (WorldServer)(new DemoWorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                }
+-                else
+-                {
+-                    this.worldServers[i] = (WorldServer)(new WorldServer(this, isavehandler, worldinfo, j, this.theProfiler)).init();
+-                }
+-
+-                this.worldServers[i].initialize(this.theWorldSettings);
+-            }
+-            else
+-            {
+-                this.worldServers[i] = (WorldServer)(new WorldServerMulti(this, isavehandler, j, this.worldServers[0], this.theProfiler)).init();
+-            }
+-
+-            this.worldServers[i].addWorldAccess(new WorldManager(this, this.worldServers[i]));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
+         }
+ 
+-        this.func_184103_al().setPlayerManager(this.worldServers);
++        this.func_184103_al().setPlayerManager(new WorldServer[]{ overWorld });
+ 
+-        if (this.worldServers[0].getWorldInfo().getDifficulty() == null)
++        if (overWorld.getWorldInfo().getDifficulty() == null)
+         {
+             this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
+         }
+@@ -138,9 +115,10 @@
+         this.setAllowFlight(true);
+         logger.info("Generating keypair");
+         this.setKeyPair(CryptManager.generateKeyPair());
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+         this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType(), this.theWorldSettings.getWorldName());
+         this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
+-        return true;
++        return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+     }
+ 
+     public void tick()
+@@ -213,6 +191,7 @@
+ 
+     public EnumDifficulty getDifficulty()
+     {
++        if (this.mc.theWorld == null) return this.mc.gameSettings.difficulty; // Fix NPE just in case.
+         return this.mc.theWorld.getWorldInfo().getDifficulty();
+     }
+ 

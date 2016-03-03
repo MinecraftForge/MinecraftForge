@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
+@@ -254,7 +254,7 @@
+             {
+                 BlockPos blockpos1 = posOne.add((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
+ 
+-                if (!this.func_150523_a(this.world.getBlockState(blockpos1).getBlock()))
++                if (!this.isReplaceable(world, blockpos1))
+                 {
+                     return j;
+                 }
+@@ -282,6 +282,7 @@
+ 
+         if (!this.validTreeLocation())
+         {
++            this.world = null; //Fix vanilla Mem leak, holds latest world
+             return false;
+         }
+         else
+@@ -290,15 +291,18 @@
+             this.generateLeaves();
+             this.generateTrunk();
+             this.generateLeafNodeBases();
++            this.world = null; //Fix vanilla Mem leak, holds latest world
+             return true;
+         }
+     }
+ 
+     private boolean validTreeLocation()
+     {
+-        Block block = this.world.getBlockState(this.basePos.down()).getBlock();
++        BlockPos down = this.basePos.down();
++        net.minecraft.block.state.IBlockState state = this.world.getBlockState(down);
++        boolean isSoil = state.getBlock().canSustainPlant(state, this.world, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-        if (block != Blocks.dirt && block != Blocks.grass && block != Blocks.farmland)
++        if (!isSoil)
+         {
+             return false;
+         }

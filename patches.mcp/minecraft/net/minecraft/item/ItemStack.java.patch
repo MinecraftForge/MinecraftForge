@@ -1,0 +1,229 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -41,7 +41,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public final class ItemStack
++public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
+     public int stackSize;
+@@ -55,6 +55,10 @@
+     private Block canPlaceOnCacheBlock;
+     private boolean canPlaceOnCacheResult;
+ 
++    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private NBTTagCompound capNBT;
++
+     public ItemStack(Block blockIn)
+     {
+         this((Block)blockIn, 1);
+@@ -80,13 +84,15 @@
+         this((Item)itemIn, amount, 0);
+     }
+ 
+-    public ItemStack(Item itemIn, int amount, int meta)
++    public ItemStack(Item itemIn, int amount, int meta) { this (itemIn, amount, meta, null); }
++    public ItemStack(Item itemIn, int amount, int meta, NBTTagCompound capNBT)
+     {
++        this.capNBT = capNBT;
+         this.canDestroyCacheBlock = null;
+         this.canDestroyCacheResult = false;
+         this.canPlaceOnCacheBlock = null;
+         this.canPlaceOnCacheResult = false;
+-        this.item = itemIn;
++        this.setItem(itemIn);
+         this.stackSize = amount;
+         this.itemDamage = meta;
+ 
+@@ -114,7 +120,7 @@
+     public ItemStack splitStack(int amount)
+     {
+         amount = Math.min(amount, this.stackSize);
+-        ItemStack itemstack = new ItemStack(this.item, amount, this.itemDamage);
++        ItemStack itemstack = new ItemStack(this.item, amount, this.itemDamage, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+ 
+         if (this.stackTagCompound != null)
+         {
+@@ -127,11 +133,12 @@
+ 
+     public Item getItem()
+     {
+-        return this.item;
++        return this.delegate != null ? this.delegate.get() : null;
+     }
+ 
+     public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand side, EnumFacing hitX, float hitY, float hitZ, float p_179546_8_)
+     {
++        if (!worldIn.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, playerIn, worldIn, pos, hitX, hitY, hitZ, p_179546_8_, side);
+         EnumActionResult enumactionresult = this.getItem().onItemUse(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ, p_179546_8_);
+ 
+         if (enumactionresult == EnumActionResult.SUCCESS)
+@@ -169,12 +176,16 @@
+             nbt.setTag("tag", this.stackTagCompound);
+         }
+ 
++        if (this.capabilities != null) nbt.setTag("ForgeCaps", this.capabilities.serializeNBT());
++
+         return nbt;
+     }
+ 
+     public void readFromNBT(NBTTagCompound nbt)
+     {
+-        this.item = Item.getByNameOrId(nbt.getString("id"));
++        this.capNBT = nbt.hasKey("ForgeCaps") ? nbt.getCompoundTag("ForgeCaps") : null;
++        this.setItem(Item.getByNameOrId(nbt.getString("id")));
++        this.capNBT = null;
+         this.stackSize = nbt.getByte("Count");
+         this.itemDamage = nbt.getShort("Damage");
+ 
+@@ -196,7 +207,7 @@
+ 
+     public int getMaxStackSize()
+     {
+-        return this.getItem().getItemStackLimit();
++        return this.getItem().getItemStackLimit(this);
+     }
+ 
+     public boolean isStackable()
+@@ -206,7 +217,7 @@
+ 
+     public boolean isItemStackDamageable()
+     {
+-        return this.item == null ? false : (this.item.getMaxDamage() <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable"));
++        return this.item == null ? false : (this.item.getMaxDamage(this) <= 0 ? false : !this.hasTagCompound() || !this.getTagCompound().getBoolean("Unbreakable"));
+     }
+ 
+     public boolean getHasSubtypes()
+@@ -216,32 +227,27 @@
+ 
+     public boolean isItemDamaged()
+     {
+-        return this.isItemStackDamageable() && this.itemDamage > 0;
++        return this.isItemStackDamageable() && getItem().isDamaged(this);
+     }
+ 
+     public int getItemDamage()
+     {
+-        return this.itemDamage;
++        return getItem().getDamage(this);
+     }
+ 
+     public int getMetadata()
+     {
+-        return this.itemDamage;
++        return getItem().getMetadata(this);
+     }
+ 
+     public void setItemDamage(int meta)
+     {
+-        this.itemDamage = meta;
+-
+-        if (this.itemDamage < 0)
+-        {
+-            this.itemDamage = 0;
+-        }
++        getItem().setDamage(this, meta);
+     }
+ 
+     public int getMaxDamage()
+     {
+-        return this.item == null ? 0 : this.item.getMaxDamage();
++        return this.item == null ? 0 : this.item.getMaxDamage(this);
+     }
+ 
+     public boolean attemptDamageItem(int amount, Random rand)
+@@ -273,8 +279,8 @@
+                 }
+             }
+ 
+-            this.itemDamage += amount;
+-            return this.itemDamage > this.getMaxDamage();
++            setItemDamage(getItemDamage() + amount); //Redirect through Item's callback if applicable.
++            return getItemDamage() > getMaxDamage();
+         }
+     }
+ 
+@@ -328,7 +334,7 @@
+ 
+     public boolean canHarvestBlock(IBlockState blockIn)
+     {
+-        return this.item.canHarvestBlock(blockIn);
++        return getItem().canHarvestBlock(blockIn, this);
+     }
+ 
+     public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn, EnumHand p_111282_3_)
+@@ -338,7 +344,7 @@
+ 
+     public ItemStack copy()
+     {
+-        ItemStack itemstack = new ItemStack(this.item, this.stackSize, this.itemDamage);
++        ItemStack itemstack = new ItemStack(this.item, this.stackSize, this.itemDamage, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+ 
+         if (this.stackTagCompound != null)
+         {
+@@ -759,6 +765,7 @@
+             }
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, playerIn, list, advanced);
+         return list;
+     }
+ 
+@@ -869,7 +876,7 @@
+         }
+         else
+         {
+-            multimap = this.getItem().getItemAttributeModifiers(p_111283_1_);
++            multimap = this.getItem().getAttributeModifiers(p_111283_1_, this);
+         }
+ 
+         return multimap;
+@@ -901,6 +908,18 @@
+ 
+     public void setItem(Item newItem)
+     {
++        if (newItem == this.item && item != null && this.capabilities != null) //Item Didn't change but refreshed
++        {
++            net.minecraftforge.common.capabilities.ICapabilityProvider parent = item.initCapabilities(this, this.capabilities.serializeNBT());
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(item, this, parent);
++        }
++        else if (newItem != this.item && newItem != null) // Item Changed
++        {
++            net.minecraftforge.common.capabilities.ICapabilityProvider parent = newItem.initCapabilities(this, this.capNBT);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(newItem, this, parent);
++        }
++        if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
++        this.delegate = newItem != null ? newItem.delegate : null;
+         this.item = newItem;
+     }
+ 
+@@ -987,4 +1006,26 @@
+             return false;
+         }
+     }
++
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.readFromNBT(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        this.writeToNBT(ret);
++        return ret;
++    }
+ }

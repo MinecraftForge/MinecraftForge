@@ -69,13 +69,13 @@ public class PotionRegistryDebug {
       int height = width;
 /*
       Tessellator tessellator = Tessellator.getInstance();
-      WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-      worldrenderer.startDrawingQuads();
-      worldrenderer.setColorOpaque_I(potion.getLiquidColor());
-      worldrenderer.addVertexWithUV((double) x, (double) (y + height), 0.0D, sprite.getMinU(), sprite.getMaxV());
-      worldrenderer.addVertexWithUV((double)(x + width), (double)(y + height), 0.0D, sprite.getMaxU(), sprite.getMaxV());
-      worldrenderer.addVertexWithUV((double)(x + width), (double)y, 0.0D, sprite.getMaxU(), sprite.getMinV());
-      worldrenderer.addVertexWithUV((double)x, (double)y, 0.0D, sprite.getMinU(), sprite.getMinV());
+      VertexBuffer VertexBuffer = tessellator.getVertexBuffer();
+      VertexBuffer.startDrawingQuads();
+      VertexBuffer.setColorOpaque_I(potion.getLiquidColor());
+      VertexBuffer.addVertexWithUV((double) x, (double) (y + height), 0.0D, sprite.getMinU(), sprite.getMaxV());
+      VertexBuffer.addVertexWithUV((double)(x + width), (double)(y + height), 0.0D, sprite.getMaxU(), sprite.getMaxV());
+      VertexBuffer.addVertexWithUV((double)(x + width), (double)y, 0.0D, sprite.getMaxU(), sprite.getMinV());
+      VertexBuffer.addVertexWithUV((double)x, (double)y, 0.0D, sprite.getMinU(), sprite.getMinV());
       tessellator.draw();*/
     }
   }

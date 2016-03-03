@@ -1,0 +1,68 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -133,7 +133,9 @@
+                 return;
+             }
+ 
+-            iblockaccess = new RegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
++            RegionRenderCache cache = createRegionRenderCache(this.world, blockpos.add(-1, -1, -1), blockpos1.add(1, 1, 1), 1);
++            net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(world, position, cache);
++            iblockaccess = cache;
+             generator.setCompiledChunk(compiledchunk);
+         }
+         finally
+@@ -160,7 +162,7 @@
+                     lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
+                 }
+ 
+-                if (block.hasTileEntity())
++                if (block.hasTileEntity(iblockstate))
+                 {
+                     TileEntity tileentity = iblockaccess.getTileEntity(new BlockPos(blockpos$mutableblockpos));
+                     TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.instance.<TileEntity>getSpecialRenderer(tileentity);
+@@ -176,7 +178,9 @@
+                     }
+                 }
+ 
+-                BlockRenderLayer blockrenderlayer1 = block.getBlockLayer();
++                for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
++                     if(!block.canRenderInLayer(blockrenderlayer1)) continue;
++                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
+                 int j = blockrenderlayer1.ordinal();
+ 
+                 if (block.getDefaultState().func_185901_i() != EnumBlockRenderType.INVISIBLE)
+@@ -191,6 +195,7 @@
+ 
+                     aboolean[j] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, iblockaccess, vertexbuffer);
+                 }
++                }
+             }
+ 
+             for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
+@@ -413,6 +418,26 @@
+         return this.needsUpdate && this.field_188284_q;
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Creates a new RegionRenderCache instance.<br>
++     * Extending classes can change the behavior of the cache, allowing to visually change
++     * blocks (schematics etc).
++     *
++     * @see RegionRenderCache
++     * @param world The world to cache.
++     * @param from The starting position of the chunk minus one on each axis.
++     * @param to The ending position of the chunk plus one on each axis.
++     * @param subtract Padding used internally by the RegionRenderCache constructor to make
++     *                 the cache a 20x20x20 cube, for a total of 8000 states in the cache.
++     * @return new RegionRenderCache instance
++     */
++    protected RegionRenderCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
++    {
++        return new RegionRenderCache(world, from, to, subtract);
++    }
++    /* ========================================= FORGE END ======================================*/
++
+     public BlockPos getBlockPosOffset16(EnumFacing p_181701_1_)
+     {
+         return (BlockPos)this.mapEnumFacing.get(p_181701_1_);

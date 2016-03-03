@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -89,6 +89,11 @@
+         this.direction = packetDirection;
+     }
+ 
++    public EnumPacketDirection getDirection()
++    {
++        return this.direction;
++    }
++
+     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
+     {
+         super.channelActive(p_channelActive_1_);
+@@ -205,7 +210,7 @@
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.channel.attr(attrKeyConnectionState).get();
+ 
+-        if (enumconnectionstate1 != enumconnectionstate)
++        if (enumconnectionstate1 != enumconnectionstate && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+         {
+             logger.debug("Disabled auto read");
+             this.channel.config().setAutoRead(false);
+@@ -213,7 +218,7 @@
+ 
+         if (this.channel.eventLoop().inEventLoop())
+         {
+-            if (enumconnectionstate != enumconnectionstate1)
++            if (enumconnectionstate != enumconnectionstate1 && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+             {
+                 this.setConnectionState(enumconnectionstate);
+             }
+@@ -233,7 +238,7 @@
+             {
+                 public void run()
+                 {
+-                    if (enumconnectionstate != enumconnectionstate1)
++                    if (enumconnectionstate != enumconnectionstate1  && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+                     {
+                         NetworkManager.this.setConnectionState(enumconnectionstate);
+                     }
+@@ -452,6 +457,11 @@
+         }
+     }
+ 
++    public Channel channel()
++    {
++        return channel;
++    }
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet<?> packet;

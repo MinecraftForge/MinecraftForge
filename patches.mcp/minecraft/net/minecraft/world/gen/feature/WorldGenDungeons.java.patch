@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
+@@ -154,6 +154,12 @@
+ 
+     private String pickMobSpawner(Random p_76543_1_)
+     {
+-        return SPAWNERTYPES[p_76543_1_.nextInt(SPAWNERTYPES.length)];
++        return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_76543_1_);
+     }
++
++    static
++    {
++        net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, CHESTCONTENT, 8, 8);
++        net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++    }
+ }

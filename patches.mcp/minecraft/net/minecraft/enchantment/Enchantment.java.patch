@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
++++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -118,7 +118,7 @@
+ 
+     public boolean canApply(ItemStack stack)
+     {
+-        return this.type.canEnchantItem(stack.getItem());
++        return canApplyAtEnchantingTable(stack);
+     }
+ 
+     public void onEntityDamaged(EntityLivingBase user, Entity target, int level)

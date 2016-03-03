@@ -1,0 +1,37 @@
+++++ REJECTED PATCH 2
+                                             IBlockState iblockstate1 = p_180702_5_.getBlockState(j3, j2, i2);
+                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.getBlockState(j3, j2 + 1, i2), Blocks.air.getDefaultState());
+ 
+-                                            if (iblockstate1.getBlock() == Blocks.grass || iblockstate1.getBlock() == Blocks.mycelium)
++                                            if (isTopBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_))
+                                             {
+                                                 flag1 = true;
+                                             }
+ 
+-                                            if (this.func_175793_a(iblockstate1, iblockstate2))
+-                                            {
+-                                                if (j2 - 1 < 10)
+-                                                {
+-                                                    p_180702_5_.setBlockState(j3, j2, i2, Blocks.lava.getDefaultState());
+-                                                }
+-                                                else
+-                                                {
+-                                                    p_180702_5_.setBlockState(j3, j2, i2, Blocks.air.getDefaultState());
+-
+-                                                    if (iblockstate2.getBlock() == Blocks.sand)
+-                                                    {
+-                                                        p_180702_5_.setBlockState(j3, j2 + 1, i2, iblockstate2.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND ? Blocks.red_sandstone.getDefaultState() : Blocks.sandstone.getDefaultState());
+-                                                    }
+-
+-                                                    if (flag1 && p_180702_5_.getBlockState(j3, j2 - 1, i2).getBlock() == Blocks.dirt)
+-                                                    {
+-                                                        blockpos$mutableblockpos.set(j3 + p_180702_3_ * 16, 0, i2 + p_180702_4_ * 16);
+-                                                        p_180702_5_.setBlockState(j3, j2 - 1, i2, this.worldObj.getBiomeGenForCoords(blockpos$mutableblockpos).topBlock.getBlock().getDefaultState());
+-                                                    }
+-                                                }
+-                                            }
++                                            digBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_, flag1, iblockstate1, iblockstate2);
+                                         }
+                                     }
+                                 }
+++++ END PATCH

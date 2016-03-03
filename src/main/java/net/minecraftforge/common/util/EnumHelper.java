@@ -15,8 +15,8 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -42,11 +42,11 @@ public class EnumHelper
         {Door.class},
         {EnumEnchantmentType.class},
         {Sensitivity.class},
-        {MovingObjectType.class},
+        {RayTraceResult.Type.class},
         {EnumSkyBlock.class, int.class},
         {EnumStatus.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, EnumChatFormatting.class, String.class}
+        {EnumRarity.class, TextFormatting.class, String.class}
     };
 
     public static EnumAction addAction(String name)
@@ -82,9 +82,9 @@ public class EnumHelper
     {
         return addEnum(Sensitivity.class, name);
     }
-    public static MovingObjectType addMovingObjectType(String name)
+    public static RayTraceResult.Type addMovingObjectType(String name)
     {
-        return addEnum(MovingObjectType.class, name);
+        return addEnum(RayTraceResult.Type.class, name);
     }
     public static EnumSkyBlock addSkyBlock(String name, int lightValue)
     {
@@ -98,7 +98,7 @@ public class EnumHelper
     {
         return addEnum(ToolMaterial.class, name, harvestLevel, maxUses, efficiency, damage, enchantability);
     }
-    public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
+    public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
     }

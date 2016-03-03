@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityPistonRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityPistonRenderer.java
+@@ -23,10 +23,11 @@
+ @SideOnly(Side.CLIENT)
+ public class TileEntityPistonRenderer extends TileEntitySpecialRenderer<TileEntityPiston>
+ {
+-    private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
++    private BlockRendererDispatcher blockRenderer;
+ 
+     public void renderTileEntityAt(TileEntityPiston te, double x, double y, double z, float partialTicks, int destroyStage)
+     {
++        if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+         BlockPos blockpos = te.getPos();
+         IBlockState iblockstate = te.getPistonState();
+         Block block = iblockstate.getBlock();

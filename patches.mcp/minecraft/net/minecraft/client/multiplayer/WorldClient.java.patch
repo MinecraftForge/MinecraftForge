@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
+@@ -63,12 +63,13 @@
+         this.field_184157_a = Sets.<ChunkCoordIntPair>newHashSet();
+         this.sendQueue = p_i45063_1_;
+         this.getWorldInfo().setDifficulty(p_i45063_4_);
+-        this.setSpawnPoint(new BlockPos(8, 64, 8));
+         this.provider.registerWorld(this);
++        this.setSpawnPoint(new BlockPos(8, 64, 8)); //Forge: Moved below registerWorld to prevent NPE in our redirect.
+         this.chunkProvider = this.createChunkProvider();
+         this.mapStorage = new SaveDataMemoryStorage();
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
+     }
+ 
+     public void tick()

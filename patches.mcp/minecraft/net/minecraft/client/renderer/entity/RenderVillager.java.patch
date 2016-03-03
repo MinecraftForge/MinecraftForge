@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderVillager.java
+@@ -44,7 +44,7 @@
+             case 4:
+                 return butcherVillagerTextures;
+             default:
+-                return villagerTextures;
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.getVillagerSkin(entity.getProfession(), villagerTextures);
+         }
+     }
+ 

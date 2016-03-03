@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMap.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMap.java
+@@ -57,7 +57,7 @@
+             mapdata = new MapData(s);
+             mapdata.scale = 3;
+             mapdata.calculateMapCenter((double)worldIn.getWorldInfo().getSpawnX(), (double)worldIn.getWorldInfo().getSpawnZ(), mapdata.scale);
+-            mapdata.dimension = (byte)worldIn.provider.func_186058_p().func_186068_a();
++            mapdata.dimension = worldIn.provider.func_186058_p().func_186068_a();
+             mapdata.markDirty();
+             worldIn.setItemData(s, mapdata);
+         }

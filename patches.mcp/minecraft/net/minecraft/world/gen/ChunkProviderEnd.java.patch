@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
+@@ -123,6 +123,9 @@
+ 
+     public void func_185962_a(ChunkPrimer p_185962_1_)
+     {
++        net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks event = new net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks(this, chunkX, chunkZ, p_180519_1_, this.endWorld);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return;
+         for (int i = 0; i < 16; ++i)
+         {
+             for (int j = 0; j < 16; ++j)

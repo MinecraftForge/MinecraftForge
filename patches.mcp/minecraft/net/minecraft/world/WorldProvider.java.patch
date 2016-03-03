@@ -1,0 +1,340 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
++++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
+@@ -172,13 +172,13 @@
+ 
+     public int getAverageGroundLevel()
+     {
+-        return this.terrainType == WorldType.FLAT ? 4 : this.worldObj.getSeaLevel() + 1;
++        return this.terrainType.getMinimumSpawnHeight(this.worldObj);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public double getVoidFogYFactor()
+     {
+-        return this.terrainType == WorldType.FLAT ? 1.0D : 0.03125D;
++        return this.terrainType.voidFadeMagnitude();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -212,6 +212,321 @@
+         return new WorldBorder();
+     }
+ 
++    /*======================================= Forge Start =========================================*/
++    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
++    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
++    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
++
++    /**
++     * Sets the providers current dimension ID, used in default getSaveFolder()
++     * Added to allow default providers to be registered for multiple dimensions.
++     *
++     * @param dim Dimension ID
++     */
++    public void setDimension(int dim)
++    {
++        this.dimensionId = dim;
++    }
++
++    /**
++     * Returns the sub-folder of the world folder that this WorldProvider saves to.
++     * EXA: DIM1, DIM-1
++     * @return The sub-folder name to save this world's chunks to.
++     */
++    public String getSaveFolder()
++    {
++        return (dimensionId == 0 ? null : "DIM" + dimensionId);
++    }
++
++    /**
++     * A message to display to the user when they transfer to this dimension.
++     *
++     * @return The message to be displayed
++     */
++    public String getWelcomeMessage()
++    {
++        if (this instanceof WorldProviderEnd)
++        {
++            return "Entering the End";
++        }
++        else if (this instanceof WorldProviderHell)
++        {
++            return "Entering the Nether";
++        }
++        return null;
++    }
++
++    /**
++     * A Message to display to the user when they transfer out of this dismension.
++     *
++     * @return The message to be displayed
++     */
++    public String getDepartMessage()
++    {
++        if (this instanceof WorldProviderEnd)
++        {
++            return "Leaving the End";
++        }
++        else if (this instanceof WorldProviderHell)
++        {
++            return "Leaving the Nether";
++        }
++        return null;
++    }
++
++    /**
++     * The dimensions movement factor. Relative to normal overworld.
++     * It is applied to the players position when they transfer dimensions.
++     * Exa: Nether movement is 8.0
++     * @return The movement factor
++     */
++    public double getMovementFactor()
++    {
++        if (this instanceof WorldProviderHell)
++        {
++            return 8.0;
++        }
++        return 1.0;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public net.minecraftforge.client.IRenderHandler getSkyRenderer()
++    {
++        return this.skyRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
++    {
++        this.skyRenderer = skyRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public net.minecraftforge.client.IRenderHandler getCloudRenderer()
++    {
++        return cloudRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer)
++    {
++        cloudRenderer = renderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public net.minecraftforge.client.IRenderHandler getWeatherRenderer()
++    {
++        return weatherRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
++    {
++        weatherRenderer = renderer;
++    }
++
++    public BlockPos getRandomizedSpawnPoint()
++    {
++        BlockPos ret = this.worldObj.getSpawnPoint();
++
++        boolean isAdventure = worldObj.getWorldInfo().getGameType() == WorldSettings.GameType.ADVENTURE;
++        int spawnFuzz = this.worldObj instanceof WorldServer ? terrainType.getSpawnFuzz((WorldServer)this.worldObj, this.worldObj.getMinecraftServer()) : 1;
++        int border = MathHelper.floor_double(worldObj.getWorldBorder().getClosestDistance(ret.getX(), ret.getZ()));
++        if (border < spawnFuzz) spawnFuzz = border;
++        if (spawnFuzz < 1) spawnFuzz = 1;
++        int spawnFuzzHalf = spawnFuzz / 2;
++
++        if (!getHasNoSky() && !isAdventure)
++        {
++            ret = worldObj.getTopSolidOrLiquidBlock(ret.add(worldObj.rand.nextInt(spawnFuzzHalf) - spawnFuzz, 0, worldObj.rand.nextInt(spawnFuzzHalf) - spawnFuzz));
++        }
++
++        return ret;
++    }
++    /**
++     * Determine if the cursor on the map should 'spin' when rendered, like it does for the player in the nether.
++     *
++     * @param entity The entity holding the map, playername, or frame-ENTITYID
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True to 'spin' the cursor
++     */
++    public boolean shouldMapSpin(String entity, double x, double y, double z)
++    {
++        return dimensionId < 0;
++    }
++
++    /**
++     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
++     *
++     * @param player The player that is respawning
++     * @return The dimension to respawn the player in
++     */
++    public int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
++    {
++        return 0;
++    }
++
++    /*======================================= Start Moved From World =========================================*/
++
++    public BiomeGenBase getBiomeGenForCoords(BlockPos pos)
++    {
++        return worldObj.getBiomeGenForCoordsBody(pos);
++    }
++
++    public boolean isDaytime()
++    {
++        return worldObj.getSkylightSubtracted() < 4;
++    }
++
++    /**
++     * The current sun brightness factor for this dimension.
++     * 0.0f means no light at all, and 1.0f means maximum sunlight.
++     * This will be used for the "calculateSkylightSubtracted"
++     * which is for Sky light value calculation.
++     *
++     * @return The current brightness factor
++     * */
++    public float getSunBrightnessFactor(float par1)
++    {
++        return worldObj.getSunBrightnessFactor(par1);
++    }
++
++    /**
++     * Calculates the current moon phase factor.
++     * This factor is effective for slimes.
++     * (This method do not affect the moon rendering)
++     * */
++    public float getCurrentMoonPhaseFactor()
++    {
++        return worldObj.getCurrentMoonPhaseFactorBody();
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
++    {
++        return worldObj.getSkyColorBody(cameraEntity, partialTicks);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 drawClouds(float partialTicks)
++    {
++        return worldObj.drawCloudsBody(partialTicks);
++    }
++
++    /**
++     * Gets the Sun Brightness for rendering sky.
++     * */
++    @SideOnly(Side.CLIENT)
++    public float getSunBrightness(float par1)
++    {
++        return worldObj.getSunBrightnessBody(par1);
++    }
++
++    /**
++     * Gets the Star Brightness for rendering sky.
++     * */
++    @SideOnly(Side.CLIENT)
++    public float getStarBrightness(float par1)
++    {
++        return worldObj.getStarBrightnessBody(par1);
++    }
++
++    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
++    {
++        worldObj.spawnHostileMobs = allowHostile;
++        worldObj.spawnPeacefulMobs = allowPeaceful;
++    }
++
++    public void calculateInitialWeather()
++    {
++        worldObj.calculateInitialWeatherBody();
++    }
++
++    public void updateWeather()
++    {
++        worldObj.updateWeatherBody();
++    }
++
++    public boolean canBlockFreeze(BlockPos pos, boolean byWater)
++    {
++        return worldObj.canBlockFreezeBody(pos, byWater);
++    }
++
++    public boolean canSnowAt(BlockPos pos, boolean checkLight)
++    {
++        return worldObj.canSnowAtBody(pos, checkLight);
++    }
++    public void setWorldTime(long time)
++    {
++        worldObj.worldInfo.setWorldTime(time);
++    }
++
++    public long getSeed()
++    {
++        return worldObj.worldInfo.getSeed();
++    }
++
++    public long getWorldTime()
++    {
++        return worldObj.worldInfo.getWorldTime();
++    }
++
++    public BlockPos getSpawnPoint()
++    {
++        net.minecraft.world.storage.WorldInfo info = worldObj.worldInfo;
++        return new BlockPos(info.getSpawnX(), info.getSpawnY(), info.getSpawnZ());
++    }
++
++    public void setSpawnPoint(BlockPos pos)
++    {
++        worldObj.worldInfo.setSpawn(pos);
++    }
++
++    public boolean canMineBlock(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
++    {
++        return worldObj.canMineBlockBody(player, pos);
++    }
++
++    public boolean isBlockHighHumidity(BlockPos pos)
++    {
++        return worldObj.getBiomeGenForCoords(pos).isHighHumidity();
++    }
++
++    public int getHeight()
++    {
++        return 256;
++    }
++
++    public int getActualHeight()
++    {
++        return hasNoSky ? 128 : 256;
++    }
++
++    public double getHorizon()
++    {
++        return worldObj.worldInfo.getTerrainType().getHorizon(worldObj);
++    }
++
++    public void resetRainAndThunder()
++    {
++        worldObj.worldInfo.setRainTime(0);
++        worldObj.worldInfo.setRaining(false);
++        worldObj.worldInfo.setThunderTime(0);
++        worldObj.worldInfo.setThundering(false);
++    }
++
++    public boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
++    {
++        return true;
++    }
++
++    public boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
++    {
++        return true;
++    }
++
+     public void func_186061_a(EntityPlayerMP p_186061_1_)
+     {
+     }

@@ -9,20 +9,22 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -158,7 +160,7 @@ public class ModelBakeEventDebug
             if(te instanceof CustomTileEntity)
             {
                 CustomTileEntity cte = (CustomTileEntity) te;
-                Vec3 vec = revRotate(new Vec3(hitX - .5, hitY - .5, hitZ - .5), side).addVector(.5, .5, .5);
+                Vec3d vec = revRotate(new Vec3d(hitX - .5, hitY - .5, hitZ - .5), side).addVector(.5, .5, .5);
                 IUnlistedProperty<Integer> property = properties[side.ordinal()];
                 Integer value = cte.getState().getValue(property);
                 if(value == null) value = 0;
@@ -182,7 +184,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        protected BlockState createBlockState()
+        protected BlockStateContainer createBlockState()
         {
             return new ExtendedBlockState(this, new IProperty[0], properties);
         }
@@ -247,10 +249,10 @@ public class ModelBakeEventDebug
 
         private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
         {
-            Vec3 v1 = rotate(new Vec3(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-            Vec3 v2 = rotate(new Vec3(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-            Vec3 v3 = rotate(new Vec3(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-            Vec3 v4 = rotate(new Vec3(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+            Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+            Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
+            Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
+            Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
             return new BakedQuad(Ints.concat(
                 vertexToInts((float)v1.xCoord, (float)v1.yCoord, (float)v1.zCoord, -1, texture, 0, 0),
                 vertexToInts((float)v2.xCoord, (float)v2.yCoord, (float)v2.zCoord, -1, texture, 0, 16),
@@ -317,30 +319,30 @@ public class ModelBakeEventDebug
         }
     }
 
-    private static Vec3 rotate(Vec3 vec, EnumFacing side)
+    private static Vec3d rotate(Vec3d vec, EnumFacing side)
     {
         switch(side)
         {
-            case DOWN:  return new Vec3( vec.xCoord, -vec.yCoord, -vec.zCoord);
-            case UP:    return new Vec3( vec.xCoord,  vec.yCoord,  vec.zCoord);
-            case NORTH: return new Vec3( vec.xCoord,  vec.zCoord, -vec.yCoord);
-            case SOUTH: return new Vec3( vec.xCoord, -vec.zCoord,  vec.yCoord);
-            case WEST:  return new Vec3(-vec.yCoord,  vec.xCoord,  vec.zCoord);
-            case EAST:  return new Vec3( vec.yCoord, -vec.xCoord,  vec.zCoord);
+            case DOWN:  return new Vec3d( vec.xCoord, -vec.yCoord, -vec.zCoord);
+            case UP:    return new Vec3d( vec.xCoord,  vec.yCoord,  vec.zCoord);
+            case NORTH: return new Vec3d( vec.xCoord,  vec.zCoord, -vec.yCoord);
+            case SOUTH: return new Vec3d( vec.xCoord, -vec.zCoord,  vec.yCoord);
+            case WEST:  return new Vec3d(-vec.yCoord,  vec.xCoord,  vec.zCoord);
+            case EAST:  return new Vec3d( vec.yCoord, -vec.xCoord,  vec.zCoord);
         }
         return null;
     }
 
-    private static Vec3 revRotate(Vec3 vec, EnumFacing side)
+    private static Vec3d revRotate(Vec3d vec, EnumFacing side)
     {
         switch(side)
         {
-            case DOWN:  return new Vec3( vec.xCoord, -vec.yCoord, -vec.zCoord);
-            case UP:    return new Vec3( vec.xCoord,  vec.yCoord,  vec.zCoord);
-            case NORTH: return new Vec3( vec.xCoord, -vec.zCoord,  vec.yCoord);
-            case SOUTH: return new Vec3( vec.xCoord,  vec.zCoord, -vec.yCoord);
-            case WEST:  return new Vec3( vec.yCoord, -vec.xCoord,  vec.zCoord);
-            case EAST:  return new Vec3(-vec.yCoord,  vec.xCoord,  vec.zCoord);
+            case DOWN:  return new Vec3d( vec.xCoord, -vec.yCoord, -vec.zCoord);
+            case UP:    return new Vec3d( vec.xCoord,  vec.yCoord,  vec.zCoord);
+            case NORTH: return new Vec3d( vec.xCoord, -vec.zCoord,  vec.yCoord);
+            case SOUTH: return new Vec3d( vec.xCoord,  vec.zCoord, -vec.yCoord);
+            case WEST:  return new Vec3d( vec.yCoord, -vec.xCoord,  vec.zCoord);
+            case EAST:  return new Vec3d(-vec.yCoord,  vec.xCoord,  vec.zCoord);
         }
         return null;
     }

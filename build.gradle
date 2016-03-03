@@ -26,11 +26,11 @@ apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
-    version = "1.8.9"
+    version = "1.9"
     mappings = 'stable_20'
     //mappings = "snapshot_nodoc_20151122"
     workspaceDir = "projects"
-    versionJson = "jsons/1.8.9-dev.json"
+    versionJson = "jsons/1.9-dev.json"
     buildUserdev = true
     buildInstaller = true
     installerVersion = "1.4"
@@ -47,11 +47,11 @@ minecraft {
     projects {
         forge {
             rootDir "."
-            patchDir "patches/minecraft"
+            patchDir "patches.mcp/minecraft"
             patchAfter "clean"
             genPatchesFrom "clean"
-            genMcpPatches = false
-            applyMcpPatches = false
+            genMcpPatches = true
+            applyMcpPatches = true
             with common
         }
     }
@@ -66,7 +66,7 @@ extractForgeResources { exclude "**/log4j2.xml" }
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
 processJson {
-    releaseJson = "jsons/1.8.9-rel.json"
+    releaseJson = "jsons/1.9-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
         "@version@": project.version,

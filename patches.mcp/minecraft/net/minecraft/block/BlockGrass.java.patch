@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
++++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
+@@ -38,7 +38,7 @@
+     {
+         if (!worldIn.isRemote)
+         {
+-            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).func_185891_c() > 2)
++            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
+             {
+                 worldIn.setBlockState(pos, Blocks.dirt.getDefaultState());
+             }
+@@ -58,7 +58,7 @@
+                         IBlockState iblockstate = worldIn.getBlockState(blockpos.up());
+                         IBlockState iblockstate1 = worldIn.getBlockState(blockpos);
+ 
+-                        if (iblockstate1.getBlock() == Blocks.dirt && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.func_185891_c() <= 2)
++                        if (iblockstate1.getBlock() == Blocks.dirt && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2)
+                         {
+                             worldIn.setBlockState(blockpos, Blocks.grass.getDefaultState());
+                         }
+@@ -96,7 +96,7 @@
+             {
+                 if (j >= i / 16)
+                 {
+-                    if (worldIn.getBlockState(blockpos1).getBlock().blockMaterial == Material.air)
++                    if (worldIn.isAirBlock(blockpos1))
+                     {
+                         if (rand.nextInt(8) == 0)
+                         {

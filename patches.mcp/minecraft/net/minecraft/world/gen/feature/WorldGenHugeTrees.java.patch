@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
+@@ -59,7 +59,7 @@
+                 {
+                     for (int l = -j; l <= j && flag; ++l)
+                     {
+-                        if (p_175926_2_.getY() + i < 0 || p_175926_2_.getY() + i >= 256 || !this.func_150523_a(worldIn.getBlockState(p_175926_2_.add(k, i, l)).getBlock()))
++                        if (p_175926_2_.getY() + i < 0 || p_175926_2_.getY() + i >= 256 || !this.isReplaceable(worldIn,p_175926_2_.add(k, i, l)))
+                         {
+                             flag = false;
+                         }
+@@ -78,14 +78,15 @@
+     private boolean func_175927_a(BlockPos p_175927_1_, World worldIn)
+     {
+         BlockPos blockpos = p_175927_1_.down();
+-        Block block = worldIn.getBlockState(blockpos).getBlock();
++        IBlockState state = worldIn.getBlockState(blockpos);
++        boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling));
+ 
+-        if ((block == Blocks.grass || block == Blocks.dirt) && p_175927_1_.getY() >= 2)
++        if (isSoil && p_175927_1_.getY() >= 2)
+         {
+-            this.func_175921_a(worldIn, blockpos);
+-            this.func_175921_a(worldIn, blockpos.east());
+-            this.func_175921_a(worldIn, blockpos.south());
+-            this.func_175921_a(worldIn, blockpos.south().east());
++            this.onPlantGrow(worldIn, blockpos, p_175927_1_);
++            this.onPlantGrow(worldIn, blockpos.east(), p_175927_1_);
++            this.onPlantGrow(worldIn, blockpos.south(), p_175927_1_);
++            this.onPlantGrow(worldIn, blockpos.south().east(), p_175927_1_);
+             return true;
+         }
+         else
+@@ -145,4 +146,10 @@
+             }
+         }
+     }
++
++    //Just a helper macro
++    private void onPlantGrow(World world, BlockPos pos, BlockPos source)
++    {
++        world.getBlockState(pos).getBlock().onPlantGrow(world, pos, source);
++    }
+ }

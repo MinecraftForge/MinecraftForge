@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockIce.java
++++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
+@@ -40,14 +40,19 @@
+         player.triggerAchievement(StatList.func_188055_a(this));
+         player.addExhaustion(0.025F);
+ 
+-        if (this.canSilkHarvest() && EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185306_r, p_180657_6_) > 0)
++        if (this.canSilkHarvest(worldIn, pos, state, player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185306_r, p_180657_6_) > 0)
+         {
++            java.util.List<ItemStack> items = new java.util.ArrayList<ItemStack>();
+             ItemStack itemstack = this.createStackedBlock(state);
+ 
+             if (itemstack != null)
+             {
+-                spawnAsEntity(worldIn, pos, itemstack);
++                items.add(itemstack);
+             }
++
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, worldIn, pos, state, 0, 1.0f, true, player);
++            for (ItemStack is : items)
++                spawnAsEntity(worldIn, pos, is);
+         }
+         else
+         {
+@@ -58,7 +63,9 @@
+             }
+ 
+             int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185308_t, p_180657_6_);
++            harvesters.set(player);
+             this.dropBlockAsItem(worldIn, pos, state, i);
++            harvesters.set(null);
+             Material material = worldIn.getBlockState(pos.down()).func_185904_a();
+ 
+             if (material.blocksMovement() || material.isLiquid())

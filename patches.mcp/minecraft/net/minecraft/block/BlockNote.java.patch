@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockNote.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNote.java
+@@ -64,7 +64,9 @@
+             if (tileentity instanceof TileEntityNote)
+             {
+                 TileEntityNote tileentitynote = (TileEntityNote)tileentity;
++                int old = tileentitynote.note;
+                 tileentitynote.changePitch();
++                if (old == tileentitynote.note) return false;
+                 tileentitynote.triggerNote(worldIn, pos);
+                 playerIn.triggerAchievement(StatList.field_188087_U);
+             }
+@@ -104,6 +106,10 @@
+ 
+     public boolean onBlockEventReceived(World worldIn, BlockPos pos, IBlockState state, int eventID, int eventParam)
+     {
++        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(worldIn, pos, state, eventParam, eventID);
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
++        eventID = e.instrument.ordinal();
++        eventParam = e.getVanillaNoteId();
+         float f = (float)Math.pow(2.0D, (double)(eventParam - 12) / 12.0D);
+         worldIn.func_184133_a((EntityPlayer)null, pos, this.func_185576_e(eventID), SoundCategory.BLOCKS, 3.0F, f);
+         worldIn.spawnParticle(EnumParticleTypes.NOTE, (double)pos.getX() + 0.5D, (double)pos.getY() + 1.2D, (double)pos.getZ() + 0.5D, (double)eventParam / 24.0D, 0.0D, 0.0D, new int[0]);

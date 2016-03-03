@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
+@@ -128,11 +128,12 @@
+         this.spawnableMonsterList.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
+         this.spawnableWaterCreatureList.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
+         this.spawnableCaveCreatureList.add(new BiomeGenBase.SpawnListEntry(EntityBat.class, 10, 8, 8));
++        this.addDefaultFlowers();
+     }
+ 
+     public BiomeDecorator createBiomeDecorator()
+     {
+-        return new BiomeDecorator();
++        return getModdedBiomeDecorator(new BiomeDecorator());
+     }
+ 
+     public boolean func_185363_b()
+@@ -228,7 +229,7 @@
+     {
+         double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
+         double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
+-        return ColorizerGrass.getGrassColor(d0, d1);
++        return getModdedBiomeGrassColor(ColorizerGrass.getGrassColor(d0, d1));
+     }
+ 
+     public final void generateBiomeTerrain(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int p_180628_4_, int p_180628_5_, double p_180628_6_)
+@@ -321,7 +322,7 @@
+     {
+         double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
+         double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
+-        return ColorizerFoliage.getFoliageColor(d0, d1);
++        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(d0, d1));
+     }
+ 
+     public Class <? extends BiomeGenBase > getBiomeClass()

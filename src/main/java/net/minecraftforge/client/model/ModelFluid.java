@@ -12,14 +12,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -42,7 +43,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-@SuppressWarnings("deprecation")
 public class ModelFluid implements IModelCustomData<ModelFluid>
 {
     public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);
@@ -64,7 +64,7 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
         return ImmutableSet.of(fluid.getStill(), fluid.getFlowing());
     }
 
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
         return new BakedFluid(state.apply(Optional.<IModelPart>absent()), map, format, fluid.getColor(), bakedTextureGetter.apply(fluid.getStill()), bakedTextureGetter.apply(fluid.getFlowing()), fluid.isGaseous(), Optional.<IExtendedBlockState>absent());
@@ -95,7 +95,7 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
         }
     }
 
-    public static class BakedFluid implements IFlexibleBakedModel, ISmartBlockModel, IPerspectiveAwareModel
+    public static class BakedFluid implements IPerspectiveAwareModel
     {
         private static final int x[] = { 0, 0, 1, 1 };
         private static final int z[] = { 0, 1, 1, 0 };
@@ -341,7 +341,7 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
             return false;
         }
 
-        public boolean isBuiltInRenderer()
+        public boolean func_188618_c()
         {
             return false;
         }
@@ -356,23 +356,9 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
             return ItemCameraTransforms.DEFAULT;
         }
 
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
+        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
         {
-            return faceQuads.get(side);
-        }
-
-        public List<BakedQuad> getGeneralQuads()
-        {
-            return ImmutableList.of();
-        }
-
-        public VertexFormat getFormat()
-        {
-            return format;
-        }
-
-        public IBakedModel handleBlockState(IBlockState state)
-        {
+            BakedFluid model = this;
             if(state instanceof IExtendedBlockState)
             {
                 IExtendedBlockState exState = (IExtendedBlockState)state;
@@ -386,20 +372,26 @@ public class ModelFluid implements IModelCustomData<ModelFluid>
                 }
                 key <<= 1;
                 key |= 1;
-                return modelCache.getUnchecked(key);
+                model = modelCache.getUnchecked(key);
             }
-            return this;
+            if(side == null) return ImmutableList.of();
+            return model.faceQuads.get(side);
+        }
+
+        public ItemOverrideList func_188617_f()
+        {
+            return ItemOverrideList.field_188022_a;
         }
 
         @Override
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType type)
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
         {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
         }
     }
 
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
+    public ModelFluid process(ImmutableMap<String, String> customData)
     {
         if(!customData.containsKey("fluid")) return this;
 

@@ -17,7 +17,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundEventAccessorComposite;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -27,10 +26,17 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.SimpleBakedModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -39,19 +45,19 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -81,6 +87,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
@@ -94,7 +101,7 @@ public class ForgeHooksClient
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
-    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, String type)
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EntityEquipmentSlot slot, String type)
     {
         String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
         return result != null ? result : _default;
@@ -113,9 +120,9 @@ public class ForgeHooksClient
         }
     }
 
-    public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, MovingObjectPosition target, int subID, ItemStack currentItem, float partialTicks)
+    public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, RayTraceResult target, int subID, float partialTicks)
     {
-        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, currentItem, partialTicks));
+        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, partialTicks));
     }
 
     public static void dispatchRenderLast(RenderGlobal context, float partialTicks)
@@ -145,22 +152,22 @@ public class ForgeHooksClient
         renderPass = pass;
     }
 
-    static final ThreadLocal<EnumWorldBlockLayer> renderLayer = new ThreadLocal<EnumWorldBlockLayer>()
+    static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>()
     {
-        protected EnumWorldBlockLayer initialValue()
+        protected BlockRenderLayer initialValue()
         {
-            return EnumWorldBlockLayer.SOLID;
+            return BlockRenderLayer.SOLID;
         }
     };
 
-    public static void setRenderLayer(EnumWorldBlockLayer layer)
+    public static void setRenderLayer(BlockRenderLayer layer)
     {
         renderLayer.set(layer);
     }
 
-    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
+    public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot slot, ModelBiped _default)
     {
-        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID, _default);
+        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
         return model == null ? _default : model;
     }
 
@@ -196,9 +203,9 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.newfov;
     }
-    
-    public static float getFOVModifier(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float fov) {
-        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, block, renderPartialTicks, fov);
+
+    public static float getFOVModifier(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float fov) {
+        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, state, renderPartialTicks, fov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
     }
@@ -265,7 +272,7 @@ public class ForgeHooksClient
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            String line = I18n.format("forge.update.beta.1", EnumChatFormatting.RED, EnumChatFormatting.RESET);
+            String line = I18n.format("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
             line = I18n.format("forge.update.beta.2");
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
@@ -297,7 +304,7 @@ public class ForgeHooksClient
         return e.result;
     }
 
-    //static RenderBlocks worldRendererRB;
+    //static RenderBlocks VertexBufferRB;
     static int worldRenderPass;
 
     public static int getWorldRenderPass()
@@ -312,38 +319,38 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
     }
 
-    public static float getFogDensity(EntityRenderer renderer, Entity entity, Block block, float partial, float density)
+    public static float getFogDensity(EntityRenderer renderer, Entity entity, IBlockState state, float partial, float density)
     {
-        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(renderer, entity, block, partial, density);
+        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(renderer, entity, state, partial, density);
         if (MinecraftForge.EVENT_BUS.post(event)) return event.density;
         return -1;
     }
 
-    public static void onFogRender(EntityRenderer renderer, Entity entity, Block block, float partial, int mode, float distance)
+    public static void onFogRender(EntityRenderer renderer, Entity entity, IBlockState state, float partial, int mode, float distance)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, block, partial, mode, distance));
+        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, state, partial, mode, distance));
     }
 
     /*
-    public static void setWorldRendererRB(RenderBlocks renderBlocks)
+    public static void setVertexBufferRB(RenderBlocks renderBlocks)
     {
-        worldRendererRB = renderBlocks;
+        VertexBufferRB = renderBlocks;
     }
 
-    public static void onPreRenderWorld(WorldRenderer worldRenderer, int pass)
+    public static void onPreRenderWorld(VertexBuffer VertexBuffer, int pass)
     {
-        if(worldRendererRB != null)
+        if(VertexBufferRB != null)
         {
             worldRenderPass = pass;
-            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(VertexBuffer, (ChunkCache)VertexBufferRB.blockAccess, VertexBufferRB, pass));
         }
     }
 
-    public static void onPostRenderWorld(WorldRenderer worldRenderer, int pass)
+    public static void onPostRenderWorld(VertexBuffer VertexBuffer, int pass)
     {
-        if(worldRendererRB != null)
+        if(VertexBufferRB != null)
         {
-            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Post(worldRenderer, (ChunkCache)worldRendererRB.blockAccess, worldRendererRB, pass));
+            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Post(VertexBuffer, (ChunkCache)VertexBufferRB.blockAccess, VertexBufferRB, pass));
             worldRenderPass = -1;
         }
     }
@@ -501,7 +508,7 @@ public class ForgeHooksClient
         return ret;
     }
 
-    public static void putQuadColor(WorldRenderer renderer, BakedQuad quad, int color)
+    public static void putQuadColor(VertexBuffer renderer, BakedQuad quad, int color)
     {
         float cr = color & 0xFF;
         float cg = (color >>> 8) & 0xFF;
@@ -592,4 +599,21 @@ public class ForgeHooksClient
             }
         }
     }
+
+	public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		// TODO custom damage models
+		// state = state.block.getExtendedState(state, world, pos);
+		return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
+	}
+
+	public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to)
+	{
+		if(!Objects.equal(from, to) || from == null)
+		{
+			return false;
+		}
+		// FIXME: 3rd argument?
+		return from.getItem().shouldCauseReequipAnimation(from, to);
+	}
 }

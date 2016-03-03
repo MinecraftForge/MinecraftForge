@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandFill.java
++++ ../src-work/minecraft/net/minecraft/command/CommandFill.java
+@@ -50,6 +50,7 @@
+             {
+                 i = parseInt(p_184881_3_[7], 0, 15);
+             }
++            IBlockState state = block.getStateFromMeta(i);
+ 
+             BlockPos blockpos2 = new BlockPos(Math.min(blockpos.getX(), blockpos1.getX()), Math.min(blockpos.getY(), blockpos1.getY()), Math.min(blockpos.getZ(), blockpos1.getZ()));
+             BlockPos blockpos3 = new BlockPos(Math.max(blockpos.getX(), blockpos1.getX()), Math.max(blockpos.getY(), blockpos1.getY()), Math.max(blockpos.getZ(), blockpos1.getZ()));
+@@ -77,7 +78,7 @@
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 boolean flag = false;
+ 
+-                if (p_184881_3_.length >= 10 && block.hasTileEntity())
++                if (p_184881_3_.length >= 10 && block.hasTileEntity(state))
+                 {
+                     String s = getChatComponentFromNthArg(p_184881_2_, p_184881_3_, 9).getUnformattedText();
+ 
+@@ -118,7 +119,7 @@
+                                             continue;
+                                         }
+                                     }
+-                                    else if (p_184881_3_[8].equals("replace") && !block.hasTileEntity())
++                                    else if (p_184881_3_[8].equals("replace") && !block.hasTileEntity(state))
+                                     {
+                                         if (p_184881_3_.length > 9)
+                                         {

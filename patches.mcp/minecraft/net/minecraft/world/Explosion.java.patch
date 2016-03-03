@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/world/Explosion.java
++++ ../src-work/minecraft/net/minecraft/world/Explosion.java
+@@ -67,6 +67,7 @@
+         this.explosionZ = p_i45754_7_;
+         this.isFlaming = p_i45754_10_;
+         this.isSmoking = p_i45754_11_;
++        this.position = new Vec3(explosionX, explosionY, explosionZ);
+     }
+ 
+     public void doExplosionA()
+@@ -101,7 +102,7 @@
+ 
+                             if (iblockstate.func_185904_a() != Material.air)
+                             {
+-                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance((Entity)null);
++                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(worldObj, blockpos, (Entity)null, this);
+                                 f -= (f2 + 0.3F) * 0.3F;
+                             }
+ 
+@@ -227,8 +228,7 @@
+                         block.dropBlockAsItemWithChance(this.worldObj, blockpos, this.worldObj.getBlockState(blockpos), 1.0F / this.explosionSize, 0);
+                     }
+ 
+-                    this.worldObj.setBlockState(blockpos, Blocks.air.getDefaultState(), 3);
+-                    block.onBlockDestroyedByExplosion(this.worldObj, blockpos, this);
++                    block.onBlockExploded(this.worldObj, blockpos, this);
+                 }
+             }
+         }
+@@ -264,4 +264,6 @@
+     {
+         return this.affectedBlockPositions;
+     }
++
++    public Vec3 getPosition(){ return this.position; }
+ }

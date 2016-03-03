@@ -1,0 +1,107 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
+@@ -132,7 +132,7 @@
+                             {
+                                 if (!modelblockdefinition.func_188002_b())
+                                 {
+-                                    LOGGER.warn("Unable to load variant: " + modelresourcelocation.getVariant() + " from " + modelresourcelocation);
++                                    LOGGER.warn("Unable to load variant: " + modelresourcelocation.getVariant() + " from " + modelresourcelocation, var12);
+                                 }
+                             }
+                         }
+@@ -370,6 +370,7 @@
+ 
+     protected void registerVariantNames()
+     {
++        this.variantNames.clear(); //FML clear this to prevent double ups.
+         this.variantNames.put(Item.getItemFromBlock(Blocks.stone), Lists.newArrayList(new String[] {"stone", "granite", "granite_smooth", "diorite", "diorite_smooth", "andesite", "andesite_smooth"}));
+         this.variantNames.put(Item.getItemFromBlock(Blocks.dirt), Lists.newArrayList(new String[] {"dirt", "coarse_dirt", "podzol"}));
+         this.variantNames.put(Item.getItemFromBlock(Blocks.planks), Lists.newArrayList(new String[] {"oak_planks", "spruce_planks", "birch_planks", "jungle_planks", "acacia_planks", "dark_oak_planks"}));
+@@ -413,6 +414,10 @@
+         this.variantNames.put(Item.getItemFromBlock(Blocks.oak_fence), Lists.newArrayList(new String[] {"oak_fence"}));
+         this.variantNames.put(Items.oak_door, Lists.newArrayList(new String[] {"oak_door"}));
+         this.variantNames.put(Items.boat, Lists.newArrayList(new String[] {"oak_boat"}));
++        for (Entry<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, Set<String>> e : customVariantNames.entrySet())
++        {
++            this.variantNames.put(e.getKey().get(), Lists.newArrayList(e.getValue().iterator()));
++        }
+     }
+ 
+     protected List<String> getVariantNames(Item p_177596_1_)
+@@ -429,7 +434,7 @@
+ 
+     protected ResourceLocation getItemLocation(String p_177583_1_)
+     {
+-        ResourceLocation resourcelocation = new ResourceLocation(p_177583_1_);
++        ResourceLocation resourcelocation = new ResourceLocation(p_177583_1_.replaceAll("#.*", ""));
+         return new ResourceLocation(resourcelocation.getResourceDomain(), "item/" + resourcelocation.getResourcePath());
+     }
+ 
+@@ -536,7 +541,7 @@
+         for (Entry<String, ResourceLocation> entry : this.itemLocations.entrySet())
+         {
+             ResourceLocation resourcelocation = (ResourceLocation)entry.getValue();
+-            ModelResourceLocation modelresourcelocation = new ModelResourceLocation((String)entry.getKey(), "inventory");
++            ModelResourceLocation modelresourcelocation = net.minecraftforge.client.model.ModelLoader.getInventoryVariant(entry.getKey());
+             ModelBlock modelblock = (ModelBlock)this.models.get(resourcelocation);
+ 
+             if (modelblock != null && modelblock.isResolved())
+@@ -623,6 +628,11 @@
+ 
+     private IBakedModel bakeModel(ModelBlock modelBlockIn, ModelRotation modelRotationIn, boolean uvLocked)
+     {
++        return bakeModel(modelBlockIn, (net.minecraftforge.client.model.ITransformation)modelRotationIn, uvLocked);
++    }
++
++    protected IBakedModel bakeModel(ModelBlock modelBlockIn, net.minecraftforge.client.model.ITransformation modelRotationIn, boolean uvLocked)
++    {
+         TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.sprites.get(new ResourceLocation(modelBlockIn.resolveTextureName("particle")));
+         SimpleBakedModel.Builder simplebakedmodel$builder = (new SimpleBakedModel.Builder(modelBlockIn, modelBlockIn.func_187967_g())).setTexture(textureatlassprite);
+ 
+@@ -639,13 +649,13 @@
+                     BlockPartFace blockpartface = (BlockPartFace)blockpart.mapFaces.get(enumfacing);
+                     TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)this.sprites.get(new ResourceLocation(modelBlockIn.resolveTextureName(blockpartface.texture)));
+ 
+-                    if (blockpartface.cullFace == null)
++                    if (blockpartface.cullFace == null || !net.minecraftforge.client.model.TRSRTransformation.isInteger(modelRotationIn.getMatrix()))
+                     {
+                         simplebakedmodel$builder.addGeneralQuad(this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
+                     }
+                     else
+                     {
+-                        simplebakedmodel$builder.addFaceQuad(modelRotationIn.rotateFace(blockpartface.cullFace), this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
++                        simplebakedmodel$builder.addFaceQuad(modelRotationIn.rotate(blockpartface.cullFace), this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
+                     }
+                 }
+             }
+@@ -656,6 +666,11 @@
+ 
+     private BakedQuad makeBakedQuad(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, ModelRotation p_177589_5_, boolean p_177589_6_)
+     {
++        return makeBakedQuad(p_177589_1_, p_177589_2_, p_177589_3_, p_177589_4_, (net.minecraftforge.client.model.ITransformation)p_177589_5_, p_177589_6_);
++    }
++
++    protected BakedQuad makeBakedQuad(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, net.minecraftforge.client.model.ITransformation p_177589_5_, boolean p_177589_6_)
++    {
+         return this.faceBakery.makeBakedQuad(p_177589_1_.positionFrom, p_177589_1_.positionTo, p_177589_2_, p_177589_3_, p_177589_4_, p_177589_5_, p_177589_1_.partRotation, p_177589_6_, p_177589_1_.shade);
+     }
+ 
+@@ -878,4 +893,18 @@
+         MODEL_GENERATED.name = "generation marker";
+         MODEL_ENTITY.name = "block entity marker";
+     }
++
++    private static Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, Set<String>> customVariantNames = Maps.newHashMap();
++
++    public static void registerItemVariants(Item item, ResourceLocation... names)
++    {
++        if (!customVariantNames.containsKey(item.delegate))
++        {
++            customVariantNames.put(item.delegate, Sets.<String>newHashSet());
++        }
++        for(ResourceLocation name : names)
++        {
++            customVariantNames.get(item.delegate).add(name.toString());
++        }
++    }
+ }

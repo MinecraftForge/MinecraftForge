@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -42,13 +42,18 @@
+         }
+         else
+         {
++            if (worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos))
++            {
++                hitX = EnumFacing.UP;
++                pos = pos.down();
++            }
+             IBlockState iblockstate = worldIn.getBlockState(pos);
+             Block block = iblockstate.getBlock();
+             boolean flag = block.isReplaceable(worldIn, pos);
+ 
+             if (!flag)
+             {
+-                if (!worldIn.getBlockState(pos).func_185904_a().isSolid())
++                if (!worldIn.getBlockState(pos).func_185904_a().isSolid() && !worldIn.isSideSolid(pos, hitX, true))
+                 {
+                     return EnumActionResult.FAIL;
+                 }

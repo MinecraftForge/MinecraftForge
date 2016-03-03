@@ -17,7 +17,7 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.BlockStateLoader.Marker;
@@ -37,7 +37,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-@SuppressWarnings("deprecation")
 public class ForgeBlockStateV1 extends Marker
 {
     ForgeBlockStateV1.Variant defaults;
@@ -372,7 +371,7 @@ public class ForgeBlockStateV1 extends Marker
 
         protected SubModel asGenericSubModel()
         {
-            return new SubModel(state.or(TRSRTransformation.identity()), uvLock.or(false), getTextures(), model, getCustomData());
+            return new SubModel(state.or(TRSRTransformation.identity()), smooth.or(true), gui3d.or(true), uvLock.or(false), getTextures(), model, getCustomData());
         }
 
         /**
@@ -481,7 +480,7 @@ public class ForgeBlockStateV1 extends Marker
                         {
                             ret.state = Optional.<IModelState>of(TRSRTransformation.identity());
                         }
-                        else if (transform.equals("forge:default-block"))
+                        /*else if (transform.equals("forge:default-block"))
                         {
                             TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                                 new Vector3f(0, 1.5f / 16, -2.75f / 16),
@@ -517,7 +516,7 @@ public class ForgeBlockStateV1 extends Marker
                                 new Vector3f(1.7f, 1.7f, 1.7f),
                                 null));
                             ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
-                        }
+                        }*/ // FIXME
                         else
                         {
                             throw new JsonParseException("transform: unknown default string: " + transform);
@@ -543,13 +542,37 @@ public class ForgeBlockStateV1 extends Marker
                         {
                             TRSRTransformation t = context.deserialize(transform.get("thirdperson"), TRSRTransformation.class);
                             transform.remove("thirdperson");
-                            transforms.put(TransformType.THIRD_PERSON, TRSRTransformation.blockCenterToCorner(t));
+                            transforms.put(TransformType.THIRD_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("thirdperson_righthand"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("thirdperson_righthand"), TRSRTransformation.class);
+                            transform.remove("thirdperson_righthand");
+                            transforms.put(TransformType.THIRD_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("thirdperson_lefthand"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("thirdperson_lefthand"), TRSRTransformation.class);
+                            transform.remove("thirdperson_lefthand");
+                            transforms.put(TransformType.THIRD_PERSON_LEFT_HAND, TRSRTransformation.blockCenterToCorner(t));
                         }
                         if(transform.has("firstperson"))
                         {
                             TRSRTransformation t = context.deserialize(transform.get("firstperson"), TRSRTransformation.class);
                             transform.remove("firstperson");
-                            transforms.put(TransformType.FIRST_PERSON, TRSRTransformation.blockCenterToCorner(t));
+                            transforms.put(TransformType.FIRST_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("firstperson_righthand"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("firstperson_righthand"), TRSRTransformation.class);
+                            transform.remove("firstperson_righthand");
+                            transforms.put(TransformType.FIRST_PERSON_RIGHT_HAND, TRSRTransformation.blockCenterToCorner(t));
+                        }
+                        if(transform.has("firstperson_lefthand"))
+                        {
+                            TRSRTransformation t = context.deserialize(transform.get("firstperson_lefthand"), TRSRTransformation.class);
+                            transform.remove("firstperson_lefthand");
+                            transforms.put(TransformType.FIRST_PERSON_LEFT_HAND, TRSRTransformation.blockCenterToCorner(t));
                         }
                         if(transform.has("head"))
                         {

@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -56,6 +56,7 @@
+     private boolean canSpawnStructures;
+     private WorldSettings.GameType gameType;
+     private boolean guiIsEnabled;
++    public static boolean allowPlayerLogins = false;
+ 
+     public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
+     {
+@@ -89,6 +90,7 @@
+         {
+             public void run()
+             {
++                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
+                 BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in));
+                 String s4;
+ 
+@@ -114,6 +116,8 @@
+             logger.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
++
+         logger.info("Loading properties");
+         this.settings = new PropertyManager(new File("server.properties"));
+         this.eula = new ServerEula(new File("eula.txt"));
+@@ -205,6 +209,7 @@
+             }
+             else
+             {
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
+                 this.func_184105_a(new DedicatedPlayerList(this));
+                 long j = System.nanoTime();
+ 
+@@ -254,6 +259,7 @@
+                 TileEntitySkull.func_184293_a(this.getPlayerProfileCache());
+                 TileEntitySkull.func_184294_a(this.getMinecraftSessionService());
+                 PlayerProfileCache.func_187320_a(this.isServerInOnlineMode());
++                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
+                 logger.info("Preparing level \"" + this.getFolderName() + "\"");
+                 this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;
+@@ -282,7 +288,7 @@
+                     thread1.start();
+                 }
+ 
+-                return true;
++                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
+             }
+         }
+     }
+@@ -580,6 +586,9 @@
+         return this.settings.getIntProperty("network-compression-threshold", super.getNetworkCompressionTreshold());
+     }
+ 
++    //Forge: Enable formated text for colors in console.
++    @Override public void addChatMessage(net.minecraft.util.IChatComponent message) { logger.info(message.getFormattedText()); }
++
+     protected boolean convertFiles() throws IOException
+     {
+         boolean flag = false;

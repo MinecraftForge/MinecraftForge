@@ -29,11 +29,11 @@ import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.FoodStats;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.ForgeHooks;
@@ -596,7 +596,7 @@ public class GuiIngameForge extends GuiIngame
             {
                 String name = this.highlightingItemStack.getDisplayName();
                 if (this.highlightingItemStack.hasDisplayName())
-                    name = EnumChatFormatting.ITALIC + name;
+                    name = TextFormatting.ITALIC + name;
 
                 name = this.highlightingItemStack.getItem().getHighlightTip(this.highlightingItemStack, name);
 

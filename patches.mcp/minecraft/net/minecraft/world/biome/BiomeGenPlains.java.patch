@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
+@@ -92,4 +92,19 @@
+ 
+         super.decorate(worldIn, rand, pos);
+     }
++
++    @Override
++    public void addDefaultFlowers()
++    {
++        BlockFlower red = net.minecraft.init.Blocks.red_flower;
++        BlockFlower yel = net.minecraft.init.Blocks.yellow_flower;
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.ORANGE_TULIP), 3);
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.RED_TULIP), 3);
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.PINK_TULIP), 3);
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.WHITE_TULIP), 3);
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.POPPY), 20);
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.HOUSTONIA), 20);
++        addFlower(red.getDefaultState().withProperty(red.getTypeProperty(), BlockFlower.EnumFlowerType.OXEYE_DAISY), 20);
++        addFlower(yel.getDefaultState().withProperty(yel.getTypeProperty(), BlockFlower.EnumFlowerType.DANDELION), 30);
++    }
+ }

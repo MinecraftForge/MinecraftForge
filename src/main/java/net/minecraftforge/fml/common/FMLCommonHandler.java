@@ -42,7 +42,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.TextComponentString;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
@@ -609,7 +609,7 @@ public class FMLCommonHandler
     {
         if (!shouldAllowPlayerLogins())
         {
-            ChatComponentText text = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
+            TextComponentString text = new TextComponentString("Server is still starting! Please wait before reconnecting.");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
             manager.sendPacket(new S00PacketDisconnect(text));
             manager.closeChannel(text);
@@ -619,7 +619,7 @@ public class FMLCommonHandler
         if (packet.getRequestedState() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
         {
             manager.setConnectionState(EnumConnectionState.LOGIN);
-            ChatComponentText text = new ChatComponentText("This server requires FML/Forge to be installed. Contact your server admin for more details.");
+            TextComponentString text = new TextComponentString("This server requires FML/Forge to be installed. Contact your server admin for more details.");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
             manager.sendPacket(new S00PacketDisconnect(text));
             manager.closeChannel(text);

@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga1.java
+@@ -53,7 +53,7 @@
+                     {
+                         if (i1 >= 0 && i1 < 256)
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(blockpos$mutableblockpos.set(k1, i1, l1)).getBlock()))
++                            if (!this.isReplaceable(worldIn,blockpos$mutableblockpos.set(k1, i1, l1)))
+                             {
+                                 flag = false;
+                             }
+@@ -72,11 +72,13 @@
+             }
+             else
+             {
+-                Block block = worldIn.getBlockState(position.down()).getBlock();
++                BlockPos down = position.down();
++                IBlockState state = worldIn.getBlockState(down);
++                boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling);
+ 
+-                if ((block == Blocks.grass || block == Blocks.dirt) && position.getY() < 256 - i - 1)
++                if (isSoil && position.getY() < 256 - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, position.down());
++                    state.getBlock().onPlantGrow(worldIn, down, position);
+                     int k2 = 0;
+ 
+                     for (int l2 = position.getY() + i; l2 >= position.getY() + j; --l2)

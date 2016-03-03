@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -360,7 +360,7 @@
+                 this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
+             }
+         }
+-        else if (p_187457_6_.getItem() == Items.filled_map)
++        else if (p_187457_6_.getItem() instanceof net.minecraft.item.ItemMap)
+         {
+             if (flag && this.field_187468_e == null)
+             {
+@@ -444,6 +444,7 @@
+         if (this.mc.thePlayer.isEntityInsideOpaqueBlock())
+         {
+             IBlockState iblockstate = this.mc.theWorld.getBlockState(new BlockPos(this.mc.thePlayer));
++            BlockPos overlayPos = new BlockPos(this.mc.thePlayer);
+             EntityPlayer entityplayer = this.mc.thePlayer;
+ 
+             for (int i = 0; i < 8; ++i)
+@@ -457,11 +458,13 @@
+                 if (iblockstate1.getBlock().isVisuallyOpaque())
+                 {
+                     iblockstate = iblockstate1;
++                    overlayPos = blockpos;
+                 }
+             }
+ 
+             if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(mc.thePlayer, partialTicks, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
+                 this.func_178108_a(partialTicks, this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(iblockstate));
+             }
+         }
+@@ -470,11 +473,13 @@
+         {
+             if (this.mc.thePlayer.isInsideOfMaterial(Material.water))
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(mc.thePlayer, partialTicks))
+                 this.renderWaterOverlayTexture(partialTicks);
+             }
+ 
+             if (this.mc.thePlayer.isBurning())
+             {
++                if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(mc.thePlayer, partialTicks))
+                 this.renderFireInFirstPerson(partialTicks);
+             }
+         }
+@@ -596,8 +601,8 @@
+         else
+         {
+             float f = entityplayersp.func_184825_o(1.0F);
+-            this.field_187469_f += MathHelper.clamp_float((Objects.equal(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
+-            this.field_187471_h += MathHelper.clamp_float((float)(Objects.equal(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
++            this.field_187469_f += MathHelper.clamp_float((net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
++            this.field_187471_h += MathHelper.clamp_float((float)(net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
+         }
+ 
+         if (this.field_187469_f < 0.1F)

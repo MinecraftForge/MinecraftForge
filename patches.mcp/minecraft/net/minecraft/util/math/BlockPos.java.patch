@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/util/math/BlockPos.java
++++ ../src-work/minecraft/net/minecraft/util/math/BlockPos.java
+@@ -270,6 +270,21 @@
+         };
+     }
+ 
++    /**
++     * Returns a version of this BlockPos that is guaranteed to be Immutable.
++     * In most cases this will return 'this', but if 'this' is an instance of
++     * MutableBlockPos it will return a new instance of BlockPos with the same values.
++     *
++     * When storing a parameter given to you for an extended period of time, make sure you
++     * use this in case the value is changed internally.
++     *
++     * @return An immutable BlockPos.
++     */
++    public BlockPos getImmutable()
++    {
++        return this;
++    }
++
+     public static final class MutableBlockPos extends BlockPos
+         {
+             private int x;
+@@ -333,6 +348,8 @@
+             {
+                 return new BlockPos(this);
+             }
++
++            @Override public BlockPos getImmutable() { return new BlockPos(this); }
+         }
+ 
+     public static final class PooledMutableBlockPos extends BlockPos
+@@ -443,5 +460,7 @@
+             {
+                 return this.func_185343_d(this.field_185347_c + p_185341_1_.getFrontOffsetX(), this.field_185348_d + p_185341_1_.getFrontOffsetY(), this.field_185349_e + p_185341_1_.getFrontOffsetZ());
+             }
++
++            @Override public BlockPos getImmutable() { return new BlockPos(this); }
+         }
+ }

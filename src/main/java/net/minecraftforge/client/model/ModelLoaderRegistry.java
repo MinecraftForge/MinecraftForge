@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;

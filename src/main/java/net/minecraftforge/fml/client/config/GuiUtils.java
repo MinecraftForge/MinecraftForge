@@ -15,7 +15,7 @@ package net.minecraftforge.fml.client.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
@@ -184,12 +184,12 @@ public class GuiUtils
         float uScale = 1f / 0x100;
         float vScale = 1f / 0x100;
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer wr = tessellator.getWorldRenderer();
+        VertexBuffer wr = tessellator.getWorldRenderer();
         wr.begin(7, DefaultVertexFormats.POSITION_TEX);
-        wr.pos(x        , y + height, zLevel).tex( u          * uScale, ((v + height) * vScale)).endVertex();
-        wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
-        wr.pos(x + width, y         , zLevel).tex((u + width) * uScale, ( v           * vScale)).endVertex();
-        wr.pos(x        , y         , zLevel).tex( u          * uScale, ( v           * vScale)).endVertex();
+        wr.pos(x        , y + height, zLevel).func_187315_a( u          * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x + width, y + height, zLevel).func_187315_a((u + width) * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x + width, y         , zLevel).func_187315_a((u + width) * uScale, ( v           * vScale)).endVertex();
+        wr.pos(x        , y         , zLevel).func_187315_a( u          * uScale, ( v           * vScale)).endVertex();
         tessellator.draw();
     }
 

@@ -1,15 +1,16 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.IColoredBakedQuad;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -71,17 +72,15 @@ public class LightUtil
         }
     }
 
-    private static final LoadingCache<VertexFormat, int[]> formatMaps = CacheBuilder.newBuilder()
+    private static final LoadingCache<Pair<VertexFormat, VertexFormat>, int[]> formatMaps = CacheBuilder.newBuilder()
         .maximumSize(10)
-        .build(new CacheLoader<VertexFormat, int[]>()
+        .build(new CacheLoader<Pair<VertexFormat, VertexFormat>, int[]>()
         {
-            public int[] load(VertexFormat format)
+            public int[] load(Pair<VertexFormat, VertexFormat> pair)
             {
-                return mapFormats(format, DefaultVertexFormats.ITEM);
+                return mapFormats(pair.getLeft(), pair.getRight());
             }
         });
-
-    private static final int itemCount = DefaultVertexFormats.ITEM.getElementCount();
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
@@ -96,16 +95,18 @@ public class LightUtil
         }
         //int[] eMap = mapFormats(consumer.getVertexFormat(), DefaultVertexFormats.ITEM);
         float[] data = new float[4];
-        VertexFormat format = consumer.getVertexFormat();
-        int count = format.getElementCount();
-        int[] eMap = formatMaps.getUnchecked(format);
+        VertexFormat formatFrom = consumer.getVertexFormat();
+        VertexFormat formatTo = quad.getFormat();
+        int countFrom = formatFrom.getElementCount();
+        int countTo = formatTo.getElementCount();
+        int[] eMap = formatMaps.getUnchecked(Pair.of(formatFrom, formatTo));
         for(int v = 0; v < 4; v++)
         {
-            for(int e = 0; e < count; e++)
+            for(int e = 0; e < countFrom; e++)
             {
-                if(eMap[e] != itemCount)
+                if(eMap[e] != countTo)
                 {
-                    unpack(quad.getVertexData(), data, DefaultVertexFormats.ITEM, v, eMap[e]);
+                    unpack(quad.getVertexData(), data, quad.getFormat(), v, eMap[e]);
                     consumer.put(e, data);
                 }
                 else
@@ -240,8 +241,8 @@ public class LightUtil
         if(tessellator == null)
         {
             Tessellator tes = Tessellator.getInstance();
-            WorldRenderer wr = tes.getWorldRenderer();
-            tessellator = new WorldRendererConsumer(wr);
+            VertexBuffer wr = tes.getWorldRenderer();
+            tessellator = new VertexBufferConsumer(wr);
         }
         return tessellator;
     }
@@ -257,7 +258,7 @@ public class LightUtil
     }
 
     // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(WorldRenderer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColorSlow(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
         if(wr == Tessellator.getInstance().getWorldRenderer())
@@ -266,7 +267,7 @@ public class LightUtil
         }
         else
         {
-            cons = new ItemConsumer(new WorldRendererConsumer(wr));
+            cons = new ItemConsumer(new VertexBufferConsumer(wr));
         }
         float b = (float)(auxColor & 0xFF) / 0xFF;
         float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
@@ -277,7 +278,7 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(WorldRenderer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         wr.addVertexData(quad.getVertexData());
         if(quad instanceof IColoredBakedQuad)

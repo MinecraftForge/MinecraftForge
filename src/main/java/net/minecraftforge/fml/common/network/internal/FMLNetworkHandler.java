@@ -109,7 +109,7 @@ public class FMLNetworkHandler
 
     }
 
-    public static void makeEntitySpawnAdjustment(Entity entity, EntityPlayerMP player, int serverX, int serverY, int serverZ)
+    public static void makeEntitySpawnAdjustment(Entity entity, EntityPlayerMP player, long serverX, long serverY, long serverZ)
     {
         EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
         embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);

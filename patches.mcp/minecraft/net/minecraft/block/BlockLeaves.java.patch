@@ -1,0 +1,127 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
+@@ -17,7 +17,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public abstract class BlockLeaves extends Block
++public abstract class BlockLeaves extends Block implements net.minecraftforge.common.IShearable
+ {
+     public static final PropertyBool DECAYABLE = PropertyBool.create("decayable");
+     public static final PropertyBool CHECK_DECAY = PropertyBool.create("check_decay");
+@@ -53,9 +53,9 @@
+                         BlockPos blockpos = pos.add(j1, k1, l1);
+                         IBlockState iblockstate = worldIn.getBlockState(blockpos);
+ 
+-                        if (iblockstate.func_185904_a() == Material.leaves && !((Boolean)iblockstate.getValue(CHECK_DECAY)).booleanValue())
++                        if (iblockstate.getBlock().isLeaves(iblockstate, worldIn, blockpos))
+                         {
+-                            worldIn.setBlockState(blockpos, iblockstate.withProperty(CHECK_DECAY, Boolean.valueOf(true)), 4);
++                            iblockstate.getBlock().beginLeavesDecay(iblockstate, worldIn, blockpos);
+                         }
+                     }
+                 }
+@@ -96,9 +96,9 @@
+                                 IBlockState iblockstate = worldIn.getBlockState(blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2));
+                                 Block block = iblockstate.getBlock();
+ 
+-                                if (block != Blocks.log && block != Blocks.log2)
++                                if (!block.canSustainLeaves(iblockstate, worldIn, blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)))
+                                 {
+-                                    if (iblockstate.func_185904_a() == Material.leaves)
++                                    if (block.isLeaves(iblockstate, worldIn, blockpos$mutableblockpos.set(k + i2, l + j2, i1 + k2)))
+                                     {
+                                         this.surroundings[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
+                                     }
+@@ -205,40 +205,7 @@
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
+-        if (!worldIn.isRemote)
+-        {
+-            int i = this.getSaplingDropChance(state);
+-
+-            if (fortune > 0)
+-            {
+-                i -= 2 << fortune;
+-
+-                if (i < 10)
+-                {
+-                    i = 10;
+-                }
+-            }
+-
+-            if (worldIn.rand.nextInt(i) == 0)
+-            {
+-                Item item = this.getItemDropped(state, worldIn.rand, fortune);
+-                spawnAsEntity(worldIn, pos, new ItemStack(item, 1, this.damageDropped(state)));
+-            }
+-
+-            i = 200;
+-
+-            if (fortune > 0)
+-            {
+-                i -= 10 << fortune;
+-
+-                if (i < 40)
+-                {
+-                    i = 40;
+-                }
+-            }
+-
+-            this.dropApple(worldIn, pos, state, i);
+-        }
++        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
+     }
+ 
+     protected void dropApple(World worldIn, BlockPos pos, IBlockState state, int chance)
+@@ -274,6 +241,49 @@
+ 
+     public abstract BlockPlanks.EnumType getWoodType(int meta);
+ 
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
++    @Override public boolean isLeaves(IBlockState state, IBlockAccess world, BlockPos pos){ return true; }
++
++    @Override
++    public void beginLeavesDecay(IBlockState state, World world, BlockPos pos)
++    {
++        if (!(Boolean)state.getValue(CHECK_DECAY))
++        {
++            world.setBlockState(pos, state.withProperty(CHECK_DECAY, true), 4);
++        }
++    }
++
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
++        Random rand = world instanceof World ? ((World)world).rand : new Random();
++        int chance = this.getSaplingDropChance(state);
++
++        if (fortune > 0)
++        {
++            chance -= 2 << fortune;
++            if (chance < 10) chance = 10;
++        }
++
++        if (rand.nextInt(chance) == 0)
++            ret.add(new ItemStack(getItemDropped(state, rand, fortune), 1, damageDropped(state)));
++
++        chance = 200;
++        if (fortune > 0)
++        {
++            chance -= 10 << fortune;
++            if (chance < 40) chance = 40;
++        }
++
++        this.captureDrops(true);
++        if (world instanceof World)
++            this.dropApple((World)world, pos, state, chance); // Dammet mojang
++        ret.addAll(this.captureDrops(false));
++        return ret;
++    }
++
++
+     @SideOnly(Side.CLIENT)
+     public boolean shouldSideBeRendered(IBlockState worldIn, IBlockAccess pos, BlockPos side, EnumFacing p_176225_4_)
+     {

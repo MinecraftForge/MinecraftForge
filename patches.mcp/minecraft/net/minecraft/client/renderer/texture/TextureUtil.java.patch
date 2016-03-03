@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
+@@ -202,9 +202,11 @@
+ 
+     public static void allocateTextureImpl(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
+     {
++        synchronized (net.minecraftforge.fml.client.SplashProgress.class)
++        {
+         deleteTexture(p_180600_0_);
+         bindTexture(p_180600_0_);
+-
++        }
+         if (p_180600_1_ >= 0)
+         {
+             GlStateManager.func_187421_b(3553, 33085, p_180600_1_);

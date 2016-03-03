@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
++++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
+@@ -118,8 +118,17 @@
+             if (this.useDepth)
+             {
+                 OpenGlHelper.glBindRenderbuffer(OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
++                if (!this.stencilEnabled)
++                {
+                 OpenGlHelper.glRenderbufferStorage(OpenGlHelper.GL_RENDERBUFFER, 33190, this.framebufferTextureWidth, this.framebufferTextureHeight);
+                 OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
++                }
++                else
++                {
++                    OpenGlHelper.glRenderbufferStorage(OpenGlHelper.GL_RENDERBUFFER, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.framebufferTextureWidth, this.framebufferTextureHeight);
++                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
++                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, this.depthBuffer);
++                }
+             }
+ 
+             this.framebufferClear();
+@@ -279,4 +288,36 @@
+         GlStateManager.clear(i);
+         this.unbindFramebuffer();
+     }
++
++    /*================================ FORGE START ================================================*/
++    private boolean stencilEnabled = false;
++    /**
++     * Attempts to enabled 8 bits of stencil buffer on this FrameBuffer.
++     * Modders must call this directly to set things up.
++     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     * Modders should check the below 'isStencilEnabled' to check if another modder has already enabled them.
++     *
++     * Note:
++     *   As of now the only thing that is checked is if FBOs are supported entirely, in the future
++     *   we may expand to check for errors.
++     *
++     * @return True if the FBO was re-initialized with stencil bits.
++     */
++    public boolean enableStencil()
++    {
++        if (!OpenGlHelper.isFramebufferEnabled()) return false;
++        stencilEnabled = true;
++        this.createBindFramebuffer(framebufferWidth, framebufferHeight);
++        return true; //TODO: Find a way to detect if this failed?
++    }
++
++    /**
++     * Returns wither or not this FBO has been successfully initialized with stencil bits.
++     * If not, and a modder wishes it to be, they must call enableStencil.
++     */
++    public boolean isStencilEnabled()
++    {
++        return this.stencilEnabled;
++    }
++    /*================================ FORGE END   ================================================*/
+ }

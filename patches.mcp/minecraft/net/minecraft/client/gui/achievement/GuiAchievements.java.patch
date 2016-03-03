@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
++++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
+@@ -49,6 +49,10 @@
+     private StatFileWriter statFileWriter;
+     private boolean loadingAchievements = true;
+ 
++    private int currentPage = -1;
++    private GuiButton button;
++    private java.util.LinkedList<Achievement> minecraftAchievements = new java.util.LinkedList<Achievement>();
++
+     public GuiAchievements(GuiScreen parentScreenIn, StatFileWriter statFileWriterIn)
+     {
+         this.parentScreen = parentScreenIn;
+@@ -64,6 +68,7 @@
+         this.mc.getNetHandler().addToSendQueue(new CPacketClientStatus(CPacketClientStatus.State.REQUEST_STATS));
+         this.buttonList.clear();
+         this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, I18n.format("gui.done", new Object[0])));
++        this.buttonList.add(button = new GuiButton(2, (width - field_146555_f) / 2 + 24, height / 2 + 74, 125, 20, net.minecraftforge.common.AchievementPage.getTitle(currentPage)));
+     }
+ 
+     protected void actionPerformed(GuiButton button) throws IOException
+@@ -74,6 +79,16 @@
+             {
+                 this.mc.displayGuiScreen(this.parentScreen);
+             }
++
++            if (button.id == 2)
++            {
++                currentPage++;
++                if (currentPage >= net.minecraftforge.common.AchievementPage.getAchievementPages().size())
++                {
++                    currentPage = -1;
++                }
++                this.button.displayString = net.minecraftforge.common.AchievementPage.getTitle(currentPage);
++            }
+         }
+     }
+ 
+@@ -257,7 +272,9 @@
+         GlStateManager.depthFunc(518);
+         GlStateManager.pushMatrix();
+         GlStateManager.translate((float)i1, (float)j1, -200.0F);
+-        GlStateManager.scale(1.0F / this.field_146570_r, 1.0F / this.field_146570_r, 0.0F);
++        // FIXES models rendering weirdly in the acheivements pane
++        // see https://github.com/MinecraftForge/MinecraftForge/commit/1b7ce7592caafb760ec93066184182ae0711e793#commitcomment-10512284
++        GlStateManager.scale(1.0F / this.field_146570_r, 1.0F / this.field_146570_r, 1.0F);
+         GlStateManager.enableTexture2D();
+         GlStateManager.disableLighting();
+         GlStateManager.enableRescaleNormal();
+@@ -432,6 +449,7 @@
+ 
+                 this.mc.getTextureManager().bindTexture(ACHIEVEMENT_BACKGROUND);
+ 
++                GlStateManager.enableBlend(); // Forge: Specifically enable blend because it is needed here. And we fix Generic RenderItem's leakage of it.
+                 if (achievement2.getSpecial())
+                 {
+                     this.drawTexturedModalRect(l6 - 2, j7 - 2, 26, 202, 26, 26);
+@@ -440,6 +458,7 @@
+                 {
+                     this.drawTexturedModalRect(l6 - 2, j7 - 2, 0, 202, 26, 26);
+                 }
++                GlStateManager.disableBlend(); //Forge: Cleanup states we set.
+ 
+                 if (!this.statFileWriter.canUnlockAchievement(achievement2))
+                 {
+@@ -448,7 +467,7 @@
+                     this.itemRender.func_175039_a(false);
+                 }
+ 
+-                GlStateManager.enableLighting();
++                GlStateManager.disableLighting(); //Forge: Make sure Lighting is disabled. Fixes MC-33065
+                 GlStateManager.enableCull();
+                 this.itemRender.renderItemAndEffectIntoGUI(achievement2.theItemStack, l6 + 3, j7 + 3);
+                 GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

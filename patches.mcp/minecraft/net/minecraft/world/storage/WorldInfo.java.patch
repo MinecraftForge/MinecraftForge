@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -60,6 +60,7 @@
+     private int borderWarningTime = 15;
+     private final Map<DimensionType, NBTTagCompound> field_186348_N = Maps.newEnumMap(DimensionType.class);
+     private GameRules theGameRules = new GameRules();
++    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
+ 
+     protected WorldInfo()
+     {
+@@ -785,6 +786,26 @@
+         });
+     }
+ 
++    /**
++     * Allow access to additional mod specific world based properties
++     * Used by FML to store mod list associated with a world, and maybe an id map
++     * Used by Forge to store the dimensions available to a world
++     * @param additionalProperties
++     */
++    public void setAdditionalProperties(java.util.Map<String,net.minecraft.nbt.NBTBase> additionalProperties)
++    {
++        // one time set for this
++        if (this.additionalProperties == null)
++        {
++            this.additionalProperties = additionalProperties;
++        }
++    }
++
++    public net.minecraft.nbt.NBTBase getAdditionalProperty(String additionalProperty)
++    {
++        return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
++    }
++
+     public NBTTagCompound func_186347_a(DimensionType p_186347_1_)
+     {
+         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_186348_N.get(p_186347_1_);

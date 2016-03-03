@@ -10,9 +10,12 @@ import javax.vecmath.Vector4f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -28,7 +31,6 @@ import com.google.common.collect.ImmutableMap;
 
 public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
 {
-
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
 
     private final ImmutableList<ResourceLocation> textures;
@@ -68,7 +70,7 @@ public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
         return TRSRTransformation.identity();
     }
 
-    public IModel retexture(ImmutableMap<String, String> textures)
+    public ItemLayerModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
         for(int i = 0; i < textures.size() + this.textures.size(); i++)
@@ -85,7 +87,7 @@ public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
         return new ItemLayerModel(builder.build());
     }
 
-    public IFlexibleBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.<IModelPart>absent());
@@ -96,47 +98,21 @@ public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, format, map, null);
+        return new BakedItemModel(builder.build(), particle, map, null);
     }
 
-    @Deprecated // remove 1.9
-    public static class BakedModel implements IFlexibleBakedModel
+    private static class BakedItemModel implements IPerspectiveAwareModel
     {
         private final ImmutableList<BakedQuad> quads;
         private final TextureAtlasSprite particle;
-        private final VertexFormat format;
-
-        public BakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format)
-        {
-            this.quads = quads;
-            this.particle = particle;
-            this.format = format;
-        }
-
-        public boolean isAmbientOcclusion() { return true; }
-        public boolean isGui3d() { return false; }
-        public boolean isBuiltInRenderer() { return false; }
-        public TextureAtlasSprite getParticleTexture() { return particle; }
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
-        public List<BakedQuad> getFaceQuads(EnumFacing side) { return ImmutableList.of(); }
-        public List<BakedQuad> getGeneralQuads() { return quads; }
-        public VertexFormat getFormat() { return format; }
-    }
-
-    private static class BakedItemModel implements IFlexibleBakedModel, IPerspectiveAwareModel
-    {
-        private final ImmutableList<BakedQuad> quads;
-        private final TextureAtlasSprite particle;
-        private final VertexFormat format;
         private final ImmutableMap<TransformType, TRSRTransformation> transforms;
-        private final IFlexibleBakedModel otherModel;
+        private final IBakedModel otherModel;
         private final boolean isCulled;
 
-        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> transforms, IFlexibleBakedModel otherModel)
+        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, IBakedModel otherModel)
         {
             this.quads = quads;
             this.particle = particle;
-            this.format = format;
             this.transforms = transforms;
             if(otherModel != null)
             {
@@ -153,23 +129,26 @@ public class ItemLayerModel implements IRetexturableModel<ItemLayerModel>
                         builder.add(quad);
                     }
                 }
-                this.otherModel = new BakedItemModel(builder.build(), particle, format, transforms, this);
+                this.otherModel = new BakedItemModel(builder.build(), particle, transforms, this);
                 isCulled = false;
             }
         }
 
         public boolean isAmbientOcclusion() { return true; }
         public boolean isGui3d() { return false; }
-        public boolean isBuiltInRenderer() { return false; }
+        public boolean func_188618_c() { return false; }
         public TextureAtlasSprite getParticleTexture() { return particle; }
         public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
-        public List<BakedQuad> getFaceQuads(EnumFacing side) { return ImmutableList.of(); }
-        public List<BakedQuad> getGeneralQuads() { return quads; }
-        public VertexFormat getFormat() { return format; }
-
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType type)
+        public ItemOverrideList func_188617_f() { return ItemOverrideList.field_188022_a; }
+        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
         {
-            Pair<? extends IFlexibleBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
+            if(side == null) return quads;
+            return ImmutableList.of();
+        }
+
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
+        {
+            Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
             if(type == TransformType.GUI && !isCulled && pair.getRight() == null)
             {
                 return Pair.of(otherModel, null);

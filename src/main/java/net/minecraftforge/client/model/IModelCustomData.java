@@ -9,6 +9,5 @@ public interface IModelCustomData<M extends IModelCustomData<M>> extends IModel
      * If unknown data is encountered it should be skipped.
      * @return a new model, with data applied.
      */
-    // 1.9: change IModel to M
-    IModel process(ImmutableMap<String, String> customData);
+    M process(ImmutableMap<String, String> customData);
 }

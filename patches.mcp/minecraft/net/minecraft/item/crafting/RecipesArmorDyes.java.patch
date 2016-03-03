@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipesArmorDyes.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipesArmorDyes.java
+@@ -146,11 +146,7 @@
+         for (int i = 0; i < aitemstack.length; ++i)
+         {
+             ItemStack itemstack = inv.getStackInSlot(i);
+-
+-            if (itemstack != null && itemstack.getItem().hasContainerItem())
+-            {
+-                aitemstack[i] = new ItemStack(itemstack.getItem().getContainerItem());
+-            }
++            aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+         }
+ 
+         return aitemstack;

@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
+@@ -69,6 +69,8 @@
+                     playerIn.addExperienceLevel(-ContainerRepair.this.maximumCost);
+                 }
+ 
++                float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(playerIn, stack, ContainerRepair.this.inputSlots.getStackInSlot(0), ContainerRepair.this.inputSlots.getStackInSlot(1));
++
+                 ContainerRepair.this.inputSlots.setInventorySlotContents(0, (ItemStack)null);
+ 
+                 if (ContainerRepair.this.materialCost > 0)
+@@ -93,7 +95,7 @@
+                 ContainerRepair.this.maximumCost = 0;
+                 IBlockState iblockstate = worldIn.getBlockState(blockPosIn);
+ 
+-                if (!playerIn.capabilities.isCreativeMode && !worldIn.isRemote && iblockstate.getBlock() == Blocks.anvil && playerIn.getRNG().nextFloat() < 0.12F)
++                if (!playerIn.capabilities.isCreativeMode && !worldIn.isRemote && iblockstate.getBlock() == Blocks.anvil && playerIn.getRNG().nextFloat() < breakChance)
+                 {
+                     int l = ((Integer)iblockstate.getValue(BlockAnvil.DAMAGE)).intValue();
+                     ++l;
+@@ -163,6 +165,7 @@
+ 
+             if (itemstack2 != null)
+             {
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) return;
+                 boolean flag = itemstack2.getItem() == Items.enchanted_book && !Items.enchanted_book.getEnchantments(itemstack2).hasNoTags();
+ 
+                 if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2))
+@@ -235,7 +238,7 @@
+ 
+                             for (Enchantment enchantment : map.keySet())
+                             {
+-                                if (enchantment != enchantment1 && !enchantment1.canApplyTogether(enchantment))
++                                if (enchantment != enchantment1 && !(enchantment1.canApplyTogether(enchantment) && enchantment.canApplyTogether(enchantment1)))  //Forge BugFix: Let Both enchantments veto being together
+                                 {
+                                     flag1 = false;
+                                     ++i;
+@@ -279,6 +282,8 @@
+                 }
+             }
+ 
++            if (flag && !itemstack1.getItem().isBookEnchantable(itemstack1, itemstack2)) itemstack1 = null;
++
+             if (StringUtils.isBlank(this.repairedItemName))
+             {
+                 if (itemstack.hasDisplayName())

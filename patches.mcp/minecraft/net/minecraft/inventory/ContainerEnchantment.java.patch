@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerEnchantment.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerEnchantment.java
+@@ -68,9 +68,12 @@
+         });
+         this.addSlotToContainer(new Slot(this.tableInventory, 1, 35, 47)
+         {
++            java.util.List<ItemStack> ores = net.minecraftforge.oredict.OreDictionary.getOres("gemLapis");
+             public boolean isItemValid(ItemStack stack)
+             {
+-                return stack.getItem() == Items.dye && EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.BLUE;
++                for (ItemStack ore : ores)
++                    if (net.minecraftforge.oredict.OreDictionary.itemMatches(ore, stack, false)) return true;
++                return false;
+             }
+         });
+ 
+@@ -155,6 +158,7 @@
+                 if (!this.worldPointer.isRemote)
+                 {
+                     int l = 0;
++                    float power = 0;
+ 
+                     for (int j = -1; j <= 1; ++j)
+                     {
+@@ -162,37 +166,14 @@
+                         {
+                             if ((j != 0 || k != 0) && this.worldPointer.isAirBlock(this.position.add(k, 0, j)) && this.worldPointer.isAirBlock(this.position.add(k, 1, j)))
+                             {
+-                                if (this.worldPointer.getBlockState(this.position.add(k * 2, 0, j * 2)).getBlock() == Blocks.bookshelf)
+-                                {
+-                                    ++l;
+-                                }
+-
+-                                if (this.worldPointer.getBlockState(this.position.add(k * 2, 1, j * 2)).getBlock() == Blocks.bookshelf)
+-                                {
+-                                    ++l;
+-                                }
+-
++                                power += net.minecraftforge.common.ForgeHooks.getEnchantPower(worldPointer, position.add(k * 2, 0, j * 2));
++                                power += net.minecraftforge.common.ForgeHooks.getEnchantPower(worldPointer, position.add(k * 2, 1, j * 2));
+                                 if (k != 0 && j != 0)
+                                 {
+-                                    if (this.worldPointer.getBlockState(this.position.add(k * 2, 0, j)).getBlock() == Blocks.bookshelf)
+-                                    {
+-                                        ++l;
+-                                    }
+-
+-                                    if (this.worldPointer.getBlockState(this.position.add(k * 2, 1, j)).getBlock() == Blocks.bookshelf)
+-                                    {
+-                                        ++l;
+-                                    }
+-
+-                                    if (this.worldPointer.getBlockState(this.position.add(k, 0, j * 2)).getBlock() == Blocks.bookshelf)
+-                                    {
+-                                        ++l;
+-                                    }
+-
+-                                    if (this.worldPointer.getBlockState(this.position.add(k, 1, j * 2)).getBlock() == Blocks.bookshelf)
+-                                    {
+-                                        ++l;
+-                                    }
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(worldPointer, position.add(k * 2, 0, j));
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(worldPointer, position.add(k * 2, 1, j));
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(worldPointer, position.add(k, 0, j * 2));
++                                    power += net.minecraftforge.common.ForgeHooks.getEnchantPower(worldPointer, position.add(k, 1, j * 2));
+                                 }
+                             }
+                         }
+@@ -202,7 +183,7 @@
+ 
+                     for (int i1 = 0; i1 < 3; ++i1)
+                     {
+-                        this.enchantLevels[i1] = EnchantmentHelper.calcItemStackEnchantability(this.rand, i1, l, itemstack);
++                        this.enchantLevels[i1] = EnchantmentHelper.calcItemStackEnchantability(this.rand, i1, (int)power, itemstack);
+                         this.field_185001_h[i1] = -1;
+                         this.field_185002_i[i1] = -1;
+ 

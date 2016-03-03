@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStrongholdPieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStrongholdPieces.java
+@@ -244,6 +244,12 @@
+             {
+             }
+ 
++            static
++            {
++                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CORRIDOR, strongholdChestContents, 2, 4);
++                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CORRIDOR, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++            }
++
+             public ChestCorridor(int p_i45582_1_, Random p_i45582_2_, StructureBoundingBox p_i45582_3_, EnumFacing p_i45582_4_)
+             {
+                 super(p_i45582_1_);
+@@ -599,6 +605,12 @@
+         {
+             private boolean isLargeRoom;
+ 
++            static
++            {
++                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_LIBRARY, strongholdLibraryChestContents, 1, 5);
++                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_LIBRARY, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 5, 2));
++            }
++
+             public Library()
+             {
+             }
+@@ -1025,6 +1037,12 @@
+         {
+             protected int roomType;
+ 
++            static
++            {
++                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CROSSING, strongholdRoomCrossingChestContents, 1, 5);
++                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.STRONGHOLD_CROSSING, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
++            }
++
+             public RoomCrossing()
+             {
+             }

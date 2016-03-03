@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
+@@ -44,7 +44,7 @@
+ 
+     private void checkFallable(World worldIn, BlockPos pos)
+     {
+-        if (func_185759_i(worldIn.getBlockState(pos.down())) && pos.getY() >= 0)
++        if (worldIn.isAirBlock(pos) && func_185759_i(worldIn.getBlockState(pos.down())) && pos.getY() >= 0)
+         {
+             int i = 32;
+ 
+@@ -62,7 +62,7 @@
+                 worldIn.setBlockToAir(pos);
+                 BlockPos blockpos;
+ 
+-                for (blockpos = pos.down(); func_185759_i(worldIn.getBlockState(blockpos)) && blockpos.getY() > 0; blockpos = blockpos.down())
++                for (blockpos = pos.down(); worldIn.isAirBlock(blockpos) && func_185759_i(worldIn.getBlockState(blockpos)) && blockpos.getY() > 0; blockpos = blockpos.down())
+                 {
+                     ;
+                 }

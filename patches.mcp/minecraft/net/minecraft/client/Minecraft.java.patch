@@ -1,0 +1,125 @@
+--- ../src-base/minecraft/net/minecraft/client/Minecraft.java
++++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
+@@ -318,7 +318,6 @@
+         this.sessionService = (new YggdrasilAuthenticationService(this.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
+         this.session = gameConfig.userInfo.session;
+         logger.info("Setting user: " + this.session.getUsername());
+-        logger.info("(Session ID is " + this.session.getSessionID() + ")");
+         this.isDemo = gameConfig.gameInfo.isDemo;
+         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
+         this.displayHeight = gameConfig.displayInfo.height > 0 ? gameConfig.displayInfo.height : 1;
+@@ -469,6 +468,8 @@
+             }
+         });
+         this.mouseHelper = new MouseHelper();
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar= net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 5, true);
++        bar.step("GL Setup");
+         this.checkGLError("Pre startup");
+         GlStateManager.enableTexture2D();
+         GlStateManager.shadeModel(7425);
+@@ -692,21 +693,23 @@
+         File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-client.txt");
+         Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
+ 
++        int retVal;
+         if (crashReportIn.getFile() != null)
+         {
+             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else if (crashReportIn.saveToFile(file2))
+         {
+             Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
+-            System.exit(-1);
++            retVal = -1;
+         }
+         else
+         {
+             Bootstrap.printToSYSOUT("#@?@# Game crashed! Crash report could not be saved. #@?@#");
+-            System.exit(-2);
++            retVal = -2;
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleExit(retVal);
+     }
+ 
+     public boolean isUnicode()
+@@ -899,11 +902,6 @@
+ 
+     public void displayGuiScreen(GuiScreen guiScreenIn)
+     {
+-        if (this.currentScreen != null)
+-        {
+-            this.currentScreen.onGuiClosed();
+-        }
+-
+         if (guiScreenIn == null && this.theWorld == null)
+         {
+             guiScreenIn = new GuiMainMenu();
+@@ -1051,9 +1049,11 @@
+ 
+         if (!this.skipRenderWorld)
+         {
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickStart(this.timer.renderPartialTicks);
+             this.mcProfiler.endStartSection("gameRenderer");
+             this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
+             this.mcProfiler.endSection();
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickEnd(this.timer.renderPartialTicks);
+         }
+ 
+         this.mcProfiler.endSection();
+@@ -1623,6 +1623,8 @@
+             --this.rightClickDelayTimer;
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreClientTick();
++
+         this.mcProfiler.startSection("gui");
+ 
+         if (!this.isGamePaused)
+@@ -1734,6 +1736,7 @@
+                     this.joinPlayerCounter = 0;
+                     this.theWorld.joinEntityInSurroundings(this.thePlayer);
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
+             }
+ 
+             this.mcProfiler.endStartSection("gameRenderer");
+@@ -1926,6 +1929,7 @@
+                         this.gameSettings.showLagometer = this.gameSettings.showDebugInfo && GuiScreen.isAltKeyDown();
+                     }
+                 }
++                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireKeyInput();
+             }
+         }
+ 
+@@ -2273,6 +2277,12 @@
+ 
+         while (!this.theIntegratedServer.serverIsInRunLoop())
+         {
++            if (!net.minecraftforge.fml.common.StartupQuery.check())
++            {
++                loadWorld(null);
++                displayGuiScreen(null);
++                return;
++            }
+             String s = this.theIntegratedServer.getUserMessage();
+ 
+             if (s != null)
+@@ -2310,6 +2320,8 @@
+ 
+     public void loadWorld(WorldClient worldClientIn, String loadingMessage)
+     {
++        if (theWorld != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(theWorld));
++
+         if (worldClientIn == null)
+         {
+             NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
+@@ -2345,6 +2357,7 @@
+             this.ingameGUI.func_181029_i();
+             this.setServerData((ServerData)null);
+             this.integratedServerIsRunning = false;
++            net.minecraftforge.fml.client.FMLClientHandler.instance().handleClientWorldClosing(this.theWorld);
+         }
+ 
+         this.mcSoundHandler.stopSounds();

@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
+@@ -235,6 +235,8 @@
+         private final int[] damageReductionAmountArray;
+         private final int enchantability;
+         private final SoundEvent field_185020_j;
++        //Added by forge for custom Armor materials.
++        public Item customCraftingMaterial = null;
+ 
+         private ArmorMaterial(String p_i46796_3_, int p_i46796_4_, int[] p_i46796_5_, int p_i46796_6_, SoundEvent p_i46796_7_)
+         {
+@@ -267,7 +269,15 @@
+ 
+         public Item getRepairItem()
+         {
+-            return this == LEATHER ? Items.leather : (this == CHAIN ? Items.iron_ingot : (this == GOLD ? Items.gold_ingot : (this == IRON ? Items.iron_ingot : (this == DIAMOND ? Items.diamond : null))));
++            switch (this)
++            {
++                case LEATHER: return Items.leather;
++                case CHAIN:   return Items.iron_ingot;
++                case GOLD:    return Items.gold_ingot;
++                case IRON:    return Items.iron_ingot;
++                case DIAMOND: return Items.diamond;
++                default:      return customCraftingMaterial;
++            }
+         }
+ 
+         @SideOnly(Side.CLIENT)

@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSnow.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSnow.java
+@@ -68,4 +68,10 @@
+     {
+         return damage;
+     }
++
++    public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
++    {
++        IBlockState state = world.getBlockState(pos);
++        return (state.getBlock() != net.minecraft.init.Blocks.snow_layer || ((Integer)state.getValue(BlockSnow.LAYERS)) > 7) ? super.canPlaceBlockOnSide(world, pos, side, player, stack) : true;
++    }
+ }

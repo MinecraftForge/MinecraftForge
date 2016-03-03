@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
+@@ -115,6 +115,7 @@
+                 return IntCache.getCacheSizes();
+             }
+         });
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.theReportCategory);
+     }
+ 
+     public String getDescription()
+@@ -203,6 +204,8 @@
+     {
+         StringBuilder stringbuilder = new StringBuilder();
+         stringbuilder.append("---- Minecraft Crash Report ----\n");
++        net.minecraftforge.fml.common.asm.transformers.BlamingTransformer.onCrash(stringbuilder);
++        net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
+         stringbuilder.append("// ");
+         stringbuilder.append(getWittyComment());
+         stringbuilder.append("\n\n");

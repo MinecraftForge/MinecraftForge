@@ -16,15 +16,18 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -45,12 +48,15 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -64,7 +70,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
@@ -105,11 +110,11 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
+    public static boolean doPlayerHarvestCheck(EntityPlayer player, IBlockState state, boolean success)
     {
-        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
+        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, state, success);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.success;
+        return event.canHarvest();
     }
 
     public static float getBreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
@@ -131,9 +136,9 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack)
+    public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack, EnumHand hand)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
+        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
@@ -215,26 +220,26 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, bolt));
     }
 
-    public static int onItemUseStart(EntityPlayer player, ItemStack item, int duration)
+    public static int onItemUseStart(EntityLivingBase entity, ItemStack item, int duration)
     {
-        PlayerUseItemEvent event = new PlayerUseItemEvent.Start(player, item, duration);
+        LivingEntityUseItemEvent event = new LivingEntityUseItemEvent.Start(entity, item, duration);
         return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
     }
 
-    public static int onItemUseTick(EntityPlayer player, ItemStack item, int duration)
+    public static int onItemUseTick(EntityLivingBase entity, ItemStack item, int duration)
     {
-        PlayerUseItemEvent event = new PlayerUseItemEvent.Tick(player, item, duration);
+        LivingEntityUseItemEvent event = new LivingEntityUseItemEvent.Tick(entity, item, duration);
         return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
     }
 
-    public static boolean onUseItemStop(EntityPlayer player, ItemStack item, int duration)
+    public static boolean onUseItemStop(EntityLivingBase entity, ItemStack item, int duration)
     {
-        return MinecraftForge.EVENT_BUS.post(new PlayerUseItemEvent.Stop(player, item, duration));
+        return MinecraftForge.EVENT_BUS.post(new LivingEntityUseItemEvent.Stop(entity, item, duration));
     }
 
-    public static ItemStack onItemUseFinish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
+    public static ItemStack onItemUseFinish(EntityLivingBase entity, ItemStack item, int duration, ItemStack result)
     {
-        PlayerUseItemEvent.Finish event = new PlayerUseItemEvent.Finish(player, item, duration, result);
+        LivingEntityUseItemEvent.Finish event = new LivingEntityUseItemEvent.Finish(entity, item, duration, result);
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
@@ -266,7 +271,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 
-    public static IChatComponent onClientChat(byte type, IChatComponent message)
+    public static ITextComponent onClientChat(byte type, ITextComponent message)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.message;
@@ -297,23 +302,23 @@ public class ForgeEventFactory
         return 0;
     }
 
-    public static ItemStack onBucketUse(EntityPlayer player, World world, ItemStack stack, MovingObjectPosition target)
+    public static ActionResult<ItemStack> onBucketUse(EntityPlayer player, World world, ItemStack stack, RayTraceResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, world, target);
-        if (MinecraftForge.EVENT_BUS.post(event)) return stack;
+        if (MinecraftForge.EVENT_BUS.post(event)) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 
         if (event.getResult() == Result.ALLOW)
         {
             if (player.capabilities.isCreativeMode)
-                return stack;
+                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 
             if (--stack.stackSize <= 0)
-                return event.result;
+                return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, event.getFilledBucket());
 
-            if (!player.inventory.addItemStackToInventory(event.result))
-                player.dropPlayerItemWithRandomChoice(event.result, false);
+            if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
+                player.dropPlayerItemWithRandomChoice(event.getFilledBucket(), false);
 
-            return stack;
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
         }
         return null;
     }
@@ -370,9 +375,9 @@ public class ForgeEventFactory
         }
     }
 
-    public static boolean canInteractWith(EntityPlayer player, Entity entity)
+    public static boolean canInteractWith(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
     {
-        return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
+        return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity, item, hand));
     }
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
@@ -519,6 +524,22 @@ public class ForgeEventFactory
             return player.worldObj.getBlockState(player.playerLocation).getBlock().isBed(player.worldObj, player.playerLocation, player);
         else
             return canContinueSleep == Result.ALLOW;
+    }
+
+    public static ActionResult<ItemStack> onArrowNock(ItemStack item, World world, EntityPlayer player, EnumHand hand, boolean hasAmmo)
+    {
+        ArrowNockEvent event = new ArrowNockEvent(player, item, hand, world, hasAmmo);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return new ActionResult<ItemStack>(EnumActionResult.FAIL, item);
+        return event.getAction();
+    }
+
+    public static int onArrowLoose(ItemStack stack, World world, EntityPlayer player, int charge, boolean hasAmmo)
+    {
+        ArrowLooseEvent event = new ArrowLooseEvent(player, stack, world, charge, hasAmmo);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return -1;
+        return event.getCharge();
     }
 
 }

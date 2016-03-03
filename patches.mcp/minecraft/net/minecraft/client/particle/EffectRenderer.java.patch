@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/client/particle/EffectRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/particle/EffectRenderer.java
+@@ -460,4 +460,13 @@
+ 
+         return "" + i;
+     }
++
++    public void addBlockHitEffects(BlockPos pos, net.minecraft.util.MovingObjectPosition target)
++    {
++        Block block = worldObj.getBlockState(pos).getBlock();
++        if (block != null && !block.addHitEffects(worldObj, target, this))
++        {
++            addBlockHitEffects(pos, target.sideHit);
++        }
++     }
+ }

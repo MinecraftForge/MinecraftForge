@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/vertex/VertexFormatElement.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/vertex/VertexFormatElement.java
+@@ -142,10 +142,17 @@
+         NORMAL("Normal"),
+         COLOR("Vertex Color"),
+         UV("UV"),
++        // As of 1.8.8 - unused in vanilla; use GENERIC for now
++        @Deprecated
+         MATRIX("Bone Matrix"),
++        @Deprecated
+         BLEND_WEIGHT("Blend Weight"),
+-        PADDING("Padding");
++        PADDING("Padding"),
++        GENERIC("Generic");
+ 
++        public void preDraw(VertexFormat format, int element, int stride, java.nio.ByteBuffer buffer) { net.minecraftforge.client.ForgeHooksClient.preDraw(this, format, element, stride, buffer); }
++        public void postDraw(VertexFormat format, int element, int stride, java.nio.ByteBuffer buffer) { net.minecraftforge.client.ForgeHooksClient.postDraw(this, format, element, stride, buffer); }
++
+         private final String displayName;
+ 
+         private EnumUsage(String displayNameIn)

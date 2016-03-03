@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
+@@ -6,15 +6,25 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public class BakedQuad
++public class BakedQuad implements net.minecraftforge.client.model.pipeline.IVertexProducer
+ {
+     protected final int[] vertexData;
+     protected final int tintIndex;
+     protected final EnumFacing face;
+     protected final TextureAtlasSprite field_187509_d;
+ 
++    /**
++     * @deprecated Use constructor with the format argument.
++     */
++    @Deprecated
+     public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_)
+     {
++        this(p_i46574_1_, p_i46574_2_, p_i46574_3_, p_i46574_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM);
++    }
++
++    public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_, net.minecraft.client.renderer.vertex.VertexFormat format)
++    {
++        this.format = format;
+         this.vertexData = p_i46574_1_;
+         this.tintIndex = p_i46574_2_;
+         this.face = p_i46574_3_;
+@@ -45,4 +55,17 @@
+     {
+         return this.face;
+     }
++
++    private final net.minecraft.client.renderer.vertex.VertexFormat format;
++
++    @Override
++    public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer)
++    {
++        net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this);
++    }
++
++    public net.minecraft.client.renderer.vertex.VertexFormat getFormat()
++    {
++        return format;
++    }
+ }

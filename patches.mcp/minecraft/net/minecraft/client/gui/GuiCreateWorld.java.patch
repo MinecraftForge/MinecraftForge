@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
+@@ -205,6 +205,8 @@
+                     }
+                 }
+ 
++                WorldType.worldTypes[this.selectedIndex].onGUICreateWorldPress();
++
+                 WorldSettings worldsettings = new WorldSettings(i, WorldSettings.GameType.getByName(this.gameMode), this.field_146341_s, this.field_146337_w, WorldType.worldTypes[this.selectedIndex]);
+                 worldsettings.setWorldName(this.chunkProviderSettingsJson);
+ 
+@@ -311,14 +313,7 @@
+             }
+             else if (button.id == 8)
+             {
+-                if (WorldType.worldTypes[this.selectedIndex] == WorldType.FLAT)
+-                {
+-                    this.mc.displayGuiScreen(new GuiCreateFlatWorld(this, this.chunkProviderSettingsJson));
+-                }
+-                else
+-                {
+-                    this.mc.displayGuiScreen(new GuiCustomizeWorldScreen(this, this.chunkProviderSettingsJson));
+-                }
++                WorldType.worldTypes[this.selectedIndex].onCustomizeButton(mc, this);
+             }
+         }
+     }
+@@ -370,7 +365,7 @@
+             this.btnBonusItems.visible = this.field_146344_y;
+             this.btnMapType.visible = this.field_146344_y;
+             this.btnAllowCommands.visible = this.field_146344_y;
+-            this.btnCustomizeType.visible = this.field_146344_y && (WorldType.worldTypes[this.selectedIndex] == WorldType.FLAT || WorldType.worldTypes[this.selectedIndex] == WorldType.CUSTOMIZED);
++            this.btnCustomizeType.visible = this.field_146344_y && WorldType.worldTypes[this.selectedIndex].isCustomizable();
+         }
+ 
+         this.func_146319_h();

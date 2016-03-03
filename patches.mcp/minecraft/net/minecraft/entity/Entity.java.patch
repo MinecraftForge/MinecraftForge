@@ -1,0 +1,297 @@
+--- ../src-base/minecraft/net/minecraft/entity/Entity.java
++++ ../src-work/minecraft/net/minecraft/entity/Entity.java
+@@ -76,7 +76,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class Entity implements ICommandSender
++public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     private static final Logger field_184243_a = LogManager.getLogger();
+     private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -195,8 +195,20 @@
+         this.dataWatcher.func_187214_a(field_184242_az, "");
+         this.dataWatcher.func_187214_a(field_184234_aB, Boolean.valueOf(false));
+         this.entityInit();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, worldIn);
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
+ 
++    /** Forge: Used to store custom data for each entity. */
++    private NBTTagCompound customEntityData;
++    public boolean captureDrops = false;
++    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
++
++    @Deprecated //ToDo: Move to Capabilities?
++    protected java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties> extendedProperties = new java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties>();
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++
+     public int getEntityId()
+     {
+         return this.entityId;
+@@ -1534,6 +1546,23 @@
+                 tagCompund.setTag("Tags", nbttaglist);
+             }
+ 
++            if (customEntityData != null) tagCompund.setTag("ForgeData", customEntityData);
++            for (String identifier : this.extendedProperties.keySet())
++            {
++                try
++                {
++                    net.minecraftforge.common.IExtendedEntityProperties props = this.extendedProperties.get(identifier);
++                    props.saveNBTData(tagCompund);
++                }
++                catch (Throwable t)
++                {
++                    net.minecraftforge.fml.common.FMLLog.severe("Failed to save extended properties for %s.  This is a mod issue.", identifier);
++                    t.printStackTrace();
++                }
++            }
++
++            if (this.capabilities != null) tagCompund.setTag("ForgeCaps", this.capabilities.serializeNBT());
++
+             this.writeEntityToNBT(tagCompund);
+ 
+             if (this.func_184207_aI())
+@@ -1715,7 +1744,10 @@
+         {
+             EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)offsetY, this.posZ, itemStackIn);
+             entityitem.setDefaultPickupDelay();
+-            this.worldObj.spawnEntityInWorld(entityitem);
++            if (captureDrops)
++                this.capturedDrops.add(entityitem);
++            else
++                this.worldObj.spawnEntityInWorld(entityitem);
+             return entityitem;
+         }
+         else
+@@ -2279,6 +2311,7 @@
+     {
+         if (!this.worldObj.isRemote && !this.isDead)
+         {
++            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionId)) return;
+             this.worldObj.theProfiler.startSection("changeDimension");
+             MinecraftServer minecraftserver = this.func_184102_h();
+             int i = this.dimension;
+@@ -2372,7 +2405,7 @@
+ 
+     public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn)
+     {
+-        return blockStateIn.getBlock().getExplosionResistance(this);
++        return blockStateIn.getBlock().getExplosionResistance(worldIn, pos, this, explosionIn);
+     }
+ 
+     public boolean verifyExplosion(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
+@@ -2662,6 +2695,211 @@
+         EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
+     }
+ 
++    /* ================================== Forge Start =====================================*/
++    /**
++     * Returns a NBTTagCompound that can be used to store custom data for this entity.
++     * It will be written, and read from disc, so it persists over world saves.
++     * @return A NBTTagCompound
++     */
++    public NBTTagCompound getEntityData()
++    {
++        if (customEntityData == null)
++        {
++            customEntityData = new NBTTagCompound();
++        }
++        return customEntityData;
++    }
++
++    /**
++     * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
++     * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
++     */
++    public boolean shouldRiderSit()
++    {
++        return true;
++    }
++
++    /**
++     * Called when a user uses the creative pick block button on this entity.
++     *
++     * @param target The full target the player is looking at
++     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
++     */
++    public ItemStack getPickedResult(MovingObjectPosition target)
++    {
++        if (this instanceof net.minecraft.entity.item.EntityPainting)
++        {
++            return new ItemStack(net.minecraft.init.Items.painting);
++        }
++        else if (this instanceof EntityLeashKnot)
++        {
++            return new ItemStack(net.minecraft.init.Items.lead);
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityItemFrame)
++        {
++            ItemStack held = ((net.minecraft.entity.item.EntityItemFrame)this).getDisplayedItem();
++            if (held == null)
++            {
++                return new ItemStack(net.minecraft.init.Items.item_frame);
++            }
++            else
++            {
++                return held.copy();
++            }
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityMinecart)
++        {
++            return ((net.minecraft.entity.item.EntityMinecart)this).getCartItem();
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityBoat)
++        {
++            return new ItemStack(net.minecraft.init.Items.boat);
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityArmorStand)
++        {
++            return new ItemStack(net.minecraft.init.Items.armor_stand);
++        }
++        else
++        {
++            int id = EntityList.getEntityID(this);
++            if (id > 0 && EntityList.entityEggs.containsKey(id))
++            {
++                return new ItemStack(net.minecraft.init.Items.spawn_egg, 1, id);
++            }
++            String name = EntityList.getEntityString(this);
++            if (name != null && net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().containsKey(name))
++            {
++                ItemStack stack = new ItemStack(net.minecraft.init.Items.spawn_egg);
++                stack.setTagInfo("entity_name", new net.minecraft.nbt.NBTTagString(name));
++                return stack;
++            }
++        }
++        return null;
++    }
++
++    public UUID getPersistentID()
++    {
++        return entityUniqueID;
++    }
++
++    /**
++     * Reset the entity ID to a new value. Not to be used from Mod code
++     */
++    public final void resetEntityId()
++    {
++        this.entityId = nextEntityID++;
++    }
++
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
++    }
++
++    /**
++     * Returns true if the entity is of the @link{EnumCreatureType} provided
++     * @param type The EnumCreatureType type this entity is evaluating
++     * @param forSpawnCount If this is being invoked to check spawn count caps.
++     * @return If the creature is of the type provided
++     */
++    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
++    {
++        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).isNoDespawnRequired()) return false;
++        return type.getCreatureClass().isAssignableFrom(this.getClass());
++    }
++
++    /**
++     * Register the instance of IExtendedProperties into the entity's collection.
++     * @param identifier The identifier which you can use to retrieve these properties for the entity.
++     * @param properties The instanceof IExtendedProperties to register
++     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
++     */
++    public String registerExtendedProperties(String identifier, net.minecraftforge.common.IExtendedEntityProperties properties)
++    {
++        if (identifier == null)
++        {
++            net.minecraftforge.fml.common.FMLLog.warning("Someone is attempting to register extended properties using a null identifier.  This is not allowed.  Aborting.  This may have caused instability.");
++            return "";
++        }
++        if (properties == null)
++        {
++            net.minecraftforge.fml.common.FMLLog.warning("Someone is attempting to register null extended properties.  This is not allowed.  Aborting.  This may have caused instability.");
++            return "";
++        }
++
++        String baseIdentifier = identifier;
++        int identifierModCount = 1;
++        while (this.extendedProperties.containsKey(identifier))
++        {
++            identifier = String.format("%s%d", baseIdentifier, identifierModCount++);
++        }
++
++        if (baseIdentifier != identifier)
++        {
++            net.minecraftforge.fml.common.FMLLog.info("An attempt was made to register exended properties using an existing key.  The duplicate identifier (%s) has been remapped to %s.", baseIdentifier, identifier);
++        }
++
++        this.extendedProperties.put(identifier, properties);
++        return identifier;
++    }
++
++    /**
++     * Gets the extended properties identified by the passed in key
++     * @param identifier The key that identifies the extended properties.
++     * @return The instance of IExtendedProperties that was found, or null.
++     */
++    public net.minecraftforge.common.IExtendedEntityProperties getExtendedProperties(String identifier)
++    {
++        return this.extendedProperties.get(identifier);
++    }
++
++    /**
++     * If a rider of this entity can interact with this entity. Should return true on the
++     * ridden entity if so.
++     *
++     * @return if the entity can be interacted with from a rider
++     */
++    public boolean canRiderInteract()
++    {
++        return false;
++    }
++
++    /**
++     * If the rider should be dismounted from the entity when the entity goes under water
++     *
++     * @param rider The entity that is riding
++     * @return if the entity should be dismounted when under water
++     */
++    public boolean shouldDismountInWater(Entity rider)
++    {
++        return this instanceof EntityLivingBase;
++    }
++
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (getCapability(capability, facing) != null)
++            return true;
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.readFromNBT(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        ret.setString("id", this.getEntityString());
++        this.writeToNBT(ret);
++        return ret;
++    }
++    /* ================================== Forge End =====================================*/
++
+     public void func_184178_b(EntityPlayerMP p_184178_1_)
+     {
+     }

@@ -9,12 +9,13 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraft.util.EnumChatFormatting;
-import static net.minecraft.util.EnumChatFormatting.*;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import static net.minecraft.util.text.TextFormatting.*;
 
 /**
  * The class that handles client-side chat commands. You should register any
@@ -57,7 +58,7 @@ public class ClientCommandHandler extends CommandHandler
                 return 0;
             }
 
-            if (icommand.canCommandSenderUseCommand(sender))
+            if (icommand.func_184882_a(this.func_184879_a(), sender))
             {
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
@@ -69,7 +70,7 @@ public class ClientCommandHandler extends CommandHandler
                     return 0;
                 }
 
-                icommand.processCommand(sender, args);
+                this.tryExecute(sender, args, icommand, message);
                 return 1;
             }
             else
@@ -95,9 +96,9 @@ public class ClientCommandHandler extends CommandHandler
     }
 
     //Couple of helpers because the mcp names are stupid and long...
-    private ChatComponentTranslation format(EnumChatFormatting color, String str, Object... args)
+    private TextComponentTranslation format(TextFormatting color, String str, Object... args)
     {
-        ChatComponentTranslation ret = new ChatComponentTranslation(str, args);
+        TextComponentTranslation ret = new TextComponentTranslation(str, args);
         ret.getChatStyle().setColor(color);
         return ret;
     }
@@ -135,5 +136,10 @@ public class ClientCommandHandler extends CommandHandler
                 }
             }
         }
+    }
+
+    @Override
+    protected MinecraftServer func_184879_a() {
+        return Minecraft.getMinecraft().getIntegratedServer();
     }
 }

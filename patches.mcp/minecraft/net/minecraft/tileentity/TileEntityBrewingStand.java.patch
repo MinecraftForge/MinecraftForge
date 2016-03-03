@@ -1,0 +1,86 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+@@ -140,7 +140,7 @@
+ 
+     private boolean canBrew()
+     {
+-        if (this.brewingItemStacks[3] != null && this.brewingItemStacks[3].stackSize > 0)
++        if (this.brewingItemStacks[3] != null && this.brewingItemStacks[3].stackSize > 0 && false) // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
+         {
+             ItemStack itemstack = this.brewingItemStacks[3];
+ 
+@@ -165,25 +165,23 @@
+         }
+         else
+         {
+-            return false;
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(brewingItemStacks, brewingItemStacks[3], outputSlots);
+         }
+     }
+ 
+     private void brewPotions()
+     {
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(brewingItemStacks)) return;
+         ItemStack itemstack = this.brewingItemStacks[3];
+ 
+-        for (int i = 0; i < 3; ++i)
+-        {
+-            this.brewingItemStacks[i] = PotionHelper.func_185212_d(itemstack, this.brewingItemStacks[i]);
+-        }
++        net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(brewingItemStacks, brewingItemStacks[3], outputSlots);
+ 
+         --itemstack.stackSize;
+         BlockPos blockpos = this.getPos();
+ 
+-        if (itemstack.getItem().hasContainerItem())
++        if (itemstack.getItem().hasContainerItem(itemstack))
+         {
+-            ItemStack itemstack1 = new ItemStack(itemstack.getItem().getContainerItem());
++            ItemStack itemstack1 = new ItemStack(itemstack.getItem().getContainerItem(itemstack));
+ 
+             if (itemstack.stackSize <= 0)
+             {
+@@ -202,6 +200,7 @@
+ 
+         this.brewingItemStacks[3] = itemstack;
+         this.worldObj.playAuxSFX(1035, blockpos, 0);
++        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(brewingItemStacks);
+     }
+ 
+     public void readFromNBT(NBTTagCompound compound)
+@@ -303,12 +302,12 @@
+     {
+         if (index == 3)
+         {
+-            return PotionHelper.func_185205_a(stack);
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
+         }
+         else
+         {
+             Item item = stack.getItem();
+-            return index == 4 ? item == Items.blaze_powder : item == Items.potionitem || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.glass_bottle;
++            return index == 4 ? item == Items.blaze_powder : net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
+         }
+     }
+ 
+@@ -362,6 +361,20 @@
+         }
+     }
+ 
++    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
++    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.UP)
++                return (T) handlerInput;
++            else
++                return (T) handlerOutput;
++        return super.getCapability(capability, facing);
++    }
++
+     public int getFieldCount()
+     {
+         return 2;

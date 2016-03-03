@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
+@@ -112,4 +112,12 @@
+ 
+         return aint1;
+     }
++
++    protected net.minecraftforge.common.BiomeManager.BiomeEntry getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType type)
++    {
++        java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry> biomeList = biomes[type.ordinal()];
++        int totalWeight = net.minecraft.util.WeightedRandom.getTotalWeight(biomeList);
++        int weight = net.minecraftforge.common.BiomeManager.isTypeListModded(type)?nextInt(totalWeight):nextInt(totalWeight / 10) * 10;
++        return (net.minecraftforge.common.BiomeManager.BiomeEntry)net.minecraft.util.WeightedRandom.getRandomItem(biomeList, weight);
++    }
+ }

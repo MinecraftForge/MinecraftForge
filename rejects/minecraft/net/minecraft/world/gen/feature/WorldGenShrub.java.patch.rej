@@ -1,0 +1,31 @@
+++++ REJECTED PATCH 1
+     {
+         Block block;
+ 
+-        while (((block = worldIn.getBlockState(position).getBlock()).getMaterial() == Material.air || block.getMaterial() == Material.leaves) && position.getY() > 0)
++        do
+         {
++            block = worldIn.getBlockState(position).getBlock();
++            if (!block.isAir(worldIn, position) && !block.isLeaves(worldIn, position)) break;
+             position = position.down();
+-        }
++        } while (position.getY() > 0);
+ 
+         Block block1 = worldIn.getBlockState(position).getBlock();
+ 
+-        if (block1 == Blocks.dirt || block1 == Blocks.grass)
++        if (block1.canSustainPlant(worldIn, position, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.sapling)))
+         {
+             position = position.up();
+             this.setBlockAndNotifyAdequately(worldIn, position, this.woodMetadata);
+++++ END PATCH
+++++ REJECTED PATCH 2
+                         {
+                             BlockPos blockpos = new BlockPos(l, i, j1);
+ 
+-                            if (!worldIn.getBlockState(blockpos).getBlock().isFullBlock())
++                            if (worldIn.getBlockState(blockpos).getBlock().canBeReplacedByLeaves(worldIn, blockpos))
+                             {
+                                 this.setBlockAndNotifyAdequately(worldIn, blockpos, this.leavesMetadata);
+                             }
+++++ END PATCH

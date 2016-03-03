@@ -1,0 +1,124 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
+@@ -46,8 +46,41 @@
+         this.field_186055_e = p_i46673_2_;
+     }
+ 
++    public boolean chunkExists(World world, int x, int z)
++    {
++        ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
++
++        if (this.pendingAnvilChunksCoordinates.contains(chunkcoordintpair))
++        {
++            for(ChunkCoordIntPair pendingChunkCoord : this.chunksToRemove.keySet())
++            {
++                if (pendingChunkCoord.equals(chunkcoordintpair))
++                {
++                    return true;
++                }
++            }
++        }
++
++        return RegionFileCache.createOrLoadRegionFile(this.chunkSaveLocation, x, z).chunkExists(x & 31, z & 31);
++    }
++
+     public Chunk loadChunk(World worldIn, int x, int z) throws IOException
+     {
++        Object[] data = this.loadChunk__Async(worldIn, x, z);
++
++        if (data != null)
++        {
++            Chunk chunk = (Chunk) data[0];
++            NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
++            this.loadEntities(worldIn, nbttagcompound.getCompoundTag("Level"), chunk);
++            return chunk;
++        }
++
++        return null;
++    }
++
++    public Object[] loadChunk__Async(World worldIn, int x, int z) throws IOException
++    {
+         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
+         NBTTagCompound nbttagcompound = (NBTTagCompound)this.chunksToRemove.get(chunkcoordintpair);
+ 
+@@ -63,11 +96,17 @@
+             nbttagcompound = this.field_186055_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.read(datainputstream));
+         }
+ 
+-        return this.checkedReadChunkFromNBT(worldIn, x, z, nbttagcompound);
++        return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
+     }
+ 
+     protected Chunk checkedReadChunkFromNBT(World worldIn, int x, int z, NBTTagCompound p_75822_4_)
+     {
++        Object[] data = this.checkedReadChunkFromNBT__Async(worldIn, x, z, p_75822_4_);
++        return data != null ? (Chunk)data[0] : null;
++    }
++
++    protected Object[] checkedReadChunkFromNBT__Async(World worldIn, int x, int z, NBTTagCompound p_75822_4_)
++    {
+         if (!p_75822_4_.hasKey("Level", 10))
+         {
+             logger.error("Chunk file at " + x + "," + z + " is missing level data, skipping");
+@@ -91,10 +130,29 @@
+                     logger.error("Chunk file at " + x + "," + z + " is in the wrong location; relocating. (Expected " + x + ", " + z + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
+                     nbttagcompound.setInteger("xPos", x);
+                     nbttagcompound.setInteger("zPos", z);
++                    
++                    // Have to move tile entities since we don't load them at this stage
++                    NBTTagList _tileEntities = nbttagcompound.getTagList("TileEntities", 10);
++
++                    if (_tileEntities != null)
++                    {
++                        for (int te = 0; te < _tileEntities.tagCount(); te++)
++                        {
++                            NBTTagCompound _nbt = (NBTTagCompound) _tileEntities.getCompoundTagAt(te);
++                            _nbt.setInteger("x", x * 16 + (_nbt.getInteger("x") - chunk.xPosition * 16));
++                            _nbt.setInteger("z", z * 16 + (_nbt.getInteger("z") - chunk.zPosition * 16));
++                        }
++                    }
++
+                     chunk = this.readChunkFromNBT(worldIn, nbttagcompound);
+                 }
+ 
+-                return chunk;
++                Object[] data = new Object[2];
++                data[0] = chunk;
++                data[1] = p_75822_4_;
++                // event is fired in ChunkIOProvider.callStage2 since it must be fired after TE's load.
++                // MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
++                return data;
+             }
+         }
+     }
+@@ -110,6 +168,7 @@
+             nbttagcompound.setTag("Level", nbttagcompound1);
+             nbttagcompound.setInteger("DataVersion", 169);
+             this.writeChunkToNBT(chunkIn, worldIn, nbttagcompound1);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(chunkIn, nbttagcompound));
+             this.addChunkToPending(chunkIn.getChunkCoordIntPair(), nbttagcompound);
+         }
+         catch (Exception exception)
+@@ -347,6 +406,12 @@
+             chunk.setBiomeArray(p_75823_2_.getByteArray("Biomes"));
+         }
+ 
++        // End this method here and split off entity loading to another method
++        return chunk;
++    }
++
++    public void loadEntities(World worldIn, NBTTagCompound p_75823_2_, Chunk chunk)
++    {
+         NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
+ 
+         if (nbttaglist1 != null)
+@@ -399,8 +464,6 @@
+                 }
+             }
+         }
+-
+-        return chunk;
+     }
+ 
+     public static Entity func_186050_a(NBTTagCompound p_186050_0_, World p_186050_1_, Chunk p_186050_2_)

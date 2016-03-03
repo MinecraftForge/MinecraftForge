@@ -3,6 +3,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 /**
  * ArrowLooseEvent is fired when a player stops using a bow.<br>
@@ -22,13 +23,22 @@ import net.minecraft.item.ItemStack;
 @Cancelable
 public class ArrowLooseEvent extends PlayerEvent
 {
-    public final ItemStack bow;
-    public int charge;
-    
-    public ArrowLooseEvent(EntityPlayer player, ItemStack bow, int charge)
+    private final ItemStack bow;
+    private final World world;
+    private final boolean hasAmmo;
+    private int charge;
+
+    public ArrowLooseEvent(EntityPlayer player, ItemStack bow, World world, int charge, boolean hasAmmo)
     {
         super(player);
         this.bow = bow;
+        this.world = world;
         this.charge = charge;
+        this.hasAmmo = hasAmmo;
     }
+
+    public ItemStack getBow() { return this.bow; }
+    public boolean hasAmmo() { return this.hasAmmo; }
+    public int getCharge() { return this.charge; }
+    public void setCharge(int charge) { this.charge = charge; }
 }

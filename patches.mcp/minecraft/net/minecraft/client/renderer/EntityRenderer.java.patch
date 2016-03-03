@@ -1,0 +1,189 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
+@@ -207,6 +207,7 @@
+             {
+                 this.loadShader(new ResourceLocation("shaders/post/invert.json"));
+             }
++            else net.minecraftforge.client.ForgeHooksClient.loadEntityShader(entityIn, this);
+         }
+     }
+ 
+@@ -398,7 +399,7 @@
+ 
+                         if (d3 < d2 || d2 == 0.0D)
+                         {
+-                            if (entity1.func_184208_bv() == entity.func_184208_bv())
++                            if (entity1.func_184208_bv() == entity.func_184208_bv() && !entity.canRiderInteract())
+                             {
+                                 if (d2 == 0.0D)
+                                 {
+@@ -491,7 +492,7 @@
+                 f = f * 60.0F / 70.0F;
+             }
+ 
+-            return f;
++            return net.minecraftforge.client.ForgeHooksClient.getFOVModifier(this, entity, iblockstate, partialTicks, f);
+         }
+     }
+ 
+@@ -555,14 +556,8 @@
+             {
+                 BlockPos blockpos = new BlockPos(entity);
+                 IBlockState iblockstate = this.mc.theWorld.getBlockState(blockpos);
+-                Block block = iblockstate.getBlock();
++                net.minecraftforge.client.ForgeHooksClient.orientBedCamera(this.mc.theWorld, blockpos, iblockstate, entity);
+ 
+-                if (block == Blocks.bed)
+-                {
+-                    int j = ((EnumFacing)iblockstate.getValue(BlockBed.field_185512_D)).getHorizontalIndex();
+-                    GlStateManager.rotate((float)(j * 90), 0.0F, 1.0F, 0.0F);
+-                }
+-
+                 GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, -1.0F, 0.0F);
+                 GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, -1.0F, 0.0F, 0.0F);
+             }
+@@ -629,17 +624,20 @@
+ 
+         if (!this.mc.gameSettings.debugCamEnable)
+         {
+-            GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 1.0F, 0.0F, 0.0F);
+-
++            float yaw = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F;
++            float pitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
++            float roll = 0.0F;
+             if (entity instanceof EntityAnimal)
+             {
+                 EntityAnimal entityanimal = (EntityAnimal)entity;
+-                GlStateManager.rotate(entityanimal.prevRotationYawHead + (entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
++                yaw = entityanimal.prevRotationYawHead + (entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks + 180.0F;
+             }
+-            else
+-            {
+-                GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
+-            }
++            IBlockState state = ActiveRenderInfo.func_186703_a(this.mc.theWorld, entity, partialTicks);
++            net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup event = new net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup(this, entity, state, partialTicks, yaw, pitch, roll);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++            GlStateManager.rotate(event.roll, 0.0F, 0.0F, 1.0F);
++            GlStateManager.rotate(event.pitch, 1.0F, 0.0F, 0.0F);
++            GlStateManager.rotate(event.yaw, 0.0F, 1.0F, 0.0F);
+         }
+ 
+         GlStateManager.translate(0.0F, -f, 0.0F);
+@@ -757,6 +755,7 @@
+ 
+             boolean flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping();
+ 
++            if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(mc.renderGlobal, partialTicks, xOffset))
+             if (this.mc.gameSettings.thirdPersonView == 0 && !flag && !this.mc.gameSettings.hideGUI && !this.mc.playerController.isSpectator())
+             {
+                 this.enableLightmap();
+@@ -1092,7 +1091,7 @@
+ 
+                 try
+                 {
+-                    this.mc.currentScreen.drawScreen(k1, l1, p_181560_1_);
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.mc.currentScreen, k1, l1, p_181560_1_);
+                 }
+                 catch (Throwable throwable)
+                 {
+@@ -1187,7 +1186,7 @@
+ 
+                     if (this.mc.playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)
+                     {
+-                        flag = block.hasTileEntity() && this.mc.theWorld.getTileEntity(blockpos) instanceof IInventory;
++                        flag = block.hasTileEntity(this.mc.theWorld.getBlockState(blockpos)) && this.mc.theWorld.getTileEntity(blockpos) instanceof IInventory;
+                     }
+                     else
+                     {
+@@ -1312,7 +1311,9 @@
+             GlStateManager.pushMatrix();
+             RenderHelper.enableStandardItemLighting();
+             this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             renderglobal.renderEntities(entity, icamera, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             RenderHelper.disableStandardItemLighting();
+             this.disableLightmap();
+         }
+@@ -1325,6 +1326,7 @@
+             EntityPlayer entityplayer = (EntityPlayer)entity;
+             GlStateManager.disableAlpha();
+             this.mc.mcProfiler.endStartSection("outline");
++            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, partialTicks))
+             renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
+             GlStateManager.enableAlpha();
+         }
+@@ -1366,6 +1368,15 @@
+         GlStateManager.shadeModel(7425);
+         this.mc.mcProfiler.endStartSection("translucent");
+         renderglobal.renderBlockLayer(BlockRenderLayer.TRANSLUCENT, (double)partialTicks, pass, entity);
++        if (!this.debugView) //Only render if render pass 0 happens as well.
++        {
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
++            renderglobal.renderEntities(entity, icamera, partialTicks);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
++        }
+         GlStateManager.shadeModel(7424);
+         GlStateManager.depthMask(true);
+         GlStateManager.enableCull();
+@@ -1378,6 +1389,9 @@
+             this.renderCloudsCheck(renderglobal, partialTicks, pass);
+         }
+ 
++        this.mc.mcProfiler.endStartSection("forge_render_last");
++        net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(renderglobal, partialTicks);
++
+         this.mc.mcProfiler.endStartSection("hand");
+ 
+         if (this.renderHand)
+@@ -1490,6 +1504,13 @@
+ 
+     protected void renderRainSnow(float partialTicks)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.mc.theWorld.provider.getWeatherRenderer();
++        if (renderer != null)
++        {
++            renderer.render(partialTicks, this.mc.theWorld, mc);
++            return;
++        }
++
+         float f = this.mc.theWorld.getRainStrength(partialTicks);
+ 
+         if (f > 0.0F)
+@@ -1820,6 +1841,13 @@
+             this.fogColorBlue = f7;
+         }
+ 
++        net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, entity, iblockstate, partialTicks, this.fogColorRed, this.fogColorGreen, this.fogColorBlue);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++
++        this.fogColorRed = event.red;
++        this.fogColorGreen = event.green;
++        this.fogColorBlue = event.blue;
++
+         GlStateManager.clearColor(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 0.0F);
+     }
+ 
+@@ -1830,7 +1858,9 @@
+         GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
+         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+         IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.mc.theWorld, entity, partialTicks);
+-
++        float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, entity, iblockstate, partialTicks, 0.1F);
++        if (hook >= 0) GlStateManager.setFogDensity(hook);
++        else
+         if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).isPotionActive(MobEffects.blindness))
+         {
+             float f1 = 5.0F;
+@@ -1915,6 +1945,7 @@
+                 GlStateManager.setFogStart(f * 0.05F);
+                 GlStateManager.setFogEnd(Math.min(f, 192.0F) * 0.5F);
+             }
++            net.minecraftforge.client.ForgeHooksClient.onFogRender(this, entity, iblockstate, partialTicks, p_78468_1_, f);
+         }
+ 
+         GlStateManager.enableColorMaterial();

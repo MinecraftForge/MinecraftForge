@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -33,6 +33,7 @@
+     public final LongHashMap<Chunk> id2ChunkMap = new LongHashMap();
+     public final List<Chunk> loadedChunks = Lists.<Chunk>newArrayList();
+     public final WorldServer worldObj;
++    private Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
+ 
+     public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
+     {
+@@ -118,6 +119,7 @@
+ 
+             this.id2ChunkMap.add(i, chunk);
+             this.loadedChunks.add(chunk);
++            loadingChunks.remove(i);
+             chunk.onChunkLoad();
+             chunk.func_186030_a(this, this.field_186029_c);
+         }
+@@ -214,6 +216,11 @@
+     {
+         if (!this.worldObj.disableLevelSaving)
+         {
++            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
++            {
++                this.droppedChunksSet.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
++            }
++
+             for (int i = 0; i < 100; ++i)
+             {
+                 if (!this.droppedChunksSet.isEmpty())
+@@ -228,6 +235,12 @@
+                         this.saveChunkExtraData(chunk);
+                         this.id2ChunkMap.remove(olong.longValue());
+                         this.loadedChunks.remove(chunk);
++                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
++                        if(loadedChunks.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.worldObj.provider.getDimensionId())){
++                            net.minecraftforge.common.DimensionManager.unloadWorld(this.worldObj.provider.getDimensionId());
++                            return serverChunkGenerator.unloadQueuedChunks();
++                        }
++
+                     }
+ 
+                     this.droppedChunksSet.remove(olong);

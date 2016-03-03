@@ -20,7 +20,6 @@
 /buildSrc
 
 #Patch rejects
-*.rej
 /patches-/
 
 # FML changelog

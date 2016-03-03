@@ -29,7 +29,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.event.ClickEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -49,23 +48,21 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
@@ -157,7 +154,7 @@ public class ForgeHooks
 
     public static float blockStrength(IBlockState state, EntityPlayer player, World world, BlockPos pos)
     {
-        float hardness = state.getBlock().getBlockHardness(world, pos);
+        float hardness = state.func_185887_b(world, pos);
         if (hardness < 0.0F)
         {
             return 0.0F;
@@ -551,14 +548,14 @@ public class ForgeHooks
     }
 
     @SuppressWarnings("deprecation")
-    public static ChatComponentTranslation onServerChatEvent(NetHandlerPlayServer net, String raw, ChatComponentTranslation comp)
+    public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
         }
-        return event.component;
+        return event.getComponent();
     }
 
 
@@ -568,13 +565,13 @@ public class ForgeHooks
             "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_\\.]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
             Pattern.CASE_INSENSITIVE);
 
-    public static IChatComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
-    public static IChatComponent newChatWithLinks(String string, boolean allowMissingHeader)
+    public static ITextComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
+    public static ITextComponent newChatWithLinks(String string, boolean allowMissingHeader)
     {
         // Includes ipv4 and domain pattern
         // Matches an ip (xx.xxx.xx.xxx) or a domain (something.com) with or
         // without a protocol or path.
-        IChatComponent ichat = null;
+        ITextComponent ichat = null;
         Matcher matcher = URL_PATTERN.matcher(string);
         int lastEnd = 0;
 
@@ -589,13 +586,13 @@ public class ForgeHooks
             if (part.length() > 0)
             {
                 if (ichat == null)
-                    ichat = new ChatComponentText(part);
+                    ichat = new TextComponentString(part);
                 else
                     ichat.appendText(part);
             }
             lastEnd = end;
             String url = string.substring(start, end);
-            IChatComponent link = new ChatComponentText(url);
+            ITextComponent link = new TextComponentString(url);
 
             try
             {
@@ -605,7 +602,7 @@ public class ForgeHooks
                     if (!allowMissingHeader)
                     {
                         if (ichat == null)
-                            ichat = new ChatComponentText(url);
+                            ichat = new TextComponentString(url);
                         else
                             ichat.appendText(url);
                         continue;
@@ -616,7 +613,7 @@ public class ForgeHooks
             catch (URISyntaxException e)
             {
                 // Bad syntax bail out!
-                if (ichat == null) ichat = new ChatComponentText(url);
+                if (ichat == null) ichat = new TextComponentString(url);
                 else ichat.appendText(url);
                 continue;
             }
@@ -625,7 +622,7 @@ public class ForgeHooks
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
             link.getChatStyle().setChatClickEvent(click);
             link.getChatStyle().setUnderlined(true);
-            link.getChatStyle().setColor(EnumChatFormatting.BLUE);
+            link.getChatStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
                 ichat = link;
             else
@@ -635,7 +632,7 @@ public class ForgeHooks
         // Append the rest of the message.
         String end = string.substring(lastEnd);
         if (ichat == null)
-            ichat = new ChatComponentText(end);
+            ichat = new TextComponentString(end);
         else if (end.length() > 0)
             ichat.appendText(string.substring(lastEnd));
         return ichat;
@@ -702,7 +699,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static boolean onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public static EnumActionResult onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
     {
         // handle all placement events here
         int meta = itemstack.getItemDamage();
@@ -718,10 +715,10 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        boolean flag = itemstack.getItem().onItemUse(itemstack, player, world, pos, side, hitX, hitY, hitZ);
+        EnumActionResult ret = itemstack.getItem().onItemUse(itemstack, player, world, pos, hand, side, hitX, hitY, hitZ);
         world.captureBlockSnapshots = false;
 
-        if (flag)
+        if (ret == EnumActionResult.SUCCESS)
         {
             // save new item data
             int newMeta = itemstack.getItemDamage();
@@ -754,7 +751,7 @@ public class ForgeHooks
 
             if (placeEvent != null && (placeEvent.isCanceled()))
             {
-                flag = false; // cancel placement
+                ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
                 for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
                 {
@@ -785,12 +782,12 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.pos, null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.objectUseStats[Item.getIdFromItem(itemstack.getItem())], 1);
+                player.triggerAchievement(StatList.func_188060_a(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
 
-        return flag;
+        return ret;
     }
 
     public static boolean onAnvilChange(ContainerRepair container, ItemStack left, ItemStack right, IInventory outputSlot, String name, int baseCost)

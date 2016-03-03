@@ -9,7 +9,7 @@ import net.minecraft.network.play.client.C15PacketClientSettings;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -24,7 +24,7 @@ public class FakePlayer extends EntityPlayerMP
 
     @Override public Vec3 getPositionVector(){ return new Vec3(0, 0, 0); }
     @Override public boolean canCommandSenderUseCommand(int i, String s){ return false; }
-    @Override public void addChatComponentMessage(IChatComponent chatmessagecomponent){}
+    @Override public void addChatComponentMessage(ITextComponent chatmessagecomponent){}
     @Override public void addStat(StatBase par1StatBase, int par2){}
     @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }

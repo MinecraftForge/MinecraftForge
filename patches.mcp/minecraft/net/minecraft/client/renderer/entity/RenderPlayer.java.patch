@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
+@@ -55,6 +55,7 @@
+ 
+     public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks)
+     {
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(entity, this, partialTicks, x, y, z))) return;
+         if (!entity.isUser() || this.renderManager.livingPlayer == entity)
+         {
+             double d0 = y;
+@@ -69,6 +70,7 @@
+             super.doRender(entity, x, d0, z, entityYaw, partialTicks);
+             GlStateManager.func_187440_b(GlStateManager.Profile.PLAYER_SKIN);
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(entity, this, partialTicks, x, y, z));
+     }
+ 
+     private void setModelVisibilities(AbstractClientPlayer clientPlayer)

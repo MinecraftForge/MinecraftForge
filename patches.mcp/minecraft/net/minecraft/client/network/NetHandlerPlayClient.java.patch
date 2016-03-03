@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
++++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
+@@ -267,7 +267,7 @@
+     {
+         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
+         this.gameController.playerController = new PlayerControllerMP(this.gameController, this);
+-        this.clientWorldController = new WorldClient(this, new WorldSettings(0L, packetIn.getGameType(), false, packetIn.isHardcoreMode(), packetIn.getWorldType()), packetIn.getDimension(), packetIn.getDifficulty(), this.gameController.mcProfiler);
++        this.clientWorldController = new WorldClient(this, new WorldSettings(0L, packetIn.getGameType(), false, packetIn.isHardcoreMode(), packetIn.getWorldType()), net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.get(getNetworkManager()).getOverrideDimension(packetIn), packetIn.getDifficulty(), this.gameController.mcProfiler);
+         this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
+         this.gameController.loadWorld(this.clientWorldController);
+         this.gameController.thePlayer.dimension = packetIn.getDimension();
+@@ -785,14 +785,16 @@
+     public void handleChat(SPacketChat packetIn)
+     {
+         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
++        net.minecraft.util.IChatComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(packetIn.getType(), packetIn.getChatComponent());
++        if (message == null) return;
+ 
+         if (packetIn.getType() == 2)
+         {
+-            this.gameController.ingameGUI.setRecordPlaying(packetIn.getChatComponent(), false);
++            this.gameController.ingameGUI.setRecordPlaying(message, false);
+         }
+         else
+         {
+-            this.gameController.ingameGUI.getChatGUI().printChatMessage(packetIn.getChatComponent());
++            this.gameController.ingameGUI.getChatGUI().printChatMessage(message);
+         }
+     }
+ 
+@@ -1082,6 +1084,10 @@
+             {
+                 entityplayer.openContainer.putStackInSlot(packetIn.func_149173_d(), packetIn.func_149174_e());
+             }
++            else
++            {
++                tileentity.onDataPacket(netManager, packetIn);
++            }
+         }
+     }
+ 

@@ -431,11 +431,10 @@ public class VillagerRegistry
                                         },
                                         {
                                                 new ListItemForEmeralds(Items.redstone, new PriceInfo(-4, -1)),
-                                                new ListItemForEmeralds(new ItemStack(Items.dye, 1, EnumDyeColor.BLUE.getDyeDamage()),
-                                                        new PriceInfo(-2, -1))
+                                                new ListItemForEmeralds(new ItemStack(Items.dye, 1, EnumDyeColor.BLUE.getDyeDamage()), new PriceInfo(-2, -1))
                                         },
                                         {
-                                                new ListItemForEmeralds(Items.ender_eye, new PriceInfo(7, 11)),
+                                                new ListItemForEmeralds(Items.ender_pearl, new PriceInfo(4, 7)),
                                                 new ListItemForEmeralds(Item.getItemFromBlock(Blocks.glowstone), new PriceInfo(-3, -1))
                                         },
                                         {

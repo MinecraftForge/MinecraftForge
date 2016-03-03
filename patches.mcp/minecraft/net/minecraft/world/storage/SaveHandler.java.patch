@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -135,6 +135,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.setTag("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.worldDirectory, "level.dat_new");
+@@ -199,6 +201,8 @@
+     {
+         NBTTagCompound nbttagcompound = null;
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.playersDirectory, player.getUniqueID().toString() + ".dat");
+@@ -218,6 +222,7 @@
+             player.readFromNBT(this.field_186341_a.func_188257_a(FixTypes.PLAYER, nbttagcompound));
+         }
+ 
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(player, playersDirectory, player.getUniqueID().toString());
+         return nbttagcompound;
+     }
+ 
+@@ -259,4 +264,22 @@
+     {
+         return this.field_186342_h;
+     }
++
++    public NBTTagCompound getPlayerNBT(net.minecraft.entity.player.EntityPlayerMP player)
++    {
++        try
++        {
++            File file1 = new File(this.playersDirectory, player.getUniqueID().toString() + ".dat");
++
++            if (file1.exists() && file1.isFile())
++            {
++                return CompressedStreamTools.readCompressed(new FileInputStream(file1));
++            }
++        }
++        catch (Exception exception)
++        {
++            logger.warn("Failed to load player data for " + player.getName());
++        }
++        return null;
++    }
+ }

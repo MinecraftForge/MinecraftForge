@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayer.java
+@@ -49,12 +49,12 @@
+             i = 6;
+         }
+ 
++        i = getModdedBiomeSize(p_180781_2_, i);
++
+         GenLayer lvt_8_1_ = GenLayerZoom.magnify(1000L, genlayer4, 0);
+         GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, lvt_8_1_);
+-        GenLayerBiome lvt_9_1_ = new GenLayerBiome(200L, genlayer4, p_180781_2_, p_180781_3_);
+-        GenLayer genlayer6 = GenLayerZoom.magnify(1000L, lvt_9_1_, 2);
+-        GenLayerBiomeEdge genlayerbiomeedge = new GenLayerBiomeEdge(1000L, genlayer6);
+         GenLayer lvt_10_1_ = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
++        GenLayer genlayerbiomeedge = p_180781_2_.getBiomeLayer(seed, genlayer4, p_180781_3_);
+         GenLayer genlayerhills = new GenLayerHills(1000L, genlayerbiomeedge, lvt_10_1_);
+         GenLayer genlayer5 = GenLayerZoom.magnify(1000L, genlayerriverinit, 2);
+         genlayer5 = GenLayerZoom.magnify(1000L, genlayer5, j);
+@@ -171,4 +171,27 @@
+     {
+         return p_151617_2_ == p_151617_3_ && p_151617_3_ == p_151617_4_ ? p_151617_2_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_3_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_1_ == p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_2_ && p_151617_3_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_3_ && p_151617_2_ != p_151617_4_ ? p_151617_1_ : (p_151617_1_ == p_151617_4_ && p_151617_2_ != p_151617_3_ ? p_151617_1_ : (p_151617_2_ == p_151617_3_ && p_151617_1_ != p_151617_4_ ? p_151617_2_ : (p_151617_2_ == p_151617_4_ && p_151617_1_ != p_151617_3_ ? p_151617_2_ : (p_151617_3_ == p_151617_4_ && p_151617_1_ != p_151617_2_ ? p_151617_3_ : this.selectRandom(new int[] {p_151617_1_, p_151617_2_, p_151617_3_, p_151617_4_}))))))))));
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    protected long nextLong(long par1)
++    {
++        long j = (this.chunkSeed >> 24) % par1;
++
++        if (j < 0)
++        {
++            j += par1;
++        }
++
++        this.chunkSeed *= this.chunkSeed * 6364136223846793005L + 1442695040888963407L;
++        this.chunkSeed += this.worldGenSeed;
++        return j;
++    }
++
++    public static int getModdedBiomeSize(WorldType worldType, int original)
++    {
++        net.minecraftforge.event.terraingen.WorldTypeEvent.BiomeSize event = new net.minecraftforge.event.terraingen.WorldTypeEvent.BiomeSize(worldType, original);
++        net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS.post(event);
++        return event.newSize;
++    }
++    /* ========================================= FORGE END ======================================*/
+ }

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandEnchant.java
++++ ../src-work/minecraft/net/minecraft/command/CommandEnchant.java
+@@ -85,7 +85,7 @@
+                                 {
+                                     Enchantment enchantment1 = Enchantment.func_185262_c(k);
+ 
+-                                    if (!enchantment.canApplyTogether(enchantment1))
++                                    if (!enchantment.canApplyTogether(enchantment1) || !enchantment1.canApplyTogether(enchantment)) //Forge BugFix: Let Both enchantments veto being together
+                                     {
+                                         throw new CommandException("commands.enchant.cantCombine", new Object[] {enchantment.getTranslatedName(i), enchantment1.getTranslatedName(nbttaglist.getCompoundTagAt(j).getShort("lvl"))});
+                                     }

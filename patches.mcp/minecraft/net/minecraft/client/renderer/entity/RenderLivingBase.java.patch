@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderLivingBase.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderLivingBase.java
+@@ -32,6 +32,9 @@
+     protected List<LayerRenderer<T>> layerRenderers = Lists.<LayerRenderer<T>>newArrayList();
+     protected boolean field_188323_j = false;
+ 
++    public static float NAME_TAG_RANGE = 64.0f;
++    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
++
+     public RenderLivingBase(RenderManager renderManagerIn, ModelBase modelBaseIn, float shadowSizeIn)
+     {
+         super(renderManagerIn);
+@@ -77,10 +80,12 @@
+ 
+     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
+     {
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T>(entity, this, x, y, z))) return;
+         GlStateManager.pushMatrix();
+         GlStateManager.disableCull();
+         this.mainModel.swingProgress = this.getSwingProgress(entity, partialTicks);
+-        this.mainModel.isRiding = entity.func_184218_aH();
++        boolean shouldSit = entity.func_184218_aH() && (entity.func_184187_bx() != null && entity.func_184187_bx().shouldRiderSit());
++        this.mainModel.isRiding = shouldSit;
+         this.mainModel.isChild = entity.isChild();
+ 
+         try
+@@ -89,7 +94,7 @@
+             float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+             float f2 = f1 - f;
+ 
+-            if (entity.func_184218_aH() && entity.func_184187_bx() instanceof EntityLivingBase)
++            if (shouldSit && entity.func_184187_bx() instanceof EntityLivingBase)
+             {
+                 EntityLivingBase entitylivingbase = (EntityLivingBase)entity.func_184187_bx();
+                 f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
+@@ -197,6 +202,7 @@
+         GlStateManager.enableCull();
+         GlStateManager.popMatrix();
+         super.doRender(entity, x, y, z, entityYaw, partialTicks);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T>(entity, this, x, y, z));
+     }
+ 
+     public float func_188322_c(T p_188322_1_, float p_188322_2_)
+@@ -452,10 +458,11 @@
+ 
+     public void renderName(T entity, double x, double y, double z)
+     {
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Pre<T>(entity, this, x, y, z))) return;
+         if (this.canRenderName(entity))
+         {
+             double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
+-            float f = entity.isSneaking() ? 32.0F : 64.0F;
++            float f = entity.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
+ 
+             if (d0 < (double)(f * f))
+             {
+@@ -464,6 +471,7 @@
+                 this.func_188296_a(entity, x, y, z, s, d0);
+             }
+         }
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Specials.Post<T>(entity, this, x, y, z));
+     }
+ 
+     protected boolean canRenderName(T entity)

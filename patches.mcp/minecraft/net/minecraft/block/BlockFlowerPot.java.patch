@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
+@@ -148,13 +148,6 @@
+ 
+     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+     {
+-        TileEntityFlowerPot tileentityflowerpot = this.getTileEntity(worldIn, pos);
+-
+-        if (tileentityflowerpot != null && tileentityflowerpot.getFlowerPotItem() != null)
+-        {
+-            spawnAsEntity(worldIn, pos, new ItemStack(tileentityflowerpot.getFlowerPotItem(), 1, tileentityflowerpot.getFlowerPotData()));
+-        }
+-
+         super.breakBlock(worldIn, pos, state);
+     }
+ 
+@@ -374,6 +367,31 @@
+         return BlockRenderLayer.CUTOUT;
+     }
+ 
++
++    /*============================FORGE START=====================================*/
++    @Override
++    public java.util.List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
++        TileEntityFlowerPot te = world.getTileEntity(pos) instanceof TileEntityFlowerPot ? (TileEntityFlowerPot)world.getTileEntity(pos) : null;
++        if (te != null && te.getFlowerPotItem() != null)
++            ret.add(new ItemStack(te.getFlowerPotItem(), 1, te.getFlowerPotData()));
++        return ret;
++    }
++    @Override
++    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
++    {
++        if (willHarvest) return true; //If it will harvest, delay deletion of the block until after getDrops
++        return super.removedByPlayer(world, pos, player, willHarvest);
++    }
++    @Override
++    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack tool)
++    {
++        super.harvestBlock(world, player, pos, state, te, tool);
++        world.setBlockToAir(pos);
++    }
++    /*===========================FORGE END==========================================*/
++
+     public static enum EnumFlowerType implements IStringSerializable
+     {
+         EMPTY("empty"),

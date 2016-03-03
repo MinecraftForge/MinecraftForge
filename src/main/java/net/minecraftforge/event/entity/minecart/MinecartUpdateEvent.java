@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.minecart;
 
 import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * MinecartUpdateEvent is fired when a minecart is updated.<br>

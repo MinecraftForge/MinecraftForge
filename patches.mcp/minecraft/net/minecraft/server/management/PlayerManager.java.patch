@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerManager.java
+@@ -338,6 +338,7 @@
+             int i1 = this.playerViewRadius;
+             int j1 = i - k;
+             int k1 = j - l;
++            List<ChunkCoordIntPair> chunksToLoad = Lists.newArrayList();
+ 
+             if (j1 != 0 || k1 != 0)
+             {

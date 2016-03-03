@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -29,7 +29,7 @@
+     public BlockRendererDispatcher(BlockModelShapes p_i46577_1_, BlockColors p_i46577_2_)
+     {
+         this.blockModelShapes = p_i46577_1_;
+-        this.blockModelRenderer = new BlockModelRenderer(p_i46577_2_);
++        this.blockModelRenderer = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer(p_i46577_2_);
+         this.fluidRenderer = new BlockFluidRenderer(p_i46577_2_);
+     }
+ 
+@@ -44,7 +44,7 @@
+         {
+             state = state.func_185899_b(blockAccess, pos);
+             IBakedModel ibakedmodel = this.blockModelShapes.getModelForState(state);
+-            IBakedModel ibakedmodel1 = (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
++            IBakedModel ibakedmodel1 = net.minecraftforge.client.ForgeHooksClient.getDamageModel(ibakedmodel, texture, state, blockAccess, pos);
+             this.blockModelRenderer.renderModel(blockAccess, ibakedmodel1, state, pos, Tessellator.getInstance().getWorldRenderer(), true);
+         }
+     }
+@@ -76,7 +76,9 @@
+                 switch (enumblockrendertype)
+                 {
+                     case MODEL:
+-                        return this.blockModelRenderer.renderModel(blockAccess, this.func_184389_a(state), state, pos, worldRendererIn, true);
++                        IBakedModel model = this.func_184389_a(state);
++                        state = state.getBlock().getExtendedState(state, blockAccess, pos);
++                        return this.blockModelRenderer.renderModel(blockAccess, model, state, pos, worldRendererIn, true);
+                     case ENTITYBLOCK_ANIMATED:
+                         return false;
+                     case LIQUID:

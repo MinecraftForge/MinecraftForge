@@ -1,0 +1,207 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
+@@ -363,7 +363,7 @@
+             if (!this.worldObj.isRemote && (this.isPlayer() || this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot")))
+             {
+                 int i = this.getExperiencePoints(this.attackingPlayer);
+-
++                i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.attackingPlayer, i);
+                 while (i > 0)
+                 {
+                     int j = EntityXPOrb.getXPSplit(i);
+@@ -424,6 +424,7 @@
+     {
+         this.entityLivingToAttack = livingBase;
+         this.revengeTimer = this.ticksExisted;
++        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, livingBase);
+     }
+ 
+     public EntityLivingBase getLastAttacker()
+@@ -775,6 +776,8 @@
+ 
+     public void heal(float healAmount)
+     {
++        healAmount = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, healAmount);
++        if (healAmount <= 0) return;
+         float f = this.getHealth();
+ 
+         if (f > 0.0F)
+@@ -795,6 +798,7 @@
+ 
+     public boolean attackEntityFrom(DamageSource source, float amount)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, source, amount)) return false;
+         if (this.isEntityInvulnerable(source))
+         {
+             return false;
+@@ -883,9 +887,9 @@
+                         this.recentlyHit = 100;
+                         this.attackingPlayer = (EntityPlayer)entity;
+                     }
+-                    else if (entity instanceof EntityWolf)
++                    else if (entity instanceof net.minecraft.entity.passive.EntityTameable)
+                     {
+-                        EntityWolf entitywolf = (EntityWolf)entity;
++                        net.minecraft.entity.passive.EntityTameable entitywolf = (net.minecraft.entity.passive.EntityTameable)entity;
+ 
+                         if (entitywolf.isTamed())
+                         {
+@@ -982,6 +986,16 @@
+                     return true;
+                 }
+             }
++
++            captureDrops = false;
++
++            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, cause, capturedDrops, i, recentlyHit > 0))
++            {
++                for (EntityItem item : capturedDrops)
++                {
++                    worldObj.spawnEntityInWorld(item);
++                }
++            }
+         }
+ 
+         return false;
+@@ -1139,6 +1153,9 @@
+ 
+     public void fall(float distance, float damageMultiplier)
+     {
++        float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, distance, damageMultiplier);
++        if (ret == null) return;
++        distance = ret[0]; damageMultiplier = ret[1];
+         super.fall(distance, damageMultiplier);
+         PotionEffect potioneffect = this.getActivePotionEffect(MobEffects.jump);
+         float f = potioneffect == null ? 0.0F : (float)(potioneffect.getAmplifier() + 1);
+@@ -1231,6 +1248,8 @@
+     {
+         if (!this.isEntityInvulnerable(damageSrc))
+         {
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
++            if (damageAmount <= 0) return;
+             damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
+             damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
+             float f = damageAmount;
+@@ -1279,6 +1298,11 @@
+ 
+     public void func_184609_a(EnumHand p_184609_1_)
+     {
++        ItemStack stack = this.getHeldItem();
++        if (stack != null && stack.getItem() != null)
++        {
++            if (stack.getItem().onEntitySwing(this, stack)) return;
++        }
+         if (!this.isSwingInProgress || this.swingProgressInt >= this.getArmSwingAnimationEnd() / 2 || this.swingProgressInt < 0)
+         {
+             this.swingProgressInt = -1;
+@@ -1586,6 +1610,7 @@
+         }
+ 
+         this.isAirBorne = true;
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
+ 
+     protected void updateAITick()
+@@ -1845,6 +1870,7 @@
+ 
+     public void onUpdate()
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
+         super.onUpdate();
+         this.func_184608_ct();
+ 
+@@ -2351,6 +2377,41 @@
+         this.potionsNeedUpdate = true;
+     }
+ 
++    /***
++     * Removes all potion effects that have curativeItem as a curative item for its effect
++     * @param curativeItem The itemstack we are using to cure potion effects
++     */
++    public void curePotionEffects(ItemStack curativeItem)
++    {
++        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
++        if (worldObj.isRemote) return;
++
++        while (potionKey.hasNext())
++        {
++            Integer key = potionKey.next();
++            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++
++            if (effect.isCurativeItem(curativeItem))
++            {
++                potionKey.remove();
++                onFinishedPotionEffect(effect);
++                this.potionsNeedUpdate = true;
++            }
++        }
++    }
++
++    /**
++     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
++     * currently only used in vanilla code by pigs.
++     *
++     * @param player The player who is riding the entity.
++     * @return If the player should orient the same direction as this entity.
++     */
++    public boolean shouldRiderFaceForward(EntityPlayer player)
++    {
++        return this instanceof net.minecraft.entity.passive.EntityPig;
++    }
++
+     public abstract EnumHandSide func_184591_cq();
+ 
+     public boolean func_184587_cr()
+@@ -2371,6 +2432,14 @@
+ 
+             if (itemstack == this.field_184627_bm)
+             {
++                field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
++                if (field_184628_bn <= 0)
++                {
++                    this.onItemUseFinish();
++                }
++                else
++                { // Forge Keep unindented to lower patch
++                field_184627_bm.getItem().onUsingTick(field_184627_bm, this, field_184628_bn); //Forge Added
+                 if (this.func_184605_cv() <= 25 && this.func_184605_cv() % 4 == 0)
+                 {
+                     this.func_184584_a(this.field_184627_bm, 5);
+@@ -2380,6 +2449,7 @@
+                 {
+                     this.onItemUseFinish();
+                 }
++                }
+             }
+             else
+             {
+@@ -2394,8 +2464,10 @@
+ 
+         if (itemstack != null && !this.func_184587_cr())
+         {
++            int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.getMaxItemUseDuration());
++            if (duration <= 0) return;
+             this.field_184627_bm = itemstack;
+-            this.field_184628_bn = itemstack.getMaxItemUseDuration();
++            this.field_184628_bn = duration;
+ 
+             if (!this.worldObj.isRemote)
+             {
+@@ -2478,6 +2550,8 @@
+             this.func_184584_a(this.field_184627_bm, 16);
+             ItemStack itemstack = this.field_184627_bm.onItemUseFinish(this.worldObj, this);
+ 
++            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, field_184627_bm, func_184605_cv(), itemstack);
++
+             if (itemstack != null && itemstack.stackSize == 0)
+             {
+                 itemstack = null;
+@@ -2508,6 +2582,8 @@
+         if (this.field_184627_bm != null)
+         {
+             this.field_184627_bm.onPlayerStoppedUsing(this.worldObj, this, this.func_184605_cv());
++            if (!net.minecraftforge.event.ForgeEventFactory.onUseItemStop(this, field_184627_bm, this.func_184605_cv()))
++                this.field_184627_bm.onPlayerStoppedUsing(this.worldObj, this, this.func_184605_cv());
+         }
+ 
+         this.func_184602_cy();

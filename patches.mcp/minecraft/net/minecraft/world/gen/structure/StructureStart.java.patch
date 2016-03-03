@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
+@@ -63,6 +63,10 @@
+ 
+     public NBTTagCompound writeStructureComponentsToNBT(int chunkX, int chunkZ)
+     {
++        if (MapGenStructureIO.getStructureStartName(this) == null) // This is just a more friendly error instead of the 'Null String' below
++        {
++            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
++        }
+         NBTTagCompound nbttagcompound = new NBTTagCompound();
+         nbttagcompound.setString("id", MapGenStructureIO.getStructureStartName(this));
+         nbttagcompound.setInteger("ChunkX", chunkX);
+@@ -98,7 +102,8 @@
+ 
+         for (int i = 0; i < nbttaglist.tagCount(); ++i)
+         {
+-            this.components.add(MapGenStructureIO.getStructureComponent(nbttaglist.getCompoundTagAt(i), worldIn));
++            StructureComponent tmp = MapGenStructureIO.getStructureComponent(nbttaglist.getCompoundTagAt(i), worldIn);
++            if (tmp != null) this.components.add(tmp); //Forge: Prevent NPEs further down the line when a componenet can't be loaded.
+         }
+ 
+         this.readFromNBT(tagCompound);
