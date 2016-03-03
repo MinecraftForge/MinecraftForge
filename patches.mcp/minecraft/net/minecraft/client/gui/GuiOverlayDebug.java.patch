@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiOverlayDebug.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiOverlayDebug.java
+@@ -145,7 +145,7 @@
+                 }
+                 else if (!chunk.isEmpty())
+                 {
+-                    list.add("Biome: " + chunk.getBiome(blockpos, this.mc.theWorld.getWorldChunkManager()).func_185359_l());
++                    list.add("Biome: " + chunk.getBiome(blockpos, this.mc.theWorld.getWorldChunkManager()).getBiomeName());
+                     list.add("Light: " + chunk.getLightSubtracted(blockpos, 0) + " (" + chunk.getLightFor(EnumSkyBlock.SKY, blockpos) + " sky, " + chunk.getLightFor(EnumSkyBlock.BLOCK, blockpos) + " block)");
+                     DifficultyInstance difficultyinstance = this.mc.theWorld.getDifficultyForLocation(blockpos);
+ 
 @@ -190,6 +190,9 @@
          long l = j - k;
          List<String> list = Lists.newArrayList(new String[] {String.format("Java: %s %dbit", new Object[]{System.getProperty("java.version"), Integer.valueOf(this.mc.isJava64bit() ? 64 : 32)}), String.format("Mem: % 2d%% %03d/%03dMB", new Object[]{Long.valueOf(l * 100L / i), Long.valueOf(bytesToMb(l)), Long.valueOf(bytesToMb(i))}), String.format("Allocated: % 2d%% %03dMB", new Object[]{Long.valueOf(j * 100L / i), Long.valueOf(bytesToMb(j))}), "", String.format("CPU: %s", new Object[]{OpenGlHelper.getCpu()}), "", String.format("Display: %dx%d (%s)", new Object[]{Integer.valueOf(Display.getWidth()), Integer.valueOf(Display.getHeight()), GlStateManager.func_187416_u(7936)}), GlStateManager.func_187416_u(7937), GlStateManager.func_187416_u(7938)});

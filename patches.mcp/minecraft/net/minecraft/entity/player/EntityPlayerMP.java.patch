@@ -27,6 +27,24 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
+@@ -390,7 +391,7 @@
+     protected void updateBiomesExplored()
+     {
+         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(new BlockPos(MathHelper.floor_double(this.posX), 0, MathHelper.floor_double(this.posZ)));
+-        String s = biomegenbase.func_185359_l();
++        String s = biomegenbase.getBiomeName();
+         JsonSerializableSet jsonserializableset = (JsonSerializableSet)this.getStatFile().func_150870_b(AchievementList.field_187979_L);
+ 
+         if (jsonserializableset == null)
+@@ -412,7 +413,7 @@
+                 {
+                     BiomeGenBase biomegenbase1 = (BiomeGenBase)iterator.next();
+ 
+-                    if (biomegenbase1.func_185359_l().equals(s1))
++                    if (biomegenbase1.getBiomeName().equals(s1))
+                     {
+                         iterator.remove();
+                     }
 @@ -433,6 +434,7 @@
  
      public void onDeath(DamageSource cause)

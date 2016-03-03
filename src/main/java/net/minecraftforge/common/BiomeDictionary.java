@@ -289,7 +289,7 @@ public class BiomeDictionary
     {
         if (biome.theBiomeDecorator.treesPerChunk >= 3)
         {
-            if (biome.isHighHumidity() && biome.func_185353_n() >= 0.9F)
+            if (biome.isHighHumidity() && biome.getTemperature() >= 0.9F)
             {
                 BiomeDictionary.registerBiomeType(biome, JUNGLE);
             }
@@ -297,15 +297,15 @@ public class BiomeDictionary
             {
                 BiomeDictionary.registerBiomeType(biome, FOREST);
 
-                if (biome.func_185353_n() <= 0.2f)
+                if (biome.getTemperature() <= 0.2f)
                 {
                     BiomeDictionary.registerBiomeType(biome, CONIFEROUS);
                 }
             }
         }
-        else if(biome.func_185360_m() <= 0.3F && biome.func_185360_m() >= 0.0F)
+        else if(biome.getMaxHeight() <= 0.3F && biome.getMaxHeight() >= 0.0F)
         {
-            if(!biome.isHighHumidity() || biome.func_185355_j() >= 0.0F)
+            if(!biome.isHighHumidity() || biome.getMinHeight() >= 0.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, PLAINS);
             }
@@ -321,12 +321,12 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, DRY);
         }
 
-        if (biome.func_185353_n() > 0.85f)
+        if (biome.getTemperature() > 0.85f)
         {
             BiomeDictionary.registerBiomeType(biome, HOT);
         }
 
-        if (biome.func_185353_n() < 0.15f)
+        if (biome.getTemperature() < 0.15f)
         {
             BiomeDictionary.registerBiomeType(biome, COLD);
         }
@@ -340,14 +340,14 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, DENSE);
         }
 
-        if (biome.isHighHumidity() && biome.func_185355_j() < 0.0F && (biome.func_185360_m() <= 0.3F && biome.func_185360_m() >= 0.0F))
+        if (biome.isHighHumidity() && biome.getMinHeight() < 0.0F && (biome.getMaxHeight() <= 0.3F && biome.getMaxHeight() >= 0.0F))
         {
             BiomeDictionary.registerBiomeType(biome, SWAMP);
         }
 
-        if (biome.func_185355_j() <= -0.5F)
+        if (biome.getMinHeight() <= -0.5F)
         {
-            if (biome.func_185360_m() == 0.0F)
+            if (biome.getMaxHeight() == 0.0F)
             {
                 BiomeDictionary.registerBiomeType(biome, RIVER);
             }
@@ -357,12 +357,12 @@ public class BiomeDictionary
             }
         }
 
-        if (biome.func_185360_m() >= 0.4F && biome.func_185360_m() < 1.5F)
+        if (biome.getMaxHeight() >= 0.4F && biome.getMaxHeight() < 1.5F)
         {
             BiomeDictionary.registerBiomeType(biome, HILLS);
         }
 
-        if (biome.func_185360_m() >= 1.5F)
+        if (biome.getMaxHeight() >= 1.5F)
         {
             BiomeDictionary.registerBiomeType(biome, MOUNTAIN);
         }
@@ -372,7 +372,7 @@ public class BiomeDictionary
             BiomeDictionary.registerBiomeType(biome, SNOWY);
         }
 
-        if (biome.topBlock != Blocks.sand && biome.func_185353_n() >= 1.0f && biome.getFloatRainfall() < 0.2f)
+        if (biome.topBlock != Blocks.sand && biome.getTemperature() >= 1.0f && biome.getFloatRainfall() < 0.2f)
         {
             BiomeDictionary.registerBiomeType(biome, SAVANNA);
         }
