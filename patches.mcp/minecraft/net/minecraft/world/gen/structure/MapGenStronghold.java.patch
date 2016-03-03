@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
+@@ -28,7 +28,7 @@
+ 
+         for (BiomeGenBase biomegenbase : BiomeGenBase.field_185377_q)
+         {
+-            if (biomegenbase != null && biomegenbase.func_185355_j() > 0.0F)
++            if (biomegenbase != null && biomegenbase.getMinHeight() > 0.0F)
+             {
+                 this.field_151546_e.add(biomegenbase);
+             }

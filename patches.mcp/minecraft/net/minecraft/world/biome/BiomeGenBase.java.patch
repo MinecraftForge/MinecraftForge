@@ -14,6 +14,20 @@
      }
  
      public boolean func_185363_b()
+@@ -205,11 +206,11 @@
+         if (pos.getY() > 64)
+         {
+             float f = (float)(temperatureNoise.func_151601_a((double)((float)pos.getX() / 8.0F), (double)((float)pos.getZ() / 8.0F)) * 4.0D);
+-            return this.func_185353_n() - (f + (float)pos.getY() - 64.0F) * 0.05F / 30.0F;
++            return this.getTemperature() - (f + (float)pos.getY() - 64.0F) * 0.05F / 30.0F;
+         }
+         else
+         {
+-            return this.func_185353_n();
++            return this.getTemperature();
+         }
+     }
+ 
 @@ -228,7 +229,7 @@
      {
          double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(pos), 0.0F, 1.0F);
@@ -32,6 +46,45 @@
      }
  
      public Class <? extends BiomeGenBase > getBiomeClass()
+@@ -331,7 +332,7 @@
+ 
+     public BiomeGenBase.TempCategory getTempCategory()
+     {
+-        return (double)this.func_185353_n() < 0.2D ? BiomeGenBase.TempCategory.COLD : ((double)this.func_185353_n() < 1.0D ? BiomeGenBase.TempCategory.MEDIUM : BiomeGenBase.TempCategory.WARM);
++        return (double)this.getTemperature() < 0.2D ? BiomeGenBase.TempCategory.COLD : ((double)this.getTemperature() < 1.0D ? BiomeGenBase.TempCategory.MEDIUM : BiomeGenBase.TempCategory.WARM);
+     }
+ 
+     public static BiomeGenBase getBiome(int id)
+@@ -350,7 +351,7 @@
+         return false;
+     }
+ 
+-    public final float func_185355_j()
++    public final float getMinHeight()
+     {
+         return this.minHeight;
+     }
+@@ -360,17 +361,17 @@
+         return this.rainfall;
+     }
+ 
+-    public final String func_185359_l()
++    public final String getBiomeName()
+     {
+         return this.biomeName;
+     }
+ 
+-    public final float func_185360_m()
++    public final float getMaxHeight()
+     {
+         return this.maxHeight;
+     }
+ 
+-    public final float func_185353_n()
++    public final float getTemperature()
+     {
+         return this.temperature;
+     }
 @@ -386,6 +387,83 @@
          return this.enableSnow;
      }

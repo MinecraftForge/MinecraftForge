@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiCustomizeWorldScreen.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiCustomizeWorldScreen.java
+@@ -305,12 +305,12 @@
+                 else if ((int)p_175330_2_ >= BiomeGenBase.func_185362_a(Biomes.hell))
+                 {
+                     BiomeGenBase biomegenbase1 = BiomeGenBase.func_185357_a((int)p_175330_2_ + 2);
+-                    return biomegenbase1 != null ? biomegenbase1.func_185359_l() : "?";
++                    return biomegenbase1 != null ? biomegenbase1.getBiomeName() : "?";
+                 }
+                 else
+                 {
+                     BiomeGenBase biomegenbase = BiomeGenBase.func_185357_a((int)p_175330_2_);
+-                    return biomegenbase != null ? biomegenbase.func_185359_l() : "?";
++                    return biomegenbase != null ? biomegenbase.getBiomeName() : "?";
+                 }
+         }
+     }

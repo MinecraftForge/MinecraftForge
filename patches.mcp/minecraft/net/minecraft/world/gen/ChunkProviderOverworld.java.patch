@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderOverworld.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderOverworld.java
+@@ -260,8 +260,8 @@
+                     for (int k1 = -i1; k1 <= i1; ++k1)
+                     {
+                         BiomeGenBase biomegenbase1 = this.field_185981_C[k + j1 + 2 + (l + k1 + 2) * 10];
+-                        float f5 = this.field_186000_s.biomeDepthOffSet + biomegenbase1.func_185355_j() * this.field_186000_s.biomeDepthWeight;
+-                        float f6 = this.field_186000_s.biomeScaleOffset + biomegenbase1.func_185360_m() * this.field_186000_s.biomeScaleWeight;
++                        float f5 = this.field_186000_s.biomeDepthOffSet + biomegenbase1.getMinHeight() * this.field_186000_s.biomeDepthWeight;
++                        float f6 = this.field_186000_s.biomeScaleOffset + biomegenbase1.getMaxHeight() * this.field_186000_s.biomeScaleWeight;
+ 
+                         if (this.field_185997_p == WorldType.AMPLIFIED && f5 > 0.0F)
+                         {
+@@ -271,7 +271,7 @@
+ 
+                         float f7 = this.field_185999_r[j1 + 2 + (k1 + 2) * 5] / (f5 + 2.0F);
+ 
+-                        if (biomegenbase1.func_185355_j() > biomegenbase.func_185355_j())
++                        if (biomegenbase1.getMinHeight() > biomegenbase.getMinHeight())
+                         {
+                             f7 /= 2.0F;
+                         }
