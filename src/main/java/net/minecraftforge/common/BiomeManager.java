@@ -7,9 +7,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.init.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.WorldChunkManager;
+import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.util.EnumHelper;
 
@@ -24,9 +25,9 @@ public class BiomeManager
 
     static
     {
-        oceanBiomes.add(BiomeGenBase.ocean);
-        oceanBiomes.add(BiomeGenBase.deepOcean);
-        oceanBiomes.add(BiomeGenBase.frozenOcean);
+        oceanBiomes.add(Biomes.ocean);
+        oceanBiomes.add(Biomes.deepOcean);
+        oceanBiomes.add(Biomes.frozenOcean);
     }
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
@@ -35,26 +36,26 @@ public class BiomeManager
         TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
         List<BiomeEntry> list = new ArrayList<BiomeEntry>();
 
-        list.add(new BiomeEntry(BiomeGenBase.forest, 10));
-        list.add(new BiomeEntry(BiomeGenBase.roofedForest, 10));
-        list.add(new BiomeEntry(BiomeGenBase.extremeHills, 10));
-        list.add(new BiomeEntry(BiomeGenBase.plains, 10));
-        list.add(new BiomeEntry(BiomeGenBase.birchForest, 10));
-        list.add(new BiomeEntry(BiomeGenBase.swampland, 10));
+        list.add(new BiomeEntry(Biomes.forest, 10));
+        list.add(new BiomeEntry(Biomes.roofedForest, 10));
+        list.add(new BiomeEntry(Biomes.extremeHills, 10));
+        list.add(new BiomeEntry(Biomes.plains, 10));
+        list.add(new BiomeEntry(Biomes.birchForest, 10));
+        list.add(new BiomeEntry(Biomes.swampland, 10));
 
         currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
-        list.add(new BiomeEntry(BiomeGenBase.forest, 10));
-        list.add(new BiomeEntry(BiomeGenBase.extremeHills, 10));
-        list.add(new BiomeEntry(BiomeGenBase.taiga, 10));
-        list.add(new BiomeEntry(BiomeGenBase.plains, 10));
+        list.add(new BiomeEntry(Biomes.forest, 10));
+        list.add(new BiomeEntry(Biomes.extremeHills, 10));
+        list.add(new BiomeEntry(Biomes.taiga, 10));
+        list.add(new BiomeEntry(Biomes.plains, 10));
 
         currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
-        list.add(new BiomeEntry(BiomeGenBase.icePlains, 30));
-        list.add(new BiomeEntry(BiomeGenBase.coldTaiga, 10));
+        list.add(new BiomeEntry(Biomes.icePlains, 30));
+        list.add(new BiomeEntry(Biomes.coldTaiga, 10));
 
         currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
@@ -102,17 +103,17 @@ public class BiomeManager
 
     public static void addSpawnBiome(BiomeGenBase biome)
     {
-        if (!WorldChunkManager.allowedBiomes.contains(biome))
+        if (!BiomeProvider.allowedBiomes.contains(biome))
         {
-            WorldChunkManager.allowedBiomes.add(biome);
+            BiomeProvider.allowedBiomes.add(biome);
         }
     }
 
     public static void removeSpawnBiome(BiomeGenBase biome)
     {
-        if (WorldChunkManager.allowedBiomes.contains(biome))
+        if (BiomeProvider.allowedBiomes.contains(biome))
         {
-            WorldChunkManager.allowedBiomes.remove(biome);
+            BiomeProvider.allowedBiomes.remove(biome);
         }
     }
 
