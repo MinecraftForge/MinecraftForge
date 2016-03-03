@@ -1,24 +1,26 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/world/WorldEntitySpawner.java
++++ ../src-work/minecraft/net/minecraft/world/WorldEntitySpawner.java
+@@ -77,15 +77,17 @@
              {
                  if ((!enumcreaturetype.getPeacefulCreature() || spawnPeacefulMobs) && (enumcreaturetype.getPeacefulCreature() || spawnHostileMobs) && (!enumcreaturetype.getAnimal() || p_77192_4_))
                  {
--                    int j4 = worldServerIn.countEntities(enumcreaturetype.getCreatureClass());
-+                    int j4 = worldServerIn.countEntities(enumcreaturetype, true);
-                     int k4 = enumcreaturetype.getMaxNumberOfCreature() * i / MOB_COUNT_DIV;
+-                    int k4 = worldServerIn.countEntities(enumcreaturetype.getCreatureClass());
++                    int k4 = worldServerIn.countEntities(enumcreaturetype, true);
+                     int l4 = enumcreaturetype.getMaxNumberOfCreature() * i / MOB_COUNT_DIV;
  
-                     if (j4 <= k4)
+                     if (k4 <= l4)
                      {
 +                        java.util.ArrayList<ChunkCoordIntPair> shuffled = com.google.common.collect.Lists.newArrayList(this.eligibleChunksForSpawning);
 +                        java.util.Collections.shuffle(shuffled);
-                         label374:
--
+                         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+                         label415:
+ 
 -                        for (ChunkCoordIntPair chunkcoordintpair1 : this.eligibleChunksForSpawning)
 +                        for (ChunkCoordIntPair chunkcoordintpair1 : shuffled)
                          {
                              BlockPos blockpos = getRandomChunkPosition(worldServerIn, chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos);
                              int k1 = blockpos.getX();
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -144,8 +146,10 @@
  
                                                  entityliving.setLocationAndAngles((double)f, (double)i3, (double)f1, worldServerIn.rand.nextFloat() * 360.0F, 0.0F);
  
@@ -30,24 +32,23 @@
                                                      ientitylivingdata = entityliving.onInitialSpawn(worldServerIn.getDifficultyForLocation(new BlockPos(entityliving)), ientitylivingdata);
  
                                                      if (entityliving.isNotColliding())
-++++ END PATCH
-++++ REJECTED PATCH 3
-                                                         worldServerIn.spawnEntityInWorld(entityliving);
+@@ -158,7 +162,7 @@
+                                                         entityliving.setDead();
                                                      }
  
 -                                                    if (j2 >= entityliving.getMaxSpawnedInChunk())
 +                                                    if (i2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                      {
-                                                         continue label374;
+                                                         continue label415;
                                                      }
-++++ END PATCH
-++++ REJECTED PATCH 4
+@@ -211,8 +215,9 @@
+             else
              {
                  BlockPos blockpos = pos.down();
++                IBlockState state = worldIn.getBlockState(blockpos);
  
--                if (!World.doesBlockHaveSolidTopSurface(worldIn, blockpos))
-+                if (!worldIn.getBlockState(blockpos).getBlock().canCreatureSpawn(worldIn, blockpos, spawnPlacementTypeIn))
+-                if (!worldIn.getBlockState(blockpos).func_185896_q())
++                if (!state.getBlock().canCreatureSpawn(state, worldIn, blockpos, spawnPlacementTypeIn))
                  {
                      return false;
                  }
-++++ END PATCH

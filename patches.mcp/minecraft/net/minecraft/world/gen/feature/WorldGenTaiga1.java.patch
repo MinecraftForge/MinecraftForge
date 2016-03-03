@@ -22,7 +22,31 @@
 +                if (isSoil && position.getY() < 256 - i - 1)
                  {
 -                    this.func_175921_a(worldIn, position.down());
-+                    state.getBlock().onPlantGrow(worldIn, down, position);
++                    state.getBlock().onPlantGrow(state, worldIn, down, position);
                      int k2 = 0;
  
                      for (int l2 = position.getY() + i; l2 >= position.getY() + j; --l2)
+@@ -92,8 +94,9 @@
+                                 if (Math.abs(k3) != k2 || Math.abs(j2) != k2 || k2 <= 0)
+                                 {
+                                     BlockPos blockpos = new BlockPos(j3, l2, i2);
++                                    state = worldIn.getBlockState(blockpos);
+ 
+-                                    if (!worldIn.getBlockState(blockpos).func_185913_b())
++                                    if (state.getBlock().canBeReplacedByLeaves(state, worldIn, blockpos))
+                                     {
+                                         this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181637_b);
+                                     }
+@@ -113,9 +116,10 @@
+ 
+                     for (int i3 = 0; i3 < i - 1; ++i3)
+                     {
+-                        Material material = worldIn.getBlockState(position.up(i3)).func_185904_a();
++                        BlockPos upN = position.up(i3);
++                        state = worldIn.getBlockState(upN);
+ 
+-                        if (material == Material.air || material == Material.leaves)
++                        if (state.getBlock().isAir(state, worldIn, upN) || state.getBlock().isLeaves(state, worldIn, upN))
+                         {
+                             this.setBlockAndNotifyAdequately(worldIn, position.up(i3), field_181636_a);
+                         }

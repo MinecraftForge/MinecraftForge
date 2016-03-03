@@ -1,14 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src-work/minecraft/net/minecraft/world/Explosion.java
-@@ -67,6 +67,7 @@
+@@ -40,6 +40,7 @@
+     private final float explosionSize;
+     private final List<BlockPos> affectedBlockPositions;
+     private final Map<EntityPlayer, Vec3d> playerKnockbackMap;
++    private final Vec3d position;
+ 
+     @SideOnly(Side.CLIENT)
+     public Explosion(World worldIn, Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_)
+@@ -67,6 +68,7 @@
          this.explosionZ = p_i45754_7_;
          this.isFlaming = p_i45754_10_;
          this.isSmoking = p_i45754_11_;
-+        this.position = new Vec3(explosionX, explosionY, explosionZ);
++        this.position = new Vec3d(explosionX, explosionY, explosionZ);
      }
  
      public void doExplosionA()
-@@ -101,7 +102,7 @@
+@@ -101,7 +103,7 @@
  
                              if (iblockstate.func_185904_a() != Material.air)
                              {
@@ -17,7 +25,15 @@
                                  f -= (f2 + 0.3F) * 0.3F;
                              }
  
-@@ -227,8 +228,7 @@
+@@ -128,6 +130,7 @@
+         int j2 = MathHelper.floor_double(this.explosionZ - (double)f3 - 1.0D);
+         int j1 = MathHelper.floor_double(this.explosionZ + (double)f3 + 1.0D);
+         List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, f3);
+         Vec3d vec3d = new Vec3d(this.explosionX, this.explosionY, this.explosionZ);
+ 
+         for (int k2 = 0; k2 < list.size(); ++k2)
+@@ -227,8 +230,7 @@
                          block.dropBlockAsItemWithChance(this.worldObj, blockpos, this.worldObj.getBlockState(blockpos), 1.0F / this.explosionSize, 0);
                      }
  
@@ -27,10 +43,10 @@
                  }
              }
          }
-@@ -264,4 +264,6 @@
+@@ -264,4 +266,6 @@
      {
          return this.affectedBlockPositions;
      }
 +
-+    public Vec3 getPosition(){ return this.position; }
++    public Vec3d getPosition(){ return this.position; }
  }

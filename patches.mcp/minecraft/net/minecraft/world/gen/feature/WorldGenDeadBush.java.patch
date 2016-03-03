@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDeadBush.java
+@@ -11,12 +11,12 @@
+ {
+     public boolean generate(World worldIn, Random rand, BlockPos position)
+     {
+-        IBlockState iblockstate;
+-
+-        while (((iblockstate = worldIn.getBlockState(position)).func_185904_a() == Material.air || iblockstate.func_185904_a() == Material.leaves) && position.getY() > 0)
++        do
+         {
++            IBlockState state = worldIn.getBlockState(position);
++            if (!state.getBlock().isAir(state, worldIn, position) && !state.getBlock().isLeaves(state, worldIn, position)) break;
+             position = position.down();
+-        }
++        } while (position.getY() > 0);
+ 
+         for (int i = 0; i < 4; ++i)
+         {

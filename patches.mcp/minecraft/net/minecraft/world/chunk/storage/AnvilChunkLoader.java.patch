@@ -65,7 +65,7 @@
                      logger.error("Chunk file at " + x + "," + z + " is in the wrong location; relocating. (Expected " + x + ", " + z + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
                      nbttagcompound.setInteger("xPos", x);
                      nbttagcompound.setInteger("zPos", z);
-+                    
++
 +                    // Have to move tile entities since we don't load them at this stage
 +                    NBTTagList _tileEntities = nbttagcompound.getTagList("TileEntities", 10);
 +
@@ -100,7 +100,44 @@
              this.addChunkToPending(chunkIn.getChunkCoordIntPair(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -347,6 +406,12 @@
+@@ -265,8 +324,17 @@
+ 
+                 if (entity.writeToNBTOptional(nbttagcompound2))
+                 {
++                    try
++                    {
+                     chunkIn.setHasEntities(true);
+                     nbttaglist1.appendTag(nbttagcompound2);
++                    }
++                    catch (Exception e)
++                    {
++                        net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                                "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                                entity.getClass().getName());
++                    }
+                 }
+             }
+         }
+@@ -276,9 +344,18 @@
+ 
+         for (TileEntity tileentity : chunkIn.getTileEntityMap().values())
+         {
++            try
++            {
+             NBTTagCompound nbttagcompound3 = new NBTTagCompound();
+             tileentity.writeToNBT(nbttagcompound3);
+             nbttaglist2.appendTag(nbttagcompound3);
++            }
++            catch (Exception e)
++            {
++                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                        "A TileEntity type %s has throw an exception trying to write state. It will not persist. Report this to the mod author",
++                        tileentity.getClass().getName());
++            }
+         }
+ 
+         p_75820_3_.setTag("TileEntities", nbttaglist2);
+@@ -347,6 +424,12 @@
              chunk.setBiomeArray(p_75823_2_.getByteArray("Biomes"));
          }
  
@@ -113,7 +150,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -399,8 +464,6 @@
+@@ -399,8 +482,6 @@
                  }
              }
          }

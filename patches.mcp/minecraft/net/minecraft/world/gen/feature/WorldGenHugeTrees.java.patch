@@ -31,7 +31,31 @@
              return true;
          }
          else
-@@ -145,4 +146,10 @@
+@@ -113,9 +114,9 @@
+                 if (j * j + k * k <= i || l * l + i1 * i1 <= i || j * j + i1 * i1 <= i || l * l + k * k <= i)
+                 {
+                     BlockPos blockpos = p_175925_2_.add(j, 0, k);
+-                    Material material = worldIn.getBlockState(blockpos).func_185904_a();
++                    IBlockState state = worldIn.getBlockState(blockpos);
+ 
+-                    if (material == Material.air || material == Material.leaves)
++                    if (state.getBlock().isAir(state, worldIn, blockpos) || state.getBlock().isLeaves(state, worldIn, blockpos))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, blockpos, this.leavesMetadata);
+                     }
+@@ -135,9 +136,9 @@
+                 if (j * j + k * k <= i)
+                 {
+                     BlockPos blockpos = p_175928_2_.add(j, 0, k);
+-                    Material material = worldIn.getBlockState(blockpos).func_185904_a();
++                    IBlockState state = worldIn.getBlockState(blockpos);
+ 
+-                    if (material == Material.air || material == Material.leaves)
++                    if (state.getBlock().isAir(state, worldIn, blockpos) || state.getBlock().isLeaves(state, worldIn, blockpos))
+                     {
+                         this.setBlockAndNotifyAdequately(worldIn, blockpos, this.leavesMetadata);
+                     }
+@@ -145,4 +146,11 @@
              }
          }
      }
@@ -39,6 +63,7 @@
 +    //Just a helper macro
 +    private void onPlantGrow(World world, BlockPos pos, BlockPos source)
 +    {
-+        world.getBlockState(pos).getBlock().onPlantGrow(world, pos, source);
++        IBlockState state = world.getBlockState(pos);
++        state.getBlock().onPlantGrow(state, world, pos, source);
 +    }
  }

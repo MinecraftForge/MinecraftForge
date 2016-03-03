@@ -7,7 +7,7 @@
 +    @Override
 +    public void addDefaultFlowers()
 +    {
-+        if (field_150632_aF != 1)
++        if (field_150632_aF != BiomeGenForest.Type.FLOWER)
 +        {
 +            super.addDefaultFlowers();
 +            return;

@@ -1,6 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -172,13 +172,13 @@
+@@ -52,26 +52,12 @@
+ 
+     protected void registerWorldChunkManager()
+     {
+-        WorldType worldtype = this.worldObj.getWorldInfo().getTerrainType();
+-
+-        if (worldtype == WorldType.FLAT)
+-        {
+-            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.createFlatGeneratorFromString(this.worldObj.getWorldInfo().getGeneratorOptions());
+-            this.worldChunkMgr = new BiomeProviderSingle(BiomeGenBase.getBiomeFromBiomeList(flatgeneratorinfo.getBiome(), Biomes.field_180279_ad));
+-        }
+-        else if (worldtype == WorldType.DEBUG_WORLD)
+-        {
+-            this.worldChunkMgr = new BiomeProviderSingle(Biomes.plains);
+-        }
+-        else
+-        {
+-            this.worldChunkMgr = new BiomeProvider(this.worldObj.getWorldInfo());
+-        }
++        this.worldChunkMgr = terrainType.getBiomeProvider(worldObj);
+     }
+ 
+     public IChunkGenerator func_186060_c()
+     {
+-        return (IChunkGenerator)(this.terrainType == WorldType.FLAT ? new ChunkProviderFlat(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled(), this.generatorSettings) : (this.terrainType == WorldType.DEBUG_WORLD ? new ChunkProviderDebug(this.worldObj) : (this.terrainType == WorldType.CUSTOMIZED ? new ChunkProviderOverworld(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled(), this.generatorSettings) : new ChunkProviderOverworld(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled(), this.generatorSettings))));
++        return terrainType.getChunkGenerator(worldObj, generatorSettings);
+     }
+ 
+     public boolean canCoordinateBeSpawn(int x, int z)
+@@ -156,7 +142,7 @@
+     @SideOnly(Side.CLIENT)
+     public float getCloudHeight()
+     {
+-        return 128.0F;
++        return this.terrainType.getCloudHeight();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -172,13 +158,13 @@
  
      public int getAverageGroundLevel()
      {
@@ -16,7 +54,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -212,6 +212,321 @@
+@@ -212,6 +198,322 @@
          return new WorldBorder();
      }
  
@@ -24,6 +62,7 @@
 +    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
++    private int dimensionId;
 +
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -212,13 +251,13 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
++    public Vec3d getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
 +    {
 +        return worldObj.getSkyColorBody(cameraEntity, partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawClouds(float partialTicks)
++    public Vec3d drawClouds(float partialTicks)
 +    {
 +        return worldObj.drawCloudsBody(partialTicks);
 +    }

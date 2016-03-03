@@ -1,6 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -135,6 +135,8 @@
+@@ -117,7 +117,7 @@
+ 
+         if (file1.exists())
+         {
+-            WorldInfo worldinfo = SaveFormatOld.func_186353_a(file1, this.field_186341_a);
++            WorldInfo worldinfo = SaveFormatOld.loadAndFix(file1, this.field_186341_a, this);
+ 
+             if (worldinfo != null)
+             {
+@@ -125,8 +125,9 @@
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
+         file1 = new File(this.worldDirectory, "level.dat_old");
+-        return file1.exists() ? SaveFormatOld.func_186353_a(file1, this.field_186341_a) : null;
++        return file1.exists() ? SaveFormatOld.loadAndFix(file1, this.field_186341_a, this) : null;
+     }
+ 
+     public void saveWorldInfoWithPlayer(WorldInfo worldInformation, NBTTagCompound tagCompound)
+@@ -135,6 +136,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.setTag("Data", nbttagcompound);
  
@@ -9,15 +29,14 @@
          try
          {
              File file1 = new File(this.worldDirectory, "level.dat_new");
-@@ -199,6 +201,8 @@
-     {
-         NBTTagCompound nbttagcompound = null;
+@@ -188,6 +191,7 @@
+             }
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, worldInformation, nbttagcompound1);
-+
-         try
+             file1.renameTo(file2);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(player, this.playersDirectory, player.getUniqueID().toString());
+         }
+         catch (Exception var5)
          {
-             File file1 = new File(this.playersDirectory, player.getUniqueID().toString() + ".dat");
 @@ -218,6 +222,7 @@
              player.readFromNBT(this.field_186341_a.func_188257_a(FixTypes.PLAYER, nbttagcompound));
          }

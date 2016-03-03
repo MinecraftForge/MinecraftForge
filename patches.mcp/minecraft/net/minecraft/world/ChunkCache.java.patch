@@ -18,7 +18,17 @@
                  return this.chunkArray[i][j].getLightFor(p_175629_1_, pos);
              }
          }
-@@ -160,6 +164,7 @@
+@@ -150,7 +154,8 @@
+ 
+     public boolean isAirBlock(BlockPos pos)
+     {
+-        return this.getBlockState(pos).func_185904_a() == Material.air;
++        IBlockState state = this.getBlockState(pos);
++        return state.getBlock().isAir(state, this, pos);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -160,6 +165,7 @@
          {
              int i = (pos.getX() >> 4) - this.chunkX;
              int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -26,7 +36,7 @@
              return this.chunkArray[i][j].getLightFor(p_175628_1_, pos);
          }
          else
-@@ -178,4 +183,16 @@
+@@ -178,4 +184,17 @@
      {
          return this.worldObj.getWorldType();
      }
@@ -40,6 +50,7 @@
 +        if (x < 0 || x >= chunkArray.length || z < 0 || z >= chunkArray[x].length) return _default;
 +        if (chunkArray[x][z] == null) return _default;
 +
-+        return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
++        IBlockState state = getBlockState(pos);
++        return state.getBlock().isSideSolid(state, this, pos, side);
 +    }
  }

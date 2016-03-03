@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBirchTree.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBirchTree.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
++import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
+@@ -56,9 +57,9 @@
+                 {
+                     for (int i1 = position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1)
+                     {
+-                        if (j >= 0 && j < 256)
++                        if (j >= 0 && j < worldIn.getHeight())
+                         {
+-                            if (!this.func_150523_a(worldIn.getBlockState(blockpos$mutableblockpos.set(l, j, i1)).getBlock()))
++                            if (!this.isReplaceable(worldIn, blockpos$mutableblockpos.set(l, j, i1)))
+                             {
+                                 flag = false;
+                             }
+@@ -77,11 +78,13 @@
+             }
+             else
+             {
+-                Block block = worldIn.getBlockState(position.down()).getBlock();
++                BlockPos down = position.down();
++                IBlockState state = worldIn.getBlockState(down);
++                boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, down, EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling);
+ 
+-                if ((block == Blocks.grass || block == Blocks.dirt || block == Blocks.farmland) && position.getY() < 256 - i - 1)
++                if (isSoil && position.getY() < worldIn.getHeight() - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, position.down());
++                    state.getBlock().onPlantGrow(state, worldIn, down, position);
+ 
+                     for (int i2 = position.getY() - 3 + i; i2 <= position.getY() + i; ++i2)
+                     {
+@@ -99,9 +102,9 @@
+                                 if (Math.abs(j1) != l2 || Math.abs(l1) != l2 || rand.nextInt(2) != 0 && k2 != 0)
+                                 {
+                                     BlockPos blockpos = new BlockPos(i3, i2, k1);
+-                                    Material material = worldIn.getBlockState(blockpos).func_185904_a();
++                                    IBlockState state2 = worldIn.getBlockState(blockpos);
+ 
+-                                    if (material == Material.air || material == Material.leaves)
++                                    if (state2.getBlock().isAir(state2, worldIn, blockpos) || state2.getBlock().isAir(state2, worldIn, blockpos))
+                                     {
+                                         this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181630_b);
+                                     }
+@@ -112,9 +115,10 @@
+ 
+                     for (int j2 = 0; j2 < i; ++j2)
+                     {
+-                        Material material1 = worldIn.getBlockState(position.up(j2)).func_185904_a();
++                        BlockPos upN = position.up(j2);
++                        IBlockState state2 = worldIn.getBlockState(upN);
+ 
+-                        if (material1 == Material.air || material1 == Material.leaves)
++                        if (state2.getBlock().isAir(state2, worldIn, upN) || state2.getBlock().isLeaves(state2, worldIn, upN))
+                         {
+                             this.setBlockAndNotifyAdequately(worldIn, position.up(j2), field_181629_a);
+                         }

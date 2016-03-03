@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
+@@ -56,9 +56,9 @@
+                     {
+                         if (j >= 0 && j < 256)
+                         {
+-                            Material material = worldIn.getBlockState(blockpos$mutableblockpos.set(l, j, i1)).func_185904_a();
++                            IBlockState state = worldIn.getBlockState(blockpos$mutableblockpos.set(l, j, i1));
+ 
+-                            if (material != Material.air && material != Material.leaves)
++                            if (!state.getBlock().isAir(state, worldIn, blockpos$mutableblockpos) && !state.getBlock().isLeaves(state, worldIn, blockpos$mutableblockpos))
+                             {
+                                 flag = false;
+                             }
+@@ -193,8 +193,9 @@
+                                 if (position.getY() >= position.getY() + i - 1 || blockhugemushroom$enumtype != BlockHugeMushroom.EnumType.ALL_INSIDE)
+                                 {
+                                     BlockPos blockpos = new BlockPos(l1, l2, i2);
++                                    IBlockState state = worldIn.getBlockState(blockpos);
+ 
+-                                    if (!worldIn.getBlockState(blockpos).func_185913_b())
++                                    if (state.getBlock().canBeReplacedByLeaves(state, worldIn, blockpos))
+                                     {
+                                         this.setBlockAndNotifyAdequately(worldIn, blockpos, block.getDefaultState().withProperty(BlockHugeMushroom.VARIANT, blockhugemushroom$enumtype));
+                                     }
+@@ -207,7 +208,7 @@
+                     {
+                         IBlockState iblockstate = worldIn.getBlockState(position.up(i3));
+ 
+-                        if (!iblockstate.func_185913_b())
++                        if (iblockstate.getBlock().canBeReplacedByLeaves(iblockstate, worldIn, position.up(i3)))
+                         {
+                             this.setBlockAndNotifyAdequately(worldIn, position.up(i3), block.getDefaultState().withProperty(BlockHugeMushroom.VARIANT, BlockHugeMushroom.EnumType.STEM));
+                         }

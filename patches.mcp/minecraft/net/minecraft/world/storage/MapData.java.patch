@@ -5,7 +5,7 @@
      public int xCenter;
      public int zCenter;
 -    public byte dimension;
-+    public int dimension;
++    public int dimension; //FML byte -> int
      public boolean field_186210_e;
      public byte scale;
      public byte[] colors = new byte[16384];

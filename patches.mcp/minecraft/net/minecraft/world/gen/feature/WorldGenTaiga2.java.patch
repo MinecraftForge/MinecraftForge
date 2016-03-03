@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
+@@ -30,7 +30,7 @@
+         int l = 2 + rand.nextInt(2);
+         boolean flag = true;
+ 
+-        if (position.getY() >= 1 && position.getY() + i + 1 <= 256)
++        if (position.getY() >= 1 && position.getY() + i + 1 <= worldIn.getHeight())
+         {
+             for (int i1 = position.getY(); i1 <= position.getY() + 1 + i && flag; ++i1)
+             {
+@@ -51,11 +51,11 @@
+                 {
+                     for (int l1 = position.getZ() - j1; l1 <= position.getZ() + j1 && flag; ++l1)
+                     {
+-                        if (i1 >= 0 && i1 < 256)
++                        if (i1 >= 0 && i1 < worldIn.getHeight())
+                         {
+-                            Material material = worldIn.getBlockState(blockpos$mutableblockpos.set(k1, i1, l1)).func_185904_a();
++                            IBlockState state = worldIn.getBlockState(blockpos$mutableblockpos.set(k1, i1, l1));
+ 
+-                            if (material != Material.air && material != Material.leaves)
++                            if (!state.getBlock().isAir(state, worldIn, blockpos$mutableblockpos.set(k1, i1, l1)) && !state.getBlock().isLeaves(state, worldIn, blockpos$mutableblockpos.set(k1, i1, l1)))
+                             {
+                                 flag = false;
+                             }
+@@ -74,11 +74,12 @@
+             }
+             else
+             {
+-                Block block = worldIn.getBlockState(position.down()).getBlock();
++                BlockPos down = position.down();
++                IBlockState state = worldIn.getBlockState(down);
+ 
+-                if ((block == Blocks.grass || block == Blocks.dirt || block == Blocks.farmland) && position.getY() < 256 - i - 1)
++                if (state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.sapling) && position.getY() < worldIn.getHeight() - i - 1)
+                 {
+-                    this.func_175921_a(worldIn, position.down());
++                    state.getBlock().onPlantGrow(state, worldIn, down, position);
+                     int i3 = rand.nextInt(2);
+                     int j3 = 1;
+                     int k3 = 0;
+@@ -98,8 +99,9 @@
+                                 if (Math.abs(j2) != i3 || Math.abs(l2) != i3 || i3 <= 0)
+                                 {
+                                     BlockPos blockpos = new BlockPos(i2, j4, k2);
++                                    state = worldIn.getBlockState(blockpos);
+ 
+-                                    if (!worldIn.getBlockState(blockpos).func_185913_b())
++                                    if (state.getBlock().canBeReplacedByLeaves(state, worldIn, blockpos))
+                                     {
+                                         this.setBlockAndNotifyAdequately(worldIn, blockpos, field_181646_b);
+                                     }
+@@ -128,9 +130,10 @@
+ 
+                     for (int k4 = 0; k4 < i - i4; ++k4)
+                     {
+-                        Material material1 = worldIn.getBlockState(position.up(k4)).func_185904_a();
++                        BlockPos upN = position.up(k4);
++                        state = worldIn.getBlockState(upN);
+ 
+-                        if (material1 == Material.air || material1 == Material.leaves)
++                        if (state.getBlock().isAir(state, worldIn, upN) || state.getBlock().isLeaves(state, worldIn, upN))
+                         {
+                             this.setBlockAndNotifyAdequately(worldIn, position.up(k4), field_181645_a);
+                         }

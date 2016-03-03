@@ -51,7 +51,7 @@
 +            {
 +                BlockPos blockpos = pos.add(rand.nextInt(16), rand.nextInt(28) + 4, rand.nextInt(16));
 +
-+                if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockHelper.forBlock(Blocks.stone)))
++                if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockMatcher.forBlock(Blocks.stone)))
 +                {
 +                    worldIn.setBlockState(blockpos, Blocks.emerald_ore.getDefaultState(), 2);
 +                }

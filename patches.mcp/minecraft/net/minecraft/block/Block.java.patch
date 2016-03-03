@@ -188,7 +188,7 @@
      }
  
      protected ItemStack createStackedBlock(IBlockState state)
-@@ -844,6 +864,1180 @@
+@@ -844,6 +864,1175 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  
@@ -543,23 +543,15 @@
 +     * Determines if a specified mob type can spawn on this block, returning false will
 +     * prevent any mob from spawning on the block.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param type The Mob Category Type
 +     * @return True to allow a mob of the specified category to spawn, false to prevent it.
 +     */
-+    public boolean canCreatureSpawn(IBlockAccess world, BlockPos pos, net.minecraft.entity.EntityLiving.SpawnPlacementType type)
++    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, net.minecraft.entity.EntityLiving.SpawnPlacementType type)
 +    {
-+        IBlockState state = world.getBlockState(pos);
-+        if (this instanceof BlockSlab)
-+        {
-+            return (isFullBlock() || state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP);
-+        }
-+        else if (this instanceof BlockStairs)
-+        {
-+            return state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
-+        }
-+        return isSideSolid(world, pos, EnumFacing.UP);
++        return isSideSolid(state, world, pos, EnumFacing.UP);
 +    }
 +
 +    /**
@@ -677,13 +669,14 @@
 +    /**
 +     * Used during tree growth to determine if newly generated leaves can replace this block.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @return true if this block can be replaced by growing leaves.
 +     */
-+    public boolean canBeReplacedByLeaves(IBlockAccess world, BlockPos pos)
++    public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return !isFullBlock();
++        return !state.func_185913_b();
 +    }
 +
 +    /**
@@ -700,15 +693,16 @@
 +    /**
 +     * Determines if the current block is replaceable by Ore veins during world generation.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param target The generic target block the gen is looking for, Standards define stone
 +     *      for overworld generation, and neatherack for the nether.
 +     * @return True to allow this block to be replaced by a ore
 +     */
-+    public boolean isReplaceableOreGen(World world, BlockPos pos, com.google.common.base.Predicate<IBlockState> target)
++    public boolean isReplaceableOreGen(IBlockState state, IBlockAccess world, BlockPos pos, com.google.common.base.Predicate<IBlockState> target)
 +    {
-+        return target.apply(world.getBlockState(pos));
++        return target.apply(state);
 +    }
 +
 +    /**
@@ -941,11 +935,12 @@
 +     *
 +     * Note: This happens DURING the generation, the generation may not be complete when this is called.
 +     *
++     * @param state The current state
 +     * @param world Current world
 +     * @param pos Block position in world
 +     * @param source Source plant's position in world
 +     */
-+    public void onPlantGrow(World world, BlockPos pos, BlockPos source)
++    public void onPlantGrow(IBlockState state, World world, BlockPos pos, BlockPos source)
 +    {
 +        if (this == net.minecraft.init.Blocks.grass || this == net.minecraft.init.Blocks.farmland)
 +        {

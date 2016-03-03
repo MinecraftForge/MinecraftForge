@@ -18,3 +18,22 @@
  
          if (i <= 0)
          {
+@@ -380,7 +380,8 @@
+ 
+         while (iterator.hasNext())
+         {
+-            if (!p_185282_1_.enchantmentobj.canApplyTogether(((EnchantmentData)iterator.next()).enchantmentobj))
++            Enchantment e2 = iterator.next().enchantmentobj;
++            if (!p_185282_1_.enchantmentobj.canApplyTogether(e2) || !e2.canApplyTogether(p_185282_1_.enchantmentobj)) //Forge BugFix: Let Both enchantments veto being together
+             {
+                 iterator.remove();
+             }
+@@ -395,7 +396,7 @@
+ 
+         for (Enchantment enchantment : Enchantment.field_185264_b)
+         {
+-            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.type.canEnchantItem(item) || flag))
++            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.canApplyAtEnchantingTable(p_185291_1_) || (flag || enchantment.isAllowedOnBooks())))
+             {
+                 for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i)
+                 {

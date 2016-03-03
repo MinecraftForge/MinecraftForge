@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHellLava.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHellLava.java
+@@ -24,7 +24,7 @@
+         {
+             return false;
+         }
+-        else if (worldIn.getBlockState(position).func_185904_a() != Material.air && worldIn.getBlockState(position).getBlock() != Blocks.netherrack)
++        else if (!worldIn.isAirBlock(position) && worldIn.getBlockState(position).getBlock() != Blocks.netherrack)
+         {
+             return false;
+         }

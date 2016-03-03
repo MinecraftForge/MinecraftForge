@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
-@@ -73,7 +73,7 @@
+@@ -73,7 +73,8 @@
                                  {
                                      BlockPos blockpos = new BlockPos(l1, i2, j2);
  
 -                                    if (this.predicate.apply(worldIn.getBlockState(blockpos)))
-+                                    if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, this.predicate))
++                                    IBlockState state = worldIn.getBlockState(blockpos);
++                                    if (state.getBlock().isReplaceableOreGen(state, worldIn, blockpos, this.predicate))
                                      {
                                          worldIn.setBlockState(blockpos, this.oreBlock, 2);
                                      }

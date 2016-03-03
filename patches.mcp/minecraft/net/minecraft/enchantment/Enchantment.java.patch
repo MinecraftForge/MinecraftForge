@@ -9,3 +9,30 @@
      }
  
      public void onEntityDamaged(EntityLivingBase user, Entity target, int level)
+@@ -134,6 +134,26 @@
+         return false;
+     }
+ 
++    /**
++     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
++     * applies for <i>all possible</i> enchantments.
++     * @param stack
++     * @return
++     */
++    public boolean canApplyAtEnchantingTable(ItemStack stack)
++    {
++        return this.type.canEnchantItem(stack.getItem());
++    }
++
++    /**
++     * Is this enchantment allowed to be enchanted on books via Enchantment Table
++     * @return false to disable the vanilla feature
++     */
++    public boolean isAllowedOnBooks()
++    {
++        return true;
++    }
++
+     public static void func_185257_f()
+     {
+         EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};

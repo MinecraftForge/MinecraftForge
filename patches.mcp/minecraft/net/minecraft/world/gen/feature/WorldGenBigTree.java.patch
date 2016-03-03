@@ -1,5 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
+@@ -99,9 +99,9 @@
+                 if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(p_181631_2_ * p_181631_2_))
+                 {
+                     BlockPos blockpos = p_181631_1_.add(j, 0, k);
+-                    Material material = this.world.getBlockState(blockpos).func_185904_a();
++                    IBlockState state = this.world.getBlockState(blockpos);
+ 
+-                    if (material == Material.air || material == Material.leaves)
++                    if (state.getBlock().isAir(state, world, blockpos) || state.getBlock().isLeaves(state, world, blockpos))
+                     {
+                         this.setBlockAndNotifyAdequately(this.world, blockpos, p_181631_3_);
+                     }
 @@ -254,7 +254,7 @@
              {
                  BlockPos blockpos1 = posOne.add((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));

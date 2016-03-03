@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -27,6 +27,7 @@
+@@ -1,5 +1,9 @@
+ package net.minecraft.world;
+ 
++import net.minecraft.world.chunk.IChunkGenerator;
++import net.minecraft.world.gen.ChunkProviderDebug;
++import net.minecraft.world.gen.ChunkProviderFlat;
++import net.minecraft.world.gen.ChunkProviderOverworld;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -27,6 +31,7 @@
  
      private WorldType(int id, String name, int version)
      {
@@ -8,33 +18,34 @@
          this.worldType = name;
          this.generatorVersion = version;
          this.canBeCreated = true;
-@@ -113,4 +114,144 @@
+@@ -113,4 +118,145 @@
          this.hasNotificationData = true;
          return this;
      }
 +
-+    public net.minecraft.world.biome.WorldChunkManager getChunkManager(World world)
++    public net.minecraft.world.biome.BiomeProvider getBiomeProvider(World world)
 +    {
 +        if (this == FLAT)
 +        {
 +            net.minecraft.world.gen.FlatGeneratorInfo flatgeneratorinfo = net.minecraft.world.gen.FlatGeneratorInfo.createFlatGeneratorFromString(world.getWorldInfo().getGeneratorOptions());
-+            return new net.minecraft.world.biome.WorldChunkManagerHell(net.minecraft.world.biome.BiomeGenBase.getBiomeFromBiomeList(flatgeneratorinfo.getBiome(), net.minecraft.world.biome.BiomeGenBase.field_180279_ad), 0.5F);
++            return new net.minecraft.world.biome.BiomeProviderSingle(net.minecraft.world.biome.BiomeGenBase.getBiomeFromBiomeList(flatgeneratorinfo.getBiome(), net.minecraft.init.Biomes.field_180279_ad));
 +        }
 +        else if (this == DEBUG_WORLD)
 +        {
-+            return new net.minecraft.world.biome.WorldChunkManagerHell(net.minecraft.world.biome.BiomeGenBase.plains, 0.0F);
++            return new net.minecraft.world.biome.BiomeProviderSingle(net.minecraft.init.Biomes.plains);
 +        }
 +        else
 +        {
-+            return new net.minecraft.world.biome.WorldChunkManager(world);
++            return new net.minecraft.world.biome.BiomeProvider(world.getWorldInfo());
 +        }
 +    }
 +
-+    public net.minecraft.world.chunk.IChunkProvider getChunkGenerator(World world, String generatorOptions)
++    public net.minecraft.world.chunk.IChunkGenerator getChunkGenerator(World world, String generatorOptions)
 +    {
 +        if (this == FLAT) return new net.minecraft.world.gen.ChunkProviderFlat(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions);
 +        if (this == DEBUG_WORLD) return new net.minecraft.world.gen.ChunkProviderDebug(world);
-+        return new net.minecraft.world.gen.ChunkProviderGenerate(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions);
++        if (this == CUSTOMIZED) return new net.minecraft.world.gen.ChunkProviderOverworld(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions);
++        return new net.minecraft.world.gen.ChunkProviderOverworld(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions);
 +    }
 +
 +    public int getMinimumSpawnHeight(World world)
