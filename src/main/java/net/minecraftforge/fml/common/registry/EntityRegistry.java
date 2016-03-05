@@ -199,6 +199,34 @@ public class EntityRegistry
     }
 
     /**
+     * Registers a spawn egg for the specified entity class.
+     * The class must already be registered in the EntityList.classToStringMapping.
+     * This can be done either by using the global ID system, or preferably the registerModEntity functions above.
+     * Once registered mob eggs can be created by using minecraft:spawn_egg with NBT entry 'entity_name' with
+     * value of the name this class is registered in the classToStringMapping with.
+     *
+     * @param entityClass The entity class
+     * @param primary Primary egg color
+     * @param secondary Secondary egg color
+     *
+     * @throws IllegalArgumentException if entityClass is not registered in classToStringMapping.
+     *
+     */
+
+    public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
+    {
+        if (EntityList.classToStringMapping.containsKey(entityClass))
+        {
+            String name = EntityList.classToStringMapping.get(entityClass);
+            EntityList.entityEggs.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
+            FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
+        }
+        else
+        {
+            FMLLog.fine("Failed registering entity egg %s (No entity found)", entityClass.getName());
+        }
+    }
+    /**
      * Registers in the minecraft Entity ID list. This is generally not a good idea and shouldn't be used.
      * Simply use {@link #registerModEntity(Class, String, int, Object, int, int, boolean, int, int)} instead.
      *
