@@ -28,7 +28,19 @@
          }
      }
  
-@@ -1082,6 +1084,10 @@
+@@ -848,6 +850,11 @@
+         float f = (float)(packetIn.getYaw() * 360) / 256.0F;
+         float f1 = (float)(packetIn.getPitch() * 360) / 256.0F;
+         EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.createEntityByID(packetIn.getEntityType(), this.gameController.theWorld);
++        if (entitylivingbase == null)
++        {
++            net.minecraftforge.fml.common.FMLLog.info("Server attempted to spawn an unknown entity using ID: {0} at ({1}, {2}, {3}) Skipping!", packetIn.getEntityType(), d0, d1, d2);
++            return;
++        }
+         EntityTracker.func_187254_a(entitylivingbase, d0, d1, d2);
+         entitylivingbase.renderYawOffset = entitylivingbase.rotationYawHead = (float)(packetIn.getHeadPitch() * 360) / 256.0F;
+         Entity[] aentity = entitylivingbase.getParts();
+@@ -1082,6 +1089,10 @@
              {
                  entityplayer.openContainer.putStackInSlot(packetIn.func_149173_d(), packetIn.func_149174_e());
              }
@@ -39,3 +51,12 @@
          }
      }
  
+@@ -1378,7 +1389,7 @@
+ 
+         if (entity instanceof EntityLivingBase)
+         {
+-            Potion potion = Potion.func_188412_a(packetIn.getEffectId());
++            Potion potion = Potion.func_188412_a(packetIn.getEffectId() & 0xFF);
+ 
+             if (potion != null)
+             {
