@@ -8,7 +8,74 @@
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
-@@ -118,6 +119,7 @@
+@@ -92,14 +93,65 @@
+ 
+     public Chunk func_186025_d(int p_186025_1_, int p_186025_2_)
+     {
++        return loadChunk(p_186025_1_, p_186025_2_, null);
++    }
++
++    public Chunk loadChunk(int X, int Z, Runnable runnable)
++    {
++        long pos = ChunkCoordIntPair.chunkXZ2Int(X, Z);
++        this.droppedChunksSet.remove(Long.valueOf(pos));
++        Chunk chunk = this.id2ChunkMap.getValueByKey(pos);
++        net.minecraft.world.chunk.storage.AnvilChunkLoader loader = null;
++
++        if (this.chunkLoader instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader)
++        {
++            loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.chunkLoader;
++        }
++
++        // We can only use the queue for already generated chunks
++        if (chunk == null && loader != null && loader.chunkExists(this.worldObj, X, Z))
++        {
++            if (runnable != null)
++            {
++                net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.worldObj, loader, this, X, Z, runnable);
++                return null;
++            }
++            else
++            {
++                chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.worldObj, loader, this, X, Z);
++            }
++        }
++        else if (chunk == null)
++        {
++            chunk = this.originalLoadChunk(X, Z);
++        }
++
++        // If we didn't load the chunk async and have a callback run it now
++        if (runnable != null)
++        {
++            runnable.run();
++        }
++
++        return chunk;
++    }
++
++    public Chunk originalLoadChunk(int p_186025_1_, int p_186025_2_)
++    {
+         Chunk chunk = this.func_186028_c(p_186025_1_, p_186025_2_);
+ 
+         if (chunk == null)
+         {
+             long i = ChunkCoordIntPair.chunkXZ2Int(p_186025_1_, p_186025_2_);
+-            chunk = this.loadChunkFromFile(p_186025_1_, p_186025_2_);
++            if (!loadingChunks.add(i))
++            {
++                net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk (%d,%d) in di    >mension %d that is already being loaded. This will cause weird chunk breakages.", p_186025_1_, p_186025_2_, worldObj.provider.getDimension());
++            }
++            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(i, this.worldObj);
+ 
+             if (chunk == null)
++                chunk = this.loadChunkFromFile(p_186025_1_, p_186025_2_);
++
++            if (chunk == null)
+             {
+                 try
+                 {
+@@ -118,6 +170,7 @@
  
              this.id2ChunkMap.add(i, chunk);
              this.loadedChunks.add(chunk);
@@ -16,7 +83,7 @@
              chunk.onChunkLoad();
              chunk.func_186030_a(this, this.field_186029_c);
          }
-@@ -214,6 +216,11 @@
+@@ -214,6 +267,11 @@
      {
          if (!this.worldObj.disableLevelSaving)
          {
@@ -28,14 +95,14 @@
              for (int i = 0; i < 100; ++i)
              {
                  if (!this.droppedChunksSet.isEmpty())
-@@ -228,6 +235,12 @@
+@@ -228,6 +286,12 @@
                          this.saveChunkExtraData(chunk);
                          this.id2ChunkMap.remove(olong.longValue());
                          this.loadedChunks.remove(chunk);
 +                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
-+                        if(loadedChunks.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.worldObj.provider.getDimensionId())){
-+                            net.minecraftforge.common.DimensionManager.unloadWorld(this.worldObj.provider.getDimensionId());
-+                            return serverChunkGenerator.unloadQueuedChunks();
++                        if(loadedChunks.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.worldObj.provider.getDimension())){
++                            net.minecraftforge.common.DimensionManager.unloadWorld(this.worldObj.provider.getDimension());
++                            return false;
 +                        }
 +
                      }

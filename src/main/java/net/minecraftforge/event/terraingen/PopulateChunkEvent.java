@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 
 /**
@@ -20,7 +21,7 @@ import net.minecraft.world.chunk.IChunkProvider;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}, except {@link Populate}, which fires on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
-public class PopulateChunkEvent extends ChunkProviderEvent
+public class PopulateChunkEvent extends ChunkGeneratorEvent
 {
     public final World world;
     public final Random rand;
@@ -28,9 +29,9 @@ public class PopulateChunkEvent extends ChunkProviderEvent
     public final int chunkZ;
     public final boolean hasVillageGenerated;
 
-    public PopulateChunkEvent(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+    public PopulateChunkEvent(IChunkGenerator gen, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
     {
-        super(chunkProvider);
+        super(gen);
         this.world = world;
         this.rand = rand;
         this.chunkX = chunkX;
@@ -53,9 +54,9 @@ public class PopulateChunkEvent extends ChunkProviderEvent
      **/
     public static class Pre extends PopulateChunkEvent
     {
-        public Pre(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        public Pre(IChunkGenerator gen, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
         {
-            super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+            super(gen, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
 
@@ -74,7 +75,7 @@ public class PopulateChunkEvent extends ChunkProviderEvent
      **/
     public static class Post extends PopulateChunkEvent
     {
-        public Post(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        public Post(IChunkGenerator chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
@@ -105,9 +106,9 @@ public class PopulateChunkEvent extends ChunkProviderEvent
 
         public final EventType type;
 
-        public Populate(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, EventType type)
+        public Populate(IChunkGenerator gen, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, EventType type)
         {
-            super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+            super(gen, world, rand, chunkX, chunkZ, hasVillageGenerated);
             this.type = type;
         }
     }

@@ -1,15 +1,53 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/MapGenCaves.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/MapGenCaves.java
-@@ -143,7 +143,7 @@
+@@ -141,9 +141,7 @@
+                             {
+                                 if (l1 >= 0 && l1 < 256)
                                  {
-                                     IBlockState iblockstate = p_180702_5_.getBlockState(j1, l1, k1);
- 
+-                                    IBlockState iblockstate = p_180702_5_.getBlockState(j1, l1, k1);
+-
 -                                    if (iblockstate.getBlock() == Blocks.flowing_water || iblockstate.getBlock() == Blocks.water)
 +                                    if (isOceanBlock(p_180702_5_, j1, l1, k1, p_180702_3_, p_180702_4_))
                                      {
                                          flag3 = true;
                                      }
-@@ -266,4 +266,71 @@
+@@ -181,33 +179,12 @@
+                                             IBlockState iblockstate1 = p_180702_5_.getBlockState(j3, j2, i2);
+                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.getBlockState(j3, j2 + 1, i2), field_186127_b);
+ 
+-                                            if (iblockstate1.getBlock() == Blocks.grass || iblockstate1.getBlock() == Blocks.mycelium)
++                                            if (isTopBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_))
+                                             {
+                                                 flag1 = true;
+                                             }
+ 
+-                                            if (this.func_175793_a(iblockstate1, iblockstate2))
+-                                            {
+-                                                if (j2 - 1 < 10)
+-                                                {
+-                                                    p_180702_5_.setBlockState(j3, j2, i2, field_186126_a);
+-                                                }
+-                                                else
+-                                                {
+-                                                    p_180702_5_.setBlockState(j3, j2, i2, field_186127_b);
+-
+-                                                    if (iblockstate2.getBlock() == Blocks.sand)
+-                                                    {
+-                                                        p_180702_5_.setBlockState(j3, j2 + 1, i2, iblockstate2.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND ? field_186129_d : field_186128_c);
+-                                                    }
+-
+-                                                    if (flag1 && p_180702_5_.getBlockState(j3, j2 - 1, i2).getBlock() == Blocks.dirt)
+-                                                    {
+-                                                        blockpos$mutableblockpos.set(j3 + p_180702_3_ * 16, 0, i2 + p_180702_4_ * 16);
+-                                                        p_180702_5_.setBlockState(j3, j2 - 1, i2, this.worldObj.getBiomeGenForCoords(blockpos$mutableblockpos).topBlock.getBlock().getDefaultState());
+-                                                    }
+-                                                }
+-                                            }
++                                            digBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_, flag1, iblockstate1, iblockstate2);
+                                         }
+                                     }
+                                 }
+@@ -266,4 +243,71 @@
              }
          }
      }
@@ -23,8 +61,8 @@
 +    //Exception biomes to make sure we generate like vanilla
 +    private boolean isExceptionBiome(net.minecraft.world.biome.BiomeGenBase biome)
 +    {
-+        if (biome == net.minecraft.world.biome.BiomeGenBase.beach) return true;
-+        if (biome == net.minecraft.world.biome.BiomeGenBase.desert) return true;
++        if (biome == net.minecraft.init.Biomes.beach) return true;
++        if (biome == net.minecraft.init.Biomes.desert) return true;
 +        return false;
 +    }
 +
@@ -60,17 +98,17 @@
 +
 +        if (this.func_175793_a(state, up) || state.getBlock() == top.getBlock() || state.getBlock() == filler.getBlock())
 +        {
-+            if (y < 10)
++            if (y - 1 < 10)
 +            {
-+                data.setBlockState(x, y, z, Blocks.lava.getDefaultState());
++                data.setBlockState(x, y, z, field_186126_a);
 +            }
 +            else
 +            {
-+                data.setBlockState(x, y, z, Blocks.air.getDefaultState());
++                data.setBlockState(x, y, z, field_186127_b);
 +
 +                if (up.getBlock() == Blocks.sand)
 +                {
-+                    data.setBlockState(x, y + 1, z, up.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND ? Blocks.red_sandstone.getDefaultState() : Blocks.sandstone.getDefaultState());
++                    data.setBlockState(x, y + 1, z, up.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND ? field_186129_d : field_186128_c);
 +                }
 +
 +                if (foundTop && data.getBlockState(x, y - 1, z).getBlock() == filler.getBlock())

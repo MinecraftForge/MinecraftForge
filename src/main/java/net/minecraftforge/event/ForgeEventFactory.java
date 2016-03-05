@@ -33,6 +33,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -73,6 +75,8 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
@@ -521,7 +525,10 @@ public class ForgeEventFactory
 
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
-            return player.worldObj.getBlockState(player.playerLocation).getBlock().isBed(player.worldObj, player.playerLocation, player);
+        {
+            IBlockState state = player.worldObj.getBlockState(player.playerLocation);
+            return state.getBlock().isBed(state, player.worldObj, player.playerLocation, player);
+        }
         else
             return canContinueSleep == Result.ALLOW;
     }
@@ -540,6 +547,18 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getCharge();
+    }
+
+    public static boolean onReplaceBiomeBlocks(IChunkGenerator gen, int x, int z, ChunkPrimer primer, World world)
+    {
+        ChunkGeneratorEvent.ReplaceBiomeBlocks event = new ChunkGeneratorEvent.ReplaceBiomeBlocks(gen, x, z, primer, world);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
+    }
+
+    public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, int x, int z, boolean hasVillageGenerated)
+    {
+        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated));
     }
 
 }

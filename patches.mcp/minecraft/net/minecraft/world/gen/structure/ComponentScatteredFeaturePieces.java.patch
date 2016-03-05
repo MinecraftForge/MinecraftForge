@@ -1,29 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeaturePieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeaturePieces.java
-@@ -57,6 +57,12 @@
-             {
-             }
- 
-+            static
-+            {
-+                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.PYRAMID_DESERT_CHEST, itemsToGenerateInTemple, 2, 7);
-+                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.PYRAMID_DESERT_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
-+            }
-+
-             public DesertPyramid(Random p_i2062_1_, int p_i2062_2_, int p_i2062_3_)
-             {
-                 super(p_i2062_1_, p_i2062_2_, 64, p_i2062_3_, 21, 15, 21);
-@@ -451,6 +457,13 @@
+@@ -451,6 +451,11 @@
              private static final List<WeightedRandomChestContent> field_175815_j = Lists.newArrayList(new WeightedRandomChestContent[] {new WeightedRandomChestContent(Items.arrow, 0, 2, 7, 30)});
              private static ComponentScatteredFeaturePieces.JunglePyramid.Stones junglePyramidsRandomScatteredStones = new ComponentScatteredFeaturePieces.JunglePyramid.Stones();
  
 +            static
 +            {
 +                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_DISPENSER, field_175815_j, 2, 2);
-+                net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_CHEST, field_175816_i, 2, 7);
-+                net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.enchanted_book, 1, 0), 1, 1, 1));
 +            }
 +
              public JunglePyramid()
              {
              }
+@@ -607,9 +612,10 @@
+                     this.setBlockState(worldIn, Blocks.redstone_wire.getDefaultState(), 4, -3, 1, structureBoundingBoxIn);
+                     this.setBlockState(worldIn, Blocks.mossy_cobblestone.getDefaultState(), 3, -3, 1, structureBoundingBoxIn);
+ 
++                    net.minecraftforge.common.ChestGenHooks dispenser = net.minecraftforge.common.ChestGenHooks.getInfo(net.minecraftforge.common.ChestGenHooks.PYRAMID_JUNGLE_DISPENSER);
+                     if (!this.field_74945_j)
+                     {
+-                        this.field_74945_j = this.func_186166_a(worldIn, structureBoundingBoxIn, randomIn, 3, -2, 1, EnumFacing.NORTH, field_175815_j, 2);
++                        this.field_74945_j = this.func_186166_a(worldIn, structureBoundingBoxIn, randomIn, 3, -2, 1, EnumFacing.NORTH, dispenser.getItems(randomIn), dispenser.getCount(randomIn));
+                     }
+ 
+                     this.setBlockState(worldIn, Blocks.vine.getDefaultState().withProperty(BlockVine.SOUTH, Boolean.valueOf(true)), 3, -2, 2, structureBoundingBoxIn);
+@@ -626,7 +632,7 @@
+ 
+                     if (!this.field_74946_k)
+                     {
+-                        this.field_74946_k = this.func_186166_a(worldIn, structureBoundingBoxIn, randomIn, 9, -2, 3, EnumFacing.WEST, field_175815_j, 2);
++                        this.field_74946_k = this.func_186166_a(worldIn, structureBoundingBoxIn, randomIn, 9, -2, 3, EnumFacing.WEST, dispenser.getItems(randomIn), dispenser.getCount(randomIn));
+                     }
+ 
+                     this.setBlockState(worldIn, Blocks.vine.getDefaultState().withProperty(BlockVine.EAST, Boolean.valueOf(true)), 8, -1, 3, structureBoundingBoxIn);

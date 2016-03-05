@@ -39,6 +39,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
@@ -94,7 +95,7 @@ public class GameRegistry
      * @param chunkGenerator The chunk generator
      * @param chunkProvider  The chunk provider
      */
-    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
     {
         if (sortedGeneratorList == null)
         {

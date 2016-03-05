@@ -24,17 +24,9 @@ import net.minecraftforge.oredict.OreDictionary;
 public class ChestGenHooks
 {
     //Currently implemented categories for chests/dispensers, Dungeon loot is still in DungeonHooks
-    public static final String MINESHAFT_CORRIDOR       = "mineshaftCorridor";
-    public static final String PYRAMID_DESERT_CHEST     = "pyramidDesertyChest";
-    public static final String PYRAMID_JUNGLE_CHEST     = "pyramidJungleChest";
-    public static final String PYRAMID_JUNGLE_DISPENSER = "pyramidJungleDispenser";
-    public static final String STRONGHOLD_CORRIDOR      = "strongholdCorridor";
-    public static final String STRONGHOLD_LIBRARY       = "strongholdLibrary";
-    public static final String STRONGHOLD_CROSSING      = "strongholdCrossing";
-    public static final String VILLAGE_BLACKSMITH       = "villageBlacksmith";
+    public static final String PYRAMID_JUNGLE_DISPENSER = "pyramidJungleDispenser"; // TODO: Convert to a Loot Table
     public static final String BONUS_CHEST              = "bonusChest";
     public static final String DUNGEON_CHEST            = "dungeonChest";
-    public static final String NETHER_FORTRESS          = "netherFortress";
 
     private static final HashMap<String, ChestGenHooks> chestInfo = new HashMap<String, ChestGenHooks>();
     private static boolean hasInit = false;
@@ -53,15 +45,7 @@ public class ChestGenHooks
         hasInit = true;
         // This causes the classes static initializers to run
         new WorldGenDungeons();
-        new DesertPyramid();
         new JunglePyramid();
-        new StructureMineshaftPieces();
-        new StructureOceanMonument();
-        new StructureStrongholdPieces.ChestCorridor();
-        new StructureStrongholdPieces.Library();
-        new StructureStrongholdPieces.RoomCrossing();
-        new StructureVillagePieces.House2();
-        new StructureNetherBridgePieces.Corridor();
         WorldServer.fillChestHook();
     }
 

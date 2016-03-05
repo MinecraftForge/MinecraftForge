@@ -198,7 +198,15 @@
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
  
-@@ -1050,7 +1050,7 @@
+@@ -994,6 +994,7 @@
+         {
+             this.func_150809_p();
+             p_186034_1_.func_185931_b(this.xPosition, this.zPosition);
++            net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.xPosition, this.zPosition, this.worldObj, p_186034_1_, this.worldObj.getChunkProvider());
+             this.setChunkModified();
+         }
+     }
+@@ -1050,7 +1051,7 @@
          {
              BlockPos blockpos = (BlockPos)this.tileEntityPosQueue.poll();
  
@@ -207,7 +215,7 @@
              {
                  TileEntity tileentity = this.createNewTileEntity(blockpos);
                  this.worldObj.setTileEntity(blockpos, tileentity);
-@@ -1114,6 +1114,13 @@
+@@ -1114,6 +1115,13 @@
      @SideOnly(Side.CLIENT)
      public void func_186033_a(PacketBuffer p_186033_1_, int p_186033_2_, boolean p_186033_3_)
      {
@@ -221,7 +229,7 @@
          boolean flag = !this.worldObj.provider.getHasNoSky();
  
          for (int i = 0; i < this.storageArrays.length; ++i)
-@@ -1162,10 +1169,16 @@
+@@ -1162,10 +1170,16 @@
          this.isTerrainPopulated = true;
          this.generateHeightMap();
  
@@ -238,7 +246,7 @@
      }
  
      public BiomeGenBase getBiome(BlockPos pos, BiomeProvider chunkManager)
-@@ -1239,7 +1252,7 @@
+@@ -1239,7 +1253,7 @@
                          {
                              BlockPos blockpos2 = blockpos1.offset(enumfacing);
  
@@ -247,7 +255,7 @@
                              {
                                  this.worldObj.checkLight(blockpos2);
                              }
-@@ -1370,7 +1383,7 @@
+@@ -1370,7 +1384,7 @@
          {
              blockpos$mutableblockpos.set(blockpos$mutableblockpos.getX(), l, blockpos$mutableblockpos.getZ());
  
@@ -256,7 +264,7 @@
              {
                  this.worldObj.checkLight(blockpos$mutableblockpos);
              }
-@@ -1481,4 +1494,20 @@
+@@ -1481,4 +1495,20 @@
          QUEUED,
          CHECK;
      }

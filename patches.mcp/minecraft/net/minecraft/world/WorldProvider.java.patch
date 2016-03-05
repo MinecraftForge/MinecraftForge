@@ -54,7 +54,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -212,6 +198,322 @@
+@@ -212,6 +198,327 @@
          return new WorldBorder();
      }
  
@@ -67,12 +67,17 @@
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
++     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
 +     *
 +     * @param dim Dimension ID
 +     */
 +    public void setDimension(int dim)
 +    {
 +        this.dimensionId = dim;
++    }
++    public int getDimension()
++    {
++        return this.dimensionId;
 +    }
 +
 +    /**

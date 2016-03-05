@@ -57,7 +57,7 @@
          Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
      }
-@@ -422,11 +431,628 @@
+@@ -422,11 +431,629 @@
          return false;
      }
  
@@ -301,6 +301,7 @@
 +     * @param original Original result registered with the chest gen hooks.
 +     * @return New values to use as the random item, typically this will be original
 +     */
++    @Deprecated // LootTables!
 +    public net.minecraft.util.WeightedRandomChestContent getChestGenBase(net.minecraftforge.common.ChestGenHooks chest, Random rnd, net.minecraft.util.WeightedRandomChestContent original)
 +    {
 +        if (this instanceof ItemEnchantedBook)
@@ -686,7 +687,7 @@
      public static void registerItems()
      {
          registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
-@@ -935,6 +1561,10 @@
+@@ -935,6 +1562,10 @@
          private final float damageVsEntity;
          private final int enchantability;
  
@@ -697,7 +698,7 @@
          private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
          {
              this.harvestLevel = harvestLevel;
-@@ -969,9 +1599,36 @@
+@@ -969,9 +1600,36 @@
              return this.enchantability;
          }
  

@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -15,11 +15,12 @@ package net.minecraftforge.fml.common;
 import java.util.Random;
 
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 
 
 /**
- * This is called back during world generation. 
+ * This is called back during world generation.
  *
  * @author cpw
  *
@@ -37,5 +38,5 @@ public interface IWorldGenerator
      * @param chunkProvider : additionalData[2] {@link IChunkProvider} that is requesting the world generation.
      *
      */
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider);
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider);
 }
