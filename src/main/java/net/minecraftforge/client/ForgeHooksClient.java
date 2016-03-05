@@ -71,7 +71,6 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModelPart;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -356,11 +355,10 @@ public class ForgeHooksClient
     }
     */
 
-    public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelBakery modelBakery)
+    public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {
-        ModelLoader loader = (ModelLoader)modelBakery;
-        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, loader));
-        loader.onPostBakeEvent(modelRegistry);
+        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
+        modelLoader.onPostBakeEvent(modelRegistry);
     }
 
 	public static Matrix4f getMatrix(ItemTransformVec3f transform)
@@ -389,7 +387,7 @@ public class ForgeHooksClient
     {
         if(model instanceof IPerspectiveAwareModel)
         {
-            Pair<? extends IFlexibleBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
+            Pair<? extends IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
 
             if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             return pair.getLeft();

@@ -83,7 +83,7 @@ public class ItemTileDebug
         @SubscribeEvent
         public void onModelBakeEvent(ModelBakeEvent event)
         {
-            event.modelManager.getBlockModelShapes().registerBuiltInBlocks(TestBlock.instance);
+            event.getModelManager().getBlockModelShapes().registerBuiltInBlocks(TestBlock.instance);
         }
     }
 

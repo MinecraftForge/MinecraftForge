@@ -117,8 +117,8 @@ public class ModelBakeEventDebug
             TextureAtlasSprite base = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/slime");
             TextureAtlasSprite overlay = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/redstone_block");
             IBakedModel customModel = new CustomModel(base, overlay);
-            event.modelRegistry.putObject(ClientProxy.blockLocation, customModel);
-            event.modelRegistry.putObject(ClientProxy.itemLocation, customModel);
+            event.getModelRegistry().putObject(ClientProxy.blockLocation, customModel);
+            event.getModelRegistry().putObject(ClientProxy.itemLocation, customModel);
         }
     }
 

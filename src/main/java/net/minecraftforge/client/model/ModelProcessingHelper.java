@@ -39,4 +39,13 @@ public class ModelProcessingHelper
         }
         return model;
     }
+
+    public static IModel uvlock(IModel model, boolean uvlock)
+    {
+        if(model instanceof IModelUVLock)
+        {
+            model = ((IModelUVLock)model).uvlock(uvlock);
+        }
+        return model;
+    }
 }

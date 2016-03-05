@@ -146,12 +146,13 @@ public class BlockStateLoader
             this.gui3d = gui3d;
         }
 
-        private IModel runModelHooks(IModel base, boolean smooth, boolean gui3d, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
+        private IModel runModelHooks(IModel base, boolean smooth, boolean gui3d, boolean uvlock, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
         {
             base = ModelProcessingHelper.customData(base, customData);
             base = ModelProcessingHelper.retexture(base, textureMap);
             base = ModelProcessingHelper.smoothLighting(base, smooth);
             base = ModelProcessingHelper.gui3d(base, gui3d);
+            base = ModelProcessingHelper.uvlock(base, uvlock);
             return base;
         }
 
@@ -166,7 +167,7 @@ public class BlockStateLoader
 
             if (hasBase)
             {
-                base = runModelHooks(base, smooth, gui3d, textures, customData);
+                base = runModelHooks(base, smooth, gui3d, this.func_188049_c(), textures, customData);
 
                 if (size <= 0)
                     return base;
@@ -193,9 +194,8 @@ public class BlockStateLoader
                 }
 
                 IModelState partState = new ModelStateComposition(baseTr, part.getState());
-                if (part.isUVLock()) partState = new ModelLoader.UVLock(partState);
 
-                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.getTextures(), part.getCustomData()), partState));
+                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.uvLock, part.getTextures(), part.getCustomData()), partState));
             }
 
             return new MultiModel(func_188046_a(), hasBase ? base : null, baseTr, models.build());

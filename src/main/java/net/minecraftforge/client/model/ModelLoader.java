@@ -17,12 +17,14 @@ import java.util.Set;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.block.model.BlockPartRotation;
@@ -162,16 +164,42 @@ public class ModelLoader extends ModelBakery
         ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
         for(ModelResourceLocation variant : variants)
         {
-            loadVariants(ImmutableList.of(variant));
+            loadVariant(variant);
             blockBar.step(variant.toString());
         }
         ProgressManager.pop(blockBar);
     }
 
+    // FIXME: all the new shiny multipart things
+    private void loadVariant(ModelResourceLocation variant)
+    {
+        try
+        {
+            ModelBlockDefinition modelblockdefinition = this.getModelBlockDefinition(variant);
+
+            try
+            {
+                this.registerVariant(modelblockdefinition, variant);
+            }
+            catch (Exception ex)
+            {
+                FMLLog.getLogger().warn("Unable to load variant: " + variant.getVariant() + " from " + variant, ex);
+            }
+        }
+        catch (Exception ex)
+        {
+            FMLLog.getLogger().warn("Unable to load definition " + variant, ex);
+        }
+    }
+
+    // FIXME: this is probably not the hook point anymore
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        VariantList variants = null;
+        // for now
+        super.registerVariant(definition, location);
+
+        /*VariantList variants = null;
         try
         {
             variants = definition.getVariants(location.getVariant());
@@ -190,7 +218,7 @@ public class ModelLoader extends ModelBakery
             {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
     }
 
     private void storeException(ResourceLocation location, Exception exception)
@@ -387,7 +415,7 @@ public class ModelLoader extends ModelBakery
 
     IModel getVariantModel(ModelResourceLocation location)
     {
-        loadVariants(ImmutableList.of(location));
+        loadVariant(location);
         IModel model = stateModels.get(location);
         if(model == null) model = getMissingModel();
         return model;
@@ -409,16 +437,18 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
     }
 
-    private class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IAnimatedModel
+    private class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IModelUVLock, IAnimatedModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;
+        private final boolean uvlock;
         private final ModelBlockAnimation animation;
 
-        public VanillaModelWrapper(ResourceLocation location, ModelBlock model, ModelBlockAnimation animation)
+        public VanillaModelWrapper(ResourceLocation location, ModelBlock model, boolean uvlock, ModelBlockAnimation animation)
         {
             this.location = location;
             this.model = model;
+            this.uvlock = uvlock;
             this.animation = animation;
         }
 
@@ -500,7 +530,7 @@ public class ModelLoader extends ModelBakery
             return builder.build();
         }
 
-        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -517,12 +547,6 @@ public class ModelLoader extends ModelBakery
             }
 
             ItemCameraTransforms transforms = model.func_181682_g();
-            boolean uvlock = false;
-            if(state instanceof UVLock)
-            {
-                uvlock = true;
-                state = ((UVLock)state).getParent();
-            }
             Map<TransformType, TRSRTransformation> tMap = Maps.newHashMap();
             tMap.putAll(IPerspectiveAwareModel.MapWrapper.getTransforms(transforms));
             tMap.putAll(IPerspectiveAwareModel.MapWrapper.getTransforms(state));
@@ -532,14 +556,14 @@ public class ModelLoader extends ModelBakery
             {
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
-            if(isCustomRenderer(model)) return new BuiltInModel(transforms);
+            if(isCustomRenderer(model)) return new BuiltInModel(transforms, model.func_187967_g());
             return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
         }
 
         private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
-            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
+            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.func_187967_g())).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
                 BlockPart part = model.getElements().get(i);
@@ -566,31 +590,27 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            // FIXME
-            return new ISmartBlockModel.PerspectiveWrapper(new IPerspectiveAwareModel.MapWrapper(builder.makeBakedModel(), perState))
+            return new IPerspectiveAwareModel.MapWrapper(builder.makeBakedModel(), perState)
             {
-                public IBakedModel handleBlockState(IBlockState state)
+                @Override
+                public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
                 {
-                    return VanillaModelWrapper.this.handleBlockState(parent, bakedTextureGetter, modelState, state);
-                }
-            };
-        }
-
-        private IBakedModel handleBlockState(IBakedModel model, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, TRSRTransformation modelState, IBlockState state)
-        {
-            if(state instanceof IExtendedBlockState)
-            {
-                IExtendedBlockState exState = (IExtendedBlockState)state;
-                if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
-                {
-                    IModelState newState = exState.getValue(Properties.AnimationProperty);
-                    if(newState != null)
+                    if(state instanceof IExtendedBlockState)
                     {
-                        return VanillaModelWrapper.this.bake(new ModelStateComposition(modelState, newState), model.getFormat(), bakedTextureGetter);
+                        IExtendedBlockState exState = (IExtendedBlockState)state;
+                        if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
+                        {
+                            IModelState newState = exState.getValue(Properties.AnimationProperty);
+                            IExtendedBlockState newExState = exState.withProperty(Properties.AnimationProperty, null);
+                            if(newState != null)
+                            {
+                                return VanillaModelWrapper.this.bake(new ModelStateComposition(modelState, newState), format, bakedTextureGetter).func_188616_a(newExState, side, rand);
+                            }
+                        }
                     }
-                }
-            }
-            return model;
+                    return super.func_188616_a(state, side, rand);
+                };
+            };
         }
 
         @Override
@@ -607,7 +627,7 @@ public class ModelLoader extends ModelBakery
 
             ModelBlock newModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
-                model.func_181682_g());
+                model.func_181682_g(), Lists.newArrayList(model.func_187966_f()));
             newModel.name = this.model.name;
             newModel.parent = this.model.parent;
 
@@ -651,7 +671,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new VanillaModelWrapper(location, newModel, animation);
+            return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }
 
         @Override
@@ -676,10 +696,10 @@ public class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.func_181682_g());
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.func_181682_g(), Lists.newArrayList(model.func_187966_f()));
             newModel.parent = model.parent;
             newModel.name = model.name;
-            return new VanillaModelWrapper(location, newModel, animation);
+            return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }
 
         @Override
@@ -689,31 +709,20 @@ public class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.func_181682_g());
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.func_181682_g(), Lists.newArrayList(model.func_187966_f()));
             newModel.parent = model.parent;
             newModel.name = model.name;
-            return new VanillaModelWrapper(location, newModel, animation);
-        }
-    }
-
-    @Deprecated // rework in 1.9
-    public static class UVLock implements IModelState
-    {
-        private final IModelState parent;
-
-        public UVLock(IModelState parent)
-        {
-            this.parent = parent;
+            return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }
 
-        public IModelState getParent()
+        @Override
+        public IModel uvlock(boolean value)
         {
-            return parent;
-        }
-
-        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
-        {
-            return parent.apply(part);
+            if(uvlock == value)
+            {
+                return this;
+            }
+            return new VanillaModelWrapper(location, model, value, animation);
         }
     }
 
@@ -730,7 +739,7 @@ public class ModelLoader extends ModelBakery
             ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
             for (Variant v : this.variants)
             {
-                ResourceLocation loc = v.getModelLocation();
+                ResourceLocation loc = v.func_188046_a();
                 locations.add(loc);
 
                 IModel model = null;
@@ -787,12 +796,6 @@ public class ModelLoader extends ModelBakery
             return Collections.emptyList();
         }
 
-        private IModelState addUV(boolean uv, IModelState state)
-        {
-            if(uv) return new UVLock(state);
-            return state;
-        }
-
         public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
@@ -803,14 +806,14 @@ public class ModelLoader extends ModelBakery
             {
                 Variant v = variants.get(0);
                 IModel model = models.get(0);
-                return model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, 0)), format, bakedTextureGetter);
+                return model.bake(MultiModelState.getPartState(state, model, 0), format, bakedTextureGetter);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
                 Variant v =  variants.get(i);
-                builder.add(model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, i)), format, bakedTextureGetter), variants.get(i).getWeight());
+                builder.add(model.bake(MultiModelState.getPartState(state, model, i), format, bakedTextureGetter), variants.get(i).func_188047_d());
             }
             return builder.build();
         }
@@ -878,7 +881,7 @@ public class ModelLoader extends ModelBakery
             }
             ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
             ModelBlockAnimation animation = Animation.INSTANCE.loadVanillaAnimation(armatureLocation);
-            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation), animation);
+            return loader.new VanillaModelWrapper(modelLocation, loader.loadModel(modelLocation), false, animation);
         }
     }
 
@@ -898,6 +901,7 @@ public class ModelLoader extends ModelBakery
             return true;
         }
 
+        // TODO: check if this code is correct
         @Override
         public boolean load(IResourceManager manager, ResourceLocation location)
         {
@@ -905,16 +909,10 @@ public class ModelLoader extends ModelBakery
             Graphics2D graphics = image.createGraphics();
             graphics.setBackground(Color.WHITE);
             graphics.clearRect(0, 0, 16, 16);
-            BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
-            images[0] = image;
-            try
-            {
-                loadSprite(images, null);
-            }
-            catch(IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+            pixels[0] = new int[image.getWidth() * image.getHeight()];
+            image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth());
+            this.framesTextureData.add(pixels);
             return false;
         }
 
