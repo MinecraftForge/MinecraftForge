@@ -8,21 +8,24 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
@@ -93,15 +96,15 @@ public class ModelAnimationDebug
                 }
 
                 @Override
-                public boolean isOpaqueCube() { return false; }
+                public boolean isOpaqueCube(IBlockState state) { return false; }
 
                 @Override
-                public boolean isFullCube() { return false; }
+                public boolean isFullCube(IBlockState state) { return false; }
 
                 @Override
                 public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
                 {
-                    return this.getDefaultState().withProperty(FACING, BlockPistonBase.getFacingFromEntity(world, pos, placer));
+                    return this.getDefaultState().withProperty(FACING, BlockPistonBase.func_185647_a(pos, placer));
                 }
 
                 @Override
@@ -140,7 +143,7 @@ public class ModelAnimationDebug
                 }*/
 
                 @Override
-                public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+                public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
                 {
                     if(world.isRemote)
                     {
@@ -209,13 +212,13 @@ public class ModelAnimationDebug
                             "chamber", "blocks/redstone_block",
                             "trunk", "blocks/end_stone"
                         );
-                        if(base instanceof IRetexturableModel)
+                        if(base instanceof IRetexturableModel<?>)
                         {
-                            base = ((IRetexturableModel)base).retexture(textures);
+                            base = ((IRetexturableModel<?>)base).retexture(textures);
                         }
-                        if(ring instanceof IRetexturableModel)
+                        if(ring instanceof IRetexturableModel<?>)
                         {
-                            ring = ((IRetexturableModel)ring).retexture(textures);
+                            ring = ((IRetexturableModel<?>)ring).retexture(textures);
                         }
                         IModel model = new MultiModel(
                             new ResourceLocation(ModelAnimationDebug.MODID, "builtin/engine"),
@@ -225,7 +228,7 @@ public class ModelAnimationDebug
                                 "base", Pair.<IModel, IModelState>of(base, TRSRTransformation.identity())
                             )
                         );
-                        return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo())
+                        return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo(Minecraft.getMinecraft().func_184125_al()))
                             {
                                 @Override
                                 public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
@@ -362,11 +365,12 @@ public class ModelAnimationDebug
             return asm;
         }
 
-        @Override
-        public void onDataWatcherUpdate(int id)
+        // FIXME update health
+        /*@Override
+        public void func_184206_a(DataParameter<?> key)
         {
-            super.onDataWatcherUpdate(id);
-            if(id == 6) // health
+            super.func_184206_a(key);
+            if(field_184632_c.equals(key)) // health
             {
                 if(cycleLength == null)
                 {
@@ -374,7 +378,7 @@ public class ModelAnimationDebug
                 }
                 cycleLength.setValue(getHealth() / 5);
             }
-        }
+        }*/
 
         @Override
         protected void applyEntityAttributes()

@@ -1,37 +1,36 @@
 package net.minecraftforge.debug;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.ISmartBlockModel;
-import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -45,9 +44,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 
-@SuppressWarnings("deprecation")
 @Mod(modid = ModelBakeEventDebug.MODID, version = ModelBakeEventDebug.VERSION)
 public class ModelBakeEventDebug
 {
@@ -136,13 +135,13 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public int getRenderType() { return 3; }
+        public EnumBlockRenderType getRenderType(IBlockState state) { return EnumBlockRenderType.MODEL; }
 
         @Override
-        public boolean isOpaqueCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
@@ -154,7 +153,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             TileEntity te = world.getTileEntity(pos);
             if(te instanceof CustomTileEntity)
@@ -210,30 +209,18 @@ public class ModelBakeEventDebug
         }
     }
 
-    public static class CustomModel implements IBakedModel, ISmartBlockModel, ISmartItemModel
+    public static class CustomModel implements IBakedModel
     {
         private final TextureAtlasSprite base, overlay;
         //private boolean hasStateSet = false;
-        private final IExtendedBlockState state;
 
         public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay)
         {
-            this(base, overlay, null);
-        }
-
-        public CustomModel(TextureAtlasSprite base, TextureAtlasSprite overlay, IExtendedBlockState state)
-        {
             this.base = base;
             this.overlay = overlay;
-            this.state = state;
         }
 
-        @Override
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
-            return Collections.emptyList();
-        }
-
+        // TODO update to builder
         private int[] vertexToInts(float x, float y, float z, int color, TextureAtlasSprite texture, float u, float v)
         {
             return new int[] {
@@ -258,12 +245,14 @@ public class ModelBakeEventDebug
                 vertexToInts((float)v2.xCoord, (float)v2.yCoord, (float)v2.zCoord, -1, texture, 0, 16),
                 vertexToInts((float)v3.xCoord, (float)v3.yCoord, (float)v3.zCoord, -1, texture, 16, 16),
                 vertexToInts((float)v4.xCoord, (float)v4.yCoord, (float)v4.zCoord, -1, texture, 16, 0)
-            ), -1, side);
+            ), -1, side, texture, DefaultVertexFormats.BLOCK);
         }
 
         @Override
-        public List<BakedQuad> getGeneralQuads()
+        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
         {
+            if(side != null || !(state instanceof IExtendedBlockState)) return ImmutableList.of();
+            IExtendedBlockState exState = (IExtendedBlockState)state;
             int len = cubeSize * 5 + 1;
             List<BakedQuad> ret = new ArrayList<BakedQuad>();
             for(EnumFacing f : EnumFacing.values())
@@ -273,13 +262,10 @@ public class ModelBakeEventDebug
                 {
                     for(int j = 0; j < cubeSize; j++)
                     {
-                        if(state != null)
+                        Integer value = exState.getValue(properties[f.ordinal()]);
+                        if(value != null && (value & (1 << (i * cubeSize + j))) != 0)
                         {
-                            Integer value = state.getValue(properties[f.ordinal()]);
-                            if(value != null && (value & (1 << (i * cubeSize + j))) != 0)
-                            {
-                                ret.add(createSidedBakedQuad((float)(1 + i * 5) / len, (float)(5 + i * 5) / len, (float)(1 + j * 5) / len, (float)(5 + j * 5) / len, 1.0001f, overlay, f));
-                            }
+                            ret.add(createSidedBakedQuad((float)(1 + i * 5) / len, (float)(5 + i * 5) / len, (float)(1 + j * 5) / len, (float)(5 + j * 5) / len, 1.0001f, overlay, f));
                         }
                     }
                 }
@@ -294,29 +280,16 @@ public class ModelBakeEventDebug
         public boolean isAmbientOcclusion() { return true; }
 
         @Override
-        public boolean isBuiltInRenderer() { return false; }
+        public boolean func_188618_c() { return false; }
 
         @Override
         public TextureAtlasSprite getParticleTexture() { return this.base; }
 
         @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
-            return ItemCameraTransforms.DEFAULT;
-        }
+        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
 
         @Override
-        public IBakedModel handleBlockState(IBlockState state)
-        {
-            return new CustomModel(base, overlay, (IExtendedBlockState)state);
-        }
-
-        @Override
-        public IBakedModel handleItemState(ItemStack stack)
-        {
-            IExtendedBlockState itemState = ((IExtendedBlockState)CustomModelBlock.instance.getDefaultState()).withProperty(properties[1], (1 << (cubeSize * cubeSize)) - 1);
-            return new CustomModel(base, overlay, itemState);
-        }
+        public ItemOverrideList func_188617_f() { return ItemOverrideList.field_188022_a; }
     }
 
     private static Vec3d rotate(Vec3d vec, EnumFacing side)

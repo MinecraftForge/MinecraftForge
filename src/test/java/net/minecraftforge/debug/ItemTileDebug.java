@@ -2,6 +2,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -125,10 +126,10 @@ public class ItemTileDebug
         }
 
         @Override
-        public boolean isOpaqueCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }

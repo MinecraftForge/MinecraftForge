@@ -20,7 +20,7 @@ public class FOVModifierTest {
     
     @SubscribeEvent
     public void getFOVModifier(EntityViewRenderEvent.FOVModifier event) {
-        if(event.block.getMaterial() == Material.water)
+        if(event.getState().func_185904_a() == Material.water)
             event.setFOV(event.getFOV() / 60.0f * 50.0f);
     }
 }

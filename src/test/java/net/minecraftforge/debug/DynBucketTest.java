@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -81,6 +82,7 @@ public class DynBucketTest
         }
     }
 
+    @SuppressWarnings("unused")
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -113,6 +115,7 @@ public class DynBucketTest
         //MinecraftForge.EVENT_BUS.register(this);
     }
 
+    @SuppressWarnings("unused")
     private void registerFluidContainer(Fluid fluid, int meta)
     {
         if (fluid == null)
@@ -123,6 +126,7 @@ public class DynBucketTest
         FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.bucket));
     }
 
+    @SuppressWarnings("unused")
     private void registerFluidContainer2(Fluid fluid, int meta)
     {
         if (fluid == null)
@@ -136,16 +140,16 @@ public class DynBucketTest
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent event)
     {
-        IBlockState state = event.world.getBlockState(event.target.getBlockPos());
+        IBlockState state = event.getWorld().getBlockState(event.getTarget().getBlockPos());
         if (state.getBlock() instanceof IFluidBlock)
         {
             Fluid fluid = ((IFluidBlock) state.getBlock()).getFluid();
             FluidStack fs = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
 
-            ItemStack filled = FluidContainerRegistry.fillFluidContainer(fs, event.current);
+            ItemStack filled = FluidContainerRegistry.fillFluidContainer(fs, event.getEmptyBucket());
             if (filled != null)
             {
-                event.result = filled;
+                event.setFilledBucket(filled);
                 event.setResult(Result.ALLOW);
             }
         }
@@ -202,7 +206,7 @@ public class DynBucketTest
         }
 
         @Override
-        public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             TileEntity te = worldIn.getTileEntity(pos);
             if (!(te instanceof IFluidHandler))
@@ -212,15 +216,14 @@ public class DynBucketTest
             IFluidHandler tank = (IFluidHandler) te;
             side = side.getOpposite();
 
-            ItemStack stack = playerIn.inventory.getCurrentItem();
-            if (stack == null)
+            if (heldItem == null)
             {
                 sendText(playerIn, tank, side);
                 return false;
             }
 
             // do the thing with the tank and the buckets
-            if (FluidUtil.interactWithTank(stack, playerIn, tank, side))
+            if (FluidUtil.interactWithTank(heldItem, playerIn, tank, side))
             {
                 return true;
             }
@@ -230,7 +233,7 @@ public class DynBucketTest
             }
 
             // prevent interaction of the item if it's a fluidcontainer. Prevents placing liquids when interacting with the tank
-            return FluidContainerRegistry.isFilledContainer(stack) || stack.getItem() instanceof IFluidContainerItem;
+            return FluidContainerRegistry.isFilledContainer(heldItem) || heldItem.getItem() instanceof IFluidContainerItem;
         }
 
         private void sendText(EntityPlayer player, IFluidHandler tank, EnumFacing side)
@@ -259,7 +262,8 @@ public class DynBucketTest
         {
             int filled = tank.fill(resource, doFill);
             if(doFill && filled > 0) {
-                worldObj.markBlockForUpdate(pos);
+                IBlockState state = worldObj.getBlockState(pos);
+                worldObj.func_184138_a(pos, state, state, 8); // TODO check flag
             }
             return filled;
         }
@@ -276,7 +280,8 @@ public class DynBucketTest
         {
             FluidStack drained = tank.drain(maxDrain, doDrain);
             if(doDrain && drained != null) {
-                worldObj.markBlockForUpdate(pos);
+                IBlockState state = worldObj.getBlockState(pos);
+                worldObj.func_184138_a(pos, state, state, 8); // TODO check flag
             }
             return drained;
         }
@@ -315,7 +320,7 @@ public class DynBucketTest
         }
 
         @Override
-        public Packet getDescriptionPacket() {
+        public Packet<?> getDescriptionPacket() {
             NBTTagCompound tag = new NBTTagCompound();
             writeToNBT(tag);
             return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);

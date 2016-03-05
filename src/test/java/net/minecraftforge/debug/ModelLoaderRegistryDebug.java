@@ -26,11 +26,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
@@ -162,7 +164,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if(world.isRemote)
             {
@@ -249,7 +251,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) == null) world.setTileEntity(pos, new OBJTesseractTileEntity());
             OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
@@ -278,8 +280,9 @@ public class ModelLoaderRegistryDebug
 
             if (world.isRemote)
             {
-                OBJBakedModel objBaked = (OBJBakedModel) Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(state, world, pos);
-                objBaked.scheduleRebake();  //not necessarily needed for this specific case, but is available
+                // wtf
+                //OBJBakedModel objBaked = (OBJBakedModel) Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(state, world, pos);
+                //objBaked.scheduleRebake();  //not necessarily needed for this specific case, but is available
             }
             world.markBlockRangeForRenderUpdate(pos, pos);
             return false;
@@ -429,13 +432,6 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        @SideOnly(Side.CLIENT)
-        public IBlockState getStateForEntityRender(IBlockState state)
-        {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.NORTH);
-        }
-
-        @Override
         public BlockStateContainer createBlockState()
         {
             return new ExtendedBlockState(this, new IProperty[] {FACING}, new IUnlistedProperty[] {OBJModel.OBJProperty.instance});
@@ -506,7 +502,7 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJVertexColoring2TileEntity)
             {
@@ -531,6 +527,7 @@ public class ModelLoaderRegistryDebug
             if (this.worldObj.isRemote)
             {
                 FMLLog.info("%b", shouldIncrement);
+                /*
                 IBakedModel bakedModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(this.worldObj.getBlockState(this.pos), this.worldObj, this.pos);
                 if (bakedModel != null && bakedModel instanceof OBJBakedModel)
                 {
@@ -552,6 +549,7 @@ public class ModelLoaderRegistryDebug
                     {
                         FMLLog.info("incrementing");
                         String name = materialNames.get(index);
+                        // no
                         objBaked.getModel().getMatLib().changeMaterialColor(name, 0xFF000000);
                         objBaked.scheduleRebake();
                         index++;
@@ -568,12 +566,13 @@ public class ModelLoaderRegistryDebug
                         String name = materialNames.get(index);
                         if (!name.equals(OBJModel.Material.WHITE_NAME))
                         {
+                            // FIXME
                             objBaked.getModel().getMatLib().changeMaterialColor(name, color);
                             objBaked.scheduleRebake();
                         }
                     }
                     this.worldObj.markBlockRangeForRenderUpdate(this.pos, this.pos);
-                }
+                }*/
             }
         }
     }
