@@ -148,21 +148,10 @@ public class BlockStateLoader
 
         private IModel runModelHooks(IModel base, boolean smooth, boolean gui3d, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
         {
-            if (!customData.isEmpty() && base instanceof IModelCustomData)
-            {
-                base = ((IModelCustomData<?>)base).process(customData);
-            }
-
-            if (!textureMap.isEmpty() && base instanceof IRetexturableModel)
-            {
-                base = ((IRetexturableModel<?>)base).retexture(textureMap);
-            }
-
-            if (base instanceof IModelSimpleProperties<?>)
-            {
-                base = ((IModelSimpleProperties<?>) base).smoothLighting(smooth).gui3d(gui3d);
-            }
-
+            base = ModelProcessingHelper.customData(base, customData);
+            base = ModelProcessingHelper.retexture(base, textureMap);
+            base = ModelProcessingHelper.smoothLighting(base, smooth);
+            base = ModelProcessingHelper.gui3d(base, gui3d);
             return base;
         }
 

@@ -400,7 +400,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    public static class ModelWrapper implements IRetexturableModel<ModelWrapper>, IModelCustomData<ModelWrapper>, IModelSimpleProperties<ModelWrapper>, IAnimatedModel
+    public static class ModelWrapper implements IRetexturableModel, IModelCustomData, IModelSimpleProperties, IAnimatedModel
     {
         private final ResourceLocation modelLocation;
         private final B3DModel model;

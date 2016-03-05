@@ -43,7 +43,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public class ModelFluid implements IModelCustomData<ModelFluid>
+public class ModelFluid implements IModelCustomData
 {
     public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);
     public static final ModelFluid lavaModel = new ModelFluid(FluidRegistry.LAVA);

@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel>
+public class OBJModel implements IRetexturableModel, IModelCustomData
 {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;

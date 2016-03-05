@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>, IRetexturableModel<ModelDynBucket>
+public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
 {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
 

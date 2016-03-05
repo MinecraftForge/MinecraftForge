@@ -409,7 +409,7 @@ public class ModelLoader extends ModelBakery
         textures.addAll(model.getTextures());
     }
 
-    private class VanillaModelWrapper implements IRetexturableModel<VanillaModelWrapper>, IModelSimpleProperties<VanillaModelWrapper>, IAnimatedModel
+    private class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IAnimatedModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;

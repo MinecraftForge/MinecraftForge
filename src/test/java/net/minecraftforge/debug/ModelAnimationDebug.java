@@ -33,6 +33,7 @@ import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelProcessingHelper;
 import net.minecraftforge.client.model.MultiModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.animation.Animation;
@@ -212,14 +213,8 @@ public class ModelAnimationDebug
                             "chamber", "blocks/redstone_block",
                             "trunk", "blocks/end_stone"
                         );
-                        if(base instanceof IRetexturableModel<?>)
-                        {
-                            base = ((IRetexturableModel<?>)base).retexture(textures);
-                        }
-                        if(ring instanceof IRetexturableModel<?>)
-                        {
-                            ring = ((IRetexturableModel<?>)ring).retexture(textures);
-                        }
+                        base = ModelProcessingHelper.retexture(base, textures);
+                        ring = ModelProcessingHelper.retexture(base, textures);
                         IModel model = new MultiModel(
                             new ResourceLocation(ModelAnimationDebug.MODID, "builtin/engine"),
                             ring,
