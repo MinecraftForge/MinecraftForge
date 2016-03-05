@@ -1,4 +1,6 @@
-++++ REJECTED PATCH 1
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerList.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerList.java
+@@ -101,7 +101,7 @@
          this.maxPlayers = 8;
      }
  
@@ -7,8 +9,7 @@
      {
          GameProfile gameprofile = playerIn.getGameProfile();
          PlayerProfileCache playerprofilecache = this.mcServer.getPlayerProfileCache();
-++++ END PATCH
-++++ REJECTED PATCH 2
+@@ -110,6 +110,17 @@
          playerprofilecache.addEntry(gameprofile);
          NBTTagCompound nbttagcompound = this.readPlayerDataFromFile(playerIn);
          playerIn.setWorld(this.mcServer.worldServerForDimension(playerIn.dimension));
@@ -16,8 +17,8 @@
 +        World playerWorld = this.mcServer.worldServerForDimension(playerIn.dimension);
 +        if (playerWorld == null)
 +        {
-+            playerIn.dimension=0;
-+            playerWorld=this.mcServer.worldServerForDimension(0);
++            playerIn.dimension = 0;
++            playerWorld = this.mcServer.worldServerForDimension(0);
 +            BlockPos spawnPoint = playerWorld.provider.getRandomizedSpawnPoint();
 +            playerIn.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
 +        }
@@ -26,36 +27,32 @@
          playerIn.theItemInWorldManager.setWorld((WorldServer)playerIn.worldObj);
          String s1 = "local";
  
-++++ END PATCH
-++++ REJECTED PATCH 3
+@@ -123,7 +134,7 @@
          WorldInfo worldinfo = worldserver.getWorldInfo();
          BlockPos blockpos = worldserver.getSpawnPoint();
          this.setPlayerGameTypeBasedOnOther(playerIn, (EntityPlayerMP)null, worldserver);
 -        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn);
 +        playerIn.playerNetServerHandler = nethandlerplayserver;
-         nethandlerplayserver.sendPacket(new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(), worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionId(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(), worldserver.getGameRules().getBoolean("reducedDebugInfo")));
-         nethandlerplayserver.sendPacket(new S3FPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(this.getServerInstance().getServerModName())));
-         nethandlerplayserver.sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
-++++ END PATCH
-++++ REJECTED PATCH 4
+         nethandlerplayserver.sendPacket(new SPacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(), worldinfo.isHardcoreModeEnabled(), worldserver.provider.func_186058_p().func_186068_a(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(), worldserver.getGameRules().getBoolean("reducedDebugInfo")));
+         nethandlerplayserver.sendPacket(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(this.getServerInstance().getServerModName())));
+         nethandlerplayserver.sendPacket(new SPacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
+@@ -213,6 +224,7 @@
+         }
  
          playerIn.addSelfToInternalCraftingInventory();
- 
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(playerIn);
-         if (nbttagcompound != null && nbttagcompound.hasKey("Riding", 10))
-         {
-             Entity entity = EntityList.createEntityFromNBT(nbttagcompound.getCompoundTag("Riding"), worldserver);
-++++ END PATCH
-++++ REJECTED PATCH 5
-             playerIn.readFromNBT(nbttagcompound);
-             nbttagcompound1 = nbttagcompound;
+     }
+ 
+     protected void sendScoreboard(ServerScoreboard scoreboardIn, EntityPlayerMP playerIn)
+@@ -302,6 +314,7 @@
+             nbttagcompound1 = this.mcServer.func_184110_aI().func_188257_a(FixTypes.PLAYER, nbttagcompound);
+             playerIn.readFromNBT(nbttagcompound1);
              logger.debug("loading single player");
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(playerIn, this.playerNBTManagerObj, playerIn.getUniqueID().toString());
          }
          else
          {
-++++ END PATCH
-++++ REJECTED PATCH 6
+@@ -311,8 +324,24 @@
          return nbttagcompound1;
      }
  
@@ -72,6 +69,7 @@
 +            return ((net.minecraft.world.storage.SaveHandler)this.playerNBTManagerObj).getPlayerNBT(player);
 +        }
 +    }
++
      protected void writePlayerData(EntityPlayerMP playerIn)
      {
 +        if (playerIn.playerNetServerHandler == null) return;
@@ -79,35 +77,31 @@
          this.playerNBTManagerObj.writePlayerData(playerIn);
          StatisticsFile statisticsfile = (StatisticsFile)this.playerStatFiles.get(playerIn.getUniqueID());
  
-++++ END PATCH
-++++ REJECTED PATCH 7
-         this.uuidToPlayerMap.put(playerIn.getUniqueID(), playerIn);
-         this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {playerIn}));
-         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
+@@ -334,6 +363,7 @@
+             playerIn.playerNetServerHandler.sendPacket(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {(EntityPlayerMP)this.playerEntityList.get(i)}));
+         }
+ 
 +        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
          worldserver.spawnEntityInWorld(playerIn);
          this.preparePlayer(playerIn, (WorldServer)null);
- 
-++++ END PATCH
-++++ REJECTED PATCH 8
+     }
+@@ -345,6 +375,7 @@
  
      public void playerLoggedOut(EntityPlayerMP playerIn)
      {
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(playerIn);
+         WorldServer worldserver = playerIn.getServerForPlayer();
          playerIn.triggerAchievement(StatList.leaveGameStat);
          this.writePlayerData(playerIn);
-         WorldServer worldserver = playerIn.getServerForPlayer();
-++++ END PATCH
-++++ REJECTED PATCH 9
+@@ -379,6 +410,7 @@
              this.uuidToPlayerMap.remove(uuid);
              this.playerStatFiles.remove(uuid);
          }
 +        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
  
-         this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {playerIn}));
+         this.sendPacketToAllPlayers(new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[] {playerIn}));
      }
-++++ END PATCH
-++++ REJECTED PATCH 10
+@@ -462,13 +494,23 @@
  
      public EntityPlayerMP recreatePlayerEntity(EntityPlayerMP playerIn, int dimension, boolean conqueredEnd)
      {
@@ -123,7 +117,7 @@
 +
          playerIn.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(playerIn);
          playerIn.getServerForPlayer().getEntityTracker().untrackEntity(playerIn);
-         playerIn.getServerForPlayer().getPlayerManager().removePlayer(playerIn);
+         playerIn.getServerForPlayer().func_184164_w().removePlayer(playerIn);
          this.playerEntityList.remove(playerIn);
          this.mcServer.worldServerForDimension(playerIn.dimension).removePlayerEntityDangerously(playerIn);
 -        BlockPos blockpos = playerIn.getBedLocation();
@@ -131,19 +125,19 @@
 +        BlockPos blockpos = playerIn.getBedLocation(dimension);
 +        boolean flag = playerIn.isSpawnForced(dimension);
          playerIn.dimension = dimension;
-         ItemInWorldManager iteminworldmanager;
+         PlayerInteractionManager playerinteractionmanager;
  
-++++ END PATCH
-++++ REJECTED PATCH 11
-         EntityPlayerMP entityplayermp = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(playerIn.dimension), playerIn.getGameProfile(), iteminworldmanager);
+@@ -484,7 +526,8 @@
+         EntityPlayerMP entityplayermp = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(playerIn.dimension), playerIn.getGameProfile(), playerinteractionmanager);
          entityplayermp.playerNetServerHandler = playerIn.playerNetServerHandler;
          entityplayermp.clonePlayer(playerIn, conqueredEnd);
+-        entityplayermp.setEntityId(playerIn.getEntityId());
 +        entityplayermp.dimension = dimension;
-         entityplayermp.setEntityId(playerIn.getEntityId());
++       entityplayermp.setEntityId(playerIn.getEntityId());
          entityplayermp.func_174817_o(playerIn);
-         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
-++++ END PATCH
-++++ REJECTED PATCH 12
+         entityplayermp.func_184819_a(playerIn.func_184591_cq());
+ 
+@@ -531,6 +574,7 @@
          this.uuidToPlayerMap.put(entityplayermp.getUniqueID(), entityplayermp);
          entityplayermp.addSelfToInternalCraftingInventory();
          entityplayermp.setHealth(entityplayermp.getHealth());
@@ -151,32 +145,34 @@
          return entityplayermp;
      }
  
-     public void transferPlayerToDimension(EntityPlayerMP playerIn, int dimension)
+@@ -545,15 +589,20 @@
+ 
+     public void func_187242_a(EntityPlayerMP p_187242_1_, int p_187242_2_)
      {
-+        transferPlayerToDimension(playerIn, dimension, mcServer.worldServerForDimension(dimension).getDefaultTeleporter());
++        transferPlayerToDimension(p_187242_1_, p_187242_2_, mcServer.worldServerForDimension(p_187242_2_).getDefaultTeleporter());
 +    }
 +
-+    public void transferPlayerToDimension(EntityPlayerMP playerIn, int dimension, net.minecraft.world.Teleporter teleporter)
++    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraft.world.Teleporter teleporter)
 +    {
-         int i = playerIn.dimension;
-         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
-         playerIn.dimension = dimension;
-         WorldServer worldserver1 = this.mcServer.worldServerForDimension(playerIn.dimension);
--        playerIn.playerNetServerHandler.sendPacket(new S07PacketRespawn(playerIn.dimension, playerIn.worldObj.getDifficulty(), playerIn.worldObj.getWorldInfo().getTerrainType(), playerIn.theItemInWorldManager.getGameType()));
-+        playerIn.playerNetServerHandler.sendPacket(new S07PacketRespawn(playerIn.dimension, worldserver1.getDifficulty(), worldserver1.getWorldInfo().getTerrainType(), playerIn.theItemInWorldManager.getGameType()));
-         worldserver.removePlayerEntityDangerously(playerIn);
-         playerIn.isDead = false;
--        this.transferEntityToWorld(playerIn, i, worldserver, worldserver1);
-+        this.transferEntityToWorld(playerIn, i, worldserver, worldserver1, teleporter);
-         this.preparePlayer(playerIn, worldserver);
-         playerIn.playerNetServerHandler.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
-         playerIn.theItemInWorldManager.setWorld(worldserver1);
-++++ END PATCH
-++++ REJECTED PATCH 13
+         int i = p_187242_1_.dimension;
+         WorldServer worldserver = this.mcServer.worldServerForDimension(p_187242_1_.dimension);
+         p_187242_1_.dimension = p_187242_2_;
+         WorldServer worldserver1 = this.mcServer.worldServerForDimension(p_187242_1_.dimension);
+-        p_187242_1_.playerNetServerHandler.sendPacket(new SPacketRespawn(p_187242_1_.dimension, p_187242_1_.worldObj.getDifficulty(), p_187242_1_.worldObj.getWorldInfo().getTerrainType(), p_187242_1_.theItemInWorldManager.getGameType()));
++        p_187242_1_.playerNetServerHandler.sendPacket(new SPacketRespawn(p_187242_1_.dimension, worldserver1.getDifficulty(), worldserver1.getWorldInfo().getTerrainType(), p_187242_1_.theItemInWorldManager.getGameType()));
+         this.func_187243_f(p_187242_1_);
+         worldserver.removePlayerEntityDangerously(p_187242_1_);
+         p_187242_1_.isDead = false;
+-        this.transferEntityToWorld(p_187242_1_, i, worldserver, worldserver1);
++        this.transferEntityToWorld(p_187242_1_, i, worldserver, worldserver1, teleporter);
+         this.preparePlayer(p_187242_1_, worldserver);
+         p_187242_1_.playerNetServerHandler.setPlayerLocation(p_187242_1_.posX, p_187242_1_.posY, p_187242_1_.posZ, p_187242_1_.rotationYaw, p_187242_1_.rotationPitch);
+         p_187242_1_.theItemInWorldManager.setWorld(worldserver1);
+@@ -565,17 +614,27 @@
          {
-             playerIn.playerNetServerHandler.sendPacket(new S1DPacketEntityEffect(playerIn.getEntityId(), potioneffect));
+             p_187242_1_.playerNetServerHandler.sendPacket(new SPacketEntityEffect(p_187242_1_.getEntityId(), potioneffect));
          }
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(playerIn, i, dimension);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(p_187242_1_, i, p_187242_2_);
      }
  
      public void transferEntityToWorld(Entity entityIn, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
@@ -199,22 +195,20 @@
          p_82448_3_.theProfiler.startSection("moving");
  
 -        if (entityIn.dimension == -1)
-+        if (false && entityIn.dimension == -1) //Forge Kill it but dont comment out so we can rename it.
++        if (false && entityIn.dimension == -1)
          {
              d0 = MathHelper.clamp_double(d0 / d2, p_82448_4_.getWorldBorder().minX() + 16.0D, p_82448_4_.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp_double(d1 / d2, p_82448_4_.getWorldBorder().minZ() + 16.0D, p_82448_4_.getWorldBorder().maxZ() - 16.0D);
-++++ END PATCH
-++++ REJECTED PATCH 14
+@@ -586,7 +645,7 @@
                  p_82448_3_.updateEntityWithOptionalForce(entityIn, false);
              }
          }
 -        else if (entityIn.dimension == 0)
-+        else if (false && entityIn.dimension == 0) //Forge Kill it but dont comment out so we can rename it.
++        else if (false && entityIn.dimension == 0)
          {
              d0 = MathHelper.clamp_double(d0 * d2, p_82448_4_.getWorldBorder().minX() + 16.0D, p_82448_4_.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp_double(d1 * d2, p_82448_4_.getWorldBorder().minZ() + 16.0D, p_82448_4_.getWorldBorder().maxZ() - 16.0D);
-++++ END PATCH
-++++ REJECTED PATCH 15
+@@ -597,7 +656,8 @@
                  p_82448_3_.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -224,8 +218,7 @@
          {
              BlockPos blockpos;
  
-++++ END PATCH
-++++ REJECTED PATCH 16
+@@ -632,7 +692,7 @@
              if (entityIn.isEntityAlive())
              {
                  entityIn.setLocationAndAngles(d0, entityIn.posY, d1, entityIn.rotationYaw, entityIn.rotationPitch);
@@ -234,4 +227,3 @@
                  p_82448_4_.spawnEntityInWorld(entityIn);
                  p_82448_4_.updateEntityWithOptionalForce(entityIn, false);
              }
-++++ END PATCH
