@@ -19,11 +19,11 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -68,7 +68,6 @@ import com.google.gson.JsonParser;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-@SuppressWarnings("deprecation")
 public class B3DLoader implements ICustomModelLoader
 {
     public static final B3DLoader instance = new B3DLoader();
@@ -487,7 +486,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public IModel retexture(ImmutableMap<String, String> textures)
+        public ModelWrapper retexture(ImmutableMap<String, String> textures)
         {
             ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
             for(Map.Entry<String, ResourceLocation> e : this.textures.entrySet())
@@ -509,7 +508,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public IModel process(ImmutableMap<String, String> data)
+        public ModelWrapper process(ImmutableMap<String, String> data)
         {
             if(data.containsKey("mesh"))
             {
@@ -601,7 +600,7 @@ public class B3DLoader implements ICustomModelLoader
         private final VertexFormat format;
         private final ImmutableSet<String> meshes;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
-        private final LoadingCache<Integer, BakedWrapper> cache;
+        private final LoadingCache<Integer, B3DState> cache;
 
         private ImmutableList<BakedQuad> quads;
 
@@ -610,9 +609,9 @@ public class B3DLoader implements ICustomModelLoader
             this(node, state, smooth, gui3d, format, meshes, textures, CacheBuilder.newBuilder()
                 .maximumSize(128)
                 .expireAfterAccess(2, TimeUnit.MINUTES)
-                .<Integer, BakedWrapper>build(new CacheLoader<Integer, BakedWrapper>()
+                .<Integer, B3DState>build(new CacheLoader<Integer, B3DState>()
                 {
-                    public BakedWrapper load(Integer frame) throws Exception
+                    public B3DState load(Integer frame) throws Exception
                     {
                         IModelState parent = state;
                         Animation newAnimation = node.getAnimation();
@@ -621,12 +620,12 @@ public class B3DLoader implements ICustomModelLoader
                             B3DState ps = (B3DState)parent;
                             parent = ps.getParent();
                         }
-                        return new BakedWrapper(node, new B3DState(newAnimation, frame, frame, 0, parent), smooth, gui3d, format, meshes, textures);
+                        return new B3DState(newAnimation, frame, frame, 0, parent);
                     }
                 }));
         }
 
-        public BakedWrapper(Node<?> node, IModelState state, boolean smooth, boolean gui3d, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, BakedWrapper> cache)
+        public BakedWrapper(Node<?> node, IModelState state, boolean smooth, boolean gui3d, VertexFormat format, ImmutableSet<String> meshes, ImmutableMap<String, TextureAtlasSprite> textures, LoadingCache<Integer, B3DState> cache)
         {
             this.node = node;
             this.state = state;
@@ -638,59 +637,111 @@ public class B3DLoader implements ICustomModelLoader
             this.cache = cache;
         }
 
-        // FIXME merge with handleBlockState
         @Override
-        public List<BakedQuad> getGeneralQuads()
+        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
         {
+            if(side != null) return ImmutableList.of();
+            IModelState modelState = this.state;
+            if(state instanceof IExtendedBlockState)
+            {
+                IExtendedBlockState exState = (IExtendedBlockState)state;
+                if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
+                {
+                    B3DState s = exState.getValue(B3DFrameProperty.instance);
+                    if(s != null)
+                    {
+                        //return getCachedModel(s.getFrame());
+                        IModelState parent = this.state;
+                        Animation newAnimation = s.getAnimation();
+                        if(parent instanceof B3DState)
+                        {
+                            B3DState ps = (B3DState)parent;
+                            parent = ps.getParent();
+                        }
+                        if(newAnimation == null)
+                        {
+                            newAnimation = node.getAnimation();
+                        }
+                        if(s.getFrame() == s.getNextFrame())
+                        {
+                            modelState = cache.getUnchecked(s.getFrame());
+                        }
+                        else
+                        {
+                            modelState = new B3DState(newAnimation, s.getFrame(), s.getNextFrame(), s.getProgress(), parent);
+                        }
+                    }
+                }
+                else if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
+                {
+                    // FIXME: should animation state handle the parent state, or should it remain here?
+                    IModelState parent = this.state;
+                    if(parent instanceof B3DState)
+                    {
+                        B3DState ps = (B3DState)parent;
+                        parent = ps.getParent();
+                    }
+                    IModelState newState = exState.getValue(Properties.AnimationProperty);
+                    if(newState != null)
+                    {
+                        modelState = new ModelStateComposition(parent, newState);
+                    }
+                }
+            }
             if(quads == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for(Node<?> child : node.getNodes().values())
-                {
-                    builder.addAll(new BakedWrapper(child, state, smooth, gui3d, format, meshes, textures).getGeneralQuads());
-                }
-                if(node.getKind() instanceof Mesh && meshes.contains(node.getName()))
-                {
-                    Mesh mesh = (Mesh)node.getKind();
-                    Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
-                    {
-                        private final TRSRTransformation global = state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
-                        private final LoadingCache<Node<?>, TRSRTransformation> localCache = CacheBuilder.newBuilder()
-                            .maximumSize(32)
-                            .build(new CacheLoader<Node<?>, TRSRTransformation>()
-                            {
-                                public TRSRTransformation load(Node<?> node) throws Exception
-                                {
-                                    return state.apply(Optional.of(new NodeJoint(node))).or(TRSRTransformation.identity());
-                                }
-                            });
-
-                        public Matrix4f apply(Node<?> node)
-                        {
-                            return global.compose(localCache.getUnchecked(node)).getMatrix();
-                        }
-                    });
-                    for(Face f : faces)
-                    {
-                        UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
-                        quadBuilder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
-                        quadBuilder.setQuadColored();
-                        List<Texture> textures = null;
-                        if(f.getBrush() != null) textures = f.getBrush().getTextures();
-                        TextureAtlasSprite sprite;
-                        if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
-                        else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
-                        else sprite = this.textures.get(textures.get(0).getPath());
-                        putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
-                        putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
-                        putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
-                        putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
-                        builder.add(quadBuilder.build());
-                    }
-                }
+                generateQuads(builder, node, modelState);
                 quads = builder.build();
             }
             return quads;
+        }
+
+        protected void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state)
+        {
+            for(Node<?> child : node.getNodes().values())
+            {
+                generateQuads(builder, child, state);
+            }
+            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()))
+            {
+                Mesh mesh = (Mesh)node.getKind();
+                Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
+                {
+                    private final TRSRTransformation global = state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
+                    private final LoadingCache<Node<?>, TRSRTransformation> localCache = CacheBuilder.newBuilder()
+                        .maximumSize(32)
+                        .build(new CacheLoader<Node<?>, TRSRTransformation>()
+                        {
+                            public TRSRTransformation load(Node<?> node) throws Exception
+                            {
+                                return state.apply(Optional.of(new NodeJoint(node))).or(TRSRTransformation.identity());
+                            }
+                        });
+
+                    public Matrix4f apply(Node<?> node)
+                    {
+                        return global.compose(localCache.getUnchecked(node)).getMatrix();
+                    }
+                });
+                for(Face f : faces)
+                {
+                    UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
+                    quadBuilder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
+                    quadBuilder.setQuadColored();
+                    List<Texture> textures = null;
+                    if(f.getBrush() != null) textures = f.getBrush().getTextures();
+                    TextureAtlasSprite sprite;
+                    if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
+                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
+                    else sprite = this.textures.get(textures.get(0).getPath());
+                    putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
+                    putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
+                    putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
+                    putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
+                    builder.add(quadBuilder.build());
+                }
+            }
         }
 
         private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Vector3f faceNormal, TextureAtlasSprite sprite)
@@ -772,60 +823,16 @@ public class B3DLoader implements ICustomModelLoader
             return ItemCameraTransforms.DEFAULT;
         }
 
-        // FIXME merge with getQuads
-        @Override
-        public BakedWrapper handleBlockState(IBlockState state)
-        {
-            if(state instanceof IExtendedBlockState)
-            {
-                IExtendedBlockState exState = (IExtendedBlockState)state;
-                if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
-                {
-                    B3DState s = exState.getValue(B3DFrameProperty.instance);
-                    if(s != null)
-                    {
-                        //return getCachedModel(s.getFrame());
-                        IModelState parent = this.state;
-                        Animation newAnimation = s.getAnimation();
-                        if(parent instanceof B3DState)
-                        {
-                            B3DState ps = (B3DState)parent;
-                            parent = ps.getParent();
-                        }
-                        if(newAnimation == null)
-                        {
-                            newAnimation = node.getAnimation();
-                        }
-                        if(s.getFrame() == s.getNextFrame())
-                        {
-                            return cache.getUnchecked(s.getFrame());
-                        }
-                        B3DState newState = new B3DState(newAnimation, s.getFrame(), s.getNextFrame(), s.getProgress(), parent);
-                        return new BakedWrapper(node, newState, smooth, gui3d, format, meshes, textures);
-                    }
-                }
-                else if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
-                {
-                    // FIXME: should animation state handle the parent state, or should it remain here?
-                    IModelState parent = this.state;
-                    if(parent instanceof B3DState)
-                    {
-                        B3DState ps = (B3DState)parent;
-                        parent = ps.getParent();
-                    }
-                    IModelState newState = exState.getValue(Properties.AnimationProperty);
-                    if(newState != null)
-                    {
-                        return new BakedWrapper(node, new ModelStateComposition(parent, newState), smooth, gui3d, format, meshes, textures);
-                    }
-                }
-            }
-            return this;
-        }
-
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
+        }
+
+        @Override
+        public ItemOverrideList func_188617_f()
+        {
+            // TODO handle items
+            return ItemOverrideList.field_188022_a;
         }
     }
 }

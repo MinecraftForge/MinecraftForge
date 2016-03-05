@@ -32,8 +32,8 @@ import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.MissingVariantException;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variant;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition.Variants;
+import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.model.VariantList;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -53,7 +53,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IRegistry;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
@@ -78,7 +78,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 
-@SuppressWarnings("ALL")
 public class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
@@ -132,7 +131,7 @@ public class ModelLoader extends ModelBakery
                 }
             }
         });
-        IFlexibleBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance);
+        IBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance);
         for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
             if(e.getValue() == getMissingModel())
@@ -172,7 +171,7 @@ public class ModelLoader extends ModelBakery
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        Variants variants = null;
+        VariantList variants = null;
         try
         {
             variants = definition.getVariants(location.getVariant());
@@ -480,7 +479,7 @@ public class ModelLoader extends ModelBakery
                     {
                         builder.add(loc);
                     }
-                    // mojang hardcode
+                    /*// mojang hardcode
                     if(model.getRootModel() == MODEL_COMPASS && !loc.equals(TextureMap.LOCATION_MISSING_TEXTURE))
                     {
                         TextureAtlasSprite.setLocationNameCompass(loc.toString());
@@ -488,7 +487,7 @@ public class ModelLoader extends ModelBakery
                     else if(model.getRootModel() == MODEL_CLOCK && !loc.equals(TextureMap.LOCATION_MISSING_TEXTURE))
                     {
                         TextureAtlasSprite.setLocationNameClock(loc.toString());
-                    }
+                    }*/
                 }
             }
             for(String s : model.textures.values())
@@ -501,7 +500,7 @@ public class ModelLoader extends ModelBakery
             return builder.build();
         }
 
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -533,11 +532,11 @@ public class ModelLoader extends ModelBakery
             {
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
-            if(isCustomRenderer(model)) return new IFlexibleBakedModel.Wrapper(new BuiltInModel(transforms), format);
+            if(isCustomRenderer(model)) return new BuiltInModel(transforms);
             return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
         }
 
-        private IFlexibleBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model)).setTexture(particle);
@@ -567,7 +566,8 @@ public class ModelLoader extends ModelBakery
                 }
             }
 
-            return new ISmartBlockModel.PerspectiveWrapper(new IPerspectiveAwareModel.MapWrapper(new IFlexibleBakedModel.Wrapper(builder.makeBakedModel(), format), perState))
+            // FIXME
+            return new ISmartBlockModel.PerspectiveWrapper(new IPerspectiveAwareModel.MapWrapper(builder.makeBakedModel(), perState))
             {
                 public IBakedModel handleBlockState(IBlockState state)
                 {
@@ -576,7 +576,7 @@ public class ModelLoader extends ModelBakery
             };
         }
 
-        private IBakedModel handleBlockState(IFlexibleBakedModel model, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, TRSRTransformation modelState, IBlockState state)
+        private IBakedModel handleBlockState(IBakedModel model, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, TRSRTransformation modelState, IBlockState state)
         {
             if(state instanceof IExtendedBlockState)
             {
@@ -594,7 +594,7 @@ public class ModelLoader extends ModelBakery
         }
 
         @Override
-        public IModel retexture(ImmutableMap<String, String> textures)
+        public VanillaModelWrapper retexture(ImmutableMap<String, String> textures)
         {
             if (textures.isEmpty())
                 return this;
@@ -724,11 +724,11 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        public WeightedRandomModel(ModelResourceLocation parent, Variants variants)
+        public WeightedRandomModel(ModelResourceLocation parent, VariantList variants)
         {
-            this.variants = variants.getVariants();
+            this.variants = variants.func_188114_a();
             ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
-            for (Variant v : variants.getVariants())
+            for (Variant v : this.variants)
             {
                 ResourceLocation loc = v.getModelLocation();
                 locations.add(loc);
@@ -793,7 +793,7 @@ public class ModelLoader extends ModelBakery
             return state;
         }
 
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -812,28 +812,12 @@ public class ModelLoader extends ModelBakery
                 Variant v =  variants.get(i);
                 builder.add(model.bake(addUV(v.isUvLocked(), MultiModelState.getPartState(state, model, i)), format, bakedTextureGetter), variants.get(i).getWeight());
             }
-            return new FlexibleWeightedBakedModel(builder.build(), Attributes.DEFAULT_BAKED_FORMAT);
+            return builder.build();
         }
 
         public IModelState getDefaultState()
         {
             return defaultState;
-        }
-    }
-
-    private static class FlexibleWeightedBakedModel extends WeightedBakedModel implements IFlexibleBakedModel
-    {
-        private final VertexFormat format;
-
-        public FlexibleWeightedBakedModel(WeightedBakedModel parent, VertexFormat format)
-        {
-            super(parent.models);
-            this.format = format;
-        }
-
-        public VertexFormat getFormat()
-        {
-            return format;
         }
     }
 
