@@ -24,6 +24,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
@@ -1324,8 +1325,9 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         // FIXME: merge with getQuads
         @Override
-        public List<BakedQuad> getGeneralQuads()
+        public List<BakedQuad> func_188616_a(IBlockState blockState, EnumFacing side, long rand)
         {
+            if(side != null) return ImmutableList.of();
             if (quads == null)
             {
                 quads = Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
@@ -1491,7 +1493,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
 
         // FIXME: merge with getQuads
-        @Override
+        /* @Override
         public OBJBakedModel handleBlockState(IBlockState state)
         {
             if (state instanceof IExtendedBlockState)
@@ -1511,7 +1513,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 }
             }
             return this;
-        }
+        }*/
 
         private void updateStateVisibilityMap(OBJState state)
         {
@@ -1583,6 +1585,12 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         public String toString()
         {
             return this.model.modelLocation.toString();
+        }
+
+        @Override
+        public ItemOverrideList func_188617_f()
+        {
+            return ItemOverrideList.field_188022_a;
         }
     }
 
