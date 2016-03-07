@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -133,7 +134,7 @@ public class ForgeEventFactory
         return onPlayerInteract(player, action, world, pos, face, null);
     }
 
-    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face, Vec3 localPos)
+    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face, Vec3d localPos)
     {
         PlayerInteractEvent event = new PlayerInteractEvent(player, action, pos, face, world, localPos);
         MinecraftForge.EVENT_BUS.post(event);
