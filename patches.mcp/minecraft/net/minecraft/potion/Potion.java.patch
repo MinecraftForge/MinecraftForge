@@ -1,21 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -18,12 +18,13 @@
- import net.minecraft.util.StringUtils;
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.registry.RegistryNamespaced;
-+import net.minecraftforge.fml.common.registry.GameData;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -23,7 +23,7 @@
  
  public class Potion
  {
 -    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced();
-+    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = GameData.getPotionRegistry();
++    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.fml.common.registry.GameData.getPotionRegistry();
      private final Map<IAttribute, AttributeModifier> attributeModifierMap = Maps.<IAttribute, AttributeModifier>newHashMap();
      private final boolean isBadEffect;
      private final int liquidColor;
-@@ -195,7 +196,6 @@
+@@ -195,7 +195,6 @@
          return this.statusIconIndex;
      }
  
@@ -23,7 +17,7 @@
      public boolean isBadEffect()
      {
          return this.isBadEffect;
-@@ -266,7 +266,37 @@
+@@ -266,7 +265,37 @@
          return modifier.getAmount() * (double)(p_111183_1_ + 1);
      }
  
