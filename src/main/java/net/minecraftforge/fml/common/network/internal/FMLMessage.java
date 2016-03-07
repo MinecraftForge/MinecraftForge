@@ -6,11 +6,11 @@ import io.netty.buffer.Unpooled;
 import java.io.IOException;
 import java.util.List;
 
+import net.minecraft.network.datasync.EntityDataManager;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
 
-import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.PacketBuffer;
@@ -157,7 +157,7 @@ public abstract class FMLMessage {
         double speedScaledX;
         double speedScaledY;
         double speedScaledZ;
-        List<DataWatcher.WatchableObject> dataWatcherList;
+        List<EntityDataManager.DataEntry<?>> dataWatcherList;
         ByteBuf dataStream;
 
         public EntitySpawnMessage() {}
@@ -193,7 +193,7 @@ public abstract class FMLMessage {
             PacketBuffer pb = new PacketBuffer(tmpBuf);
             try
             {
-                entity.getDataWatcher().writeTo(pb);
+                entity.func_184212_Q().func_187216_a(pb);
             } catch (IOException e)
             {
                 FMLLog.log(Level.FATAL,e,"Encountered fatal exception trying to send entity spawn data watchers");
@@ -247,7 +247,7 @@ public abstract class FMLMessage {
             scaledHeadYaw = dat.readByte() * 360F / 256F;
             try
             {
-                dataWatcherList = DataWatcher.readWatchedListFromPacketBuffer(new PacketBuffer(dat));
+                dataWatcherList = EntityDataManager.func_187215_b(new PacketBuffer(dat));
             } catch (IOException e)
             {
                 FMLLog.log(Level.FATAL, e, "There was a critical error decoding the datawatcher stream for a mod entity.");

@@ -126,7 +126,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
 
             if (spawnMsg.dataWatcherList != null)
             {
-                entity.getDataWatcher().updateWatchedObjectsFromList(spawnMsg.dataWatcherList);
+                entity.func_184212_Q().func_187218_a(spawnMsg.dataWatcherList);
             }
 
             if (spawnMsg.throwerId > 0)

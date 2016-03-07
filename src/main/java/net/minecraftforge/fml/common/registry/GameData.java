@@ -254,9 +254,7 @@ public class GameData
 
         @Override
         public void onAdd(Potion potion, int id) {
-            // fix the data in the potion and the potions-array
-            potion.id = id;
-            Potion.potionTypes[id] = potion;
+            // no op for the minute?
         }
     }
 }
