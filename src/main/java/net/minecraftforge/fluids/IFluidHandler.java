@@ -8,8 +8,6 @@ import net.minecraft.util.EnumFacing;
  *
  * A reference implementation is provided {@link TileFluidHandler}.
  *
- * @author King Lemming
- *
  */
 public interface IFluidHandler
 {

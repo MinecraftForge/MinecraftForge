@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStaticLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStaticLiquid.java
+@@ -52,7 +52,7 @@
+                     {
+                         blockpos = blockpos.add(rand.nextInt(3) - 1, 1, rand.nextInt(3) - 1);
+ 
+-                        if (blockpos.getY() >= 0 && blockpos.getY() < 256 && !worldIn.isBlockLoaded(blockpos))
++                        if (blockpos.getY() >= 0 && blockpos.getY() < worldIn.getHeight() && !worldIn.isBlockLoaded(blockpos))
+                         {
+                             return;
+                         }

@@ -8,8 +8,6 @@ import net.minecraft.world.World;
  *
  * NOTE: Using/extending the reference implementations {@link BlockFluidBase} is encouraged.
  *
- * @author King Lemming
- *
  */
 public interface IFluidBlock
 {

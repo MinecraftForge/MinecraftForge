@@ -5,12 +5,14 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.items.IItemHandler;
@@ -402,7 +404,7 @@ public class FluidUtil
         {
             if (world != null && pos != null)
             {
-                world.playSoundEffect(pos.getX(), pos.getY(), pos.getZ(), "random.pop", 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                world.func_184148_a(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.field_187638_cR, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             }
             return true;
         }

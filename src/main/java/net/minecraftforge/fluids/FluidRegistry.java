@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.base.Strings;
@@ -32,9 +32,6 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.
- *
- * @author King Lemming, CovertJaguar (LiquidDictionary)
- *
  */
 public abstract class FluidRegistry
 {
@@ -56,14 +53,14 @@ public abstract class FluidRegistry
     public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
-            return StatCollector.translateToLocal("tile.water.name");
+            return I18n.translateToLocal("tile.water.name");
         }
     }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
 
     public static final Fluid LAVA = new Fluid("lava", new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
-            return StatCollector.translateToLocal("tile.lava.name");
+            return I18n.translateToLocal("tile.lava.name");
         }
     }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.getUnlocalizedName());
 

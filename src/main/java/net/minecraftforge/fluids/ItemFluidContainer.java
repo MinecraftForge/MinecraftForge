@@ -6,9 +6,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Reference implementation of {@link IFluidContainerItem}. Use/extend this or implement your own.
- *
- * @author King Lemming
- *
  */
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {

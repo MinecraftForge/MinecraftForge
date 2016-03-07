@@ -7,9 +7,6 @@ import net.minecraft.util.EnumFacing;
 
 /**
  * Reference Tile Entity implementation of {@link IFluidHandler}. Use/extend this or write your own.
- *
- * @author King Lemming
- *
  */
 public class TileFluidHandler extends TileEntity implements IFluidHandler
 {

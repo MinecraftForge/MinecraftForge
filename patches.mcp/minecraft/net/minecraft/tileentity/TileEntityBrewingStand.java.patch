@@ -36,7 +36,7 @@
 +        if (itemstack.getItem().hasContainerItem(itemstack))
          {
 -            ItemStack itemstack1 = new ItemStack(itemstack.getItem().getContainerItem());
-+            ItemStack itemstack1 = new ItemStack(itemstack.getItem().getContainerItem(itemstack));
++            ItemStack itemstack1 = itemstack.getItem().getContainerItem(itemstack);
  
              if (itemstack.stackSize <= 0)
              {

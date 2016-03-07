@@ -6,8 +6,8 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -15,8 +15,6 @@ import net.minecraft.world.World;
  * This is a cellular-automata based finite fluid block implementation.
  *
  * It is highly recommended that you use/extend this class for finite fluid blocks.
- *
- * @author OvermindDL1, KingLemming
  *
  */
 public class BlockFluidFinite extends BlockFluidBase
@@ -30,7 +28,7 @@ public class BlockFluidFinite extends BlockFluidBase
     public int getQuantaValue(IBlockAccess world, BlockPos pos)
     {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock().isAir(world, pos))
+        if (state.getBlock().isAir(state, world, pos))
         {
             return 0;
         }
@@ -39,13 +37,13 @@ public class BlockFluidFinite extends BlockFluidBase
         {
             return -1;
         }
-        return ((Integer)state.getValue(LEVEL)) + 1;
+        return state.getValue(LEVEL) + 1;
     }
 
     @Override
     public boolean canCollideCheck(IBlockState state, boolean fullHit)
     {
-        return fullHit && ((Integer)state.getValue(LEVEL)) == quantaPerBlock - 1;
+        return fullHit && state.getValue(LEVEL) == quantaPerBlock - 1;
     }
 
     @Override
@@ -58,7 +56,7 @@ public class BlockFluidFinite extends BlockFluidBase
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
         boolean changed = false;
-        int quantaRemaining = ((Integer)state.getValue(LEVEL)) + 1;
+        int quantaRemaining = state.getValue(LEVEL) + 1;
 
         // Flow vertically if possible
         int prevRemaining = quantaRemaining;

@@ -3,8 +3,8 @@ package net.minecraftforge.fluids;
 import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
@@ -23,8 +23,6 @@ import net.minecraft.item.EnumRarity;
  *
  * The default values can be used as a reference point for mods adding fluids such as oil or heavy
  * water.
- *
- * @author King Lemming
  *
  */
 public class Fluid
@@ -165,12 +163,6 @@ public class Fluid
         return this.fluidName;
     }
 
-    @Deprecated // Modders should never actually use int ID, use String
-    public final int getID()
-    {
-        return FluidRegistry.getFluidID(this.fluidName);
-    }
-
     public final Block getBlock()
     {
         return block;
@@ -187,7 +179,7 @@ public class Fluid
     public String getLocalizedName(FluidStack stack)
     {
         String s = this.getUnlocalizedName();
-        return s == null ? "" : StatCollector.translateToLocal(s);
+        return s == null ? "" : I18n.translateToLocal(s);
     }
 
     /**
