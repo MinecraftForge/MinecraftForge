@@ -228,13 +228,15 @@ public class BlockFluidFinite extends BlockFluidBase
     @Override
     public FluidStack drain(World world, BlockPos pos, boolean doDrain)
     {
+        final FluidStack fluidStack = new FluidStack(getFluid(),
+                MathHelper.floor_float(getQuantaPercentage(world, pos) * FluidContainerRegistry.BUCKET_VOLUME));
+
         if (doDrain)
         {
             world.setBlockToAir(pos);
         }
 
-        return new FluidStack(getFluid(),
-                MathHelper.floor_float(getQuantaPercentage(world, pos) * FluidContainerRegistry.BUCKET_VOLUME));
+        return fluidStack;
     }
 
     @Override
