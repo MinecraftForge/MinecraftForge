@@ -152,8 +152,6 @@ public class PersistentRegistryManager
 
         // Empty the blockstate map before loading
         GameData.getBlockStateIDMap().clear();
-        // Clean up potion array before reloading it from the snapshot
-        Arrays.fill(Potion.potionTypes, null);
 
         // Load the snapshot into the "STAGING" registry
         for (Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapshotEntry : snapshot.entries.entrySet())

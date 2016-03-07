@@ -17,6 +17,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraft.util.IntIdentityHashBiMap;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
@@ -170,7 +171,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         this.dummiedLocations.clear();
         this.dummiedLocations.addAll(otherRegistry.dummiedLocations);
 
-        underlyingIntegerMap = new ObjectIntIdentityMap<I>();
+        underlyingIntegerMap.func_186812_a();
         registryObjects.clear();
 
         for (I thing : otherRegistry.typeSafeIterable())
@@ -556,7 +557,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             throw new IllegalArgumentException("The object to be added to the registry is not of the right type. Reflection/ASM hackery? Registry bug?");
         }
 
-        underlyingIntegerMap.put(thing, id); // obj <-> id
+        underlyingIntegerMap.func_186814_a(thing, id); // obj <-> id
         super.putObject(name, thing); // name <-> obj
         availabilityMap.set(id);
         if (addCallback != null)
@@ -758,7 +759,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
         for (I i : this.underlyingIntegerMap)
         {
-            addCallback.onAdd(i, this.underlyingIntegerMap.get(i));
+            addCallback.onAdd(i, this.underlyingIntegerMap.func_186808_c(i));
         }
     }
 
