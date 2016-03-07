@@ -374,3 +374,15 @@ String getVersionFromJava(File file)
 // should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
 task setupForge { dependsOn 'setup' }
 task buildPackages { dependsOn 'build' }
+
+//Temporary hack to fix compile errors caused by 1.8.9 mappings on 1.9
+task fixParams << {
+    logger.lifecycle('Fixing param names!')
+    def params = new File(extractMcpMappings.destinationDir, 'params.csv')
+    def text = params.text
+    text = text.replaceAll('p_150893_2_,block,', 'p_150893_2_,state,')
+    text = text.replaceAll('p_148611_1_,sound,', 'p_148611_1_,p_sound,')
+    params.write(text)
+}
+fixParams.dependsOn('extractMcpMappings')
+extractMcpMappings.finalizedBy('fixParams')
