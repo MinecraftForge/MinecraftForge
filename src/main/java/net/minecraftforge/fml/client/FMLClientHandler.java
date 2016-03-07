@@ -30,16 +30,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
+import net.minecraft.client.gui.GuiListWorldSelectionEntry;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSelectWorld;
+import net.minecraft.client.gui.GuiWorldSelection;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.ServerListEntryNormal;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.OldServerPinger;
+import net.minecraft.client.network.ServerPinger;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FallbackResourceManager;
@@ -67,6 +68,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.SaveFormatComparator;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -123,7 +125,7 @@ import com.google.gson.JsonObject;
 /**
  * Handles primary communication from hooked code into the system
  *
- * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List)} called from
+ * The FML entry point is {@link #beginMinecraftLoading(Minecraft, List, IReloadableResourceManager)} called from
  * {@link Minecraft}
  *
  * Obfuscated code should focus on this class and other members of the "server"
@@ -666,9 +668,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return new File(client.mcDataDir, "saves");
     }
-    public void tryLoadExistingWorld(GuiSelectWorld selectWorldGUI, String dirName, String saveName)
+    public void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, SaveFormatComparator comparator)
     {
-        File dir = new File(getSavesDir(), dirName);
+        File dir = new File(getSavesDir(), comparator.getFileName());
         NBTTagCompound leveldat;
         try
         {
@@ -682,20 +684,20 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             catch (Exception e1)
             {
-                FMLLog.warning("There appears to be a problem loading the save %s, both level files are unreadable.", dirName);
+                FMLLog.warning("There appears to be a problem loading the save %s, both level files are unreadable.", comparator.getFileName());
                 return;
             }
         }
         NBTTagCompound fmlData = leveldat.getCompoundTag("FML");
         if (fmlData.hasKey("ModItemData"))
         {
-            showGuiScreen(new GuiOldSaveLoadConfirm(dirName, saveName, selectWorldGUI));
+            showGuiScreen(new GuiOldSaveLoadConfirm(comparator.getFileName(), comparator.getDisplayName(), selectWorldGUI));
         }
         else
         {
             try
             {
-                client.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+                client.launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), (WorldSettings)null);
             }
             catch (StartupQuery.AbortedException e)
             {
@@ -820,7 +822,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void connectToServerAtStartup(String host, int port)
     {
         setupServerList();
-        OldServerPinger osp = new OldServerPinger();
+        ServerPinger osp = new ServerPinger();
         ServerData serverData = new ServerData("Command Line", host+":"+port,false);
         try
         {

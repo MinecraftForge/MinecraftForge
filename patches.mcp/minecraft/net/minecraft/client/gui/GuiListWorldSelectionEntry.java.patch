@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiListWorldSelectionEntry.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiListWorldSelectionEntry.java
+@@ -242,7 +242,7 @@
+ 
+         if (this.field_186784_e.getSaveLoader().canLoadWorld(this.field_186786_g.getFileName()))
+         {
+-            this.field_186784_e.launchIntegratedServer(this.field_186786_g.getFileName(), this.field_186786_g.getDisplayName(), (WorldSettings)null);
++            net.minecraftforge.fml.client.FMLClientHandler.instance().tryLoadExistingWorld(field_186785_f, this.field_186786_g);
+         }
+     }
+ 

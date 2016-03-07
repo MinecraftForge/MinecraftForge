@@ -6,7 +6,7 @@ import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSelectWorld;
+import net.minecraft.client.gui.GuiWorldSelection;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.world.WorldSettings;
@@ -57,7 +57,6 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
     {
         if (button.id == 1)
         {
-            ObfuscationReflectionHelper.setPrivateValue(GuiSelectWorld.class, (GuiSelectWorld)parentScreen, false, "field_"+"146634_i");
             FMLClientHandler.instance().showGuiScreen(parent);
         }
         else
