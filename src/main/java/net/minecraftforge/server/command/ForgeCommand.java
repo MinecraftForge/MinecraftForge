@@ -17,12 +17,6 @@ import net.minecraftforge.server.ForgeTimeTracker;
 public class ForgeCommand extends CommandBase {
 
     private static final DecimalFormat timeFormatter = new DecimalFormat("########0.000");
-    private WeakReference<MinecraftServer> server;
-
-    public ForgeCommand(MinecraftServer server)
-    {
-        this.server = new WeakReference<MinecraftServer>(server);
-    }
 
     @Override
     public String getCommandName()
@@ -42,7 +36,7 @@ public class ForgeCommand extends CommandBase {
         return 2;
     }
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException
+    public void func_184881_a(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length == 0)
         {
@@ -54,15 +48,15 @@ public class ForgeCommand extends CommandBase {
         }
         else if ("tps".equals(args[0]))
         {
-            displayTPS(sender,args);
+            displayTPS(server, sender,args);
         }
         else if ("tpslog".equals(args[0]))
         {
-            doTPSLog(sender,args);
+            doTPSLog(server, sender,args);
         }
         else if ("track".equals(args[0]))
         {
-            handleTracking(sender, args);
+            handleTracking(server, sender, args);
         }
         else
         {
@@ -71,7 +65,7 @@ public class ForgeCommand extends CommandBase {
     }
 
     @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    public List<String> func_184883_a(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
     {
         if (args.length == 1)
         {
@@ -80,7 +74,7 @@ public class ForgeCommand extends CommandBase {
         else if (args.length == 2)
         {
             if ("tps".equals(args[0])) {
-                return getListOfStringsMatchingLastWord(args, getServer().worldTickTimes.keySet());
+                return getListOfStringsMatchingLastWord(args, server.worldTickTimes.keySet());
             }
             else if ("track".equals(args[0]))
             {
@@ -90,7 +84,7 @@ public class ForgeCommand extends CommandBase {
         return null;
     }
 
-    private void handleTracking(ICommandSender sender, String[] args) throws CommandException
+    private void handleTracking(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length != 3)
         {
@@ -101,7 +95,7 @@ public class ForgeCommand extends CommandBase {
 
         if ("te".equals(type))
         {
-            doTurnOnTileEntityTracking(sender, duration);
+            doTurnOnTileEntityTracking(server, sender, duration);
         }
         else
         {
@@ -109,19 +103,19 @@ public class ForgeCommand extends CommandBase {
         }
     }
 
-    private void doTurnOnTileEntityTracking(ICommandSender sender, int duration)
+    private void doTurnOnTileEntityTracking(MinecraftServer server, ICommandSender sender, int duration)
     {
         ForgeTimeTracker.tileEntityTrackingDuration = duration;
         ForgeTimeTracker.tileEntityTracking = true;
         sender.addChatMessage(new TextComponentTranslation("commands.forge.tracking.te.enabled", duration));
     }
 
-    private void doTPSLog(ICommandSender sender, String[] args)
+    private void doTPSLog(MinecraftServer server, ICommandSender sender, String[] args)
     {
 
     }
 
-    private void displayTPS(ICommandSender sender, String[] args) throws CommandException
+    private void displayTPS(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         int dim = 0;
         boolean summary = true;
@@ -134,17 +128,17 @@ public class ForgeCommand extends CommandBase {
         {
             for (Integer dimId : DimensionManager.getIDs())
             {
-                double worldTickTime = ForgeCommand.mean(this.getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
+                double worldTickTime = ForgeCommand.mean(server.worldTickTimes.get(dimId)) * 1.0E-6D;
                 double worldTPS = Math.min(1000.0/worldTickTime, 20);
                 sender.addChatMessage(new TextComponentTranslation("commands.forge.tps.summary",String.format("Dim %d", dimId), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
             }
-            double meanTickTime = ForgeCommand.mean(this.getServer().tickTimeArray) * 1.0E-6D;
+            double meanTickTime = ForgeCommand.mean(server.tickTimeArray) * 1.0E-6D;
             double meanTPS = Math.min(1000.0/meanTickTime, 20);
             sender.addChatMessage(new TextComponentTranslation("commands.forge.tps.summary","Overall", timeFormatter.format(meanTickTime), timeFormatter.format(meanTPS)));
         }
         else
         {
-            double worldTickTime = ForgeCommand.mean(this.getServer().worldTickTimes.get(dim)) * 1.0E-6D;
+            double worldTickTime = ForgeCommand.mean(server.worldTickTimes.get(dim)) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
             sender.addChatMessage(new TextComponentTranslation("commands.forge.tps.summary",String.format("Dim %d", dim), timeFormatter.format(worldTickTime), timeFormatter.format(worldTPS)));
         }
@@ -159,10 +153,5 @@ public class ForgeCommand extends CommandBase {
         }
 
         return sum / values.length;
-    }
-
-    private MinecraftServer getServer()
-    {
-        return this.server.get();
     }
 }
