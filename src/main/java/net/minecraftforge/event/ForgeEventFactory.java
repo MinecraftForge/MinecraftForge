@@ -25,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -335,18 +336,7 @@ public class ForgeEventFactory
         return event.canUpdate;
     }
 
-    /**
-     * Use {@link #onPlaySoundAtEntity(Entity,String,float,float)}
-     */
-    @Deprecated
-    public static String onPlaySoundAt(Entity entity, String name, float volume, float pitch)
-    {
-        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.name;
-    }
-
-    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, String name, float volume, float pitch)
+    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, float volume, float pitch)
     {
         PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
         MinecraftForge.EVENT_BUS.post(event);

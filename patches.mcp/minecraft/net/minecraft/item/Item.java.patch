@@ -57,7 +57,7 @@
          Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
      }
-@@ -422,11 +431,629 @@
+@@ -422,11 +431,619 @@
          return false;
      }
  
@@ -110,22 +110,12 @@
 +     * @param world The Current World
 +     * @param pos Target position
 +     * @param side The side of the target hit
-+     * @return Return true to prevent any further processing.
++     * @param hand Which hand the item is being held in.
++     * @return Return PASS to allow vanilla handling, any other to skip normal code.
 +     */
-+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
++    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
 +    {
-+        return false;
-+    }
-+
-+    /**
-+     * Metadata-sensitive version of getStrVsBlock
-+     * @param itemstack The Item Stack
-+     * @param state The block state
-+     * @return The damage strength
-+     */
-+    public float getDigSpeed(ItemStack itemstack, net.minecraft.block.state.IBlockState state)
-+    {
-+        return getStrVsBlock(itemstack, state.getBlock());
++        return EnumActionResult.PASS;
 +    }
 +
 +    protected boolean canRepair = true;
@@ -322,7 +312,7 @@
 +     * @param player The Player that is wielding the item
 +     * @return
 +     */
-+    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player)
++    public boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.IBlockAccess world, BlockPos pos, EntityPlayer player)
 +    {
 +        return false;
 +    }
@@ -687,7 +677,7 @@
      public static void registerItems()
      {
          registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
-@@ -935,6 +1562,10 @@
+@@ -935,6 +1552,10 @@
          private final float damageVsEntity;
          private final int enchantability;
  
@@ -698,7 +688,7 @@
          private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
          {
              this.harvestLevel = harvestLevel;
-@@ -969,9 +1600,36 @@
+@@ -969,9 +1590,36 @@
              return this.enchantability;
          }
  

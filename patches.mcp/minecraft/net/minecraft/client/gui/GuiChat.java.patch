@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
+@@ -250,6 +250,7 @@
+ 
+             public BlockPos func_186839_b()
+             {
++
+                 BlockPos blockpos = null;
+ 
+                 if (this.field_186853_g.objectMouseOver != null && this.field_186853_g.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)

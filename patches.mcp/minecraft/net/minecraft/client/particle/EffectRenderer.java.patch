@@ -10,7 +10,24 @@
  import java.util.ArrayDeque;
  import java.util.Iterator;
  import java.util.List;
-@@ -460,4 +463,13 @@
+@@ -143,6 +146,7 @@
+ 
+     public void addEffect(EntityFX effect)
+     {
++        if (effect == null) return; //Forge: Prevent modders from being bad and adding nulls causing untraceable NPEs.
+         this.field_187241_h.add(effect);
+     }
+ 
+@@ -376,7 +380,7 @@
+ 
+     public void addBlockDestroyEffects(BlockPos pos, IBlockState state)
+     {
+-        if (state.func_185904_a() != Material.air)
++        if (state.getBlock().isAir(state, worldObj, pos) && !state.getBlock().addDestroyEffects(worldObj, pos, this))
+         {
+             state = state.func_185899_b(this.worldObj, pos);
+             int i = 4;
+@@ -460,4 +464,13 @@
  
          return "" + i;
      }

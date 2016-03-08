@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/util/TabCompleter.java
++++ ../src-work/minecraft/net/minecraft/util/TabCompleter.java
+@@ -53,13 +53,14 @@
+             this.field_186844_a.deleteFromCursor(i - this.field_186844_a.getCursorPosition());
+         }
+ 
+-        this.field_186844_a.writeText((String)this.field_186849_f.get(this.field_186848_e++));
++        this.field_186844_a.writeText(net.minecraft.util.text.TextFormatting.getTextWithoutFormattingCodes(this.field_186849_f.get(this.field_186848_e++)));
+     }
+ 
+     private void func_186838_a(String p_186838_1_)
+     {
+         if (p_186838_1_.length() >= 1)
+         {
++            net.minecraftforge.client.ClientCommandHandler.instance.autoComplete(p_186838_1_);
+             Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new CPacketTabComplete(p_186838_1_, this.func_186839_b(), this.field_186845_b));
+             this.field_186847_d = true;
+         }
+@@ -74,6 +75,12 @@
+             this.field_186846_c = false;
+             this.field_186849_f.clear();
+ 
++            String[] complete = net.minecraftforge.client.ClientCommandHandler.instance.latestAutoComplete;
++            if (complete != null)
++            {
++                p_186840_1_ = com.google.common.collect.ObjectArrays.concat(complete, p_186840_1_, String.class);
++            }
++
+             for (String s : p_186840_1_)
+             {
+                 if (!s.isEmpty())
+@@ -84,6 +91,7 @@
+ 
+             String s1 = this.field_186844_a.getText().substring(this.field_186844_a.func_146197_a(-1, this.field_186844_a.getCursorPosition(), false));
+             String s2 = org.apache.commons.lang3.StringUtils.getCommonPrefix(p_186840_1_);
++            s2 = net.minecraft.util.text.TextFormatting.getTextWithoutFormattingCodes(s2);
+ 
+             if (!s2.isEmpty() && !s1.equalsIgnoreCase(s2))
+             {

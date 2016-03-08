@@ -59,6 +59,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -671,7 +672,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (world.getTileEntity(pos) == null)
         {
-            S23PacketBlockChange packet = new S23PacketBlockChange(world, pos);
+            SPacketBlockChange packet = new SPacketBlockChange(world, pos);
             packet.blockState = Blocks.air.getDefaultState();
             entityPlayer.playerNetServerHandler.sendPacket(packet);
         }

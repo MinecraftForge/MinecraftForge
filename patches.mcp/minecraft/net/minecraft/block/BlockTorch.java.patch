@@ -1,11 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
-@@ -86,7 +86,7 @@
+@@ -79,14 +79,14 @@
+ 
+     private boolean canPlaceOn(World worldIn, BlockPos pos)
+     {
+-        if (worldIn.getBlockState(pos).func_185896_q())
++        IBlockState state = worldIn.getBlockState(pos);
++        if (state.isSideSolid(worldIn, pos, EnumFacing.UP))
+         {
+             return true;
+         }
          else
          {
-             Block block = worldIn.getBlockState(pos).getBlock();
+-            Block block = worldIn.getBlockState(pos).getBlock();
 -            return block instanceof BlockFence || block == Blocks.glass || block == Blocks.cobblestone_wall || block == Blocks.stained_glass;
-+            return block.canPlaceTorchOnTop(worldIn, pos);
++            return state.getBlock().canPlaceTorchOnTop(state, worldIn, pos);
          }
      }
  

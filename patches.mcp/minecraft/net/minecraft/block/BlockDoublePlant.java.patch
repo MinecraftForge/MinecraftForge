@@ -54,7 +54,7 @@
              return true;
          }
      }
-@@ -284,6 +279,32 @@
+@@ -284,6 +279,33 @@
          return Block.EnumOffsetType.XZ;
      }
  
@@ -65,6 +65,7 @@
 +        EnumPlantType type = (EnumPlantType)state.getValue(VARIANT);
 +        return state.getValue(HALF) == EnumBlockHalf.LOWER && (type == EnumPlantType.FERN || type == EnumPlantType.GRASS);
 +    }
++
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
@@ -74,11 +75,11 @@
 +        if (type == EnumPlantType.GRASS) ret.add(new ItemStack(Blocks.tallgrass, 2, BlockTallGrass.EnumType.GRASS.getMeta()));
 +        return ret;
 +    }
++
 +    @Override
-+    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
++    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
 +        //Forge: Break both parts on the client to prevent the top part flickering as default type for a few frames.
-+        IBlockState state = world.getBlockState(pos);
 +        if (state.getBlock() ==  this && state.getValue(HALF) == EnumBlockHalf.LOWER && world.getBlockState(pos.up()).getBlock() == this)
 +            world.setBlockToAir(pos.up());
 +        return world.setBlockToAir(pos);

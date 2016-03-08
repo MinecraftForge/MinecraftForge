@@ -97,7 +97,7 @@
          this.missingImage.generateMipmaps(this.mipmapLevels);
          stitcher.addSprite(this.missingImage);
 +        skipFirst = false;
-+        bar = net.minecraftforge.fml.common.ProgressManager.push("Texture creation", 3);
++        bar = net.minecraftforge.fml.common.ProgressManager.push("Texture creation", 2);
  
          try
          {
@@ -105,7 +105,7 @@
              stitcher.doStitch();
          }
          catch (StitcherException stitcherexception)
-@@ -150,9 +183,11 @@
+@@ -150,11 +183,16 @@
          }
  
          logger.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.getCurrentWidth()), Integer.valueOf(stitcher.getCurrentHeight()), this.basePath});
@@ -113,11 +113,16 @@
          TextureUtil.allocateTextureImpl(this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight());
          Map<String, TextureAtlasSprite> map = Maps.<String, TextureAtlasSprite>newHashMap(this.mapRegisteredSprites);
  
-+        bar.step("Uploading GL texture");
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
++        bar = net.minecraftforge.fml.common.ProgressManager.push("Texture mipmap and upload", stitcher.getStichSlots().size());
++
          for (TextureAtlasSprite textureatlassprite1 : stitcher.getStichSlots())
          {
++            bar.step(textureatlassprite1.getIconName());
              if (textureatlassprite1 == this.missingImage || this.func_184397_a(resourceManager, textureatlassprite1))
-@@ -185,6 +220,13 @@
+             {
+                 String s = textureatlassprite1.getIconName();
+@@ -185,6 +223,13 @@
          {
              textureatlassprite2.copyFrom(this.missingImage);
          }
@@ -131,7 +136,7 @@
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -317,4 +359,37 @@
+@@ -317,4 +362,37 @@
      {
          return this.missingImage;
      }

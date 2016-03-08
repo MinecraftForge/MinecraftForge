@@ -18,8 +18,8 @@
  
      public boolean canHarvestBlock(IBlockState blockIn)
 @@ -36,4 +37,71 @@
-         Block block = block.getBlock();
-         return block != Blocks.web && block.func_185904_a() != Material.leaves ? (block == Blocks.wool ? 5.0F : super.getStrVsBlock(stack, block)) : 15.0F;
+         Block block = state.getBlock();
+         return block != Blocks.web && state.func_185904_a() != Material.leaves ? (block == Blocks.wool ? 5.0F : super.getStrVsBlock(stack, state)) : 15.0F;
      }
 +
 +

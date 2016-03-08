@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
-@@ -37,28 +37,20 @@
+@@ -2,6 +2,7 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.BlockSilverfish;
++import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+@@ -37,28 +38,20 @@
      public void decorate(World worldIn, Random rand, BlockPos pos)
      {
          super.decorate(worldIn, rand, pos);
@@ -36,7 +44,7 @@
      }
  
      public void genTerrainBlocks(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int p_180622_4_, int p_180622_5_, double p_180622_6_)
-@@ -86,4 +78,23 @@
+@@ -86,4 +79,24 @@
          EXTRA_TREES,
          MUTATED;
      }
@@ -51,7 +59,8 @@
 +            {
 +                BlockPos blockpos = pos.add(rand.nextInt(16), rand.nextInt(28) + 4, rand.nextInt(16));
 +
-+                if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockMatcher.forBlock(Blocks.stone)))
++                IBlockState state = worldIn.getBlockState(blockpos);
++                if (state.getBlock().isReplaceableOreGen(state, worldIn, blockpos, net.minecraft.block.state.pattern.BlockMatcher.forBlock(Blocks.stone)))
 +                {
 +                    worldIn.setBlockState(blockpos, Blocks.emerald_ore.getDefaultState(), 2);
 +                }

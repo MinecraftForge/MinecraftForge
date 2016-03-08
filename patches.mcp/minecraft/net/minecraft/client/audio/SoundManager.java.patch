@@ -16,3 +16,26 @@
      }
  
      private synchronized void loadSoundSystem()
+@@ -350,6 +352,9 @@
+             }
+             else
+             {
++                p_sound = net.minecraftforge.client.ForgeHooksClient.playSound(this, p_sound);
++                if (p_sound == null) return;
++
+                 if (!this.field_188777_o.isEmpty())
+                 {
+                     for (ISoundEventListener isoundeventlistener : this.field_188777_o)
+@@ -400,10 +405,12 @@
+                             if (sound.func_188723_h())
+                             {
+                                 this.sndSystem.newStreamingSource(false, s, getURLForSoundResource(resourcelocation1), resourcelocation1.toString(), flag, p_sound.getXPosF(), p_sound.getYPosF(), p_sound.getZPosF(), p_sound.getAttenuationType().getTypeInt(), f);
++                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, p_sound, s));
+                             }
+                             else
+                             {
+                                 this.sndSystem.newSource(false, s, getURLForSoundResource(resourcelocation1), resourcelocation1.toString(), flag, p_sound.getXPosF(), p_sound.getYPosF(), p_sound.getZPosF(), p_sound.getAttenuationType().getTypeInt(), f);
++                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, p_sound, s));
+                             }
+ 
+                             logger.debug(LOG_MARKER, "Playing sound {} for event {} as channel {}", new Object[] {sound.func_188719_a(), resourcelocation1, s});

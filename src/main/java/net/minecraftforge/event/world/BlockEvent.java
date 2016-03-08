@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -78,14 +79,14 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getSilkTouchModifier(player))) // If the block is being silk harvested, the exp dropped is 0
+                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185306_r, player.func_184614_ca()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
             else
             {
-                int bonusLevel = EnchantmentHelper.getFortuneModifier(player);
-                this.exp = state.getBlock().getExpDrop(world, pos, bonusLevel);
+                int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185308_t, player.func_184614_ca());
+                this.exp = state.getBlock().getExpDrop(state, world, pos, bonusLevel);
             }
         }
 
@@ -133,13 +134,13 @@ public class BlockEvent extends Event
         {
             super(blockSnapshot.world, blockSnapshot.pos, blockSnapshot.getCurrentBlock());
             this.player = player;
-            this.itemInHand = player.getCurrentEquippedItem();
+            this.itemInHand = player.func_184614_ca();
             this.blockSnapshot = blockSnapshot;
             this.placedBlock = blockSnapshot.getCurrentBlock();
             this.placedAgainst = placedAgainst;
             if (DEBUG)
             {
-                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ]\n", placedBlock, placedAgainst, player.getCurrentEquippedItem(), player);
+                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ]\n", placedBlock, placedAgainst, itemInHand, player);
             }
         }
     }

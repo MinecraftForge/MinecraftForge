@@ -56,3 +56,16 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
+@@ -515,6 +528,12 @@
+ 
+     public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_)
+     {
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_184185_1_, p_184185_2_, p_184185_3_);
++        if (event.isCanceled() || event.getSound() == null) return;
++        p_184185_1_ = event.getSound();
++        p_184185_2_ = event.getVolume();
++        p_184185_3_ = event.getPitch();
++
+         this.worldObj.func_184134_a(this.posX, this.posY, this.posZ, p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_, false);
+     }
+ 
