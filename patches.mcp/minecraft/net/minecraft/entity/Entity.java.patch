@@ -30,7 +30,7 @@
              BlockPos blockpos = new BlockPos(this.posX, d0, this.posZ);
              IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
  
-+            Boolean result = iblockstate.getBlock().isEntityInsideMaterial(iblockstate, this.worldObj, blockpos, iblockstate, this, d0, materialIn, true);
++            Boolean result = iblockstate.getBlock().isEntityInsideMaterial(this.worldObj, blockpos, iblockstate, this, d0, materialIn, true);
 +            if (result != null) return result;
 +
              if (iblockstate.func_185904_a() == materialIn)

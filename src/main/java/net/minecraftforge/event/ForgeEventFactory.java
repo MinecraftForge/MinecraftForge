@@ -25,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -336,9 +337,9 @@ public class ForgeEventFactory
         return event.canUpdate;
     }
 
-    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, float volume, float pitch)
+    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
     {
-        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, category, volume, pitch);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

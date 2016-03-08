@@ -196,7 +196,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.getItemFromBlock(this), 1, this.damageDropped(p_185473_3_));
-@@ -844,6 +865,1167 @@
+@@ -844,6 +865,1166 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  
@@ -1248,7 +1248,6 @@
 +      * Called when the entity is inside this block, may be used to determined if the entity can breathing,
 +      * display material overlays, or if the entity can swim inside a block.
 +      *
-+      * @param state The current block state
 +      * @param world that is being tested.
 +      * @param blockpos position thats being tested.
 +      * @param iblockstate state at world/blockpos
@@ -1258,7 +1257,7 @@
 +      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
 +      * @return null for default behavior, true if the entity is within the material, false if it was not.
 +      */
-+     public Boolean isEntityInsideMaterial(IBlockState state, IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
++     public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
 +     {
 +         return null;
 +     }

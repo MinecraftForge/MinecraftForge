@@ -246,7 +246,14 @@
      }
  
      public BiomeGenBase getBiome(BlockPos pos, BiomeProvider chunkManager)
-@@ -1239,7 +1253,7 @@
+@@ -1233,13 +1247,13 @@
+                     BlockPos blockpos1 = blockpos.add(k, (j << 4) + i1, l);
+                     boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
+ 
+-                    if (this.storageArrays[j] == field_186036_a && flag || this.storageArrays[j] != field_186036_a && this.storageArrays[j].get(k, i1, l).func_185904_a() == Material.air)
++                    if (this.storageArrays[j] == field_186036_a && flag || this.storageArrays[j] != field_186036_a && this.storageArrays[j].get(k, i1, l).getBlock().isAir(this.storageArrays[j].get(k, i1, l), this.worldObj, blockpos1))
+                     {
+                         for (EnumFacing enumfacing : EnumFacing.values())
                          {
                              BlockPos blockpos2 = blockpos1.offset(enumfacing);
  

@@ -262,9 +262,9 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3d drawClouds(float partialTicks)
++    public Vec3d getCloudColor(float partialTicks)
 +    {
-+        return worldObj.drawCloudsBody(partialTicks);
++        return worldObj.getCloudColorBody(partialTicks);
 +    }
 +
 +    /**
