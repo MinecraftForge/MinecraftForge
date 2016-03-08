@@ -1,5 +1,7 @@
 package net.minecraftforge.common;
 
+import com.google.common.base.Optional;
+import net.minecraft.network.datasync.DataSerializers;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,7 +27,7 @@ public class ForgeInternalHandler
         Entity entity = event.entity;
         if (entity.getClass().equals(EntityItem.class))
         {
-            ItemStack stack = entity.getDataWatcher().getWatchableObjectItemStack(10);
+            ItemStack stack = ((EntityItem)entity).getEntityItem();
 
             if (stack == null)
             {

@@ -142,7 +142,7 @@ public class MultiModel implements IModel
                 {
                     quads.addAll(bakedPart.func_188616_a(null, null, 0));
                 }
-                builder.put(Optional.absent(), quads.build());
+                builder.put(Optional.<EnumFacing>absent(), quads.build());
                 this.quads = builder.build();
             }
             return quads.get(Optional.fromNullable(side));

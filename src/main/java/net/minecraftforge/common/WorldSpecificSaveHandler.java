@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.io.IOException;
 
+import net.minecraft.world.gen.structure.template.TemplateManager;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.io.Files;
@@ -38,7 +39,6 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override public void saveWorldInfo(WorldInfo var1){ parent.saveWorldInfo(var1); }
     @Override public IPlayerFileData getPlayerNBTManager() { return parent.getPlayerNBTManager(); }
     @Override public void flush() { parent.flush(); }
-    @Override public String getWorldDirectoryName() { return parent.getWorldDirectoryName(); }
     @Override public File getWorldDirectory() { return parent.getWorldDirectory(); }
 
     @Override
@@ -66,6 +66,12 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             }
         }
         return file;
+    }
+
+    @Override
+    public TemplateManager func_186340_h()
+    {
+        return parent.func_186340_h();
     }
 
 }
