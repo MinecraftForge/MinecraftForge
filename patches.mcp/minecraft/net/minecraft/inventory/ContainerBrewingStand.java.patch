@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -196,7 +196,7 @@
+ 
+             public boolean isItemValid(ItemStack stack)
+             {
+-                return stack != null && PotionHelper.func_185205_a(stack);
++                return stack != null && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
+             }
+ 
+             public int getSlotStackLimit()
+@@ -243,8 +243,7 @@
+                 }
+                 else
+                 {
+-                    Item item = stack.getItem();
+-                    return item == Items.potionitem || item == Items.glass_bottle || item == Items.field_185155_bH || item == Items.field_185156_bI;
++                    return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
+                 }
+             }
+         }

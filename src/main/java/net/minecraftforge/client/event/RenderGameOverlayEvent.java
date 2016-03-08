@@ -28,7 +28,9 @@ public class RenderGameOverlayEvent extends Event
         JUMPBAR,
         CHAT,
         PLAYER_LIST,
-        DEBUG
+        DEBUG,
+        POTION_ICONS,
+        SUBTITLES
     }
 
     public final float partialTicks;

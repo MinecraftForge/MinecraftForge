@@ -18,15 +18,21 @@
                  {
                      int l = ((Integer)iblockstate.getValue(BlockAnvil.DAMAGE)).intValue();
                      ++l;
-@@ -163,6 +165,7 @@
+@@ -160,10 +162,12 @@
+             Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemstack1);
+             j = j + itemstack.getRepairCost() + (itemstack2 == null ? 0 : itemstack2.getRepairCost());
+             this.materialCost = 0;
++            boolean flag = false;
  
              if (itemstack2 != null)
              {
+-                boolean flag = itemstack2.getItem() == Items.enchanted_book && !Items.enchanted_book.getEnchantments(itemstack2).hasNoTags();
 +                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) return;
-                 boolean flag = itemstack2.getItem() == Items.enchanted_book && !Items.enchanted_book.getEnchantments(itemstack2).hasNoTags();
++                flag = itemstack2.getItem() == Items.enchanted_book && !Items.enchanted_book.getEnchantments(itemstack2).hasNoTags();
  
                  if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2))
-@@ -235,7 +238,7 @@
+                 {
+@@ -235,7 +239,7 @@
  
                              for (Enchantment enchantment : map.keySet())
                              {
@@ -35,7 +41,7 @@
                                  {
                                      flag1 = false;
                                      ++i;
-@@ -279,6 +282,8 @@
+@@ -279,6 +283,8 @@
                  }
              }
  

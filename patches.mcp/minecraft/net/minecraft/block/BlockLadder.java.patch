@@ -26,5 +26,5 @@
          return new BlockStateContainer(this, new IProperty[] {FACING});
      }
 +
-+    @Override public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return true; }
++    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return true; }
  }

@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -17,6 +17,7 @@
- import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.item.EntityXPOrb;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.init.Blocks;
- import net.minecraft.init.Enchantments;
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemBlock;
-@@ -46,8 +47,9 @@
+@@ -46,8 +46,9 @@
  public class Block
  {
      private static final ResourceLocation AIR_ID = new ResourceLocation("air");
@@ -20,7 +12,7 @@
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      public static final AxisAlignedBB field_185506_k = null;
      private CreativeTabs displayOnCreativeTab;
-@@ -70,6 +72,9 @@
+@@ -70,6 +71,9 @@
      private IBlockState defaultBlockState;
      private String unlocalizedName;
  
@@ -30,7 +22,7 @@
      public static int getIdFromBlock(Block blockIn)
      {
          return blockRegistry.getIDForObject(blockIn);
-@@ -83,7 +88,8 @@
+@@ -83,7 +87,8 @@
  
      public static Block getBlockById(int id)
      {
@@ -40,7 +32,7 @@
      }
  
      public static IBlockState getStateById(int id)
-@@ -268,7 +274,7 @@
+@@ -268,7 +273,7 @@
  
      public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
      {
@@ -49,7 +41,7 @@
      }
  
      public Block setHardness(float hardness)
-@@ -305,9 +311,10 @@
+@@ -305,9 +310,10 @@
          return this.needsRandomTick;
      }
  
@@ -61,7 +53,7 @@
      }
  
      public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
-@@ -346,13 +353,13 @@
+@@ -346,13 +352,13 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
@@ -77,7 +69,7 @@
          }
          else
          {
-@@ -415,7 +422,7 @@
+@@ -415,7 +421,7 @@
                  }
          }
  
@@ -86,7 +78,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -472,6 +479,10 @@
+@@ -472,6 +478,10 @@
  
      public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -97,7 +89,7 @@
      }
  
      public int quantityDropped(Random random)
-@@ -486,8 +497,7 @@
+@@ -486,8 +496,7 @@
  
      public float getPlayerRelativeBlockHardness(IBlockState playerIn, EntityPlayer worldIn, World pos, BlockPos p_180647_4_)
      {
@@ -107,7 +99,7 @@
      }
  
      public final void dropBlockAsItem(World worldIn, BlockPos pos, IBlockState state, int forture)
-@@ -497,20 +507,16 @@
+@@ -497,20 +506,16 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -133,7 +125,7 @@
                  }
              }
          }
-@@ -518,8 +524,13 @@
+@@ -518,8 +523,13 @@
  
      public static void spawnAsEntity(World worldIn, BlockPos pos, ItemStack stack)
      {
@@ -148,7 +140,7 @@
              float f = 0.5F;
              double d0 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(worldIn.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -588,7 +599,7 @@
+@@ -588,7 +598,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -157,7 +149,7 @@
      }
  
      public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand side, ItemStack hitX, EnumFacing hitY, float hitZ, float p_180639_9_, float p_180639_10_)
-@@ -638,25 +649,35 @@
+@@ -638,25 +648,35 @@
          player.triggerAchievement(StatList.func_188055_a(this));
          player.addExhaustion(0.025F);
  
@@ -196,7 +188,7 @@
      }
  
      protected ItemStack createStackedBlock(IBlockState state)
-@@ -747,6 +768,7 @@
+@@ -747,6 +767,7 @@
          entityIn.motionY = 0.0D;
      }
  
@@ -204,7 +196,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.getItemFromBlock(this), 1, this.damageDropped(p_185473_3_));
-@@ -844,6 +866,1165 @@
+@@ -844,6 +865,1167 @@
          return "Block{" + blockRegistry.getNameForObject(this) + "}";
      }
  
@@ -234,12 +226,13 @@
 +    /**
 +     * Checks if a player or entity can use this block to 'climb' like a ladder.
 +     *
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param entity The entity trying to use the ladder, CAN be null.
 +     * @return True if the block should act like a ladder
 +     */
-+    public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return false; }
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return false; }
 +
 +    /**
 +     * Return true if the block is a normal, solid cube.  This
@@ -396,7 +389,7 @@
 +    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
 +        this.onBlockHarvested(world, pos, state, player);
-+        return world.setBlockState(pos, Blocks.air.getDefaultState(), world.isRemote ? 11 : 3);
++        return world.setBlockState(pos, net.minecraft.init.Blocks.air.getDefaultState(), world.isRemote ? 11 : 3);
 +    }
 +
 +    /**
@@ -834,7 +827,7 @@
 +     * @param numberOfParticles that vanilla would have spawned.
 +     * @return True to prevent vanilla landing particles form spawning.
 +     */
-+    public boolean addLandingEffects(net.minecraft.world.WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
++    public boolean addLandingEffects(IBlockState state, net.minecraft.world.WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
 +    {
 +        return false;
 +    }
@@ -897,12 +890,12 @@
 +        IBlockState plant = plantable.getPlant(world, pos.offset(direction));
 +        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.offset(direction));
 +
-+        if (plant.getBlock() == Blocks.cactus && this == Blocks.cactus)
++        if (plant.getBlock() == net.minecraft.init.Blocks.cactus && this == net.minecraft.init.Blocks.cactus)
 +        {
 +            return true;
 +        }
 +
-+        if (plant.getBlock() == Blocks.reeds && this == Blocks.reeds)
++        if (plant.getBlock() == net.minecraft.init.Blocks.reeds && this == net.minecraft.init.Blocks.reeds)
 +        {
 +            return true;
 +        }
@@ -914,14 +907,14 @@
 +
 +        switch (plantType)
 +        {
-+            case Desert: return this == Blocks.sand || this == Blocks.hardened_clay || this == Blocks.stained_hardened_clay || this == Blocks.dirt;
-+            case Nether: return this == Blocks.soul_sand;
-+            case Crop:   return this == Blocks.farmland;
++            case Desert: return this == net.minecraft.init.Blocks.sand || this == net.minecraft.init.Blocks.hardened_clay || this == net.minecraft.init.Blocks.stained_hardened_clay || this == net.minecraft.init.Blocks.dirt;
++            case Nether: return this == net.minecraft.init.Blocks.soul_sand;
++            case Crop:   return this == net.minecraft.init.Blocks.farmland;
 +            case Cave:   return state.isSideSolid(world, pos, EnumFacing.UP);
-+            case Plains: return this == Blocks.grass || this == Blocks.dirt || this == Blocks.farmland;
++            case Plains: return this == net.minecraft.init.Blocks.grass || this == net.minecraft.init.Blocks.dirt || this == net.minecraft.init.Blocks.farmland;
 +            case Water:  return state.func_185904_a() == Material.water && state.getValue(BlockLiquid.LEVEL) == 0;
 +            case Beach:
-+                boolean isBeach = this == Blocks.grass || this == Blocks.dirt || this == Blocks.sand;
++                boolean isBeach = this == net.minecraft.init.Blocks.grass || this == net.minecraft.init.Blocks.dirt || this == net.minecraft.init.Blocks.sand;
 +                boolean hasWater = (world.getBlockState(pos.east()).func_185904_a() == Material.water ||
 +                                    world.getBlockState(pos.west()).func_185904_a() == Material.water ||
 +                                    world.getBlockState(pos.north()).func_185904_a() == Material.water ||
@@ -1255,6 +1248,7 @@
 +      * Called when the entity is inside this block, may be used to determined if the entity can breathing,
 +      * display material overlays, or if the entity can swim inside a block.
 +      *
++      * @param state The current block state
 +      * @param world that is being tested.
 +      * @param blockpos position thats being tested.
 +      * @param iblockstate state at world/blockpos
@@ -1264,7 +1258,7 @@
 +      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
 +      * @return null for default behavior, true if the entity is within the material, false if it was not.
 +      */
-+     public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
++     public Boolean isEntityInsideMaterial(IBlockState state, IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
 +     {
 +         return null;
 +     }

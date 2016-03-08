@@ -17,7 +17,7 @@ public class BrewingRecipeRegistry {
     /**
      * Adds a recipe to the registry. Due to the nature of the brewing stand
      * inputs that stack (a.k.a max stack size > 1) are not allowed.
-     * 
+     *
      * @param input
      *            The ItemStack that goes in same slots as the water bottles
      *            would.
@@ -36,7 +36,7 @@ public class BrewingRecipeRegistry {
     /**
      * Adds a recipe to the registry. Due to the nature of the brewing stand
      * inputs that stack (a.k.a max stack size > 1) are not allowed.
-     * 
+     *
      * @param input
      *            The ItemStack that goes in same slots as the water bottles
      *            would.

@@ -57,7 +57,7 @@
          Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
      }
-@@ -422,11 +431,619 @@
+@@ -422,11 +431,609 @@
          return false;
      }
  
@@ -330,19 +330,9 @@
 +     * @param entity The entity trying to equip the armor
 +     * @return True if the given ItemStack can be inserted in the slot
 +     */
-+    public boolean isValidArmor(ItemStack stack, int armorType, Entity entity)
++    public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
 +    {
-+        if (this instanceof ItemArmor)
-+        {
-+            return ((ItemArmor)this).armorType == armorType;
-+        }
-+
-+        if (armorType == 0)
-+        {
-+            return this == Item.getItemFromBlock(Blocks.pumpkin) || this == Items.skull;
-+        }
-+
-+        return false;
++        return net.minecraft.entity.EntityLiving.func_184640_d(stack) == armorType;
 +    }
 +
 +    /**
@@ -677,7 +667,7 @@
      public static void registerItems()
      {
          registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
-@@ -935,6 +1552,10 @@
+@@ -935,6 +1542,10 @@
          private final float damageVsEntity;
          private final int enchantability;
  
@@ -688,7 +678,7 @@
          private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
          {
              this.harvestLevel = harvestLevel;
-@@ -969,9 +1590,36 @@
+@@ -969,9 +1580,36 @@
              return this.enchantability;
          }
  

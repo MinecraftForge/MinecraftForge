@@ -271,11 +271,10 @@
                      }
                  }
              }
-@@ -2021,6 +2112,16 @@
-                         blockpos$pooledmutableblockpos.func_185343_d(k1, l1, i2);
+@@ -2022,6 +2113,16 @@
                          IBlockState iblockstate = this.getBlockState(blockpos$pooledmutableblockpos);
                          Block block = iblockstate.getBlock();
-+                        
+ 
 +                        Boolean result = block.isEntityInsideMaterial(this, blockpos$mutableblockpos, iblockstate, entityIn, (double)l, materialIn, false);
 +                        if (result != null && result == true)
 +                        {
@@ -285,9 +284,10 @@
 +                            continue;
 +                        }
 +                        else if (result != null && result == false) continue;
- 
++
                          if (iblockstate.func_185904_a() == materialIn)
                          {
+                             double d0 = (double)((float)(l1 + 1) - BlockLiquid.getLiquidHeightPercent(((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue()));
 @@ -2130,6 +2231,7 @@
      public Explosion newExplosion(Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -556,7 +556,7 @@
 +
 +        Chunk chunk = getChunkFromBlockCoords(pos);
 +        if (chunk == null || chunk.isEmpty()) return _default;
-+        return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
++        return getBlockState(pos).isSideSolid(this, pos, side);
 +    }
 +
 +    /**

@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityHanging.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityHanging.java
+@@ -139,6 +139,9 @@
+                     BlockPos blockpos1 = blockpos.offset(enumfacing, k + i1).up(l + j1);
+                     IBlockState iblockstate = this.worldObj.getBlockState(blockpos1);
+ 
++                    if (iblockstate.isSideSolid(this.worldObj, blockpos1, this.facingDirection))
++                        continue;
++
+                     if (!iblockstate.func_185904_a().isSolid() && !BlockRedstoneDiode.func_185546_B(iblockstate))
+                     {
+                         return false;

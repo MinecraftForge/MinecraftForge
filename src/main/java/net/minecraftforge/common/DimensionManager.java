@@ -186,19 +186,19 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
-    public static void setWorld(int id, WorldServer world)
+    public static void setWorld(int id, WorldServer world, MinecraftServer server)
     {
         if (world != null)
         {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
-            MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+            server.worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(id);
-            MinecraftServer.getServer().worldTickTimes.remove(id);
+            server.worldTickTimes.remove(id);
             FMLLog.info("Unloading dimension %d", id);
         }
 
@@ -220,7 +220,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
+        server.worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim)
@@ -334,7 +334,7 @@ public class DimensionManager
                 {
                     MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
                     w.flush();
-                    setWorld(id, null);
+                    setWorld(id, null, w.getMinecraftServer());
                 }
             }
         }
@@ -414,13 +414,13 @@ public class DimensionManager
         if (DimensionManager.getWorld(0) != null)
         {
             return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getWorldDirectory();
-        }
+        }/*
         else if (MinecraftServer.getServer() != null)
         {
             MinecraftServer srv = MinecraftServer.getServer();
             SaveHandler saveHandler = (SaveHandler) srv.getActiveAnvilConverter().getSaveLoader(srv.getFolderName(), false);
             return saveHandler.getWorldDirectory();
-        }
+        }*/
         else
         {
             return null;

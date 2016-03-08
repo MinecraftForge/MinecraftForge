@@ -1,7 +1,6 @@
 package net.minecraftforge.client.event.sound;
 
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.audio.SoundManager;
 
 /***
@@ -14,14 +13,12 @@ public class PlaySoundEvent extends SoundEvent
 {
     public final String name;
     public final ISound sound;
-    public final SoundCategory category;
     public ISound result;
 
-    public PlaySoundEvent(SoundManager manager, ISound sound, SoundCategory category)
+    public PlaySoundEvent(SoundManager manager, ISound sound)
     {
         super(manager);
         this.sound = sound;
-        this.category = category;
         this.name = sound.getSoundLocation().getResourcePath();
         this.result = sound;
     }

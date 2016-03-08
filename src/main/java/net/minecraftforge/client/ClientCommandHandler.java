@@ -103,7 +103,7 @@ public class ClientCommandHandler extends CommandHandler
         return ret;
     }
 
-    public void autoComplete(String leftOfCursor, String full)
+    public void autoComplete(String leftOfCursor)
     {
         latestAutoComplete = null;
 

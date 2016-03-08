@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
+@@ -241,6 +241,18 @@
+         return new BlockStateContainer(this, new IProperty[] {FACING, OPEN, HALF});
+     }
+ 
++    @Override
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
++    {
++        if (state.getValue(OPEN))
++        {
++            IBlockState down = world.getBlockState(pos.down());
++            if (down.getBlock() == net.minecraft.init.Blocks.ladder)
++                return down.getValue(BlockLadder.FACING) == state.getValue(FACING);
++        }
++        return false;
++    }
++
+     public static enum DoorHalf implements IStringSerializable
+     {
+         TOP("top"),

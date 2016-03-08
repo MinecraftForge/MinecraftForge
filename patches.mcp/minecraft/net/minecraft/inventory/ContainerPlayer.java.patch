@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -48,8 +48,7 @@
+                     }
+                     else
+                     {
+-                        EntityEquipmentSlot entityequipmentslot1 = EntityLiving.func_184640_d(stack);
+-                        return entityequipmentslot1 == entityequipmentslot;
++                        return stack.getItem().isValidArmor(stack, entityequipmentslot, thePlayer);
+                     }
+                 }
+                 @SideOnly(Side.CLIENT)

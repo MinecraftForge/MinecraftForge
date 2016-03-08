@@ -105,7 +105,7 @@
 +            WorldServer[] tmp = worldServers;
 +            for (WorldServer world : tmp)
 +            {
-+                net.minecraftforge.common.DimensionManager.setWorld(world.provider.getDimensionId(), null);
++                net.minecraftforge.common.DimensionManager.setWorld(world.provider.getDimension(), null, this);
 +            }
          }
  

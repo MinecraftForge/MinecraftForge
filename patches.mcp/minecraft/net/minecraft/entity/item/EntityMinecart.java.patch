@@ -215,18 +215,17 @@
                              {
                                  entityIn.motionX *= 0.20000000298023224D;
                                  entityIn.motionZ *= 0.20000000298023224D;
-@@ -981,7 +1025,222 @@
-     {
+@@ -982,6 +1026,221 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
-+    
+ 
 +    /* =================================== FORGE START ===========================================*/
 +    private BlockPos getCurrentRailPosition()
 +    {
 +        int x = MathHelper.floor_double(this.posX);
 +        int y = MathHelper.floor_double(this.posY);
 +        int z = MathHelper.floor_double(this.posZ);
- 
++
 +        if (BlockRailBase.isRailBlock(this.worldObj, new BlockPos(x, y - 1, z))) y--;
 +        return new BlockPos(x, y, z);
 +    }
@@ -251,7 +250,7 @@
 +        double mX = this.motionX;
 +        double mZ = this.motionZ;
 +
-+        if (this.riddenByEntity != null)
++        if (this.func_184187_bx() != null)
 +        {
 +            mX *= 0.75D;
 +            mZ *= 0.75D;
@@ -349,7 +348,7 @@
 +     */
 +    public boolean isPoweredCart()
 +    {
-+        return getMinecartType() == EntityMinecart.EnumMinecartType.FURNACE;
++        return func_184264_v() == EntityMinecart.Type.FURNACE;
 +    }
 +
 +    /**
@@ -358,7 +357,7 @@
 +     */
 +    public boolean canBeRidden()
 +    {
-+        return this.getMinecartType() == EntityMinecart.EnumMinecartType.RIDEABLE;
++        return this.func_184264_v() == EntityMinecart.Type.RIDEABLE;
 +    }
 +
 +    /**

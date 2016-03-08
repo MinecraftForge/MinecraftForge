@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -73,6 +74,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -487,13 +489,13 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.distance, event.damageMultiplier});
     }
 
-    public static boolean isLivingOnLadder(Block block, World world, BlockPos pos, EntityLivingBase entity)
+    public static boolean isLivingOnLadder(IBlockState state, World world, BlockPos pos, EntityLivingBase entity)
     {
         boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).isSpectator());
         if (isSpectator) return false;
         if (!ForgeModContainer.fullBoundingBoxLadders)
         {
-            return block != null && block.isLadder(world, pos, entity);
+            return state != null && state.getBlock().isLadder(state, world, pos, entity);
         }
         else
         {
@@ -508,7 +510,8 @@ public class ForgeHooks
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
-                        if (world.getBlockState(tmp).getBlock().isLadder(world, tmp, entity))
+                        state = world.getBlockState(tmp);
+                        if (state.getBlock().isLadder(state, world, tmp, entity))
                         {
                             return true;
                         }
@@ -542,7 +545,7 @@ public class ForgeHooks
             return null;
         }
 
-        player.joinEntityItemWithWorld(event.entityItem);
+        player.getEntityWorld().spawnEntityInWorld(event.entityItem);
         return event.entityItem;
     }
 
@@ -870,11 +873,6 @@ public class ForgeHooks
         return null;
     }
 
-    public static WorldGeneratorBonusChest getBonusChest(Random rand)
-    {
-        return new WorldGeneratorBonusChest(ChestGenHooks.getItems(ChestGenHooks.BONUS_CHEST, rand), ChestGenHooks.getCount(ChestGenHooks.BONUS_CHEST, rand));
-    }
-
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
     {
         IBlockState state = entity.worldObj.getBlockState(pos);
@@ -926,16 +924,16 @@ public class ForgeHooks
         return !event.isCanceled();
     }
 
-    public static MovingObjectPosition rayTraceEyes(EntityLivingBase entity, double length)
+    public static RayTraceResult rayTraceEyes(EntityLivingBase entity, double length)
     {
-        Vec3 startPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
-        Vec3 endPos = startPos.add(new Vec3(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
+        Vec3d startPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        Vec3d endPos = startPos.add(new Vec3d(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
         return entity.worldObj.rayTraceBlocks(startPos, endPos);
     }
 
-    public static Vec3 rayTraceEyeHitVec(EntityLivingBase entity, double length)
+    public static Vec3d rayTraceEyeHitVec(EntityLivingBase entity, double length)
     {
-        MovingObjectPosition movingObjectPosition = rayTraceEyes(entity, length);
-        return movingObjectPosition == null ? null : movingObjectPosition.hitVec;
+        RayTraceResult git = rayTraceEyes(entity, length);
+        return git == null ? null : git.hitVec;
     }
 }

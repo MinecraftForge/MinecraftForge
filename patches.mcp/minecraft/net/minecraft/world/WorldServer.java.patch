@@ -15,16 +15,16 @@
          this.theEntityTracker = new EntityTracker(this);
          this.thePlayerManager = new PlayerManager(this);
 +        // Guarantee the dimension ID was not reset by the provider
-+        int providerDim = this.provider.dimensionId;
++        int providerDim = this.provider.getDimension();
          this.provider.registerWorld(this);
-+        this.provider.dimensionId = providerDim;
++        this.provider.setDimension(providerDim);
          this.chunkProvider = this.createChunkProvider();
 +        perWorldStorage = new MapStorage(new net.minecraftforge.common.WorldSpecificSaveHandler((WorldServer)this, saveHandlerIn));
          this.worldTeleporter = new Teleporter(this);
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
          this.getWorldBorder().setSize(server.getMaxWorldSize());
-+        net.minecraftforge.common.DimensionManager.setWorld(dimensionId, this);
++        net.minecraftforge.common.DimensionManager.setWorld(dimensionId, this, mcServer);
      }
  
      public World init()
@@ -220,18 +220,18 @@
              if (flag)
              {
 -                this.mcServer.func_184103_al().sendPacketToAllPlayers(new SPacketChangeGameState(2, 0.0F));
-+                this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(2, 0.0F), this.provider.dimensionId);
++                this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(2, 0.0F), this.provider.getDimension());
              }
              else
              {
 -                this.mcServer.func_184103_al().sendPacketToAllPlayers(new SPacketChangeGameState(1, 0.0F));
-+                this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(1, 0.0F), this.provider.dimensionId);
++                this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(1, 0.0F), this.provider.getDimension());
              }
  
 -            this.mcServer.func_184103_al().sendPacketToAllPlayers(new SPacketChangeGameState(7, this.rainingStrength));
 -            this.mcServer.func_184103_al().sendPacketToAllPlayers(new SPacketChangeGameState(8, this.thunderingStrength));
-+            this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
-+            this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
++            this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(7, this.rainingStrength), this.provider.getDimension());
++            this.mcServer.func_184103_al().sendPacketToAllPlayersInDimension(new SPacketChangeGameState(8, this.thunderingStrength), this.provider.getDimension());
          }
      }
  

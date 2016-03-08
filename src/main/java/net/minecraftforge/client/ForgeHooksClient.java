@@ -113,9 +113,9 @@ public class ForgeHooksClient
     {
         Block block = state.getBlock();
 
-        if (block != null && block.isBed(world, pos, entity))
+        if (block != null && block.isBed(state, world, pos, entity))
         {
-            glRotatef((float)(block.getBedDirection(world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
+            glRotatef((float)(block.getBedDirection(state, world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
         }
     }
 
@@ -297,8 +297,7 @@ public class ForgeHooksClient
 
     public static ISound playSound(SoundManager manager, ISound sound)
     {
-        SoundEventAccessorComposite accessor = manager.sndHandler.getSound(sound.getSoundLocation());
-        PlaySoundEvent e = new PlaySoundEvent(manager, sound, (accessor == null ? null : accessor.getSoundCategory()));
+        PlaySoundEvent e = new PlaySoundEvent(manager, sound);
         MinecraftForge.EVENT_BUS.post(e);
         return e.result;
     }
@@ -361,7 +360,7 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-	public static Matrix4f getMatrix(ItemTransformVec3f transform)
+    public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -383,7 +382,7 @@ public class ForgeHooksClient
         return m;
     }
 
-	public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
+    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
     {
         if(model instanceof IPerspectiveAwareModel)
         {
@@ -598,20 +597,20 @@ public class ForgeHooksClient
         }
     }
 
-	public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IBlockAccess world, BlockPos pos)
-	{
-		// TODO custom damage models
-		// state = state.block.getExtendedState(state, world, pos);
-		return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
-	}
+    public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IBlockAccess world, BlockPos pos)
+    {
+        // TODO custom damage models
+        // state = state.block.getExtendedState(state, world, pos);
+        return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
+    }
 
-	public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to)
-	{
-		if(!Objects.equal(from, to) || from == null)
-		{
-			return false;
-		}
-		// FIXME: 3rd argument?
-		return from.getItem().shouldCauseReequipAnimation(from, to);
-	}
+    public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to)
+    {
+        if(!Objects.equal(from, to) || from == null)
+        {
+            return false;
+        }
+        // FIXME: 3rd argument?
+        return from.getItem().shouldCauseReequipAnimation(from, to);
+    }
 }
