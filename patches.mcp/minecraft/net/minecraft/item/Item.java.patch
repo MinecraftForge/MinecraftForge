@@ -360,7 +360,7 @@
 +     * @param type The subtype, can be null or "overlay"
 +     * @return Path of texture to bind, or null to use default
 +     */
-+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
++    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
 +    {
 +        return null;
 +    }
@@ -383,12 +383,12 @@
 +     *
 +     * @param  entityLiving  The entity wearing the armor
 +     * @param  itemStack  The itemStack to render the model of
-+     * @param  armorSlot  0=head, 1=torso, 2=legs, 3=feet
++     * @param  armorSlot  The slot the armor is in
 +     * @param _default Original armor model. Will have attributes set.
 +     * @return  A ModelBiped to render instead of the default
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int armorSlot, net.minecraft.client.model.ModelBiped _default)
++    public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default)
 +    {
 +        return null;
 +    }

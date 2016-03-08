@@ -35,7 +35,7 @@ public class BlockSnapshot implements Serializable
     public BlockSnapshot(World world, BlockPos pos, IBlockState state)
     {
         this.world = world;
-        this.dimId = world.provider.getDimensionId();
+        this.dimId = world.provider.getDimension();
         this.pos = pos;
         this.replacedBlock = state;
         this.blockIdentifier = GameRegistry.findUniqueIdentifierFor(state.getBlock());
@@ -57,7 +57,7 @@ public class BlockSnapshot implements Serializable
     public BlockSnapshot(World world, BlockPos pos, IBlockState state, NBTTagCompound nbt)
     {
         this.world = world;
-        this.dimId = world.provider.getDimensionId();
+        this.dimId = world.provider.getDimension();
         this.pos = pos.getImmutable();
         this.replacedBlock = state;
         this.blockIdentifier = GameRegistry.findUniqueIdentifierFor(state.getBlock());

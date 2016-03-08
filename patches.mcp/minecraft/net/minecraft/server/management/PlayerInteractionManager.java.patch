@@ -1,0 +1,213 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
+@@ -27,6 +27,8 @@
+ 
+ public class PlayerInteractionManager
+ {
++    /** Forge reach distance */
++    private double blockReachDistance = 5.0d;
+     public World theWorld;
+     public EntityPlayerMP thisPlayerMP;
+     private WorldSettings.GameType gameType = WorldSettings.GameType.NOT_SET;
+@@ -88,7 +90,7 @@
+             IBlockState iblockstate = this.theWorld.getBlockState(this.field_180241_i);
+             Block block = iblockstate.getBlock();
+ 
+-            if (iblockstate.func_185904_a() == Material.air)
++            if (block.isAir(iblockstate, theWorld, field_180241_i))
+             {
+                 this.receivedFinishDiggingPacket = false;
+             }
+@@ -115,7 +117,7 @@
+             IBlockState iblockstate1 = this.theWorld.getBlockState(this.field_180240_f);
+             Block block1 = iblockstate1.getBlock();
+ 
+-            if (iblockstate1.func_185904_a() == Material.air)
++            if (block1.isAir(iblockstate1, theWorld, field_180240_f))
+             {
+                 this.theWorld.sendBlockBreakProgress(this.thisPlayerMP.getEntityId(), this.field_180240_f, -1);
+                 this.durabilityRemainingOnBlock = -1;
+@@ -124,7 +126,7 @@
+             else
+             {
+                 int k = this.curblockDamage - this.initialDamage;
+-                float f1 = iblockstate1.func_185903_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, this.field_180241_i) * (float)(k + 1);
++                float f1 = iblockstate1.func_185903_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, this.field_180240_f) * (float)(k + 1); // Forge: Fix network break progress using wrong position
+                 int l = (int)(f1 * 10.0F);
+ 
+                 if (l != this.durabilityRemainingOnBlock)
+@@ -138,6 +140,14 @@
+ 
+     public void onBlockClicked(BlockPos pos, EnumFacing side)
+     {
++        net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(thisPlayerMP,
++                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, theWorld, pos, side, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(thisPlayerMP, getBlockReachDistance() + 1));
++        if (event.isCanceled())
++        {
++            thisPlayerMP.playerNetServerHandler.sendPacket(new SPacketBlockChange(theWorld, pos));
++            return;
++        }
++
+         if (this.isCreative())
+         {
+             if (!this.theWorld.extinguishFire((EntityPlayer)null, pos, side))
+@@ -173,17 +183,32 @@
+                 }
+             }
+ 
+-            this.theWorld.extinguishFire((EntityPlayer)null, pos, side);
+             this.initialDamage = this.curblockDamage;
+             float f = 1.0F;
+ 
+-            if (iblockstate.func_185904_a() != Material.air)
++            if (!iblockstate.getBlock().isAir(iblockstate, theWorld, pos))
+             {
+-                block.onBlockClicked(this.theWorld, pos, this.thisPlayerMP);
++                if (event.useBlock != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++                {
++                    block.onBlockClicked(this.theWorld, pos, this.thisPlayerMP);
++                    this.theWorld.extinguishFire((EntityPlayer)null, pos, side);
++                }
++                else
++                { 
++                    thisPlayerMP.playerNetServerHandler.sendPacket(new SPacketBlockChange(theWorld, pos));
++                }
+                 f = iblockstate.func_185903_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, pos);
+             }
++            if (event.useItem == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++            {
++                if (f >= 1.0F)
++                {
++                    thisPlayerMP.playerNetServerHandler.sendPacket(new SPacketBlockChange(theWorld, pos));
++                }
++                return;
++            }
+ 
+-            if (iblockstate.func_185904_a() != Material.air && f >= 1.0F)
++            if (iblockstate.getBlock().isAir(iblockstate, theWorld, pos) && f >= 1.0F)
+             {
+                 this.tryHarvestBlock(pos);
+             }
+@@ -205,7 +230,7 @@
+             int i = this.curblockDamage - this.initialDamage;
+             IBlockState iblockstate = this.theWorld.getBlockState(pos);
+ 
+-            if (iblockstate.func_185904_a() != Material.air)
++            if (iblockstate.getBlock().isAir(iblockstate, theWorld, pos))
+             {
+                 float f = iblockstate.func_185903_a(this.thisPlayerMP, this.thisPlayerMP.worldObj, pos) * (float)(i + 1);
+ 
+@@ -234,9 +259,14 @@
+ 
+     private boolean removeBlock(BlockPos pos)
+     {
++        return removeBlock(pos, false);
++    }
++
++    private boolean removeBlock(BlockPos pos, boolean canHarvest)
++    {
+         IBlockState iblockstate = this.theWorld.getBlockState(pos);
+         iblockstate.getBlock().onBlockHarvested(this.theWorld, pos, iblockstate, this.thisPlayerMP);
+-        boolean flag = this.theWorld.setBlockToAir(pos);
++        boolean flag = iblockstate.getBlock().removedByPlayer(iblockstate, theWorld, pos, thisPlayerMP, canHarvest);
+ 
+         if (flag)
+         {
+@@ -248,7 +278,8 @@
+ 
+     public boolean tryHarvestBlock(BlockPos pos)
+     {
+-        if (this.gameType.isCreative() && this.thisPlayerMP.func_184614_ca() != null && this.thisPlayerMP.func_184614_ca().getItem() instanceof ItemSword)
++        int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(theWorld, gameType, thisPlayerMP, pos);
++        if (exp == -1)
+         {
+             return false;
+         }
+@@ -264,41 +295,22 @@
+             }
+             else
+             {
+-                if (this.gameType.isAdventure())
+-                {
+-                    if (this.gameType == WorldSettings.GameType.SPECTATOR)
+-                    {
+-                        return false;
+-                    }
++                ItemStack stack = thisPlayerMP.func_184614_ca();
++                if (stack != null && stack.getItem().onBlockStartBreak(stack, pos, thisPlayerMP)) return false;
+ 
+-                    if (!this.thisPlayerMP.isAllowEdit())
+-                    {
+-                        ItemStack itemstack = this.thisPlayerMP.func_184614_ca();
+-
+-                        if (itemstack == null)
+-                        {
+-                            return false;
+-                        }
+-
+-                        if (!itemstack.canDestroy(iblockstate.getBlock()))
+-                        {
+-                            return false;
+-                        }
+-                    }
+-                }
+-
+                 this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, pos, Block.getStateId(iblockstate));
+-                boolean flag1 = this.removeBlock(pos);
++                boolean flag1 = false;
+ 
+                 if (this.isCreative())
+                 {
++                    flag1 = this.removeBlock(pos);
+                     this.thisPlayerMP.playerNetServerHandler.sendPacket(new SPacketBlockChange(this.theWorld, pos));
+                 }
+                 else
+                 {
+                     ItemStack itemstack1 = this.thisPlayerMP.func_184614_ca();
+                     ItemStack itemstack2 = itemstack1 == null ? null : itemstack1.copy();
+-                    boolean flag = this.thisPlayerMP.func_184823_b(iblockstate);
++                    boolean flag = iblockstate.getBlock().canHarvestBlock(theWorld, pos, thisPlayerMP);
+ 
+                     if (itemstack1 != null)
+                     {
+@@ -310,12 +322,18 @@
+                         }
+                     }
+ 
++                    flag1 = this.removeBlock(pos, flag);
+                     if (flag1 && flag)
+                     {
+                         iblockstate.getBlock().harvestBlock(this.theWorld, this.thisPlayerMP, pos, iblockstate, tileentity, itemstack2);
+                     }
+                 }
+ 
++                // Drop experience
++                if (!this.isCreative() && flag1 && exp > 0)
++                {
++                    iblockstate.getBlock().dropXpOnBlockBreak(theWorld, pos, exp);
++                }
+                 return flag1;
+             }
+         }
+@@ -359,6 +377,7 @@
+                 if (itemstack.stackSize == 0)
+                 {
+                     p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187250_1_, itemstack, p_187250_4_);
+                 }
+ 
+                 if (!p_187250_1_.func_184587_cr())
+@@ -445,4 +464,13 @@
+     {
+         this.theWorld = serverWorld;
+     }
++
++    public double getBlockReachDistance()
++    {
++        return blockReachDistance;
++    }
++    public void setBlockReachDistance(double distance)
++    {
++        blockReachDistance = distance;
++    }
+ }

@@ -60,7 +60,7 @@
  
      public Entity func_184204_a(int p_184204_1_)
      {
-+        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return;
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return this;
          this.field_184851_cj = true;
  
          if (this.dimension == 1 && p_184204_1_ == 1)

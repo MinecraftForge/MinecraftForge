@@ -13,7 +13,7 @@
      public void handleChat(SPacketChat packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-+        net.minecraft.util.IChatComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(packetIn.getType(), packetIn.getChatComponent());
++        net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(packetIn.getType(), packetIn.getChatComponent());
 +        if (message == null) return;
  
          if (packetIn.getType() == 2)
@@ -40,17 +40,17 @@
          EntityTracker.func_187254_a(entitylivingbase, d0, d1, d2);
          entitylivingbase.renderYawOffset = entitylivingbase.rotationYawHead = (float)(packetIn.getHeadPitch() * 360) / 256.0F;
          Entity[] aentity = entitylivingbase.getParts();
-@@ -1082,6 +1089,10 @@
+@@ -1179,6 +1186,10 @@
              {
-                 entityplayer.openContainer.putStackInSlot(packetIn.func_149173_d(), packetIn.func_149174_e());
+                 tileentity.readFromNBT(packetIn.getNbtCompound());
              }
 +            else
 +            {
 +                tileentity.onDataPacket(netManager, packetIn);
 +            }
-         }
-     }
  
+             if (flag && this.gameController.currentScreen instanceof GuiCommandBlock)
+             {
 @@ -1378,7 +1389,7 @@
  
          if (entity instanceof EntityLivingBase)

@@ -132,7 +132,7 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
-+        ItemStack stack = this.getHeldItem();
++        ItemStack stack = this.func_184586_b(p_184609_1_);
 +        if (stack != null && stack.getItem() != null)
 +        {
 +            if (stack.getItem().onEntitySwing(this, stack)) return;

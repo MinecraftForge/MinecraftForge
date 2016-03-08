@@ -137,24 +137,24 @@ public class ForgeHooks
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, IBlockAccess world, BlockPos pos)
     {
-        if (block.getMaterial().isToolNotRequired())
+        IBlockState state = world.getBlockState(pos);
+        state = state.getBlock().getActualState(state, world, pos);
+        if (state.func_185904_a().isToolNotRequired())
         {
             return true;
         }
 
         ItemStack stack = player.inventory.getCurrentItem();
-        IBlockState state = world.getBlockState(pos);
-        state = state.getBlock().getActualState(state, world, pos);
         String tool = block.getHarvestTool(state);
         if (stack == null || tool == null)
         {
-            return player.canHarvestBlock(block);
+            return player.func_184823_b(state);
         }
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool);
         if (toolLevel < 0)
         {
-            return player.canHarvestBlock(block);
+            return player.func_184823_b(state);
         }
 
         return toolLevel >= block.getHarvestLevel(state);

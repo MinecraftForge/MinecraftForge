@@ -50,7 +50,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             dataDir.mkdirs();
         }
         File file = new File(dataDir, name + ".dat");
-        if (!file.exists() && name.equalsIgnoreCase("FORTRESS") && world.provider.getDimensionId() == -1) //Only copy over the fortress.dat for the vanilla nether.
+        if (!file.exists() && name.equalsIgnoreCase("FORTRESS") && world.provider.getDimension() == -1) //Only copy over the fortress.dat for the vanilla nether.
         {
             File parentFile = parent.getMapFileFromName(name);
             if (parentFile.exists())
