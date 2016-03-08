@@ -354,7 +354,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void serverStarting(FMLServerStartingEvent evt)
     {
-        evt.registerServerCommand(new ForgeCommand(evt.getServer()));
+        evt.registerServerCommand(new ForgeCommand());
     }
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)

@@ -190,7 +190,7 @@
          super.onUpdate();
          this.func_184608_ct();
  
-@@ -2351,6 +2384,41 @@
+@@ -2351,6 +2384,40 @@
          this.potionsNeedUpdate = true;
      }
  
@@ -200,18 +200,17 @@
 +     */
 +    public void curePotionEffects(ItemStack curativeItem)
 +    {
-+        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
 +        if (worldObj.isRemote) return;
++        Iterator<PotionEffect> iterator = this.activePotionsMap.values().iterator();
 +
-+        while (potionKey.hasNext())
++        while (iterator.hasNext())
 +        {
-+            Integer key = potionKey.next();
-+            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++            PotionEffect effect = iterator.next();
 +
 +            if (effect.isCurativeItem(curativeItem))
 +            {
-+                potionKey.remove();
 +                onFinishedPotionEffect(effect);
++                iterator.remove();
 +                this.potionsNeedUpdate = true;
 +            }
 +        }
@@ -232,7 +231,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2371,6 +2439,14 @@
+@@ -2371,6 +2438,14 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -247,7 +246,7 @@
                  if (this.func_184605_cv() <= 25 && this.func_184605_cv() % 4 == 0)
                  {
                      this.func_184584_a(this.field_184627_bm, 5);
-@@ -2380,6 +2456,7 @@
+@@ -2380,6 +2455,7 @@
                  {
                      this.onItemUseFinish();
                  }
@@ -255,7 +254,7 @@
              }
              else
              {
-@@ -2394,8 +2471,10 @@
+@@ -2394,8 +2470,10 @@
  
          if (itemstack != null && !this.func_184587_cr())
          {
@@ -267,7 +266,7 @@
  
              if (!this.worldObj.isRemote)
              {
-@@ -2478,6 +2557,8 @@
+@@ -2478,6 +2556,8 @@
              this.func_184584_a(this.field_184627_bm, 16);
              ItemStack itemstack = this.field_184627_bm.onItemUseFinish(this.worldObj, this);
  
@@ -276,7 +275,7 @@
              if (itemstack != null && itemstack.stackSize == 0)
              {
                  itemstack = null;
-@@ -2508,6 +2589,8 @@
+@@ -2508,6 +2588,8 @@
          if (this.field_184627_bm != null)
          {
              this.field_184627_bm.onPlayerStoppedUsing(this.worldObj, this, this.func_184605_cv());

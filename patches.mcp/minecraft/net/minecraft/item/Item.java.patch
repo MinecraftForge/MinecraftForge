@@ -159,7 +159,7 @@
 +     * @param player The Player using the item
 +     * @param count The amount of time in tick the item has been used for continuously
 +     */
-+    public void onUsingTick(ItemStack stack, EntityPlayer player, int count)
++    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count)
 +    {
 +    }
 +
