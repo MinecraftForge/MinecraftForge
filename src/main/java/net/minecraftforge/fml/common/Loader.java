@@ -979,7 +979,7 @@ public class Loader
             }
         }
 
-        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, remapBlocks, remapItems);
+        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, remapBlocks, remapItems);
     }
 
     public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
