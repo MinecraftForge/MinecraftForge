@@ -80,6 +80,15 @@
      }
  
      public boolean areAllPlayersAsleep()
+@@ -368,7 +380,7 @@
+             boolean flag1 = this.isThundering();
+             this.theProfiler.startSection("pollingChunks");
+ 
+-            for (Iterator<Chunk> iterator = this.thePlayerManager.func_187300_b(); iterator.hasNext(); this.theProfiler.endSection())
++            for (Iterator<Chunk> iterator = getPersistentChunkIterable(this.thePlayerManager.func_187300_b()); iterator.hasNext(); this.theProfiler.endSection())
+             {
+                 this.theProfiler.startSection("getChunk");
+                 Chunk chunk = (Chunk)iterator.next();
 @@ -380,7 +392,7 @@
                  chunk.func_150804_b(false);
                  this.theProfiler.endStartSection("thunder");

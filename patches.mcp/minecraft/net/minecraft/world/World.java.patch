@@ -792,7 +792,7 @@
                      }
                  }
              }
-@@ -3600,6 +3781,83 @@
+@@ -3600,6 +3781,87 @@
          return i >= -k && i <= k && j >= -k && j <= k;
      }
  
@@ -839,6 +839,10 @@
 +        return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this);
 +    }
 +
++    public Iterator<Chunk> getPersistentChunkIterable(Iterator<Chunk> chunkIterator)
++    {
++        return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksIterableFor(this, chunkIterator);
++    }
 +    /**
 +     * Readded as it was removed, very useful helper function
 +     *

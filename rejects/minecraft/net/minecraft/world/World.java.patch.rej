@@ -1,9 +1,0 @@
-++++ REJECTED PATCH 40
-     {
-         this.activeChunkSet.clear();
-         this.theProfiler.startSection("buildList");
-+        this.activeChunkSet.addAll(getPersistentChunks().keySet());
- 
-         for (int i = 0; i < this.playerEntities.size(); ++i)
-         {
-++++ END PATCH

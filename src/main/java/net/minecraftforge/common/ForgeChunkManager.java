@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import org.apache.logging.log4j.Level;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -53,6 +57,8 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.Constants;
+
+import javax.annotation.Nullable;
 
 /**
  * Manages chunkloading for mods.
@@ -103,6 +109,25 @@ public class ForgeChunkManager
     {
         MOD_PROP_ORDER.add("maximumTicketCount");
         MOD_PROP_ORDER.add("maximumChunksPerTicket");
+    }
+
+    public static Iterator<Chunk> getPersistentChunksIterableFor(final World world, Iterator<Chunk> chunkIterator)
+    {
+        final ImmutableSetMultimap<ChunkCoordIntPair, Ticket> persistentChunksFor = getPersistentChunksFor(world);
+        final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
+        world.theProfiler.startSection("forcedChunkLoading");
+        builder.addAll(Iterators.transform(persistentChunksFor.keys().iterator(), new Function<ChunkCoordIntPair, Chunk>() {
+            @Nullable
+            @Override
+            public Chunk apply(@Nullable ChunkCoordIntPair input)
+            {
+                return world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
+            }
+        }));
+        world.theProfiler.endStartSection("regularChunkLoading");
+        builder.addAll(chunkIterator);
+        world.theProfiler.endSection();
+        return builder.build().iterator();
     }
 
     /**
