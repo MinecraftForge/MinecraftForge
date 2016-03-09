@@ -27,7 +27,7 @@ import net.minecraft.util.EnumHand;
 public class PlayerDestroyItemEvent extends PlayerEvent
 {
     private final ItemStack original;
-    private final EnumHand hand;
+    private final EnumHand hand; // May be null if this player destroies the item by any use besides holding it.
     public PlayerDestroyItemEvent(EntityPlayer player, ItemStack original, EnumHand hand)
     {
         super(player);

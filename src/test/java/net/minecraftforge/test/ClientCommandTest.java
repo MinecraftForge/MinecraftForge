@@ -37,13 +37,13 @@ public class ClientCommandTest {
         }
 
         @Override
-        public boolean canCommandSenderUseCommand(ICommandSender sender)
+        public boolean func_184882_a(MinecraftServer server, ICommandSender sender)
         {
             return true;
         }
 
         @Override
-        public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+        public List<String> func_184883_a(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
         {
             if (args.length > 0)
             {

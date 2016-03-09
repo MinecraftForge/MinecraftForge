@@ -249,7 +249,7 @@ public class ModelLoader extends ModelBakery
         }
 
         registerVariantNames();
-        
+
         List<String> itemVariants = Lists.newArrayList();
         for(Item item : GameData.getItemRegistry().typeSafeIterable())
         {
@@ -560,7 +560,7 @@ public class ModelLoader extends ModelBakery
             return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
         }
 
-        private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.func_187967_g())).setTexture(particle);

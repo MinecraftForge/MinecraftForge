@@ -656,7 +656,7 @@ public class ForgeHooks
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
-        if (gameType.isCreative() && entityPlayer.getHeldItem() != null && entityPlayer.getHeldItem().getItem() instanceof ItemSword)
+        if (gameType.isCreative() && entityPlayer.func_184614_ca() != null && entityPlayer.func_184614_ca().getItem() instanceof ItemSword)
             preCancelEvent = true;
 
         if (gameType.isAdventure())
@@ -666,7 +666,7 @@ public class ForgeHooks
 
             if (!entityPlayer.isAllowEdit())
             {
-                ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
+                ItemStack itemstack = entityPlayer.func_184614_ca();
                 if (itemstack == null || !itemstack.canDestroy(world.getBlockState(pos).getBlock()))
                     preCancelEvent = true;
             }
@@ -865,7 +865,7 @@ public class ForgeHooks
             stack = stack.getItem().getContainerItem(stack);
             if (stack != null && stack.isItemStackDamageable() && stack.getMetadata() > stack.getMaxDamage())
             {
-                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(craftingPlayer.get(), stack));
+                ForgeEventFactory.onPlayerDestroyItem(craftingPlayer.get(), stack, null);
                 return null;
             }
             return stack;
@@ -904,7 +904,7 @@ public class ForgeHooks
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {
         if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
-        ItemStack stack = player.getCurrentEquippedItem();
+        ItemStack stack = player.func_184614_ca();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
     }

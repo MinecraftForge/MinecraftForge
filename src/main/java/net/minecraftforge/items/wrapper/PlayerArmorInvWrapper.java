@@ -1,6 +1,7 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 public class PlayerArmorInvWrapper extends InvWrapper
@@ -31,8 +32,17 @@ public class PlayerArmorInvWrapper extends InvWrapper
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
     {
+        EntityEquipmentSlot equ = null;
+        for (EntityEquipmentSlot s : EntityEquipmentSlot.values())
+        {
+            if (s.func_188453_a() == EntityEquipmentSlot.Type.ARMOR && s.func_188454_b() == slot)
+            {
+                equ = s;
+                break;
+            }
+        }
         // check if it's valid for the armor slot
-        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, 3 - slot, inventoryPlayer.player))
+        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, equ, inventoryPlayer.player))
         {
             return super.insertItem(slot + offset, stack, simulate);
         }

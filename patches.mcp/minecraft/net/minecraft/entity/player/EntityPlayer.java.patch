@@ -107,7 +107,7 @@
      public EntityItem dropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem)
 @@ -746,15 +773,22 @@
  
-     protected ItemStack func_184816_a(EntityItem p_184816_1_)
+     public ItemStack func_184816_a(EntityItem p_184816_1_)
      {
 +        if (captureDrops) capturedDrops.add(p_184816_1_);
 +        else // Forge: Don't indent to keep patch smaller.

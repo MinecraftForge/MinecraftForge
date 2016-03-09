@@ -604,13 +604,19 @@ public class ForgeHooksClient
         return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
     }
 
-    public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to)
+    private static int slotMainHand = 0;
+    public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to, int slot)
     {
         if(!Objects.equal(from, to) || from == null)
         {
             return false;
         }
-        // FIXME: 3rd argument?
-        return from.getItem().shouldCauseReequipAnimation(from, to);
+        boolean changed = false;
+        if (slot != -1)
+        {
+            changed = slot != slotMainHand;
+            slotMainHand = slot;
+        }
+        return from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 }
