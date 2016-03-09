@@ -74,7 +74,7 @@
          }
  
 -        return !pos.getBlockState(side.offset(p_176225_4_)).func_185914_p();
-+        return !pos.getBlockState(side.offset(p_176225_4_)).doesSideBlockRendering(pos, side, p_176225_4_);
++        return !pos.getBlockState(side.offset(p_176225_4_)).doesSideBlockRendering(pos, side.offset(p_176225_4_), p_176225_4_.getOpposite());
      }
  
      @SideOnly(Side.CLIENT)

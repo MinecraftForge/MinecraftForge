@@ -110,7 +110,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             quads = model.func_188616_a(state, side, rand);
             if(!quads.isEmpty())
             {
-                if(!checkSides || state.func_185894_c(world, pos.offset(side), side))
+                if(!checkSides || state.func_185894_c(world, pos, side))
                 {
                     if(empty) lighter.updateBlockInfo();
                     empty = false;
