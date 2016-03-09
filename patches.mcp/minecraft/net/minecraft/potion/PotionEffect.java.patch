@@ -1,6 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
-@@ -240,4 +240,53 @@
+@@ -19,6 +19,8 @@
+     @SideOnly(Side.CLIENT)
+     private boolean isPotionDurationMax;
+     private boolean field_188421_h;
++    /** List of ItemStack that can cure the potion effect **/
++    private java.util.List<net.minecraft.item.ItemStack> curativeItems;
+ 
+     public PotionEffect(Potion p_i46811_1_)
+     {
+@@ -42,6 +44,8 @@
+         this.amplifier = p_i46814_3_;
+         this.isAmbient = p_i46814_4_;
+         this.field_188421_h = p_i46814_5_;
++        this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++        this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.milk_bucket));
+     }
+ 
+     public PotionEffect(PotionEffect other)
+@@ -51,6 +55,7 @@
+         this.amplifier = other.amplifier;
+         this.isAmbient = other.isAmbient;
+         this.field_188421_h = other.field_188421_h;
++        this.curativeItems = other.curativeItems;
+     }
+ 
+     public void combine(PotionEffect other)
+@@ -200,7 +205,7 @@
+ 
+     public static PotionEffect readCustomPotionEffectFromNBT(NBTTagCompound nbt)
+     {
+-        int i = nbt.getByte("Id");
++        int i = nbt.getByte("Id") & 0xFF;
+         Potion potion = Potion.func_188412_a(i);
+ 
+         if (potion == null)
+@@ -240,4 +245,53 @@
      {
          return this.isPotionDurationMax;
      }
