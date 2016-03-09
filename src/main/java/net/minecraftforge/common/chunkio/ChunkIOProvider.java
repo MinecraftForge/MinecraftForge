@@ -45,11 +45,11 @@ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChu
         queuedChunk.provider.loadedChunks.add(chunk);
         chunk.onChunkLoad();
 
-        if (queuedChunk.provider.serverChunkGenerator != null) {
-            queuedChunk.provider.serverChunkGenerator.recreateStructures(chunk, queuedChunk.x, queuedChunk.z);
+        if (queuedChunk.provider.field_186029_c != null) {
+            queuedChunk.provider.field_186029_c.recreateStructures(chunk, queuedChunk.x, queuedChunk.z);
         }
 
-        chunk.populateChunk(queuedChunk.provider, queuedChunk.provider, queuedChunk.x, queuedChunk.z);
+        chunk.func_186030_a(queuedChunk.provider, queuedChunk.provider.field_186029_c);
     }
 
     public void callStage3(QueuedChunk queuedChunk, net.minecraft.world.chunk.Chunk chunk, Runnable runnable) throws RuntimeException {
