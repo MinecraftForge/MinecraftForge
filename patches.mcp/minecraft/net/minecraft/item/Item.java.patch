@@ -57,7 +57,7 @@
          Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
      }
-@@ -422,11 +431,609 @@
+@@ -422,11 +431,588 @@
          return false;
      }
  
@@ -96,7 +96,7 @@
 +     * by a user in the displayed name, such as a mode of operation.
 +     *
 +     * @param item the ItemStack for the item.
-+     * @param the name that will be displayed unless it is changed in this method.
++     * @param displayName the name that will be displayed unless it is changed in this method.
 +     */
 +    public String getHighlightTip( ItemStack item, String displayName )
 +    {
@@ -280,27 +280,6 @@
 +    public float getSmeltingExperience(ItemStack item)
 +    {
 +        return -1; //-1 will default to the old lookups.
-+    }
-+
-+    /**
-+     * Generates the base Random item for a specific instance of the chest gen,
-+     * Enchanted books use this to pick a random enchantment.
-+     *
-+     * @param chest The chest category to generate for
-+     * @param rnd World RNG
-+     * @param original Original result registered with the chest gen hooks.
-+     * @return New values to use as the random item, typically this will be original
-+     */
-+    @Deprecated // LootTables!
-+    public net.minecraft.util.WeightedRandomChestContent getChestGenBase(net.minecraftforge.common.ChestGenHooks chest, Random rnd, net.minecraft.util.WeightedRandomChestContent original)
-+    {
-+        if (this instanceof ItemEnchantedBook)
-+        {
-+            return ((ItemEnchantedBook)this).getRandom(rnd,
-+                    original.minStackSize,
-+                    original.maxStackSize, original.itemWeight);
-+        }
-+        return original;
 +    }
 +
 +    /**
@@ -500,7 +479,7 @@
 +    }
 +
 +    /**
-+     * ItemStack sensitive version of {@link #canHarvestBlock(Block)}
++     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
 +     * @param state The block trying to harvest
 +     * @param stack The itemstack used to harvest the block
 +     * @return true if can harvest the block
@@ -515,7 +494,7 @@
 +     * This is a ItemStack (and thus NBT) sensitive version of Item.getItemStackLimit()
 +     *
 +     * @param stack The ItemStack
-+     * @return THe maximum number this item can be stacked to
++     * @return The maximum number this item can be stacked to
 +     */
 +    public int getItemStackLimit(ItemStack stack)
 +    {
@@ -667,7 +646,7 @@
      public static void registerItems()
      {
          registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>()
-@@ -935,6 +1542,10 @@
+@@ -935,6 +1521,10 @@
          private final float damageVsEntity;
          private final int enchantability;
  
@@ -678,7 +657,7 @@
          private ToolMaterial(int harvestLevel, int maxUses, float efficiency, float damageVsEntity, int enchantability)
          {
              this.harvestLevel = harvestLevel;
-@@ -969,9 +1580,36 @@
+@@ -969,9 +1559,36 @@
              return this.enchantability;
          }
  

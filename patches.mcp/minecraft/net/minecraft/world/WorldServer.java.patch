@@ -103,7 +103,7 @@
              {
                  i = 8;
 +                //Keeping here as a note for future when it may be restored.
-+                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.position.getX() >> 4, nextticklistentry.position.getZ() >> 4));
++                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
 +                i = isForced ? 0 : 8;
  
                  if (this.isAreaLoaded(pos.add(-i, -i, -i), pos.add(i, i, i)))
@@ -241,7 +241,7 @@
  
 +    public java.io.File getChunkSaveLocation()
 +    {
-+        return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)theChunkProviderServer.chunkLoader).chunkSaveLocation;
++        return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)getChunkProvider().chunkLoader).chunkSaveLocation;
 +    }
 +
      static class ServerBlockEventList extends ArrayList<BlockEventData>

@@ -69,7 +69,7 @@
 +            ret = this.json;
 +            if (ret == null)
 +            {
-+                ret = net.minecraft.network.status.server.S00PacketServerInfo.GSON.toJson(this);
++                ret = net.minecraft.network.status.server.SPacketServerInfo.GSON.toJson(this);
 +                this.json = ret;
 +            }
 +            mutex.release();

@@ -690,7 +690,7 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.playerNetServerHandler.sendPacket(new S23PacketBlockChange(world, pos));
+            entityPlayer.playerNetServerHandler.sendPacket(new SPacketBlockChange(world, pos));
 
             // Update any tile entity data for this block
             TileEntity tileentity = world.getTileEntity(pos);

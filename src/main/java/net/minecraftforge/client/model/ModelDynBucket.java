@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -228,7 +229,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
         private BakedDynBucketOverrideHandler()
         {
-            super(ImmutableList.of());
+            super(ImmutableList.<ItemOverride>of());
         }
 
         @Override
