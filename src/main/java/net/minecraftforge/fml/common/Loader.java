@@ -113,7 +113,7 @@ import com.google.gson.JsonParser;
 @SuppressWarnings("unused")
 public class Loader
 {
-    public static final String MC_VERSION = "1.8.9";
+    public static final String MC_VERSION = net.minecraftforge.common.ForgeVersion.mcVersion;
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**
@@ -705,7 +705,7 @@ public class Loader
             // before elements are things we are loaded before (so they are our dependants)
             if ("required-before".equals(instruction) || "before".equals(instruction))
             {
-            	dependants.add(VersionParser.parseVersionReference(target));
+                dependants.add(VersionParser.parseVersionReference(target));
             }
             // after elements are things that load before we do (so they are out dependencies)
             else if ("required-after".equals(instruction) || "after".equals(instruction))
@@ -984,7 +984,7 @@ public class Loader
 
     public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
     {
-	    modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
     }
 
     public void runtimeDisableMod(String modId)

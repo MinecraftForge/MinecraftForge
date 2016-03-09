@@ -31,17 +31,17 @@ import net.minecraftforge.fml.common.versioning.ComparableVersion;
 public class ForgeVersion
 {
     //This number is incremented every time we remove deprecated code/major API changes, never reset
-    public static final int majorVersion    = 11;
+    public static final int majorVersion    = 12;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = 15;
+    public static final int minorVersion    = 16;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 1;
+    public static final int revisionVersion = 0;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
-    public static final String mcVersion = "1.8.9";
+    public static final String mcVersion = "1.9";
     // This is the MCP data version we're using
-    public static final String mcpVersion = "9.19";
+    public static final String mcpVersion = "9.23";
     @SuppressWarnings("unused")
     private static Status status = PENDING;
     @SuppressWarnings("unused")
@@ -239,16 +239,12 @@ public class ForgeVersion
     }
 
     // Gather a list of mods that have opted in to this update system by providing a URL.
-    // Small hack needed to support a interface change until we force a recompile.
     public static Map<ModContainer, URL> gatherMods()
     {
         Map<ModContainer, URL> ret = new HashMap<ModContainer, URL>();
         for (ModContainer mod : Loader.instance().getActiveModList())
         {
-            URL url = null;
-            try {
-                url = mod.getUpdateUrl();
-            } catch (AbstractMethodError abs) { } //TODO: Remove this in 1.8.8+?
+            URL url = mod.getUpdateUrl();
             if (url != null)
                 ret.put(mod, url);
         }
