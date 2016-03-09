@@ -122,8 +122,8 @@ public class ForgeBlockStatesLoaderDebug {
         }
 
         public static enum CustomVariant implements IStringSerializable {
-            TypeA,
-            TypeB;
+            type_a,
+            type_b;
 
             public String getName() { return this.toString(); };
         }

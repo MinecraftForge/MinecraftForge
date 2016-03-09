@@ -276,7 +276,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      */
     public int getId(I thing)
     {
-        return getIDForObject(thing);
+        return getIDForObjectBypass(thing);
     }
 
     /**

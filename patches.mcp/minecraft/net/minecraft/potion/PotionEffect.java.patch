@@ -9,16 +9,7 @@
  
      public PotionEffect(Potion p_i46811_1_)
      {
-@@ -42,6 +44,8 @@
-         this.amplifier = p_i46814_3_;
-         this.isAmbient = p_i46814_4_;
-         this.field_188421_h = p_i46814_5_;
-+        this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
-+        this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.milk_bucket));
-     }
- 
-     public PotionEffect(PotionEffect other)
-@@ -51,6 +55,7 @@
+@@ -51,6 +53,7 @@
          this.amplifier = other.amplifier;
          this.isAmbient = other.isAmbient;
          this.field_188421_h = other.field_188421_h;
@@ -26,7 +17,7 @@
      }
  
      public void combine(PotionEffect other)
-@@ -200,7 +205,7 @@
+@@ -200,7 +203,7 @@
  
      public static PotionEffect readCustomPotionEffectFromNBT(NBTTagCompound nbt)
      {
@@ -35,7 +26,7 @@
          Potion potion = Potion.func_188412_a(i);
  
          if (potion == null)
-@@ -240,4 +245,53 @@
+@@ -240,4 +243,58 @@
      {
          return this.isPotionDurationMax;
      }
@@ -47,6 +38,11 @@
 +     */
 +    public java.util.List<net.minecraft.item.ItemStack> getCurativeItems()
 +    {
++        if (this.curativeItems == null) //Lazy load this so that we don't create a circular dep on Items.
++        {
++            this.curativeItems = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++            this.curativeItems.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.milk_bucket));
++        }
 +        return this.curativeItems;
 +    }
 +
@@ -57,7 +53,7 @@
 +     */
 +    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
 +    {
-+        for (net.minecraft.item.ItemStack curativeItem : this.curativeItems)
++        for (net.minecraft.item.ItemStack curativeItem : this.getCurativeItems())
 +        {
 +            if (curativeItem.isItemEqual(stack))
 +            {
@@ -85,7 +81,7 @@
 +    {
 +        if (!this.isCurativeItem(stack))
 +        {
-+            this.curativeItems.add(stack);
++            this.getCurativeItems().add(stack);
 +        }
 +    }
  }
