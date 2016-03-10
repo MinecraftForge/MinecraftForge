@@ -15,7 +15,7 @@
 -                    case LEATHER:
                          int i = itemarmor.getColor(itemstack);
 +                {
-+                    if (i != -1) // Allow this for anything, not only cloth
++                    if (i != 0xFFFFFF) // Allow this for anything, not only cloth
 +                    {
                          float f = (float)(i >> 16 & 255) / 255.0F;
                          float f1 = (float)(i >> 8 & 255) / 255.0F;
