@@ -114,7 +114,7 @@
              renderglobal.drawSelectionBox(entityplayer, this.mc.objectMouseOver, 0, partialTicks);
              GlStateManager.enableAlpha();
          }
-@@ -1366,6 +1368,15 @@
+@@ -1366,6 +1368,17 @@
          GlStateManager.shadeModel(7425);
          this.mc.mcProfiler.endStartSection("translucent");
          renderglobal.renderBlockLayer(BlockRenderLayer.TRANSLUCENT, (double)partialTicks, pass, entity);
@@ -124,13 +124,15 @@
 +            this.mc.mcProfiler.endStartSection("entities");
 +            net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
 +            renderglobal.renderEntities(entity, icamera, partialTicks);
++            // restore blending function changed by RenderGlobal.preRenderDamagedBlocks
++            GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 +            net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
 +            RenderHelper.disableStandardItemLighting();
 +        }
          GlStateManager.shadeModel(7424);
          GlStateManager.depthMask(true);
          GlStateManager.enableCull();
-@@ -1378,6 +1389,9 @@
+@@ -1378,6 +1391,9 @@
              this.renderCloudsCheck(renderglobal, partialTicks, pass);
          }
  
@@ -140,7 +142,7 @@
          this.mc.mcProfiler.endStartSection("hand");
  
          if (this.renderHand)
-@@ -1490,6 +1504,13 @@
+@@ -1490,6 +1506,13 @@
  
      protected void renderRainSnow(float partialTicks)
      {
@@ -154,7 +156,7 @@
          float f = this.mc.theWorld.getRainStrength(partialTicks);
  
          if (f > 0.0F)
-@@ -1820,6 +1841,13 @@
+@@ -1820,6 +1843,13 @@
              this.fogColorBlue = f7;
          }
  
@@ -168,7 +170,7 @@
          GlStateManager.clearColor(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 0.0F);
      }
  
-@@ -1830,7 +1858,9 @@
+@@ -1830,7 +1860,9 @@
          GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
          IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.mc.theWorld, entity, partialTicks);
@@ -179,7 +181,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).isPotionActive(MobEffects.blindness))
          {
              float f1 = 5.0F;
-@@ -1915,6 +1945,7 @@
+@@ -1915,6 +1947,7 @@
                  GlStateManager.setFogStart(f * 0.05F);
                  GlStateManager.setFogEnd(Math.min(f, 192.0F) * 0.5F);
              }
