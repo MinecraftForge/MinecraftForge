@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -612,7 +612,10 @@
+@@ -159,6 +159,7 @@
+ 
+     public void update()
+     {
++        if (this.playerEntity.playerNetServerHandler != this) return; // FORGE: sometimes the netqueue will tick while login is occuring, causing an NPE. We shouldn't tick until the connection is complete
+         this.func_184342_d();
+         this.playerEntity.onUpdateEntity();
+         this.playerEntity.setPositionAndRotation(this.field_184349_l, this.field_184350_m, this.field_184351_n, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
+@@ -612,7 +613,10 @@
                  double d2 = this.playerEntity.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -12,7 +20,7 @@
                  {
                      return;
                  }
-@@ -670,7 +673,9 @@
+@@ -670,7 +674,9 @@
  
          if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
          {
@@ -23,7 +31,7 @@
              {
                  this.playerEntity.theItemInWorldManager.func_187251_a(this.playerEntity, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
-@@ -689,6 +694,7 @@
+@@ -689,6 +695,7 @@
          if (itemstack != null && itemstack.stackSize == 0)
          {
              this.playerEntity.func_184611_a(enumhand, (ItemStack)null);
@@ -31,7 +39,7 @@
              itemstack = null;
          }
      }
-@@ -703,12 +709,14 @@
+@@ -703,12 +710,14 @@
  
          if (itemstack != null)
          {
@@ -46,7 +54,7 @@
                  itemstack = null;
              }
          }
-@@ -888,7 +896,9 @@
+@@ -888,7 +897,9 @@
              }
              else
              {
@@ -57,7 +65,7 @@
                  this.serverController.func_184103_al().sendChatMsgImpl(itextcomponent, false);
              }
  
-@@ -1057,7 +1067,7 @@
+@@ -1057,7 +1068,7 @@
                          return;
                      }
  
