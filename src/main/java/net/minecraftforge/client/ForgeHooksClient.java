@@ -627,7 +627,7 @@ public class ForgeHooksClient
     {
         if(!Objects.equal(from, to) || from == null)
         {
-            return false;
+            return Objects.equal(from, to);
         }
         boolean changed = false;
         if (slot != -1)
