@@ -38,7 +38,7 @@
                  }
  
 -                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
-+                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false);
                  this.itemRenderer.renderItem(itemstack, ibakedmodel);
                  GlStateManager.popMatrix();
              }
@@ -47,7 +47,7 @@
                  }
  
 -                ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GROUND);
-+                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false);
                  this.itemRenderer.renderItem(itemstack, ibakedmodel);
                  GlStateManager.popMatrix();
 -                GlStateManager.translate(0.0F * f, 0.0F * f1, 0.09375F * f2);

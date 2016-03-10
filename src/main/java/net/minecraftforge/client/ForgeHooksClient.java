@@ -90,7 +90,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
-@SuppressWarnings("deprecation")
 public class ForgeHooksClient
 {
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
@@ -360,6 +359,7 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
+    @SuppressWarnings("deprecation")
     public static Matrix4f getMatrix(ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
@@ -382,10 +382,12 @@ public class ForgeHooksClient
         return m;
     }
 
-    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType)
+    @SuppressWarnings("deprecation")
+    public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
     {
         if(model instanceof IPerspectiveAwareModel)
         {
+            // FIXME: left hand hackery
             Pair<? extends IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
 
             if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
@@ -393,7 +395,7 @@ public class ForgeHooksClient
         }
         else
         {
-            model.getItemCameraTransforms().applyTransform(cameraTransformType);
+            ItemCameraTransforms.func_188034_a(model.getItemCameraTransforms().getTransform(cameraTransformType), leftHandHackery);
         }
         return model;
     }
@@ -573,6 +575,7 @@ public class ForgeHooksClient
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static Optional<TRSRTransformation> applyTransform(ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
         if(part.isPresent()) return Optional.absent();

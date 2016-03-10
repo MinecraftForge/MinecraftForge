@@ -44,7 +44,7 @@
 -            ItemCameraTransforms itemcameratransforms = p_184394_2_.getItemCameraTransforms();
 -            ItemCameraTransforms.func_188034_a(itemcameratransforms.getTransform(p_184394_3_), p_184394_4_);
 +            // TODO: check if negative scale is a thing
-+            p_184394_2_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184394_2_, p_184394_3_);
++            p_184394_2_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184394_2_, p_184394_3_, p_184394_4_);
  
 -            if (this.func_183005_a(itemcameratransforms.getTransform(p_184394_3_)))
 -            {
@@ -59,7 +59,7 @@
          GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
          this.setupGuiTransform(p_184390_2_, p_184390_3_, p_184390_4_.isGui3d());
 -        p_184390_4_.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GUI);
-+        p_184390_4_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184390_4_, ItemCameraTransforms.TransformType.GUI);
++        p_184390_4_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184390_4_, ItemCameraTransforms.TransformType.GUI, false);
          this.renderItem(p_184390_1_, p_184390_4_);
          GlStateManager.disableAlpha();
          GlStateManager.disableRescaleNormal();

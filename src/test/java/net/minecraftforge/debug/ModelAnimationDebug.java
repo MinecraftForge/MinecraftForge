@@ -64,7 +64,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableMap;
 
-@Mod(modid = ModelAnimationDebug.MODID, version = ModelAnimationDebug.VERSION)
+//@Mod(modid = ModelAnimationDebug.MODID, version = ModelAnimationDebug.VERSION)
 public class ModelAnimationDebug
 {
     public static final String MODID = "forgedebugmodelanimation";
