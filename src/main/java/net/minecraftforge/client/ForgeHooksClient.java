@@ -608,6 +608,7 @@ public class ForgeHooksClient
     }
 
     private static int slotMainHand = 0;
+    // FIXME
     public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to, int slot)
     {
         if(!Objects.equal(from, to) || from == null)
@@ -620,6 +621,6 @@ public class ForgeHooksClient
             changed = slot != slotMainHand;
             slotMainHand = slot;
         }
-        return from.getItem().shouldCauseReequipAnimation(from, to, changed);
+        return !from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 }
