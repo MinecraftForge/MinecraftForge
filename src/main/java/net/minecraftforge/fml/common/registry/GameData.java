@@ -21,6 +21,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespaced;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -36,6 +38,8 @@ public class GameData
     static final int MAX_ITEM_ID = 31999;
     public static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
     public static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
+    public static final int MIN_BIOME_ID = 0; // 0-~31 are vanilla, forge start at 32
+    public static final int MAX_BIOME_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
 
     private static final GameData mainData = new GameData();
     // public api
@@ -68,6 +72,8 @@ public class GameData
     public static FMLControlledNamespacedRegistry<Potion> getPotionRegistry() {
         return getMain().iPotionRegistry;
     }
+
+    public static FMLControlledNamespacedRegistry<BiomeGenBase> getBiomeRegistry() { return getMain().iBiomeRegistry; }
 
 
     /***************************************************
@@ -114,6 +120,7 @@ public class GameData
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true, BlockStateCapture.INSTANCE);
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true, ItemBlockCapture.INSTANCE);
     private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MAX_POTION_ID, MIN_POTION_ID, false, PotionArrayCapture.INSTANCE);
+    private final FMLControlledNamespacedRegistry<BiomeGenBase> iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, BiomeGenBase.class, null, MAX_BIOME_ID, MIN_BIOME_ID, false, BiomeCapture.INSTANCE);
 
     int registerItem(Item item, String name) // from GameRegistry
     {
@@ -254,6 +261,15 @@ public class GameData
 
         @Override
         public void onAdd(Potion potion, int id) {
+            // no op for the minute?
+        }
+    }
+    private static class BiomeCapture implements FMLControlledNamespacedRegistry.AddCallback<BiomeGenBase>
+    {
+        static final BiomeCapture INSTANCE = new BiomeCapture();
+
+        @Override
+        public void onAdd(BiomeGenBase potion, int id) {
             // no op for the minute?
         }
     }

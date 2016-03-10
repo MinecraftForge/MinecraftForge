@@ -129,6 +129,7 @@ public class PersistentRegistryManager
     public static final ResourceLocation BLOCKS = new ResourceLocation("minecraft:blocks");
     public static final ResourceLocation ITEMS = new ResourceLocation("minecraft:items");
     public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
+    public static final ResourceLocation BIOMES = new ResourceLocation("minecraft:biomes");
 
     public static <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
     {

@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
+@@ -70,7 +70,7 @@
+     protected static final WorldGenTrees worldGeneratorTrees = new WorldGenTrees(false);
+     protected static final WorldGenBigTree worldGeneratorBigTree = new WorldGenBigTree(false);
+     protected static final WorldGenSwamp worldGeneratorSwamp = new WorldGenSwamp();
+-    public static final RegistryNamespaced<ResourceLocation, BiomeGenBase> field_185377_q = new RegistryNamespaced();
++    public static final RegistryNamespaced<ResourceLocation, BiomeGenBase> field_185377_q = net.minecraftforge.fml.common.registry.GameData.getBiomeRegistry();
+     private final String biomeName;
+     private final float minHeight;
+     private final float maxHeight;
 @@ -128,11 +128,12 @@
          this.spawnableMonsterList.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.spawnableWaterCreatureList.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
