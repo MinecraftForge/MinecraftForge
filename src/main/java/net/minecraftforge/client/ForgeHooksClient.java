@@ -382,20 +382,34 @@ public class ForgeHooksClient
         return m;
     }
 
+    private static final Matrix4f flipX;
+    static {
+        flipX = new Matrix4f();
+        flipX.setIdentity();
+        flipX.m00 = -1;
+    }
+
     @SuppressWarnings("deprecation")
     public static IBakedModel handleCameraTransforms(IBakedModel model, ItemCameraTransforms.TransformType cameraTransformType, boolean leftHandHackery)
     {
         if(model instanceof IPerspectiveAwareModel)
         {
-            // FIXME: left hand hackery
             Pair<? extends IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
 
+            Matrix4f matrix = new Matrix4f(pair.getRight());
+            if(leftHandHackery)
+            {
+                matrix.mul(flipX, matrix);
+                matrix.mul(matrix, flipX);
+            }
             if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             return pair.getLeft();
         }
         else
         {
+            //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
             ItemCameraTransforms.func_188034_a(model.getItemCameraTransforms().getTransform(cameraTransformType), leftHandHackery);
+            //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
         }
         return model;
     }
