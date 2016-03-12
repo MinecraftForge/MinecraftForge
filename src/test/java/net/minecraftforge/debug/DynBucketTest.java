@@ -8,6 +8,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
 
@@ -84,6 +88,7 @@ public class DynBucketTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        GameRegistry.registerItem(new TestItem(), "testitem");
         GameRegistry.registerBlock(new BlockSimpleTank(), "simpletank");
         GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
 
@@ -148,6 +153,45 @@ public class DynBucketTest
                 event.result = filled;
                 event.setResult(Result.ALLOW);
             }
+        }
+    }
+
+    public static class TestItem extends Item {
+        @Override
+        public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
+        {
+            if(worldIn.isRemote)
+                return itemStackIn;
+
+            ItemStackHandler handler = new ItemStackHandler(5);
+            ItemStackHandler handler2 = new ItemStackHandler(5);
+            IItemHandler joined = new CombinedInvWrapper(handler, handler2);
+
+            handler.setStackInSlot(0, new ItemStack(Blocks.stone));
+            handler.setStackInSlot(1, new ItemStack(Blocks.grass));
+            handler.setStackInSlot(2, new ItemStack(Blocks.dirt));
+            handler.setStackInSlot(3, new ItemStack(Blocks.glass));
+            handler.setStackInSlot(4, new ItemStack(Blocks.sand));
+
+            handler2.setStackInSlot(0, new ItemStack(Blocks.slime_block));
+            handler2.setStackInSlot(1, new ItemStack(Blocks.tnt));
+            handler2.setStackInSlot(2, new ItemStack(Blocks.planks));
+            handler2.setStackInSlot(3, new ItemStack(Blocks.log));
+            handler2.setStackInSlot(4, new ItemStack(Blocks.diamond_block));
+
+            for (int i = 0; i < handler.getSlots(); i++) {
+                System.out.println("Expected 1: " + handler.getStackInSlot(i));
+            }
+
+            for (int i = 0; i < handler2.getSlots(); i++) {
+                System.out.println("Expected 2: " + handler2.getStackInSlot(i));
+            }
+
+            for (int i = 0; i < joined.getSlots(); i++) {
+                System.out.println("Joined: " + joined.getStackInSlot(i));
+            }
+
+            return itemStackIn;
         }
     }
 
