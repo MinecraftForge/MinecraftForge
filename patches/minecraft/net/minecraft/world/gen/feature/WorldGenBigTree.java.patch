@@ -4,11 +4,11 @@
                  if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(p_181631_2_ * p_181631_2_))
                  {
                      BlockPos blockpos = p_181631_1_.func_177982_a(j, 0, k);
--                    Material material = this.field_175946_l.func_180495_p(blockpos).func_177230_c().func_149688_o();
-+                    net.minecraft.block.state.IBlockState state = this.field_175946_l.func_180495_p(blockpos);
+-                    Material material = this.field_175946_l.func_180495_p(blockpos).func_185904_a();
++                    IBlockState state = this.field_175946_l.func_180495_p(blockpos);
  
 -                    if (material == Material.field_151579_a || material == Material.field_151584_j)
-+                    if (state.func_177230_c().isAir(this.field_175946_l, blockpos) || state.func_177230_c().isLeaves(this.field_175946_l, blockpos))
++                    if (state.func_177230_c().isAir(state, field_175946_l, blockpos) || state.func_177230_c().isLeaves(state, field_175946_l, blockpos))
                      {
                          this.func_175903_a(this.field_175946_l, blockpos, p_181631_3_);
                      }
@@ -43,7 +43,7 @@
 -        Block block = this.field_175946_l.func_180495_p(this.field_175947_m.func_177977_b()).func_177230_c();
 +        BlockPos down = this.field_175947_m.func_177977_b();
 +        net.minecraft.block.state.IBlockState state = this.field_175946_l.func_180495_p(down);
-+        boolean isSoil = state.func_177230_c().canSustainPlant(this.field_175946_l, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
++        boolean isSoil = state.func_177230_c().canSustainPlant(state, this.field_175946_l, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
  
 -        if (block != Blocks.field_150346_d && block != Blocks.field_150349_c && block != Blocks.field_150458_ak)
 +        if (!isSoil)

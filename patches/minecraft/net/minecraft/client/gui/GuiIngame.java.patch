@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiIngame.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngame.java
+@@ -360,7 +360,8 @@
+ 
+                 BlockPos blockpos = raytraceresult.func_178782_a();
+ 
+-                if (!this.field_73839_d.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149716_u() || !(this.field_73839_d.field_71441_e.func_175625_s(blockpos) instanceof IInventory))
++                net.minecraft.block.state.IBlockState state = this.field_73839_d.field_71441_e.func_180495_p(blockpos);
++                if (!state.func_177230_c().hasTileEntity(state) || !(this.field_73839_d.field_71441_e.func_175625_s(blockpos) instanceof IInventory))
+                 {
+                     return;
+                 }

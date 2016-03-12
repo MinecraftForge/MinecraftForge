@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/gui/MinecraftServerGui.java
 +++ ../src-work/minecraft/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -78,6 +78,7 @@
+@@ -77,6 +77,7 @@
                  System.exit(0);
              }
          });
@@ -8,7 +8,7 @@
      }
  
      public MinecraftServerGui(DedicatedServer p_i2362_1_)
-@@ -162,8 +163,13 @@
+@@ -161,8 +162,13 @@
          return jpanel;
      }
  

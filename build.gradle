@@ -47,11 +47,11 @@ minecraft {
     projects {
         forge {
             rootDir "."
-            patchDir "patches.mcp/minecraft"
+            patchDir "patches/minecraft"
             patchAfter "clean"
             genPatchesFrom "clean"
-            genMcpPatches = true
-            applyMcpPatches = true
+            genMcpPatches = false
+            applyMcpPatches = false
             with common
         }
     }

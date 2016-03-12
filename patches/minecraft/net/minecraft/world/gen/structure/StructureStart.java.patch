@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
-@@ -62,6 +62,10 @@
+@@ -63,6 +63,10 @@
  
      public NBTTagCompound func_143021_a(int p_143021_1_, int p_143021_2_)
      {
@@ -11,7 +11,7 @@
          NBTTagCompound nbttagcompound = new NBTTagCompound();
          nbttagcompound.func_74778_a("id", MapGenStructureIO.func_143033_a(this));
          nbttagcompound.func_74768_a("ChunkX", p_143021_1_);
-@@ -97,7 +101,8 @@
+@@ -98,7 +102,8 @@
  
          for (int i = 0; i < nbttaglist.func_74745_c(); ++i)
          {

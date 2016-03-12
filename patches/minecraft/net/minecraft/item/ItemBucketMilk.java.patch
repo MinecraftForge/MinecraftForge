@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -23,7 +23,7 @@
+@@ -27,7 +27,7 @@
  
          if (!p_77654_2_.field_72995_K)
          {
@@ -8,4 +8,4 @@
 +            p_77654_3_.curePotionEffects(p_77654_1_);
          }
  
-         p_77654_3_.func_71029_a(StatList.field_75929_E[Item.func_150891_b(this)]);
+         if (p_77654_3_ instanceof EntityPlayer)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOre.java
-@@ -58,34 +58,40 @@
+@@ -59,34 +59,39 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
@@ -8,9 +8,8 @@
 -        if (this.func_180660_a(p_180653_3_, p_180653_1_.field_73012_v, p_180653_5_) != Item.func_150898_a(this))
 +    }
 +    @Override
-+    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
++    public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +        if (this.func_180660_a(state, rand, fortune) != Item.func_150898_a(this))
          {
@@ -48,4 +47,4 @@
 +        return 0;
      }
  
-     public int func_176222_j(World p_176222_1_, BlockPos p_176222_2_)
+     public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)

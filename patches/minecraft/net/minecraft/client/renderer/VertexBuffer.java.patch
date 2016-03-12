@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/VertexBuffer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/VertexBuffer.java
+@@ -510,15 +510,15 @@
+                 break;
+             case USHORT:
+             case SHORT:
+-                this.field_179001_a.putShort(i, (short)((int)p_181663_1_ * 32767 & 65535));
+-                this.field_179001_a.putShort(i + 2, (short)((int)p_181663_2_ * 32767 & 65535));
+-                this.field_179001_a.putShort(i + 4, (short)((int)p_181663_3_ * 32767 & 65535));
++                this.field_179001_a.putShort(i, (short)((int)(p_181663_1_ * 32767) & 65535));
++                this.field_179001_a.putShort(i + 2, (short)((int)(p_181663_2_ * 32767) & 65535));
++                this.field_179001_a.putShort(i + 4, (short)((int)(p_181663_3_ * 32767) & 65535));
+                 break;
+             case UBYTE:
+             case BYTE:
+-                this.field_179001_a.put(i, (byte)((int)p_181663_1_ * 127 & 255));
+-                this.field_179001_a.put(i + 1, (byte)((int)p_181663_2_ * 127 & 255));
+-                this.field_179001_a.put(i + 2, (byte)((int)p_181663_3_ * 127 & 255));
++                this.field_179001_a.put(i, (byte)((int)(p_181663_1_ * 127) & 255));
++                this.field_179001_a.put(i + 1, (byte)((int)(p_181663_2_ * 127) & 255));
++                this.field_179001_a.put(i + 2, (byte)((int)(p_181663_3_ * 127) & 255));
+         }
+ 
+         this.func_181667_k();
+@@ -609,4 +609,9 @@
+             return this.field_179018_e;
+         }
+     }
++
++    public boolean isColorDisabled()
++    {
++        return field_78939_q;
++    }
+ }

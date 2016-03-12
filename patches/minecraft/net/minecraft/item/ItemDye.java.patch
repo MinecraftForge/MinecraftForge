@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemDye.java
-@@ -47,7 +47,7 @@
+@@ -50,7 +50,7 @@
  
              if (enumdyecolor == EnumDyeColor.WHITE)
              {
@@ -9,36 +9,47 @@
                  {
                      if (!p_180614_3_.field_72995_K)
                      {
-@@ -97,8 +97,18 @@
+@@ -97,22 +97,32 @@
  
      public static boolean func_179234_a(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_)
      {
+-        IBlockState iblockstate = p_179234_1_.func_180495_p(p_179234_2_);
 +        if (p_179234_1_ instanceof net.minecraft.world.WorldServer)
 +            return applyBonemeal(p_179234_0_, p_179234_1_, p_179234_2_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.world.WorldServer)p_179234_1_));
 +        return false;
 +    }
-+
-+    public static boolean applyBonemeal(ItemStack p_179234_0_, World p_179234_1_, BlockPos p_179234_2_, EntityPlayer player)
-+    {
-         IBlockState iblockstate = p_179234_1_.func_180495_p(p_179234_2_);
  
-+        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_179234_1_, p_179234_2_, iblockstate, p_179234_0_);
++    public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target, EntityPlayer player)
++    {
++        IBlockState iblockstate = worldIn.func_180495_p(target);
++
++        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, worldIn, target, iblockstate, stack);
 +        if (hook != 0) return hook > 0;
 +
          if (iblockstate.func_177230_c() instanceof IGrowable)
          {
              IGrowable igrowable = (IGrowable)iblockstate.func_177230_c();
-@@ -132,7 +142,7 @@
  
-         Block block = p_180617_0_.func_180495_p(p_180617_1_).func_177230_c();
+-            if (igrowable.func_176473_a(p_179234_1_, p_179234_2_, iblockstate, p_179234_1_.field_72995_K))
++            if (igrowable.func_176473_a(worldIn, target, iblockstate, worldIn.field_72995_K))
+             {
+-                if (!p_179234_1_.field_72995_K)
++                if (!worldIn.field_72995_K)
+                 {
+-                    if (igrowable.func_180670_a(p_179234_1_, p_179234_1_.field_73012_v, p_179234_2_, iblockstate))
++                    if (igrowable.func_180670_a(worldIn, worldIn.field_73012_v, target, iblockstate))
+                     {
+-                        igrowable.func_176474_b(p_179234_1_, p_179234_1_.field_73012_v, p_179234_2_, iblockstate);
++                        igrowable.func_176474_b(worldIn, worldIn.field_73012_v, target, iblockstate);
+                     }
  
--        if (block.func_149688_o() != Material.field_151579_a)
-+        if (block.isAir(p_180617_0_, p_180617_1_))
-         {
-             block.func_180654_a(p_180617_0_, p_180617_1_);
+-                    --p_179234_0_.field_77994_a;
++                    --stack.field_77994_a;
+                 }
  
-@@ -144,6 +154,16 @@
-                 p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * block.func_149669_A(), (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
+                 return true;
+@@ -142,6 +152,16 @@
+                 p_180617_0_.func_175688_a(EnumParticleTypes.VILLAGER_HAPPY, (double)((float)p_180617_1_.func_177958_n() + field_77697_d.nextFloat()), (double)p_180617_1_.func_177956_o() + (double)field_77697_d.nextFloat() * iblockstate.func_185900_c(p_180617_0_, p_180617_1_).field_72337_e, (double)((float)p_180617_1_.func_177952_p() + field_77697_d.nextFloat()), d0, d1, d2, new int[0]);
              }
          }
 +        else
@@ -53,4 +64,4 @@
 +        }
      }
  
-     public boolean func_111207_a(ItemStack p_111207_1_, EntityPlayer p_111207_2_, EntityLivingBase p_111207_3_)
+     public boolean func_111207_a(ItemStack p_111207_1_, EntityPlayer p_111207_2_, EntityLivingBase p_111207_3_, EnumHand p_111207_4_)

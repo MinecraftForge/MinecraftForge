@@ -1,10 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
-@@ -86,6 +86,7 @@
+@@ -44,7 +44,7 @@
  
-     public static boolean func_180685_d(World p_180685_0_, BlockPos p_180685_1_)
+     private void func_176503_e(World p_176503_1_, BlockPos p_176503_2_)
      {
-+        if (p_180685_0_.func_175623_d(p_180685_1_)) return true;
-         Block block = p_180685_0_.func_180495_p(p_180685_1_).func_177230_c();
-         Material material = block.field_149764_J;
-         return block == Blocks.field_150480_ab || material == Material.field_151579_a || material == Material.field_151586_h || material == Material.field_151587_i;
+-        if (func_185759_i(p_176503_1_.func_180495_p(p_176503_2_.func_177977_b())) && p_176503_2_.func_177956_o() >= 0)
++        if (p_176503_1_.func_175623_d(p_176503_2_) && func_185759_i(p_176503_1_.func_180495_p(p_176503_2_.func_177977_b())) && p_176503_2_.func_177956_o() >= 0)
+         {
+             int i = 32;
+ 
+@@ -62,7 +62,7 @@
+                 p_176503_1_.func_175698_g(p_176503_2_);
+                 BlockPos blockpos;
+ 
+-                for (blockpos = p_176503_2_.func_177977_b(); func_185759_i(p_176503_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
++                for (blockpos = p_176503_2_.func_177977_b(); p_176503_1_.func_175623_d(blockpos) && func_185759_i(p_176503_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
+                 {
+                     ;
+                 }

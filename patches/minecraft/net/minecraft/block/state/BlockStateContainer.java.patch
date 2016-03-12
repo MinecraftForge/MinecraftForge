@@ -1,0 +1,86 @@
+--- ../src-base/minecraft/net/minecraft/block/state/BlockStateContainer.java
++++ ../src-work/minecraft/net/minecraft/block/state/BlockStateContainer.java
+@@ -55,12 +55,22 @@
+ 
+     public BlockStateContainer(Block p_i45663_1_, IProperty<?>... p_i45663_2_)
+     {
+-        this.field_177627_c = p_i45663_1_;
++        this(p_i45663_1_, p_i45663_2_, null);
++    }
++
++    protected StateImplementation createState(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
++    {
++        return new StateImplementation(block, properties);
++    }
++
++    protected BlockStateContainer(Block blockIn, IProperty<?>[] properties, ImmutableMap<net.minecraftforge.common.property.IUnlistedProperty<?>, com.google.common.base.Optional<?>> unlistedProperties)
++    {
++        this.field_177627_c = blockIn;
+         Map < String, IProperty<? >> map = Maps. < String, IProperty<? >> newHashMap();
+ 
+-        for (IProperty<?> iproperty : p_i45663_2_)
++        for (IProperty<?> iproperty : properties)
+         {
+-            func_185919_a(p_i45663_1_, iproperty);
++            func_185919_a(blockIn, iproperty);
+             map.put(iproperty.func_177701_a(), iproperty);
+         }
+ 
+@@ -71,7 +81,7 @@
+         for (List < Comparable<? >> list : Cartesian.func_179321_a(this.func_177620_e()))
+         {
+             Map < IProperty<?>, Comparable<? >> map1 = MapPopulator. < IProperty<?>, Comparable<? >> func_179400_b(this.field_177624_d.values(), list);
+-            BlockStateContainer.StateImplementation blockstatecontainer$stateimplementation = new BlockStateContainer.StateImplementation(p_i45663_1_, ImmutableMap.copyOf(map1));
++            BlockStateContainer.StateImplementation blockstatecontainer$stateimplementation = createState(blockIn, ImmutableMap.copyOf(map1), unlistedProperties);
+             map2.put(map1, blockstatecontainer$stateimplementation);
+             list1.add(blockstatecontainer$stateimplementation);
+         }
+@@ -163,6 +173,13 @@
+                 this.field_177237_b = p_i45660_2_;
+             }
+ 
++            protected StateImplementation(Block blockIn, ImmutableMap<IProperty<?>, Comparable<?>> propertiesIn, ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> propertyValueTable)
++            {
++                this.field_177239_a = blockIn;
++                this.field_177237_b = propertiesIn;
++                this.field_177238_c = propertyValueTable;
++            }
++
+             public Collection < IProperty<? >> func_177227_a()
+             {
+                 return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
+@@ -414,5 +431,34 @@
+             {
+                 return this.field_177239_a.func_185481_k(this);
+             }
++
++            //Forge Start
++            public ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> getPropertyValueTable()
++            {
++                return field_177238_c;
++            }
++
++            @Override
++            public int getLightOpacity(IBlockAccess world, BlockPos pos)
++            {
++                return this.field_177239_a.getLightOpacity(this, world, pos);
++            }
++
++            @Override
++            public int getLightValue(IBlockAccess world, BlockPos pos)
++            {
++                return this.field_177239_a.getLightValue(this, world, pos);
++            }
++
++            public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)
++            {
++                return this.field_177239_a.isSideSolid(this, world, pos, side);
++            }
++
++            @Override
++            public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing side)
++            {
++                return this.field_177239_a.doesSideBlockRendering(this, world, pos, side);
++            }
+         }
+ }

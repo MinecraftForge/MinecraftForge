@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -246,7 +246,7 @@
+@@ -267,7 +267,7 @@
      {
          PacketThreadUtil.func_180031_a(p_147282_1_, this, this.field_147299_f);
          this.field_147299_f.field_71442_b = new PlayerControllerMP(this.field_147299_f, this);
@@ -9,11 +9,11 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
-@@ -750,14 +750,16 @@
-     public void func_147251_a(S02PacketChat p_147251_1_)
+@@ -785,14 +785,16 @@
+     public void func_147251_a(SPacketChat p_147251_1_)
      {
          PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
-+        net.minecraft.util.IChatComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_179841_c(), p_147251_1_.func_148915_c());
++        net.minecraft.util.text.ITextComponent message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_147251_1_.func_179841_c(), p_147251_1_.func_148915_c());
 +        if (message == null) return;
  
          if (p_147251_1_.func_179841_c() == 2)
@@ -28,7 +28,7 @@
          }
      }
  
-@@ -808,6 +810,11 @@
+@@ -848,6 +850,11 @@
          float f = (float)(p_147281_1_.func_149028_l() * 360) / 256.0F;
          float f1 = (float)(p_147281_1_.func_149030_m() * 360) / 256.0F;
          EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.func_75616_a(p_147281_1_.func_149025_e(), this.field_147299_f.field_71441_e);
@@ -37,10 +37,10 @@
 +            net.minecraftforge.fml.common.FMLLog.info("Server attempted to spawn an unknown entity using ID: {0} at ({1}, {2}, {3}) Skipping!", p_147281_1_.func_149025_e(), d0, d1, d2);
 +            return;
 +        }
-         entitylivingbase.field_70118_ct = p_147281_1_.func_149023_f();
-         entitylivingbase.field_70117_cu = p_147281_1_.func_149034_g();
-         entitylivingbase.field_70116_cv = p_147281_1_.func_149029_h();
-@@ -1133,6 +1140,10 @@
+         EntityTracker.func_187254_a(entitylivingbase, d0, d1, d2);
+         entitylivingbase.field_70761_aq = entitylivingbase.field_70759_as = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+         Entity[] aentity = entitylivingbase.func_70021_al();
+@@ -1179,6 +1186,10 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }
@@ -48,15 +48,15 @@
 +            {
 +                tileentity.onDataPacket(field_147302_e, p_147273_1_);
 +            }
-         }
-     }
  
-@@ -1341,7 +1352,7 @@
+             if (flag && this.field_147299_f.field_71462_r instanceof GuiCommandBlock)
+             {
+@@ -1378,7 +1389,7 @@
  
          if (entity instanceof EntityLivingBase)
          {
--            PotionEffect potioneffect = new PotionEffect(p_147260_1_.func_149427_e(), p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), false, p_147260_1_.func_179707_f());
-+            PotionEffect potioneffect = new PotionEffect(p_147260_1_.func_149427_e() & 0xff, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), false, p_147260_1_.func_179707_f());
-             potioneffect.func_100012_b(p_147260_1_.func_149429_c());
-             ((EntityLivingBase)entity).func_70690_d(potioneffect);
-         }
+-            Potion potion = Potion.func_188412_a(p_147260_1_.func_149427_e());
++            Potion potion = Potion.func_188412_a(p_147260_1_.func_149427_e() & 0xFF);
+ 
+             if (potion != null)
+             {

@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -35,7 +35,7 @@
+@@ -41,7 +41,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public final class ItemStack
 +public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
-     public static final DecimalFormat field_111284_a = new DecimalFormat("#.###");
+     public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
      public int field_77994_a;
-@@ -49,6 +49,10 @@
+@@ -55,6 +55,10 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
@@ -20,7 +20,7 @@
      public ItemStack(Block p_i1876_1_)
      {
          this((Block)p_i1876_1_, 1);
-@@ -74,13 +78,15 @@
+@@ -80,13 +84,15 @@
          this((Item)p_i1880_1_, p_i1880_2_, 0);
      }
  
@@ -38,16 +38,16 @@
          this.field_77994_a = p_i1881_2_;
          this.field_77991_e = p_i1881_3_;
  
-@@ -107,7 +113,7 @@
- 
+@@ -114,7 +120,7 @@
      public ItemStack func_77979_a(int p_77979_1_)
      {
+         p_77979_1_ = Math.min(p_77979_1_, this.field_77994_a);
 -        ItemStack itemstack = new ItemStack(this.field_151002_e, p_77979_1_, this.field_77991_e);
 +        ItemStack itemstack = new ItemStack(this.field_151002_e, p_77979_1_, this.field_77991_e, this.capabilities != null ? this.capabilities.serializeNBT() : null);
  
          if (this.field_77990_d != null)
          {
-@@ -120,11 +126,12 @@
+@@ -127,11 +133,12 @@
  
      public Item func_77973_b()
      {
@@ -55,13 +55,13 @@
 +        return this.delegate != null ? this.delegate.get() : null;
      }
  
-     public boolean func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumFacing p_179546_4_, float p_179546_5_, float p_179546_6_, float p_179546_7_)
+     public EnumActionResult func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumHand p_179546_4_, EnumFacing p_179546_5_, float p_179546_6_, float p_179546_7_, float p_179546_8_)
      {
-+        if (!p_179546_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
-         boolean flag = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
++        if (!p_179546_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_, p_179546_4_);
+         EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
  
-         if (flag)
-@@ -162,19 +169,23 @@
+         if (enumactionresult == EnumActionResult.SUCCESS)
+@@ -169,12 +176,16 @@
              p_77955_1_.func_74782_a("tag", this.field_77990_d);
          }
  
@@ -72,22 +72,14 @@
  
      public void func_77963_c(NBTTagCompound p_77963_1_)
      {
+-        this.field_151002_e = Item.func_111206_d(p_77963_1_.func_74779_i("id"));
 +        this.capNBT = p_77963_1_.func_74764_b("ForgeCaps") ? p_77963_1_.func_74775_l("ForgeCaps") : null;
-         if (p_77963_1_.func_150297_b("id", 8))
-         {
--            this.field_151002_e = Item.func_111206_d(p_77963_1_.func_74779_i("id"));
-+            this.func_150996_a(Item.func_111206_d(p_77963_1_.func_74779_i("id")));
-         }
-         else
-         {
--            this.field_151002_e = Item.func_150899_d(p_77963_1_.func_74765_d("id"));
-+            this.func_150996_a(Item.func_150899_d(p_77963_1_.func_74765_d("id")));
-         }
++        this.func_150996_a(Item.func_111206_d(p_77963_1_.func_74779_i("id")));
 +        this.capNBT = null;
- 
          this.field_77994_a = p_77963_1_.func_74771_c("Count");
          this.field_77991_e = p_77963_1_.func_74765_d("Damage");
-@@ -197,7 +208,7 @@
+ 
+@@ -196,7 +207,7 @@
  
      public int func_77976_d()
      {
@@ -96,7 +88,7 @@
      }
  
      public boolean func_77985_e()
-@@ -207,7 +218,7 @@
+@@ -206,7 +217,7 @@
  
      public boolean func_77984_f()
      {
@@ -105,7 +97,7 @@
      }
  
      public boolean func_77981_g()
-@@ -217,32 +228,27 @@
+@@ -216,32 +227,27 @@
  
      public boolean func_77951_h()
      {
@@ -138,12 +130,12 @@
  
      public int func_77958_k()
      {
--        return this.field_151002_e.func_77612_l();
-+        return this.field_151002_e.getMaxDamage(this);
+-        return this.field_151002_e == null ? 0 : this.field_151002_e.func_77612_l();
++        return this.field_151002_e == null ? 0 : this.field_151002_e.getMaxDamage(this);
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -274,8 +280,8 @@
+@@ -273,8 +279,8 @@
                  }
              }
  
@@ -154,16 +146,16 @@
          }
      }
  
-@@ -334,7 +340,7 @@
+@@ -328,7 +334,7 @@
  
-     public boolean func_150998_b(Block p_150998_1_)
+     public boolean func_150998_b(IBlockState p_150998_1_)
      {
 -        return this.field_151002_e.func_150897_b(p_150998_1_);
 +        return func_77973_b().canHarvestBlock(p_150998_1_, this);
      }
  
-     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
-@@ -344,7 +350,7 @@
+     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
+@@ -338,7 +344,7 @@
  
      public ItemStack func_77946_l()
      {
@@ -172,7 +164,7 @@
  
          if (this.field_77990_d != null)
          {
-@@ -742,6 +748,7 @@
+@@ -759,6 +765,7 @@
              }
          }
  
@@ -180,16 +172,16 @@
          return list;
      }
  
-@@ -852,7 +859,7 @@
+@@ -869,7 +876,7 @@
          }
          else
          {
--            multimap = this.func_77973_b().func_111205_h();
-+            multimap = this.func_77973_b().getAttributeModifiers(this);
+-            multimap = this.func_77973_b().func_111205_h(p_111283_1_);
++            multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
          }
  
          return multimap;
-@@ -860,6 +867,18 @@
+@@ -901,6 +908,18 @@
  
      public void func_150996_a(Item p_150996_1_)
      {
@@ -208,7 +200,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -946,4 +965,26 @@
+@@ -987,4 +1006,26 @@
              return false;
          }
      }

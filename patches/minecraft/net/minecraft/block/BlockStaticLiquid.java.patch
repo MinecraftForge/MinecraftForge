@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStaticLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStaticLiquid.java
+@@ -52,7 +52,7 @@
+                     {
+                         blockpos = blockpos.func_177982_a(p_180650_4_.nextInt(3) - 1, 1, p_180650_4_.nextInt(3) - 1);
+ 
+-                        if (blockpos.func_177956_o() >= 0 && blockpos.func_177956_o() < 256 && !p_180650_1_.func_175667_e(blockpos))
++                        if (blockpos.func_177956_o() >= 0 && blockpos.func_177956_o() < p_180650_1_.func_72800_K() && !p_180650_1_.func_175667_e(blockpos))
+                         {
+                             return;
+                         }

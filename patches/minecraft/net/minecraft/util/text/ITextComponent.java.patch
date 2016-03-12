@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/text/ITextComponent.java
++++ ../src-work/minecraft/net/minecraft/util/text/ITextComponent.java
+@@ -33,7 +33,6 @@
+ 
+     String func_150260_c();
+ 
+-    @SideOnly(Side.CLIENT)
+     String func_150254_d();
+ 
+     List<ITextComponent> func_150253_a();

@@ -1,0 +1,97 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderItem.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderItem.java
+@@ -71,7 +71,7 @@
+     public RenderItem(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_)
+     {
+         this.field_175057_n = p_i46552_1_;
+-        this.field_175059_m = new ItemModelMesher(p_i46552_2_);
++        this.field_175059_m = new net.minecraftforge.client.ItemModelMesherForge(p_i46552_2_);
+         this.func_175041_b();
+         this.field_184395_f = p_i46552_3_;
+     }
+@@ -223,7 +223,7 @@
+                 k = k | -16777216;
+             }
+ 
+-            this.func_175033_a(p_175032_1_, bakedquad, k);
++            net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(p_175032_1_, bakedquad, k);
+         }
+     }
+ 
+@@ -245,17 +245,7 @@
+     public IBakedModel func_184393_a(ItemStack p_184393_1_, World p_184393_2_, EntityLivingBase p_184393_3_)
+     {
+         IBakedModel ibakedmodel = this.field_175059_m.func_178089_a(p_184393_1_);
+-        Item item = p_184393_1_.func_77973_b();
+-
+-        if (item != null && item.func_185040_i())
+-        {
+-            ResourceLocation resourcelocation = ibakedmodel.func_188617_f().func_188021_a(p_184393_1_, p_184393_2_, p_184393_3_);
+-            return resourcelocation == null ? ibakedmodel : this.field_175059_m.func_178083_a().func_174953_a(new ModelResourceLocation(resourcelocation, "inventory"));
+-        }
+-        else
+-        {
+-            return ibakedmodel;
+-        }
++        return ibakedmodel.func_188617_f().handleItemState(ibakedmodel, p_184393_1_, p_184393_2_, p_184393_3_);
+     }
+ 
+     public void func_184392_a(ItemStack p_184392_1_, EntityLivingBase p_184392_2_, ItemCameraTransforms.TransformType p_184392_3_, boolean p_184392_4_)
+@@ -279,14 +269,9 @@
+             GlStateManager.func_179147_l();
+             GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+             GlStateManager.func_179094_E();
+-            ItemCameraTransforms itemcameratransforms = p_184394_2_.func_177552_f();
+-            ItemCameraTransforms.func_188034_a(itemcameratransforms.func_181688_b(p_184394_3_), p_184394_4_);
++            // TODO: check if negative scale is a thing
++            p_184394_2_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184394_2_, p_184394_3_, p_184394_4_);
+ 
+-            if (this.func_183005_a(itemcameratransforms.func_181688_b(p_184394_3_)))
+-            {
+-                GlStateManager.func_187407_a(GlStateManager.CullFace.FRONT);
+-            }
+-
+             this.func_180454_a(p_184394_1_, p_184394_2_);
+             GlStateManager.func_187407_a(GlStateManager.CullFace.BACK);
+             GlStateManager.func_179121_F();
+@@ -319,7 +304,7 @@
+         GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+         this.func_180452_a(p_184390_2_, p_184390_3_, p_184390_4_.func_177556_c());
+-        p_184390_4_.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GUI);
++        p_184390_4_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184390_4_, ItemCameraTransforms.TransformType.GUI, false);
+         this.func_180454_a(p_184390_1_, p_184390_4_);
+         GlStateManager.func_179118_c();
+         GlStateManager.func_179101_C();
+@@ -426,10 +411,11 @@
+                 GlStateManager.func_179126_j();
+             }
+ 
+-            if (p_180453_2_.func_77951_h())
++            if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_))
+             {
+-                int j = (int)Math.round(13.0D - (double)p_180453_2_.func_77952_i() * 13.0D / (double)p_180453_2_.func_77958_k());
+-                int i = (int)Math.round(255.0D - (double)p_180453_2_.func_77952_i() * 255.0D / (double)p_180453_2_.func_77958_k());
++                double health = p_180453_2_.func_77973_b().getDurabilityForDisplay(p_180453_2_);
++                int j = (int)Math.round(13.0D - health * 13.0D);
++                int i = (int)Math.round(255.0D - health * 255.0D);
+                 GlStateManager.func_179140_f();
+                 GlStateManager.func_179097_i();
+                 GlStateManager.func_179090_x();
+@@ -440,7 +426,7 @@
+                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
+                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
+                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, j, 1, 255 - i, i, 0, 255);
+-                GlStateManager.func_179147_l();
++                //GlStateManager.enableBlend(); // Forge: Disable Blend because it screws with a lot of things down the line.
+                 GlStateManager.func_179141_d();
+                 GlStateManager.func_179098_w();
+                 GlStateManager.func_179145_e();
+@@ -1053,6 +1039,7 @@
+         this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
+         this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
+         this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");
++        net.minecraftforge.client.model.ModelLoader.onRegisterItems(this.field_175059_m);
+     }
+ 
+     public void func_110549_a(IResourceManager p_110549_1_)

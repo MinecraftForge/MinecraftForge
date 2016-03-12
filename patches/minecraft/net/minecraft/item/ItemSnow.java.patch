@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSnow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSnow.java
-@@ -67,4 +67,10 @@
+@@ -68,4 +68,10 @@
      {
          return p_77647_1_;
      }

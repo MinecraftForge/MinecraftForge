@@ -1,12 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -43,7 +43,8 @@
-                 }
-                 public boolean func_75214_a(ItemStack p_75214_1_)
-                 {
--                    return p_75214_1_ == null ? false : (p_75214_1_.func_77973_b() instanceof ItemArmor ? ((ItemArmor)p_75214_1_.func_77973_b()).field_77881_a == k_f : (p_75214_1_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_75214_1_.func_77973_b() != Items.field_151144_bL ? false : k_f == 0));
-+                    if (p_75214_1_ == null) return false;
-+                    return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, k_f, field_82862_h);
+@@ -48,8 +48,7 @@
+                     }
+                     else
+                     {
+-                        EntityEquipmentSlot entityequipmentslot1 = EntityLiving.func_184640_d(p_75214_1_);
+-                        return entityequipmentslot1 == entityequipmentslot;
++                        return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, entityequipmentslot, field_82862_h);
+                     }
                  }
                  @SideOnly(Side.CLIENT)
-                 public String func_178171_c()

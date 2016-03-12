@@ -1,113 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -36,7 +36,7 @@
-     public String func_77653_i(ItemStack p_77653_1_)
-     {
-         String s = ("" + StatCollector.func_74838_a(this.func_77658_a() + ".name")).trim();
--        String s1 = EntityList.func_75617_a(p_77653_1_.func_77960_j());
-+        String s1 = ItemMonsterPlacer.getEntityName(p_77653_1_);
- 
-         if (s1 != null)
-         {
-@@ -49,7 +49,7 @@
-     @SideOnly(Side.CLIENT)
-     public int func_82790_a(ItemStack p_82790_1_, int p_82790_2_)
-     {
--        EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(p_82790_1_.func_77960_j()));
-+        EntityList.EntityEggInfo entitylist$entityegginfo = ItemMonsterPlacer.getEggInfo(p_82790_1_);
-         return entitylist$entityegginfo != null ? (p_82790_2_ == 0 ? entitylist$entityegginfo.field_75611_b : entitylist$entityegginfo.field_75612_c) : 16777215;
-     }
- 
-@@ -74,7 +74,7 @@
-                 if (tileentity instanceof TileEntityMobSpawner)
-                 {
-                     MobSpawnerBaseLogic mobspawnerbaselogic = ((TileEntityMobSpawner)tileentity).func_145881_a();
--                    mobspawnerbaselogic.func_98272_a(EntityList.func_75617_a(p_180614_1_.func_77960_j()));
-+                    mobspawnerbaselogic.func_98272_a(ItemMonsterPlacer.getEntityName(p_180614_1_));
-                     tileentity.func_70296_d();
-                     p_180614_3_.func_175689_h(p_180614_4_);
- 
-@@ -90,12 +90,12 @@
-             p_180614_4_ = p_180614_4_.func_177972_a(p_180614_5_);
+@@ -88,7 +88,7 @@
+             p_180614_4_ = p_180614_4_.func_177972_a(p_180614_6_);
              double d0 = 0.0D;
  
--            if (p_180614_5_ == EnumFacing.UP && iblockstate instanceof BlockFence)
-+            if (p_180614_5_ == EnumFacing.UP && iblockstate.func_177230_c() instanceof BlockFence) //Forge: Fix Vanilla bug comparing state instead of block
+-            if (p_180614_6_ == EnumFacing.UP && iblockstate instanceof BlockFence)
++            if (p_180614_6_ == EnumFacing.UP && iblockstate.func_177230_c() instanceof BlockFence) //Forge: Fix Vanilla bug comparing state instead of block
              {
                  d0 = 0.5D;
              }
- 
--            Entity entity = func_77840_a(p_180614_3_, p_180614_1_.func_77960_j(), (double)p_180614_4_.func_177958_n() + 0.5D, (double)p_180614_4_.func_177956_o() + d0, (double)p_180614_4_.func_177952_p() + 0.5D);
-+            Entity entity = spawnCreature(p_180614_3_, ItemMonsterPlacer.getEntityName(p_180614_1_), (double)p_180614_4_.func_177958_n() + 0.5D, (double)p_180614_4_.func_177956_o() + d0, (double)p_180614_4_.func_177952_p() + 0.5D);
- 
-             if (entity != null)
-             {
-@@ -146,7 +146,7 @@
- 
-                     if (p_77659_2_.func_180495_p(blockpos).func_177230_c() instanceof BlockLiquid)
-                     {
--                        Entity entity = func_77840_a(p_77659_2_, p_77659_1_.func_77960_j(), (double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D);
-+                        Entity entity = spawnCreature(p_77659_2_, ItemMonsterPlacer.getEntityName(p_77659_1_), (double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D);
- 
-                         if (entity != null)
-                         {
-@@ -170,19 +170,29 @@
+@@ -195,15 +195,15 @@
          }
      }
  
-+    @Deprecated // Use string version below.
-     public static Entity func_77840_a(World p_77840_0_, int p_77840_1_, double p_77840_2_, double p_77840_4_, double p_77840_6_)
+-    public static Entity func_77840_a(World p_77840_0_, String p_77840_1_, double p_77840_2_, double p_77840_4_, double p_77840_6_)
++    public static Entity func_77840_a(World p_77840_0_, String name, double p_77840_2_, double p_77840_4_, double p_77840_6_)
      {
-         if (!EntityList.field_75627_a.containsKey(Integer.valueOf(p_77840_1_)))
-         {
-             return null;
-         }
-+        return spawnCreature(p_77840_0_, EntityList.func_75617_a(p_77840_1_), p_77840_2_, p_77840_4_, p_77840_6_);
-+    }
-+
-+    public static Entity spawnCreature(World p_77840_0_, String name, double p_77840_2_, double p_77840_4_, double p_77840_6_)
-+    {
-+        if (!EntityList.field_75625_b.containsKey(name))
-+        {
-+            return null;
-+        }
-         else
+-        if (p_77840_1_ != null && EntityList.field_75627_a.containsKey(p_77840_1_))
++        if (name != null && EntityList.field_75627_a.containsKey(name))
          {
              Entity entity = null;
  
              for (int i = 0; i < 1; ++i)
              {
--                entity = EntityList.func_75616_a(p_77840_1_, p_77840_0_);
-+                entity = EntityList.func_75620_a(name, p_77840_0_);
+-                entity = EntityList.func_188429_b(p_77840_1_, p_77840_0_);
++                entity = EntityList.func_188429_b(name, p_77840_0_);
  
                  if (entity instanceof EntityLivingBase)
                  {
-@@ -207,5 +217,28 @@
-         {
-             p_150895_3_.add(new ItemStack(p_150895_1_, 1, entitylist$entityegginfo.field_75613_a));
-         }
-+
-+        for (String name : net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().keySet())
-+        {
-+            ItemStack stack = new ItemStack(p_150895_1_);
-+            net.minecraft.nbt.NBTTagCompound nbt = new net.minecraft.nbt.NBTTagCompound();
-+            nbt.func_74778_a("entity_name", name);
-+            stack.func_77982_d(nbt);
-+            p_150895_3_.add(stack);
-+        }
-     }
-+
-+    public static String getEntityName(ItemStack stack)
-+    {
-+        if (stack.func_77942_o() && stack.func_77978_p().func_150297_b("entity_name", 8))
-+            return stack.func_77978_p().func_74779_i("entity_name");
-+        return EntityList.func_75617_a(stack.func_77960_j());
-+    }
-+
-+    private static EntityList.EntityEggInfo getEggInfo(ItemStack stack)
-+    {
-+        if (stack.func_77942_o() && stack.func_77978_p().func_150297_b("entity_name", 8))
-+            return net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(stack.func_77978_p().func_74779_i("entity_name"));
-+        return (EntityList.EntityEggInfo)EntityList.field_75627_a.get(stack.func_77960_j());
-+    }
- }

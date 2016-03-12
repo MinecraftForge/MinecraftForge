@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -52,12 +52,13 @@
-         super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), WorldProvider.func_76570_a(p_i45063_3_), p_i45063_5_, true);
+@@ -63,12 +63,13 @@
+         this.field_184157_a = Sets.<ChunkCoordIntPair>newHashSet();
          this.field_73035_a = p_i45063_1_;
          this.func_72912_H().func_176144_a(p_i45063_4_);
 -        this.func_175652_B(new BlockPos(8, 64, 8));

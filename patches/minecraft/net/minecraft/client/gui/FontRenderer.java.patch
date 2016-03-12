@@ -17,25 +17,25 @@
      }
  
      private void func_111272_d()
-@@ -105,7 +106,7 @@
+@@ -106,7 +107,7 @@
  
          try
          {
--            bufferedimage = TextureUtil.func_177053_a(Minecraft.func_71410_x().func_110442_L().func_110536_a(this.field_111273_g).func_110527_b());
-+            bufferedimage = TextureUtil.func_177053_a(getResourceInputStream(this.field_111273_g));
+-            iresource = Minecraft.func_71410_x().func_110442_L().func_110536_a(this.field_111273_g);
++            iresource = getResource(this.field_111273_g);
+             bufferedimage = TextureUtil.func_177053_a(iresource.func_110527_b());
          }
          catch (IOException ioexception)
-         {
-@@ -165,7 +166,7 @@
+@@ -171,7 +172,7 @@
  
          try
          {
--            inputstream = Minecraft.func_71410_x().func_110442_L().func_110536_a(new ResourceLocation("font/glyph_sizes.bin")).func_110527_b();
-+            inputstream = getResourceInputStream(new ResourceLocation("font/glyph_sizes.bin"));
-             inputstream.read(this.field_78287_e);
+-            iresource = Minecraft.func_71410_x().func_110442_L().func_110536_a(new ResourceLocation("font/glyph_sizes.bin"));
++            iresource = getResource(new ResourceLocation("font/glyph_sizes.bin"));
+             iresource.func_110527_b().read(this.field_78287_e);
          }
          catch (IOException ioexception)
-@@ -196,7 +197,7 @@
+@@ -202,7 +203,7 @@
          int i = p_78266_1_ % 16 * 8;
          int j = p_78266_1_ / 16 * 8;
          int k = p_78266_2_ ? 1 : 0;
@@ -43,8 +43,8 @@
 +        bindTexture(this.field_111273_g);
          int l = this.field_78286_d[p_78266_1_];
          float f = (float)l - 0.01F;
-         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-@@ -224,7 +225,7 @@
+         GlStateManager.func_187447_r(5);
+@@ -230,7 +231,7 @@
  
      private void func_78257_a(int p_78257_1_)
      {
@@ -53,7 +53,7 @@
      }
  
      protected float func_78277_a(char p_78277_1_, boolean p_78277_2_)
-@@ -271,7 +272,7 @@
+@@ -279,7 +280,7 @@
  
      public int func_175065_a(String p_175065_1_, float p_175065_2_, float p_175065_3_, int p_175065_4_, boolean p_175065_5_)
      {
@@ -62,7 +62,7 @@
          this.func_78265_b();
          int i;
  
-@@ -341,7 +342,7 @@
+@@ -349,7 +350,7 @@
  
                      int j1 = this.field_78285_g[i1];
                      this.field_78304_r = j1;
@@ -71,7 +71,7 @@
                  }
                  else if (i1 == 16)
                  {
-@@ -370,7 +371,7 @@
+@@ -378,7 +379,7 @@
                      this.field_78299_w = false;
                      this.field_78300_v = false;
                      this.field_78301_u = false;
@@ -80,7 +80,7 @@
                  }
  
                  ++i;
-@@ -398,7 +399,7 @@
+@@ -406,7 +407,7 @@
                      c0 = c1;
                  }
  
@@ -89,7 +89,7 @@
                  boolean flag = (c0 == 0 || j == -1 || this.field_78293_l) && p_78255_2_;
  
                  if (flag)
-@@ -436,7 +437,16 @@
+@@ -444,7 +445,16 @@
  
                      ++f;
                  }
@@ -106,7 +106,7 @@
                  if (this.field_78299_w)
                  {
                      Tessellator tessellator = Tessellator.func_178181_a();
-@@ -509,7 +519,7 @@
+@@ -517,7 +527,7 @@
              this.field_78292_o = (float)(p_180455_4_ >> 8 & 255) / 255.0F;
              this.field_78306_p = (float)(p_180455_4_ & 255) / 255.0F;
              this.field_78305_q = (float)(p_180455_4_ >> 24 & 255) / 255.0F;
@@ -115,19 +115,7 @@
              this.field_78295_j = p_180455_2_;
              this.field_78296_k = p_180455_3_;
              this.func_78255_a(p_180455_1_, p_180455_5_);
-@@ -588,11 +598,6 @@
-                 int j = this.field_78287_e[p_78263_1_] >>> 4;
-                 int k = this.field_78287_e[p_78263_1_] & 15;
- 
--                if (k > 7)
--                {
--                    k = 15;
--                    j = 0;
--                }
- 
-                 ++k;
-                 return (k - j) / 2 + 1;
-@@ -846,6 +851,26 @@
+@@ -848,6 +858,26 @@
          return this.field_78294_m;
      }
  
@@ -146,11 +134,11 @@
 +        field_78298_i.func_110577_a(location);
 +    }
 +
-+    protected InputStream getResourceInputStream(ResourceLocation location) throws IOException
++    protected IResource getResource(ResourceLocation location) throws IOException
 +    {
-+        return Minecraft.func_71410_x().func_110442_L().func_110536_a(location).func_110527_b();
++        return Minecraft.func_71410_x().func_110442_L().func_110536_a(location);
 +    }
 +
      public int func_175064_b(char p_175064_1_)
      {
-         return this.field_78285_g["0123456789abcdef".indexOf(p_175064_1_)];
+         int i = "0123456789abcdef".indexOf(p_175064_1_);

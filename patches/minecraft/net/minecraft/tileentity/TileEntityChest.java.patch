@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
-@@ -186,6 +186,7 @@
+@@ -171,6 +171,7 @@
      {
          super.func_145836_u();
          this.field_145984_a = false;
@@ -8,11 +8,10 @@
      }
  
      @SuppressWarnings("incomplete-switch")
-@@ -468,4 +469,24 @@
-             this.field_145985_p[i] = null;
+@@ -457,6 +458,26 @@
          }
      }
-+
+ 
 +    public net.minecraftforge.items.VanillaDoubleChestItemHandler doubleChestHandler;
 +
 +    @Override
@@ -32,4 +31,7 @@
 +    {
 +        return super.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 +    }
- }
++
+     public void func_184287_a(ResourceLocation p_184287_1_, long p_184287_2_)
+     {
+         this.field_184284_m = p_184287_1_;

@@ -1,35 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockIce.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
-@@ -38,14 +38,17 @@
-         p_180657_2_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
+@@ -40,14 +40,19 @@
+         p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.025F);
  
--        if (this.func_149700_E() && EnchantmentHelper.func_77502_d(p_180657_2_))
-+        if (this.canSilkHarvest(p_180657_1_, p_180657_3_, p_180657_1_.func_180495_p(p_180657_3_), p_180657_2_) && EnchantmentHelper.func_77502_d(p_180657_2_))
+-        if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)
++        if (this.canSilkHarvest(p_180657_1_, p_180657_3_, p_180657_4_, p_180657_2_) && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)
          {
 +            java.util.List<ItemStack> items = new java.util.ArrayList<ItemStack>();
              ItemStack itemstack = this.func_180643_i(p_180657_4_);
  
--            if (itemstack != null)
--            {
+             if (itemstack != null)
+             {
 -                func_180635_a(p_180657_1_, p_180657_3_, itemstack);
--            }
-+            if (itemstack != null) items.add(itemstack);
++                items.add(itemstack);
+             }
 +
-+            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_1_.func_180495_p(p_180657_3_), 0, 1.0f, true, p_180657_2_);
-+
++            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
 +            for (ItemStack is : items)
 +                func_180635_a(p_180657_1_, p_180657_3_, is);
          }
          else
          {
-@@ -56,7 +59,9 @@
+@@ -58,7 +63,9 @@
              }
  
-             int i = EnchantmentHelper.func_77517_e(p_180657_2_);
+             int i = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);
 +            harvesters.set(p_180657_2_);
              this.func_176226_b(p_180657_1_, p_180657_3_, p_180657_4_, i);
 +            harvesters.set(null);
-             Material material = p_180657_1_.func_180495_p(p_180657_3_.func_177977_b()).func_177230_c().func_149688_o();
+             Material material = p_180657_1_.func_180495_p(p_180657_3_.func_177977_b()).func_185904_a();
  
              if (material.func_76230_c() || material.func_76224_d())

@@ -8,21 +8,22 @@
 +public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
  {
      public static final PropertyInteger field_176587_a = PropertyInteger.func_177719_a("age", 0, 15);
- 
-@@ -109,7 +109,7 @@
+     protected static final AxisAlignedBB field_185593_b = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
+@@ -110,8 +110,8 @@
+             }
          }
  
-         Block block = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b()).func_177230_c();
--        return block == Blocks.field_150434_aF || block == Blocks.field_150354_m;
-+        return block.canSustainPlant(p_176586_1_, p_176586_2_.func_177977_b(), EnumFacing.UP, this);
+-        Block block = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b()).func_177230_c();
+-        return block == Blocks.field_150434_aF || block == Blocks.field_150354_m && !p_176586_1_.func_180495_p(p_176586_2_.func_177984_a()).func_185904_a().func_76224_d();
++        IBlockState state = p_176586_1_.func_180495_p(p_176586_2_.func_177977_b());
++        return state.func_177230_c().canSustainPlant(state, p_176586_1_, p_176586_2_, EnumFacing.UP, this) && !p_176586_1_.func_180495_p(p_176586_2_.func_177984_a()).func_185904_a().func_76224_d();
      }
  
      public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
-@@ -137,4 +137,16 @@
-     {
-         return new BlockState(this, new IProperty[] {field_176587_a});
+@@ -135,6 +135,18 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176587_a)).intValue();
      }
-+
+ 
 +    @Override
 +    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
@@ -34,4 +35,7 @@
 +    {
 +        return func_176223_P();
 +    }
- }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176587_a});

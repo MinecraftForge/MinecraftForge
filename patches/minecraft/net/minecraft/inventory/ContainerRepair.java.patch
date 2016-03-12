@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -70,6 +70,8 @@
+@@ -69,6 +69,8 @@
                      p_82870_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
                  }
  
@@ -9,7 +9,7 @@
                  ContainerRepair.this.field_82853_g.func_70299_a(0, (ItemStack)null);
  
                  if (ContainerRepair.this.field_82856_l > 0)
-@@ -94,7 +96,7 @@
+@@ -93,7 +95,7 @@
                  ContainerRepair.this.field_82854_e = 0;
                  IBlockState iblockstate = p_i45807_2_.func_180495_p(p_i45807_3_);
  
@@ -18,25 +18,30 @@
                  {
                      int l = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++l;
-@@ -172,6 +174,7 @@
+@@ -160,10 +162,12 @@
+             Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
+             j = j + itemstack.func_82838_A() + (itemstack2 == null ? 0 : itemstack2.func_82838_A());
+             this.field_82856_l = 0;
++            boolean flag = false;
  
              if (itemstack2 != null)
              {
-+                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, i2)) return;
-                 flag = itemstack2.func_77973_b() == Items.field_151134_bR && Items.field_151134_bR.func_92110_g(itemstack2).func_74745_c() > 0;
+-                boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !Items.field_151134_bR.func_92110_g(itemstack2).func_82582_d();
++                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, j)) return;
++                flag = itemstack2.func_77973_b() == Items.field_151134_bR && !Items.field_151134_bR.func_92110_g(itemstack2).func_82582_d();
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
-@@ -264,7 +267,8 @@
-                             {
-                                 int i4 = ((Integer)iterator.next()).intValue();
+                 {
+@@ -235,7 +239,7 @@
  
--                                if (i4 != i5 && !enchantment.func_77326_a(Enchantment.func_180306_c(i4)))
-+                                Enchantment e2 = Enchantment.func_180306_c(i4);
-+                                if (i4 != i5 && !(enchantment.func_77326_a(e2) && e2.func_77326_a(enchantment))) //Forge BugFix: Let Both enchantments veto being together
+                             for (Enchantment enchantment : map.keySet())
+                             {
+-                                if (enchantment != enchantment1 && !enchantment1.func_77326_a(enchantment))
++                                if (enchantment != enchantment1 && !(enchantment1.func_77326_a(enchantment) && enchantment.func_77326_a(enchantment1)))  //Forge BugFix: Let Both enchantments veto being together
                                  {
                                      flag1 = false;
-                                     ++l1;
-@@ -315,6 +319,8 @@
+                                     ++i;
+@@ -279,6 +283,8 @@
                  }
              }
  

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -175,8 +175,11 @@
+@@ -176,8 +176,11 @@
          GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
          this.field_73735_i = 200.0F;
          this.field_146296_j.field_77023_b = 200.0F;
@@ -13,9 +13,9 @@
          this.field_73735_i = 0.0F;
          this.field_146296_j.field_77023_b = 0.0F;
      }
-@@ -239,13 +242,12 @@
+@@ -240,13 +243,12 @@
  
-         if (itemstack == null)
+         if (itemstack == null && p_146977_1_.func_111238_b())
          {
 -            String s1 = p_146977_1_.func_178171_c();
 +            TextureAtlasSprite textureatlassprite = p_146977_1_.getBackgroundSprite();
@@ -30,7 +30,7 @@
                  this.func_175175_a(i, j, textureatlassprite, 16, 16);
                  GlStateManager.func_179145_e();
                  flag1 = true;
-@@ -326,6 +328,7 @@
+@@ -327,6 +329,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = p_73864_1_ < j || p_73864_2_ < k || p_73864_1_ >= j + this.field_146999_f || p_73864_2_ >= k + this.field_147000_g;
@@ -38,7 +38,7 @@
              int l = -1;
  
              if (slot != null)
-@@ -463,10 +466,12 @@
+@@ -464,10 +467,12 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
@@ -51,7 +51,7 @@
          int k = -1;
  
          if (slot != null)
-@@ -685,4 +690,16 @@
+@@ -686,4 +691,16 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }

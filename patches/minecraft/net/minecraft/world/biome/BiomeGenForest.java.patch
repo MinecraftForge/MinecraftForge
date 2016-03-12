@@ -1,14 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
-@@ -201,4 +201,20 @@
-             };
+@@ -147,6 +147,22 @@
          }
      }
-+
+ 
 +    @Override
 +    public void addDefaultFlowers()
 +    {
-+        if (field_150632_aF != 1)
++        if (field_150632_aF != BiomeGenForest.Type.FLOWER)
 +        {
 +            super.addDefaultFlowers();
 +            return;
@@ -20,4 +19,7 @@
 +            addFlower(net.minecraft.init.Blocks.field_150328_O.func_176223_P().func_177226_a(net.minecraft.init.Blocks.field_150328_O.func_176494_l(), type), 10);
 +        }
 +    }
- }
++
+     public Class <? extends BiomeGenBase > func_150562_l()
+     {
+         return BiomeGenForest.class;

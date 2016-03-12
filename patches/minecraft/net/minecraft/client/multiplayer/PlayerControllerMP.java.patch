@@ -1,87 +1,93 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -111,6 +111,12 @@
+@@ -121,6 +121,12 @@
              }
          }
  
-+        ItemStack stack = field_78776_a.field_71439_g.func_71045_bC();
-+        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_178888_1_, field_78776_a.field_71439_g))
++        ItemStack stack = field_78776_a.field_71439_g.func_184614_ca();
++        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_187103_1_, field_78776_a.field_71439_g))
 +        {
 +            return false;
 +        }
 +
-         if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_70694_bm() != null && this.field_78776_a.field_71439_g.func_70694_bm().func_77973_b() instanceof ItemSword)
+         if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_184614_ca() != null && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
          {
              return false;
-@@ -128,13 +134,7 @@
+@@ -142,14 +148,7 @@
              else
              {
-                 world.func_175718_b(2001, p_178888_1_, Block.func_176210_f(iblockstate));
--                boolean flag = world.func_175698_g(p_178888_1_);
+                 world.func_175718_b(2001, p_187103_1_, Block.func_176210_f(iblockstate));
+-                block.func_176208_a(world, p_187103_1_, iblockstate, this.field_78776_a.field_71439_g);
+-                boolean flag = world.func_180501_a(p_187103_1_, Blocks.field_150350_a.func_176223_P(), 11);
  
 -                if (flag)
 -                {
--                    block1.func_176206_d(world, p_178888_1_, iblockstate);
+-                    block.func_176206_d(world, p_187103_1_, iblockstate);
 -                }
 -
                  this.field_178895_c = new BlockPos(this.field_178895_c.func_177958_n(), -1, this.field_178895_c.func_177952_p());
  
                  if (!this.field_78779_k.func_77145_d())
-@@ -152,6 +152,12 @@
+@@ -160,13 +159,20 @@
+                     {
+                         itemstack1.func_179548_a(world, iblockstate, p_187103_1_, this.field_78776_a.field_71439_g);
+ 
+-                        if (itemstack1.field_77994_a == 0)
++                        if (itemstack1.field_77994_a <= 0)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_78776_a.field_71439_g, itemstack1, EnumHand.MAIN_HAND);
+                             this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
+                         }
                      }
                  }
  
-+                boolean flag = block1.removedByPlayer(world, p_178888_1_, field_78776_a.field_71439_g, false);
++                boolean flag = block.removedByPlayer(iblockstate, world, p_187103_1_, field_78776_a.field_71439_g, false);
 +
 +                if (flag)
 +                {
-+                    block1.func_176206_d(world, p_178888_1_, iblockstate);
++                    block.func_176206_d(world, p_187103_1_, iblockstate);
 +                }
                  return flag;
              }
          }
-@@ -356,11 +362,19 @@
+@@ -373,11 +379,15 @@
          {
              if (this.field_78779_k != WorldSettings.GameType.SPECTATOR)
              {
++                net.minecraft.item.Item item = p_187099_3_ == null ? null : p_187099_3_.func_77973_b();
++                EnumActionResult ret = item == null ? EnumActionResult.PASS : item.onItemUseFirst(p_187099_3_, p_187099_1_, p_187099_2_, p_187099_4_, p_187099_5_, f, f1, f2, p_187099_7_);
++                if (ret != EnumActionResult.PASS) return ret;
 +
-+                if (p_178890_3_ != null &&
-+                    p_178890_3_.func_77973_b() != null &&
-+                    p_178890_3_.func_77973_b().onItemUseFirst(p_178890_3_, p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2))
-+                {
-+                    return true;
-+                }
-+
-                 IBlockState iblockstate = p_178890_2_.func_180495_p(p_178890_4_);
+                 IBlockState iblockstate = p_187099_2_.func_180495_p(p_187099_4_);
  
--                if ((!p_178890_1_.func_70093_af() || p_178890_1_.func_70694_bm() == null) && iblockstate.func_177230_c().func_180639_a(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2))
-+                if ((!p_178890_1_.func_70093_af() || p_178890_1_.func_70694_bm() == null || p_178890_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_178890_2_, p_178890_4_, p_178890_1_)))
+-                if ((!p_187099_1_.func_70093_af() || p_187099_1_.func_184614_ca() == null && p_187099_1_.func_184592_cb() == null) && iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_4_, iblockstate, p_187099_1_, p_187099_7_, p_187099_3_, p_187099_5_, f, f1, f2))
++                if ((!p_187099_1_.func_70093_af() || (p_187099_1_.func_184614_ca() == null || item.doesSneakBypassUse(p_187099_3_, p_187099_2_, p_187099_4_, p_187099_1_)) && p_187099_1_.func_184592_cb() == null))
                  {
 -                    flag = true;
-+                    flag = iblockstate.func_177230_c().func_180639_a(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2);
++                    flag = iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_4_, iblockstate, p_187099_1_, p_187099_7_, p_187099_3_, p_187099_5_, f, f1, f2);
                  }
  
-                 if (!flag && p_178890_3_ != null && p_178890_3_.func_77973_b() instanceof ItemBlock)
-@@ -393,7 +407,9 @@
+                 if (!flag && p_187099_3_ != null && p_187099_3_.func_77973_b() instanceof ItemBlock)
+@@ -418,7 +428,9 @@
                  }
                  else
                  {
--                    return p_178890_3_.func_179546_a(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2);
-+                    if (!p_178890_3_.func_179546_a(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2)) return false;
-+                    if (p_178890_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_178890_1_, p_178890_3_);
-+                    return true;
+-                    return p_187099_3_.func_179546_a(p_187099_1_, p_187099_2_, p_187099_4_, p_187099_7_, p_187099_5_, f, f1, f2);
++                    EnumActionResult ret = p_187099_3_.func_179546_a(p_187099_1_, p_187099_2_, p_187099_4_, p_187099_7_, p_187099_5_, f, f1, f2);
++                    if (p_187099_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187099_1_, p_187099_3_, p_187099_7_);
++                    return ret;
                  }
              }
              else
-@@ -420,9 +436,10 @@
-             {
-                 p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack;
- 
--                if (itemstack.field_77994_a == 0)
-+                if (itemstack.field_77994_a <= 0)
+@@ -453,9 +465,10 @@
                  {
-                     p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = null;
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_78769_1_, itemstack);
+                     p_187101_1_.func_184611_a(p_187101_4_, itemstack);
+ 
+-                    if (itemstack.field_77994_a == 0)
++                    if (itemstack.field_77994_a <= 0)
+                     {
+                         p_187101_1_.func_184611_a(p_187101_4_, (ItemStack)null);
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_4_);
+                     }
                  }
  
-                 return true;

@@ -1,39 +1,39 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
-@@ -18,7 +18,7 @@
+@@ -17,7 +17,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
--public abstract class BlockLeaves extends BlockLeavesBase
-+public abstract class BlockLeaves extends BlockLeavesBase implements net.minecraftforge.common.IShearable
+-public abstract class BlockLeaves extends Block
++public abstract class BlockLeaves extends Block implements net.minecraftforge.common.IShearable
  {
      public static final PropertyBool field_176237_a = PropertyBool.func_177716_a("decayable");
      public static final PropertyBool field_176236_b = PropertyBool.func_177716_a("check_decay");
-@@ -75,9 +75,9 @@
+@@ -53,9 +53,9 @@
                          BlockPos blockpos = p_180663_2_.func_177982_a(j1, k1, l1);
                          IBlockState iblockstate = p_180663_1_.func_180495_p(blockpos);
  
--                        if (iblockstate.func_177230_c().func_149688_o() == Material.field_151584_j && !((Boolean)iblockstate.func_177229_b(field_176236_b)).booleanValue())
-+                        if (iblockstate.func_177230_c().isLeaves(p_180663_1_, blockpos))
+-                        if (iblockstate.func_185904_a() == Material.field_151584_j && !((Boolean)iblockstate.func_177229_b(field_176236_b)).booleanValue())
++                        if (iblockstate.func_177230_c().isLeaves(iblockstate, p_180663_1_, blockpos))
                          {
 -                            p_180663_1_.func_180501_a(blockpos, iblockstate.func_177226_a(field_176236_b, Boolean.valueOf(true)), 4);
-+                            iblockstate.func_177230_c().beginLeavesDecay(p_180663_1_, blockpos);
++                            iblockstate.func_177230_c().beginLeavesDecay(iblockstate, p_180663_1_, blockpos);
                          }
                      }
                  }
-@@ -117,9 +117,9 @@
-                             {
-                                 Block block = p_180650_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)).func_177230_c();
+@@ -96,9 +96,9 @@
+                                 IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2));
+                                 Block block = iblockstate.func_177230_c();
  
 -                                if (block != Blocks.field_150364_r && block != Blocks.field_150363_s)
-+                                if (!block.canSustainLeaves(p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
++                                if (!block.canSustainLeaves(iblockstate, p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                  {
--                                    if (block.func_149688_o() == Material.field_151584_j)
-+                                    if (block.isLeaves(p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
+-                                    if (iblockstate.func_185904_a() == Material.field_151584_j)
++                                    if (block.isLeaves(iblockstate, p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                      {
                                          this.field_150128_a[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
                                      }
-@@ -226,40 +226,7 @@
+@@ -205,40 +205,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -75,18 +75,16 @@
      }
  
      protected void func_176234_a(World p_176234_1_, BlockPos p_176234_2_, IBlockState p_176234_3_, int p_176234_4_)
-@@ -296,4 +263,48 @@
-     }
+@@ -274,6 +241,49 @@
  
      public abstract BlockPlanks.EnumType func_176233_b(int p_176233_1_);
-+
+ 
 +    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
-+    @Override public boolean isLeaves(IBlockAccess world, BlockPos pos){ return true; }
++    @Override public boolean isLeaves(IBlockState state, IBlockAccess world, BlockPos pos){ return true; }
 +
 +    @Override
-+    public void beginLeavesDecay(World world, BlockPos pos)
++    public void beginLeavesDecay(IBlockState state, World world, BlockPos pos)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
 +        if (!(Boolean)state.func_177229_b(field_176236_b))
 +        {
 +            world.func_180501_a(pos, state.func_177226_a(field_176236_b, true), 4);
@@ -123,4 +121,7 @@
 +        return ret;
 +    }
 +
- }
++
+     @SideOnly(Side.CLIENT)
+     public boolean func_176225_a(IBlockState p_176225_1_, IBlockAccess p_176225_2_, BlockPos p_176225_3_, EnumFacing p_176225_4_)
+     {

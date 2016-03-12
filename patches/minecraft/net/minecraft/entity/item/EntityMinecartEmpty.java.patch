@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartEmpty.java
-@@ -18,6 +18,7 @@
+@@ -19,6 +19,8 @@
  
-     public boolean func_130002_c(EntityPlayer p_130002_1_)
+     public boolean func_184230_a(EntityPlayer p_184230_1_, ItemStack p_184230_2_, EnumHand p_184230_3_)
      {
-+        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_130002_1_))) return true;
-         if (this.field_70153_n != null && this.field_70153_n instanceof EntityPlayer && this.field_70153_n != p_130002_1_)
++        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, p_184230_1_, p_184230_2_, p_184230_3_))) return true;
++
+         if (p_184230_1_.func_70093_af())
          {
-             return true;
+             return false;

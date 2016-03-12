@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityPiston.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityPiston.java
-@@ -148,7 +148,8 @@
+@@ -201,7 +201,8 @@
              if (this.field_145850_b.func_180495_p(this.field_174879_c).func_177230_c() == Blocks.field_180384_M)
              {
                  this.field_145850_b.func_180501_a(this.field_174879_c, this.field_174932_a, 3);
@@ -10,7 +10,7 @@
              }
          }
      }
-@@ -166,7 +167,8 @@
+@@ -219,7 +220,8 @@
              if (this.field_145850_b.func_180495_p(this.field_174879_c).func_177230_c() == Blocks.field_180384_M)
              {
                  this.field_145850_b.func_180501_a(this.field_174879_c, this.field_174932_a, 3);
