@@ -96,9 +96,9 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public boolean func_188618_c()
+        public boolean isBuiltInRenderer()
         {
-            return internalBase.func_188618_c();
+            return internalBase.isBuiltInRenderer();
         }
 
         @Override
@@ -114,7 +114,7 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(quads == null)
             {
@@ -125,22 +125,22 @@ public class MultiModel implements IModel
                     ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
                     if (base != null)
                     {
-                        quads.addAll(base.func_188616_a(null, face, 0));
+                        quads.addAll(base.getQuads(null, face, 0));
                     }
                     for (IBakedModel bakedPart : parts.values())
                     {
-                        quads.addAll(bakedPart.func_188616_a(null, face, 0));
+                        quads.addAll(bakedPart.getQuads(null, face, 0));
                     }
                     builder.put(Optional.of(face), quads.build());
                 }
                 ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
                 if (base != null)
                 {
-                    quads.addAll(base.func_188616_a(null, null, 0));
+                    quads.addAll(base.getQuads(null, null, 0));
                 }
                 for (IBakedModel bakedPart : parts.values())
                 {
-                    quads.addAll(bakedPart.func_188616_a(null, null, 0));
+                    quads.addAll(bakedPart.getQuads(null, null, 0));
                 }
                 builder.put(Optional.<EnumFacing>absent(), quads.build());
                 this.quads = builder.build();
@@ -167,7 +167,7 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public ItemOverrideList func_188617_f()
+        public ItemOverrideList getOverrides()
         {
             // TODO Auto-generated method stub
             return null;

@@ -263,7 +263,7 @@ public class DynBucketTest
             int filled = tank.fill(resource, doFill);
             if(doFill && filled > 0) {
                 IBlockState state = worldObj.getBlockState(pos);
-                worldObj.func_184138_a(pos, state, state, 8); // TODO check flag
+                worldObj.notifyBlockUpdate(pos, state, state, 8); // TODO check flag
             }
             return filled;
         }
@@ -281,7 +281,7 @@ public class DynBucketTest
             FluidStack drained = tank.drain(maxDrain, doDrain);
             if(doDrain && drained != null) {
                 IBlockState state = worldObj.getBlockState(pos);
-                worldObj.func_184138_a(pos, state, state, 8); // TODO check flag
+                worldObj.notifyBlockUpdate(pos, state, state, 8); // TODO check flag
             }
             return drained;
         }

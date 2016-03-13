@@ -35,7 +35,7 @@ public class PlayerArmorInvWrapper extends InvWrapper
         EntityEquipmentSlot equ = null;
         for (EntityEquipmentSlot s : EntityEquipmentSlot.values())
         {
-            if (s.func_188453_a() == EntityEquipmentSlot.Type.ARMOR && s.func_188454_b() == slot)
+            if (s.getSlotType() == EntityEquipmentSlot.Type.ARMOR && s.getIndex() == slot)
             {
                 equ = s;
                 break;

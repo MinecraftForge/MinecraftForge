@@ -487,7 +487,7 @@ public class GuiModList extends GuiScreen
                 }
 
                 ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                ret.addAll(GuiUtilRenderComponents.func_178908_a(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
+                ret.addAll(GuiUtilRenderComponents.splitText(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
             }
             return ret;
         }
@@ -524,13 +524,13 @@ public class GuiModList extends GuiScreen
             {
                 GlStateManager.enableBlend();
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
-                VertexBuffer wr = tess.getWorldRenderer();
+                VertexBuffer wr = tess.getBuffer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
                 wr.begin(7, DefaultVertexFormats.POSITION_TEX);
-                wr.pos(offset,                  top + logoDims.height, zLevel).func_187315_a(0, 1).endVertex();
-                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).func_187315_a(1, 1).endVertex();
-                wr.pos(offset + logoDims.width, top,                   zLevel).func_187315_a(1, 0).endVertex();
-                wr.pos(offset,                  top,                   zLevel).func_187315_a(0, 0).endVertex();
+                wr.pos(offset,                  top + logoDims.height, zLevel).tex(0, 1).endVertex();
+                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
+                wr.pos(offset + logoDims.width, top,                   zLevel).tex(1, 0).endVertex();
+                wr.pos(offset,                  top,                   zLevel).tex(0, 0).endVertex();
                 tess.draw();
                 GlStateManager.disableBlend();
                 top += logoDims.height + 10;

@@ -48,7 +48,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean func_187497_c(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer buffer, boolean checkSides, long rand)
+    public boolean renderModelFlat(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer buffer, boolean checkSides, long rand)
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
@@ -64,12 +64,12 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         else
         {
-            return super.func_187497_c(world, model, state, pos, buffer, checkSides, rand);
+            return super.renderModelFlat(world, model, state, pos, buffer, checkSides, rand);
         }
     }
 
     @Override
-    public boolean func_187498_b(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer buffer, boolean checkSides, long rand)
+    public boolean renderModelSmooth(IBlockAccess world, IBakedModel model, IBlockState state, BlockPos pos, VertexBuffer buffer, boolean checkSides, long rand)
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
@@ -85,7 +85,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         else
         {
-            return super.func_187498_b(world, model, state, pos, buffer, checkSides, rand);
+            return super.renderModelSmooth(world, model, state, pos, buffer, checkSides, rand);
         }
     }
 
@@ -95,7 +95,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         lighter.setState(state);
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = model.func_188616_a(state, null, rand);
+        List<BakedQuad> quads = model.getQuads(state, null, rand);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -107,10 +107,10 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = model.func_188616_a(state, side, rand);
+            quads = model.getQuads(state, side, rand);
             if(!quads.isEmpty())
             {
-                if(!checkSides || state.func_185894_c(world, pos, side))
+                if(!checkSides || state.shouldSideBeRendered(world, pos, side))
                 {
                     if(empty) lighter.updateBlockInfo();
                     empty = false;

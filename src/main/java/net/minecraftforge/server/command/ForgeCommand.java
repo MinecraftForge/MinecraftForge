@@ -36,7 +36,7 @@ public class ForgeCommand extends CommandBase {
         return 2;
     }
     @Override
-    public void func_184881_a(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length == 0)
         {
@@ -65,7 +65,7 @@ public class ForgeCommand extends CommandBase {
     }
 
     @Override
-    public List<String> func_184883_a(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
+    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
     {
         if (args.length == 1)
         {

@@ -69,9 +69,9 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     }
 
     @Override
-    public TemplateManager func_186340_h()
+    public TemplateManager getStructureTemplateManager()
     {
-        return parent.func_186340_h();
+        return parent.getStructureTemplateManager();
     }
 
 }

@@ -118,7 +118,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         {
             // build base (insidest)
             IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(state, format, bakedTextureGetter);
-            builder.addAll(model.func_188616_a(null, null, 0));
+            builder.addAll(model.getQuads(null, null, 0));
         }
         if (liquidLocation != null && fluidSprite != null)
         {
@@ -302,7 +302,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         }
 
         @Override
-        public ItemOverrideList func_188617_f()
+        public ItemOverrideList getOverrides()
         {
             return BakedDynBucketOverrideHandler.INSTANCE;
         }
@@ -314,7 +314,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         }
 
         @Override
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(side == null) return quads;
             return ImmutableList.of();
@@ -322,7 +322,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
 
         public boolean isAmbientOcclusion() { return true;  }
         public boolean isGui3d() { return false; }
-        public boolean func_188618_c() { return false; }
+        public boolean isBuiltInRenderer() { return false; }
         public TextureAtlasSprite getParticleTexture() { return particle; }
         public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
     }

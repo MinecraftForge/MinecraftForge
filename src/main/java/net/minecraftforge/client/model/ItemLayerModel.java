@@ -136,11 +136,11 @@ public class ItemLayerModel implements IRetexturableModel
 
         public boolean isAmbientOcclusion() { return true; }
         public boolean isGui3d() { return false; }
-        public boolean func_188618_c() { return false; }
+        public boolean isBuiltInRenderer() { return false; }
         public TextureAtlasSprite getParticleTexture() { return particle; }
         public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
-        public ItemOverrideList func_188617_f() { return ItemOverrideList.field_188022_a; }
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(side == null) return quads;
             return ImmutableList.of();

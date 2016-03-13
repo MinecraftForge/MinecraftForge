@@ -31,7 +31,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
@@ -408,7 +407,7 @@ public class ForgeHooksClient
         else
         {
             //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
-            ItemCameraTransforms.func_188034_a(model.getItemCameraTransforms().getTransform(cameraTransformType), leftHandHackery);
+            ItemCameraTransforms.applyTransformSide(model.getItemCameraTransforms().getTransform(cameraTransformType), leftHandHackery);
             //if(leftHandHackery) GlStateManager.scale(-1, 1, 1);
         }
         return model;
@@ -436,7 +435,7 @@ public class ForgeHooksClient
         VertexFormatElement attr = format.getElement(element);
         int count = attr.getElementCount();
         int constant = attr.getType().getGlConstant();
-        buffer.position(format.func_181720_d(element));
+        buffer.position(format.getOffset(element));
         switch(attrType)
         {
             case POSITION:

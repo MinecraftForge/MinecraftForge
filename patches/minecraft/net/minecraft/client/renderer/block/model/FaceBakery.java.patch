@@ -15,7 +15,7 @@
          {
 -            blockfaceuv = this.func_188010_a(p_178414_3_.field_178243_e, p_178414_5_, p_178414_6_);
 +            // TODO fix uvlock for custom rotations
-+            //blockfaceuv = this.func_188010_a(face.blockFaceUV, facing, modelRotationIn);
++            //blockfaceuv = this.applyUVLock(face.blockFaceUV, facing, modelRotationIn);
          }
  
 -        int[] aint = this.func_188012_a(blockfaceuv, p_178414_4_, p_178414_5_, this.func_178403_a(p_178414_1_, p_178414_2_), p_178414_6_, p_178414_7_, p_178414_9_);
@@ -38,14 +38,14 @@
 +        return makeQuadVertexData(p_188012_1_, p_188012_2_, p_188012_3_, p_188012_4_, (net.minecraftforge.client.model.ITransformation)p_188012_5_, p_188012_6_, p_188012_7_);
 +    }
 +
-+    private int[] makeQuadVertexData(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, EnumFacing p_188012_3_, float[] p_188012_4_, net.minecraftforge.client.model.ITransformation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_)
++    private int[] makeQuadVertexData(BlockFaceUV uvs, TextureAtlasSprite sprite, EnumFacing orientation, float[] p_188012_4_, net.minecraftforge.client.model.ITransformation rotationIn, BlockPartRotation partRotation, boolean shade)
 +    {
          int[] aint = new int[28];
  
          for (int i = 0; i < 4; ++i)
          {
 -            this.func_188015_a(aint, i, p_188012_3_, p_188012_1_, p_188012_4_, p_188012_2_, p_188012_5_, p_188012_6_, p_188012_7_);
-+            this.fillVertexData(aint, i, p_188012_3_, p_188012_1_, p_188012_4_, p_188012_2_, p_188012_5_, p_188012_6_, p_188012_7_);
++            this.fillVertexData(aint, i, orientation, uvs, p_188012_4_, sprite, rotationIn, partRotation, shade);
          }
  
          return aint;

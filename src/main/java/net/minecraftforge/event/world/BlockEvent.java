@@ -79,13 +79,13 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185306_r, player.func_184614_ca()) > 0)) // If the block is being silk harvested, the exp dropped is 0
+                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.silkTouch, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
             else
             {
-                int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185308_t, player.func_184614_ca());
+                int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.fortune, player.getHeldItemMainhand());
                 this.exp = state.getBlock().getExpDrop(state, world, pos, bonusLevel);
             }
         }
@@ -134,7 +134,7 @@ public class BlockEvent extends Event
         {
             super(blockSnapshot.world, blockSnapshot.pos, blockSnapshot.getCurrentBlock());
             this.player = player;
-            this.itemInHand = player.func_184614_ca();
+            this.itemInHand = player.getHeldItemMainhand();
             this.blockSnapshot = blockSnapshot;
             this.placedBlock = blockSnapshot.getCurrentBlock();
             this.placedAgainst = placedAgainst;

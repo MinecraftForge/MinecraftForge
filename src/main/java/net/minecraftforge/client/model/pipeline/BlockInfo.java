@@ -36,7 +36,7 @@ public class BlockInfo
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = colors.func_186724_a(state, world, blockPos, tint);
+        cachedMultiplier = colors.colorMultiplier(state, world, blockPos, tint);
         return cachedMultiplier;
     }
 
@@ -102,15 +102,15 @@ public class BlockInfo
                 {
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
                     IBlockState state = world.getBlockState(pos);
-                    translucent[x][y][z] = state.func_185895_e();
+                    translucent[x][y][z] = state.isTranslucent();
                     //translucent[x][y][z] = world.getBlockState(pos).getBlock().getLightOpacity(world, pos) == 0;
-                    int brightness = state.func_185889_a(world, pos);
+                    int brightness = state.getPackedLightmapCoords(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
-                    ao[x][y][z] = state.func_185892_j();
+                    ao[x][y][z] = state.getAmbientOcclusionLightValue();
                     if(x == 1 && y == 1 && z == 1)
                     {
-                        full = state.func_185917_h();
+                        full = state.isFullCube();
                     }
                 }
             }

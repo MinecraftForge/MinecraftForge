@@ -638,7 +638,7 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(side != null) return ImmutableList.of();
             IModelState modelState = this.state;
@@ -807,7 +807,7 @@ public class B3DLoader implements ICustomModelLoader
             return gui3d;
         }
 
-        public boolean func_188618_c()
+        public boolean isBuiltInRenderer()
         {
             return false;
         }
@@ -829,10 +829,10 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public ItemOverrideList func_188617_f()
+        public ItemOverrideList getOverrides()
         {
             // TODO handle items
-            return ItemOverrideList.field_188022_a;
+            return ItemOverrideList.NONE;
         }
     }
 }

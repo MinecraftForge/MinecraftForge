@@ -249,7 +249,7 @@ public class ModelBakeEventDebug
         }
 
         @Override
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(side != null || !(state instanceof IExtendedBlockState)) return ImmutableList.of();
             IExtendedBlockState exState = (IExtendedBlockState)state;
@@ -280,7 +280,7 @@ public class ModelBakeEventDebug
         public boolean isAmbientOcclusion() { return true; }
 
         @Override
-        public boolean func_188618_c() { return false; }
+        public boolean isBuiltInRenderer() { return false; }
 
         @Override
         public TextureAtlasSprite getParticleTexture() { return this.base; }
@@ -289,7 +289,7 @@ public class ModelBakeEventDebug
         public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
 
         @Override
-        public ItemOverrideList func_188617_f() { return ItemOverrideList.field_188022_a; }
+        public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
     }
 
     private static Vec3d rotate(Vec3d vec, EnumFacing side)

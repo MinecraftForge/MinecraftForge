@@ -58,7 +58,7 @@ public class PotionRegistryDebug {
 
     @Override
     public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) {
-      Potion potion = effect.func_188419_a();
+      Potion potion = effect.getPotion();
 
       mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
       TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_0");
@@ -75,13 +75,13 @@ public class PotionRegistryDebug {
       float a = (float)(potion.getLiquidColor()       & 255) / 255.0F;
 
       Tessellator tessellator = Tessellator.getInstance();
-      VertexBuffer buf = tessellator.getWorldRenderer();
+      VertexBuffer buf = tessellator.getBuffer();
       buf.begin(7, DefaultVertexFormats.POSITION_TEX);
       GlStateManager.color(r, g, b, a);
-      buf.pos((double) x,          (double)(y + height), 0.0D).func_187315_a(sprite.getMinU(), sprite.getMaxV()).endVertex();
-      buf.pos((double)(x + width), (double)(y + height), 0.0D).func_187315_a(sprite.getMaxU(), sprite.getMaxV()).endVertex();
-      buf.pos((double)(x + width), (double) y,           0.0D).func_187315_a(sprite.getMaxU(), sprite.getMinV()).endVertex();
-      buf.pos((double) x,          (double) y,           0.0D).func_187315_a(sprite.getMinU(), sprite.getMinV()).endVertex();
+      buf.pos((double) x,          (double)(y + height), 0.0D).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double)(y + height), 0.0D).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double) y,           0.0D).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
+      buf.pos((double) x,          (double) y,           0.0D).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
       tessellator.draw();
     }
   }

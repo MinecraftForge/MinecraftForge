@@ -27,7 +27,7 @@ apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
     version = "1.9"
-    mappings = 'stable_20'
+    mappings = 'snapshot_nodoc_20160312'
     //mappings = "snapshot_nodoc_20151122"
     workspaceDir = "projects"
     versionJson = "jsons/1.9-dev.json"

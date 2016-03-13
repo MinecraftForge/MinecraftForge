@@ -161,13 +161,13 @@ public class MultiLayerModel implements IModelCustomData
             ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
             for(IBakedModel model : models.values())
             {
-                builder.addAll(model.func_188616_a(null, side.orNull(), 0));
+                builder.addAll(model.getQuads(null, side.orNull(), 0));
             }
             return builder.build();
         }
 
         @Override
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             IBakedModel model;
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
@@ -183,7 +183,7 @@ public class MultiLayerModel implements IModelCustomData
             {
                 model = models.get(Optional.of(layer));
             }
-            return model.func_188616_a(state, side, rand);
+            return model.getQuads(state, side, rand);
         }
 
         @Override
@@ -199,9 +199,9 @@ public class MultiLayerModel implements IModelCustomData
         }
 
         @Override
-        public boolean func_188618_c()
+        public boolean isBuiltInRenderer()
         {
-            return base.func_188618_c();
+            return base.isBuiltInRenderer();
         }
 
         @Override
@@ -223,9 +223,9 @@ public class MultiLayerModel implements IModelCustomData
         }
 
         @Override
-        public ItemOverrideList func_188617_f()
+        public ItemOverrideList getOverrides()
         {
-            return ItemOverrideList.field_188022_a;
+            return ItemOverrideList.NONE;
         }
     }
 

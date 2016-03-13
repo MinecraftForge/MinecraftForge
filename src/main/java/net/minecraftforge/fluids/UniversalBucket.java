@@ -129,7 +129,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                             && !player.capabilities.isCreativeMode)
                     {
                         // success!
-                        player.triggerAchievement(StatList.func_188057_b(this));
+                        player.addStat(StatList.func_188057_b(this));
 
                         itemstack.stackSize--;
                         ItemStack emptyStack = empty != null ? empty.copy() : new ItemStack(this);
@@ -162,7 +162,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
             return false;
         }
 
-        Material material = worldIn.getBlockState(pos).func_185904_a();
+        Material material = worldIn.getBlockState(pos).getMaterial();
         boolean isSolid = material.isSolid();
 
         // can only place in air or non-solid blocks
@@ -177,7 +177,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
             int i = pos.getX();
             int j = pos.getY();
             int k = pos.getZ();
-            worldIn.func_184133_a(null, pos, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F,
+            worldIn.playSound(null, pos, SoundEvents.block_fire_extinguish, SoundCategory.BLOCKS, 0.5F,
                     2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
 
             for (int l = 0; l < 8; ++l)

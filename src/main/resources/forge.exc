@@ -3,7 +3,7 @@ net/minecraft/client/renderer/ItemRenderer.renderItem(Lnet/minecraft/entity/Enti
 net/minecraft/client/renderer/RenderGlobal.drawBlockDamageTexture(Lnet/minecraft/client/renderer/Tessellator;Lnet/minecraft/entity/EntityLivingBase;F)V=|p_72717_1_,p_72717_2_,p_72717_3_
 net/minecraft/client/renderer/entity/RenderItem.renderDroppedItem(Lnet/minecraft/entity/item/EntityItem;Lnet/minecraft/util/IIcon;IFFFFI)V=|p_77020_1_,p_77020_2_,p_77020_3_,p_77020_4_,p_77020_5_,p_77020_6_,p_77020_7_,pass
 net/minecraft/client/renderer/entity/RenderItem.renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V=|p_77015_1_,p_77015_2_,p_77015_3_,p_77015_4_,p_77015_5_,renderEffect
-net/minecraft/server/management/ServerConfigurationManager.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_72356_1_,p_72356_2_,teleporter
+net/minecraft/server/management/PlayerList.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_187242_1_,p_187242_2_,teleporter
 net/minecraft/server/management/ServerConfigurationManager.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 net/minecraft/world/World.getBiomeGenForCoordsBody(II)Lnet/minecraft/world/biome/BiomeGenBase;=|p_72807_1_,p_72807_2_
 net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
@@ -45,4 +45,5 @@ net/minecraft/stats/StatList.mergeStatBases([Lnet/minecraft/stats/StatBase;Lnet/
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/item/Item;IILnet/minecraft/nbt/NBTTagCompound;)V=|p_i1881_1_,p_i1881_2_,p_i1881_3_,capNBT
 
 net/minecraft/block/BlockRedstoneWire.canConnectTo(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/EnumFacing;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)Z=p_176343_0_,p_176343_1_,world,pos
-net/minecraft/client/renderer/block/model/BakedQuad.<init>([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/vertex/VertexFormat)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,format
+net/minecraft/client/renderer/block/model/BakedQuad.<init>([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,format
+net/minecraft/client/renderer/texture/TextureMap.<init>(Ljava/lang/String;Lnet/minecraft/client/renderer/texture/IIconCreator;Z)V=|p_i46100_1_,p_i46100_2_,skipFirst

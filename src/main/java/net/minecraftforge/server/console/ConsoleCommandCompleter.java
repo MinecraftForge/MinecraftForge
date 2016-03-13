@@ -47,7 +47,7 @@ public final class ConsoleCommandCompleter implements Completer
             @Override
             public List<String> call() throws Exception
             {
-                return ConsoleCommandCompleter.this.server.func_184104_a(ConsoleCommandCompleter.this.server, input,
+                return ConsoleCommandCompleter.this.server.getTabCompletions(ConsoleCommandCompleter.this.server, input,
                         ConsoleCommandCompleter.this.server.getPosition(), false/*  we're not a command block */);
             }
         });

@@ -91,12 +91,12 @@ public interface IPerspectiveAwareModel extends IBakedModel
 
         public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
         public boolean isGui3d() { return parent.isGui3d(); }
-        public boolean func_188618_c() { return parent.func_188618_c(); }
+        public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
         public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
         @SuppressWarnings("deprecation")
         public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand) { return parent.func_188616_a(state, side, rand); }
-        public ItemOverrideList func_188617_f() { return parent.func_188617_f(); }
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) { return parent.getQuads(state, side, rand); }
+        public ItemOverrideList getOverrides() { return parent.getOverrides(); }
 
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)

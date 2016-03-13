@@ -341,7 +341,7 @@ public class ModelFluid implements IModelCustomData
             return false;
         }
 
-        public boolean func_188618_c()
+        public boolean isBuiltInRenderer()
         {
             return false;
         }
@@ -356,7 +356,7 @@ public class ModelFluid implements IModelCustomData
             return ItemCameraTransforms.DEFAULT;
         }
 
-        public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             BakedFluid model = this;
             if(state instanceof IExtendedBlockState)
@@ -378,9 +378,9 @@ public class ModelFluid implements IModelCustomData
             return model.faceQuads.get(side);
         }
 
-        public ItemOverrideList func_188617_f()
+        public ItemOverrideList getOverrides()
         {
-            return ItemOverrideList.field_188022_a;
+            return ItemOverrideList.NONE;
         }
 
         @Override

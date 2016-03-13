@@ -139,7 +139,7 @@ public class BlockSnapshot implements Serializable
     public TileEntity getTileEntity()
     {
         if (nbt != null)
-            return TileEntity.func_184246_b(getWorld().getMinecraftServer(), nbt);
+            return TileEntity.createTileEntity(getWorld().getMinecraftServer(), nbt);
         else return null;
     }
 
@@ -170,7 +170,7 @@ public class BlockSnapshot implements Serializable
         }
 
         world.setBlockState(pos, replaced, applyPhysics ? 3 : 2);
-        world.func_184138_a(pos, current, replaced, applyPhysics ? 3 : 2);
+        world.notifyBlockUpdate(pos, current, replaced, applyPhysics ? 3 : 2);
         TileEntity te = null;
         if (nbt != null)
         {
@@ -205,7 +205,7 @@ public class BlockSnapshot implements Serializable
         }
 
         world.setBlockState(pos, replaced, applyPhysics ? 3 : 2);
-        world.func_184138_a(pos, current, replaced, applyPhysics ? 3 : 2);
+        world.notifyBlockUpdate(pos, current, replaced, applyPhysics ? 3 : 2);
         TileEntity te = null;
         if (nbt != null)
         {

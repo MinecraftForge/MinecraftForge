@@ -8,24 +8,25 @@
      static void func_151353_a()
      {
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151032_g, new BehaviorProjectileDispense()
-@@ -87,9 +88,9 @@
+@@ -87,42 +88,42 @@
          });
          BlockDispenser.field_149943_a.func_82595_a(Items.field_185167_i, new BehaviorProjectileDispense()
          {
 -            protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
              {
 -                EntityTippedArrow entitytippedarrow = new EntityTippedArrow(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c());
+-                entitytippedarrow.func_184555_a(p_82499_3_);
 +                EntityTippedArrow entitytippedarrow = new EntityTippedArrow(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c());
-                 entitytippedarrow.func_184555_a(p_82499_3_);
++                entitytippedarrow.func_184555_a(stack);
                  entitytippedarrow.field_70251_a = EntityArrow.PickupStatus.ALLOWED;
                  return entitytippedarrow;
-@@ -97,32 +98,32 @@
+             }
          });
          BlockDispenser.field_149943_a.func_82595_a(Items.field_185166_h, new BehaviorProjectileDispense()
          {
 -            protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
              {
 -                EntityArrow entityarrow = new EntitySpectralArrow(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c());
 +                EntityArrow entityarrow = new EntitySpectralArrow(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c());
@@ -36,7 +37,7 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151110_aK, new BehaviorProjectileDispense()
          {
 -            protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
              {
 -                return new EntityEgg(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c());
 +                return new EntityEgg(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c());
@@ -45,7 +46,7 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151126_ay, new BehaviorProjectileDispense()
          {
 -            protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
              {
 -                return new EntitySnowball(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c());
 +                return new EntitySnowball(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c());
@@ -54,7 +55,7 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151062_by, new BehaviorProjectileDispense()
          {
 -            protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++            protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
              {
 -                return new EntityExpBottle(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c());
 +                return new EntityExpBottle(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c());
@@ -71,7 +72,7 @@
                  return (new BehaviorProjectileDispense()
                  {
 -                    protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+                    protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++                    protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
                      {
 -                        return new EntityPotion(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c(), p_82482_2_.func_77946_l());
 +                        return new EntityPotion(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c(), stack.func_77946_l());
@@ -94,7 +95,7 @@
                  return (new BehaviorProjectileDispense()
                  {
 -                    protected IProjectile func_82499_a(World p_82499_1_, IPosition p_82499_2_, ItemStack p_82499_3_)
-+                    protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack p_82499_3_)
++                    protected IProjectile func_82499_a(World worldIn, IPosition position, ItemStack stack)
                      {
 -                        return new EntityPotion(p_82499_1_, p_82499_2_.func_82615_a(), p_82499_2_.func_82617_b(), p_82499_2_.func_82616_c(), p_82482_2_.func_77946_l());
 +                        return new EntityPotion(worldIn, position.func_82615_a(), position.func_82617_b(), position.func_82616_c(), stack.func_77946_l());
@@ -144,11 +145,13 @@
              }
          });
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151124_az, new Bootstrap.BehaviorDispenseBoat(EntityBoat.Type.OAK));
-@@ -245,20 +246,20 @@
+@@ -244,21 +245,21 @@
+         BlockDispenser.field_149943_a.func_82595_a(Items.field_185153_aK, new Bootstrap.BehaviorDispenseBoat(EntityBoat.Type.ACACIA));
          IBehaviorDispenseItem ibehaviordispenseitem = new BehaviorDefaultDispenseItem()
          {
-             private final BehaviorDefaultDispenseItem field_150841_b = new BehaviorDefaultDispenseItem();
+-            private final BehaviorDefaultDispenseItem field_150841_b = new BehaviorDefaultDispenseItem();
 -            public ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_)
++            private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
 +            public ItemStack func_82487_b(IBlockSource source, ItemStack stack)
              {
 -                ItemBucket itembucket = (ItemBucket)p_82487_2_.func_77973_b();
@@ -169,15 +172,17 @@
                  else
                  {
 -                    return this.field_150841_b.func_82482_a(p_82487_1_, p_82487_2_);
-+                    return this.field_150841_b.func_82482_a(source, stack);
++                    return this.dispenseBehavior.func_82482_a(source, stack);
                  }
              }
          };
-@@ -267,10 +268,10 @@
+@@ -266,11 +267,11 @@
+         BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
-             private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
+-            private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
 -            public ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_)
++            private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
 +            public ItemStack func_82487_b(IBlockSource source, ItemStack stack)
              {
 -                World world = p_82487_1_.func_82618_k();
@@ -212,7 +217,7 @@
 +                else if (((TileEntityDispenser)source.func_150835_j()).func_146019_a(new ItemStack(item)) < 0)
                  {
 -                    this.field_150840_b.func_82482_a(p_82487_1_, new ItemStack(item));
-+                    this.field_150840_b.func_82482_a(source, new ItemStack(item));
++                    this.dispenseBehavior.func_82482_a(source, new ItemStack(item));
                  }
  
 -                return p_82487_2_;

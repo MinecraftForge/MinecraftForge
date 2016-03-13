@@ -503,8 +503,8 @@ public class SplashProgress
         if (max_texture_size != -1) return max_texture_size;
         for (int i = 0x4000; i > 0; i >>= 1)
         {
-            GlStateManager.func_187419_a(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (IntBuffer)null);
-            if (GlStateManager.func_187411_c(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH) != 0)
+            GlStateManager.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (IntBuffer)null);
+            if (GlStateManager.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH) != 0)
             {
                 max_texture_size = i;
                 return i;

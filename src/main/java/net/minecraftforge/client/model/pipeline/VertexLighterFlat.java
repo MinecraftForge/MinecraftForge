@@ -203,7 +203,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float e2 = 0.95f;
         BlockPos pos = blockInfo.getBlockPos();
 
-        boolean full = blockInfo.getState().func_185917_h();
+        boolean full = blockInfo.getState().isFullCube();
 
         if((full || y < -e1) && normal[1] < -e2) pos = pos.down();
         if((full || y >  e1) && normal[1] >  e2) pos = pos.up();
@@ -212,7 +212,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         if((full || x < -e1) && normal[0] < -e2) pos = pos.west();
         if((full || x >  e1) && normal[0] >  e2) pos = pos.east();
 
-        int brightness = blockInfo.getState().func_185889_a(blockInfo.getWorld(), pos);
+        int brightness = blockInfo.getState().getPackedLightmapCoords(blockInfo.getWorld(), pos);
 
         lightmap[0] = ((float)((brightness >> 0x04) & 0xF) * 0x20) / 0xFFFF;
         lightmap[1] = ((float)((brightness >> 0x14) & 0xF) * 0x20) / 0xFFFF;

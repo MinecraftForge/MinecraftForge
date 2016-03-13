@@ -58,7 +58,7 @@ public class ClientCommandHandler extends CommandHandler
                 return 0;
             }
 
-            if (icommand.func_184882_a(this.func_184879_a(), sender))
+            if (icommand.checkPermission(this.getServer(), sender))
             {
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
@@ -139,7 +139,7 @@ public class ClientCommandHandler extends CommandHandler
     }
 
     @Override
-    protected MinecraftServer func_184879_a() {
+    protected MinecraftServer getServer() {
         return Minecraft.getMinecraft().getIntegratedServer();
     }
 }

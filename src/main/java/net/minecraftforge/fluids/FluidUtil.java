@@ -404,7 +404,7 @@ public class FluidUtil
         {
             if (world != null && pos != null)
             {
-                world.func_184148_a(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.field_187638_cR, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.entity_item_pickup, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             }
             return true;
         }

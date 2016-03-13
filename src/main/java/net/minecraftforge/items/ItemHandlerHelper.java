@@ -157,8 +157,8 @@ public class ItemHandlerHelper
         // play sound if something got picked up
         if (remainder == null || remainder.stackSize != stack.stackSize)
         {
-            world.func_184148_a(player, player.posX, player.posY, player.posZ,
-                    SoundEvents.field_187638_cR, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            world.playSound(player, player.posX, player.posY, player.posZ,
+                    SoundEvents.entity_item_pickup, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world

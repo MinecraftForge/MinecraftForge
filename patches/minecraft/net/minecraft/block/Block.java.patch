@@ -166,9 +166,9 @@
              }
 +
 +            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
-+            for (ItemStack stack : items)
++            for (ItemStack item : items)
 +            {
-+                func_180635_a(p_180657_1_, p_180657_3_, stack);
++                func_180635_a(p_180657_1_, p_180657_3_, item);
 +            }
          }
          else

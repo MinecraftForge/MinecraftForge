@@ -144,7 +144,7 @@ public class LightUtil
     {
         int length = 4 < to.length ? 4 : to.length;
         VertexFormatElement element = formatFrom.getElement(e);
-        int vertexStart = v * formatFrom.getNextOffset() + formatFrom.func_181720_d(e);
+        int vertexStart = v * formatFrom.getNextOffset() + formatFrom.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.EnumType type = element.getType();
         int size = type.getSize();
@@ -198,7 +198,7 @@ public class LightUtil
     public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e)
     {
         VertexFormatElement element = formatTo.getElement(e);
-        int vertexStart = v * formatTo.getNextOffset() + formatTo.func_181720_d(e);
+        int vertexStart = v * formatTo.getNextOffset() + formatTo.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.EnumType type = element.getType();
         int size = type.getSize();
@@ -241,7 +241,7 @@ public class LightUtil
         if(tessellator == null)
         {
             Tessellator tes = Tessellator.getInstance();
-            VertexBuffer wr = tes.getWorldRenderer();
+            VertexBuffer wr = tes.getBuffer();
             tessellator = new VertexBufferConsumer(wr);
         }
         return tessellator;
@@ -261,7 +261,7 @@ public class LightUtil
     public static void renderQuadColorSlow(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
-        if(wr == Tessellator.getInstance().getWorldRenderer())
+        if(wr == Tessellator.getInstance().getBuffer())
         {
             cons = getItemConsumer();
         }

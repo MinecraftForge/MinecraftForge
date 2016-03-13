@@ -557,7 +557,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             throw new IllegalArgumentException("The object to be added to the registry is not of the right type. Reflection/ASM hackery? Registry bug?");
         }
 
-        underlyingIntegerMap.func_186814_a(thing, id); // obj <-> id
+        underlyingIntegerMap.put(thing, id); // obj <-> id
         super.putObject(name, thing); // name <-> obj
         availabilityMap.set(id);
         if (addCallback != null)
@@ -759,7 +759,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
         for (I i : this.underlyingIntegerMap)
         {
-            addCallback.onAdd(i, this.underlyingIntegerMap.func_186808_c(i));
+            addCallback.onAdd(i, this.underlyingIntegerMap.add(i));
         }
     }
 

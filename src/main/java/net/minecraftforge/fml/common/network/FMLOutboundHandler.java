@@ -128,7 +128,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
-                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_184103_al().getPlayerList())
+                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
                 {
                     NetworkDispatcher dispatcher = player.playerNetServerHandler.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                     if (dispatcher != null) builder.add(dispatcher);
@@ -156,7 +156,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             {
                 int dimension = (Integer)args;
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
-                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_184103_al().getPlayerList())
+                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
                 {
                     if (dimension == player.dimension)
                     {
@@ -190,7 +190,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             {
                 TargetPoint tp = (TargetPoint)args;
                 ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.<NetworkDispatcher>builder();
-                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().func_184103_al().getPlayerList())
+                for (EntityPlayerMP player : (List<EntityPlayerMP>)FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerList())
                 {
                     if (player.dimension == tp.dimension)
                     {

@@ -546,7 +546,7 @@ public class ModelLoader extends ModelBakery
                 newTransforms.add(animation.getPartTransform(state, part, i));
             }
 
-            ItemCameraTransforms transforms = model.func_181682_g();
+            ItemCameraTransforms transforms = model.getAllTransforms();
             Map<TransformType, TRSRTransformation> tMap = Maps.newHashMap();
             tMap.putAll(IPerspectiveAwareModel.MapWrapper.getTransforms(transforms));
             tMap.putAll(IPerspectiveAwareModel.MapWrapper.getTransforms(state));
@@ -556,14 +556,14 @@ public class ModelLoader extends ModelBakery
             {
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
-            if(isCustomRenderer(model)) return new BuiltInModel(transforms, model.func_187967_g());
+            if(isCustomRenderer(model)) return new BuiltInModel(transforms, model.createOverrides());
             return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
         }
 
         private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
-            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.func_187967_g())).setTexture(particle);
+            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.createOverrides())).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
                 BlockPart part = model.getElements().get(i);
@@ -593,7 +593,7 @@ public class ModelLoader extends ModelBakery
             return new IPerspectiveAwareModel.MapWrapper(builder.makeBakedModel(), perState)
             {
                 @Override
-                public List<BakedQuad> func_188616_a(IBlockState state, EnumFacing side, long rand)
+                public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
                 {
                     if(state instanceof IExtendedBlockState)
                     {
@@ -604,11 +604,11 @@ public class ModelLoader extends ModelBakery
                             IExtendedBlockState newExState = exState.withProperty(Properties.AnimationProperty, null);
                             if(newState != null)
                             {
-                                return VanillaModelWrapper.this.bake(new ModelStateComposition(modelState, newState), format, bakedTextureGetter).func_188616_a(newExState, side, rand);
+                                return VanillaModelWrapper.this.bake(new ModelStateComposition(modelState, newState), format, bakedTextureGetter).getQuads(newExState, side, rand);
                             }
                         }
                     }
-                    return super.func_188616_a(state, side, rand);
+                    return super.getQuads(state, side, rand);
                 };
             };
         }
@@ -627,7 +627,7 @@ public class ModelLoader extends ModelBakery
 
             ModelBlock newModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
-                model.func_181682_g(), Lists.newArrayList(model.func_187966_f()));
+                model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.name = this.model.name;
             newModel.parent = this.model.parent;
 
@@ -696,7 +696,7 @@ public class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.func_181682_g(), Lists.newArrayList(model.func_187966_f()));
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.parent = model.parent;
             newModel.name = model.name;
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
@@ -709,7 +709,7 @@ public class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.func_181682_g(), Lists.newArrayList(model.func_187966_f()));
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.parent = model.parent;
             newModel.name = model.name;
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
@@ -735,11 +735,11 @@ public class ModelLoader extends ModelBakery
 
         public WeightedRandomModel(ModelResourceLocation parent, VariantList variants)
         {
-            this.variants = variants.func_188114_a();
+            this.variants = variants.getVariantList();
             ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
             for (Variant v : this.variants)
             {
-                ResourceLocation loc = v.func_188046_a();
+                ResourceLocation loc = v.getModelLocation();
                 locations.add(loc);
 
                 IModel model = null;
@@ -813,7 +813,7 @@ public class ModelLoader extends ModelBakery
             {
                 IModel model = models.get(i);
                 Variant v =  variants.get(i);
-                builder.add(model.bake(MultiModelState.getPartState(state, model, i), format, bakedTextureGetter), variants.get(i).func_188047_d());
+                builder.add(model.bake(MultiModelState.getPartState(state, model, i), format, bakedTextureGetter), variants.get(i).getWeight());
             }
             return builder.build();
         }

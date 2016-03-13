@@ -366,7 +366,7 @@ public class ForgeEventFactory
         {
             for (EntityItem item : capturedDrops)
             {
-                player.func_184816_a(item);
+                player.dropItemAndGetStack(item);
             }
         }
     }

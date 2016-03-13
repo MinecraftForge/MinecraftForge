@@ -1325,7 +1325,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
         // FIXME: merge with getQuads
         @Override
-        public List<BakedQuad> func_188616_a(IBlockState blockState, EnumFacing side, long rand)
+        public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand)
         {
             if(side != null) return ImmutableList.of();
             if (quads == null)
@@ -1475,7 +1475,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
 
         @Override
-        public boolean func_188618_c()
+        public boolean isBuiltInRenderer()
         {
             return false;
         }
@@ -1588,9 +1588,9 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
 
         @Override
-        public ItemOverrideList func_188617_f()
+        public ItemOverrideList getOverrides()
         {
-            return ItemOverrideList.field_188022_a;
+            return ItemOverrideList.NONE;
         }
     }
 

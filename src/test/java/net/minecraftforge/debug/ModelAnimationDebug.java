@@ -105,7 +105,7 @@ public class ModelAnimationDebug
                 @Override
                 public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
                 {
-                    return this.getDefaultState().withProperty(FACING, BlockPistonBase.func_185647_a(pos, placer));
+                    return this.getDefaultState().withProperty(FACING, BlockPistonBase.getFacingFromEntity(pos, placer));
                 }
 
                 @Override
@@ -223,7 +223,7 @@ public class ModelAnimationDebug
                                 "base", Pair.<IModel, IModelState>of(base, TRSRTransformation.identity())
                             )
                         );
-                        return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo(Minecraft.getMinecraft().func_184125_al()))
+                        return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
                             {
                                 @Override
                                 public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
@@ -379,7 +379,7 @@ public class ModelAnimationDebug
         protected void applyEntityAttributes()
         {
             super.applyEntityAttributes();
-            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60);
+            this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60);
         }
     }
 }

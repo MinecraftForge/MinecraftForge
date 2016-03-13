@@ -289,7 +289,7 @@ public class BlockFluidClassic extends BlockFluidBase
             return displacements.get(state.getBlock());
         }
 
-        Material material = state.func_185904_a();
+        Material material = state.getMaterial();
         if (material.blocksMovement()  ||
             material == Material.water ||
             material == Material.lava  ||

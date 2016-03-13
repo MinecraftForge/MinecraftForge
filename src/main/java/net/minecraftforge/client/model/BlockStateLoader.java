@@ -167,7 +167,7 @@ public class BlockStateLoader
 
             if (hasBase)
             {
-                base = runModelHooks(base, smooth, gui3d, this.func_188049_c(), textures, customData);
+                base = runModelHooks(base, smooth, gui3d, this.isUvLock(), textures, customData);
 
                 if (size <= 0)
                     return base;
@@ -198,7 +198,7 @@ public class BlockStateLoader
                 models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.uvLock, part.getTextures(), part.getCustomData()), partState));
             }
 
-            return new MultiModel(func_188046_a(), hasBase ? base : null, baseTr, models.build());
+            return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());
         }
 
         @Override

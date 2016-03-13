@@ -139,7 +139,7 @@ public class ForgeHooks
     {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
-        if (state.func_185904_a().isToolNotRequired())
+        if (state.getMaterial().isToolNotRequired())
         {
             return true;
         }
@@ -148,13 +148,13 @@ public class ForgeHooks
         String tool = block.getHarvestTool(state);
         if (stack == null || tool == null)
         {
-            return player.func_184823_b(state);
+            return player.canHarvestBlock(state);
         }
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool);
         if (toolLevel < 0)
         {
-            return player.func_184823_b(state);
+            return player.canHarvestBlock(state);
         }
 
         return toolLevel >= block.getHarvestLevel(state);
@@ -171,7 +171,7 @@ public class ForgeHooks
 
     public static float blockStrength(IBlockState state, EntityPlayer player, World world, BlockPos pos)
     {
-        float hardness = state.func_185887_b(world, pos);
+        float hardness = state.getBlockHardness(world, pos);
         if (hardness < 0.0F)
         {
             return 0.0F;
@@ -276,7 +276,7 @@ public class ForgeHooks
                 IBlockState iblockstate = this.theWorld.getBlockState(blockpos);
                 Block block = iblockstate.getBlock();
 
-                if (iblockstate.func_185904_a() == Material.air)
+                if (iblockstate.getMaterial() == Material.air)
                 {
                     return;
                 }
@@ -428,22 +428,22 @@ public class ForgeHooks
 
         if (te != null)
         {
-            Minecraft.getMinecraft().func_184119_a(result, te);
+            Minecraft.getMinecraft().storeTEInStack(result, te);
         }
 
         if (isCreative)
         {
             player.inventory.func_184434_a(result);
-            Minecraft.getMinecraft().playerController.sendSlotPacket(player.func_184586_b(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
+            Minecraft.getMinecraft().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
-        int slot = player.inventory.func_184429_b(result);
+        int slot = player.inventory.getSlotFor(result);
         if (slot != -1)
         {
-            if (InventoryPlayer.func_184435_e(slot))
+            if (InventoryPlayer.isHotbar(slot))
                 player.inventory.currentItem = slot;
             else
-                Minecraft.getMinecraft().playerController.func_187100_a(slot);
+                Minecraft.getMinecraft().playerController.pickItem(slot);
             return true;
         }
         return false;
@@ -656,7 +656,7 @@ public class ForgeHooks
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
-        if (gameType.isCreative() && entityPlayer.func_184614_ca() != null && entityPlayer.func_184614_ca().getItem() instanceof ItemSword)
+        if (gameType.isCreative() && entityPlayer.getHeldItemMainhand() != null && entityPlayer.getHeldItemMainhand().getItem() instanceof ItemSword)
             preCancelEvent = true;
 
         if (gameType.isAdventure())
@@ -666,7 +666,7 @@ public class ForgeHooks
 
             if (!entityPlayer.isAllowEdit())
             {
-                ItemStack itemstack = entityPlayer.func_184614_ca();
+                ItemStack itemstack = entityPlayer.getHeldItemMainhand();
                 if (itemstack == null || !itemstack.canDestroy(world.getBlockState(pos).getBlock()))
                     preCancelEvent = true;
             }
@@ -789,7 +789,7 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.pos, null, oldBlock, newBlock, updateFlag);
                 }
-                player.triggerAchievement(StatList.func_188060_a(itemstack.getItem()));
+                player.addStat(StatList.func_188060_a(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
@@ -904,7 +904,7 @@ public class ForgeHooks
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {
         if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
-        ItemStack stack = player.func_184614_ca();
+        ItemStack stack = player.getHeldItemMainhand();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
     }
