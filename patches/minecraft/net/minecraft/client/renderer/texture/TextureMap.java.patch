@@ -28,16 +28,14 @@
 +        this(basePathIn, null, skipFirst);
 +    }
 +
-+    public TextureMap(String basePathIn, IIconCreator iconCreatorIn, boolean skipFirst)
++    public TextureMap(String p_i46100_1_, IIconCreator p_i46100_2_, boolean skipFirst)
 +    {
          this.field_94258_i = Lists.<TextureAtlasSprite>newArrayList();
          this.field_110574_e = Maps.<String, TextureAtlasSprite>newHashMap();
          this.field_94252_e = Maps.<String, TextureAtlasSprite>newHashMap();
          this.field_94249_f = new TextureAtlasSprite("missingno");
--        this.field_94254_c = p_i46100_1_;
--        this.field_174946_m = p_i46100_2_;
-+        this.field_94254_c = basePathIn;
-+        this.field_174946_m = iconCreatorIn;
+         this.field_94254_c = p_i46100_1_;
+         this.field_174946_m = p_i46100_2_;
 +        this.skipFirst = skipFirst && ENABLE_SKIP;
      }
  

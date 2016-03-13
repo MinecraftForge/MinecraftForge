@@ -4,7 +4,7 @@ net/minecraft/client/renderer/RenderGlobal.drawBlockDamageTexture(Lnet/minecraft
 net/minecraft/client/renderer/entity/RenderItem.renderDroppedItem(Lnet/minecraft/entity/item/EntityItem;Lnet/minecraft/util/IIcon;IFFFFI)V=|p_77020_1_,p_77020_2_,p_77020_3_,p_77020_4_,p_77020_5_,p_77020_6_,p_77020_7_,pass
 net/minecraft/client/renderer/entity/RenderItem.renderItemIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IIZ)V=|p_77015_1_,p_77015_2_,p_77015_3_,p_77015_4_,p_77015_5_,renderEffect
 net/minecraft/server/management/PlayerList.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_187242_1_,p_187242_2_,teleporter
-net/minecraft/server/management/ServerConfigurationManager.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
+net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 net/minecraft/world/World.getBiomeGenForCoordsBody(II)Lnet/minecraft/world/biome/BiomeGenBase;=|p_72807_1_,p_72807_2_
 net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
 net/minecraft/world/World.getSunBrightnessBody(F)F=|p_72971_1_
@@ -38,7 +38,7 @@ net/minecraft/client/renderer/block/model/FaceBakery.rotateVertex(Lorg/lwjgl/uti
 
 net/minecraft/item/ItemBlock.setTileEntityNBT(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)Z=|p_179224_0_,p_179224_1_,p_179224_2_,player
 
-net/minecraft/server/management/ServerConfigurationManager.initializeConnectionToPlayer(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/network/NetHandlerPlayServer;)V=|p_72355_1_,p_72355_2_,nethandlerplayserver
+net/minecraft/server/management/PlayerList.initializeConnectionToPlayer(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/network/NetHandlerPlayServer;)V=|p_72355_1_,p_72355_2_,nethandlerplayserver
 net/minecraft/item/ItemMonsterPlacer.spawnCreature(Lnet/minecraft/world/World;Ljava/lang/String;DDD)Lnet/minecraft/entity/Entity;=|p_77840_0_,name,p_77840_2_,p_77840_4_,p_77840_6_
 
 net/minecraft/stats/StatList.mergeStatBases([Lnet/minecraft/stats/StatBase;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Z)V=|p_151180_0_,p_151180_1_,p_151180_2_,useItemIds

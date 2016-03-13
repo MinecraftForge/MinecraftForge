@@ -1,147 +1,46 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerList.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerList.java
-@@ -101,65 +101,76 @@
+@@ -101,7 +101,7 @@
          this.field_72405_c = 8;
      }
  
 -    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_)
-+    public void initializeConnectionToPlayer(NetworkManager netManager, EntityPlayerMP playerIn, NetHandlerPlayServer nethandlerplayserver)
++    public void initializeConnectionToPlayer(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_, NetHandlerPlayServer nethandlerplayserver)
      {
--        GameProfile gameprofile = p_72355_2_.func_146103_bH();
-+        GameProfile gameprofile = playerIn.func_146103_bH();
+         GameProfile gameprofile = p_72355_2_.func_146103_bH();
          PlayerProfileCache playerprofilecache = this.field_72400_f.func_152358_ax();
-         GameProfile gameprofile1 = playerprofilecache.func_152652_a(gameprofile.getId());
-         String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
+@@ -110,6 +110,17 @@
          playerprofilecache.func_152649_a(gameprofile);
--        NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
--        p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
--        p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
-+        NBTTagCompound nbttagcompound = this.func_72380_a(playerIn);
-+        playerIn.func_70029_a(this.field_72400_f.func_71218_a(playerIn.field_71093_bK));
+         NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
+         p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
 +
-+        World playerWorld = this.field_72400_f.func_71218_a(playerIn.field_71093_bK);
++        World playerWorld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
 +        if (playerWorld == null)
 +        {
-+            playerIn.field_71093_bK = 0;
++            p_72355_2_.field_71093_bK = 0;
 +            playerWorld = this.field_72400_f.func_71218_a(0);
 +            BlockPos spawnPoint = playerWorld.field_73011_w.getRandomizedSpawnPoint();
-+            playerIn.func_70107_b(spawnPoint.func_177958_n(), spawnPoint.func_177956_o(), spawnPoint.func_177952_p());
++            p_72355_2_.func_70107_b(spawnPoint.func_177958_n(), spawnPoint.func_177956_o(), spawnPoint.func_177952_p());
 +        }
 +
-+        playerIn.func_70029_a(playerWorld);
-+        playerIn.field_71134_c.func_73080_a((WorldServer)playerIn.field_70170_p);
++        p_72355_2_.func_70029_a(playerWorld);
+         p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
          String s1 = "local";
  
--        if (p_72355_1_.func_74430_c() != null)
-+        if (netManager.func_74430_c() != null)
-         {
--            s1 = p_72355_1_.func_74430_c().toString();
-+            s1 = netManager.func_74430_c().toString();
-         }
- 
--        field_148546_d.info(p_72355_2_.func_70005_c_() + "[" + s1 + "] logged in with entity id " + p_72355_2_.func_145782_y() + " at (" + p_72355_2_.field_70165_t + ", " + p_72355_2_.field_70163_u + ", " + p_72355_2_.field_70161_v + ")");
--        WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
-+        field_148546_d.info(playerIn.func_70005_c_() + "[" + s1 + "] logged in with entity id " + playerIn.func_145782_y() + " at (" + playerIn.field_70165_t + ", " + playerIn.field_70163_u + ", " + playerIn.field_70161_v + ")");
-+        WorldServer worldserver = this.field_72400_f.func_71218_a(playerIn.field_71093_bK);
+@@ -123,7 +134,7 @@
          WorldInfo worldinfo = worldserver.func_72912_H();
          BlockPos blockpos = worldserver.func_175694_M();
--        this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
 -        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
--        nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
-+        this.func_72381_a(playerIn, (EntityPlayerMP)null, worldserver);
-+        playerIn.field_71135_a = nethandlerplayserver;
-+        nethandlerplayserver.func_147359_a(new SPacketJoinGame(playerIn.func_145782_y(), playerIn.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
++        p_72355_2_.field_71135_a = nethandlerplayserver;
+         nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
          nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
          nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
-         nethandlerplayserver.func_147359_a(new SPacketSpawnPosition(blockpos));
--        nethandlerplayserver.func_147359_a(new SPacketPlayerAbilities(p_72355_2_.field_71075_bZ));
--        nethandlerplayserver.func_147359_a(new SPacketHeldItemChange(p_72355_2_.field_71071_by.field_70461_c));
--        this.func_187243_f(p_72355_2_);
--        p_72355_2_.func_147099_x().func_150877_d();
--        p_72355_2_.func_147099_x().func_150884_b(p_72355_2_);
--        this.func_96456_a((ServerScoreboard)worldserver.func_96441_U(), p_72355_2_);
-+        nethandlerplayserver.func_147359_a(new SPacketPlayerAbilities(playerIn.field_71075_bZ));
-+        nethandlerplayserver.func_147359_a(new SPacketHeldItemChange(playerIn.field_71071_by.field_70461_c));
-+        this.func_187243_f(playerIn);
-+        playerIn.func_147099_x().func_150877_d();
-+        playerIn.func_147099_x().func_150884_b(playerIn);
-+        this.func_96456_a((ServerScoreboard)worldserver.func_96441_U(), playerIn);
-         this.field_72400_f.func_147132_au();
-         TextComponentTranslation textcomponenttranslation;
- 
--        if (!p_72355_2_.func_70005_c_().equalsIgnoreCase(s))
-+        if (!playerIn.func_70005_c_().equalsIgnoreCase(s))
-         {
--            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined.renamed", new Object[] {p_72355_2_.func_145748_c_(), s});
-+            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined.renamed", new Object[] {playerIn.func_145748_c_(), s});
-         }
-         else
-         {
--            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined", new Object[] {p_72355_2_.func_145748_c_()});
-+            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined", new Object[] {playerIn.func_145748_c_()});
+@@ -213,6 +224,7 @@
          }
  
-         textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.YELLOW);
-         this.func_148539_a(textcomponenttranslation);
--        this.func_72377_c(p_72355_2_);
--        nethandlerplayserver.func_147364_a(p_72355_2_.field_70165_t, p_72355_2_.field_70163_u, p_72355_2_.field_70161_v, p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
--        this.func_72354_b(p_72355_2_, worldserver);
-+        this.func_72377_c(playerIn);
-+        nethandlerplayserver.func_147364_a(playerIn.field_70165_t, playerIn.field_70163_u, playerIn.field_70161_v, playerIn.field_70177_z, playerIn.field_70125_A);
-+        this.func_72354_b(playerIn, worldserver);
- 
-         if (!this.field_72400_f.func_147133_T().isEmpty())
-         {
--            p_72355_2_.func_175397_a(this.field_72400_f.func_147133_T(), this.field_72400_f.func_175581_ab());
-+            playerIn.func_175397_a(this.field_72400_f.func_147133_T(), this.field_72400_f.func_175581_ab());
-         }
- 
--        for (PotionEffect potioneffect : p_72355_2_.func_70651_bq())
-+        for (PotionEffect potioneffect : playerIn.func_70651_bq())
-         {
--            nethandlerplayserver.func_147359_a(new SPacketEntityEffect(p_72355_2_.func_145782_y(), potioneffect));
-+            nethandlerplayserver.func_147359_a(new SPacketEntityEffect(playerIn.func_145782_y(), potioneffect));
-         }
- 
-         if (nbttagcompound != null)
-@@ -175,7 +186,7 @@
- 
-                     if (entity2.func_110124_au().equals(uuid))
-                     {
--                        p_72355_2_.func_184205_a(entity2, true);
-+                        playerIn.func_184205_a(entity2, true);
-                     }
-                     else
-                     {
-@@ -183,13 +194,13 @@
-                         {
-                             if (entity.func_110124_au().equals(uuid))
-                             {
--                                p_72355_2_.func_184205_a(entity, true);
-+                                playerIn.func_184205_a(entity, true);
-                                 break;
-                             }
-                         }
-                     }
- 
--                    if (!p_72355_2_.func_184218_aH())
-+                    if (!playerIn.func_184218_aH())
-                     {
-                         field_148546_d.warn("Couldn\'t reattach entity to player");
-                         worldserver.func_72973_f(entity2);
-@@ -207,12 +218,13 @@
- 
-                 if (entity1 != null)
-                 {
--                    p_72355_2_.func_184205_a(entity1, true);
-+                    playerIn.func_184205_a(entity1, true);
-                 }
-             }
-         }
- 
--        p_72355_2_.func_71116_b();
-+        playerIn.func_71116_b();
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(playerIn);
+         p_72355_2_.func_71116_b();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(p_72355_2_);
      }
  
      protected void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_)
@@ -246,53 +145,34 @@
          return entityplayermp;
      }
  
-@@ -545,102 +589,118 @@
+@@ -545,15 +589,20 @@
  
      public void func_187242_a(EntityPlayerMP p_187242_1_, int p_187242_2_)
      {
--        int i = p_187242_1_.field_71093_bK;
--        WorldServer worldserver = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
--        p_187242_1_.field_71093_bK = p_187242_2_;
--        WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
--        p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
--        this.func_187243_f(p_187242_1_);
--        worldserver.func_72973_f(p_187242_1_);
--        p_187242_1_.field_70128_L = false;
--        this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
--        this.func_72375_a(p_187242_1_, worldserver);
--        p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
--        p_187242_1_.field_71134_c.func_73080_a(worldserver1);
--        p_187242_1_.field_71135_a.func_147359_a(new SPacketPlayerAbilities(p_187242_1_.field_71075_bZ));
--        this.func_72354_b(p_187242_1_, worldserver1);
--        this.func_72385_f(p_187242_1_);
 +        transferPlayerToDimension(p_187242_1_, p_187242_2_, field_72400_f.func_71218_a(p_187242_2_).func_85176_s());
 +    }
- 
--        for (PotionEffect potioneffect : p_187242_1_.func_70651_bq())
-+    public void transferPlayerToDimension(EntityPlayerMP player, int dimensionIn, net.minecraft.world.Teleporter teleporter)
-+    {
-+        int i = player.field_71093_bK;
-+        WorldServer worldserver = this.field_72400_f.func_71218_a(player.field_71093_bK);
-+        player.field_71093_bK = dimensionIn;
-+        WorldServer worldserver1 = this.field_72400_f.func_71218_a(player.field_71093_bK);
-+        player.field_71135_a.func_147359_a(new SPacketRespawn(player.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), player.field_71134_c.func_73081_b()));
-+        this.func_187243_f(player);
-+        worldserver.func_72973_f(player);
-+        player.field_70128_L = false;
-+        this.transferEntityToWorld(player, i, worldserver, worldserver1, teleporter);
-+        this.func_72375_a(player, worldserver);
-+        player.field_71135_a.func_147364_a(player.field_70165_t, player.field_70163_u, player.field_70161_v, player.field_70177_z, player.field_70125_A);
-+        player.field_71134_c.func_73080_a(worldserver1);
-+        player.field_71135_a.func_147359_a(new SPacketPlayerAbilities(player.field_71075_bZ));
-+        this.func_72354_b(player, worldserver1);
-+        this.func_72385_f(player);
 +
-+        for (PotionEffect potioneffect : player.func_70651_bq())
++    public void transferPlayerToDimension(EntityPlayerMP p_187242_1_, int p_187242_2_, net.minecraft.world.Teleporter teleporter)
++    {
+         int i = p_187242_1_.field_71093_bK;
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
+         p_187242_1_.field_71093_bK = p_187242_2_;
+         WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
+-        p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
++        p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
+         this.func_187243_f(p_187242_1_);
+         worldserver.func_72973_f(p_187242_1_);
+         p_187242_1_.field_70128_L = false;
+-        this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
++        this.transferEntityToWorld(p_187242_1_, i, worldserver, worldserver1, teleporter);
+         this.func_72375_a(p_187242_1_, worldserver);
+         p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
+         p_187242_1_.field_71134_c.func_73080_a(worldserver1);
+@@ -565,17 +614,27 @@
          {
--            p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
-+            player.field_71135_a.func_147359_a(new SPacketEntityEffect(player.func_145782_y(), potioneffect));
+             p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
          }
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, i, dimensionIn);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(p_187242_1_, i, p_187242_2_);
      }
  
      public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)
@@ -303,116 +183,47 @@
 +    }
 +
 +    @SuppressWarnings("unused")
-+    public void transferEntityToWorld(Entity entityIn, int lastDimension, WorldServer oldWorldIn, WorldServer toWorldIn, net.minecraft.world.Teleporter teleporter)
++    public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraft.world.Teleporter teleporter)
 +    {
-+        net.minecraft.world.WorldProvider pOld = oldWorldIn.field_73011_w;
-+        net.minecraft.world.WorldProvider pNew = toWorldIn.field_73011_w;
++        net.minecraft.world.WorldProvider pOld = p_82448_3_.field_73011_w;
++        net.minecraft.world.WorldProvider pNew = p_82448_4_.field_73011_w;
 +        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
-+        double d0 = entityIn.field_70165_t * moveFactor;
-+        double d1 = entityIn.field_70161_v * moveFactor;
++        double d0 = p_82448_1_.field_70165_t * moveFactor;
++        double d1 = p_82448_1_.field_70161_v * moveFactor;
          double d2 = 8.0D;
--        float f = p_82448_1_.field_70177_z;
--        p_82448_3_.field_72984_F.func_76320_a("moving");
-+        float f = entityIn.field_70177_z;
-+        oldWorldIn.field_72984_F.func_76320_a("moving");
+         float f = p_82448_1_.field_70177_z;
+         p_82448_3_.field_72984_F.func_76320_a("moving");
  
 -        if (p_82448_1_.field_71093_bK == -1)
-+        if (false && entityIn.field_71093_bK == -1)
++        if (false && p_82448_1_.field_71093_bK == -1)
          {
--            d0 = MathHelper.func_151237_a(d0 / d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
--            d1 = MathHelper.func_151237_a(d1 / d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
--            p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
-+            d0 = MathHelper.func_151237_a(d0 / d2, toWorldIn.func_175723_af().func_177726_b() + 16.0D, toWorldIn.func_175723_af().func_177728_d() - 16.0D);
-+            d1 = MathHelper.func_151237_a(d1 / d2, toWorldIn.func_175723_af().func_177736_c() + 16.0D, toWorldIn.func_175723_af().func_177733_e() - 16.0D);
-+            entityIn.func_70012_b(d0, entityIn.field_70163_u, d1, entityIn.field_70177_z, entityIn.field_70125_A);
- 
--            if (p_82448_1_.func_70089_S())
-+            if (entityIn.func_70089_S())
-             {
--                p_82448_3_.func_72866_a(p_82448_1_, false);
-+                oldWorldIn.func_72866_a(entityIn, false);
+             d0 = MathHelper.func_151237_a(d0 / d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
+             d1 = MathHelper.func_151237_a(d1 / d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+@@ -586,7 +645,7 @@
+                 p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
 -        else if (p_82448_1_.field_71093_bK == 0)
-+        else if (false && entityIn.field_71093_bK == 0)
++        else if (false && p_82448_1_.field_71093_bK == 0)
          {
--            d0 = MathHelper.func_151237_a(d0 * d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
--            d1 = MathHelper.func_151237_a(d1 * d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
--            p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
-+            d0 = MathHelper.func_151237_a(d0 * d2, toWorldIn.func_175723_af().func_177726_b() + 16.0D, toWorldIn.func_175723_af().func_177728_d() - 16.0D);
-+            d1 = MathHelper.func_151237_a(d1 * d2, toWorldIn.func_175723_af().func_177736_c() + 16.0D, toWorldIn.func_175723_af().func_177733_e() - 16.0D);
-+            entityIn.func_70012_b(d0, entityIn.field_70163_u, d1, entityIn.field_70177_z, entityIn.field_70125_A);
- 
--            if (p_82448_1_.func_70089_S())
-+            if (entityIn.func_70089_S())
-             {
--                p_82448_3_.func_72866_a(p_82448_1_, false);
-+                oldWorldIn.func_72866_a(entityIn, false);
+             d0 = MathHelper.func_151237_a(d0 * d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
+             d1 = MathHelper.func_151237_a(d1 * d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+@@ -597,7 +656,8 @@
+                 p_82448_3_.func_72866_a(p_82448_1_, false);
              }
          }
 -        else
 +
-+        if (entityIn.field_71093_bK == 1)
++        if (p_82448_1_.field_71093_bK == 1)
          {
              BlockPos blockpos;
  
--            if (p_82448_2_ == 1)
-+            if (lastDimension == 1)
+@@ -632,7 +692,7 @@
+             if (p_82448_1_.func_70089_S())
              {
--                blockpos = p_82448_4_.func_175694_M();
-+                blockpos = toWorldIn.func_175694_M();
-             }
-             else
-             {
--                blockpos = p_82448_4_.func_180504_m();
-+                blockpos = toWorldIn.func_180504_m();
-             }
- 
-             d0 = (double)blockpos.func_177958_n();
--            p_82448_1_.field_70163_u = (double)blockpos.func_177956_o();
-+            entityIn.field_70163_u = (double)blockpos.func_177956_o();
-             d1 = (double)blockpos.func_177952_p();
--            p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, 90.0F, 0.0F);
-+            entityIn.func_70012_b(d0, entityIn.field_70163_u, d1, 90.0F, 0.0F);
- 
--            if (p_82448_1_.func_70089_S())
-+            if (entityIn.func_70089_S())
-             {
--                p_82448_3_.func_72866_a(p_82448_1_, false);
-+                oldWorldIn.func_72866_a(entityIn, false);
-             }
-         }
- 
--        p_82448_3_.field_72984_F.func_76319_b();
-+        oldWorldIn.field_72984_F.func_76319_b();
- 
--        if (p_82448_2_ != 1)
-+        if (lastDimension != 1)
-         {
--            p_82448_3_.field_72984_F.func_76320_a("placing");
-+            oldWorldIn.field_72984_F.func_76320_a("placing");
-             d0 = (double)MathHelper.func_76125_a((int)d0, -29999872, 29999872);
-             d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
- 
--            if (p_82448_1_.func_70089_S())
-+            if (entityIn.func_70089_S())
-             {
--                p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
+                 p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
 -                p_82448_4_.func_85176_s().func_180266_a(p_82448_1_, f);
--                p_82448_4_.func_72838_d(p_82448_1_);
--                p_82448_4_.func_72866_a(p_82448_1_, false);
-+                entityIn.func_70012_b(d0, entityIn.field_70163_u, d1, entityIn.field_70177_z, entityIn.field_70125_A);
-+                teleporter.func_180266_a(entityIn, f);
-+                toWorldIn.func_72838_d(entityIn);
-+                toWorldIn.func_72866_a(entityIn, false);
++                teleporter.func_180266_a(p_82448_1_, f);
+                 p_82448_4_.func_72838_d(p_82448_1_);
+                 p_82448_4_.func_72866_a(p_82448_1_, false);
              }
- 
--            p_82448_3_.field_72984_F.func_76319_b();
-+            oldWorldIn.field_72984_F.func_76319_b();
-         }
- 
--        p_82448_1_.func_70029_a(p_82448_4_);
-+        entityIn.func_70029_a(toWorldIn);
-     }
- 
-     public void func_72374_b()

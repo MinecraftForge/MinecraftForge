@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
-@@ -6,21 +6,31 @@
+@@ -6,15 +6,25 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
  @SideOnly(Side.CLIENT)
@@ -18,25 +18,15 @@
 +    @Deprecated
      public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_)
      {
--        this.field_178215_a = p_i46574_1_;
--        this.field_178213_b = p_i46574_2_;
--        this.field_178214_c = p_i46574_3_;
--        this.field_187509_d = p_i46574_4_;
 +        this(p_i46574_1_, p_i46574_2_, p_i46574_3_, p_i46574_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
-     }
- 
-+    public BakedQuad(int[] vertexDataIn, int tintIndexIn, EnumFacing faceIn, TextureAtlasSprite spriteIn, net.minecraft.client.renderer.vertex.VertexFormat format)
-+    {
-+        this.format = format;
-+        this.field_178215_a = vertexDataIn;
-+        this.field_178213_b = tintIndexIn;
-+        this.field_178214_c = faceIn;
-+        this.field_187509_d = spriteIn;
 +    }
 +
-     public TextureAtlasSprite func_187508_a()
-     {
-         return this.field_187509_d;
++    public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_, net.minecraft.client.renderer.vertex.VertexFormat format)
++    {
++        this.format = format;
+         this.field_178215_a = p_i46574_1_;
+         this.field_178213_b = p_i46574_2_;
+         this.field_178214_c = p_i46574_3_;
 @@ -45,4 +55,17 @@
      {
          return this.field_178214_c;
