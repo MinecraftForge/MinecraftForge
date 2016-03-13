@@ -34,15 +34,22 @@ public class ItemLayerModel implements IRetexturableModel
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
 
     private final ImmutableList<ResourceLocation> textures;
+    private final ItemOverrideList overrides;
 
     public ItemLayerModel(ImmutableList<ResourceLocation> textures)
     {
+        this(textures, ItemOverrideList.NONE);
+    }
+
+    public ItemLayerModel(ImmutableList<ResourceLocation> textures, ItemOverrideList overrides)
+    {
         this.textures = textures;
+        this.overrides = overrides;
     }
 
     public ItemLayerModel(ModelBlock model)
     {
-        this(getTextures(model));
+        this(getTextures(model), model.createOverrides());
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
@@ -84,7 +91,7 @@ public class ItemLayerModel implements IRetexturableModel
                 builder.add(this.textures.get(i));
             }
         }
-        return new ItemLayerModel(builder.build());
+        return new ItemLayerModel(builder.build(), overrides);
     }
 
     public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -98,7 +105,7 @@ public class ItemLayerModel implements IRetexturableModel
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, map, null);
+        return new BakedItemModel(builder.build(), particle, map, overrides, null);
     }
 
     private static class BakedItemModel implements IPerspectiveAwareModel
@@ -108,12 +115,14 @@ public class ItemLayerModel implements IRetexturableModel
         private final ImmutableMap<TransformType, TRSRTransformation> transforms;
         private final IBakedModel otherModel;
         private final boolean isCulled;
+        private final ItemOverrideList overrides;
 
-        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, IBakedModel otherModel)
+        public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, IBakedModel otherModel)
         {
             this.quads = quads;
             this.particle = particle;
             this.transforms = transforms;
+            this.overrides = overrides;
             if(otherModel != null)
             {
                 this.otherModel = otherModel;
@@ -129,7 +138,7 @@ public class ItemLayerModel implements IRetexturableModel
                         builder.add(quad);
                     }
                 }
-                this.otherModel = new BakedItemModel(builder.build(), particle, transforms, this);
+                this.otherModel = new BakedItemModel(builder.build(), particle, transforms, overrides, this);
                 isCulled = false;
             }
         }
@@ -139,7 +148,7 @@ public class ItemLayerModel implements IRetexturableModel
         public boolean isBuiltInRenderer() { return false; }
         public TextureAtlasSprite getParticleTexture() { return particle; }
         public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
-        public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
+        public ItemOverrideList getOverrides() { return overrides; }
         public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
             if(side == null) return quads;

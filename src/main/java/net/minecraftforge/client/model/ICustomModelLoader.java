@@ -1,7 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.io.IOException;
-
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,5 +14,5 @@ public interface ICustomModelLoader extends IResourceManagerReloadListener
     /*
      * loads (or reloads) specified model
      */
-    public IModel loadModel(ResourceLocation modelLocation) throws IOException;
+    public IModel loadModel(ResourceLocation modelLocation);
 }

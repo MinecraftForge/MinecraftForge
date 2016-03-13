@@ -160,10 +160,10 @@ public class BlockStateLoader
          * Used to replace the base model with a retextured model containing submodels.
          */
         @Override
-        public IModel process(IModel base, ModelLoader loader)
+        public IModel process(IModel base)
         {
             int size = parts.size();
-            boolean hasBase = base != loader.getMissingModel();
+            boolean hasBase = base != ModelLoaderRegistry.getMissingModel();
 
             if (hasBase)
             {
@@ -182,16 +182,7 @@ public class BlockStateLoader
             {
                 SubModel part = entry.getValue();
 
-                IModel model = null;
-                try
-                {
-                    model = loader.getModel(part.getModelLocation());
-                }
-                catch (IOException e)
-                {
-                    FMLLog.warning("Unable to load block sub-model: \'" + part.getModelLocation() /*+ "\' for variant: \'" + parent*/ + "\': " + e.toString());
-                    model = loader.getMissingModel(); // Will make it look weird, but that is good.
-                }
+                IModel model = ModelLoaderRegistry.getModel(part.getModelLocation());
 
                 IModelState partState = new ModelStateComposition(baseTr, part.getState());
 

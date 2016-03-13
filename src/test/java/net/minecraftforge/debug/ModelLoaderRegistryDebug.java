@@ -255,15 +255,7 @@ public class ModelLoaderRegistryDebug
         {
             if (world.getTileEntity(pos) == null) world.setTileEntity(pos, new OBJTesseractTileEntity());
             OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
-            IModel model = ModelLoaderRegistry.getMissingModel();
-            try
-            {
-                model = ModelLoaderRegistry.getModel(new ResourceLocation(MODID.toLowerCase() + ":" + "block/tesseract.obj"));
-            }
-            catch (IOException e)
-            {
-                model = ModelLoaderRegistry.getMissingModel();
-            }
+            IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(MODID.toLowerCase() + ":" + "block/tesseract.obj"));
 
             if (player.isSneaking())
             {

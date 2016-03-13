@@ -1,8 +1,6 @@
 package net.minecraftforge.client.model;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,19 +9,27 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
+import net.minecraftforge.client.model.ModelLoader.VariantLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+
 /*
  * Central hub for custom model loaders.
  */
 public class ModelLoaderRegistry
 {
-    private static final Set<ICustomModelLoader> loaders = new HashSet<ICustomModelLoader>();
-    private static final Map<ResourceLocation, IModel> cache = new HashMap<ResourceLocation, IModel>();
+    private static final Set<ICustomModelLoader> loaders = Sets.newHashSet();
+    private static final Map<ResourceLocation, IModel> cache = Maps.newHashMap();
+    private static final Deque<ResourceLocation> loadingModels = Queues.newArrayDeque();
+    private static final Set<ResourceLocation> textures = Sets.newHashSet();
 
     // Forge built-in loaders
     static
@@ -53,6 +59,7 @@ public class ModelLoaderRegistry
 
     public static ResourceLocation getActualLocation(ResourceLocation location)
     {
+        if(location instanceof ModelResourceLocation) return location;
         if(location.getResourcePath().startsWith("builtin/")) return location;
         return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
     }
@@ -62,25 +69,20 @@ public class ModelLoaderRegistry
      * ResourceLocation argument will be passed directly to the custom model loaders,
      * ModelResourceLocation argument will be loaded through the blockstate system.
      */
-    public static IModel getModel(ResourceLocation location) throws IOException
+    public static IModel getModel(ResourceLocation location)
     {
         IModel model;
-        if(location instanceof ModelResourceLocation)
+        if(cache.containsKey(location)) return cache.get(location);
+        for(ResourceLocation loading : loadingModels)
         {
-            ModelLoader loader = ModelLoader.VanillaLoader.instance.getLoader();
-            if(loader != null)
+            if(location.getClass() == loading.getClass() && location.equals(loading))
             {
-                model = loader.getVariantModel((ModelResourceLocation)location);
-            }
-            else
-            {
-                FMLLog.log(Level.ERROR, "Loading model too early, skipping: %s", location);
-                model = getMissingModel();
+                throw new IllegalStateException("circular model dependencies, stack: [" + Joiner.on(", ").join(loadingModels) + "]");
             }
         }
-        else
+        loadingModels.addLast(location);
+        try
         {
-            if(cache.containsKey(location)) return cache.get(location);
             ResourceLocation actual = getActualLocation(location);
             ICustomModelLoader accepted = null;
             for(ICustomModelLoader loader : loaders)
@@ -103,10 +105,17 @@ public class ModelLoaderRegistry
                 }
             }
 
-            // no custom loaders found, try vanilla one
+            // no custom loaders found, try vanilla ones
             if(accepted == null)
             {
-                if(VanillaLoader.instance.accepts(actual)) accepted = VanillaLoader.instance;
+                if(VariantLoader.instance.accepts(actual))
+                {
+                     accepted = VariantLoader.instance;
+                }
+                else if(VanillaLoader.instance.accepts(actual))
+                {
+                    accepted = VanillaLoader.instance;
+                }
             }
 
             if(accepted == null)
@@ -120,18 +129,36 @@ public class ModelLoaderRegistry
                 {
                     model = accepted.loadModel(actual);
                 }
-                catch (IOException e)
-                {
-                    throw e;
-                }
                 catch(Exception e)
                 {
                     FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
                     model = getMissingModel();
                 }
+                if(model == getMissingModel())
+                {
+                    FMLLog.log(Level.ERROR, "Loader %s returned missing model while loading model %s", accepted, location);
+                }
+                if(model == null)
+                {
+                    FMLLog.log(Level.ERROR, "Loader %s returned null while loading model %s", accepted, location);
+                    model = getMissingModel();
+                }
+                textures.addAll(model.getTextures());
+            }
+        }
+        finally
+        {
+            ResourceLocation popLoc = loadingModels.removeLast();
+            if(popLoc != location)
+            {
+                throw new IllegalStateException("Corrupted loading model stack: " + popLoc + " != " + location);
             }
         }
         cache.put(location, model);
+        for (ResourceLocation dep : model.getDependencies())
+        {
+            getModel(dep);
+        }
         return model;
     }
 
@@ -147,5 +174,10 @@ public class ModelLoaderRegistry
         cache.put(new ResourceLocation("minecraft:builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
         cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
         cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
+    }
+
+    static Iterable<ResourceLocation> getTextures()
+    {
+        return textures;
     }
 }

@@ -1,6 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -212,7 +211,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation) throws IOException
+        public IModel loadModel(ResourceLocation modelLocation)
         {
             return MODEL;
         }

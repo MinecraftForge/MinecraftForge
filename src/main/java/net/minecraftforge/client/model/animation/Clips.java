@@ -62,23 +62,15 @@ public final class Clips
      */
     public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName)
     {
-        IModel model;
-        try
+        IModel model = ModelLoaderRegistry.getModel(modelLocation);
+        if(model instanceof IAnimatedModel)
         {
-            model = ModelLoaderRegistry.getModel(modelLocation);
-            if(model instanceof IAnimatedModel)
+            Optional<? extends IClip> clip = ((IAnimatedModel)model).getClip(clipName);
+            if(clip.isPresent())
             {
-                Optional<? extends IClip> clip = ((IAnimatedModel)model).getClip(clipName);
-                if(clip.isPresent())
-                {
-                    return new ModelClip(clip.get(), modelLocation, clipName);
-                }
-                FMLLog.getLogger().error("Unable to find clip " + clipName + " in the model " + modelLocation);
+                return new ModelClip(clip.get(), modelLocation, clipName);
             }
-        }
-        catch (IOException e)
-        {
-            FMLLog.getLogger().error("Unable to load model" + modelLocation + " while loading clip " + clipName, e);
+            FMLLog.getLogger().error("Unable to find clip " + clipName + " in the model " + modelLocation);
         }
         // FIXME: missing clip?
         return new ModelClip(IdentityClip.instance, modelLocation, clipName);

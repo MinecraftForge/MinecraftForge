@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
+@@ -109,7 +109,7 @@
+                     {
+                         Collection<ModelResourceLocation> collection = Sets.newHashSet(map.values());
+                         modelblockdefinition.func_188001_c().func_188138_a(block.func_176194_O());
+-                        this.field_188642_k.put(modelblockdefinition, Lists.newArrayList(Iterables.filter(collection, new Predicate<ModelResourceLocation>()
++                        registerMultipartVariant(modelblockdefinition, Lists.newArrayList(Iterables.filter(collection, new Predicate<ModelResourceLocation>()
+                         {
+                             public boolean apply(ModelResourceLocation p_apply_1_)
+                             {
 @@ -126,13 +126,13 @@
                          {
                              try
@@ -98,10 +107,15 @@
      private void func_177597_h()
      {
          this.func_177574_i();
-@@ -878,4 +893,18 @@
+@@ -878,4 +893,23 @@
          field_177606_o.field_178317_b = "generation marker";
          field_177616_r.field_178317_b = "block entity marker";
      }
++
++    protected void registerMultipartVariant(ModelBlockDefinition definition, Collection<ModelResourceLocation> locations)
++    {
++        this.field_188642_k.put(definition, locations);
++    }
 +
 +    private static Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, Set<String>> customVariantNames = Maps.newHashMap();
 +

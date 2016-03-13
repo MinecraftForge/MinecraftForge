@@ -194,54 +194,47 @@ public class ModelAnimationDebug
             {
                 public Render<EntityChest> createRenderFor(RenderManager manager)
                 {
-                    try
+                    /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
+                    if(model instanceof IRetexturableModel)
                     {
-                        /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
-                        if(model instanceof IRetexturableModel)
+                        model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
+                    }
+                    if(model instanceof IModelCustomData)
+                    {
+                        model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
+                    }*/
+                    IModel base = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine"));
+                    IModel ring = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine_ring"));
+                    ImmutableMap<String, String> textures = ImmutableMap.of(
+                        "base", "blocks/stone",
+                        "front", "blocks/log_oak",
+                        "chamber", "blocks/redstone_block",
+                        "trunk", "blocks/end_stone"
+                    );
+                    base = ModelProcessingHelper.retexture(base, textures);
+                    ring = ModelProcessingHelper.retexture(base, textures);
+                    IModel model = new MultiModel(
+                        new ResourceLocation(ModelAnimationDebug.MODID, "builtin/engine"),
+                        ring,
+                        TRSRTransformation.identity(),
+                        ImmutableMap.of(
+                            "base", Pair.<IModel, IModelState>of(base, TRSRTransformation.identity())
+                        )
+                    );
+                    return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
                         {
-                            model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
-                        }
-                        if(model instanceof IModelCustomData)
-                        {
-                            model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
-                        }*/
-                        IModel base = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine"));
-                        IModel ring = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine_ring"));
-                        ImmutableMap<String, String> textures = ImmutableMap.of(
-                            "base", "blocks/stone",
-                            "front", "blocks/log_oak",
-                            "chamber", "blocks/redstone_block",
-                            "trunk", "blocks/end_stone"
-                        );
-                        base = ModelProcessingHelper.retexture(base, textures);
-                        ring = ModelProcessingHelper.retexture(base, textures);
-                        IModel model = new MultiModel(
-                            new ResourceLocation(ModelAnimationDebug.MODID, "builtin/engine"),
-                            ring,
-                            TRSRTransformation.identity(),
-                            ImmutableMap.of(
-                                "base", Pair.<IModel, IModelState>of(base, TRSRTransformation.identity())
-                            )
-                        );
-                        return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
+                            @Override
+                            public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
                             {
-                                @Override
-                                public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
-                                {
-                                    chest.handleEvents(time, pastEvents);
-                                }
-                            }, 0.5f)
-                        {
-                            protected ResourceLocation getEntityTexture(EntityChest entity)
-                            {
-                                return TextureMap.locationBlocksTexture;
+                                chest.handleEvents(time, pastEvents);
                             }
-                        };
-                    }
-                    catch(IOException e)
+                        }, 0.5f)
                     {
-                        throw new RuntimeException(e);
-                    }
+                        protected ResourceLocation getEntityTexture(EntityChest entity)
+                        {
+                            return TextureMap.locationBlocksTexture;
+                        }
+                    };
                 }
             });
         }

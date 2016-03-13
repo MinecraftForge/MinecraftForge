@@ -48,6 +48,7 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -94,7 +95,7 @@ public class B3DLoader implements ICustomModelLoader
     }
 
     @SuppressWarnings("unchecked")
-    public IModel loadModel(ResourceLocation modelLocation) throws IOException
+    public IModel loadModel(ResourceLocation modelLocation)
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if(!cache.containsKey(file))
@@ -120,9 +121,8 @@ public class B3DLoader implements ICustomModelLoader
             }
             catch(IOException e)
             {
-                //FMLLog.log(Level.ERROR, e, "Exception loading model %s with B3D loader, skipping", modelLocation);
+                FMLLog.log(Level.ERROR, e, "Exception loading model %s with B3D loader, skipping", modelLocation);
                 cache.put(file, null);
-                throw e;
             }
         }
         B3DModel model = cache.get(file);

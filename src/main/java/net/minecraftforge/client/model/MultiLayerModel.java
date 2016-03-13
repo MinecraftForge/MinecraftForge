@@ -1,6 +1,5 @@
 package net.minecraftforge.client.model;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,7 +22,6 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -60,16 +58,7 @@ public class MultiLayerModel implements IModelCustomData
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
-            IModel model;
-            try
-            {
-                model = ModelLoaderRegistry.getModel(models.get(key));
-            }
-            catch (IOException e)
-            {
-                FMLLog.log(Level.ERROR, e, "Couldn't load MultiLayerModel dependency: %s", models.get(key));
-                model = ModelLoaderRegistry.getMissingModel();
-            }
+            IModel model = ModelLoaderRegistry.getModel(models.get(key));
             builder.put(key, model.bake(new ModelStateComposition(state, model.getDefaultState()), format, bakedTextureGetter));
         }
         return builder.build();

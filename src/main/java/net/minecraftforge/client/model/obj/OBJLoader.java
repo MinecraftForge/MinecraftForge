@@ -45,7 +45,7 @@ public class OBJLoader implements ICustomModelLoader {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
     }
 
-    public IModel loadModel(ResourceLocation modelLocation) throws IOException
+    public IModel loadModel(ResourceLocation modelLocation)
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
@@ -78,8 +78,7 @@ public class OBJLoader implements ICustomModelLoader {
             }
             catch (IOException e)
             {
-//                FMLLog.log(Level.ERROR, e, "Exception loading model '%s' with OBJ loader, skipping", modelLocation);
-                throw e;
+                cache.put(modelLocation, null);
             }
         }
         OBJModel model = cache.get(file);
