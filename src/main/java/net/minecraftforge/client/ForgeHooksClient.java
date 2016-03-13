@@ -395,13 +395,16 @@ public class ForgeHooksClient
         {
             Pair<? extends IBakedModel, Matrix4f> pair = ((IPerspectiveAwareModel)model).handlePerspective(cameraTransformType);
 
-            Matrix4f matrix = new Matrix4f(pair.getRight());
-            if(leftHandHackery)
+            if(pair.getRight() != null)
             {
-                matrix.mul(flipX, matrix);
-                matrix.mul(matrix, flipX);
+                Matrix4f matrix = new Matrix4f(pair.getRight());
+                if(leftHandHackery)
+                {
+                    matrix.mul(flipX, matrix);
+                    matrix.mul(matrix, flipX);
+                }
+                if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             }
-            if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
             return pair.getLeft();
         }
         else

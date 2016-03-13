@@ -169,8 +169,7 @@ public class MultiModel implements IModel
         @Override
         public ItemOverrideList getOverrides()
         {
-            // TODO Auto-generated method stub
-            return null;
+            return ItemOverrideList.NONE;
         }
     }
 

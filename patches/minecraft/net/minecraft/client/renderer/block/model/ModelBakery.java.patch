@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
-@@ -132,7 +132,7 @@
+@@ -126,13 +126,13 @@
+                         {
+                             try
+                             {
+-                                this.field_177612_i.put(modelresourcelocation, modelblockdefinition.func_188004_c(modelresourcelocation.func_177518_c()));
++                                this.func_177569_a(modelblockdefinition, modelresourcelocation);
+                             }
+                             catch (RuntimeException var12)
                              {
                                  if (!modelblockdefinition.func_188002_b())
                                  {

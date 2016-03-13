@@ -435,6 +435,15 @@ public class ForgeBlockStateV1 extends Marker
                     throw new UnsupportedOperationException("Forge BlockStateLoader V1 does not support nested submodels.");
             }
 
+            private TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
+            {
+                return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+                    new Vector3f(tx / 16, ty / 16, tz / 16),
+                    TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
+                    new Vector3f(s, s, s),
+                    null));
+            }
+
             @Override
             public ForgeBlockStateV1.Variant deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
             {
@@ -476,47 +485,41 @@ public class ForgeBlockStateV1 extends Marker
                     {
                         String transform = json.get("transform").getAsString();
                         // Note: these strings might change to a full-blown resource locations in the future, and move from here to some json somewhere
+                        // TODO: vanilla now includes from parent, deprecate?
                         if (transform.equals("identity"))
                         {
                             ret.state = Optional.<IModelState>of(TRSRTransformation.identity());
                         }
-                        /*else if (transform.equals("forge:default-block"))
+                        // block/block
+                        else if (transform.equals("forge:default-block"))
                         {
-                            TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                                new Vector3f(0, 1.5f / 16, -2.75f / 16),
-                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)),
-                                new Vector3f(0.375f, 0.375f, 0.375f),
-                                null));
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson)));
+                            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+                            builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
+                            builder.put( TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
+                            builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
+                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 2.5f, 0, 75, 45, 0, 0.375f));
+                            builder.put( TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
+                            builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 255, 0, 0.4f));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
                         }
+                        // item/generated
                         else if (transform.equals("forge:default-item"))
                         {
-                            TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                                new Vector3f(0, 1f / 16, -3f / 16),
-                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(-90, 0, 0)),
-                                new Vector3f(0.55f, 0.55f, 0.55f),
-                                null));
-                            TRSRTransformation firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                                new Vector3f(0, 4f / 16, 2f / 16),
-                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
-                                new Vector3f(1.7f, 1.7f, 1.7f),
-                                null));
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(
+                                TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f),
+                                TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1),
+                                TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 3, 1, 0, 0, 0, 0.55f),
+                                TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f))));
                         }
+                        // item/handheld
                         else if (transform.equals("forge:default-tool"))
                         {
-                            TRSRTransformation thirdperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                                new Vector3f(0, 1.25f / 16, -3.5f / 16),
-                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, 90, -35)),
-                                new Vector3f(0.85f, 0.85f, 0.85f),
-                                null));
-                            TRSRTransformation firstperson = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-                                new Vector3f(0, 4f / 16, 2f / 16),
-                                TRSRTransformation.quatFromYXZDegrees(new Vector3f(0, -135, 25)),
-                                new Vector3f(1.7f, 1.7f, 1.7f),
-                                null));
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(TransformType.THIRD_PERSON, thirdperson, TransformType.FIRST_PERSON, firstperson)));
-                        }*/ // FIXME
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(
+                                TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f),
+                                TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f),
+                                TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f),
+                                TransformType.FIRST_PERSON_LEFT_HAND,  get(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f))));
+                        }
                         else
                         {
                             throw new JsonParseException("transform: unknown default string: " + transform);

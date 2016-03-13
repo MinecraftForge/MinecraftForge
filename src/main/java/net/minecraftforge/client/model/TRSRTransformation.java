@@ -8,7 +8,6 @@ import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
@@ -31,7 +30,6 @@ import com.google.common.base.Optional;
  * should be comparable to using Matrix4f directly.
  * Immutable.
  */
-@SuppressWarnings("deprecation")
 public class TRSRTransformation implements IModelState, ITransformation
 {
     private final Matrix4f matrix;
@@ -64,14 +62,16 @@ public class TRSRTransformation implements IModelState, ITransformation
         full = true;
     }
 
-    public TRSRTransformation(ItemTransformVec3f transform)
+    @Deprecated
+    public TRSRTransformation(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
     {
         this(getMatrix(transform));
     }
 
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
+    @Deprecated
+    public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
     {
-        TRSRTransformation ret = new TRSRTransformation(toVecmath(transform.translation), quatFromYXZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
+        TRSRTransformation ret = new TRSRTransformation(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
         return blockCenterToCorner(ret).getMatrix();
     }
 
@@ -135,22 +135,34 @@ public class TRSRTransformation implements IModelState, ITransformation
         }
     }
 
-    public static Quat4f quatFromYXZDegrees(Vector3f yxz)
-    {
-        return quatFromYXZ((float)Math.toRadians(yxz.y), (float)Math.toRadians(yxz.x), (float)Math.toRadians(yxz.z));
-    }
-
-    public static Quat4f quatFromYXZ(Vector3f yxz)
-    {
-        return quatFromYXZ(yxz.y, yxz.x, yxz.z);
-    }
-
     public static Quat4f quatFromYXZ(float y, float x, float z)
     {
         Quat4f ret = new Quat4f(0, 0, 0, 1), t = new Quat4f();
         t.set(0, (float)Math.sin(y/2), 0, (float)Math.cos(y/2));
         ret.mul(t);
         t.set((float)Math.sin(x/2), 0, 0, (float)Math.cos(x/2));
+        ret.mul(t);
+        t.set(0, 0, (float)Math.sin(z/2), (float)Math.cos(z/2));
+        ret.mul(t);
+        return ret;
+    }
+
+    public static Quat4f quatFromXYZDegrees(Vector3f xyz)
+    {
+        return quatFromXYZ((float)Math.toRadians(xyz.x), (float)Math.toRadians(xyz.y), (float)Math.toRadians(xyz.z));
+    }
+
+    public static Quat4f quatFromXYZ(Vector3f xyz)
+    {
+        return quatFromXYZ(xyz.x, xyz.y, xyz.z);
+    }
+
+    public static Quat4f quatFromXYZ(float x, float y, float z)
+    {
+        Quat4f ret = new Quat4f(0, 0, 0, 1), t = new Quat4f();
+        t.set((float)Math.sin(x/2), 0, 0, (float)Math.cos(x/2));
+        ret.mul(t);
+        t.set(0, (float)Math.sin(y/2), 0, (float)Math.cos(y/2));
         ret.mul(t);
         t.set(0, 0, (float)Math.sin(z/2), (float)Math.cos(z/2));
         ret.mul(t);
@@ -184,6 +196,37 @@ public class TRSRTransformation implements IModelState, ITransformation
             x,
             (float)Math.atan2(2 * q.x * q.z + 2 * q.y * q.w, w2 - x2 - y2 + z2),
             (float)Math.atan2(2 * q.x * q.y + 2 * q.w * q.z, w2 - x2 + y2 - z2)
+        );
+    }
+
+    public static Vector3f toXYZDegrees(Quat4f q)
+    {
+        Vector3f xyz = toXYZ(q);
+        return new Vector3f((float)Math.toDegrees(xyz.x), (float)Math.toDegrees(xyz.y), (float)Math.toDegrees(xyz.z));
+    }
+
+    // TODO check if correct
+    public static Vector3f toXYZ(Quat4f q)
+    {
+        float w2 = q.w * q.w;
+        float x2 = q.x * q.x;
+        float y2 = q.y * q.y;
+        float z2 = q.z * q.z;
+        float l = w2 + x2 + y2 + z2;
+        float sy = 2 * q.w * q.x - 2 * q.y * q.z;
+        float y = (float)Math.asin(sy / l);
+        if(Math.abs(sy) > .999f * l)
+        {
+            return new Vector3f(
+                 2 * (float)Math.atan2(q.x, q.w),
+                 y,
+                 0
+            );
+        }
+        return new Vector3f(
+            (float)Math.atan2(2 * q.y * q.z + 2 * q.x * q.w, w2 - x2 - y2 + z2),
+            y,
+            (float)Math.atan2(2 * q.x * q.y + 2 * q.w * q.z, w2 + x2 - y2 - z2)
         );
     }
 
@@ -447,9 +490,10 @@ public class TRSRTransformation implements IModelState, ITransformation
     /*
      * Don't use this if you don't need to, conversion is lossy (second rotation component is lost).
      */
-    public ItemTransformVec3f toItemTransform()
+    @Deprecated
+    public net.minecraft.client.renderer.block.model.ItemTransformVec3f toItemTransform()
     {
-        return new ItemTransformVec3f(toLwjgl(toYXZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
+        return new net.minecraft.client.renderer.block.model.ItemTransformVec3f(toLwjgl(toXYZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
     }
 
     public Matrix4f getMatrix()

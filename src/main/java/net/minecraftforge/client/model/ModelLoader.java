@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +109,7 @@ public class ModelLoader extends ModelBakery
     {
         isLoading = true;
         loadBlocks();
-        loadItems();
+        loadVariantItemModels();
         try
         {
             missingModel = getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
@@ -148,7 +147,15 @@ public class ModelLoader extends ModelBakery
         return bakedRegistry;
     }
 
-    private void loadBlocks()
+    // NOOP, replaced by dependency resolution
+    @Override
+    protected void loadVariantModels() {}
+
+    // NOOP, replaced by dependency resolution
+    @Override
+    protected void loadMultipartVariantModels() {}
+
+    /*private void loadBlocks()
     {
         Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
         List<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
@@ -168,9 +175,10 @@ public class ModelLoader extends ModelBakery
             blockBar.step(variant.toString());
         }
         ProgressManager.pop(blockBar);
-    }
+    }*/
 
     // FIXME: all the new shiny multipart things
+    @Deprecated
     private void loadVariant(ModelResourceLocation variant)
     {
         try
@@ -192,23 +200,20 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    // FIXME: this is probably not the hook point anymore
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        // for now
-        super.registerVariant(definition, location);
-
-        /*VariantList variants = null;
+        // TODO loader?
+        VariantList variants = null;
         try
         {
-            variants = definition.getVariants(location.getVariant());
+            variants = definition.getVariant(location.getVariant());
         }
         catch(MissingVariantException e)
         {
             missingVariants.add(location);
         }
-        if (variants != null && !variants.getVariants().isEmpty())
+        if (variants != null && !variants.getVariantList().isEmpty())
         {
             try
             {
@@ -218,7 +223,7 @@ public class ModelLoader extends ModelBakery
             {
                 throw new RuntimeException(e);
             }
-        }*/
+        }
     }
 
     private void storeException(ResourceLocation location, Exception exception)
@@ -240,7 +245,8 @@ public class ModelLoader extends ModelBakery
         return new ModelBlockDefinition(new ArrayList<ModelBlockDefinition>());
     }
 
-    private void loadItems()
+    @Override
+    protected void loadItemModels()
     {
         // register model for the universal bucket, if it exists
         if(FluidRegistry.isUniversalBucketEnabled())
@@ -454,8 +460,13 @@ public class ModelLoader extends ModelBakery
 
         public Collection<ResourceLocation> getDependencies()
         {
-            if(model.getParentLocation() == null || model.getParentLocation().getResourcePath().startsWith("builtin/")) return Collections.emptyList();
-            return Collections.singletonList(model.getParentLocation());
+            Set<ResourceLocation> set = Sets.newHashSet();
+            set.addAll(model.getOverrideLocations());
+            if(model.getParentLocation() != null && !model.getParentLocation().getResourcePath().startsWith("builtin/"))
+            {
+                set.add(model.getParentLocation());
+            }
+            return ImmutableSet.copyOf(set);
         }
 
         public Collection<ResourceLocation> getTextures()
