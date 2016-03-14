@@ -11,38 +11,6 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -71,25 +71,25 @@
-     private static final IItemPropertyGetter field_185047_c = new IItemPropertyGetter()
-     {
-         @SideOnly(Side.CLIENT)
--        public float func_185085_a(ItemStack p_185085_1_, World p_185085_2_, EntityLivingBase p_185085_3_)
-+        public float func_185085_a(ItemStack stack, World worldIn, EntityLivingBase entityIn)
-         {
--            return MathHelper.func_76131_a((float)p_185085_1_.func_77952_i() / (float)p_185085_1_.func_77958_k(), 0.0F, 1.0F);
-+            return MathHelper.func_76131_a((float)stack.func_77952_i() / (float)stack.func_77958_k(), 0.0F, 1.0F);
-         }
-     };
-     private static final IItemPropertyGetter field_185048_d = new IItemPropertyGetter()
-     {
-         @SideOnly(Side.CLIENT)
--        public float func_185085_a(ItemStack p_185085_1_, World p_185085_2_, EntityLivingBase p_185085_3_)
-+        public float func_185085_a(ItemStack stack, World worldIn, EntityLivingBase entityIn)
-         {
--            return p_185085_3_ != null && p_185085_3_.func_184591_cq() != EnumHandSide.RIGHT ? 1.0F : 0.0F;
-+            return entityIn != null && entityIn.func_184591_cq() != EnumHandSide.RIGHT ? 1.0F : 0.0F;
-         }
-     };
-     private static final IItemPropertyGetter field_185049_e = new IItemPropertyGetter()
-     {
-         @SideOnly(Side.CLIENT)
--        public float func_185085_a(ItemStack p_185085_1_, World p_185085_2_, EntityLivingBase p_185085_3_)
-+        public float func_185085_a(ItemStack stack, World worldIn, EntityLivingBase entityIn)
-         {
--            return p_185085_3_ instanceof EntityPlayer ? ((EntityPlayer)p_185085_3_).func_184811_cZ().func_185143_a(p_185085_1_.func_77973_b(), 0.0F) : 0.0F;
-+            return entityIn instanceof EntityPlayer ? ((EntityPlayer)entityIn).func_184811_cZ().func_185143_a(stack.func_77973_b(), 0.0F) : 0.0F;
-         }
-     };
-     private final IRegistry<ResourceLocation, IItemPropertyGetter> field_185051_m = new RegistrySimple();
 @@ -104,6 +104,9 @@
      private Item field_77700_c;
      private String field_77774_bZ;

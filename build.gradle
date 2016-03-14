@@ -171,25 +171,25 @@ task makeMdk(type: Zip) {
     from 'gradlew'
     from 'gradlew.bat'
     into ('gradle') {
-    	from 'gradle'
+        from 'gradle'
     }
     into ('eclipse') {
         from 'mdk/eclipse'
     }
     from changelog.output
     from ('mdk') {
-	    filter(ReplaceTokens, tokens: [
-		VERSION: project.version,
-		MAPPINGS: minecraft.mappings.replace('nodoc_', '')
-	    ])
-	    exclude 'eclipse'
-	    rename 'gitignore\\.txt', '.gitignore'
-	    from 'MinecraftForge-Credits.txt'
-	    from 'MinecraftForge-License.txt'
-	    from 'Paulscode IBXM Library License.txt'
-	    from 'Paulscode SoundSystem CodecIBXM License.txt'
-	    from 'CREDITS-fml.txt'
-	    from 'LICENSE-fml.txt'
+        filter(ReplaceTokens, tokens: [
+        VERSION: project.version,
+        MAPPINGS: minecraft.mappings.replace('nodoc_', '')
+        ])
+        exclude 'eclipse'
+        rename 'gitignore\\.txt', '.gitignore'
+        from 'MinecraftForge-Credits.txt'
+        from 'MinecraftForge-License.txt'
+        from 'Paulscode IBXM Library License.txt'
+        from 'Paulscode SoundSystem CodecIBXM License.txt'
+        from 'CREDITS-fml.txt'
+        from 'LICENSE-fml.txt'
     }
 }
 tasks.build.dependsOn makeMdk
@@ -375,13 +375,12 @@ String getVersionFromJava(File file)
 task setupForge { dependsOn 'setup' }
 task buildPackages { dependsOn 'build' }
 
-//Temporary hack to fix compile errors caused by 1.8.9 mappings on 1.9
+//Temporary hack to fix compile errors caused by mappings shading in Bootstrap
 task fixParams << {
     logger.lifecycle('Fixing param names!')
     def params = new File(extractMcpMappings.destinationDir, 'params.csv')
     def text = params.text
-    text = text.replaceAll('p_150893_2_,block,', 'p_150893_2_,state,')
-    text = text.replaceAll('p_148611_1_,sound,', 'p_148611_1_,p_sound,')
+    text = text.replaceAll('p_82499_3_,stack,', 'p_82499_3_,stackIn,')
     params.write(text)
 }
 fixParams.dependsOn('extractMcpMappings')
