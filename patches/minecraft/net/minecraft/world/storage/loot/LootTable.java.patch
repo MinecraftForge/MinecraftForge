@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/loot/LootTable.java
++++ ../src-work/minecraft/net/minecraft/world/storage/loot/LootTable.java
+@@ -48,7 +48,7 @@
+         {
+             field_186465_b.warn("Detected infinite loop in loot tables");
+         }
+-
++        if (net.minecraftforge.event.ForgeEventFactory.onLootGenerate(this, p_186462_2_, list)) return Lists.newArrayList();
+         return list;
+     }
+ 

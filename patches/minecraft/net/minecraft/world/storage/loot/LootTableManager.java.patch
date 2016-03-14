@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/loot/LootTableManager.java
++++ ../src-work/minecraft/net/minecraft/world/storage/loot/LootTableManager.java
+@@ -64,7 +64,7 @@
+             else
+             {
+                 LootTable loottable = this.func_186517_b(p_load_1_);
+-
++                if(loottable == null) loottable = net.minecraftforge.common.loot.LootRegistry.loadModLootTable(p_load_1_, field_186526_b);
+                 if (loottable == null)
+                 {
+                     loottable = this.func_186518_c(p_load_1_);

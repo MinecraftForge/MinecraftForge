@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/loot/LootContext.java
++++ ../src-work/minecraft/net/minecraft/world/storage/loot/LootContext.java
+@@ -163,4 +163,17 @@
+                 }
+             }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Gets the world of this context. Useful when no entities are involved so we cannot use their worlds.
++     * E.g. dungeon chests, etc.
++     * The result should never be null.
++     * @return The world of this context.
++     */
++    public WorldServer getWorld()
++    {
++        return field_186499_b;
++    }
++    /* ======================================== FORGE END =====================================*/
+ }
