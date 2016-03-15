@@ -111,6 +111,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class ForgeHooks
 {
+    //TODO: Loot tables?
     static class SeedEntry extends WeightedRandom.Item
     {
         public final ItemStack seed;
@@ -119,17 +120,21 @@ public class ForgeHooks
             super(weight);
             this.seed = seed;
         }
+        public ItemStack getStack(Random rand, int fortune)
+        {
+            return seed.copy();
+        }
     }
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
-    public static ItemStack getGrassSeed(Random rand)
+    public static ItemStack getGrassSeed(Random rand, int fortune)
     {
         SeedEntry entry = (SeedEntry)WeightedRandom.getRandomItem(rand, seedList);
         if (entry == null || entry.seed == null)
         {
             return null;
         }
-        return entry.seed.copy();
+        return entry.getStack(rand, fortune);
     }
 
     private static boolean toolInit = false;
@@ -257,7 +262,13 @@ public class ForgeHooks
 
     static
     {
-        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10));
+        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10)
+        {
+            public ItemStack getStack(Random rand, int fortune)
+            {
+                return new ItemStack(Items.wheat_seeds, 1 + rand.nextInt(fortune * 2 + 1));
+            }
+        });
         initTools();
     }
 

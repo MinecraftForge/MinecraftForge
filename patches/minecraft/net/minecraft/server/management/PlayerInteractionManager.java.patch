@@ -84,7 +84,7 @@
 +            }
  
 -            if (iblockstate.func_185904_a() != Material.field_151579_a && f >= 1.0F)
-+            if (iblockstate.func_177230_c().isAir(iblockstate, field_73092_a, p_180784_1_) && f >= 1.0F)
++            if (!iblockstate.func_177230_c().isAir(iblockstate, field_73092_a, p_180784_1_) && f >= 1.0F)
              {
                  this.func_180237_b(p_180784_1_);
              }

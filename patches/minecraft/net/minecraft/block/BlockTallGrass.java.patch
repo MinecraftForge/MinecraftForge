@@ -54,7 +54,7 @@
 +    {
 +        List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 +        if (RANDOM.nextInt(8) != 0) return ret;
-+        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM);
++        ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(RANDOM, fortune);
 +        if (seed != null) ret.add(seed);
 +        return ret;
 +    }

@@ -38,10 +38,16 @@ public class MinecraftForge
      * @param seed The item to drop as a seed.
      * @param weight The relative probability of the seeds,
      *               where wheat seeds are 10.
+     *
+     * Note: These functions may be going away soon, we're looking into loot tables....
      */
     public static void addGrassSeed(ItemStack seed, int weight)
     {
-        ForgeHooks.seedList.add(new SeedEntry(seed, weight));
+        addGrassSeed(new SeedEntry(seed, weight));
+    }
+    public static void addGrassSeed(SeedEntry seed)
+    {
+        ForgeHooks.seedList.add(seed);
     }
 
    /**
