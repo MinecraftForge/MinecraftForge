@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer.java
-+++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer.java
-@@ -45,4 +45,6 @@
-     {
-         return false;
-     }
-+
-+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, net.minecraft.client.renderer.VertexBuffer buffer) {}
- }
