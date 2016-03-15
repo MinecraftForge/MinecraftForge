@@ -36,7 +36,7 @@ public class LootDebugAddons {
 
     @SubscribeEvent
     public void openHopperCart(MinecartInteractEvent evt) {
-        if (evt.minecart instanceof EntityMinecartHopper
+        if (!evt.minecart.worldObj.isRemote && evt.minecart instanceof EntityMinecartHopper
                 && "LOOTTEST".equals(evt.minecart.getCustomNameTag())) {
             ((EntityMinecartHopper) evt.minecart).setLootTable(new ResourceLocation("forgelootdebugaddons", "handledbymyoverride"), 0);
         }

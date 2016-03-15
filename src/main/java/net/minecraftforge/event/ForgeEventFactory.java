@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -16,7 +15,6 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -25,6 +23,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -557,7 +556,14 @@ public class ForgeEventFactory
 
     public static boolean onLootGenerate(LootTable table, LootContext context, List<ItemStack> lootList)
     {
-        return MinecraftForge.EVENT_BUS.post(new LootEvent(table, context, lootList));
+        return MinecraftForge.EVENT_BUS.post(new LootGenerateEvent(table, context, lootList));
+    }
+
+    public static LootTable onLootTableLoad(LootTable table, ResourceLocation loc)
+    {
+        LootTableLoadEvent evt = new LootTableLoadEvent(table, loc);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.getTable();
     }
 
 }

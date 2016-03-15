@@ -9,19 +9,20 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import java.util.List;
 
 /**
- * This is fired after a LootTable has finished generating a list of possible loot.
- * Modifications to the list will change the loot directly.
- * Canceling the event will cause an empty list to be returned (existing list will not be cleared)
- * Note that further random picking
+ * This event is fired on MinecraftForge.EVENT_BUS after a LootTable has finished generating a list of possible loot.
+ * Modifications to the ItemStack list will change the loot directly.
+ * Canceling the event will cause an empty list to be returned in the end (existing list will not be cleared).
+ * This is so that uncanceling the event will work as intended.
+ * This event has no result.
  */
 @Cancelable
-public class LootEvent extends Event
+public class LootGenerateEvent extends Event
 {
     private final LootTable table;
     private final LootContext context;
     private final List<ItemStack> lootList;
 
-    public LootEvent(LootTable table, LootContext context, List<ItemStack> lootList)
+    public LootGenerateEvent(LootTable table, LootContext context, List<ItemStack> lootList)
     {
         this.table = table;
         this.context = context;
