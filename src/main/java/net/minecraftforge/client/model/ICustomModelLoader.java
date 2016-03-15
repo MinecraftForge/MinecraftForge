@@ -14,5 +14,5 @@ public interface ICustomModelLoader extends IResourceManagerReloadListener
     /*
      * loads (or reloads) specified model
      */
-    public IModel loadModel(ResourceLocation modelLocation);
+    public IModel loadModel(ResourceLocation modelLocation) throws Exception;
 }

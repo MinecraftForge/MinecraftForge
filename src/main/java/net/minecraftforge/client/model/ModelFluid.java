@@ -43,7 +43,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public class ModelFluid implements IModelCustomData
+public final class ModelFluid implements IModelCustomData
 {
     public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);
     public static final ModelFluid lavaModel = new ModelFluid(FluidRegistry.LAVA);
@@ -95,7 +95,7 @@ public class ModelFluid implements IModelCustomData
         }
     }
 
-    public static class BakedFluid implements IPerspectiveAwareModel
+    private static final class BakedFluid implements IPerspectiveAwareModel
     {
         private static final int x[] = { 0, 0, 1, 1 };
         private static final int z[] = { 0, 1, 1, 0 };
@@ -125,16 +125,6 @@ public class ModelFluid implements IModelCustomData
         private final TextureAtlasSprite still, flowing;
         private final boolean gas;
         private final EnumMap<EnumFacing, List<BakedQuad>> faceQuads;
-
-        public BakedFluid(Optional<TRSRTransformation> transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas)
-        {
-            this(transformation, format, color, still, flowing, gas, Optional.<IExtendedBlockState>absent());
-        }
-
-        public BakedFluid(Optional<TRSRTransformation> transformation, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
-        {
-            this(transformation, ImmutableMap.<TransformType, TRSRTransformation>of(), format, color, still, flowing, gas, stateOption);
-        }
 
         public BakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, boolean gas, Optional<IExtendedBlockState> stateOption)
         {

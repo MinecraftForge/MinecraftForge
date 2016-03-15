@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
+public final class ModelDynBucket implements IModel, IModelCustomData, IRetexturableModel
 {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
 
@@ -51,12 +51,12 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
 
     public static final IModel MODEL = new ModelDynBucket();
 
-    protected final ResourceLocation baseLocation;
-    protected final ResourceLocation liquidLocation;
-    protected final ResourceLocation coverLocation;
+    private final ResourceLocation baseLocation;
+    private final ResourceLocation liquidLocation;
+    private final ResourceLocation coverLocation;
 
-    protected final Fluid fluid;
-    protected final boolean flipGas;
+    private final Fluid fluid;
+    private final boolean flipGas;
 
     public ModelDynBucket()
     {
@@ -223,7 +223,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
         }
     }
 
-    protected static final class BakedDynBucketOverrideHandler extends ItemOverrideList
+    private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
     {
         public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
         private BakedDynBucketOverrideHandler()
@@ -277,7 +277,7 @@ public class ModelDynBucket implements IModel, IModelCustomData, IRetexturableMo
     }
 
     // the dynamic bucket is based on the empty bucket
-    protected static class BakedDynBucket implements IPerspectiveAwareModel
+    private static final class BakedDynBucket implements IPerspectiveAwareModel
     {
 
         private final ModelDynBucket parent;

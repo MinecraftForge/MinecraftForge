@@ -30,7 +30,7 @@ import com.google.common.base.Optional;
  * should be comparable to using Matrix4f directly.
  * Immutable.
  */
-public class TRSRTransformation implements IModelState, ITransformation
+public final class TRSRTransformation implements IModelState, ITransformation
 {
     private final Matrix4f matrix;
 

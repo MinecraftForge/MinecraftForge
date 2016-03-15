@@ -62,7 +62,7 @@ public final class Clips
      */
     public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName)
     {
-        IModel model = ModelLoaderRegistry.getModel(modelLocation);
+        IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
         if(model instanceof IAnimatedModel)
         {
             Optional<? extends IClip> clip = ((IAnimatedModel)model).getClip(clipName);

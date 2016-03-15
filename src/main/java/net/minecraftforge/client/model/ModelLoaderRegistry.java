@@ -69,7 +69,7 @@ public class ModelLoaderRegistry
      * ResourceLocation argument will be passed directly to the custom model loaders,
      * ModelResourceLocation argument will be loaded through the blockstate system.
      */
-    public static IModel getModel(ResourceLocation location)
+    public static IModel getModel(ResourceLocation location) throws Exception
     {
         IModel model;
         if(cache.containsKey(location)) return cache.get(location);
@@ -77,7 +77,7 @@ public class ModelLoaderRegistry
         {
             if(location.getClass() == loading.getClass() && location.equals(loading))
             {
-                throw new IllegalStateException("circular model dependencies, stack: [" + Joiner.on(", ").join(loadingModels) + "]");
+                throw new LoaderException("circular model dependencies, stack: [" + Joiner.on(", ").join(loadingModels) + "]");
             }
         }
         loadingModels.addLast(location);
@@ -93,15 +93,14 @@ public class ModelLoaderRegistry
                     {
                         if(accepted != null)
                         {
-                            FMLLog.severe("2 loaders (%s and %s) want to load the same model %s", accepted, loader, location);
-                            throw new IllegalStateException("2 loaders want to load the same model");
+                            throw new LoaderException(String.format("2 loaders (%s and %s) want to load the same model %s", accepted, loader, location));
                         }
                         accepted = loader;
                     }
                 }
                 catch(Exception e)
                 {
-                    FMLLog.log(Level.ERROR, e, "Exception checking if model %s can be loaded with loader %s, skipping", location, loader);
+                    throw new LoaderException(String.format("Exception checking if model %s can be loaded with loader %s, skipping", location, loader), e);
                 }
             }
 
@@ -120,31 +119,25 @@ public class ModelLoaderRegistry
 
             if(accepted == null)
             {
-                FMLLog.severe("no suitable loader found for the model %s, skipping", location);
-                model = getMissingModel();
+                throw new LoaderException("no suitable loader found for the model " + location + ", skipping");
             }
-            else
+            try
             {
-                try
-                {
-                    model = accepted.loadModel(actual);
-                }
-                catch(Exception e)
-                {
-                    FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
-                    model = getMissingModel();
-                }
-                if(model == getMissingModel())
-                {
-                    FMLLog.log(Level.ERROR, "Loader %s returned missing model while loading model %s", accepted, location);
-                }
-                if(model == null)
-                {
-                    FMLLog.log(Level.ERROR, "Loader %s returned null while loading model %s", accepted, location);
-                    model = getMissingModel();
-                }
-                textures.addAll(model.getTextures());
+                model = accepted.loadModel(actual);
             }
+            catch(Exception e)
+            {
+                throw new LoaderException(String.format("Exception loading model %s with loader %s, skipping", location, accepted), e);
+            }
+            if(model == getMissingModel())
+            {
+                throw new LoaderException(String.format("Loader %s returned missing model while loading model %s", accepted, location));
+            }
+            if(model == null)
+            {
+                throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
+            }
+            textures.addAll(model.getTextures());
         }
         finally
         {
@@ -157,9 +150,40 @@ public class ModelLoaderRegistry
         cache.put(location, model);
         for (ResourceLocation dep : model.getDependencies())
         {
-            getModel(dep);
+            getModelOrMissing(dep);
         }
         return model;
+    }
+
+    /**
+     * Use this if you don't care about the exception and want some model anyway.
+     */
+    public static IModel getModelOrMissing(ResourceLocation location)
+    {
+        try
+        {
+            return getModel(location);
+        }
+        catch(Exception e)
+        {
+            return getMissingModel();
+        }
+    }
+
+    /**
+     * Use this if you want the model, but need to log the error.
+     */
+    public static IModel getModelOrLogError(ResourceLocation location, String error)
+    {
+        try
+        {
+            return getModel(location);
+        }
+        catch(Exception e)
+        {
+            FMLLog.getLogger().error(error, e);
+            return getMissingModel();
+        }
     }
 
     public static IModel getMissingModel()
@@ -179,5 +203,20 @@ public class ModelLoaderRegistry
     static Iterable<ResourceLocation> getTextures()
     {
         return textures;
+    }
+
+    public static class LoaderException extends Exception
+    {
+        public LoaderException(String message)
+        {
+            super(message);
+        }
+
+        public LoaderException(String message, Throwable cause)
+        {
+            super(message, cause);
+        }
+
+        private static final long serialVersionUID = 1L;
     }
 }

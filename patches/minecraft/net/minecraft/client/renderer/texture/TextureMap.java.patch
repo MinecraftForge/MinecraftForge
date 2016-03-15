@@ -136,6 +136,15 @@
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
+@@ -194,7 +239,7 @@
+         label9:
+         {
+             boolean flag;
+-
++            if (p_184397_2_.hasCustomLoader(p_184397_1_, resourcelocation)) break label9;
+             try
+             {
+                 iresource = p_184397_1_.func_110536_a(resourcelocation);
 @@ -317,4 +362,37 @@
      {
          return this.field_94249_f;

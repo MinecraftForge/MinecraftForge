@@ -55,7 +55,7 @@ public class ItemTileDebug
 
     public static class ClientProxy extends CommonProxy
     {
-        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
+        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "normal");
 
         @SuppressWarnings("deprecation")
         @Override

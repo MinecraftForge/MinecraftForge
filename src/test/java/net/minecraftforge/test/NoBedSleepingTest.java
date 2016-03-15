@@ -1,5 +1,6 @@
 package net.minecraftforge.test;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
@@ -14,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -24,6 +26,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -37,12 +40,35 @@ public class NoBedSleepingTest
     @CapabilityInject(IExtraSleeping.class)
     private static final Capability<IExtraSleeping> SLEEP_CAP = null;
 
+    @SidedProxy
+    public static CommonProxy proxy = null;
+
+    public static abstract class CommonProxy
+    {
+        public void preInit(FMLPreInitializationEvent event)
+        {
+            GameRegistry.registerItem(ItemSleepingPill.instance, ItemSleepingPill.name);
+            CapabilityManager.INSTANCE.register(IExtraSleeping.class, new Storage(), DefaultImpl.class);
+            MinecraftForge.EVENT_BUS.register(new EventHandler());
+        }
+    }
+
+    public static final class ServerProxy extends CommonProxy {}
+
+    public static final class ClientProxy extends CommonProxy
+    {
+        @Override
+        public void preInit(FMLPreInitializationEvent event)
+        {
+            super.preInit(event);
+            ModelLoader.setCustomModelResourceLocation(ItemSleepingPill.instance, 0, new ModelResourceLocation(new ResourceLocation(MODID, ItemSleepingPill.name), "inventory"));
+        }
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        GameRegistry.registerItem(ItemSleepingPill.instance, ItemSleepingPill.name);
-        CapabilityManager.INSTANCE.register(IExtraSleeping.class, new Storage(), DefaultImpl.class);
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        proxy.preInit(event);
     }
 
     public static class EventHandler

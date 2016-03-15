@@ -251,21 +251,24 @@ public class ModelBakeEventDebug
         @Override
         public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
         {
-            if(side != null || !(state instanceof IExtendedBlockState)) return ImmutableList.of();
+            if(side != null) return ImmutableList.of();
             IExtendedBlockState exState = (IExtendedBlockState)state;
             int len = cubeSize * 5 + 1;
             List<BakedQuad> ret = new ArrayList<BakedQuad>();
             for(EnumFacing f : EnumFacing.values())
             {
                 ret.add(createSidedBakedQuad(0, 1, 0, 1, 1, base, f));
-                for(int i = 0; i < cubeSize; i++)
+                if(state != null)
                 {
-                    for(int j = 0; j < cubeSize; j++)
+                    for(int i = 0; i < cubeSize; i++)
                     {
-                        Integer value = exState.getValue(properties[f.ordinal()]);
-                        if(value != null && (value & (1 << (i * cubeSize + j))) != 0)
+                        for(int j = 0; j < cubeSize; j++)
                         {
-                            ret.add(createSidedBakedQuad((float)(1 + i * 5) / len, (float)(5 + i * 5) / len, (float)(1 + j * 5) / len, (float)(5 + j * 5) / len, 1.0001f, overlay, f));
+                            Integer value = exState.getValue(properties[f.ordinal()]);
+                            if(value != null && (value & (1 << (i * cubeSize + j))) != 0)
+                            {
+                                ret.add(createSidedBakedQuad((float)(1 + i * 5) / len, (float)(5 + i * 5) / len, (float)(1 + j * 5) / len, (float)(5 + j * 5) / len, 1.0001f, overlay, f));
+                            }
                         }
                     }
                 }

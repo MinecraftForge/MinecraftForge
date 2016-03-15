@@ -7,7 +7,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class MultiModelState implements IModelState
+public final class MultiModelState implements IModelState
 {
     private final ImmutableMap<MultiModelPart, ? extends IModelState> states;
 

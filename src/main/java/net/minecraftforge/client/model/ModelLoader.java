@@ -10,11 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -26,15 +22,24 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.block.model.BlockPartRotation;
+import net.minecraft.client.renderer.block.model.BuiltInModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition.MissingVariantException;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.MultipartBakedModel;
+import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.block.model.VariantList;
+import net.minecraft.client.renderer.block.model.WeightedBakedModel;
+import net.minecraft.client.renderer.block.model.multipart.Multipart;
+import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -42,22 +47,13 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.renderer.block.model.BuiltInModel;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.model.ModelRotation;
-import net.minecraft.client.renderer.block.model.SimpleBakedModel;
-import net.minecraft.client.renderer.block.model.WeightedBakedModel;
-import net.minecraft.client.renderer.block.model.multipart.Multipart;
-import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
 import net.minecraftforge.client.model.animation.IClip;
@@ -78,9 +74,18 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
-public class ModelLoader extends ModelBakery
+public final class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
@@ -110,7 +115,7 @@ public class ModelLoader extends ModelBakery
         isLoading = true;
         loadBlocks();
         loadVariantItemModels();
-        missingModel = ModelLoaderRegistry.getModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+        missingModel = ModelLoaderRegistry.getMissingModel();
         stateModels.put(MODEL_MISSING, missingModel);
 
         final Set<ResourceLocation> textures = Sets.newHashSet(ModelLoaderRegistry.getTextures());
@@ -181,7 +186,17 @@ public class ModelLoader extends ModelBakery
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
     {
-        stateModels.put(location, ModelLoaderRegistry.getModel(location));
+        IModel model;
+        try
+        {
+            model = ModelLoaderRegistry.getModel(location);
+        }
+        catch(Exception e)
+        {
+            storeException(location, e);
+            model = getMissingModel();
+        }
+        stateModels.put(location, model);
     }
 
     @Override
@@ -189,7 +204,7 @@ public class ModelLoader extends ModelBakery
     {
         for (ModelResourceLocation location : locations)
         {
-            stateModels.put(location, ModelLoaderRegistry.getModel(location));
+            registerVariant(null, location);
         }
     }
 
@@ -235,25 +250,27 @@ public class ModelLoader extends ModelBakery
             ResourceLocation file = getItemLocation(s);
             ModelResourceLocation memory = getInventoryVariant(s);
             itemBar.step(memory.toString());
+            IModel model = ModelLoaderRegistry.getMissingModel();
+            Exception exception = null;
             try
             {
-                IModel model = ModelLoaderRegistry.getModel(file);
-                if(model == getMissingModel())
-                {
-                    // try blockstate json if the item model is missing
-                    FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
-                    try
-                    {
-                        model = ModelLoaderRegistry.getModel(memory);
-                    }
-                    catch (Exception exception)
-                    {
-                        storeException(memory, new Exception("Could not load item model either from the normal location " + file + " or from the blockstate", exception));
-                    }
-                }
-                stateModels.put(memory, model);
+                model = ModelLoaderRegistry.getModel(file);
             }
-            catch (Exception exception)
+            catch(Exception e)
+            {
+                // try blockstate json if the item model is missing
+                FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
+                try
+                {
+                    model = ModelLoaderRegistry.getModel(memory);
+                }
+                catch (Exception ex)
+                {
+                    exception = new Exception("Could not load item model either from the normal location " + file + " or from the blockstate", ex);
+                }
+            }
+            stateModels.put(memory, model);
+            if(exception != null)
             {
                 storeException(memory, exception);
             }
@@ -282,7 +299,7 @@ public class ModelLoader extends ModelBakery
             for(String s : getVariantNames(Items.bucket))
             {
                 ModelResourceLocation memory = getInventoryVariant(s);
-                IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("forge", "item/bucket"));
+                IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket"));
                 // only on successful load, otherwise continue using the old model
                 if(model != getMissingModel())
                 {
@@ -309,7 +326,7 @@ public class ModelLoader extends ModelBakery
                 for(String s : getVariantNames(Items.milk_bucket))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
-                    IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("forge", "item/bucket_milk"));
+                    IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket_milk"));
                     // only on successful load, otherwise continue using the old model
                     if(model != getMissingModel())
                     {
@@ -348,7 +365,7 @@ public class ModelLoader extends ModelBakery
         return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
     }
 
-    private class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IModelUVLock, IAnimatedModel
+    private final class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IModelUVLock, IAnimatedModel
     {
         private final ResourceLocation location;
         private final ModelBlock model;
@@ -372,7 +389,7 @@ public class ModelLoader extends ModelBakery
                 {
                     set.add(dep);
                     // TODO: check if this can go somewhere else, random access to global things is bad
-                    stateModels.put(getInventoryVariant(dep.toString()), ModelLoaderRegistry.getModel(dep));
+                    stateModels.put(getInventoryVariant(dep.toString()), ModelLoaderRegistry.getModelOrLogError(dep, "Could not load override model " + dep + " for model " + location));
                 }
             }
             if(model.getParentLocation() != null && !model.getParentLocation().getResourcePath().startsWith("builtin/"))
@@ -393,11 +410,7 @@ public class ModelLoader extends ModelBakery
                 }
                 else
                 {
-                    IModel parent = ModelLoaderRegistry.getModel(model.getParentLocation());
-                    if(parent == getMissingModel())
-                    {
-                        FMLLog.warning("Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model);
-                    }
+                    IModel parent = ModelLoaderRegistry.getModelOrLogError(model.getParentLocation(), "Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model);
                     if(parent instanceof VanillaModelWrapper)
                     {
                         model.parent = ((VanillaModelWrapper) parent).model;
@@ -629,7 +642,7 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    private static class WeightedRandomModel implements IModel
+    private static final class WeightedRandomModel implements IModel
     {
         private final List<Variant> variants;
         private final List<ResourceLocation> locations = new ArrayList<ResourceLocation>();
@@ -637,7 +650,7 @@ public class ModelLoader extends ModelBakery
         private final List<IModel> models = new ArrayList<IModel>();
         private final IModelState defaultState;
 
-        public WeightedRandomModel(ResourceLocation parent, VariantList variants)
+        public WeightedRandomModel(ResourceLocation parent, VariantList variants) throws Exception
         {
             this.variants = variants.getVariantList();
             ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
@@ -646,21 +659,11 @@ public class ModelLoader extends ModelBakery
                 ResourceLocation loc = v.getModelLocation();
                 locations.add(loc);
 
-                IModel model = null;
-                try
-                {
-                    model = ModelLoaderRegistry.getModel(loc);
-                }
-                catch (Exception e)
-                {
-                    /*
-                     * Vanilla eats this, which makes it only show variants that have models.
-                     * But that doesn't help debugging, so we maintain the missing model
-                     * so that resource pack makers have a hint that their states are broken.
-                     */
-                    FMLLog.getLogger().error("Unable to load block model: \'" + loc + "\' for variant: \'" + parent, e);
-                    model = ModelLoaderRegistry.getMissingModel();
-                }
+                /*
+                 * Vanilla eats this, which makes it only show variants that have models.
+                 * But that doesn't help debugging, so throw the exception
+                 */
+                IModel model = ModelLoaderRegistry.getModel(loc);
 
                 // FIXME: is this the place? messes up dependency and texture resolution
                 if (v instanceof ISmartVariant)
@@ -668,7 +671,7 @@ public class ModelLoader extends ModelBakery
                     model = ((ISmartVariant)v).process(model);
                     for(ResourceLocation location : model.getDependencies())
                     {
-                        ModelLoaderRegistry.getModel(location);
+                        ModelLoaderRegistry.getModelOrMissing(location);
                     }
                     //FMLLog.getLogger().error("Exception resolving indirect dependencies for model" + loc, e);
                     textures.addAll(model.getTextures()); // Kick this, just in case.
@@ -680,6 +683,7 @@ public class ModelLoader extends ModelBakery
 
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
             {
+                // FIXME: log this?
                 IModel missing = ModelLoaderRegistry.getMissingModel();
                 models.add(missing);
                 builder.add(Pair.<IModel, IModelState>of(missing, TRSRTransformation.identity()));
@@ -728,7 +732,14 @@ public class ModelLoader extends ModelBakery
     {
         if (missingModel == null)
         {
-            missingModel = VanillaLoader.instance.loadModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+            try
+            {
+                missingModel = VanillaLoader.instance.loadModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException("Missing the missing model, this should never happen");
+            }
         }
         return missingModel;
     }
@@ -738,7 +749,7 @@ public class ModelLoader extends ModelBakery
         return itemModel;
     }
 
-    static enum VanillaLoader implements ICustomModelLoader
+    protected static enum VanillaLoader implements ICustomModelLoader
     {
         instance;
 
@@ -764,7 +775,7 @@ public class ModelLoader extends ModelBakery
             return true;
         }
 
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IModel loadModel(ResourceLocation modelLocation) throws Exception
         {
             String modelPath = modelLocation.getResourcePath();
             if(modelLocation.getResourcePath().startsWith("models/"))
@@ -773,21 +784,8 @@ public class ModelLoader extends ModelBakery
             }
             ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
             ModelBlockAnimation animation = Animation.INSTANCE.loadVanillaAnimation(armatureLocation);
-            ModelBlock model = null;
-            try
-            {
-                model = loader.loadModel(modelLocation);
-            }
-            catch(Exception e)
-            {
-                // FIXME better error reporting?
-                FMLLog.getLogger().error("Unable to load vanilla model " + modelLocation, e);
-            }
-            if(model != null)
-            {
-                return loader.new VanillaModelWrapper(modelLocation, model, false, animation);
-            }
-            return ModelLoaderRegistry.getMissingModel();
+            ModelBlock model = loader.loadModel(modelLocation);
+            return loader.new VanillaModelWrapper(modelLocation, model, false, animation);
         }
 
         @Override
@@ -797,7 +795,7 @@ public class ModelLoader extends ModelBakery
         }
     }
 
-    public static class White extends TextureAtlasSprite
+    public static final class White extends TextureAtlasSprite
     {
         public static ResourceLocation loc = new ResourceLocation("white");
         public static White instance = new White();
@@ -824,6 +822,7 @@ public class ModelLoader extends ModelBakery
             int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
             pixels[0] = new int[image.getWidth() * image.getHeight()];
             image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth());
+            this.clearFramesTextureData();
             this.framesTextureData.add(pixels);
             return false;
         }
@@ -1045,7 +1044,7 @@ public class ModelLoader extends ModelBakery
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IModel loadModel(ResourceLocation modelLocation) throws Exception
         {
             ModelResourceLocation variant = (ModelResourceLocation) modelLocation;
             ModelBlockDefinition definition = loader.getModelBlockDefinition(variant);
@@ -1060,9 +1059,8 @@ public class ModelLoader extends ModelBakery
                 {
                     return new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
                 }
-                // FIXME log missing model?
+                throw e;
             }
-            return ModelLoaderRegistry.getMissingModel();
         }
 
         @Override
@@ -1078,7 +1076,7 @@ public class ModelLoader extends ModelBakery
         private final Multipart multipart;
         private final ImmutableMap<Selector, IModel> partModels;
 
-        public MultipartModel(ResourceLocation location, Multipart multipart)
+        public MultipartModel(ResourceLocation location, Multipart multipart) throws Exception
         {
             this.location = location;
             this.multipart = multipart;

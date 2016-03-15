@@ -29,7 +29,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class ItemLayerModel implements IRetexturableModel
+public final class ItemLayerModel implements IRetexturableModel
 {
     public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
 
@@ -108,7 +108,7 @@ public class ItemLayerModel implements IRetexturableModel
         return new BakedItemModel(builder.build(), particle, map, overrides, null);
     }
 
-    private static class BakedItemModel implements IPerspectiveAwareModel
+    private static final class BakedItemModel implements IPerspectiveAwareModel
     {
         private final ImmutableList<BakedQuad> quads;
         private final TextureAtlasSprite particle;
@@ -170,7 +170,7 @@ public class ItemLayerModel implements IRetexturableModel
         }
     }
 
-    public ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, Optional<TRSRTransformation> transform)
+    public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, Optional<TRSRTransformation> transform)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
@@ -240,7 +240,7 @@ public class ItemLayerModel implements IRetexturableModel
         return builder.build();
     }
 
-    protected boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
+    private static boolean isTransparent(int[] pixels, int uMax, int vMax, int u, int v)
     {
         return (pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF) == 0;
     }

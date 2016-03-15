@@ -37,9 +37,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.List;
 
-@Mod(modid = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
+@Mod(modid = DynBucketTest.MODID, version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
 public class DynBucketTest
 {
+    public static final String MODID = "DynBucketTest";
     public static final Item dynBucket = new DynBucket();
     public static final Item dynBottle = new DynBottle();
 
@@ -79,6 +80,7 @@ public class DynBucketTest
                 }
             });
             ModelBakery.registerItemVariants(dynBottle, bottle);
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, "simpletank")), 0, new ModelResourceLocation(new ResourceLocation(MODID, "simpletank"), "normal"));
         }
     }
 

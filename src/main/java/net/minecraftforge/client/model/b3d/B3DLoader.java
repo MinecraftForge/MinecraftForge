@@ -25,15 +25,25 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.*;
-import net.minecraftforge.client.model.animation.IClip;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.model.ICustomModelLoader;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelCustomData;
+import net.minecraftforge.client.model.IModelPart;
+import net.minecraftforge.client.model.IModelSimpleProperties;
+import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.IRetexturableModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelStateComposition;
+import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
+import net.minecraftforge.client.model.animation.IClip;
 import net.minecraftforge.client.model.animation.IJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Animation;
 import net.minecraftforge.client.model.b3d.B3DModel.Face;
-import net.minecraftforge.client.model.b3d.B3DModel.IKind;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Mesh;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
@@ -48,7 +58,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -69,7 +78,7 @@ import com.google.gson.JsonParser;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-public class B3DLoader implements ICustomModelLoader
+public final class B3DLoader implements ICustomModelLoader
 {
     public static final B3DLoader instance = new B3DLoader();
 
@@ -95,7 +104,7 @@ public class B3DLoader implements ICustomModelLoader
     }
 
     @SuppressWarnings("unchecked")
-    public IModel loadModel(ResourceLocation modelLocation)
+    public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if(!cache.containsKey(file))
@@ -121,12 +130,12 @@ public class B3DLoader implements ICustomModelLoader
             }
             catch(IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "Exception loading model %s with B3D loader, skipping", modelLocation);
                 cache.put(file, null);
+                throw e;
             }
         }
         B3DModel model = cache.get(file);
-        if(model == null) return ModelLoaderRegistry.getMissingModel();
+        if(model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file);
         if(!(model.getRoot().getKind() instanceof Mesh))
         {
             return new ModelWrapper(modelLocation, model, ImmutableSet.<String>of(), true, true, 1);
@@ -134,7 +143,7 @@ public class B3DLoader implements ICustomModelLoader
         return new ModelWrapper(modelLocation, model, ImmutableSet.of(((Node<Mesh>)model.getRoot()).getName()), true, true, 1);
     }
 
-    public static class B3DState implements IModelState
+    public static final class B3DState implements IModelState
     {
         private final Animation animation;
         private final int frame;
@@ -304,7 +313,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    public static class NodeJoint implements IJoint
+    static final class NodeJoint implements IJoint
     {
         private final Node<?> node;
 
@@ -380,27 +389,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    public static class PartWrapper<K extends IKind<K>> implements IModelPart
-    {
-        private final Node<K> node;
-
-        public static <K extends IKind<K>> PartWrapper<K> create(Node<K> node)
-        {
-            return new PartWrapper<K>(node);
-        }
-
-        public PartWrapper(Node<K> node)
-        {
-            this.node = node;
-        }
-
-        public Node<K> getNode()
-        {
-            return node;
-        }
-    }
-
-    public static class ModelWrapper implements IRetexturableModel, IModelCustomData, IModelSimpleProperties, IAnimatedModel
+    private static final class ModelWrapper implements IRetexturableModel, IModelCustomData, IModelSimpleProperties, IAnimatedModel
     {
         private final ResourceLocation modelLocation;
         private final B3DModel model;
@@ -591,7 +580,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    private static class BakedWrapper implements IPerspectiveAwareModel
+    private static final class BakedWrapper implements IPerspectiveAwareModel
     {
         private final Node<?> node;
         private final IModelState state;
@@ -697,7 +686,7 @@ public class B3DLoader implements ICustomModelLoader
             return quads;
         }
 
-        protected void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state)
+        private void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state)
         {
             for(Node<?> child : node.getNodes().values())
             {
@@ -828,7 +817,6 @@ public class B3DLoader implements ICustomModelLoader
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
-        @Override
         public ItemOverrideList getOverrides()
         {
             // TODO handle items

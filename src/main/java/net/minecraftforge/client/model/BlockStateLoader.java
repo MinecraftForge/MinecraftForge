@@ -163,6 +163,7 @@ public class BlockStateLoader
         public IModel process(IModel base)
         {
             int size = parts.size();
+            // FIXME: should missing base be handled this way?
             boolean hasBase = base != ModelLoaderRegistry.getMissingModel();
 
             if (hasBase)
@@ -182,7 +183,7 @@ public class BlockStateLoader
             {
                 SubModel part = entry.getValue();
 
-                IModel model = ModelLoaderRegistry.getModel(part.getModelLocation());
+                IModel model = ModelLoaderRegistry.getModelOrLogError(part.getModelLocation(), "Unable to load block sub-model: \'" + part.getModelLocation());
 
                 IModelState partState = new ModelStateComposition(baseTr, part.getState());
 

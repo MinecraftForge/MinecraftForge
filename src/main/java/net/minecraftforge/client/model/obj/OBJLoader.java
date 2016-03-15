@@ -1,7 +1,6 @@
 package net.minecraftforge.client.model.obj;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,7 +21,7 @@ import org.apache.logging.log4j.Level;
  * To enable your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-public class OBJLoader implements ICustomModelLoader {
+public final class OBJLoader implements ICustomModelLoader {
     public static final OBJLoader instance = new OBJLoader();
     private IResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<String>();
@@ -45,44 +44,37 @@ public class OBJLoader implements ICustomModelLoader {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
     }
 
-    public IModel loadModel(ResourceLocation modelLocation)
+    public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
         {
+            IResource resource = null;
             try
             {
-                IResource resource = null;
-                try
-                {
-                    resource = manager.getResource(file);
-                }
-                catch (FileNotFoundException e)
-                {
-                    if (modelLocation.getResourcePath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
-                    else if (modelLocation.getResourcePath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
-                    else throw e;
-                }
-                OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
-                OBJModel model = null;
-                try
-                {
-                	model = parser.parse();
-                }
-                finally
-                {
-                	cache.put(modelLocation, model);
-                }
+                resource = manager.getResource(file);
             }
-            catch (IOException e)
+            catch (FileNotFoundException e)
             {
-                cache.put(modelLocation, null);
+                if (modelLocation.getResourcePath().startsWith("models/block/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
+                else if (modelLocation.getResourcePath().startsWith("models/item/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
+                else throw e;
+            }
+            OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
+            OBJModel model = null;
+            try
+            {
+                model = parser.parse();
+            }
+            finally
+            {
+                cache.put(modelLocation, model);
             }
         }
         OBJModel model = cache.get(file);
-        if (model == null) return ModelLoaderRegistry.getMissingModel();
+        if (model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file);
         return model;
     }
 }

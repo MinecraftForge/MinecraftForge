@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public class MultiLayerModel implements IModelCustomData
+public final class MultiLayerModel implements IModelCustomData
 {
     public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.<Optional<BlockRenderLayer>, ModelResourceLocation>of());
 
@@ -58,7 +58,7 @@ public class MultiLayerModel implements IModelCustomData
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
-            IModel model = ModelLoaderRegistry.getModel(models.get(key));
+            IModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
             builder.put(key, model.bake(new ModelStateComposition(state, model.getDefaultState()), format, bakedTextureGetter));
         }
         return builder.build();
@@ -115,7 +115,7 @@ public class MultiLayerModel implements IModelCustomData
         return new ModelResourceLocation("builtin/missing", "missing");
     }
 
-    public static class MultiLayerBakedModel implements IPerspectiveAwareModel
+    private static final class MultiLayerBakedModel implements IPerspectiveAwareModel
     {
         private final ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> models;
         private final ImmutableMap<TransformType, TRSRTransformation> cameraTransforms;;

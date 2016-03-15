@@ -32,21 +32,16 @@ import com.google.common.collect.Sets;
 
 // TODO: Switch to vanilla class, or to something similar
 @Deprecated
-public class MultiModel implements IModel
+public final class MultiModel implements IModel
 {
-    public static class Baked implements IPerspectiveAwareModel
+    private static final class Baked implements IPerspectiveAwareModel
     {
-        protected final IBakedModel base;
-        protected final ImmutableMap<String, IBakedModel> parts;
+        private final IBakedModel base;
+        private final ImmutableMap<String, IBakedModel> parts;
 
-        protected final IBakedModel internalBase;
-        protected ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
-        protected final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
-
-        public Baked(IBakedModel base, ImmutableMap<String, IBakedModel> parts)
-        {
-            this(null, false, base, parts);
-        }
+        private final IBakedModel internalBase;
+        private ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
+        private final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
 
         public Baked(ResourceLocation location, boolean perspective, IBakedModel base, ImmutableMap<String, IBakedModel> parts)
         {
@@ -148,16 +143,6 @@ public class MultiModel implements IModel
             return quads.get(Optional.fromNullable(side));
         }
 
-        public IBakedModel getBaseModel()
-        {
-            return base;
-        }
-
-        public Map<String, IBakedModel> getParts()
-        {
-            return parts;
-        }
-
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
@@ -173,10 +158,10 @@ public class MultiModel implements IModel
         }
     }
 
-    protected final ResourceLocation location;
-    protected final IModel base;
-    protected final IModelState baseState;
-    protected final Map<String, Pair<IModel, IModelState>> parts;
+    private final ResourceLocation location;
+    private final IModel base;
+    private final IModelState baseState;
+    private final Map<String, Pair<IModel, IModelState>> parts;
 
     public MultiModel(ResourceLocation location, IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
     {
@@ -184,16 +169,6 @@ public class MultiModel implements IModel
         this.base = base;
         this.baseState = baseState;
         this.parts = parts;
-    }
-
-    public MultiModel(IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
-    {
-        this(null, base, baseState, parts);
-    }
-
-    public MultiModel(IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
-    {
-        this(null, base, baseState, ImmutableMap.copyOf(parts));
     }
 
     public MultiModel(ResourceLocation location, IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
@@ -252,22 +227,6 @@ public class MultiModel implements IModel
             return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
         }
         return new Baked(location, true, bakedBase, mapBuilder.build());
-    }
-
-    /**
-     * @return The base model of this MultiModel. May be null.
-     */
-    public IModel getBaseModel()
-    {
-        return base;
-    }
-
-    /**
-     * @return A map of the submodel name to its IModel and IModelState.
-     */
-    public Map<String, Pair<IModel, IModelState>> getParts()
-    {
-        return parts;
     }
 
     @Override

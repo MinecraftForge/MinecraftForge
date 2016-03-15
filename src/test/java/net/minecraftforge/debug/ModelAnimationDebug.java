@@ -203,8 +203,8 @@ public class ModelAnimationDebug
                     {
                         model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
                     }*/
-                    IModel base = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine"));
-                    IModel ring = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine_ring"));
+                    IModel base = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine"));
+                    IModel ring = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine_ring"));
                     ImmutableMap<String, String> textures = ImmutableMap.of(
                         "base", "blocks/stone",
                         "front", "blocks/log_oak",
