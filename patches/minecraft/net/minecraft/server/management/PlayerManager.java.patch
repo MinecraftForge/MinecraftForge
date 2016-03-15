@@ -1,10 +1,121 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerManager.java
-@@ -338,6 +338,7 @@
-             int i1 = this.field_72698_e;
-             int j1 = i - k;
-             int k1 = j - l;
-+            List<ChunkCoordIntPair> chunksToLoad = Lists.newArrayList();
+@@ -468,11 +468,18 @@
+         private int field_187288_h;
+         private long field_187289_i;
+         private boolean field_187290_j;
++        private Runnable loadedRunnable = new Runnable()
++        {
++            public void run()
++            {
++                PlayerInstance.this.field_187286_f = PlayerManager.this.func_72688_a().func_72863_F().func_186028_c(PlayerInstance.this.field_187284_d.field_77276_a, PlayerInstance.this.field_187284_d.field_77275_b);
++            }
++        };
  
-             if (j1 != 0 || k1 != 0)
+         public PlayerInstance(int p_i1518_2_, int p_i1518_3_)
+         {
+             this.field_187284_d = new ChunkCoordIntPair(p_i1518_2_, p_i1518_3_);
+-            this.field_187286_f = PlayerManager.this.func_72688_a().func_72863_F().func_186028_c(p_i1518_2_, p_i1518_3_);
++            PlayerManager.this.func_72688_a().func_72863_F().loadChunk(p_i1518_2_, p_i1518_3_, this.loadedRunnable);
+         }
+ 
+         public ChunkCoordIntPair func_187264_a()
+@@ -506,6 +513,20 @@
+         {
+             if (this.field_187283_c.contains(p_187277_1_))
              {
++                // If we haven't loaded yet don't load the chunk just so we can clean it up
++                if (this.field_187286_f == null)
++                {
++                    this.field_187283_c.remove(p_187277_1_);
++
++                    if (this.field_187283_c.isEmpty())
++                    {
++                        net.minecraftforge.common.chunkio.ChunkIOExecutor.dropQueuedChunkLoad(PlayerManager.this.func_72688_a(), this.field_187284_d.field_77276_a, this.field_187284_d.field_77275_b, this.loadedRunnable);
++                        PlayerManager.this.func_187305_b(this);
++                    }
++
++                    return;
++                }
++
+                 if (this.field_187290_j)
+                 {
+                     p_187277_1_.field_71135_a.func_147359_a(new SPacketUnloadChunk(this.field_187284_d.field_77276_a, this.field_187284_d.field_77275_b));
+@@ -513,6 +534,8 @@
+ 
+                 this.field_187283_c.remove(p_187277_1_);
+ 
++                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.UnWatch(this.field_187284_d, p_187277_1_));
++
+                 if (this.field_187283_c.isEmpty())
+                 {
+                     PlayerManager.this.func_187305_b(this);
+@@ -625,7 +648,7 @@
+ 
+                 this.field_187288_h |= 1 << (p_187265_2_ >> 4);
+ 
+-                if (this.field_187287_g < 64)
++                //Forge; Cache everything, so always run
+                 {
+                     short short1 = (short)(p_187265_1_ << 12 | p_187265_3_ << 8 | p_187265_2_);
+ 
+@@ -637,6 +660,8 @@
+                         }
+                     }
+ 
++                    if (this.field_187287_g == this.field_187285_e.length)
++                        this.field_187285_e = java.util.Arrays.copyOf(this.field_187285_e, this.field_187285_e.length << 1);
+                     this.field_187285_e[this.field_187287_g++] = short1;
+                 }
+             }
+@@ -653,6 +678,7 @@
+             }
+         }
+ 
++        @SuppressWarnings("unused")
+         public void func_187280_d()
+         {
+             if (this.field_187290_j && this.field_187286_f != null)
+@@ -666,18 +692,20 @@
+                         int k = (this.field_187285_e[0] >> 8 & 15) + this.field_187284_d.field_77275_b * 16;
+                         BlockPos blockpos = new BlockPos(i, j, k);
+                         this.func_187267_a(new SPacketBlockChange(PlayerManager.this.func_72688_a(), blockpos));
++                        net.minecraft.block.state.IBlockState state = PlayerManager.this.func_72688_a().func_180495_p(blockpos);
+ 
+-                        if (PlayerManager.this.func_72688_a().func_180495_p(blockpos).func_177230_c().func_149716_u())
++                        if (state.func_177230_c().hasTileEntity(state))
+                         {
+                             this.func_187273_a(PlayerManager.this.func_72688_a().func_175625_s(blockpos));
+                         }
+                     }
+-                    else if (this.field_187287_g == 64)
++                    else if (this.field_187287_g >= net.minecraftforge.common.ForgeModContainer.clumpingThreshold)
+                     {
+                         int i1 = this.field_187284_d.field_77276_a * 16;
+                         int k1 = this.field_187284_d.field_77275_b * 16;
+                         this.func_187267_a(new SPacketChunkData(this.field_187286_f, false, this.field_187288_h));
+ 
++                        if (false) // Forge: Grabs ALL the tile entities, costly on a modded server, only send needed ones
+                         for (int i2 = 0; i2 < 16; ++i2)
+                         {
+                             if ((this.field_187288_h & 1 << i2) != 0)
+@@ -695,15 +723,17 @@
+                     else
+                     {
+                         this.func_187267_a(new SPacketMultiBlockChange(this.field_187287_g, this.field_187285_e, this.field_187286_f));
+-
++                    }
++                    { // Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
+                         for (int j1 = 0; j1 < this.field_187287_g; ++j1)
+                         {
+                             int l1 = (this.field_187285_e[j1] >> 12 & 15) + this.field_187284_d.field_77276_a * 16;
+                             int j2 = this.field_187285_e[j1] & 255;
+                             int l2 = (this.field_187285_e[j1] >> 8 & 15) + this.field_187284_d.field_77275_b * 16;
+                             BlockPos blockpos1 = new BlockPos(l1, j2, l2);
++                            net.minecraft.block.state.IBlockState state = PlayerManager.this.func_72688_a().func_180495_p(blockpos1);
+ 
+-                            if (PlayerManager.this.func_72688_a().func_180495_p(blockpos1).func_177230_c().func_149716_u())
++                            if (state.func_177230_c().hasTileEntity(state))
+                             {
+                                 this.func_187273_a(PlayerManager.this.func_72688_a().func_175625_s(blockpos1));
+                             }
