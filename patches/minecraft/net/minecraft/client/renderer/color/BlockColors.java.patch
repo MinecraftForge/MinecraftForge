@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/color/BlockColors.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/color/BlockColors.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.client.renderer.color;
+ 
++import java.util.HashMap;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockDoublePlant;
+ import net.minecraft.block.BlockOldLeaf;
+@@ -13,7 +15,6 @@
+ import net.minecraft.item.ItemBlock;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityFlowerPot;
+-import net.minecraft.util.ObjectIntIdentityMap;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.ColorizerFoliage;
+ import net.minecraft.world.ColorizerGrass;
+@@ -25,7 +26,9 @@
+ @SideOnly(Side.CLIENT)
+ public class BlockColors
+ {
+-    private final ObjectIntIdentityMap<IBlockColor> field_186725_a = new ObjectIntIdentityMap(32);
++    // private final ObjectIntIdentityMap<IBlockColor> mapBlockColors = new ObjectIntIdentityMap(32); Vanilla
++    // FORGE
++    private final HashMap<Block, IBlockColor> field_186725_a = new HashMap<Block, IBlockColor>(); 
+ 
+     public static BlockColors func_186723_a()
+     {
+@@ -145,7 +148,7 @@
+ 
+     public int func_186724_a(IBlockState p_186724_1_, IBlockAccess p_186724_2_, BlockPos p_186724_3_, int p_186724_4_)
+     {
+-        IBlockColor iblockcolor = (IBlockColor)this.field_186725_a.func_148745_a(Block.func_149682_b(p_186724_1_.func_177230_c()));
++        IBlockColor iblockcolor = (IBlockColor)this.field_186725_a.get(p_186724_1_.func_177230_c());
+         return iblockcolor == null ? -1 : iblockcolor.func_186720_a(p_186724_1_, p_186724_2_, p_186724_3_, p_186724_4_);
+     }
+ 
+@@ -155,7 +158,7 @@
+ 
+         for (int j = p_186722_2_.length; i < j; ++i)
+         {
+-            this.field_186725_a.func_148746_a(p_186722_1_, Block.func_149682_b(p_186722_2_[i]));
++            this.field_186725_a.put(p_186722_2_[i], p_186722_1_);
+         }
+     }
+ }

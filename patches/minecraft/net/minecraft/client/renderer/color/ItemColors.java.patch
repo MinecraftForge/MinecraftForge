@@ -1,0 +1,56 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/color/ItemColors.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/color/ItemColors.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.client.renderer.color;
+ 
++import java.util.HashMap;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockDoublePlant;
+ import net.minecraft.block.state.IBlockState;
+@@ -16,7 +18,6 @@
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagIntArray;
+ import net.minecraft.potion.PotionUtils;
+-import net.minecraft.util.ObjectIntIdentityMap;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.ColorizerGrass;
+ import net.minecraft.world.IBlockAccess;
+@@ -26,7 +27,9 @@
+ @SideOnly(Side.CLIENT)
+ public class ItemColors
+ {
+-    private final ObjectIntIdentityMap<IItemColor> field_186732_a = new ObjectIntIdentityMap(32);
++//    private final ObjectIntIdentityMap<IItemColor> mapItemColors = new ObjectIntIdentityMap(32); Vanilla
++    // FORGE
++    private final HashMap<Item, IItemColor> field_186732_a = new HashMap<Item, IItemColor>();
+ 
+     public static ItemColors func_186729_a(final BlockColors p_186729_0_)
+     {
+@@ -136,7 +139,7 @@
+ 
+     public int func_186728_a(ItemStack p_186728_1_, int p_186728_2_)
+     {
+-        IItemColor iitemcolor = (IItemColor)this.field_186732_a.func_148745_a(Item.field_150901_e.func_148757_b(p_186728_1_.func_77973_b()));
++        IItemColor iitemcolor = (IItemColor)this.field_186732_a.get(p_186728_1_.func_77973_b());
+         return iitemcolor == null ? -1 : iitemcolor.func_186726_a(p_186728_1_, p_186728_2_);
+     }
+ 
+@@ -146,7 +149,7 @@
+ 
+         for (int j = p_186731_2_.length; i < j; ++i)
+         {
+-            this.field_186732_a.func_148746_a(p_186731_1_, Item.func_150891_b(Item.func_150898_a(p_186731_2_[i])));
++            this.field_186732_a.put(Item.func_150898_a(p_186731_2_[i]), p_186731_1_);
+         }
+     }
+ 
+@@ -156,7 +159,7 @@
+ 
+         for (int j = p_186730_2_.length; i < j; ++i)
+         {
+-            this.field_186732_a.func_148746_a(p_186730_1_, Item.func_150891_b(p_186730_2_[i]));
++            this.field_186732_a.put(p_186730_2_[i], p_186730_1_);
+         }
+     }
+ }
