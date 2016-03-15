@@ -474,3 +474,14 @@
      }
  
      public boolean func_70002_Q()
+@@ -3192,4 +3084,10 @@
+     {
+         return this.field_184127_aH;
+     }
++    
++    // FORGE
++    public ItemColors getItemColors()
++    {
++    	return this.field_184128_aI;
++    }
+ }
