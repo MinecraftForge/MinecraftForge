@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import net.minecraft.client.renderer.block.model.VariantList;
 import net.minecraft.client.renderer.block.model.WeightedBakedModel;
 import net.minecraft.client.renderer.block.model.multipart.Multipart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
+import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.IIconCreator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -83,6 +85,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 public final class ModelLoader extends ModelBakery
@@ -135,8 +138,14 @@ public final class ModelLoader extends ModelBakery
 
         IBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance);
         Map<IModel, IBakedModel> bakedModels = Maps.newHashMap();
-        for(IModel model : stateModels.values())
+        HashMultimap<IModel, ModelResourceLocation> models = HashMultimap.create();
+        Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
+
+        ProgressBar bakeBar = ProgressManager.push("ModelLoader: baking", models.keySet().size());
+
+        for(IModel model : models.keySet())
         {
+            bakeBar.step("[" + Joiner.on(", ").join(models.get(model)) + "]");
             if(model == getMissingModel())
             {
                 bakedModels.put(model, missingBaked);
@@ -146,6 +155,9 @@ public final class ModelLoader extends ModelBakery
                 bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance));
             }
         }
+
+        ProgressManager.pop(bakeBar);
+
         for (Entry<ModelResourceLocation, IModel> e : stateModels.entrySet())
         {
             bakedRegistry.putObject(e.getKey(), bakedModels.get(e.getValue()));
@@ -161,27 +173,31 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadMultipartVariantModels() {}
 
-    /*private void loadBlocks()
+    @Override
+    protected void loadBlocks()
     {
-        Map<IBlockState, ModelResourceLocation> stateMap = blockModelShapes.getBlockStateMapper().putAllStateModelLocations();
-        List<ModelResourceLocation> variants = Lists.newArrayList(stateMap.values());
-        variants.add(new ModelResourceLocation("minecraft:item_frame", "normal")); //Vanilla special cases item_frames so must we
-        variants.add(new ModelResourceLocation("minecraft:item_frame", "map"));
-        Collections.sort(variants, new Comparator<ModelResourceLocation>()
+        List<Block> blocks = Lists.newArrayList(Block.blockRegistry);
+        Collections.sort(blocks, new Comparator<Block>()
         {
-            public int compare(ModelResourceLocation v1, ModelResourceLocation v2)
+            public int compare(Block b1, Block b2)
             {
-                return v1.toString().compareTo(v2.toString());
+                return b1.getRegistryName().compareTo(b2.getRegistryName());
             }
         });
-        ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", variants.size());
-        for(ModelResourceLocation variant : variants)
+        ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
+
+        BlockStateMapper mapper = this.blockModelShapes.getBlockStateMapper();
+
+        for(Block block : blocks)
         {
-            loadVariant(variant);
-            blockBar.step(variant.toString());
+            blockBar.step(block.getRegistryName());
+            for(ResourceLocation location : mapper.getBlockstateLocations(block))
+            {
+                loadBlock(mapper, block, location);
+            }
         }
         ProgressManager.pop(blockBar);
-    }*/
+    }
 
     @Override
     protected void registerVariant(ModelBlockDefinition definition, ModelResourceLocation location)
@@ -238,41 +254,47 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<String> itemVariants = Lists.newArrayList();
-        for(Item item : GameData.getItemRegistry().typeSafeIterable())
+        List<Item> items = Lists.newArrayList(GameData.getItemRegistry().typeSafeIterable());
+        Collections.sort(items, new Comparator<Item>()
         {
-            itemVariants.addAll(getVariantNames(item));
-        }
-        Collections.sort(itemVariants);
-        ProgressBar itemBar = ProgressManager.push("ModelLoader: items", itemVariants.size());
-        for(String s : itemVariants)
-        {
-            ResourceLocation file = getItemLocation(s);
-            ModelResourceLocation memory = getInventoryVariant(s);
-            itemBar.step(memory.toString());
-            IModel model = ModelLoaderRegistry.getMissingModel();
-            Exception exception = null;
-            try
+            public int compare(Item i1, Item i2)
             {
-                model = ModelLoaderRegistry.getModel(file);
+                return i1.getRegistryName().compareTo(i2.getRegistryName());
             }
-            catch(Exception e)
+        });
+
+        ProgressBar itemBar = ProgressManager.push("ModelLoader: items", items.size());
+        for(Item item : items)
+        {
+            itemBar.step(item.getRegistryName());
+            for(String s : getVariantNames(item))
             {
-                // try blockstate json if the item model is missing
-                FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
+                ResourceLocation file = getItemLocation(s);
+                ModelResourceLocation memory = getInventoryVariant(s);
+                IModel model = ModelLoaderRegistry.getMissingModel();
+                Exception exception = null;
                 try
                 {
-                    model = ModelLoaderRegistry.getModel(memory);
+                    model = ModelLoaderRegistry.getModel(file);
                 }
-                catch (Exception ex)
+                catch(Exception e)
                 {
-                    exception = new Exception("Could not load item model either from the normal location " + file + " or from the blockstate", ex);
+                    // try blockstate json if the item model is missing
+                    FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
+                    try
+                    {
+                        model = ModelLoaderRegistry.getModel(memory);
+                    }
+                    catch (Exception ex)
+                    {
+                        exception = new Exception("Could not load item model either from the normal location " + file + " or from the blockstate", ex);
+                    }
                 }
-            }
-            stateModels.put(memory, model);
-            if(exception != null)
-            {
-                storeException(memory, exception);
+                stateModels.put(memory, model);
+                if(exception != null)
+                {
+                    storeException(memory, exception);
+                }
             }
         }
         ProgressManager.pop(itemBar);
