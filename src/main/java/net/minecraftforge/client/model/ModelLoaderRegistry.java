@@ -195,9 +195,9 @@ public class ModelLoaderRegistry
     {
         cache.clear();
         // putting the builtin models in
-        cache.put(new ResourceLocation("minecraft:builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
-        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
-        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());
+        cache.put(new ResourceLocation("minecraft:builtin/generated"), ItemLayerModel.instance);
+        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ItemLayerModel.instance);
+        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ItemLayerModel.instance);
     }
 
     static Iterable<ResourceLocation> getTextures()

@@ -94,7 +94,6 @@ public final class ModelLoader extends ModelBakery
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
     private IModel missingModel = null;
-    private IModel itemModel = new ItemLayerModel(MODEL_GENERATED);
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -372,6 +371,9 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    /**
+     * Hooked from ModelBakery, allows using MRLs that don't end with "inventory" for items.
+     */
     public static ModelResourceLocation getInventoryVariant(String s)
     {
         if(s.contains("#"))
@@ -750,7 +752,7 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
-    public IModel getMissingModel()
+    protected IModel getMissingModel()
     {
         if (missingModel == null)
         {
@@ -764,11 +766,6 @@ public final class ModelLoader extends ModelBakery
             }
         }
         return missingModel;
-    }
-
-    public IModel getItemModel()
-    {
-        return itemModel;
     }
 
     protected static enum VanillaLoader implements ICustomModelLoader
@@ -787,10 +784,8 @@ public final class ModelLoader extends ModelBakery
             return loader;
         }
 
-        public void onResourceManagerReload(IResourceManager resourceManager)
-        {
-            // do nothing, cause loader will store the reference to the resourceManager
-        }
+        // NOOP, handled in loader
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         public boolean accepts(ResourceLocation modelLocation)
         {
@@ -817,12 +812,15 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    /**
+     * 16x16 pure white sprite.
+     */
     public static final class White extends TextureAtlasSprite
     {
         public static ResourceLocation loc = new ResourceLocation("white");
         public static White instance = new White();
 
-        protected White()
+        private White()
         {
             super(loc.toString());
         }
@@ -833,7 +831,6 @@ public final class ModelLoader extends ModelBakery
             return true;
         }
 
-        // TODO: check if this code is correct
         @Override
         public boolean load(IResourceManager manager, ResourceLocation location)
         {
@@ -855,6 +852,9 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    /**
+     * Internal, do not use.
+     */
     public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
@@ -973,6 +973,9 @@ public final class ModelLoader extends ModelBakery
         customStateMappers.put(block.delegate, mapper);
     }
 
+    /**
+     * Internal, do not use.
+     */
     public static void onRegisterAllBlocks(BlockModelShapes shapes)
     {
         for (Entry<RegistryDelegate<Block>, IStateMapper> e : customStateMappers.entrySet())
@@ -1003,6 +1006,9 @@ public final class ModelLoader extends ModelBakery
         customMeshDefinitions.put(item.delegate, meshDefinition);
     }
 
+    /**
+     * Helper method for registering all itemstacks for given item to map to universal bucket model.
+     */
     public static void setBucketModelDefinition(Item item) {
         ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
         {
@@ -1015,6 +1021,9 @@ public final class ModelLoader extends ModelBakery
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 
+    /**
+     * Internal, do not use.
+     */
     public static void onRegisterItems(ItemModelMesher mesher)
     {
         for (Map.Entry<RegistryDelegate<Item>, ItemMeshDefinition> e : customMeshDefinitions.entrySet())
@@ -1037,6 +1046,9 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    /**
+     * Get the default texture getter the models will be baked with.
+     */
     public static Function<ResourceLocation, TextureAtlasSprite> defaultTextureGetter()
     {
         return DefaultTextureGetter.instance;
@@ -1053,11 +1065,9 @@ public final class ModelLoader extends ModelBakery
             this.loader = loader;
         }
 
+        // NOOP, handled in loader
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager)
-        {
-            // TODO Auto-generated method stub
-        }
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
