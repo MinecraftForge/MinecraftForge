@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOldLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOldLeaf.java
-@@ -14,6 +14,7 @@
- import net.minecraft.stats.StatList;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.util.math.BlockPos;
-+import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-@@ -103,11 +104,16 @@
+@@ -103,11 +103,16 @@
          if (!p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
          {
              p_180657_2_.func_71029_a(StatList.func_188055_a(this));
@@ -21,7 +13,7 @@
      }
 +
 +    @Override
-+    public List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    public List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
 +        return java.util.Arrays.asList(new ItemStack(this, 1, world.func_180495_p(pos).func_177229_b(field_176239_P).func_176839_a()));
 +    }

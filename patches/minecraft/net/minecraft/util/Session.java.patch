@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/Session.java
 +++ ../src-work/minecraft/net/minecraft/util/Session.java
-@@ -5,6 +5,8 @@
- import com.mojang.util.UUIDTypeAdapter;
- import java.util.Map;
- import java.util.UUID;
-+
-+import net.minecraftforge.fml.common.FMLLog;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -15,9 +17,24 @@
+@@ -15,9 +15,25 @@
      private final String field_148257_b;
      private final String field_148258_c;
      private final Session.Type field_152429_d;
@@ -22,19 +13,20 @@
 +        {
 +            p_i1098_1_ = "MissingName";
 +            p_i1098_2_ = p_i1098_3_ = "NotValid";
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "=========================================================");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "WARNING!! the username was not set for this session, typically");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "this means you installed Forge incorrectly. We have set your");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "name to \"MissingName\" and your session to nothing. Please");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "check your installation and post a console log from the launcher");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "when asking for help!");
-+            FMLLog.getLogger().log(org.apache.logging.log4j.Level.WARN, "=========================================================");
++            org.apache.logging.log4j.Logger logger = net.minecraftforge.fml.common.FMLLog.getLogger();
++            logger.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
++            logger.log(org.apache.logging.log4j.Level.WARN, "WARNING!! the username was not set for this session, typically");
++            logger.log(org.apache.logging.log4j.Level.WARN, "this means you installed Forge incorrectly. We have set your");
++            logger.log(org.apache.logging.log4j.Level.WARN, "name to \"MissingName\" and your session to nothing. Please");
++            logger.log(org.apache.logging.log4j.Level.WARN, "check your installation and post a console log from the launcher");
++            logger.log(org.apache.logging.log4j.Level.WARN, "when asking for help!");
++            logger.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
 +        }
 +
          this.field_74286_b = p_i1098_1_;
          this.field_148257_b = p_i1098_2_;
          this.field_148258_c = p_i1098_3_;
-@@ -49,14 +66,29 @@
+@@ -49,14 +65,29 @@
          try
          {
              UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());

@@ -1,16 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -1,5 +1,9 @@
- package net.minecraft.world;
- 
-+import net.minecraft.world.chunk.IChunkGenerator;
-+import net.minecraft.world.gen.ChunkProviderDebug;
-+import net.minecraft.world.gen.ChunkProviderFlat;
-+import net.minecraft.world.gen.ChunkProviderOverworld;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -27,6 +31,7 @@
+@@ -27,6 +27,7 @@
  
      private WorldType(int p_i1960_1_, String p_i1960_2_, int p_i1960_3_)
      {
@@ -18,7 +8,7 @@
          this.field_77133_f = p_i1960_2_;
          this.field_77134_g = p_i1960_3_;
          this.field_77140_h = true;
-@@ -113,4 +118,145 @@
+@@ -113,4 +114,145 @@
          this.field_151361_l = true;
          return this;
      }
