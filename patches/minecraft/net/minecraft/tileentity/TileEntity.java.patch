@@ -68,7 +68,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -271,6 +281,185 @@
+@@ -271,6 +281,186 @@
          return false;
      }
  
@@ -130,20 +130,21 @@
 +    {
 +        net.minecraft.util.math.AxisAlignedBB bb = INFINITE_EXTENT_AABB;
 +        Block type = func_145838_q();
++        BlockPos pos = func_174877_v();
 +        if (type == Blocks.field_150381_bn)
 +        {
-+            bb = new net.minecraft.util.math.AxisAlignedBB(func_174877_v(), func_174877_v().func_177982_a(1, 1, 1));
++            bb = new net.minecraft.util.math.AxisAlignedBB(pos, pos.func_177982_a(1, 1, 1));
 +        }
 +        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
-+            bb = new net.minecraft.util.math.AxisAlignedBB(func_174877_v().func_177982_a(-1, 0, -1), func_174877_v().func_177982_a(2, 2, 2));
++            bb = new net.minecraft.util.math.AxisAlignedBB(pos.func_177982_a(-1, 0, -1), pos.func_177982_a(2, 2, 2));
 +        }
 +        else if (type != null && type != Blocks.field_150461_bJ)
 +        {
 +            net.minecraft.util.math.AxisAlignedBB cbb = null;
 +            try
 +            {
-+                cbb = field_145850_b.func_180495_p(func_174877_v()).func_185890_d(field_145850_b, func_174877_v());
++                cbb = field_145850_b.func_180495_p(func_174877_v()).func_185890_d(field_145850_b, pos).func_72321_a(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
 +            }
 +            catch (Exception e)
 +            {
