@@ -403,7 +403,7 @@ public class ForgeHooksClient
                     matrix.mul(flipX, matrix);
                     matrix.mul(matrix, flipX);
                 }
-                if(pair.getRight() != null) multiplyCurrentGlMatrix(pair.getRight());
+                multiplyCurrentGlMatrix(matrix);
             }
             return pair.getLeft();
         }
