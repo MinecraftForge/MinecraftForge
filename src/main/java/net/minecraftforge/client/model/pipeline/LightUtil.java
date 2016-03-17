@@ -88,6 +88,7 @@ public class LightUtil
         {
             consumer.setQuadTint(quad.getTintIndex());
         }
+        consumer.setApplyDiffuseLighting(quad.shouldApplyDiffuseLighting());
         //int[] eMap = mapFormats(consumer.getVertexFormat(), DefaultVertexFormats.ITEM);
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();

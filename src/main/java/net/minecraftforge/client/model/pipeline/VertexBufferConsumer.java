@@ -57,4 +57,5 @@ public class VertexBufferConsumer implements IVertexConsumer
 
     public void setQuadTint(int tint) {}
     public void setQuadOrientation(EnumFacing orientation) {}
+    public void setApplyDiffuseLighting(boolean diffuse) {}
 }

@@ -17,6 +17,7 @@ public interface IVertexConsumer
 
     void setQuadTint(int tint);
     void setQuadOrientation(EnumFacing orientation);
+    void setApplyDiffuseLighting(boolean diffuse);
 
     void put(int element, float... data);
 }

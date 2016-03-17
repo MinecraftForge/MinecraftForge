@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
-@@ -6,15 +6,25 @@
+@@ -6,15 +6,26 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
  @SideOnly(Side.CLIENT)
@@ -18,21 +18,23 @@
 +    @Deprecated
      public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_)
      {
-+        this(p_i46574_1_, p_i46574_2_, p_i46574_3_, p_i46574_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++        this(p_i46574_1_, p_i46574_2_, p_i46574_3_, p_i46574_4_, true, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
 +    }
 +
-+    public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_, net.minecraft.client.renderer.vertex.VertexFormat format)
++    public BakedQuad(int[] p_i46574_1_, int p_i46574_2_, EnumFacing p_i46574_3_, TextureAtlasSprite p_i46574_4_, boolean applyDiffuseLighting, net.minecraft.client.renderer.vertex.VertexFormat format)
 +    {
 +        this.format = format;
++        this.applyDiffuseLighting = applyDiffuseLighting;
          this.field_178215_a = p_i46574_1_;
          this.field_178213_b = p_i46574_2_;
          this.field_178214_c = p_i46574_3_;
-@@ -45,4 +55,17 @@
+@@ -45,4 +56,23 @@
      {
          return this.field_178214_c;
      }
 +
-+    private final net.minecraft.client.renderer.vertex.VertexFormat format;
++    protected final net.minecraft.client.renderer.vertex.VertexFormat format;
++    protected final boolean applyDiffuseLighting;
 +
 +    @Override
 +    public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer)
@@ -43,5 +45,10 @@
 +    public net.minecraft.client.renderer.vertex.VertexFormat getFormat()
 +    {
 +        return format;
++    }
++
++    public boolean shouldApplyDiffuseLighting()
++    {
++        return applyDiffuseLighting;
 +    }
  }

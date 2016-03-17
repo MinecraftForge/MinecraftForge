@@ -13,9 +13,9 @@ public class UnpackedBakedQuad extends BakedQuad
     protected final VertexFormat format;
     protected boolean packed = false;
 
-    public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, VertexFormat format)
+    public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, boolean applyDiffuseLighting, VertexFormat format)
     {
-        super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation, texture, format);
+        super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation, texture, applyDiffuseLighting, format);
         this.unpackedData = unpackedData;
         this.format = format;
     }
@@ -70,6 +70,7 @@ public class UnpackedBakedQuad extends BakedQuad
         private int tint = -1;
         private EnumFacing orientation;
         private TextureAtlasSprite texture;
+        private boolean applyDiffuseLighting;
 
         private int vertices = 0;
         private int elements = 0;
@@ -99,6 +100,11 @@ public class UnpackedBakedQuad extends BakedQuad
         public void setTexture(TextureAtlasSprite texture)
         {
             this.texture = texture;
+        }
+
+        public void setApplyDiffuseLighting(boolean diffuse)
+        {
+            this.applyDiffuseLighting = diffuse;
         }
 
         public void put(int element, float... data)
@@ -132,7 +138,7 @@ public class UnpackedBakedQuad extends BakedQuad
             {
                 throw new IllegalStateException("not enough data");
             }
-            return new UnpackedBakedQuad(unpackedData, tint, orientation, texture, format);
+            return new UnpackedBakedQuad(unpackedData, tint, orientation, texture, applyDiffuseLighting, format);
         }
     }
 }

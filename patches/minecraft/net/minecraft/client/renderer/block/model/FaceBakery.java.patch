@@ -19,18 +19,20 @@
          }
  
 -        int[] aint = this.func_188012_a(blockfaceuv, p_178414_4_, p_178414_5_, this.func_178403_a(p_178414_1_, p_178414_2_), p_178414_6_, p_178414_7_, p_178414_9_);
-+        int[] aint = this.makeQuadVertexData(blockfaceuv, p_178414_4_, p_178414_5_, this.func_178403_a(p_178414_1_, p_178414_2_), p_178414_6_, p_178414_7_, p_178414_9_);
++        int[] aint = this.makeQuadVertexData(blockfaceuv, p_178414_4_, p_178414_5_, this.func_178403_a(p_178414_1_, p_178414_2_), p_178414_6_, p_178414_7_, false);
          EnumFacing enumfacing = func_178410_a(aint);
  
          if (p_178414_7_ == null)
-@@ -63,6 +69,7 @@
+@@ -63,7 +69,8 @@
              this.func_178408_a(aint, enumfacing);
          }
  
+-        return new BakedQuad(aint, p_178414_3_.field_178245_c, enumfacing, p_178414_4_);
 +        net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, enumfacing);
-         return new BakedQuad(aint, p_178414_3_.field_178245_c, enumfacing, p_178414_4_);
++        return new BakedQuad(aint, p_178414_3_.field_178245_c, enumfacing, p_178414_4_, p_178414_9_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
      }
  
+     private BlockFaceUV func_188010_a(BlockFaceUV p_188010_1_, EnumFacing p_188010_2_, ModelRotation p_188010_3_)
 @@ -73,11 +80,16 @@
  
      private int[] func_188012_a(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, EnumFacing p_188012_3_, float[] p_188012_4_, ModelRotation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_)

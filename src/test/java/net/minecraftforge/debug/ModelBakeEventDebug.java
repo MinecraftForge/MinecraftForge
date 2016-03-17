@@ -245,7 +245,7 @@ public class ModelBakeEventDebug
                 vertexToInts((float)v2.xCoord, (float)v2.yCoord, (float)v2.zCoord, -1, texture, 0, 16),
                 vertexToInts((float)v3.xCoord, (float)v3.yCoord, (float)v3.zCoord, -1, texture, 16, 16),
                 vertexToInts((float)v4.xCoord, (float)v4.yCoord, (float)v4.zCoord, -1, texture, 16, 0)
-            ), -1, side, texture, DefaultVertexFormats.BLOCK);
+            ), -1, side, texture, true, DefaultVertexFormats.BLOCK);
         }
 
         @Override

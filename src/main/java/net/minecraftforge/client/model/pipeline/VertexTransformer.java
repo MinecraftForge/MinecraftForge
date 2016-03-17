@@ -27,6 +27,11 @@ public class VertexTransformer implements IVertexConsumer
         parent.setQuadOrientation(orientation);
     }
 
+    public void setApplyDiffuseLighting(boolean diffuse)
+    {
+        parent.setApplyDiffuseLighting(diffuse);
+    }
+
     public void put(int element, float... data)
     {
         parent.put(element, data);
