@@ -148,6 +148,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                 if(skyLight > lightmap[v][1]) lightmap[v][1] = skyLight;
             }
             updateColor(normal[v], color[v], x, y, z, tint, multiplier);
+            float diffuse = LightUtil.diffuseLight(normal[v][0], normal[v][1], normal[v][2]);
+            for(int i = 0; i < 3; i++)
+            {
+                color[v][i] *= diffuse;
+            }
             if(EntityRenderer.anaglyphEnable)
             {
                 applyAnaglyph(color[v]);
@@ -234,7 +239,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     }
     public void setQuadOrientation(EnumFacing orientation) {}
     public void setQuadCulled() {}
-    public void setQuadColored() {}
 
     public void setWorld(IBlockAccess world)
     {

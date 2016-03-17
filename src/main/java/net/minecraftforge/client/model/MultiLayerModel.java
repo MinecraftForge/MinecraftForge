@@ -164,7 +164,7 @@ public final class MultiLayerModel implements IModelCustomData
             {
                 return quads.get(Optional.fromNullable(side));
             }
-            else if(!models.containsKey(layer))
+            else if(!models.containsKey(Optional.of(layer)))
             {
                 model = missing;
             }
@@ -172,6 +172,7 @@ public final class MultiLayerModel implements IModelCustomData
             {
                 model = models.get(Optional.of(layer));
             }
+            // assumes that child model will handle this state properly. FIXME?
             return model.getQuads(state, side, rand);
         }
 

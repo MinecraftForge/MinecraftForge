@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IColoredBakedQuad;
 
 // advantages: non-fixed-length vertex format, no overhead of packing and unpacking attributes to transform the model
 // disadvantages: (possibly) larger memory footprint, overhead on packing the attributes at the final rendering stage
@@ -48,10 +47,6 @@ public class UnpackedBakedQuad extends BakedQuad
             consumer.setQuadTint(getTintIndex());
         }
         consumer.setQuadOrientation(getFace());
-        if(this instanceof IColoredBakedQuad)
-        {
-            consumer.setQuadColored();
-        }
         for(int v = 0; v < 4; v++)
         {
             for(int e = 0; e < consumer.getVertexFormat().getElementCount(); e++)
@@ -68,14 +63,6 @@ public class UnpackedBakedQuad extends BakedQuad
         }
     }
 
-    public static class Colored extends UnpackedBakedQuad implements IColoredBakedQuad
-    {
-        public Colored(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, VertexFormat format)
-        {
-            super(unpackedData, tint, orientation, texture, format);
-        }
-    }
-
     public static class Builder implements IVertexConsumer
     {
         private final VertexFormat format;
@@ -83,7 +70,6 @@ public class UnpackedBakedQuad extends BakedQuad
         private int tint = -1;
         private EnumFacing orientation;
         private TextureAtlasSprite texture;
-        private boolean isColored = false;
 
         private int vertices = 0;
         private int elements = 0;
@@ -113,11 +99,6 @@ public class UnpackedBakedQuad extends BakedQuad
         public void setTexture(TextureAtlasSprite texture)
         {
             this.texture = texture;
-        }
-
-        public void setQuadColored()
-        {
-            this.isColored = true;
         }
 
         public void put(int element, float... data)
@@ -150,10 +131,6 @@ public class UnpackedBakedQuad extends BakedQuad
             if(!full)
             {
                 throw new IllegalStateException("not enough data");
-            }
-            if(isColored)
-            {
-                return new Colored(unpackedData, tint, orientation, texture, format);
             }
             return new UnpackedBakedQuad(unpackedData, tint, orientation, texture, format);
         }

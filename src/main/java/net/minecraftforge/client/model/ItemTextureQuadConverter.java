@@ -206,7 +206,6 @@ public final class ItemTextureQuadConverter
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
         builder.setQuadTint(-1);
         builder.setQuadOrientation(side);
-        builder.setQuadColored();
 
         if (side == EnumFacing.NORTH)
         {

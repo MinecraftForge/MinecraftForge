@@ -717,7 +717,6 @@ public final class B3DLoader implements ICustomModelLoader
                 {
                     UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
                     quadBuilder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
-                    quadBuilder.setQuadColored();
                     List<Texture> textures = null;
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
@@ -744,14 +743,13 @@ public final class B3DLoader implements ICustomModelLoader
                     builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, 1);
                     break;
                 case COLOR:
-                    float d = LightUtil.diffuseLight(faceNormal.x, faceNormal.y, faceNormal.z);
                     if(v.getColor() != null)
                     {
-                        builder.put(e, d * v.getColor().x, d * v.getColor().y, d * v.getColor().z, v.getColor().w);
+                        builder.put(e, v.getColor().x, v.getColor().y, v.getColor().z, v.getColor().w);
                     }
                     else
                     {
-                        builder.put(e, d, d, d, 1);
+                        builder.put(e, 1, 1, 1, 1);
                     }
                     break;
                 case UV:

@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.IColoredBakedQuad;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -88,10 +87,6 @@ public class LightUtil
         if(quad.hasTintIndex())
         {
             consumer.setQuadTint(quad.getTintIndex());
-        }
-        if(quad instanceof IColoredBakedQuad)
-        {
-            consumer.setQuadColored();
         }
         //int[] eMap = mapFormats(consumer.getVertexFormat(), DefaultVertexFormats.ITEM);
         float[] data = new float[4];
@@ -281,19 +276,11 @@ public class LightUtil
     public static void renderQuadColor(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         wr.addVertexData(quad.getVertexData());
-        if(quad instanceof IColoredBakedQuad)
-        {
-            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
-        }
-        else
-        {
-            wr.putColor4(auxColor);
-        }
+        ForgeHooksClient.putQuadColor(wr, quad, auxColor);
     }
 
     public static class ItemConsumer extends VertexTransformer
     {
-        private boolean colored = false;
         private int vertices = 0;
 
         private float[] auxColor = new float[]{1, 1, 1, 1};
@@ -309,23 +296,14 @@ public class LightUtil
             System.arraycopy(auxColor, 0, this.auxColor, 0, this.auxColor.length);
         }
 
-        @Override
-        public void setQuadColored()
-        {
-            colored = true;
-        }
-
         public void put(int element, float... data)
         {
             if(getVertexFormat().getElement(element).getUsage() == EnumUsage.COLOR)
             {
                 System.arraycopy(auxColor, 0, buf, 0, buf.length);
-                if(colored)
+                for(int i = 0; i < 4; i++)
                 {
-                    for(int i = 0; i < 4; i++)
-                    {
-                        buf[i] *= data[i];
-                    }
+                    buf[i] *= data[i];
                 }
                 super.put(element, buf);
             }
@@ -339,7 +317,6 @@ public class LightUtil
                 if(vertices == 4)
                 {
                     vertices = 0;
-                    colored = false;
                 }
             }
         }

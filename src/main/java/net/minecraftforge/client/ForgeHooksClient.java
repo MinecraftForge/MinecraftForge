@@ -149,13 +149,7 @@ public class ForgeHooksClient
         renderPass = pass;
     }
 
-    static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>()
-    {
-        protected BlockRenderLayer initialValue()
-        {
-            return BlockRenderLayer.SOLID;
-        }
-    };
+    static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();
 
     public static void setRenderLayer(BlockRenderLayer layer)
     {
@@ -525,13 +519,16 @@ public class ForgeHooksClient
 
     public static void putQuadColor(VertexBuffer renderer, BakedQuad quad, int color)
     {
-        float cr = color & 0xFF;
+        float cb = color & 0xFF;
         float cg = (color >>> 8) & 0xFF;
-        float cb = (color >>> 16) & 0xFF;
+        float cr = (color >>> 16) & 0xFF;
         float ca = (color >>> 24) & 0xFF;
+        VertexFormat format = quad.getFormat();
+        int size = format.getIntegerSize();
+        int offset = format.getColorOffset() / 4; // assumes that color is aligned
         for(int i = 0; i < 4; i++)
         {
-            int vc = quad.getVertexData()[3 + 7 * i];
+            int vc = quad.getVertexData()[offset + size * i];
             float vcr = vc & 0xFF;
             float vcg = (vc >>> 8) & 0xFF;
             float vcb = (vc >>> 16) & 0xFF;

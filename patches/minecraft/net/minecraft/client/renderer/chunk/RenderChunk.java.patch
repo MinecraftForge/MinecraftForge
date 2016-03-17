@@ -31,15 +31,16 @@
                  int j = blockrenderlayer1.ordinal();
  
                  if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
-@@ -191,6 +195,7 @@
+@@ -191,6 +195,8 @@
  
                      aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, iblockaccess, vertexbuffer);
                  }
 +                }
++                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -413,6 +418,26 @@
+@@ -413,6 +419,26 @@
          return this.field_178593_n && this.field_188284_q;
      }
  

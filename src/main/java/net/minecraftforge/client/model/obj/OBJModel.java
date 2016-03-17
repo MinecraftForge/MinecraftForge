@@ -1400,7 +1400,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     } else sprite = this.textures.get(f.getMaterialName());
                     UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                     builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
-                    builder.setQuadColored();
                     Normal faceNormal = f.getNormal();
                     putVertexData(builder, f.verts[0], faceNormal, TextureCoordinate.getDefaultUVs()[0], sprite);
                     putVertexData(builder, f.verts[1], faceNormal, TextureCoordinate.getDefaultUVs()[1], sprite);
@@ -1423,20 +1422,14 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                         builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, v.getPos().w);
                         break;
                     case COLOR:
-                        float d;
-                        if (v.hasNormal())
-                            d = LightUtil.diffuseLight(v.getNormal().x, v.getNormal().y, v.getNormal().z);
-                        else
-                            d = LightUtil.diffuseLight(faceNormal.x, faceNormal.y, faceNormal.z);
-
                         if (v.getMaterial() != null)
                             builder.put(e,
-                                    d * v.getMaterial().getColor().x,
-                                    d * v.getMaterial().getColor().y,
-                                    d * v.getMaterial().getColor().z,
+                                    v.getMaterial().getColor().x,
+                                    v.getMaterial().getColor().y,
+                                    v.getMaterial().getColor().z,
                                     v.getMaterial().getColor().w);
                         else
-                            builder.put(e, d, d, d, 1);
+                            builder.put(e, 1, 1, 1, 1);
                         break;
                     case UV:
                         if (!v.hasTextureCoordinate())

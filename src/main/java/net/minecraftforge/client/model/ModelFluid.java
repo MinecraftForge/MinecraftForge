@@ -209,7 +209,6 @@ public final class ModelFluid implements IModelCustomData
                 EnumFacing side = gas ? EnumFacing.DOWN : EnumFacing.UP;
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(side);
-                builder.setQuadColored();
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
@@ -225,7 +224,6 @@ public final class ModelFluid implements IModelCustomData
                 side = side.getOpposite();
                 builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(side);
-                builder.setQuadColored();
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
@@ -247,7 +245,6 @@ public final class ModelFluid implements IModelCustomData
                     {
                         builder = new UnpackedBakedQuad.Builder(format);
                         builder.setQuadOrientation(side);
-                        builder.setQuadColored();
                         for(int j = 0; j < 4; j++)
                         {
                             int l = (k * 3) + (1 - 2 * k) * j;
@@ -269,7 +266,6 @@ public final class ModelFluid implements IModelCustomData
                 // 1 quad for inventory
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(EnumFacing.UP);
-                builder.setQuadColored();
                 for(int i = 0; i < 4; i++)
                 {
                     putVertex(
@@ -299,11 +295,10 @@ public final class ModelFluid implements IModelCustomData
                     builder.put(e, data);
                     break;
                 case COLOR:
-                    float d = LightUtil.diffuseLight(side);
                     builder.put(e,
-                        d * ((color >> 16) & 0xFF) / 255f,
-                        d * ((color >> 8) & 0xFF) / 255f,
-                        d * (color & 0xFF) / 255f,
+                        ((color >> 16) & 0xFF) / 255f,
+                        ((color >> 8) & 0xFF) / 255f,
+                        (color & 0xFF) / 255f,
                         ((color >> 24) & 0xFF) / 255f);
                     break;
                 case UV: if(format.getElement(e).getIndex() == 0)
