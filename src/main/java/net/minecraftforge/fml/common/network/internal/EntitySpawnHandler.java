@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityAdjustMessage;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityMessage;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -52,25 +51,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         if (msg.getClass().equals(FMLMessage.EntitySpawnMessage.class))
         {
             spawnEntity((FMLMessage.EntitySpawnMessage)msg);
-        }
-        else if (msg.getClass().equals(FMLMessage.EntityAdjustMessage.class))
-        {
-            adjustEntity((FMLMessage.EntityAdjustMessage)msg);
-        }
-    }
-
-    private void adjustEntity(EntityAdjustMessage msg)
-    {
-        Entity ent = FMLClientHandler.instance().getWorldClient().getEntityByID(msg.entityId);
-        if (ent != null)
-        {
-            ent.serverPosX = msg.serverX;
-            ent.serverPosY = msg.serverY;
-            ent.serverPosZ = msg.serverZ;
-        }
-        else
-        {
-            FMLLog.fine("Attempted to adjust the position of entity %d which is not present on the client", msg.entityId);
         }
     }
 

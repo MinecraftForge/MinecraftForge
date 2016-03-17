@@ -109,14 +109,6 @@ public class FMLNetworkHandler
 
     }
 
-    public static void makeEntitySpawnAdjustment(Entity entity, EntityPlayerMP player, long serverX, long serverY, long serverZ)
-    {
-        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-        embeddedChannel.writeOutbound(new FMLMessage.EntityAdjustMessage(entity, serverX, serverY, serverZ));
-    }
-
     public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
         EntityRegistration er = EntityRegistry.instance().lookupModSpawn(entity.getClass(), false);

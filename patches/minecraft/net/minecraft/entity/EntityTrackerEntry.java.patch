@@ -1,21 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityTrackerEntry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityTrackerEntry.java
-@@ -398,6 +398,14 @@
-                     this.field_73138_k = this.field_73132_a.field_70181_x;
-                     this.field_73135_l = this.field_73132_a.field_70179_y;
- 
-+                    int posX = MathHelper.func_76128_c(this.field_73132_a.field_70165_t * 32.0D);
-+                    int posY = MathHelper.func_76128_c(this.field_73132_a.field_70163_u * 32.0D);
-+                    int posZ = MathHelper.func_76128_c(this.field_73132_a.field_70161_v * 32.0D);
-+                    if (posX != this.field_73128_d || posY != this.field_73129_e || posZ != this.field_73126_f)
-+                    {
-+                        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.makeEntitySpawnAdjustment(this.field_73132_a, p_73117_1_, this.field_73128_d, this.field_73129_e, this.field_73126_f);
-+                    }
-+
-                     if (flag && !(packet instanceof SPacketSpawnMob))
-                     {
-                         p_73117_1_.field_71135_a.func_147359_a(new SPacketEntityVelocity(this.field_73132_a.func_145782_y(), this.field_73132_a.field_70159_w, this.field_73132_a.field_70181_x, this.field_73132_a.field_70179_y));
-@@ -438,6 +446,7 @@
+@@ -438,6 +438,7 @@
  
                      this.field_73132_a.func_184178_b(p_73117_1_);
                      p_73117_1_.func_184848_d(this.field_73132_a);
@@ -23,7 +8,7 @@
                  }
              }
              else if (this.field_73134_o.contains(p_73117_1_))
-@@ -445,6 +454,7 @@
+@@ -445,6 +446,7 @@
                  this.field_73134_o.remove(p_73117_1_);
                  this.field_73132_a.func_184203_c(p_73117_1_);
                  p_73117_1_.func_152339_d(this.field_73132_a);
@@ -31,7 +16,7 @@
              }
          }
      }
-@@ -477,6 +487,9 @@
+@@ -477,6 +479,9 @@
              field_151262_p.warn("Fetching addPacket for removed entity");
          }
  

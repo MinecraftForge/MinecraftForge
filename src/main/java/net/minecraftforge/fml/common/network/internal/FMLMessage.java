@@ -109,38 +109,6 @@ public abstract class FMLMessage {
         }
     }
 
-    public static class EntityAdjustMessage extends EntityMessage {
-        long serverX;
-        long serverY;
-        long serverZ;
-
-        public EntityAdjustMessage() {}
-        public EntityAdjustMessage(Entity entity, long serverX, long serverY, long serverZ)
-        {
-            super(entity);
-            this.serverX = serverX;
-            this.serverY = serverY;
-            this.serverZ = serverZ;
-        }
-
-        @Override
-        void toBytes(ByteBuf buf)
-        {
-            super.toBytes(buf);
-            buf.writeLong(serverX);
-            buf.writeLong(serverY);
-            buf.writeLong(serverZ);
-        }
-
-        @Override
-        void fromBytes(ByteBuf buf)
-        {
-            super.fromBytes(buf);
-            serverX = buf.readInt();
-            serverY = buf.readInt();
-            serverZ = buf.readInt();
-        }
-    }
     public static class EntitySpawnMessage extends EntityMessage {
         String modId;
         int modEntityTypeId;
