@@ -50,7 +50,7 @@
                  return flag;
              }
          }
-@@ -373,11 +379,15 @@
+@@ -373,11 +379,18 @@
          {
              if (this.field_78779_k != WorldSettings.GameType.SPECTATOR)
              {
@@ -59,16 +59,19 @@
 +                if (ret != EnumActionResult.PASS) return ret;
 +
                  IBlockState iblockstate = p_187099_2_.func_180495_p(p_187099_4_);
++                boolean bypass = true;
++                for (ItemStack s : new ItemStack[]{p_187099_1_.func_184614_ca(), p_187099_1_.func_184592_cb()}) //TODO: Expand to more hands? player.inv.getHands()?
++                    bypass = bypass && (s == null || s.func_77973_b().doesSneakBypassUse(s, p_187099_2_, p_187099_4_, p_187099_1_));
  
 -                if ((!p_187099_1_.func_70093_af() || p_187099_1_.func_184614_ca() == null && p_187099_1_.func_184592_cb() == null) && iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_4_, iblockstate, p_187099_1_, p_187099_7_, p_187099_3_, p_187099_5_, f, f1, f2))
-+                if ((!p_187099_1_.func_70093_af() || (p_187099_1_.func_184614_ca() == null || item.doesSneakBypassUse(p_187099_3_, p_187099_2_, p_187099_4_, p_187099_1_)) && p_187099_1_.func_184592_cb() == null))
++                if (!p_187099_1_.func_70093_af() || bypass)
                  {
 -                    flag = true;
 +                    flag = iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_4_, iblockstate, p_187099_1_, p_187099_7_, p_187099_3_, p_187099_5_, f, f1, f2);
                  }
  
                  if (!flag && p_187099_3_ != null && p_187099_3_.func_77973_b() instanceof ItemBlock)
-@@ -418,7 +428,9 @@
+@@ -418,7 +431,9 @@
                  }
                  else
                  {
@@ -79,7 +82,7 @@
                  }
              }
              else
-@@ -453,9 +465,10 @@
+@@ -453,9 +468,10 @@
                  {
                      p_187101_1_.func_184611_a(p_187101_4_, itemstack);
  
