@@ -275,10 +275,11 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  itemstack = null;
-@@ -2508,6 +2588,8 @@
+@@ -2507,7 +2587,8 @@
+     {
          if (this.field_184627_bm != null)
          {
-             this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
+-            this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
 +            if (!net.minecraftforge.event.ForgeEventFactory.onUseItemStop(this, field_184627_bm, this.func_184605_cv()))
 +                this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
          }
