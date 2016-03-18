@@ -17,7 +17,7 @@
 -            this.field_178215_a[j + 4] = Float.floatToRawIntBits(this.field_178218_d.func_94214_a((double)this.field_187509_d.func_188537_a(Float.intBitsToFloat(this.field_178215_a[j + 4]))));
 -            this.field_178215_a[j + 4 + 1] = Float.floatToRawIntBits(this.field_178218_d.func_94207_b((double)this.field_187509_d.func_188536_b(Float.intBitsToFloat(this.field_178215_a[j + 4 + 1]))));
 +            int j = format.func_181719_f() * i;
-+            int uvIndex = format.func_177344_b(0);
++            int uvIndex = format.func_177344_b(0) / 4;
 +            this.field_178215_a[j + uvIndex] = Float.floatToRawIntBits(this.field_178218_d.func_94214_a((double)this.field_187509_d.func_188537_a(Float.intBitsToFloat(this.field_178215_a[j + uvIndex]))));
 +            this.field_178215_a[j + uvIndex + 1] = Float.floatToRawIntBits(this.field_178218_d.func_94207_b((double)this.field_187509_d.func_188536_b(Float.intBitsToFloat(this.field_178215_a[j + uvIndex + 1]))));
          }
