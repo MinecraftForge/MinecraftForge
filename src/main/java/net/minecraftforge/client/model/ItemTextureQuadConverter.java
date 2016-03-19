@@ -195,10 +195,10 @@ public final class ItemTextureQuadConverter
         y1 = 1f - y2;
         y2 = 1f - tmp;
 
-        return putQuad(format, transform, facing, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
+        return putQuad(format, transform, facing, sprite, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
     }
 
-    private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, int color,
+    private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, TextureAtlasSprite sprite, int color,
                                              float x1, float y1, float x2, float y2, float z,
                                              float u1, float v1, float u2, float v2)
     {
@@ -206,6 +206,7 @@ public final class ItemTextureQuadConverter
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
         builder.setQuadTint(-1);
         builder.setQuadOrientation(side);
+        builder.setTexture(sprite);
 
         if (side == EnumFacing.NORTH)
         {

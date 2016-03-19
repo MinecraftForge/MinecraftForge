@@ -209,6 +209,7 @@ public final class ModelFluid implements IModelCustomData
                 EnumFacing side = gas ? EnumFacing.DOWN : EnumFacing.UP;
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(side);
+                builder.setTexture(topSprite);
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
@@ -224,6 +225,7 @@ public final class ModelFluid implements IModelCustomData
                 side = side.getOpposite();
                 builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(side);
+                builder.setTexture(still);
                 for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
                 {
                     putVertex(
@@ -245,6 +247,7 @@ public final class ModelFluid implements IModelCustomData
                     {
                         builder = new UnpackedBakedQuad.Builder(format);
                         builder.setQuadOrientation(side);
+                        builder.setTexture(flowing);
                         for(int j = 0; j < 4; j++)
                         {
                             int l = (k * 3) + (1 - 2 * k) * j;
@@ -266,6 +269,7 @@ public final class ModelFluid implements IModelCustomData
                 // 1 quad for inventory
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                 builder.setQuadOrientation(EnumFacing.UP);
+                builder.setTexture(still);
                 for(int i = 0; i < 4; i++)
                 {
                     putVertex(

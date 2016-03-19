@@ -224,14 +224,14 @@ public final class ItemLayerModel implements IRetexturableModel
             }
         }
         // front
-        builder.add(buildQuad(format, transform, EnumFacing.NORTH, tint,
+        builder.add(buildQuad(format, transform, EnumFacing.NORTH, sprite, tint,
             0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
             1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
             1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
         ));
         // back
-        builder.add(buildQuad(format, transform, EnumFacing.SOUTH, tint,
+        builder.add(buildQuad(format, transform, EnumFacing.SOUTH, sprite, tint,
             0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
             1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
             1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
@@ -329,7 +329,7 @@ public final class ItemLayerModel implements IRetexturableModel
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
         return buildQuad(
-            format, transform, side.getOpposite(), tint, // getOpposite is related either to the swapping of V direction, or something else
+            format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
             x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
             x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
@@ -338,7 +338,7 @@ public final class ItemLayerModel implements IRetexturableModel
     }
 
     private static final BakedQuad buildQuad(
-        VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint,
+        VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, TextureAtlasSprite sprite, int tint,
         float x0, float y0, float z0, float u0, float v0,
         float x1, float y1, float z1, float u1, float v1,
         float x2, float y2, float z2, float u2, float v2,
@@ -347,6 +347,7 @@ public final class ItemLayerModel implements IRetexturableModel
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
         builder.setQuadTint(tint);
         builder.setQuadOrientation(side);
+        builder.setTexture(sprite);
         putVertex(builder, format, transform, side, x0, y0, z0, u0, v0);
         putVertex(builder, format, transform, side, x1, y1, z1, u1, v1);
         putVertex(builder, format, transform, side, x2, y2, z2, u2, v2);

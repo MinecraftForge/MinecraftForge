@@ -723,6 +723,7 @@ public final class B3DLoader implements ICustomModelLoader
                     if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
                     else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
                     else sprite = this.textures.get(textures.get(0).getPath());
+                    quadBuilder.setTexture(sprite);
                     putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);

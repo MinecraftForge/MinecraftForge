@@ -1400,6 +1400,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                     } else sprite = this.textures.get(f.getMaterialName());
                     UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                     builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
+                    builder.setTexture(sprite);
                     Normal faceNormal = f.getNormal();
                     putVertexData(builder, f.verts[0], faceNormal, TextureCoordinate.getDefaultUVs()[0], sprite);
                     putVertexData(builder, f.verts[1], faceNormal, TextureCoordinate.getDefaultUVs()[1], sprite);
