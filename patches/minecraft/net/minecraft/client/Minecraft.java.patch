@@ -200,14 +200,14 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1926,6 +1948,7 @@
-                         this.field_71474_y.field_181657_aC = this.field_71474_y.field_74330_P && GuiScreen.func_175283_s();
+@@ -1927,6 +1949,7 @@
                      }
                  }
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().fireKeyInput();
              }
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().fireKeyInput();
          }
  
+         this.func_184117_aA();
 @@ -2166,6 +2189,8 @@
      {
          while (Mouse.next())
