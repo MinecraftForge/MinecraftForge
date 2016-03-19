@@ -387,7 +387,7 @@
 -        ITextComponent itextcomponent = new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_()));
 +        ITextComponent itextcomponent = new TextComponentString("");
 +        if (!prefixes.isEmpty()) for (ITextComponent prefix : prefixes) itextcomponent.func_150257_a(prefix);
-+        itextcomponent.func_150257_a(new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.func_70005_c_())));
++        itextcomponent.func_150257_a(new TextComponentString(ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.getDisplayNameString())));
 +        if (!suffixes.isEmpty()) for (ITextComponent suffix : suffixes) itextcomponent.func_150257_a(suffix);
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
