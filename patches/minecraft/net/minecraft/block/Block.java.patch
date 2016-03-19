@@ -196,7 +196,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -844,6 +865,1166 @@
+@@ -844,6 +865,1167 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -255,9 +255,10 @@
 +     * Faces which are fully opaque should return true, faces with transparency
 +     * or faces which do not span the full size of the block should return false.
 +     *
++     * @param state The current block state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param side The side to check
++     * @param face The side to check
 +     * @return True if the block is opaque on the specified side.
 +     */
 +    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
