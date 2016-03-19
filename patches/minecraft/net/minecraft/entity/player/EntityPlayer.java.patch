@@ -42,7 +42,7 @@
              this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
  
 -            if (this.func_184187_bx() instanceof EntityPig)
-+            if (this.func_184187_bx() instanceof EntityLivingBase && ((EntityLivingBase)this.func_94060_bK()).shouldRiderFaceForward(this))
++            if (this.func_184187_bx() instanceof EntityLivingBase && ((EntityLivingBase)this.func_184187_bx()).shouldRiderFaceForward(this))
              {
                  this.field_70125_A = f1;
                  this.field_70177_z = f;
