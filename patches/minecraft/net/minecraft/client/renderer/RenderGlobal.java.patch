@@ -48,7 +48,15 @@
                          boolean flag = this.field_175010_j.func_178635_a(entity2, p_180446_2_, d0, d1, d2) || entity2.func_184215_y(this.field_72777_q.field_71439_g);
  
                          if (flag)
-@@ -672,6 +682,7 @@
+@@ -633,6 +643,7 @@
+                 }
+             }
+ 
++            if(pass == 0)
+             if (this.func_174985_d() && (!list1.isEmpty() || this.field_184386_ad))
+             {
+                 this.field_72769_h.field_72984_F.func_76318_c("entityOutlines");
+@@ -672,6 +683,7 @@
              this.field_72769_h.field_72984_F.func_76318_c("blockentities");
              RenderHelper.func_74519_b();
  
@@ -56,7 +64,7 @@
              for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.field_72755_R)
              {
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.field_178036_a.func_178571_g().func_178485_b();
-@@ -680,6 +691,7 @@
+@@ -680,6 +692,7 @@
                  {
                      for (TileEntity tileentity2 : list3)
                      {
@@ -64,7 +72,7 @@
                          TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity2, p_180446_3_, -1);
                      }
                  }
-@@ -689,9 +701,11 @@
+@@ -689,9 +702,11 @@
              {
                  for (TileEntity tileentity : this.field_181024_n)
                  {
@@ -76,7 +84,7 @@
  
              this.func_180443_s();
  
-@@ -718,7 +732,7 @@
+@@ -718,7 +733,7 @@
  
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
  
@@ -85,7 +93,7 @@
                  {
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity1, p_180446_3_, destroyblockprogress.func_73106_e());
                  }
-@@ -1210,6 +1224,13 @@
+@@ -1210,6 +1225,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
@@ -99,7 +107,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
              this.func_180448_r();
-@@ -1427,6 +1448,12 @@
+@@ -1427,6 +1449,12 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_)
      {
@@ -112,7 +120,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1854,8 +1881,11 @@
+@@ -1854,8 +1882,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
