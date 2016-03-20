@@ -67,6 +67,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
@@ -1026,4 +1027,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         // We can't handle many unicode points in the splash renderer
         return CharMatcher.anyOf(ALLOWED_CHARS).retainFrom(StringUtils.stripControlCodes(message));
     }
+
+    @Override
+    public DataFixer getDataFixer()
+    {
+        return client.getDataFixer();
+    }
+    
 }

@@ -27,6 +27,8 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.datafix.FixTypes;
+import net.minecraft.util.datafix.IFixableData;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -35,6 +37,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -392,6 +395,33 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             GameRegistry.registerItem(universalBucket, "bucketFilled");
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
+
+        GameRegistry.registerDataFixer(FixTypes.ITEM_INSTANCE, new IFixableData()
+        {
+            @Override
+            public int getFixVersion()
+            {
+                return 100;
+            }
+
+            @Override
+            public NBTTagCompound fixTagCompound(NBTTagCompound nbt)
+            {
+                if ("minecraft:spawn_egg".equals(nbt.getString("id")))
+                {
+                    NBTTagCompound tag = nbt.getCompoundTag("tag");
+                    if (tag != null && tag.hasKey("entity_name", Constants.NBT.TAG_STRING))
+                    {
+                        NBTTagCompound entityTag = new NBTTagCompound();
+                        entityTag.setString("id", tag.getString("entity_name"));
+                        tag.setTag("EntityTag", entityTag);
+
+                        tag.removeTag("entity_name");
+                    }
+                }
+                return nbt;
+            }
+        });
     }
 
     @Subscribe

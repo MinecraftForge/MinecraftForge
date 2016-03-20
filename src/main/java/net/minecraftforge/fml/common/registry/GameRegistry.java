@@ -38,9 +38,13 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.datafix.IDataWalker;
+import net.minecraft.util.datafix.IFixType;
+import net.minecraft.util.datafix.IFixableData;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -287,6 +291,28 @@ public class GameRegistry
             fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
         }
         return fuelValue;
+    }
+    
+    /**
+     * Register a data fixer for the given data type. A data fixer can be used to update data in savegames
+     * from older versions to a new format.
+     * @param type the data type
+     * @param fix the fix
+     */
+    public static void registerDataFixer(IFixType type, IFixableData fix)
+    {
+        FMLCommonHandler.instance().getDataFixer().registerFix(type, fix);
+    }
+    
+    /**
+     * Register a data walker for the given data type. A data walker is a responsible for parsing the NBT for the given
+     * data type. See the vanilla implementations for examples.
+     * @param type the data type
+     * @param walker the walker
+     */
+    public static void registerDataWalker(IFixType type, IDataWalker walker)
+    {
+    	FMLCommonHandler.instance().getDataFixer().registerWalkerAdd(type, walker);
     }
 
     public enum Type

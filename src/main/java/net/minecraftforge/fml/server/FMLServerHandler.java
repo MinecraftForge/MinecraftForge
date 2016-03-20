@@ -27,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PendingCommand;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -321,5 +322,11 @@ public class FMLServerHandler implements IFMLSidedHandler
     public String stripSpecialChars(String message)
     {
         return message;
+    }
+
+    @Override
+    public DataFixer getDataFixer()
+    {
+    	return server.getDataFixer();
     }
 }
