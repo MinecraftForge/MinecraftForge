@@ -5,6 +5,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
@@ -27,17 +28,25 @@ public class ScreenshotEvent extends Event
      * This event is {@link Cancelable}
      *
      * {@link #screenshotFile} contains the file the screenshot will be/was saved to
+	 * {@link #image} contains the {@link BufferedImage} containing the screenshot
      * {@link #cancelReason} contains the {@link ITextComponent} to be used if the event is canceled
      */
     @Cancelable
     public static class Pre extends ScreenshotEvent
     {
+		private BufferedImage image;
         private ITextComponent cancelReason = new TextComponentString("Screenshot canceled for unknown reason");
 
-        public Pre(File screenshotFile)
+        public Pre(BufferedImage image, File screenshotFile)
         {
+			this.image = image;
             this.screenshotFile = screenshotFile;
         }
+
+		public void setScreenshotFile(File screenshotFile)
+		{
+			this.screenshotFile = screenshotFile;
+		}
 
         public ITextComponent getCancelReason()
         {
@@ -49,12 +58,14 @@ public class ScreenshotEvent extends Event
             this.cancelReason = cancelReason;
         }
 
-        public void setScreenshotFile(File screenshotFile)
-        {
-            this.screenshotFile = screenshotFile;
-        }
+		public BufferedImage getImage() {
+			return image;
+		}
 
-    }
+		public void setImage(BufferedImage image) {
+			this.image = image;
+		}
+	}
 
     /**
      * This event is fired after a screenshot is taken

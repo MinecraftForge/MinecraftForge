@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/util/ScreenShotHelper.java
 +++ ../src-work/minecraft/net/minecraft/util/ScreenShotHelper.java
-@@ -52,7 +52,14 @@
+@@ -52,7 +52,12 @@
                  file2 = new File(file1, p_148259_1_);
              }
  
-+            net.minecraftforge.client.event.ScreenshotEvent.Pre preEvent = net.minecraftforge.client.ForgeHooksClient.onScreenshotPre(file2);
++            net.minecraftforge.client.event.ScreenshotEvent.Pre preEvent = net.minecraftforge.client.ForgeHooksClient.onScreenshotPre(bufferedimage, file2);
 +            if (preEvent.isCanceled()) return preEvent.getCancelReason();
 +            file2 = preEvent.getScreenshotFile();
++            bufferedimage = preEvent.getImage();
              ImageIO.write(bufferedimage, "png", (File)file2);
 +            net.minecraftforge.client.ForgeHooksClient.onScreenshotPost(file2);
              ITextComponent itextcomponent = new TextComponentString(file2.getName());

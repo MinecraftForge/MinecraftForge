@@ -5,6 +5,7 @@ import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -639,8 +640,8 @@ public class ForgeHooksClient
         return !from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 
-    public static ScreenshotEvent.Pre onScreenshotPre(File screenshotFile) {
-        ScreenshotEvent.Pre event = new ScreenshotEvent.Pre(screenshotFile);
+    public static ScreenshotEvent.Pre onScreenshotPre(BufferedImage image, File screenshotFile) {
+        ScreenshotEvent.Pre event = new ScreenshotEvent.Pre(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
