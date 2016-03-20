@@ -32,7 +32,7 @@
 +    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = super.getDrops(world, pos, state, fortune);
-+        int age = ((Integer)state.func_177229_b(field_176488_a)).intValue();
++        int age = ((Integer)state.func_177229_b(func_185524_e())).intValue();
 +        Random rand = world instanceof World ? ((World)world).field_73012_v : new Random();
 +
 +        if (age >= 7)
