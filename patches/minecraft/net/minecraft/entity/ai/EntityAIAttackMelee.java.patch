@@ -18,7 +18,7 @@
 +                if (--this.field_75445_i <= 0)
 +                {
 +                    this.field_75438_g = this.field_75441_b.func_70661_as().func_75494_a(entitylivingbase);
-+                    this.field_151497_i = 4 + this.field_75441_b.func_70681_au().nextInt(7);
++                    this.field_75445_i = 4 + this.field_75441_b.func_70681_au().nextInt(7);
 +                    return this.field_75438_g != null;
 +                }
 +                else
@@ -35,7 +35,7 @@
  
 +            if (this.canPenalize)
 +            {
-+                this.field_151497_i += failedPathFindingPenalty;
++                this.field_75445_i += failedPathFindingPenalty;
 +                if (this.field_75441_b.func_70661_as().func_75505_d() != null)
 +                {
 +                    net.minecraft.pathfinding.PathPoint finalPathPoint = this.field_75441_b.func_70661_as().func_75505_d().func_75870_c();
