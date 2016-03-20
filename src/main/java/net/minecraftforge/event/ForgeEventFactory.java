@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -16,7 +15,6 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -551,6 +549,14 @@ public class ForgeEventFactory
     public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, int x, int z, boolean hasVillageGenerated)
     {
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated));
+    }
+
+    public static ITextComponent serverSendChat(ITextComponent component)
+    {
+        ServerSendChatEvent event = new ServerSendChatEvent(component);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return null;
+        return event.getComponent();
     }
 
 }
