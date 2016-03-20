@@ -221,3 +221,12 @@
                  p_82448_4_.func_72838_d(p_82448_1_);
                  p_82448_4_.func_72866_a(p_82448_1_, false);
              }
+@@ -912,6 +971,8 @@
+ 
+     public void func_148539_a(IChatComponent p_148539_1_)
+     {
++        p_148539_1_ = net.minecraftforge.event.ForgeEventFactory.serverSendChat(p_148539_1_);
++        if (p_148539_1_ == null) return;
+         this.func_148544_a(p_148539_1_, true);
+     }
+ 

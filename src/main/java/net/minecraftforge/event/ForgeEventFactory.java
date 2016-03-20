@@ -520,5 +520,12 @@ public class ForgeEventFactory
         else
             return canContinueSleep == Result.ALLOW;
     }
+    
+    public static IChatComponent serverSendChat(IChatComponent message) {
+        ServerSendChatEvent event = new ServerSendChatEvent(message);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return null;
+        return event.getMessage();
+    }
 
 }
