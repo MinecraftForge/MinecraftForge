@@ -49,7 +49,7 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -414,5 +431,34 @@
+@@ -414,5 +431,40 @@
              {
                  return this.field_177239_a.func_185481_k(this);
              }
@@ -81,6 +81,12 @@
 +            public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing side)
 +            {
 +                return this.field_177239_a.doesSideBlockRendering(this, world, pos, side);
++            }
++
++            @Override
++            public boolean isAir(IBlockAccess world, BlockPos pos)
++            {
++                return this.field_177239_a.isAir(this, world, pos);
 +            }
          }
  }
