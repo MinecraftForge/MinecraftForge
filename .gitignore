@@ -8,6 +8,7 @@
 
 #idea
 /.idea
+/classes
 *.iml
 
 #gradle
