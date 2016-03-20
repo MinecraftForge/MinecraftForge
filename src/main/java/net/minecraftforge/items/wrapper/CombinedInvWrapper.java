@@ -49,13 +49,13 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
         return itemHandler[index];
     }
 
-    protected int getSlotFromIndex(int index)
+    protected int getSlotFromIndex(int slot, int index)
     {
         if (index <= 0 || index >= baseIndex.length)
         {
-            return 0;
+            return slot;
         }
-        return baseIndex[index - 1];
+        return slot - baseIndex[index - 1];
     }
 
     @Override
@@ -63,7 +63,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
-        slot = slot - getSlotFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
         handler.setStackInSlot(slot, stack);
     }
 
@@ -78,7 +78,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
-        slot = getSlotFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
         return handler.getStackInSlot(slot);
     }
 
@@ -87,7 +87,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
-        slot = getSlotFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
         return handler.insertItem(slot, stack, simulate);
     }
 
@@ -96,7 +96,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
-        slot = getSlotFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
         return handler.extractItem(slot, amount, simulate);
     }
 }
