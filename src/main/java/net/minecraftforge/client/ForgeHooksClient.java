@@ -5,6 +5,7 @@ import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Map;
@@ -68,6 +69,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.IModelPart;
@@ -636,4 +638,15 @@ public class ForgeHooksClient
         }
         return !from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
+
+    public static ScreenshotEvent.Pre onScreenshotPre(File screenshotFile) {
+        ScreenshotEvent.Pre event = new ScreenshotEvent.Pre(screenshotFile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static void onScreenshotPost(File screenshotFile) {
+        MinecraftForge.EVENT_BUS.post(new ScreenshotEvent.Post(screenshotFile));
+    }
+
 }
