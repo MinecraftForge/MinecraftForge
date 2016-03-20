@@ -17,6 +17,8 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.EnumFacing;
@@ -164,10 +166,10 @@ public class DynBucketTest
 
     public static class TestItem extends Item {
         @Override
-        public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
+        public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
         {
             if(worldIn.isRemote)
-                return itemStackIn;
+                return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
 
             ItemStackHandler handler = new ItemStackHandler(5);
             ItemStackHandler handler2 = new ItemStackHandler(5);
@@ -197,7 +199,7 @@ public class DynBucketTest
                 System.out.println("Joined: " + joined.getStackInSlot(i));
             }
 
-            return itemStackIn;
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
         }
     }
 
