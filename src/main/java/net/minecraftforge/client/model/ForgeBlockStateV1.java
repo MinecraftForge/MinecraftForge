@@ -373,7 +373,7 @@ public class ForgeBlockStateV1 extends Marker
 
         protected SubModel asGenericSubModel()
         {
-            return new SubModel(state.or(TRSRTransformation.identity()), smooth.or(true), gui3d.or(true), uvLock.or(false), getTextures(), model, getCustomData());
+            return new SubModel(state.or(TRSRTransformation.identity()), uvLock.or(false), smooth.or(true), gui3d.or(true), getTextures(), model, getCustomData());
         }
 
         /**

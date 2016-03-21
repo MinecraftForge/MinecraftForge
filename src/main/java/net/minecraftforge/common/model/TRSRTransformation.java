@@ -1,8 +1,12 @@
 package net.minecraftforge.common.model;
 
+import java.util.EnumMap;
+
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
+import javax.vecmath.SingularMatrixException;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
@@ -19,6 +23,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 /*
  * Interpolation-friendly affine transformation.
@@ -128,6 +133,14 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return new TRSRTransformation(m);
     }
 
+    public TRSRTransformation inverse()
+    {
+        if(this == identity) return this;
+        Matrix4f m = getMatrix();
+        m.invert();
+        return new TRSRTransformation(m);
+    }
+
     private void genCheck()
     {
         if(!full)
@@ -212,7 +225,6 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return new Vector3f((float)Math.toDegrees(xyz.x), (float)Math.toDegrees(xyz.y), (float)Math.toDegrees(xyz.z));
     }
 
-    // TODO check if correct
     public static Vector3f toXYZ(Quat4f q)
     {
         float w2 = q.w * q.w;
@@ -730,5 +742,52 @@ public final class TRSRTransformation implements IModelState, ITransformation
             lerp(this.getScale(), that.getScale(), progress),
             slerp(this.getRightRot(), that.getRightRot(), progress)
         );
+    }
+
+    private static final EnumMap<EnumFacing, TRSRTransformation> vanillaUvTransformLocalToGlobal = Maps.newEnumMap(EnumFacing.class);
+    private static final EnumMap<EnumFacing, TRSRTransformation> vanillaUvTransformGlobalToLocal = Maps.newEnumMap(EnumFacing.class);
+
+    static
+    {
+        vanillaUvTransformLocalToGlobal.put(EnumFacing.SOUTH, identity);
+        Quat4f tmp = new Quat4f();
+        tmp.set(new AxisAngle4f(0, 1, 0, (float)Math.toRadians(90)));
+        vanillaUvTransformLocalToGlobal.put(EnumFacing.EAST,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        tmp.set(new AxisAngle4f(0, 1, 0, (float)Math.toRadians(-90)));
+        vanillaUvTransformLocalToGlobal.put(EnumFacing.WEST,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        tmp.set(new AxisAngle4f(0, 1, 0, (float)Math.toRadians(180)));
+        vanillaUvTransformLocalToGlobal.put(EnumFacing.NORTH, new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        tmp.set(new AxisAngle4f(1, 0, 0, (float)Math.toRadians(-90)));
+        vanillaUvTransformLocalToGlobal.put(EnumFacing.UP,    new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        tmp.set(new AxisAngle4f(1, 0, 0, (float)Math.toRadians(90)));
+        vanillaUvTransformLocalToGlobal.put(EnumFacing.DOWN,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
+
+        for(EnumFacing side : EnumFacing.values())
+        {
+            vanillaUvTransformGlobalToLocal.put(side, vanillaUvTransformLocalToGlobal.get(side).inverse());
+        }
+    }
+
+    public static TRSRTransformation getVanillaUvTransformLocalToGlobal(EnumFacing side)
+    {
+        return vanillaUvTransformLocalToGlobal.get(side);
+    }
+
+    public static TRSRTransformation getVanillaUvTransformGlobalToLocal(EnumFacing side)
+    {
+        return vanillaUvTransformGlobalToLocal.get(side);
+    }
+
+    public TRSRTransformation getUVLockTransform(EnumFacing originalSide)
+    {
+        EnumFacing newSide = rotate(originalSide);
+        try
+        {
+            return blockCenterToCorner(vanillaUvTransformGlobalToLocal.get(originalSide).compose(blockCornerToCenter(this.inverse())).compose(vanillaUvTransformLocalToGlobal.get(newSide)));
+        }
+        catch(SingularMatrixException e)
+        {
+            return new TRSRTransformation(null, null, new Vector3f(0, 0, 0), null);
+        }
     }
 }

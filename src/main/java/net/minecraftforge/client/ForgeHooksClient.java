@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Map;
 
+import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
@@ -28,9 +29,9 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
@@ -52,8 +53,11 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
@@ -75,9 +79,10 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.ITransformation;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
@@ -353,7 +358,7 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
+    public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -589,7 +594,7 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Optional<TRSRTransformation> applyTransform(ItemTransformVec3f transform, Optional<? extends IModelPart> part)
+    public static Optional<TRSRTransformation> applyTransform(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
         if(part.isPresent()) return Optional.absent();
         return Optional.of(new TRSRTransformation(transform));
@@ -635,5 +640,43 @@ public class ForgeHooksClient
             slotMainHand = slot;
         }
         return !from.getItem().shouldCauseReequipAnimation(from, to, changed);
+    }
+
+    public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, EnumFacing originalSide, ITransformation rotation)
+    {
+        TRSRTransformation global = new TRSRTransformation(rotation.getMatrix());
+        Matrix4f uv = global.getUVLockTransform(originalSide).getMatrix();
+        Vector4f vec = new Vector4f(0, 0, 0, 1);
+        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0)) / 16;
+        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0)) / 16;
+        uv.transform(vec);
+        float uMin = 16 * vec.x; // / vec.w;
+        float vMin = 16 * vec.y; // / vec.w;
+        vec.x = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(2)) / 16;
+        vec.y = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(2)) / 16;
+        vec.z = 0;
+        vec.w = 1;
+        uv.transform(vec);
+        float uMax = 16 * vec.x; // / vec.w;
+        float vMax = 16 * vec.y; // / vec.w;
+        if(uMin > uMax)
+        {
+            float t = uMin;
+            uMin = uMax;
+            uMax = t;
+        }
+        if(vMin > vMax)
+        {
+            float t = vMin;
+            vMin = vMax;
+            vMax = t;
+        }
+        float a = (float)Math.toRadians(blockFaceUV.rotation);
+        Vector3f rv = new Vector3f(MathHelper.cos(a), MathHelper.sin(a), 0);
+        Matrix3f rot = new Matrix3f();
+        uv.getRotationScale(rot);
+        rot.transform(rv);
+        int angle = MathHelper.normalizeAngle(-(int)Math.round(Math.toDegrees(Math.atan2(rv.y, rv.x)) / 90) * 90, 360);
+        return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
     }
 }

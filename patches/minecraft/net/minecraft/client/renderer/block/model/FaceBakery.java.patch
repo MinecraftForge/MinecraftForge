@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/FaceBakery.java
-@@ -48,14 +48,20 @@
+@@ -48,14 +48,19 @@
  
      public BakedQuad func_178414_a(Vector3f p_178414_1_, Vector3f p_178414_2_, BlockPartFace p_178414_3_, TextureAtlasSprite p_178414_4_, EnumFacing p_178414_5_, ModelRotation p_178414_6_, BlockPartRotation p_178414_7_, boolean p_178414_8_, boolean p_178414_9_)
      {
@@ -14,8 +14,7 @@
          if (p_178414_8_)
          {
 -            blockfaceuv = this.func_188010_a(p_178414_3_.field_178243_e, p_178414_5_, p_178414_6_);
-+            // TODO fix uvlock for custom rotations 
-+            //blockfaceuv = this.applyUVLock(face.blockFaceUV, facing, modelRotationIn);
++            blockfaceuv = net.minecraftforge.client.ForgeHooksClient.applyUVLock(p_178414_3_.field_178243_e, p_178414_5_, p_178414_6_);
          }
  
 -        int[] aint = this.func_188012_a(blockfaceuv, p_178414_4_, p_178414_5_, this.func_178403_a(p_178414_1_, p_178414_2_), p_178414_6_, p_178414_7_, p_178414_9_);
@@ -23,7 +22,7 @@
          EnumFacing enumfacing = func_178410_a(aint);
  
          if (p_178414_7_ == null)
-@@ -63,7 +69,8 @@
+@@ -63,7 +68,8 @@
              this.func_178408_a(aint, enumfacing);
          }
  
@@ -33,7 +32,7 @@
      }
  
      private BlockFaceUV func_188010_a(BlockFaceUV p_188010_1_, EnumFacing p_188010_2_, ModelRotation p_188010_3_)
-@@ -73,11 +80,16 @@
+@@ -73,11 +79,16 @@
  
      private int[] func_188012_a(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, EnumFacing p_188012_3_, float[] p_188012_4_, ModelRotation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_)
      {
@@ -51,7 +50,7 @@
          }
  
          return aint;
-@@ -123,12 +135,17 @@
+@@ -123,12 +134,17 @@
  
      private void func_188015_a(int[] p_188015_1_, int p_188015_2_, EnumFacing p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, ModelRotation p_188015_7_, BlockPartRotation p_188015_8_, boolean p_188015_9_)
      {
@@ -71,7 +70,7 @@
          this.func_178404_a(p_188015_1_, j, p_188015_2_, vector3f, i, p_188015_6_, p_188015_4_);
      }
  
-@@ -189,14 +206,19 @@
+@@ -189,14 +205,19 @@
  
      public int func_188011_a(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, ModelRotation p_188011_4_)
      {
