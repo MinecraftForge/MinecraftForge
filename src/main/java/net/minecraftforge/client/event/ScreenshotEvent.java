@@ -34,7 +34,7 @@ public class ScreenshotEvent extends Event
     @Cancelable
     public static class Pre extends ScreenshotEvent
     {
-        private BufferedImage image;
+        private final BufferedImage image;
         private ITextComponent cancelReason = new TextComponentString("Screenshot canceled for unknown reason");
 
         public Pre(BufferedImage image, File screenshotFile)
