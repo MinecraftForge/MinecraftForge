@@ -437,13 +437,20 @@ public class ForgeBlockStateV1 extends Marker
                     throw new UnsupportedOperationException("Forge BlockStateLoader V1 does not support nested submodels.");
             }
 
-            private TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
+            private static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
             {
                 return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
                     new Vector3f(tx / 16, ty / 16, tz / 16),
                     TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
                     new Vector3f(s, s, s),
                     null));
+            }
+
+            private static final TRSRTransformation flipX = new TRSRTransformation(null, null, new Vector3f(-1, 1, 1), null);
+
+            private static TRSRTransformation leftify(TRSRTransformation transform)
+            {
+                return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
             }
 
             @Override
@@ -495,23 +502,30 @@ public class ForgeBlockStateV1 extends Marker
                         // block/block
                         else if (transform.equals("forge:default-block"))
                         {
+                            TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
                             ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
                             builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
-                            builder.put( TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
+                            builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
                             builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
-                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 2.5f, 0, 75, 45, 0, 0.375f));
-                            builder.put( TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
+                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
+                            builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
+                            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
                             builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 255, 0, 0.4f));
                             ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
                         }
                         // item/generated
                         else if (transform.equals("forge:default-item"))
                         {
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(
-                                TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f),
-                                TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1),
-                                TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 3, 1, 0, 0, 0, 0.55f),
-                                TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f))));
+                            TRSRTransformation thirdperson = get(0, 3, 1, 0, 0, 0, 0.55f);
+                            TRSRTransformation firstperson = get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f);
+                            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+                            builder.put(TransformType.GROUND,                  get(0, 2, 0, 0, 0, 0, 0.5f));
+                            builder.put(TransformType.HEAD,                    get(0, 13, 7, 0, 180, 0, 1));
+                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
+                            builder.put(TransformType.THIRD_PERSON_LEFT_HAND, leftify(thirdperson));
+                            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, firstperson);
+                            builder.put(TransformType.FIRST_PERSON_LEFT_HAND, leftify(firstperson));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
                         }
                         // item/handheld
                         else if (transform.equals("forge:default-tool"))
