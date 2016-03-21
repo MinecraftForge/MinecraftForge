@@ -82,10 +82,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -179,7 +181,13 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Block.blockRegistry);
+        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.blockRegistry, new Predicate<Block>()
+        {
+            public boolean apply(Block block)
+            {
+                return block.getRegistryName() != null;
+            }
+        }));
         Collections.sort(blocks, new Comparator<Block>()
         {
             public int compare(Block b1, Block b2)
@@ -257,7 +265,13 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<Item> items = Lists.newArrayList(GameData.getItemRegistry().typeSafeIterable());
+        List<Item> items = Lists.newArrayList(Iterables.filter(Item.itemRegistry, new Predicate<Item>()
+        {
+            public boolean apply(Item item)
+            {
+                return item.getRegistryName() != null;
+            }
+        }));
         Collections.sort(items, new Comparator<Item>()
         {
             public int compare(Item i1, Item i2)
