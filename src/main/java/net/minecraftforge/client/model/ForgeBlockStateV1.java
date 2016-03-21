@@ -498,6 +498,7 @@ public class ForgeBlockStateV1 extends Marker
                             builder.put( TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
                             builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
                             builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 2.5f, 0, 75, 45, 0, 0.375f));
+                            builder.put(TransformType.THIRD_PERSON_LEFT_HAND, get(0, 2.5f, 0, 75, -45, 0, 0.375f))
                             builder.put( TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
                             builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 255, 0, 0.4f));
                             ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
