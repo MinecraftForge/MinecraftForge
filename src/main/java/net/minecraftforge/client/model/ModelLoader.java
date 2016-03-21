@@ -57,12 +57,14 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
-import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
-import net.minecraftforge.client.model.animation.IClip;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.Fluid;
@@ -110,7 +112,7 @@ public final class ModelLoader extends ModelBakery
         super(manager, map, shapes);
         VanillaLoader.instance.setLoader(this);
         VariantLoader.instance.setLoader(this);
-        ModelLoaderRegistry.clearModelCache();
+        ModelLoaderRegistry.clearModelCache(manager);
     }
 
     @Override
@@ -811,7 +813,7 @@ public final class ModelLoader extends ModelBakery
                 modelPath = modelPath.substring("models/".length());
             }
             ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
-            ModelBlockAnimation animation = Animation.INSTANCE.loadVanillaAnimation(armatureLocation);
+            ModelBlockAnimation animation = ModelBlockAnimation.loadVanillaAnimation(loader.resourceManager, armatureLocation);
             ModelBlock model = loader.loadModel(modelLocation);
             return loader.new VanillaModelWrapper(modelLocation, model, false, animation);
         }

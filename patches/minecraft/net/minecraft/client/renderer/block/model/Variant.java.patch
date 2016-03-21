@@ -10,7 +10,7 @@
          return this.field_188051_b;
      }
  
-+    public net.minecraftforge.client.model.IModelState getState()
++    public net.minecraftforge.common.model.IModelState getState()
 +    {
 +        return this.field_188051_b;
 +    }

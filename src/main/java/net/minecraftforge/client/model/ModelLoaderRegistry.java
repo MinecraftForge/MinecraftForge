@@ -7,16 +7,19 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.ModelLoader.VariantLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.common.animation.ITimeValue;
+import net.minecraftforge.common.model.animation.AnimationStateMachine;
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.FMLLog;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -30,6 +33,7 @@ public class ModelLoaderRegistry
     private static final Map<ResourceLocation, IModel> cache = Maps.newHashMap();
     private static final Deque<ResourceLocation> loadingModels = Queues.newArrayDeque();
     private static final Set<ResourceLocation> textures = Sets.newHashSet();
+    private static IResourceManager manager;
 
     // Forge built-in loaders
     static
@@ -191,8 +195,9 @@ public class ModelLoaderRegistry
         return ModelLoader.VanillaLoader.instance.getLoader().getMissingModel();
     }
 
-    public static void clearModelCache()
+    public static void clearModelCache(IResourceManager manager)
     {
+        ModelLoaderRegistry.manager = manager;
         cache.clear();
         // putting the builtin models in
         cache.put(new ResourceLocation("minecraft:builtin/generated"), ItemLayerModel.instance);
@@ -218,5 +223,10 @@ public class ModelLoaderRegistry
         }
 
         private static final long serialVersionUID = 1L;
+    }
+
+    public static IAnimationStateMachine loadASM(ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
+    {
+        return AnimationStateMachine.load(manager, location, customParameters);
     }
 }

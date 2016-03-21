@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelResourceLocation.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelResourceLocation.java
+@@ -1,11 +1,8 @@
+ package net.minecraft.client.renderer.block.model;
+ 
+ import net.minecraft.util.ResourceLocation;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.commons.lang3.StringUtils;
+ 
+-@SideOnly(Side.CLIENT)
+ public class ModelResourceLocation extends ResourceLocation
+ {
+     private final String field_177519_c;

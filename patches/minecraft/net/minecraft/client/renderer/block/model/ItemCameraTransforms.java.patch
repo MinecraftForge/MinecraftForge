@@ -39,7 +39,7 @@
  
      @SideOnly(Side.CLIENT)
 -    public static enum TransformType
-+    public static enum TransformType implements net.minecraftforge.client.model.IModelPart
++    public static enum TransformType implements net.minecraftforge.common.model.IModelPart
      {
          NONE,
          THIRD_PERSON_LEFT_HAND,

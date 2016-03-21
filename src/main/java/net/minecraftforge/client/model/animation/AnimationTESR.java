@@ -9,7 +9,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.animation.IEventHandler;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 

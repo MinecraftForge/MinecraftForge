@@ -1,14 +1,14 @@
 package net.minecraftforge.client.model.b3d;
 
-import net.minecraftforge.client.model.TRSRTransformation;
-import net.minecraftforge.client.model.animation.Event;
-import net.minecraftforge.client.model.animation.IClip;
-import net.minecraftforge.client.model.animation.IJoint;
-import net.minecraftforge.client.model.animation.IJointClip;
-import net.minecraftforge.client.model.animation.JointClips;
 import net.minecraftforge.client.model.b3d.B3DLoader.NodeJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.animation.IClip;
+import net.minecraftforge.common.model.animation.IJoint;
+import net.minecraftforge.common.model.animation.IJointClip;
+import net.minecraftforge.common.model.animation.JointClips;
 
 import com.google.common.collect.ImmutableSet;
 

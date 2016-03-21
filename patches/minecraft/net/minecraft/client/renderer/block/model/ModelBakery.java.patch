@@ -97,10 +97,10 @@
  
      private IBakedModel func_177578_a(ModelBlock p_177578_1_, ModelRotation p_177578_2_, boolean p_177578_3_)
      {
-+        return bakeModel(p_177578_1_, (net.minecraftforge.client.model.ITransformation)p_177578_2_, p_177578_3_);
++        return bakeModel(p_177578_1_, (net.minecraftforge.common.model.ITransformation)p_177578_2_, p_177578_3_);
 +    }
 +
-+    protected IBakedModel bakeModel(ModelBlock p_177578_1_, net.minecraftforge.client.model.ITransformation p_177578_2_, boolean p_177578_3_)
++    protected IBakedModel bakeModel(ModelBlock p_177578_1_, net.minecraftforge.common.model.ITransformation p_177578_2_, boolean p_177578_3_)
 +    {
          TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c("particle")));
          SimpleBakedModel.Builder simplebakedmodel$builder = (new SimpleBakedModel.Builder(p_177578_1_, p_177578_1_.func_187967_g())).func_177646_a(textureatlassprite);
@@ -110,7 +110,7 @@
                      TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c(blockpartface.field_178242_d)));
  
 -                    if (blockpartface.field_178244_b == null)
-+                    if (blockpartface.field_178244_b == null || !net.minecraftforge.client.model.TRSRTransformation.isInteger(p_177578_2_.getMatrix()))
++                    if (blockpartface.field_178244_b == null || !net.minecraftforge.common.model.TRSRTransformation.isInteger(p_177578_2_.getMatrix()))
                      {
 -                        simplebakedmodel$builder.func_177648_a(this.func_177589_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_177578_2_, p_177578_3_));
 +                        simplebakedmodel$builder.func_177648_a(this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, p_177578_2_, p_177578_3_));
@@ -127,10 +127,10 @@
      private BakedQuad func_177589_a(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, ModelRotation p_177589_5_, boolean p_177589_6_)
      {
 -        return this.field_177607_l.func_178414_a(p_177589_1_.field_178241_a, p_177589_1_.field_178239_b, p_177589_2_, p_177589_3_, p_177589_4_, p_177589_5_, p_177589_1_.field_178237_d, p_177589_6_, p_177589_1_.field_178238_e);
-+        return makeBakedQuad(p_177589_1_, p_177589_2_, p_177589_3_, p_177589_4_, (net.minecraftforge.client.model.ITransformation)p_177589_5_, p_177589_6_);
++        return makeBakedQuad(p_177589_1_, p_177589_2_, p_177589_3_, p_177589_4_, (net.minecraftforge.common.model.ITransformation)p_177589_5_, p_177589_6_);
      }
  
-+    protected BakedQuad makeBakedQuad(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, net.minecraftforge.client.model.ITransformation p_177589_5_, boolean p_177589_6_)
++    protected BakedQuad makeBakedQuad(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, net.minecraftforge.common.model.ITransformation p_177589_5_, boolean p_177589_6_)
 +    {
 +        return this.field_177607_l.makeBakedQuad(p_177589_1_.field_178241_a, p_177589_1_.field_178239_b, p_177589_2_, p_177589_3_, p_177589_4_, p_177589_5_, p_177589_1_.field_178237_d, p_177589_6_, p_177589_1_.field_178238_e);
 +    }

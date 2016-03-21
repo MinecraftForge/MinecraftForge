@@ -13,8 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelStateComposition;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 
 import com.google.common.base.Function;
@@ -43,7 +44,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity)
     {
-        if(stack.hasCapability(net.minecraftforge.client.model.animation.CapabilityAnimation.ANIMATION_CAPABILITY, null))
+        if(stack.hasCapability(net.minecraftforge.common.model.animation.CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {
             // TODO: caching?
             IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);

@@ -1,5 +1,9 @@
 package net.minecraftforge.client.model;
 
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Objects;

@@ -4,17 +4,17 @@
  
      public BakedQuad func_178414_a(Vector3f p_178414_1_, Vector3f p_178414_2_, BlockPartFace p_178414_3_, TextureAtlasSprite p_178414_4_, EnumFacing p_178414_5_, ModelRotation p_178414_6_, BlockPartRotation p_178414_7_, boolean p_178414_8_, boolean p_178414_9_)
      {
-+        return makeBakedQuad(p_178414_1_, p_178414_2_, p_178414_3_, p_178414_4_, p_178414_5_, (net.minecraftforge.client.model.ITransformation)p_178414_6_, p_178414_7_, p_178414_8_, p_178414_9_);
++        return makeBakedQuad(p_178414_1_, p_178414_2_, p_178414_3_, p_178414_4_, p_178414_5_, (net.minecraftforge.common.model.ITransformation)p_178414_6_, p_178414_7_, p_178414_8_, p_178414_9_);
 +    }
 +
-+    public BakedQuad makeBakedQuad(Vector3f p_178414_1_, Vector3f p_178414_2_, BlockPartFace p_178414_3_, TextureAtlasSprite p_178414_4_, EnumFacing p_178414_5_, net.minecraftforge.client.model.ITransformation p_178414_6_, BlockPartRotation p_178414_7_, boolean p_178414_8_, boolean p_178414_9_)
++    public BakedQuad makeBakedQuad(Vector3f p_178414_1_, Vector3f p_178414_2_, BlockPartFace p_178414_3_, TextureAtlasSprite p_178414_4_, EnumFacing p_178414_5_, net.minecraftforge.common.model.ITransformation p_178414_6_, BlockPartRotation p_178414_7_, boolean p_178414_8_, boolean p_178414_9_)
 +    {
          BlockFaceUV blockfaceuv = p_178414_3_.field_178243_e;
  
          if (p_178414_8_)
          {
 -            blockfaceuv = this.func_188010_a(p_178414_3_.field_178243_e, p_178414_5_, p_178414_6_);
-+            // TODO fix uvlock for custom rotations
++            // TODO fix uvlock for custom rotations 
 +            //blockfaceuv = this.applyUVLock(face.blockFaceUV, facing, modelRotationIn);
          }
  
@@ -37,10 +37,10 @@
  
      private int[] func_188012_a(BlockFaceUV p_188012_1_, TextureAtlasSprite p_188012_2_, EnumFacing p_188012_3_, float[] p_188012_4_, ModelRotation p_188012_5_, BlockPartRotation p_188012_6_, boolean p_188012_7_)
      {
-+        return makeQuadVertexData(p_188012_1_, p_188012_2_, p_188012_3_, p_188012_4_, (net.minecraftforge.client.model.ITransformation)p_188012_5_, p_188012_6_, p_188012_7_);
++        return makeQuadVertexData(p_188012_1_, p_188012_2_, p_188012_3_, p_188012_4_, (net.minecraftforge.common.model.ITransformation)p_188012_5_, p_188012_6_, p_188012_7_);
 +    }
 +
-+    private int[] makeQuadVertexData(BlockFaceUV uvs, TextureAtlasSprite sprite, EnumFacing orientation, float[] p_188012_4_, net.minecraftforge.client.model.ITransformation rotationIn, BlockPartRotation partRotation, boolean shade)
++    private int[] makeQuadVertexData(BlockFaceUV uvs, TextureAtlasSprite sprite, EnumFacing orientation, float[] p_188012_4_, net.minecraftforge.common.model.ITransformation rotationIn, BlockPartRotation partRotation, boolean shade)
 +    {
          int[] aint = new int[28];
  
@@ -56,10 +56,10 @@
      private void func_188015_a(int[] p_188015_1_, int p_188015_2_, EnumFacing p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, ModelRotation p_188015_7_, BlockPartRotation p_188015_8_, boolean p_188015_9_)
      {
 -        EnumFacing enumfacing = p_188015_7_.func_177523_a(p_188015_3_);
-+        fillVertexData(p_188015_1_, p_188015_2_, p_188015_3_, p_188015_4_, p_188015_5_, p_188015_6_, (net.minecraftforge.client.model.ITransformation)p_188015_7_, p_188015_8_, p_188015_9_);
++        fillVertexData(p_188015_1_, p_188015_2_, p_188015_3_, p_188015_4_, p_188015_5_, p_188015_6_, (net.minecraftforge.common.model.ITransformation)p_188015_7_, p_188015_8_, p_188015_9_);
 +    }
 +
-+    private void fillVertexData(int[] p_188015_1_, int p_188015_2_, EnumFacing p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, net.minecraftforge.client.model.ITransformation p_188015_7_, BlockPartRotation p_188015_8_, boolean p_188015_9_)
++    private void fillVertexData(int[] p_188015_1_, int p_188015_2_, EnumFacing p_188015_3_, BlockFaceUV p_188015_4_, float[] p_188015_5_, TextureAtlasSprite p_188015_6_, net.minecraftforge.common.model.ITransformation p_188015_7_, BlockPartRotation p_188015_8_, boolean p_188015_9_)
 +    {
 +        EnumFacing enumfacing = p_188015_7_.rotate(p_188015_3_);
          int i = p_188015_9_ ? this.func_178413_a(enumfacing) : -1;
@@ -75,10 +75,10 @@
  
      public int func_188011_a(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, ModelRotation p_188011_4_)
      {
-+        return rotateVertex(p_188011_1_, p_188011_2_, p_188011_3_, (net.minecraftforge.client.model.ITransformation)p_188011_4_);
++        return rotateVertex(p_188011_1_, p_188011_2_, p_188011_3_, (net.minecraftforge.common.model.ITransformation)p_188011_4_);
 +    }
 +
-+    public int rotateVertex(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, net.minecraftforge.client.model.ITransformation p_188011_4_)
++    public int rotateVertex(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, net.minecraftforge.common.model.ITransformation p_188011_4_)
 +    {
          if (p_188011_4_ == ModelRotation.X0_Y0)
          {

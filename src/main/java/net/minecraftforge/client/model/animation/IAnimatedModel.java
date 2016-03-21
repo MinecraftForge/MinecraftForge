@@ -1,6 +1,7 @@
 package net.minecraftforge.client.model.animation;
 
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.common.model.animation.IClip;
 
 import com.google.common.base.Optional;
 

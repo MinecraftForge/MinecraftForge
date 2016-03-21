@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model;
+package net.minecraftforge.common.model;
 
 /*
  * Represents the part of the model you can refer to, for example: mesh,

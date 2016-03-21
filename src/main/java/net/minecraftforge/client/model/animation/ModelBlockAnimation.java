@@ -1,5 +1,8 @@
 package net.minecraftforge.client.model.animation;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -12,13 +15,25 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.client.renderer.block.model.BlockPart;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.model.IModelState;
-import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Interpolation;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Type;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Variable;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.animation.IClip;
+import net.minecraftforge.common.model.animation.IJoint;
+import net.minecraftforge.common.model.animation.IJointClip;
+import net.minecraftforge.common.model.animation.JointClips;
+import net.minecraftforge.common.util.JsonUtils;
+import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
@@ -28,6 +43,9 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 
 public class ModelBlockAnimation
@@ -509,4 +527,47 @@ public class ModelBlockAnimation
         }
         return null;
     }
+
+    /**
+     * Load armature associated with a vanilla model.
+     */
+    public static ModelBlockAnimation loadVanillaAnimation(IResourceManager manager, ResourceLocation armatureLocation)
+    {
+        try
+        {
+            IResource resource = null;
+            try
+            {
+                resource = manager.getResource(armatureLocation);
+            }
+            catch(FileNotFoundException e)
+            {
+                // this is normal. FIXME: error reporting?
+                return defaultModelBlockAnimation;
+            }
+            ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), ModelBlockAnimation.class);
+            //String json = mbaGson.toJson(mba);
+            return mba;
+        }
+        catch(IOException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Exception loading vanilla model aniamtion %s, skipping", armatureLocation);
+            return defaultModelBlockAnimation;
+        }
+        catch(JsonParseException e)
+        {
+            FMLLog.log(Level.ERROR, e, "Exception loading vanilla model aniamtion %s, skipping", armatureLocation);
+            return defaultModelBlockAnimation;
+        }
+    }
+
+    private static final Gson mbaGson = new GsonBuilder()
+        .registerTypeAdapter(ImmutableList.class, JsonUtils.ImmutableListTypeAdapter.INSTANCE)
+        .registerTypeAdapter(ImmutableMap.class, JsonUtils.ImmutableMapTypeAdapter.INSTANCE)
+        .setPrettyPrinting()
+        .enableComplexMapKeySerialization()
+        .disableHtmlEscaping()
+        .create();
+
+    private static final ModelBlockAnimation defaultModelBlockAnimation = new ModelBlockAnimation(ImmutableMap.<String, ImmutableMap<String, float[]>>of(), ImmutableMap.<String, ModelBlockAnimation.MBClip>of());
 }

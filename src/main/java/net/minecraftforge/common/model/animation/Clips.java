@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.model.animation;
 
 import java.io.IOException;
 
@@ -7,11 +7,16 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelPart;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.animation.IAnimatedModel;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.animation.ITimeValue;
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -60,6 +65,7 @@ public final class Clips
     /**
      * Retrieves the clip from the model.
      */
+    @SideOnly(Side.CLIENT)
     public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName)
     {
         IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);

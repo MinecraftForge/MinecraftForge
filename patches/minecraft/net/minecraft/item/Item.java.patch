@@ -642,13 +642,13 @@
 +        return null;
 +    }
 +
-+    public com.google.common.collect.ImmutableMap<String, net.minecraftforge.client.model.animation.ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final EntityLivingBase entity)
++    public com.google.common.collect.ImmutableMap<String, net.minecraftforge.common.animation.ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final EntityLivingBase entity)
 +    {
-+        com.google.common.collect.ImmutableMap.Builder<String, net.minecraftforge.client.model.animation.ITimeValue> builder = com.google.common.collect.ImmutableMap.builder();
++        com.google.common.collect.ImmutableMap.Builder<String, net.minecraftforge.common.animation.ITimeValue> builder = com.google.common.collect.ImmutableMap.builder();
 +        for(ResourceLocation location : field_185051_m.func_148742_b())
 +        {
 +            final IItemPropertyGetter parameter = field_185051_m.func_82594_a(location);
-+            builder.put(location.toString(), new net.minecraftforge.client.model.animation.ITimeValue()
++            builder.put(location.toString(), new net.minecraftforge.common.animation.ITimeValue()
 +            {
 +                public float apply(float input)
 +                {

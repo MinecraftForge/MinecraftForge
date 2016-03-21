@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.animation;
 
 /**
  * Time-varying value associated with the animation.

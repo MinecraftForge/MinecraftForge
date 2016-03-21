@@ -29,16 +29,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.animation.AnimationTESR;
-import net.minecraftforge.client.model.animation.CapabilityAnimation;
-import net.minecraftforge.client.model.animation.Event;
-import net.minecraftforge.client.model.animation.ITimeValue;
-import net.minecraftforge.client.model.animation.TimeValues.VariableValue;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.animation.ITimeValue;
+import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -225,7 +226,7 @@ public class ModelAnimationDebug
 
         public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
-            return Animation.INSTANCE.load(location, parameters);
+            return ModelLoaderRegistry.loadASM(location, parameters);
         }
 
     }

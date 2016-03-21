@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model;
+package net.minecraftforge.common.model;
 
 import javax.vecmath.Matrix4f;
 

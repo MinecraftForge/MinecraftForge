@@ -1,6 +1,6 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.model.animation;
 
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 /**
  * Various implementations of IJointClip.

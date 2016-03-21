@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.animation;
 
 import java.io.IOException;
 import java.util.regex.Pattern;

@@ -1,4 +1,6 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.model.animation;
+
+import net.minecraftforge.common.animation.Event;
 
 
 /**

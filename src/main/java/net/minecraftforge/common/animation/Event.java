@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.animation;
 
 import com.google.common.base.Objects;
 

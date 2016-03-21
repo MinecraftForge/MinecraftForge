@@ -1,12 +1,15 @@
 package net.minecraftforge.client.model;
 
 import com.google.common.collect.Lists;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 import javax.vecmath.Vector4f;
+
 import java.util.List;
 
 public final class ItemTextureQuadConverter

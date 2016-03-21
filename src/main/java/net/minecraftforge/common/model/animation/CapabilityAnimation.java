@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.common.model.animation;
 
 import java.util.concurrent.Callable;
 
@@ -8,7 +8,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 
 public class CapabilityAnimation
 {
@@ -29,7 +28,7 @@ public class CapabilityAnimation
         {
             public IAnimationStateMachine call() throws Exception
             {
-                return Animation.INSTANCE.missing;
+                return AnimationStateMachine.getMissing();
             }
         });
     }
