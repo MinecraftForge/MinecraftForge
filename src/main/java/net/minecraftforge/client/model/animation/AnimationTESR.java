@@ -18,12 +18,16 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
  */
-public class AnimationTESR<T extends TileEntity & IAnimationProvider> extends FastTESR<T> implements IEventHandler<T>
+public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements IEventHandler<T>
 {
     protected static BlockRendererDispatcher blockRenderer;
 
     public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, VertexBuffer renderer)
     {
+        if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
+        {
+            return;
+        }
         if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         IBlockAccess world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
@@ -38,7 +42,7 @@ public class AnimationTESR<T extends TileEntity & IAnimationProvider> extends Fa
             if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
             {
                 float time = Animation.getWorldTime(getWorld(), partialTick);
-                Pair<IModelState, Iterable<Event>> pair = te.asm().apply(time);
+                Pair<IModelState, Iterable<Event>> pair = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null).apply(time);
                 handleEvents(te, time, pair.getRight());
 
                 // TODO: caching?

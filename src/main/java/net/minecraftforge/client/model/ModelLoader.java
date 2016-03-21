@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
@@ -57,6 +58,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
 import net.minecraftforge.client.model.animation.IClip;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
@@ -497,17 +499,18 @@ public final class ModelLoader extends ModelBakery
                 return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
             }
             if(isCustomRenderer(model)) return new BuiltInModel(transforms, model.createOverrides());
-            return bakeNormal(model, perState, state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity()), newTransforms, format, bakedTextureGetter, uvlock);
+            return bakeNormal(model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
         }
 
-        private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final TRSRTransformation modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final IModelState modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
+            final TRSRTransformation baseState = modelState.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.createOverrides())).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
                 BlockPart part = model.getElements().get(i);
-                TRSRTransformation transformation = modelState;
+                TRSRTransformation transformation = baseState;
                 if(newTransforms.get(i) != null)
                 {
                     transformation = transformation.compose(newTransforms.get(i));
@@ -525,13 +528,15 @@ public final class ModelLoader extends ModelBakery
                     }
                     else
                     {
-                        builder.addFaceQuad(modelState.rotate(e.getValue().cullFace), makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), transformation, uvLocked));
+                        builder.addFaceQuad(baseState.rotate(e.getValue().cullFace), makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), transformation, uvLocked));
                     }
                 }
             }
 
             return new IPerspectiveAwareModel.MapWrapper(builder.makeBakedModel(), perState)
             {
+                private final ItemOverrideList overrides = new AnimationItemOverrideList(VanillaModelWrapper.this, modelState, format, bakedTextureGetter, super.getOverrides());
+
                 @Override
                 public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
                 {
@@ -550,6 +555,12 @@ public final class ModelLoader extends ModelBakery
                     }
                     return super.getQuads(state, side, rand);
                 };
+
+                @Override
+                public ItemOverrideList getOverrides()
+                {
+                    return overrides;
+                }
             };
         }
 

@@ -8,7 +8,7 @@
      public ResourceLocation func_188021_a(ItemStack p_188021_1_, World p_188021_2_, EntityLivingBase p_188021_3_)
      {
          if (!this.field_188023_b.isEmpty())
-@@ -42,4 +43,18 @@
+@@ -42,4 +43,23 @@
  
          return null;
      }
@@ -25,5 +25,10 @@
 +            }
 +        }
 +        return originalModel;
++    }
++
++    public com.google.common.collect.ImmutableList<ItemOverride> getOverrides()
++    {
++        return com.google.common.collect.ImmutableList.copyOf(field_188023_b);
 +    }
  }

@@ -14,9 +14,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 
@@ -28,14 +30,14 @@ import org.lwjgl.opengl.GL11;
  * Some quirks are still left, deprecated for the moment.
  */
 @Deprecated
-public class AnimationModelBase<T extends Entity & IAnimationProvider> extends ModelBase implements IEventHandler<T>
+public class AnimationModelBase<T extends Entity> extends ModelBase implements IEventHandler<T>
 {
     private final VertexLighterFlat lighter;
-    private final IModel model;
+    private final ResourceLocation modelLocation;
 
-    public AnimationModelBase(IModel model, VertexLighterFlat lighter)
+    public AnimationModelBase(ResourceLocation modelLocation, VertexLighterFlat lighter)
     {
-        this.model = model;
+        this.modelLocation = modelLocation;
         this.lighter = lighter;
     }
 
@@ -43,13 +45,14 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
     {
-        if(!(entity instanceof IAnimationProvider))
+        if(!(entity.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)))
         {
-            throw new ClassCastException("AnimationModelBase expects IAnimationProvider");
+            return;
         }
 
-        Pair<IModelState, Iterable<Event>> pair = ((IAnimationProvider)entity).asm().apply(timeAlive / 20);
+        Pair<IModelState, Iterable<Event>> pair = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null).apply(timeAlive / 20);
         handleEvents((T)entity, timeAlive / 20, pair.getRight());
+        IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
         IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
 
         BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.height, entity.posZ);

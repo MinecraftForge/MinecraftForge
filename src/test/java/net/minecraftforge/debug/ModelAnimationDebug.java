@@ -1,7 +1,5 @@
 package net.minecraftforge.debug;
 
-import java.io.IOException;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
@@ -20,7 +18,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -28,23 +28,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
-import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.ModelProcessingHelper;
-import net.minecraftforge.client.model.MultiModel;
-import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.animation.Animation;
-import net.minecraftforge.client.model.animation.AnimationModelBase;
 import net.minecraftforge.client.model.animation.AnimationTESR;
+import net.minecraftforge.client.model.animation.CapabilityAnimation;
 import net.minecraftforge.client.model.animation.Event;
-import net.minecraftforge.client.model.animation.IAnimationProvider;
 import net.minecraftforge.client.model.animation.ITimeValue;
 import net.minecraftforge.client.model.animation.TimeValues.VariableValue;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -59,8 +53,6 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -156,6 +148,14 @@ public class ModelAnimationDebug
                     }
                     return true;
                 }
+            }, null, blockName);
+            GameRegistry.registerItem(new ItemBlock(GameRegistry.findBlock(MODID, blockName))
+            {
+                @Override
+                public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
+                {
+                    return new ItemAnimationHolder();
+                }
             }, blockName);
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
         }
@@ -192,6 +192,7 @@ public class ModelAnimationDebug
             EntityRegistry.registerModEntity(EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
             RenderingRegistry.registerEntityRenderingHandler(EntityChest.class, new IRenderFactory<EntityChest>()
             {
+                @SuppressWarnings("deprecation")
                 public Render<EntityChest> createRenderFor(RenderManager manager)
                 {
                     /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
@@ -203,25 +204,8 @@ public class ModelAnimationDebug
                     {
                         model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
                     }*/
-                    IModel base = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine"));
-                    IModel ring = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine_ring"));
-                    ImmutableMap<String, String> textures = ImmutableMap.of(
-                        "base", "blocks/stone",
-                        "front", "blocks/log_oak",
-                        "chamber", "blocks/redstone_block",
-                        "trunk", "blocks/end_stone"
-                    );
-                    base = ModelProcessingHelper.retexture(base, textures);
-                    ring = ModelProcessingHelper.retexture(base, textures);
-                    IModel model = new MultiModel(
-                        new ResourceLocation(ModelAnimationDebug.MODID, "builtin/engine"),
-                        ring,
-                        TRSRTransformation.identity(),
-                        ImmutableMap.of(
-                            "base", Pair.<IModel, IModelState>of(base, TRSRTransformation.identity())
-                        )
-                    );
-                    return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
+                    ResourceLocation location = new ModelResourceLocation(new ResourceLocation(MODID, blockName), "entity");
+                    return new RenderLiving<EntityChest>(manager, new net.minecraftforge.client.model.animation.AnimationModelBase<EntityChest>(location, new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()))
                         {
                             @Override
                             public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
@@ -246,10 +230,34 @@ public class ModelAnimationDebug
 
     }
 
+    private static class ItemAnimationHolder implements ICapabilityProvider
+    {
+        private final VariableValue cycleLength = new VariableValue(4);
+
+        private final IAnimationStateMachine asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
+            "cycle_length", cycleLength
+        ));
+
+        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        {
+            return capability == CapabilityAnimation.ANIMATION_CAPABILITY;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        {
+            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return (T)asm;
+            }
+            return null;
+        }
+    }
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
 
-    public static class Chest extends TileEntity implements IAnimationProvider
+    public static class Chest extends TileEntity
     {
         private final IAnimationStateMachine asm;
         private final VariableValue cycleLength = new VariableValue(4);
@@ -319,25 +327,37 @@ public class ModelAnimationDebug
             }
         }
 
-        public IAnimationStateMachine asm()
+        @Override
+        public boolean hasCapability(Capability<?> capability, EnumFacing side)
         {
-            return asm;
+            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return true;
+            }
+            return super.hasCapability(capability, side);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        {
+            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return (T)asm;
+            }
+            return super.getCapability(capability, side);
         }
     }
 
-    public static class EntityChest extends EntityLiving implements IAnimationProvider
+    public static class EntityChest extends EntityLiving
     {
         private final IAnimationStateMachine asm;
-        private VariableValue cycleLength;
+        private final VariableValue cycleLength = new VariableValue(getHealth() / 5);
 
         public EntityChest(World world)
         {
             super(world);
             setSize(1, 1);
-            if(cycleLength == null)
-            {
-                cycleLength = new VariableValue(getHealth() / 5);
-            }
             asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
                 "cycle_length", cycleLength
             ));
@@ -348,31 +368,42 @@ public class ModelAnimationDebug
             // TODO Auto-generated method stub
         }
 
-        public IAnimationStateMachine asm()
+        @Override
+        public void onEntityUpdate()
         {
-            return asm;
-        }
-
-        // FIXME update health
-        /*@Override
-        public void func_184206_a(DataParameter<?> key)
-        {
-            super.func_184206_a(key);
-            if(field_184632_c.equals(key)) // health
+            super.onEntityUpdate();
+            if(worldObj.isRemote && cycleLength != null)
             {
-                if(cycleLength == null)
-                {
-                    cycleLength = new VariableValue(0);
-                }
                 cycleLength.setValue(getHealth() / 5);
             }
-        }*/
+        }
 
         @Override
         protected void applyEntityAttributes()
         {
             super.applyEntityAttributes();
             this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60);
+        }
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        {
+            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return true;
+            }
+            return super.hasCapability(capability, side);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        {
+            if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
+            {
+                return (T)asm;
+            }
+            return super.getCapability(capability, side);
         }
     }
 }

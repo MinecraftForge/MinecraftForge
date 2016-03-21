@@ -43,6 +43,12 @@
                 }*/
                 "model": "forgedebugmodelanimation:engine_ring"
             }
-        }
+        },
+        "entity": [{
+            "model": "forgedebugmodelanimation:engine",
+            "submodel": {
+                "ring": { "model": "forgedebugmodelanimation:engine_ring" }
+            }
+        }]
     }
 }

@@ -107,7 +107,7 @@ public enum Animation implements IResourceManagerReloadListener
                 return defaultModelBlockAnimation;
             }
             ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), ModelBlockAnimation.class);
-            String json = mbaGson.toJson(mba);
+            //String json = mbaGson.toJson(mba);
             return mba;
         }
         catch(IOException e)
@@ -124,7 +124,7 @@ public enum Animation implements IResourceManagerReloadListener
 
     private IResourceManager manager;
 
-    private final AnimationStateMachine missing = new AnimationStateMachine(
+    protected final AnimationStateMachine missing = new AnimationStateMachine(
         ImmutableMap.<String, ITimeValue>of(),
         ImmutableMap.of("missingno", (IClip)Clips.IdentityClip.instance),
         ImmutableList.of("missingno"),

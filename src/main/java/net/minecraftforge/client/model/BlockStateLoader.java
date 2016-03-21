@@ -185,9 +185,7 @@ public class BlockStateLoader
 
                 IModel model = ModelLoaderRegistry.getModelOrLogError(part.getModelLocation(), "Unable to load block sub-model: \'" + part.getModelLocation());
 
-                IModelState partState = new ModelStateComposition(baseTr, part.getState());
-
-                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.uvLock, part.getTextures(), part.getCustomData()), partState));
+                models.put(entry.getKey(), Pair.<IModel, IModelState>of(runModelHooks(model, part.smooth, part.gui3d, part.uvLock, part.getTextures(), part.getCustomData()), part.getState()));
             }
 
             return new MultiModel(getModelLocation(), hasBase ? base : null, baseTr, models.build());

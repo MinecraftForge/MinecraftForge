@@ -49,7 +49,6 @@ import net.minecraftforge.client.model.b3d.B3DModel.Mesh;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
 import net.minecraftforge.client.model.b3d.B3DModel.Texture;
 import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -680,8 +679,15 @@ public final class B3DLoader implements ICustomModelLoader
             if(quads == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                generateQuads(builder, node, modelState);
+                generateQuads(builder, node, this.state);
                 quads = builder.build();
+            }
+            // TODO: caching?
+            if(this.state != modelState)
+            {
+                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
+                generateQuads(builder, node, modelState);
+                return builder.build();
             }
             return quads;
         }
