@@ -33,7 +33,7 @@
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {
 -            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.field_77351_y.func_77557_a(item) || flag))
-+            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.canApplyAtEnchantingTable(p_185291_1_) || (flag || enchantment.isAllowedOnBooks())))
++            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.canApplyAtEnchantingTable(p_185291_1_) || (flag && enchantment.isAllowedOnBooks())))
              {
                  for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {
