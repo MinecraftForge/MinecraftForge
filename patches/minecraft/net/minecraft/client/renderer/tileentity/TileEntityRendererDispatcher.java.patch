@@ -4,7 +4,7 @@
      {
          if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
          {
-+            if(!p_180546_1_.hasFastRenderer())
++            if(!drawingBatch || !p_180546_1_.hasFastRenderer())
 +            {
              int i = this.field_147550_f.func_175626_b(p_180546_1_.func_174877_v(), 0);
              int j = i % 65536;
@@ -19,7 +19,7 @@
          {
              try
              {
-+                if(p_178469_1_.hasFastRenderer())
++                if(drawingBatch && p_178469_1_.hasFastRenderer())
 +                {
 +                    tileentityspecialrenderer.renderTileEntityFast(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_, batchBuffer.func_178180_c());
 +                }
@@ -27,7 +27,7 @@
                  tileentityspecialrenderer.func_180535_a(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_);
              }
              catch (Throwable throwable)
-@@ -155,4 +163,49 @@
+@@ -155,4 +163,52 @@
      {
          return this.field_147557_n;
      }
@@ -37,6 +37,7 @@
 +     * Buffer used for batched TESRs
 +     */
 +    private net.minecraft.client.renderer.Tessellator batchBuffer = new net.minecraft.client.renderer.Tessellator(0x200000);
++    private boolean drawingBatch = false;
 +
 +    /**
 +     * Prepare for a batched TESR rendering.
@@ -45,6 +46,7 @@
 +    public void preDrawBatch()
 +    {
 +        batchBuffer.func_178180_c().func_181668_a(org.lwjgl.opengl.GL11.GL_QUADS, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
++        drawingBatch = true;
 +    }
 +
 +    /**
@@ -75,5 +77,6 @@
 +        batchBuffer.func_78381_a();
 +
 +        net.minecraft.client.renderer.RenderHelper.func_74519_b();
++        drawingBatch = false;
 +    }
  }
