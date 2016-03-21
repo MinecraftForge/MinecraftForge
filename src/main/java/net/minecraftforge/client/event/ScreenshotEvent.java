@@ -63,10 +63,6 @@ public class ScreenshotEvent extends Event
             return image;
         }
 
-        public void setImage(BufferedImage image)
-        {
-            this.image = image;
-        }
     }
 
     /**
