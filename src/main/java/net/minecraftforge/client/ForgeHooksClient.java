@@ -640,13 +640,15 @@ public class ForgeHooksClient
         return !from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 
-    public static ScreenshotEvent.Pre onScreenshotPre(BufferedImage image, File screenshotFile) {
+    public static ScreenshotEvent.Pre onScreenshotPre(BufferedImage image, File screenshotFile)
+    {
         ScreenshotEvent.Pre event = new ScreenshotEvent.Pre(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
-    public static void onScreenshotPost(File screenshotFile) {
+    public static void onScreenshotPost(File screenshotFile)
+    {
         MinecraftForge.EVENT_BUS.post(new ScreenshotEvent.Post(screenshotFile));
     }
 
