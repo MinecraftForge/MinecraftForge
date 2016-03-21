@@ -1,26 +1,25 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-public class PlayerArmorInvWrapper extends InvWrapper
+public class PlayerOffhandInvWrapper extends InvWrapper
 {
     public final InventoryPlayer inventoryPlayer;
     private final int offset;
 
-    public PlayerArmorInvWrapper(InventoryPlayer inv)
+    public PlayerOffhandInvWrapper(InventoryPlayer inv)
     {
         super(inv);
 
         inventoryPlayer = inv;
-        offset = inventoryPlayer.mainInventory.length;
+        offset = inventoryPlayer.mainInventory.length + inventoryPlayer.armorInventory.length;
     }
 
     @Override
     public int getSlots()
     {
-        return inventoryPlayer.armorInventory.length;
+        return inventoryPlayer.offHandInventory.length;
     }
 
     @Override
@@ -32,21 +31,7 @@ public class PlayerArmorInvWrapper extends InvWrapper
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
     {
-        EntityEquipmentSlot equ = null;
-        for (EntityEquipmentSlot s : EntityEquipmentSlot.values())
-        {
-            if (s.getSlotType() == EntityEquipmentSlot.Type.ARMOR && s.getIndex() == slot)
-            {
-                equ = s;
-                break;
-            }
-        }
-        // check if it's valid for the armor slot
-        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, equ, inventoryPlayer.player))
-        {
-            return super.insertItem(slot + offset, stack, simulate);
-        }
-        return stack;
+        return super.insertItem(slot + offset, stack, simulate);
     }
 
     @Override
@@ -60,4 +45,5 @@ public class PlayerArmorInvWrapper extends InvWrapper
     {
         return super.extractItem(slot + offset, amount, simulate);
     }
+
 }

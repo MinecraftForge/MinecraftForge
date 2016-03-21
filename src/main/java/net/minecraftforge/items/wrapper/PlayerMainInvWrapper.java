@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
  */
 public class PlayerMainInvWrapper extends InvWrapper
 {
-
     public final InventoryPlayer inventoryPlayer;
 
     public PlayerMainInvWrapper(InventoryPlayer inv)
@@ -29,7 +28,7 @@ public class PlayerMainInvWrapper extends InvWrapper
     @Override
     public void setStackInSlot(int slot, ItemStack stack)
     {
-        // prevent setting of armor inventory
+        // prevent setting of armor and offhand
         if (slot > getSlots())
         {
             return;
@@ -40,7 +39,7 @@ public class PlayerMainInvWrapper extends InvWrapper
     @Override
     public ItemStack getStackInSlot(int slot)
     {
-        // prevent getting of armor inventory
+        // prevent getting of armor and offhand
         if (slot > getSlots())
         {
             return null;
@@ -51,7 +50,7 @@ public class PlayerMainInvWrapper extends InvWrapper
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
     {
-        // prevent inserting into armor inventory
+        // prevent inserting into armor and offhand
         if (slot > getSlots())
         {
             return stack;
@@ -79,7 +78,7 @@ public class PlayerMainInvWrapper extends InvWrapper
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
-        // prevent extraction from armor inventory
+        // prevent extraction from armor and offhand
         if (slot > getSlots())
         {
             return null;
