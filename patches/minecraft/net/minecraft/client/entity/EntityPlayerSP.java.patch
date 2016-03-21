@@ -8,7 +8,7 @@
 +    {
 +        for (int y = 0; y < height; y++)
 +        {
-+            if (func_175162_d(pos.func_177982_a(0, y, 0))) return false;
++            if (!func_175162_d(pos.func_177982_a(0, y, 0))) return false;
 +        }
 +        return true;
 +    }
@@ -21,7 +21,7 @@
              double d1 = p_145771_5_ - (double)blockpos.func_177952_p();
  
 -            if (!this.func_175162_d(blockpos))
-+            int entHeight = Math.max(Math.round(this.field_70131_O), 1);
++            int entHeight = Math.max((int)Math.ceil(this.field_70131_O), 1);
 +
 +            boolean inTranslucentBlock = this.isHeadspaceFree(blockpos, entHeight);
 +
@@ -56,6 +56,15 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
+@@ -470,7 +483,7 @@
+ 
+     private boolean func_175162_d(BlockPos p_175162_1_)
+     {
+-        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_185915_l();
++        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l();
+     }
+ 
+     public void func_70031_b(boolean p_70031_1_)
 @@ -515,7 +528,13 @@
  
      public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_)
