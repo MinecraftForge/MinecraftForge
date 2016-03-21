@@ -1,0 +1,8 @@
+newmtl black
+Kd 0.0 0.0 0.0
+
+newmtl dark_gray
+Kd 0.2 0.2 0.2
+
+newmtl digits
+Kd 1.0 0.0 0.0

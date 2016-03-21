@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Level;
  * Loader for OBJ models.
  * To enable your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
+ * Most of the work is done in OBJModel, this class is just used for storing cached models.
  */
 public class OBJLoader implements ICustomModelLoader {
     public static final OBJLoader instance = new OBJLoader();
@@ -47,6 +48,7 @@ public class OBJLoader implements ICustomModelLoader {
 
     public IModel loadModel(ResourceLocation modelLocation) throws IOException
     {
+    	FMLLog.info("OBJLoader: Loading model %s", modelLocation);
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
         {
@@ -73,12 +75,11 @@ public class OBJLoader implements ICustomModelLoader {
                 }
                 finally
                 {
-                	cache.put(modelLocation, model);
+                	cache.put(file, model);
                 }
             }
             catch (IOException e)
             {
-//                FMLLog.log(Level.ERROR, e, "Exception loading model '%s' with OBJ loader, skipping", modelLocation);
                 throw e;
             }
         }

@@ -1,0 +1,24 @@
+mtllib atlas_plane.mtl
+v 0 0 0.5
+v 1 0 0.5
+v 1 1 0.5
+v 0 1 0.5
+# vt 0 0
+# vt 1 0
+# vt 1 1
+# vt 0 1
+usemtl mat
+# south-facing
+# f 1/4 2/3 3/2 4/1
+# north-facing
+# f 2/4 1/3 4/2 3/1
+
+# south-facing
+# f 3/2 4/1 1/4 2/3
+# north-facing
+# f 4/2 3/1 2/4 1/3
+
+# south-facing
+f 1 2 3 4
+# north-facing
+f 2 1 4 3

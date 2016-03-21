@@ -1,0 +1,42 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "forgedebugmodelloaderregistry:clock_base.obj",
+		"custom": {
+			"gui3d": false
+		}
+	},
+	"variants": {
+		"inventory": [{
+			"transform": {
+				"firstperson": {
+					"translation": [0, 0.15, 0],
+					"rotation": {"y": -45}
+				},
+				"thirdperson": {
+					"translation": [0.06, 0, -0.15],
+					"rotation": {"x": 90},
+					"scale": 0.25
+				},
+				"gui": {
+					"translation": [-0.125, 0, 0],
+					"scale": 0.5
+				}
+			}
+		}],
+		"facing": {
+			"north": {},
+			"south": {"y": 180},
+			"west": {"y": 270},
+			"east": {"y": 90}
+		},
+		"twenty_four": {
+			"true": {},
+			"false": {}
+		},
+		"secondary": {
+			"true": {},
+			"false": {}
+		}
+	}
+}

@@ -532,7 +532,7 @@ public class TRSRTransformation implements IModelState, ITransformation
     {
         genCheck();
         return Objects.toStringHelper(this.getClass())
-            .add("matrix", matrix)
+            .add("\nmatrix", "\n" + matrix)
             .add("translation", translation)
             .add("leftRot", leftRot)
             .add("scale", scale)

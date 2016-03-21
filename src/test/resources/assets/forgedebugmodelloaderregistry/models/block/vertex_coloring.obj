@@ -4,7 +4,7 @@
 
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib models/block/vertex_coloring.mtl
+mtllib vertex_coloring.mtl
 usemtl red
 v 0.000000 0.000000 1.000000
 usemtl orange

@@ -1,0 +1,26 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "forgedebugmodelloaderregistry:group_test.obj",
+		"transform": "forge:default-block",
+		"custom": {
+			"groupConfigs": {
+				"center": { "show": ["center"], "flags": ["alwaysActive"] },
+				"up": { "show": ["up"] },
+				"down": { "show": ["down"] },
+				"north": { "show": ["north"] },
+				"south": { "show": ["south"] },
+				"east": { "show": ["east"] },
+				"west": { "show": ["west"] }
+			}
+		}
+	},
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"is_white": {
+			"true": {},
+			"false": {}
+		}
+	}
+}
