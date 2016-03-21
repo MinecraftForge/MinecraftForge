@@ -110,8 +110,8 @@ public final class ModelLoader extends ModelBakery
     public ModelLoader(IResourceManager manager, TextureMap map, BlockModelShapes shapes)
     {
         super(manager, map, shapes);
-        VanillaLoader.instance.setLoader(this);
-        VariantLoader.instance.setLoader(this);
+        VanillaLoader.INSTANCE.setLoader(this);
+        VariantLoader.INSTANCE.setLoader(this);
         ModelLoaderRegistry.clearModelCache(manager);
     }
 
@@ -139,7 +139,7 @@ public final class ModelLoader extends ModelBakery
             }
         });
 
-        IBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance);
+        IBakedModel missingBaked = missingModel.bake(missingModel.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE);
         Map<IModel, IBakedModel> bakedModels = Maps.newHashMap();
         HashMultimap<IModel, ModelResourceLocation> models = HashMultimap.create();
         Multimaps.invertFrom(Multimaps.forMap(stateModels), models);
@@ -155,7 +155,7 @@ public final class ModelLoader extends ModelBakery
             }
             else
             {
-                bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.instance));
+                bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
             }
         }
 
@@ -771,7 +771,7 @@ public final class ModelLoader extends ModelBakery
         {
             try
             {
-                missingModel = VanillaLoader.instance.loadModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+                missingModel = VanillaLoader.INSTANCE.loadModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
             }
             catch(Exception e)
             {
@@ -783,7 +783,7 @@ public final class ModelLoader extends ModelBakery
 
     protected static enum VanillaLoader implements ICustomModelLoader
     {
-        instance;
+        INSTANCE;
 
         private ModelLoader loader;
 
@@ -821,7 +821,7 @@ public final class ModelLoader extends ModelBakery
         @Override
         public String toString()
         {
-            return "VanillaLoader.instance";
+            return "VanillaLoader.INSTANCE";
         }
     }
 
@@ -830,12 +830,12 @@ public final class ModelLoader extends ModelBakery
      */
     public static final class White extends TextureAtlasSprite
     {
-        public static ResourceLocation loc = new ResourceLocation("white");
-        public static White instance = new White();
+        public static ResourceLocation LOCATION = new ResourceLocation("white");
+        public static White INSTANCE = new White();
 
         private White()
         {
-            super(loc.toString());
+            super(LOCATION.toString());
         }
 
         @Override
@@ -861,7 +861,7 @@ public final class ModelLoader extends ModelBakery
 
         public void register(TextureMap map)
         {
-            map.setTextureEntry(White.loc.toString(), White.instance);
+            map.setTextureEntry(White.LOCATION.toString(), White.INSTANCE);
         }
     }
 
@@ -1051,7 +1051,7 @@ public final class ModelLoader extends ModelBakery
 
     private static enum DefaultTextureGetter implements Function<ResourceLocation, TextureAtlasSprite>
     {
-        instance;
+        INSTANCE;
 
         public TextureAtlasSprite apply(ResourceLocation location)
         {
@@ -1064,12 +1064,12 @@ public final class ModelLoader extends ModelBakery
      */
     public static Function<ResourceLocation, TextureAtlasSprite> defaultTextureGetter()
     {
-        return DefaultTextureGetter.instance;
+        return DefaultTextureGetter.INSTANCE;
     }
 
     protected static enum VariantLoader implements ICustomModelLoader
     {
-        instance;
+        INSTANCE;
 
         private ModelLoader loader;
 
@@ -1111,7 +1111,7 @@ public final class ModelLoader extends ModelBakery
         @Override
         public String toString()
         {
-            return "VariantLoader.instance";
+            return "VariantLoader.INSTANCE";
         }
     }
 

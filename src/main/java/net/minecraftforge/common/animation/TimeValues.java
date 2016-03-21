@@ -23,7 +23,7 @@ public final class TimeValues
 {
     public static enum IdentityValue implements ITimeValue, IStringSerializable
     {
-        instance;
+        INSTANCE;
 
         public float apply(float input)
         {
@@ -352,7 +352,7 @@ public final class TimeValues
                         String string = in.nextString();
                         if(string.equals("#identity"))
                         {
-                            return IdentityValue.instance;
+                            return IdentityValue.INSTANCE;
                         }
                         if(!string.startsWith("#"))
                         {

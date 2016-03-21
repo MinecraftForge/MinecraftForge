@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableMap;
 
 public final class ItemLayerModel implements IRetexturableModel
 {
-    public static final ItemLayerModel instance = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
+    public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
 
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
@@ -400,7 +400,7 @@ public final class ItemLayerModel implements IRetexturableModel
 
     public static enum Loader implements ICustomModelLoader
     {
-        instance;
+        INSTANCE;
 
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
@@ -414,7 +414,7 @@ public final class ItemLayerModel implements IRetexturableModel
 
         public IModel loadModel(ResourceLocation modelLocation)
         {
-            return ItemLayerModel.instance;
+            return ItemLayerModel.INSTANCE;
         }
     }
 }

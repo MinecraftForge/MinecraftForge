@@ -205,7 +205,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
 
     public enum LoaderDynBucket implements ICustomModelLoader
     {
-        instance;
+        INSTANCE;
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)

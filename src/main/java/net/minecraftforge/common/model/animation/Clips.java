@@ -44,11 +44,11 @@ public final class Clips
      */
     public static enum IdentityClip implements IClip, IStringSerializable
     {
-        instance;
+        INSTANCE;
 
         public IJointClip apply(IJoint joint)
         {
-            return JointClips.IdentityJointClip.instance;
+            return JointClips.IdentityJointClip.INSTANCE;
         }
 
         public Iterable<Event> pastEvents(float lastPollTime, float time)
@@ -79,7 +79,7 @@ public final class Clips
             FMLLog.getLogger().error("Unable to find clip " + clipName + " in the model " + modelLocation);
         }
         // FIXME: missing clip?
-        return new ModelClip(IdentityClip.instance, modelLocation, clipName);
+        return new ModelClip(IdentityClip.INSTANCE, modelLocation, clipName);
     }
 
     /**
@@ -502,7 +502,7 @@ public final class Clips
                             // IdentityClip
                             if(string.equals("#identity"))
                             {
-                                return IdentityClip.instance;
+                                return IdentityClip.INSTANCE;
                             }
                             // Clip reference
                             if(string.startsWith("#"))

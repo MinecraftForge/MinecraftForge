@@ -38,12 +38,12 @@ public class ModelLoaderRegistry
     // Forge built-in loaders
     static
     {
-        registerLoader(B3DLoader.instance);
-        registerLoader(OBJLoader.instance);
-        registerLoader(ModelFluid.FluidLoader.instance);
-        registerLoader(ItemLayerModel.Loader.instance);
-        registerLoader(MultiLayerModel.Loader.instance);
-        registerLoader(ModelDynBucket.LoaderDynBucket.instance);
+        registerLoader(B3DLoader.INSTANCE);
+        registerLoader(OBJLoader.INSTANCE);
+        registerLoader(ModelFluid.FluidLoader.INSTANCE);
+        registerLoader(ItemLayerModel.Loader.INSTANCE);
+        registerLoader(MultiLayerModel.Loader.INSTANCE);
+        registerLoader(ModelDynBucket.LoaderDynBucket.INSTANCE);
     }
 
     /*
@@ -111,13 +111,13 @@ public class ModelLoaderRegistry
             // no custom loaders found, try vanilla ones
             if(accepted == null)
             {
-                if(VariantLoader.instance.accepts(actual))
+                if(VariantLoader.INSTANCE.accepts(actual))
                 {
-                     accepted = VariantLoader.instance;
+                     accepted = VariantLoader.INSTANCE;
                 }
-                else if(VanillaLoader.instance.accepts(actual))
+                else if(VanillaLoader.INSTANCE.accepts(actual))
                 {
-                    accepted = VanillaLoader.instance;
+                    accepted = VanillaLoader.INSTANCE;
                 }
             }
 
@@ -192,7 +192,7 @@ public class ModelLoaderRegistry
 
     public static IModel getMissingModel()
     {
-        return ModelLoader.VanillaLoader.instance.getLoader().getMissingModel();
+        return ModelLoader.VanillaLoader.INSTANCE.getLoader().getMissingModel();
     }
 
     public static void clearModelCache(IResourceManager manager)
@@ -200,9 +200,9 @@ public class ModelLoaderRegistry
         ModelLoaderRegistry.manager = manager;
         cache.clear();
         // putting the builtin models in
-        cache.put(new ResourceLocation("minecraft:builtin/generated"), ItemLayerModel.instance);
-        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ItemLayerModel.instance);
-        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ItemLayerModel.instance);
+        cache.put(new ResourceLocation("minecraft:builtin/generated"), ItemLayerModel.INSTANCE);
+        cache.put(new ResourceLocation("minecraft:block/builtin/generated"), ItemLayerModel.INSTANCE);
+        cache.put(new ResourceLocation("minecraft:item/builtin/generated"), ItemLayerModel.INSTANCE);
     }
 
     static Iterable<ResourceLocation> getTextures()

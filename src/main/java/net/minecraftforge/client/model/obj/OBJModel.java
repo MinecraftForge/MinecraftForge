@@ -101,7 +101,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-        builder.put(ModelLoader.White.loc.toString(), ModelLoader.White.instance);
+        builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
         TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
         for (Map.Entry<String, Material> e : matLib.materials.entrySet())
         {
@@ -1278,7 +1278,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
     public enum OBJProperty implements IUnlistedProperty<OBJState>
     {
-        instance;
+        INSTANCE;
         public String getName()
         {
             return "OBJPropery";
@@ -1310,7 +1310,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         private final VertexFormat format;
         private Set<BakedQuad> quads;
         private ImmutableMap<String, TextureAtlasSprite> textures;
-        private TextureAtlasSprite sprite = ModelLoader.White.instance;
+        private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
 
         public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
         {
@@ -1399,7 +1399,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                                 v.setMaterial(this.model.getMatLib().getMaterial(v.getMaterial().getName()));
                             }
                         }
-                        sprite = ModelLoader.White.instance;
+                        sprite = ModelLoader.White.INSTANCE;
                     } else sprite = this.textures.get(f.getMaterialName());
                     UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                     builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));

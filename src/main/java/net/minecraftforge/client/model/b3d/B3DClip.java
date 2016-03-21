@@ -15,13 +15,13 @@ import com.google.common.collect.ImmutableSet;
 // FIXME: is this fast enough?
 public enum B3DClip implements IClip
 {
-    instance;
+    INSTANCE;
 
     public IJointClip apply(final IJoint joint)
     {
         if(!(joint instanceof NodeJoint))
         {
-            return JointClips.IdentityJointClip.instance;
+            return JointClips.IdentityJointClip.INSTANCE;
         }
         return new NodeClip(((NodeJoint)joint).getNode());
     }

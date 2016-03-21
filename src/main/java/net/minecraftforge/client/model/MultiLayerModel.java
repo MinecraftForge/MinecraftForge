@@ -34,7 +34,7 @@ import com.google.gson.JsonParser;
 
 public final class MultiLayerModel implements IModelCustomData
 {
-    public static final MultiLayerModel instance = new MultiLayerModel(ImmutableMap.<Optional<BlockRenderLayer>, ModelResourceLocation>of());
+    public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.<Optional<BlockRenderLayer>, ModelResourceLocation>of());
 
     private final ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models;
 
@@ -102,7 +102,7 @@ public final class MultiLayerModel implements IModelCustomData
             }
         }
         ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models = builder.build();
-        if(models.isEmpty()) return instance;
+        if(models.isEmpty()) return INSTANCE;
         return new MultiLayerModel(models);
     }
 
@@ -223,7 +223,7 @@ public final class MultiLayerModel implements IModelCustomData
 
     public static enum Loader implements ICustomModelLoader
     {
-        instance;
+        INSTANCE;
 
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
@@ -237,7 +237,7 @@ public final class MultiLayerModel implements IModelCustomData
 
         public IModel loadModel(ResourceLocation modelLocation)
         {
-            return MultiLayerModel.instance;
+            return MultiLayerModel.INSTANCE;
         }
     }
 }

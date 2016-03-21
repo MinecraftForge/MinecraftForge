@@ -170,7 +170,7 @@ public class ModelBlockAnimation
                 MBJointClip clip = jointClips.get(mbJoint.getName());
                 if(clip != null) return clip;
             }
-            return JointClips.IdentityJointClip.instance;
+            return JointClips.IdentityJointClip.INSTANCE;
         }
 
         @Override

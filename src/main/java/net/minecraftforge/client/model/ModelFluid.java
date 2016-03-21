@@ -48,8 +48,8 @@ import com.google.gson.JsonParser;
 
 public final class ModelFluid implements IModelCustomData
 {
-    public static final ModelFluid waterModel = new ModelFluid(FluidRegistry.WATER);
-    public static final ModelFluid lavaModel = new ModelFluid(FluidRegistry.LAVA);
+    public static final ModelFluid WATER = new ModelFluid(FluidRegistry.WATER);
+    public static final ModelFluid LAVA = new ModelFluid(FluidRegistry.LAVA);
     private final Fluid fluid;
 
     public ModelFluid(Fluid fluid)
@@ -80,7 +80,7 @@ public final class ModelFluid implements IModelCustomData
 
     public static enum FluidLoader implements ICustomModelLoader
     {
-        instance;
+        INSTANCE;
 
         public void onResourceManagerReload(IResourceManager resourceManager) {}
 
@@ -94,7 +94,7 @@ public final class ModelFluid implements IModelCustomData
 
         public IModel loadModel(ResourceLocation modelLocation)
         {
-            return waterModel;
+            return WATER;
         }
     }
 
@@ -393,7 +393,7 @@ public final class ModelFluid implements IModelCustomData
         if(!FluidRegistry.isFluidRegistered(fluid))
         {
             FMLLog.severe("fluid '%s' not found", fluid);
-            return waterModel;
+            return WATER;
         }
         return new ModelFluid(FluidRegistry.getFluid(fluid));
     }

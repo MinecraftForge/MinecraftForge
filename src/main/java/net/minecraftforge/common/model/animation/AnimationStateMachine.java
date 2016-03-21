@@ -206,7 +206,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
 
     private static final AnimationStateMachine missing = new AnimationStateMachine(
         ImmutableMap.<String, ITimeValue>of(),
-        ImmutableMap.of("missingno", (IClip)Clips.IdentityClip.instance),
+        ImmutableMap.of("missingno", (IClip)Clips.IdentityClip.INSTANCE),
         ImmutableList.of("missingno"),
         ImmutableMap.<String, String>of(),
         "missingno");

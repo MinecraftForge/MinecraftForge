@@ -178,7 +178,7 @@ public class ModelAnimationDebug
         public void preInit(FMLPreInitializationEvent event)
         {
             super.preInit(event);
-            B3DLoader.instance.addDomain(MODID);
+            B3DLoader.INSTANCE.addDomain(MODID);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {

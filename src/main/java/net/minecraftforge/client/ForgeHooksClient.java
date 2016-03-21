@@ -135,7 +135,7 @@ public class ForgeHooksClient
     public static void onTextureStitchedPre(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
-        ModelLoader.White.instance.register(map);
+        ModelLoader.White.INSTANCE.register(map);
     }
 
     public static void onTextureStitchedPost(TextureMap map)

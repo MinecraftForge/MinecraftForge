@@ -9,7 +9,7 @@ public final class JointClips
 {
     public static enum IdentityJointClip implements IJointClip
     {
-        instance;
+        INSTANCE;
 
         public TRSRTransformation apply(float time)
         {

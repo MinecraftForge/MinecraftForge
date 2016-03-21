@@ -21,8 +21,9 @@ import org.apache.logging.log4j.Level;
  * To enable your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-public final class OBJLoader implements ICustomModelLoader {
-    public static final OBJLoader instance = new OBJLoader();
+public enum OBJLoader implements ICustomModelLoader {
+    INSTANCE;
+
     private IResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<String>();
     private final Map<ResourceLocation, OBJModel> cache = new HashMap<ResourceLocation, OBJModel>();

@@ -77,9 +77,9 @@ import com.google.gson.JsonParser;
  * To enable for your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-public final class B3DLoader implements ICustomModelLoader
+public enum B3DLoader implements ICustomModelLoader
 {
-    public static final B3DLoader instance = new B3DLoader();
+    INSTANCE;
 
     private IResourceManager manager;
 
@@ -366,7 +366,7 @@ public final class B3DLoader implements ICustomModelLoader
 
     public static enum B3DFrameProperty implements IUnlistedProperty<B3DState>
     {
-        instance;
+        INSTANCE;
         public String getName()
         {
             return "B3DFrame";
@@ -548,7 +548,7 @@ public final class B3DLoader implements ICustomModelLoader
         {
             if(name.equals("main"))
             {
-                return Optional.<IClip>of(B3DClip.instance);
+                return Optional.<IClip>of(B3DClip.INSTANCE);
             }
             return Optional.absent();
         }
@@ -633,9 +633,9 @@ public final class B3DLoader implements ICustomModelLoader
             if(state instanceof IExtendedBlockState)
             {
                 IExtendedBlockState exState = (IExtendedBlockState)state;
-                if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
+                if(exState.getUnlistedNames().contains(B3DFrameProperty.INSTANCE))
                 {
-                    B3DState s = exState.getValue(B3DFrameProperty.instance);
+                    B3DState s = exState.getValue(B3DFrameProperty.INSTANCE);
                     if(s != null)
                     {
                         //return getCachedModel(s.getFrame());
@@ -727,7 +727,7 @@ public final class B3DLoader implements ICustomModelLoader
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
-                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance;
+                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.INSTANCE;
                     else sprite = this.textures.get(textures.get(0).getPath());
                     quadBuilder.setTexture(sprite);
                     putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
