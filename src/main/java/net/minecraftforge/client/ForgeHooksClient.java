@@ -597,7 +597,7 @@ public class ForgeHooksClient
     public static Optional<TRSRTransformation> applyTransform(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
         if(part.isPresent()) return Optional.absent();
-        return Optional.of(new TRSRTransformation(transform));
+        return Optional.of(TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transform)));
     }
 
     public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)

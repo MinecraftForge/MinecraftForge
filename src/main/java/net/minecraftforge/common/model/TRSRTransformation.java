@@ -73,15 +73,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @SideOnly(Side.CLIENT)
     public TRSRTransformation(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
     {
-        this(getMatrix(transform));
-    }
-
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
-    {
-        TRSRTransformation ret = new TRSRTransformation(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
-        return blockCenterToCorner(ret).getMatrix();
+        this(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
     }
 
     @SideOnly(Side.CLIENT)

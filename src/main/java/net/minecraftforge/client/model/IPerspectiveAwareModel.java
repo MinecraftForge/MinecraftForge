@@ -68,7 +68,7 @@ public interface IPerspectiveAwareModel extends IBakedModel
             ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
             for(TransformType type : TransformType.values())
             {
-                builder.put(type, new TRSRTransformation(transforms.getTransform(type)));
+                builder.put(type, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transforms.getTransform(type))));
             }
             return builder.build();
         }
