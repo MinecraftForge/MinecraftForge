@@ -69,7 +69,7 @@ public interface RegistryDelegate<T> {
             this.referant = newTarget;
         }
 
-        void setResourceName(ResourceLocation name) { this.name = name; }
+        void setName(ResourceLocation name) { this.name = name; }
 
         @Override
         public boolean equals(Object obj)

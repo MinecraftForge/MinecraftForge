@@ -19,11 +19,9 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.util.IntIdentityHashBiMap;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraftforge.fml.common.FMLLog;
@@ -465,7 +463,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         addObjectRaw(idToUse, name, thing);
         if (isDelegated)
         {
-            getExistingDelegate(thing).setResourceName(name);
+            getExistingDelegate(thing).setName(name);
         }
 
         if (this.dummiedLocations.remove(name) && DEBUG)
