@@ -556,7 +556,7 @@ public class ForgeHooks
             return null;
         }
 
-        if (player.isServerWorld())
+        if (!player.worldObj.isRemote)
         {
             player.getEntityWorld().spawnEntityInWorld(event.entityItem);
         }
