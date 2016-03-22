@@ -8,7 +8,7 @@
 +    {
 +        for (int y = 0; y < height; y++)
 +        {
-+            if (!func_175162_d(pos.func_177982_a(0, y, 0))) return false;
++            if (func_175162_d(pos.func_177982_a(0, y, 0))) return false;
 +        }
 +        return true;
 +    }
@@ -61,7 +61,7 @@
      private boolean func_175162_d(BlockPos p_175162_1_)
      {
 -        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().func_149721_r() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_177230_c().func_149721_r();
-+        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().func_149721_r();
++        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().func_149721_r() && (this.field_70131_O < 1 || !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_177230_c().func_149721_r());
      }
  
      public void func_70031_b(boolean p_70031_1_)
