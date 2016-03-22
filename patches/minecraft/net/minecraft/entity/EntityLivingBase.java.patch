@@ -285,3 +285,31 @@
          }
  
          this.func_184602_cy();
+@@ -2626,4 +2707,27 @@
+     {
+         return true;
+     }
++
++    // FORGE
++    private final net.minecraftforge.items.IItemHandlerModifiable handHandler = new net.minecraftforge.items.ItemStackHandler(field_184630_bs);
++    private final net.minecraftforge.items.IItemHandlerModifiable armorHandler = new net.minecraftforge.items.ItemStackHandler(field_184631_bt);
++    private final net.minecraftforge.items.IItemHandler joinedHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(armorHandler, handHandler);
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if (facing == null) return (T) joinedHandler;
++            else if (facing.func_176740_k().func_176720_b()) return (T) handHandler;
++            else if (facing.func_176740_k().func_176722_c()) return (T) armorHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
+ }
