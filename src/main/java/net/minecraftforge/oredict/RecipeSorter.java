@@ -19,11 +19,13 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeBookCloning;
 import net.minecraft.item.crafting.RecipeFireworks;
 import net.minecraft.item.crafting.RecipeRepairItem;
+import net.minecraft.item.crafting.RecipeTippedArrow;
 import net.minecraft.item.crafting.RecipesArmorDyes;
 import net.minecraft.item.crafting.RecipesMapCloning;
 import net.minecraft.item.crafting.RecipesMapExtending;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.item.crafting.ShieldRecipes;
 import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
 import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
 import static net.minecraftforge.oredict.RecipeSorter.Category.*;
@@ -118,8 +120,10 @@ public class RecipeSorter implements Comparator<IRecipe>
         register("minecraft:shaped",       ShapedRecipes.class,       SHAPED,    "before:minecraft:shapeless");
         register("minecraft:mapextending", RecipesMapExtending.class, SHAPED,    "after:minecraft:shaped before:minecraft:shapeless");
         register("minecraft:shapeless",    ShapelessRecipes.class,    SHAPELESS, "after:minecraft:shaped");
+        register("minecraft:shield_deco",  ShieldRecipes.Decoration.class, SHAPELESS, "after:minecraft:shapeless"); //Size 2
         register("minecraft:repair",       RecipeRepairItem.class,    SHAPELESS, "after:minecraft:shapeless"); //Size 4
         register("minecraft:bookcloning",  RecipeBookCloning.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 9
+        register("minecraft:tippedarrow",  RecipeTippedArrow.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 9
         register("minecraft:fireworks",    RecipeFireworks.class,     SHAPELESS, "after:minecraft:shapeless"); //Size 10
         register("minecraft:armordyes",    RecipesArmorDyes.class,    SHAPELESS, "after:minecraft:shapeless"); //Size 10
         register("minecraft:mapcloning",   RecipesMapCloning.class,   SHAPELESS, "after:minecraft:shapeless"); //Size 10
