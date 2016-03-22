@@ -3,6 +3,9 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.*;
 import java.util.*;
 
+import com.google.common.collect.Lists;
+
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
@@ -204,8 +207,19 @@ public class EnumHelper
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues)
+    //Tests an enum is compatible with these args, throws an error if not.
+    public static void testEnum(Class<? extends Enum<?>> enumType, Class<?>[] paramTypes)
+    {
+        addEnum(true, enumType, null, paramTypes, (Object[])null);
+    }
+
+    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues)
+    {
+        return addEnum(false, enumType, enumName, paramTypes, paramValues);
+    }
+
+    @SuppressWarnings({ "unchecked", "serial" })
+    private static <T extends Enum<? >> T addEnum(boolean test, final Class<T> enumType, String enumName, final Class<?>[] paramTypes, Object[] paramValues)
     {
         if (!isSetup)
         {
@@ -243,14 +257,74 @@ public class EnumHelper
 
         if (valuesField == null)
         {
-            FMLLog.severe("Could not find $VALUES field for enum: %s", enumType.getName());
-            FMLLog.severe("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF);
-            FMLLog.severe("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0'));
-            FMLLog.severe("Fields:");
+            final List<String> lines = Lists.newArrayList();
+            lines.add(String.format("Could not find $VALUES field for enum: %s", enumType.getName()));
+            lines.add(String.format("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF));
+            lines.add(String.format("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0')));
+            lines.add(              "Fields:");
             for (Field field : fields)
             {
                 String mods = String.format("%16s", Integer.toBinaryString(field.getModifiers())).replace(' ', '0');
-                FMLLog.severe("       %s %s: %s", mods, field.getName(), field.getType().getName());
+                lines.add(String.format("       %s %s: %s", mods, field.getName(), field.getType().getName()));
+            }
+
+            for (String line : lines)
+                FMLLog.severe(line);
+
+            if (test)
+            {
+                throw new EnhancedRuntimeException("Could not find $VALUES field for enum: " + enumType.getName())
+                {
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        for (String line : lines)
+                            stream.println(line);
+                    }
+                };
+            }
+            return null;
+        }
+
+        if (test)
+        {
+            Object ctr = null;
+            Exception ex = null;
+            try
+            {
+                ctr = getConstructorAccessor(enumType, paramTypes);
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            if (ctr == null || ex != null)
+            {
+                throw new EnhancedRuntimeException(String.format("Could not find constructor for Enum %s", enumType.getName()), ex)
+                {
+                    private String toString(Class<?>[] cls)
+                    {
+                        StringBuilder b = new StringBuilder();
+                        for (int x = 0; x < cls.length; x++)
+                        {
+                            b.append(cls[x].getName());
+                            if (x != cls.length - 1)
+                                b.append(", ");
+                        }
+                        return b.toString();
+                    }
+                    @Override
+                    protected void printStackTrace(WrappedPrintStream stream)
+                    {
+                        stream.println("Target Arguments:");
+                        stream.println("    java.lang.String, int, " + toString(paramTypes));
+                        stream.println("Found Constructors:");
+                        for (Constructor<?> ctr : enumType.getDeclaredConstructors())
+                        {
+                            stream.println("    " + toString(ctr.getParameterTypes()));
+                        }
+                    }
+                };
             }
             return null;
         }

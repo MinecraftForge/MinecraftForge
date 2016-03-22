@@ -20,13 +20,11 @@ import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldManager;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderEnd;
-import net.minecraft.world.WorldProviderHell;
-import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
@@ -37,51 +35,24 @@ import net.minecraftforge.fml.common.FMLLog;
 
 public class DimensionManager
 {
-    private static Hashtable<Integer, Class<? extends WorldProvider>> providers = new Hashtable<Integer, Class<? extends WorldProvider>>();
-    private static Hashtable<Integer, Boolean> spawnSettings = new Hashtable<Integer, Boolean>();
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
-    private static Hashtable<Integer, Integer> dimensions = new Hashtable<Integer, Integer>();
+    private static Hashtable<Integer, DimensionType> dimensions = new Hashtable<Integer, DimensionType>();
     private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
     private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
     private static Multiset<Integer> leakedWorlds = HashMultiset.create();
 
-    public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
-    {
-        if (providers.containsKey(id))
-        {
-            return false;
-        }
-        providers.put(id, provider);
-        spawnSettings.put(id, keepLoaded);
-        return true;
-    }
-
     /**
-     * Unregisters a Provider type, and returns a array of all dimensions that are
-     * registered to this provider type.
-     * If the return size is greater then 0, it is required that the caller either
-     * change those dimensions's registered type, or replace this type before the
-     * world is attempted to load, else the loader will throw an exception.
-     *
-     * @param id The provider type ID to unreigster
-     * @return An array containing all dimension IDs still registered to this provider type.
+     * Returns a list of dimensions associated with this DimensionType.
      */
-    public static int[] unregisterProviderType(int id)
+    public static int[] getDimensions(DimensionType type)
     {
-        if (!providers.containsKey(id))
-        {
-            return new int[0];
-        }
-        providers.remove(id);
-        spawnSettings.remove(id);
-
         int[] ret = new int[dimensions.size()];
         int x = 0;
-        for (Map.Entry<Integer, Integer> ent : dimensions.entrySet())
+        for (Map.Entry<Integer, DimensionType> ent : dimensions.entrySet())
         {
-            if (ent.getValue() == id)
+            if (ent.getValue() == type)
             {
                 ret[x++] = ent.getKey();
             }
@@ -99,25 +70,19 @@ public class DimensionManager
 
         hasInit = true;
 
-        registerProviderType( 0, WorldProviderSurface.class, true);
-        registerProviderType(-1, WorldProviderHell.class,    true);
-        registerProviderType( 1, WorldProviderEnd.class,     false);
-        registerDimension( 0,  0);
-        registerDimension(-1, -1);
-        registerDimension( 1,  1);
+        registerDimension( 0, DimensionType.OVERWORLD);
+        registerDimension(-1, DimensionType.NETHER);
+        registerDimension( 1, DimensionType.THE_END);
     }
 
-    public static void registerDimension(int id, int providerType)
+    public static void registerDimension(int id, DimensionType type)
     {
-        if (!providers.containsKey(providerType))
-        {
-            throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, provider type %d does not exist", id, providerType));
-        }
+        DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
         if (dimensions.containsKey(id))
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, providerType);
+        dimensions.put(id, type);
         if (id >= 0)
         {
             dimensionMap.set(id);
@@ -141,7 +106,7 @@ public class DimensionManager
         return dimensions.containsKey(dim);
     }
 
-    public static int getProviderType(int dim)
+    public static DimensionType getProviderType(int dim)
     {
         if (!dimensions.containsKey(dim))
         {
@@ -264,12 +229,6 @@ public class DimensionManager
         return worlds.values().toArray(new WorldServer[worlds.size()]);
     }
 
-    public static boolean shouldLoadSpawn(int dim)
-    {
-        int id = getProviderType(dim);
-        return spawnSettings.containsKey(id) && spawnSettings.get(id);
-    }
-
     static
     {
         init();
@@ -289,9 +248,9 @@ public class DimensionManager
         {
             if (dimensions.containsKey(dim))
             {
-                WorldProvider provider = providers.get(getProviderType(dim)).newInstance();
-                provider.setDimension(dim);
-                return provider;
+                WorldProvider ret = getProviderType(dim).createDimension();
+                ret.setDimension(dim);
+                return ret;
             }
             else
             {
@@ -301,7 +260,7 @@ public class DimensionManager
         catch (Exception e)
         {
             FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
-                    dim, providers.get(getProviderType(dim)).getSimpleName()),e);
+                    dim, getProviderType(dim)),e);
             throw new RuntimeException(e);
         }
     }

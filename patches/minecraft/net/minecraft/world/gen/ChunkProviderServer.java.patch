@@ -100,7 +100,7 @@
                          this.field_73244_f.func_76159_d(olong.longValue());
                          this.field_73245_g.remove(chunk);
 +                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
-+                        if(field_73245_g.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.field_73251_h.field_73011_w.getDimension())){
++                        if(field_73245_g.size() == 0 && net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this.field_73251_h).size() == 0 && !this.field_73251_h.field_73011_w.func_186058_p().shouldLoadSpawn()){
 +                            net.minecraftforge.common.DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.getDimension());
 +                            return false;
 +                        }

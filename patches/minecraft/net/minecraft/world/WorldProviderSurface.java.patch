@@ -5,6 +5,6 @@
      public boolean func_186056_c(int p_186056_1_, int p_186056_2_)
      {
 -        return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_);
-+        return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_) || !net.minecraftforge.common.DimensionManager.shouldLoadSpawn(this.field_76579_a.field_73011_w.getDimension());
++        return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_) || !this.field_76579_a.field_73011_w.func_186058_p().shouldLoadSpawn();
      }
  }

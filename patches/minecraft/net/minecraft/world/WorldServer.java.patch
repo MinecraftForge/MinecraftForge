@@ -10,7 +10,8 @@
 +
      public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
-         super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
+-        super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
++        super(p_i45921_2_, p_i45921_3_, net.minecraftforge.common.DimensionManager.createProviderFor(p_i45921_4_), p_i45921_5_, false);
          this.field_73061_a = p_i45921_1_;
          this.field_73062_L = new EntityTracker(this);
          this.field_73063_M = new PlayerManager(this);
