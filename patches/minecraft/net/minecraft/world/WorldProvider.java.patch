@@ -187,6 +187,7 @@
 +        if (border < spawnFuzz) spawnFuzz = border;
 +        if (spawnFuzz < 1) spawnFuzz = 1;
 +        int spawnFuzzHalf = spawnFuzz / 2;
++        if (spawnFuzzHalf < 1) spawnFuzzHalf = 1;
 +
 +        if (!func_177495_o() && !isAdventure)
 +        {
