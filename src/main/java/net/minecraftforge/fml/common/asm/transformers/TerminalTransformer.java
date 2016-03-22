@@ -49,7 +49,8 @@ public class TerminalTransformer implements IClassTransformer
                                    clsName.equals("net/minecraftforge/fml/common/FMLCommonHandler") ||
                                    clsName.startsWith("com/jcraft/jogg/") ||
                                    clsName.startsWith("scala/sys/") ||
-                                   clsName.startsWith("net/minecraft/server/gui/MinecraftServerGui")
+                                   clsName.startsWith("net/minecraft/server/gui/MinecraftServerGui") ||
+                                   clsName.startsWith("com/sun/jna/")
                                    );
 
             return new MethodVisitor(Opcodes.ASM5, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))
