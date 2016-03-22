@@ -17,23 +17,160 @@
      public EnumFacing func_176732_a(EnumFacing.Axis p_176732_1_)
      {
          switch (p_176732_1_)
-@@ -111,7 +108,6 @@
+@@ -93,6 +90,77 @@
+                 throw new IllegalStateException("Unable to get CW facing for axis " + p_176732_1_);
+         }
+     }
++    
++    public EnumFacing rotateAroundCCW(EnumFacing.Axis axis)
++    {
++    	switch (axis)
++    	{
++    		case X:
++    			
++    			if (this != WEST && this != EAST)
++    			{
++    				return this.rotateXCCW();
++    			}
++    			
++    			return this;
++    		case Y:
++    			
++    			if (this != UP && this != DOWN)
++    			{
++    				return this.func_176735_f();
++    			}
++    			
++    			return this;
++    		case Z:
++    			
++    			if (this != NORTH && this != SOUTH)
++    			{
++    				return this.rotateZCCW();
++    			}
++    			
++    			return this;
++    		default:
++    			throw new IllegalStateException("Unable to get CCW facing for axis " + axis);
++    	}
++    }
++    
++    public EnumFacing func_176744_n()
++    {
++        switch (this)
++        {
++            case NORTH:
++                return DOWN;
++            case EAST:
++            case WEST:
++            default:
++                throw new IllegalStateException("Unable to get X-rotated facing of " + this);
++            case SOUTH:
++                return UP;
++            case UP:
++                return NORTH;
++            case DOWN:
++                return SOUTH;
++        }
++    }
++    
++    public EnumFacing rotateXCCW()
++    {
++    	switch (this)
++    	{
++    		case NORTH:
++    			return UP;
++    		case EAST:
++    		case WEST:
++    		default:
++    			throw new IllegalStateException("Unable to get CCW X-rotated facing of " + this);
++    		case SOUTH:
++    			return DOWN;
++    		case UP:
++    			return SOUTH;
++    		case DOWN:
++    			return NORTH;
++    	}
++    }
+ 
+     public EnumFacing func_176746_e()
+     {
+@@ -111,28 +179,24 @@
          }
      }
  
 -    @SideOnly(Side.CLIENT)
-     private EnumFacing func_176744_n()
+-    private EnumFacing func_176744_n()
++    public EnumFacing func_176735_f()
      {
          switch (this)
-@@ -131,7 +127,6 @@
+         {
+             case NORTH:
+-                return DOWN;
++                return WEST;
+             case EAST:
+-            case WEST:
+-            default:
+-                throw new IllegalStateException("Unable to get X-rotated facing of " + this);
+-            case SOUTH:
+-                return UP;
+-            case UP:
+                 return NORTH;
+-            case DOWN:
++            case SOUTH:
++                return EAST;
++            case WEST:
+                 return SOUTH;
++            default:
++                throw new IllegalStateException("Unable to get CCW Y-rotated facing of " + this);
          }
      }
  
 -    @SideOnly(Side.CLIENT)
-     private EnumFacing func_176738_p()
+-    private EnumFacing func_176738_p()
++    public EnumFacing func_176738_p()
      {
          switch (this)
-@@ -192,7 +187,6 @@
+         {
+@@ -149,22 +213,22 @@
+                 return WEST;
+         }
+     }
+-
+-    public EnumFacing func_176735_f()
++    
++    public EnumFacing rotateZCCW()
+     {
+-        switch (this)
+-        {
+-            case NORTH:
+-                return WEST;
+-            case EAST:
+-                return NORTH;
+-            case SOUTH:
+-                return EAST;
+-            case WEST:
+-                return SOUTH;
+-            default:
+-                throw new IllegalStateException("Unable to get CCW facing of " + this);
+-        }
++    	switch (this)
++    	{
++    		case EAST:
++    			return UP;
++    		case SOUTH:
++    		default: throw new IllegalStateException("Unable to get CCW Z-rotated facing of " + this);
++    		case WEST:
++    			return DOWN;
++    		case UP:
++    			return WEST;
++    		case DOWN:
++    			return EAST;
++    	}
+     }
+ 
+     public int func_82601_c()
+@@ -192,7 +256,6 @@
          return this.field_176758_k;
      }
  
@@ -41,7 +178,7 @@
      public static EnumFacing func_176739_a(String p_176739_0_)
      {
          return p_176739_0_ == null ? null : (EnumFacing)field_176761_p.get(p_176739_0_.toLowerCase());
-@@ -218,7 +212,6 @@
+@@ -218,7 +281,6 @@
          return values()[p_176741_0_.nextInt(values().length)];
      }
  
@@ -49,7 +186,7 @@
      public static EnumFacing func_176737_a(float p_176737_0_, float p_176737_1_, float p_176737_2_)
      {
          EnumFacing enumfacing = NORTH;
-@@ -261,7 +254,6 @@
+@@ -261,11 +323,40 @@
          throw new IllegalArgumentException("No such direction: " + p_181076_0_ + " " + p_181076_1_);
      }
  
@@ -57,7 +194,41 @@
      public Vec3i func_176730_m()
      {
          return this.field_176756_m;
-@@ -297,7 +289,6 @@
+     }
++    
++    public EnumFacing[] getAdjacentFacings()
++    {
++    	switch (this.func_176740_k())
++    	{
++    		case X:
++    			return new EnumFacing[] {DOWN, SOUTH, UP, NORTH};
++    		case Y:
++    			return new EnumFacing[] {NORTH, EAST, SOUTH, WEST};
++    		case Z:
++    			return new EnumFacing[] {DOWN, WEST, UP, EAST};
++    		default:
++    			return field_82609_l;
++    	}
++    }
++    
++    public EnumFacing[] getAdjacentFacingsCCW()
++    {
++    	switch (this.func_176740_k())
++    	{
++    		case X:
++    			return new EnumFacing[] {DOWN, NORTH, UP, SOUTH};
++    		case Y:
++    			return new EnumFacing[] {NORTH, WEST, SOUTH, EAST};
++    		case Z:
++    			return new EnumFacing[] {DOWN, EAST, UP, WEST};
++    		default:
++    			return field_82609_l;
++    	}
++    }
+ 
+     static
+     {
+@@ -297,7 +388,6 @@
              this.field_176723_f = p_i46015_4_;
          }
  
