@@ -9,6 +9,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityTracker;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -61,7 +62,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         if (er == null)
         {
             throw new RuntimeException( "Could not spawn mod entity ModID: " + spawnMsg.modId + " EntityID: " + spawnMsg.modEntityTypeId +
-                    " at ( " + spawnMsg.scaledX + "," + spawnMsg.scaledY + ", " + spawnMsg.scaledZ + ") Please contact mod author or server admin.");
+                    " at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ + ") Please contact mod author or server admin.");
         }
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
         Class<? extends Entity> cls = er.getEntityClass();
@@ -77,7 +78,8 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
 
                 int offset = spawnMsg.entityId - entity.getEntityId();
                 entity.setEntityId(spawnMsg.entityId);
-                entity.setLocationAndAngles(spawnMsg.scaledX, spawnMsg.scaledY, spawnMsg.scaledZ, spawnMsg.scaledYaw, spawnMsg.scaledPitch);
+                entity.setUniqueId(spawnMsg.entityUUID);
+                entity.setLocationAndAngles(spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ, spawnMsg.scaledYaw, spawnMsg.scaledPitch);
                 if (entity instanceof EntityLiving)
                 {
                     ((EntityLiving) entity).rotationYawHead = spawnMsg.scaledHeadYaw;
@@ -93,9 +95,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 }
             }
 
-            entity.serverPosX = spawnMsg.rawX;
-            entity.serverPosY = spawnMsg.rawY;
-            entity.serverPosZ = spawnMsg.rawZ;
+            EntityTracker.func_187254_a(entity, spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ);
 
             EntityPlayerSP clientPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entity instanceof IThrowableEntity)
@@ -121,7 +121,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             wc.addEntityToWorld(spawnMsg.entityId, entity);
         } catch (Exception e)
         {
-            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity at ( " + spawnMsg.scaledX + "," + spawnMsg.scaledY + ", " + spawnMsg.scaledZ +")");
+            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ +")");
             throw Throwables.propagate(e);
         }
     }

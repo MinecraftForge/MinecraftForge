@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.network.datasync.EntityDataManager;
 import org.apache.logging.log4j.Level;
@@ -112,12 +113,10 @@ public abstract class FMLMessage {
     public static class EntitySpawnMessage extends EntityMessage {
         String modId;
         int modEntityTypeId;
-        int rawX;
-        int rawY;
-        int rawZ;
-        double scaledX;
-        double scaledY;
-        double scaledZ;
+        UUID entityUUID;
+        double rawX;
+        double rawY;
+        double rawZ;
         float scaledYaw;
         float scaledPitch;
         float scaledHeadYaw;
@@ -141,10 +140,12 @@ public abstract class FMLMessage {
             super.toBytes(buf);
             ByteBufUtils.writeUTF8String(buf, modId);
             buf.writeInt(modEntityTypeId);
+            buf.writeLong(entityUUID.getMostSignificantBits());
+            buf.writeLong(entityUUID.getLeastSignificantBits());
             // posX, posY, posZ
-            buf.writeInt(MathHelper.floor_double(entity.posX * 32D));
-            buf.writeInt(MathHelper.floor_double(entity.posY * 32D));
-            buf.writeInt(MathHelper.floor_double(entity.posZ * 32D));
+            buf.writeDouble(entity.posX);
+            buf.writeDouble(entity.posY);
+            buf.writeDouble(entity.posZ);
             // yaw, pitch
             buf.writeByte((byte)(entity.rotationYaw * 256.0F / 360.0F));
             buf.writeByte((byte) (entity.rotationPitch * 256.0F / 360.0F));
@@ -204,12 +205,10 @@ public abstract class FMLMessage {
             super.fromBytes(dat);
             modId = ByteBufUtils.readUTF8String(dat);
             modEntityTypeId = dat.readInt();
-            rawX = dat.readInt();
-            rawY = dat.readInt();
-            rawZ = dat.readInt();
-            scaledX = rawX / 32D;
-            scaledY = rawY / 32D;
-            scaledZ = rawZ / 32D;
+            entityUUID = new UUID(dat.readLong(), dat.readLong());
+            rawX = dat.readDouble();
+            rawY = dat.readDouble();
+            rawZ = dat.readDouble();
             scaledYaw = dat.readByte() * 360F / 256F;
             scaledPitch = dat.readByte() * 360F / 256F;
             scaledHeadYaw = dat.readByte() * 360F / 256F;
