@@ -140,8 +140,8 @@ public abstract class FMLMessage {
             super.toBytes(buf);
             ByteBufUtils.writeUTF8String(buf, modId);
             buf.writeInt(modEntityTypeId);
-            buf.writeLong(entityUUID.getMostSignificantBits());
-            buf.writeLong(entityUUID.getLeastSignificantBits());
+            buf.writeLong(entity.getUniqueID().getMostSignificantBits());
+            buf.writeLong(entity.getUniqueID().getLeastSignificantBits());
             // posX, posY, posZ
             buf.writeDouble(entity.posX);
             buf.writeDouble(entity.posY);
