@@ -639,7 +639,7 @@ public class ForgeHooksClient
             changed = slot != slotMainHand;
             slotMainHand = slot;
         }
-        return !from.getItem().shouldCauseReequipAnimation(from, to, changed);
+        return from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 
     public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, EnumFacing originalSide, ITransformation rotation)
