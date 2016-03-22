@@ -16,7 +16,7 @@
              }
  
              this.field_70138_W = 1.0F;
-@@ -1793,4 +1795,20 @@
+@@ -1793,4 +1795,21 @@
                  this.field_188477_b = p_i46589_2_;
              }
          }
@@ -24,6 +24,7 @@
 +    // FORGE
 +    private net.minecraftforge.items.IItemHandler itemHandler = null; // Initialized by initHorseChest above.
 +
++    @SuppressWarnings("unchecked")
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {

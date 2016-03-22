@@ -244,12 +244,11 @@ public class ModelAnimationDebug
             return capability == CapabilityAnimation.ANIMATION_CAPABILITY;
         }
 
-        @SuppressWarnings("unchecked")
         public <T> T getCapability(Capability<T> capability, EnumFacing facing)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
-                return (T)asm;
+                return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
             return null;
         }
@@ -338,13 +337,12 @@ public class ModelAnimationDebug
             return super.hasCapability(capability, side);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public <T> T getCapability(Capability<T> capability, EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
-                return (T)asm;
+                return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
             return super.getCapability(capability, side);
         }
@@ -396,13 +394,12 @@ public class ModelAnimationDebug
             return super.hasCapability(capability, side);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public <T> T getCapability(Capability<T> capability, EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
-                return (T)asm;
+                return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
             return super.getCapability(capability, side);
         }

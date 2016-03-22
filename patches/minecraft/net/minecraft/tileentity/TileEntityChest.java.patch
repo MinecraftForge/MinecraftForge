@@ -8,12 +8,13 @@
      }
  
      @SuppressWarnings("incomplete-switch")
-@@ -457,6 +458,26 @@
+@@ -457,6 +458,27 @@
          }
      }
  
 +    public net.minecraftforge.items.VanillaDoubleChestItemHandler doubleChestHandler;
 +
++    @SuppressWarnings("unchecked")
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {

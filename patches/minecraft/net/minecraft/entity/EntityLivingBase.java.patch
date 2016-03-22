@@ -285,7 +285,7 @@
          }
  
          this.func_184602_cy();
-@@ -2626,4 +2707,27 @@
+@@ -2626,4 +2707,28 @@
      {
          return true;
      }
@@ -295,6 +295,7 @@
 +    private final net.minecraftforge.items.IItemHandlerModifiable armorHandler = new net.minecraftforge.items.ItemStackHandler(field_184631_bt);
 +    private final net.minecraftforge.items.IItemHandler joinedHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(armorHandler, handHandler);
 +
++    @SuppressWarnings("unchecked")
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {

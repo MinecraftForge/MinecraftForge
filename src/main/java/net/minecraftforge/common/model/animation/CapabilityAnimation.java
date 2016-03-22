@@ -47,12 +47,11 @@ public class CapabilityAnimation
             return capability == ANIMATION_CAPABILITY;
         }
 
-        @SuppressWarnings("unchecked")
         public <T> T getCapability(Capability<T> capability, EnumFacing facing)
         {
             if(capability == ANIMATION_CAPABILITY)
             {
-                return (T)asm;
+                return ANIMATION_CAPABILITY.cast(asm);
             }
             return null;
         }

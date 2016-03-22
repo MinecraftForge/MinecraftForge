@@ -97,11 +97,10 @@ public class TestCapabilityMod
             {
                 return TEST_CAP != null && capability == TEST_CAP;
             }
-            @SuppressWarnings("unchecked") //There isnt anything sane we can do about this.
             @Override
             public <T> T getCapability(Capability<T> capability, EnumFacing facing)
             {
-                if (TEST_CAP != null && capability == TEST_CAP) return (T)this;
+                if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
                 return null;
             }
             @Override
