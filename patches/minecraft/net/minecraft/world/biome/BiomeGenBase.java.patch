@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
+@@ -51,7 +51,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class BiomeGenBase
++public abstract class BiomeGenBase extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<BiomeGenBase>
+ {
+     private static final Logger field_150586_aC = LogManager.getLogger();
+     protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
 @@ -70,7 +70,7 @@
      protected static final WorldGenTrees field_76757_N = new WorldGenTrees(false);
      protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);

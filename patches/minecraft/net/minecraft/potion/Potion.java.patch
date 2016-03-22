@@ -1,8 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -23,7 +23,7 @@
+@@ -21,9 +21,9 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
- public class Potion
+-public class Potion
++public class Potion extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Potion>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced();
 +    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.fml.common.registry.GameData.getPotionRegistry();

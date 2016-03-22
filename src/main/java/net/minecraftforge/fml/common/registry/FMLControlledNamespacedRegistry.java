@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
@@ -15,6 +16,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.util.IntIdentityHashBiMap;
@@ -28,7 +30,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
 import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
-public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I>
+public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I> implements IForgeRegistry<I>
 {
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
     private final Class<I> superType;
@@ -673,7 +675,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     }
 
     @SuppressWarnings("unchecked")
-    public <T> FMLControlledNamespacedRegistry<T> asType(Class<? extends T> type)
+    public <T extends IForgeRegistryEntry> FMLControlledNamespacedRegistry<T> asType(Class<? extends T> type)
     {
         return (FMLControlledNamespacedRegistry<T>)this;
     }
@@ -766,11 +768,102 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     @Override
     public ResourceLocation getNameForObject(I p_177774_1_)
     {
-        ResourceLocation rl = super.getNameForObject(p_177774_1_);
+        ResourceLocation rl = super.getNameForObjectBypass(p_177774_1_);
         if (rl == null)
         {
             rl = activeSubstitutions.inverse().get(p_177774_1_);
         }
         return rl;
+    }
+
+    // IForgeRegistry: Modders should only interfaces with these methods
+    @Override
+    public void register(I value)
+    {
+        ResourceLocation key = value.getRegistryName();
+        if (key == null)
+        {
+            FMLLog.severe("Attempted to register a entry with a null name: %s", value);
+            throw new NullPointerException(String.format("Attempted to register a entry with a null name: %s", value));
+        }
+        add(-1, key, value);
+    }
+
+    @Override
+    public boolean contains(ResourceLocation key)
+    {
+        return containsKey(key);
+    }
+
+    @Override
+    public boolean contains(I value)
+    {
+        return get(value) != null;
+    }
+
+    @Override
+    public I get(ResourceLocation key)
+    {
+        return getObject(key);
+    }
+
+    @Override
+    public ResourceLocation get(I value)
+    {
+        return getNameForObject(value);
+    }
+
+    @Override
+    public List<I> getValues()
+    {
+        return Lists.newArrayList(this.iterator());
+    }
+
+    @Override
+    public Set<Entry<ResourceLocation, I>> getEntries()
+    {
+        return Sets.newHashSet(new Iterator<Entry<ResourceLocation, I>>()
+        {
+            Iterator<I> itr = FMLControlledNamespacedRegistry.this.iterator();
+
+            @Override
+            public boolean hasNext()
+            {
+                return itr.hasNext();
+            }
+
+            @Override
+            public Entry<ResourceLocation, I> next()
+            {
+                final I value = itr.next();
+                final ResourceLocation key = FMLControlledNamespacedRegistry.this.get(value);
+                return new Entry<ResourceLocation, I>()
+                {
+                    @Override
+                    public ResourceLocation getKey()
+                    {
+                        return key;
+                    }
+
+                    @Override
+                    public I getValue()
+                    {
+                        return value;
+                    }
+
+                    @Override
+                    public I setValue(I value)
+                    {
+                        throw new UnsupportedOperationException("Setting the value in an itterator is not allowed");
+                    }
+                };
+            }
+
+            @Override
+            public void remove()
+            {
+                throw new UnsupportedOperationException("This is a READ ONLY view of this registry.");
+            }
+        });
     }
 }

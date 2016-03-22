@@ -183,7 +183,7 @@ public class BlockSnapshot implements Serializable
 
         if (DEBUG)
         {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, applyPhysics);
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name().toString(), te, force, applyPhysics);
         }
         return true;
     }
@@ -218,7 +218,7 @@ public class BlockSnapshot implements Serializable
 
         if (DEBUG)
         {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, applyPhysics);
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][applyPhysics: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name().toString(), te, force, applyPhysics);
         }
         return true;
     }

@@ -250,7 +250,7 @@ public class VillagerRegistry
         }
     }
 
-    public static class VillagerProfession
+    public static class VillagerProfession extends IForgeRegistryEntry.Impl
     {
         private ResourceLocation name;
         private ResourceLocation texture;

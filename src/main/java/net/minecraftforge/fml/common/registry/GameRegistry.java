@@ -135,7 +135,7 @@ public class GameRegistry
      */
     public static void registerItem(Item item)
     {
-        registerItem(item, item.getRegistryName());
+        registerItem(item, item.getRegistryName().toString());
     }
 
     /**
@@ -151,20 +151,6 @@ public class GameRegistry
             throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
         }
         GameData.getMain().registerItem(item, name);
-    }
-
-    /**
-     * Register the specified Item with a mod specific name : overrides the standard type based name
-     *
-     * @param item  The item to register
-     * @param name  The mod-unique name to register it as - null will remove a custom name
-     * @param modId deprecated, unused
-     */
-    @Deprecated // See version without modID remove in 1.9
-    public static Item registerItem(Item item, String name, String modId)
-    {
-        registerItem(item, name);
-        return item;
     }
 
     /**
@@ -190,7 +176,7 @@ public class GameRegistry
      */
     public static Block registerBlock(Block block)
     {
-        return registerBlock(block, block.getRegistryName());
+        return registerBlock(block, block.getRegistryName().toString());
     }
 
     /**

@@ -221,7 +221,7 @@ public class GameData
         }
     }
 
-    public <T> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
+    public <T extends IForgeRegistryEntry<T>> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
     {
         return PersistentRegistryManager.makeDelegate(obj, rootClass);
     }
