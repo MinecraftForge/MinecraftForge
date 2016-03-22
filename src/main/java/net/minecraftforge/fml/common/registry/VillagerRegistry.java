@@ -250,7 +250,7 @@ public class VillagerRegistry
         }
     }
 
-    public static class VillagerProfession extends IForgeRegistryEntry.Impl
+    public static class VillagerProfession extends IForgeRegistryEntry.Impl<VillagerProfession>
     {
         private ResourceLocation name;
         private ResourceLocation texture;
@@ -316,9 +316,7 @@ public class VillagerRegistry
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
         Set<ResourceLocation> entries = INSTANCE.professions.getKeys();
-        int prof = rand.nextInt(entries.size());
-        //TODO: Grab id range from internal registry
-        entity.setProfession(rand.nextInt(5));
+        entity.setProfession(rand.nextInt(entries.size()));
     }
 
     //TODO: Figure out a good generic system for this. Put on hold for Patches.

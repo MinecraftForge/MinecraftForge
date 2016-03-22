@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
 import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
-public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I> implements IForgeRegistry<I>
+public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I> implements IForgeRegistry<I>
 {
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugRegistryEntries", "false"));
     private final Class<I> superType;
@@ -675,7 +675,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry> exte
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IForgeRegistryEntry> FMLControlledNamespacedRegistry<T> asType(Class<? extends T> type)
+    public <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> asType(Class<? extends T> type)
     {
         return (FMLControlledNamespacedRegistry<T>)this;
     }

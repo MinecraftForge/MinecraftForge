@@ -6,7 +6,7 @@ import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 
-public interface IForgeRegistry<V extends IForgeRegistryEntry> extends Iterable<V>
+public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
     void register(V value);
 
