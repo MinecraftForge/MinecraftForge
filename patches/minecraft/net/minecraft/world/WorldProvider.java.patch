@@ -187,9 +187,8 @@
 +        if (border < spawnFuzz) spawnFuzz = border;
 +        if (spawnFuzz < 1) spawnFuzz = 1;
 +        int spawnFuzzHalf = spawnFuzz / 2;
-+        if (spawnFuzzHalf < 1) spawnFuzzHalf = 1;
 +
-+        if (!func_177495_o() && !isAdventure)
++        if (!func_177495_o() && !isAdventure && spawnFuzzHalf > 0)
 +        {
 +            ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz));
 +        }
