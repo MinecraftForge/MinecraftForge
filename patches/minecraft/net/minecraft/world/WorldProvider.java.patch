@@ -185,7 +185,7 @@
 +        int spawnFuzz = this.field_76579_a instanceof WorldServer ? field_76577_b.getSpawnFuzz((WorldServer)this.field_76579_a, this.field_76579_a.func_73046_m()) : 1;
 +        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
 +        if (border < spawnFuzz) spawnFuzz = border;
-+        if (spawnFuzz < 1) spawnFuzz = 1;
++        if (spawnFuzz < 1) spawnFuzz = 2;
 +        int spawnFuzzHalf = spawnFuzz / 2;
 +
 +        if (!func_177495_o() && !isAdventure)
