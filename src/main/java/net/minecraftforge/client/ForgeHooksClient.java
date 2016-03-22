@@ -629,10 +629,9 @@ public class ForgeHooksClient
     // FIXME
     public static boolean shouldCauseReequipAnimation(ItemStack from, ItemStack to, int slot)
     {
-        if(!Objects.equal(from, to) || from == null)
-        {
-            return Objects.equal(from, to);
-        }
+        if (from == null && to != null) return true;
+        if (from == null && to == null) return false;
+        if (from != null && to == null) return true;
         boolean changed = false;
         if (slot != -1)
         {
