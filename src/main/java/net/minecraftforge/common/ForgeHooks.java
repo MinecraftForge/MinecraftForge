@@ -556,7 +556,10 @@ public class ForgeHooks
             return null;
         }
 
-        player.getEntityWorld().spawnEntityInWorld(event.entityItem);
+        if (player.isServerWorld())
+        {
+            player.getEntityWorld().spawnEntityInWorld(event.entityItem);
+        }
         return event.entityItem;
     }
 
