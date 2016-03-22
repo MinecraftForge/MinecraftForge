@@ -190,14 +190,7 @@
 +
 +        if (!func_177495_o() && !isAdventure)
 +        {
-+            if (spawnFuzzHalf > 0)
-+            {
-+                ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz));
-+            }
-+            else
-+            {
-+                ret = field_76579_a.func_175672_r(ret);
-+            }
++            ret = field_76579_a.func_175672_r(spawnFuzzHalf > 0 ? ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz) : ret);
 +        }
 +
 +        return ret;
