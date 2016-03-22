@@ -38,3 +38,13 @@
          }
          else
          {
+@@ -202,7 +214,8 @@
+ 
+     public static Entity func_188429_b(String p_188429_0_, World p_188429_1_)
+     {
+-        return func_75616_a(func_180122_a(p_188429_0_), p_188429_1_);
++        Entity e = func_75620_a(p_188429_0_, p_188429_1_); // Forge: Support entities without global ID
++        return e == null ? func_75620_a("Pig", p_188429_1_) : e;
+     }
+ 
+     public static int func_75619_a(Entity p_75619_0_)
