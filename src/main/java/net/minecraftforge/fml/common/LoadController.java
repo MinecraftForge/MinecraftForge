@@ -44,6 +44,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.eventbus.SubscriberExceptionHandler;
+import com.google.common.eventbus.SubscriberExceptionContext;
 
 public class LoadController
 {
@@ -88,10 +90,18 @@ public class LoadController
     {
         Builder<String, EventBus> eventBus = ImmutableMap.builder();
 
-        for (ModContainer mod : loader.getModList())
+        for (final ModContainer mod : loader.getModList())
         {
             //Create mod logger, and make the EventBus logger a child of it.
-            EventBus bus = new EventBus(mod.getModId());
+            EventBus bus = new EventBus(new SubscriberExceptionHandler()
+            {
+                @Override
+                public void handleException(final Throwable exception, final SubscriberExceptionContext context)
+                {
+                    LoadController.this.errorOccurred(mod, exception);
+                }
+            });
+
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)
             {
