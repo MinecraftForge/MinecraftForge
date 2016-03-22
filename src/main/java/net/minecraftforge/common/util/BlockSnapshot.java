@@ -5,11 +5,11 @@ import java.io.Serializable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 /**
  * Represents a captured snapshot of a block which will not change
@@ -29,7 +29,7 @@ public class BlockSnapshot implements Serializable
     public int flag;
     private final NBTTagCompound nbt;
     public transient World world;
-    public final UniqueIdentifier blockIdentifier;
+    public final ResourceLocation blockIdentifier;
     public final int meta;
 
     public BlockSnapshot(World world, BlockPos pos, IBlockState state)
@@ -38,7 +38,7 @@ public class BlockSnapshot implements Serializable
         this.dimId = world.provider.getDimension();
         this.pos = pos;
         this.replacedBlock = state;
-        this.blockIdentifier = GameRegistry.findUniqueIdentifierFor(state.getBlock());
+        this.blockIdentifier = state.getBlock().getRegistryName();
         this.meta = state.getBlock().getMetaFromState(state);
         this.flag = 3;
         TileEntity te = world.getTileEntity(pos);
@@ -60,7 +60,7 @@ public class BlockSnapshot implements Serializable
         this.dimId = world.provider.getDimension();
         this.pos = pos.getImmutable();
         this.replacedBlock = state;
-        this.blockIdentifier = GameRegistry.findUniqueIdentifierFor(state.getBlock());
+        this.blockIdentifier = state.getBlock().getRegistryName();
         this.meta = state.getBlock().getMetaFromState(state);
         this.flag = 3;
         this.nbt = nbt;
@@ -84,7 +84,7 @@ public class BlockSnapshot implements Serializable
         this.dimId = dimension;
         this.pos = pos.getImmutable();
         this.flag = flag;
-        this.blockIdentifier = new UniqueIdentifier(modid + ":" + blockName);
+        this.blockIdentifier = new ResourceLocation(modid, blockName);
         this.meta = meta;
         this.nbt = nbt;
     }
@@ -131,7 +131,7 @@ public class BlockSnapshot implements Serializable
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = GameRegistry.findBlock(this.blockIdentifier.modId, this.blockIdentifier.name).getStateFromMeta(meta);
+            this.replacedBlock = GameRegistry.findBlock(this.blockIdentifier.getResourceDomain(), this.blockIdentifier.getResourcePath()).getStateFromMeta(meta);
         }
         return this.replacedBlock;
     }
@@ -225,8 +225,8 @@ public class BlockSnapshot implements Serializable
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setString("blockMod", blockIdentifier.modId);
-        compound.setString("blockName", blockIdentifier.name);
+        compound.setString("blockMod", blockIdentifier.getResourceDomain());
+        compound.setString("blockName", blockIdentifier.getResourcePath());
         compound.setInteger("posX", pos.getX());
         compound.setInteger("posY", pos.getY());
         compound.setInteger("posZ", pos.getZ());
