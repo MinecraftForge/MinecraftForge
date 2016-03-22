@@ -277,7 +277,7 @@
 +     */
 +    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
-+        if (base_state.func_185896_q()) // Short circuit to vanilla function if its true
++        if (base_state.func_185896_q() && side == EnumFacing.UP) // Short circuit to vanilla function if its true
 +            return true;
 +
 +        IBlockState state = this.func_176221_a(base_state, world, pos);
