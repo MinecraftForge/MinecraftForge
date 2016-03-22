@@ -401,7 +401,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2340,6 +2447,169 @@
+@@ -2340,6 +2447,160 @@
          return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
      }
  
@@ -534,8 +534,9 @@
 +    public java.util.Collection<ITextComponent> getSuffixes() { return this.suffixes; }
 +
 +    private final net.minecraftforge.items.IItemHandler playerMainHandler = new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(field_71071_by);
-+    private final net.minecraftforge.items.IItemHandler playerArmorHandler = new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(field_71071_by);
-+    private final net.minecraftforge.items.IItemHandler playerOffhandHandler = new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(field_71071_by);
++    private final net.minecraftforge.items.IItemHandler playerEquipmentHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                    new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(field_71071_by),
++                    new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(field_71071_by));
 +    private final net.minecraftforge.items.IItemHandler playerJoinedHandler = new net.minecraftforge.items.wrapper.PlayerInvWrapper(field_71071_by);
 +
 +    @Override
@@ -543,19 +544,9 @@
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {
-+            if (facing == net.minecraft.util.EnumFacing.UP)
-+            {
-+                return (T) playerArmorHandler;
-+            } else if (facing == net.minecraft.util.EnumFacing.DOWN)
-+            {
-+                return (T) playerMainHandler;
-+            } else if (facing.func_176740_k().func_176722_c())
-+            {
-+                return (T) playerOffhandHandler;
-+            } else
-+            {
-+                return (T) playerJoinedHandler;
-+            }
++            if (facing == null) return (T) playerJoinedHandler;
++            else if (facing.func_176740_k().func_176720_b()) return (T) playerMainHandler;
++            else if (facing.func_176740_k().func_176722_c()) return (T) playerEquipmentHandler;
 +        }
 +        return super.getCapability(capability, facing);
 +    }

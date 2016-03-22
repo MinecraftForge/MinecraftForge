@@ -16,7 +16,7 @@
              }
  
              this.field_70138_W = 1.0F;
-@@ -1793,4 +1795,25 @@
+@@ -1793,4 +1795,20 @@
                  this.field_188477_b = p_i46589_2_;
              }
          }
@@ -27,18 +27,13 @@
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {
-+        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
-+                && itemHandler != null)
-+        {
-+            return (T) itemHandler;
-+        }
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) itemHandler;
 +        return super.getCapability(capability, facing);
 +    }
 +
 +    @Override
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
 +    {
-+        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null
-+                || super.hasCapability(capability, facing);
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }
  }

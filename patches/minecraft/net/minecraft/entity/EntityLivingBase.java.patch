@@ -285,7 +285,7 @@
          }
  
          this.func_184602_cy();
-@@ -2626,4 +2707,34 @@
+@@ -2626,4 +2707,27 @@
      {
          return true;
      }
@@ -300,16 +300,9 @@
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {
-+            if (facing == net.minecraft.util.EnumFacing.UP)
-+            {
-+                return (T) armorHandler;
-+            } else if (facing.func_176740_k().func_176722_c())
-+            {
-+                return (T) handHandler;
-+            } else
-+            {
-+                return (T) joinedHandler;
-+            }
++            if (facing == null) return (T) joinedHandler;
++            else if (facing.func_176740_k().func_176720_b()) return (T) handHandler;
++            else if (facing.func_176740_k().func_176722_c()) return (T) armorHandler;
 +        }
 +        return super.getCapability(capability, facing);
 +    }
