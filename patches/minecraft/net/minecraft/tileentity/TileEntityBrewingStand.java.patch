@@ -20,7 +20,7 @@
  
      private void func_145940_l()
      {
-+        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j, this.func_145831_w(), this.func_174877_v())) return;
          ItemStack itemstack = this.field_145945_j[3];
  
 -        for (int i = 0; i < 3; ++i)
@@ -44,7 +44,7 @@
  
          this.field_145945_j[3] = itemstack;
          this.field_145850_b.func_175718_b(1035, blockpos, 0);
-+        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
++        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j, this.func_145831_w(), this.func_174877_v());
      }
  
      public void func_145839_a(NBTTagCompound p_145839_1_)

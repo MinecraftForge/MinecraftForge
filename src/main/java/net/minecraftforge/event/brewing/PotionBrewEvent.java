@@ -1,6 +1,8 @@
 package net.minecraftforge.event.brewing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
@@ -8,11 +10,25 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 public class PotionBrewEvent extends Event
 {
+    private final World world;
+    private final BlockPos pos;
     private ItemStack[] stacks;
 
-    protected PotionBrewEvent(ItemStack[] stacks)
+    protected PotionBrewEvent(ItemStack[] stacks, World world, BlockPos pos)
     {
         this.stacks = stacks;
+        this.world = world;
+        this.pos = pos;
+    }
+
+    public World getWorld()
+    {
+        return this.world;
+    }
+
+    public BlockPos getPos()
+    {
+        return this.pos;
     }
 
     public ItemStack getItem(int index)
@@ -42,6 +58,10 @@ public class PotionBrewEvent extends Event
      * <br>
      * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
+     * {@link #pos} contains the World where the TileEntityBrewer which triggered this event is.<br>
+     * <br>
+     * {@link #pos} contains the BlockPos of the TileEntityBrewer which triggered this event.<br>
+     * <br>
      * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the vanilla brewing will take place instead of modded brewing.
      * <br>
@@ -54,9 +74,9 @@ public class PotionBrewEvent extends Event
     @Cancelable
     public static class Pre extends PotionBrewEvent
     {
-        public Pre(ItemStack[] stacks)
+        public Pre(ItemStack[] stacks, World world, BlockPos pos)
         {
-            super(stacks);
+            super(stacks, world, pos);
         }
     }
 
@@ -67,6 +87,10 @@ public class PotionBrewEvent extends Event
      * <br>
      * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
+     * {@link #pos} contains the World where the TileEntityBrewer which triggered this event is.<br>
+     * <br>
+     * {@link #pos} contains the BlockPos of the TileEntityBrewer which triggered this event.<br>
+     * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult}<br>
@@ -76,9 +100,9 @@ public class PotionBrewEvent extends Event
     @SuppressWarnings("deprecation")
     public static class Post extends PotionBrewedEvent
     {
-        public Post(ItemStack[] stacks)
+        public Post(ItemStack[] stacks, World world, BlockPos pos)
         {
-            super(stacks);
+            super(stacks, world, pos);
         }
     }
 }

@@ -1,6 +1,8 @@
 package net.minecraftforge.event.brewing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 /**
  * PotionBrewedEvent is fired when a potion is brewed in the brewing stand.
@@ -24,9 +26,9 @@ public class PotionBrewedEvent extends PotionBrewEvent
      */
     @Deprecated
     public ItemStack[] brewingStacks;
-    public PotionBrewedEvent(ItemStack[] brewingStacks)
+    public PotionBrewedEvent(ItemStack[] brewingStacks, World world, BlockPos pos)
     {
-        super(brewingStacks);
+        super(brewingStacks, world, pos);
         this.brewingStacks = brewingStacks;
     }
 }
