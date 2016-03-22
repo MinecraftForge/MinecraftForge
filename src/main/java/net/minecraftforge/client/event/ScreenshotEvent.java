@@ -15,16 +15,18 @@ import java.io.File;
  *
  * {@link #screenshotFile} contains the file the screenshot will be/was saved to
  * {@link #image} contains the {@link BufferedImage} that will be saved
- * {@link #cancelReason} contains the {@link ITextComponent} to be used if the event is canceled
+ * {@link #resultMessage} contains the {@link ITextComponent} to be returned. If {@code null}, the default vanilla message will be used instead
  */
 @Cancelable
 public class ScreenshotEvent extends Event
 {
 
+    public static final ITextComponent DEFAULT_CANCEL_REASON = new TextComponentString("Screenshot canceled");
+
     private BufferedImage image;
     private File screenshotFile;
 
-    private ITextComponent cancelReason = new TextComponentString("Screenshot canceled for unknown reason");
+    private ITextComponent resultMessage = null;
 
     public ScreenshotEvent(BufferedImage image, File screenshotFile)
     {
@@ -47,14 +49,19 @@ public class ScreenshotEvent extends Event
         this.screenshotFile = screenshotFile;
     }
 
-    public ITextComponent getCancelReason()
+    public ITextComponent getResultMessage()
     {
-        return cancelReason;
+        return resultMessage;
     }
 
-    public void setCancelReason(ITextComponent cancelReason)
+    public void setResultMessage(ITextComponent resultMessage)
     {
-        this.cancelReason = cancelReason;
+        this.resultMessage = resultMessage;
+    }
+
+    public ITextComponent getCancelMessage()
+    {
+        return getResultMessage() != null ? getResultMessage() : DEFAULT_CANCEL_REASON;
     }
 
 }
