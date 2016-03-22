@@ -48,20 +48,20 @@ public class PersistentRegistryManager
         ACTIVE, FROZEN, STAGING;
 
         private final BiMap<ResourceLocation, FMLControlledNamespacedRegistry<?>> registries = HashBiMap.create();
-        private final BiMap<Class<IForgeRegistryEntry>, ResourceLocation> registrySuperTypes = HashBiMap.create();
+        private final BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> registrySuperTypes = HashBiMap.create();
 
         @SuppressWarnings("unchecked")
-        <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, Class<T> regType)
+        <T extends IForgeRegistryEntry<?>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, Class<T> regType)
         {
             return (FMLControlledNamespacedRegistry<T>)registries.get(key);
         }
 
-        <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getOrShallowCopyRegistry(ResourceLocation key, Class<T> regType, FMLControlledNamespacedRegistry<T> other)
+        <T extends IForgeRegistryEntry<?>> FMLControlledNamespacedRegistry<T> getOrShallowCopyRegistry(ResourceLocation key, Class<T> regType, FMLControlledNamespacedRegistry<T> other)
         {
             if (!registries.containsKey(key))
             {
                 registries.put(key, other.makeShallowCopy());
-                //TODO: Figure out this generics... registrySuperTypes.put(regType, key);
+                registrySuperTypes.put(regType, key);
             }
             return getRegistry(key, regType);
         }
@@ -79,7 +79,7 @@ public class PersistentRegistryManager
             }
             FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, maxId, minId, type, isDelegated, addCallback);
             registries.put(registryName, fmlControlledNamespacedRegistry);
-            //TODO: Figure out this generics... registrySuperTypes.put(type, registryName);
+            registrySuperTypes.put(type, registryName);
             return getRegistry(registryName, type);
         }
 
@@ -251,7 +251,7 @@ public class PersistentRegistryManager
         }
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final PersistentRegistry from, final PersistentRegistry to, Class<T> regType)
+    private static <T extends IForgeRegistryEntry<?>> void loadRegistry(final ResourceLocation registryName, final PersistentRegistry from, final PersistentRegistry to, Class<T> regType)
     {
         FMLControlledNamespacedRegistry<T> fromRegistry = from.getRegistry(registryName, regType);
         if (fromRegistry == null)
@@ -287,14 +287,14 @@ public class PersistentRegistryManager
         }
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, Class<T> regType)
+    private static <T extends IForgeRegistryEntry<?>> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, Class<T> regType)
     {
         FMLControlledNamespacedRegistry<T> frozenRegistry = PersistentRegistry.FROZEN.getRegistry(registryName, regType);
         FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, frozenRegistry);
         newRegistry.loadIds(frozenRegistry.getEntriesNotIn(newRegistry), Maps.<ResourceLocation, Integer>newLinkedHashMap(), remaps.get(registryName), frozenRegistry, registryName);
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
+    private static <T extends IForgeRegistryEntry<?>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
     {
         ResourceLocation registryName = snapEntry.getKey();
 
