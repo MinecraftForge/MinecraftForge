@@ -50,7 +50,7 @@
                      else
                      {
 -                        aint1[j + i * p_75904_3_] = BiomeGenBase.func_185362_a(this.field_151623_c[this.func_75902_a(this.field_151623_c.length)]);
-+                        aint1[k + i * p_75904_3_] = BiomeGenBase.func_185362_a(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT).biome);
++                        aint1[j + i * p_75904_3_] = BiomeGenBase.func_185362_a(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT).biome);
                      }
                  }
                  else if (k == 2)
