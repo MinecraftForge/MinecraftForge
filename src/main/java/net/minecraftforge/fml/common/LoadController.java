@@ -237,7 +237,7 @@ public class LoadController
 
     public ImmutableBiMap<ModContainer, Object> buildModObjectList()
     {
-        ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.<ModContainer, Object>builder();
+        ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.builder();
         for (ModContainer mc : activeModList)
         {
             if (!mc.isImmutable() && mc.getMod()!=null)
@@ -265,7 +265,7 @@ public class LoadController
     {
         if (exception instanceof InvocationTargetException)
         {
-            errors.put(modContainer.getModId(), ((InvocationTargetException)exception).getCause());
+            errors.put(modContainer.getModId(), exception.getCause());
         }
         else
         {

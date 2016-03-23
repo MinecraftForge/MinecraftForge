@@ -114,7 +114,7 @@ public class GuiConfigEntries extends GuiListExtended
                 if (configElement.getConfigEntryClass() != null)
                     try
                     {
-                        this.listEntries.add((IConfigEntry) configElement.getConfigEntryClass()
+                        this.listEntries.add(configElement.getConfigEntryClass()
                                 .getConstructor(GuiConfig.class, GuiConfigEntries.class, IConfigElement.class)
                                 .newInstance(this.owningScreen, this, configElement));
                     }

@@ -81,7 +81,7 @@ public class BlockFluidFinite extends BlockFluidBase
         }
 
         // Flow out if possible
-        int lowerthan = quantaRemaining - 1;
+        int lowerThan = quantaRemaining - 1;
         int total = quantaRemaining;
         int count = 1;
 
@@ -91,7 +91,7 @@ public class BlockFluidFinite extends BlockFluidBase
             if (displaceIfPossible(world, off))
                 world.setBlockToAir(off);
 
-            int quanta = getQuantaValueBelow(world, off, lowerthan);
+            int quanta = getQuantaValueBelow(world, off, lowerThan);
             if (quanta >= 0)
             {
                 count++;
@@ -114,25 +114,25 @@ public class BlockFluidFinite extends BlockFluidBase
         for (EnumFacing side : EnumFacing.Plane.HORIZONTAL)
         {
             BlockPos off = pos.offset(side);
-            int quanta = getQuantaValueBelow(world, off, lowerthan);
+            int quanta = getQuantaValueBelow(world, off, lowerThan);
             if (quanta >= 0)
             {
-                int newquanta = each;
+                int newQuanta = each;
                 if (rem == count || rem > 1 && rand.nextInt(count - rem) != 0)
                 {
-                    ++newquanta;
+                    ++newQuanta;
                     --rem;
                 }
 
-                if (newquanta != quanta)
+                if (newQuanta != quanta)
                 {
-                    if (newquanta == 0)
+                    if (newQuanta == 0)
                     {
                         world.setBlockToAir(off);
                     }
                     else
                     {
-                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newquanta - 1), 2);
+                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newQuanta - 1), 2);
                     }
                     world.scheduleUpdate(off, this, tickRate);
                 }

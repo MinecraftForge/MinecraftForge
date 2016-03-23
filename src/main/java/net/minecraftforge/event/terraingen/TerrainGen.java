@@ -1,18 +1,17 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-import net.minecraftforge.fml.common.eventhandler.Event.*;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.*;
-import net.minecraftforge.event.terraingen.DecorateBiomeEvent.*;
-import net.minecraftforge.event.terraingen.OreGenEvent.*;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent.*;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate;
+import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 public abstract class TerrainGen
 {

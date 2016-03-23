@@ -14,12 +14,8 @@ package net.minecraftforge.fml.common.toposort;
 
 import java.util.Set;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.toposort.ModSortingException.SortingExceptionData;
 
 public class ModSortingException extends EnhancedRuntimeException
 {

@@ -90,7 +90,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
@@ -110,7 +109,7 @@ public class ForgeHooksClient
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optfine, these methods are invoked using reflection, which
+    //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
     public static void orientBedCamera(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity)
     {

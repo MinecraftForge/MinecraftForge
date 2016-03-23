@@ -60,7 +60,7 @@ public class B3DModel
 
     public static class Parser
     {
-        private static final int version = 0001;
+        private static final int version = 1;
         private final ByteBuffer buf;
 
         private byte[] tag = new byte[4];
@@ -204,7 +204,7 @@ public class B3DModel
             if(version / 100 > Parser.version / 100)
                 throw new IOException("Unsupported major model version: " + ((float)version / 100));
             if(version % 100 > Parser.version % 100)
-                logger.warn(String.format("Minor version differnce in model: ", ((float)version / 100)));
+                logger.warn(String.format("Minor version difference in model: ", ((float)version / 100)));
             List<Texture> textures = Collections.emptyList();
             List<Brush> brushes = Collections.emptyList();
             Node<?> root = null;

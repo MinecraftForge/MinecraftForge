@@ -84,7 +84,7 @@ public class BrewingRecipeRegistry {
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOuput(ItemStack input, ItemStack ingredient)
+    public static boolean hasOutput(ItemStack input, ItemStack ingredient)
     {
         return getOutput(input, ingredient) != null;
     }
@@ -100,7 +100,7 @@ public class BrewingRecipeRegistry {
 
         for (int i : inputIndexes)
         {
-            if (hasOuput(inputs[i], ingredient))
+            if (hasOutput(inputs[i], ingredient))
             {
                 return true;
             }

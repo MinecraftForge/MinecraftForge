@@ -166,7 +166,7 @@ public class Configuration
      */
     public Property get(String category, String key, boolean defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
@@ -201,7 +201,7 @@ public class Configuration
      */
     public Property get(String category, String key, boolean[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null);
+        return get(category, key, defaultValues, null);
     }
 
     /**
@@ -268,7 +268,7 @@ public class Configuration
      */
     public Property get(String category, String key, int defaultValue)
     {
-        return get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return get(category, key, defaultValue, null, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**
@@ -321,7 +321,7 @@ public class Configuration
      */
     public Property get(String category, String key, int[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null);
+        return get(category, key, defaultValues, null);
     }
 
     /**
@@ -410,7 +410,7 @@ public class Configuration
      */
     public Property get(String category, String key, double defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
@@ -553,7 +553,7 @@ public class Configuration
      */
     public Property get(String category, String key, String defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
@@ -615,7 +615,7 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null, false, -1, (Pattern) null);
+        return get(category, key, defaultValues, null, false, -1, null);
     }
 
     /**
@@ -629,7 +629,7 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, false, -1, (Pattern) null);
+        return get(category, key, defaultValues, comment, false, -1, null);
     }
 
     /**
@@ -877,7 +877,7 @@ public class Configuration
                         }
                         else if (Character.isWhitespace(line.charAt(i)))
                         {
-                            // ignore space charaters
+                            // ignore space characters
                         }
                         else
                         {
@@ -927,7 +927,7 @@ public class Configuration
                                         break;
                                     if (currentCat == null)
                                     {
-                                        throw new RuntimeException(String.format("Config file corrupt, attepted to close to many categories '%s:%d'", fileName, lineNum));
+                                        throw new RuntimeException(String.format("Config file corrupt, attempted to close to many categories '%s:%d'", fileName, lineNum));
                                     }
                                     currentCat = currentCat.parent;
                                     break;
@@ -1330,7 +1330,7 @@ public class Configuration
                 size = 4;
             }
             else if (bom32 == 0xFFFE0000) //This will never happen as it'll be caught by UTF-16LE,
-            {                             //but if anyone ever runs across a 32LE file, i'd like to disect it.
+            {                             //but if anyone ever runs across a 32LE file, i'd like to dissect it.
                 enc = "UTF-32LE";
                 size = 4;
             }
@@ -1567,7 +1567,7 @@ public class Configuration
      */
     public String[] getStringList(String name, String category, String[] defaultValues, String comment)
     {
-        return getStringList(name, category, defaultValues, comment, (String[]) null, name);
+        return getStringList(name, category, defaultValues, comment, null, name);
     }
 
     /**

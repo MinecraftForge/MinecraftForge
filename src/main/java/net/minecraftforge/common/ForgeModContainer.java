@@ -170,7 +170,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
-        prop.comment = "Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipies. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.";
+        prop.comment = "Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipes. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.";
         prop.setLanguageKey("forge.configgui.sortRecipies").setRequiresMcRestart(true);
         shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
         propOrder.add(prop.getName());
@@ -202,7 +202,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         disableStitchedFileSaving = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
-        prop.comment = "Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticable differences in mechanics so default is vanilla behavior. Default: false";
+        prop.comment = "Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false";
         prop.setLanguageKey("forge.configgui.fullBoundingBoxLadders").setRequiresWorldRestart(true);
         fullBoundingBoxLadders = prop.getBoolean(false);
         propOrder.add(prop.getName());
@@ -226,7 +226,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
-            "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
+            "The spawn fuzz when a player respawns in the world, this is controllable by WorldType, this config option is for the default overworld.",
             1, Integer.MAX_VALUE);
         prop.setLanguageKey("forge.configgui.spawnfuzz").setRequiresWorldRestart(false);
         defaultSpawnFuzz = prop.getInt(20);

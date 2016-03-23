@@ -20,7 +20,7 @@
  
      private void func_145940_l()
      {
-+        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(field_145945_j)) return;
          ItemStack itemstack = this.field_145945_j[3];
  
 -        for (int i = 0; i < 3; ++i)

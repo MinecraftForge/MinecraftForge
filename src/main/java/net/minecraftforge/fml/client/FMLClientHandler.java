@@ -186,7 +186,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param resourceManager The resource manager
      */
     @SuppressWarnings("unchecked")
-    public void beginMinecraftLoading(Minecraft minecraft, @SuppressWarnings("rawtypes") List resourcePackList, IReloadableResourceManager resourceManager)
+    public void beginMinecraftLoading(Minecraft minecraft, List<IResourcePack> resourcePackList, IReloadableResourceManager resourceManager)
     {
         detectOptifine();
         SplashProgress.start();
@@ -626,7 +626,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void serverStopped()
     {
-        // If the server crashes during startup, it might hang the client- reset the client so it can abend properly.
+        // If the server crashes during startup, it might hang the client - reset the client so it can abend properly.
         MinecraftServer server = getServer();
 
         if (server != null && !server.serverIsInRunLoop())
@@ -693,7 +693,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             try
             {
-                client.launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), (WorldSettings)null);
+                client.launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
             }
             catch (StartupQuery.AbortedException e)
             {
@@ -735,7 +735,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             String type = jsonData.get("type").getAsString();
             JsonArray modDataArray = jsonData.get("modList").getAsJsonArray();
             boolean moddedClientAllowed = jsonData.has("clientModsAllowed") ? jsonData.get("clientModsAllowed").getAsBoolean() : true;
-            Builder<String, String> modListBldr = ImmutableMap.<String,String>builder();
+            Builder<String, String> modListBldr = ImmutableMap.builder();
             for (JsonElement obj : modDataArray)
             {
                 JsonObject modObj = obj.getAsJsonObject();

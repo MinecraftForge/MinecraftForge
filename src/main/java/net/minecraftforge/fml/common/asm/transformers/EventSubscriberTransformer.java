@@ -35,7 +35,7 @@ public class EventSubscriberTransformer implements IClassTransformer
             {
                 if (Modifier.isPrivate(methodNode.access))
                 {
-                    String msg = "Cannot apply @SubsribeEvent to private method %s/%s%s";
+                    String msg = "Cannot apply @SubscribeEvent to private method %s/%s%s";
                     throw new RuntimeException(String.format(msg, classNode.name, methodNode.name, methodNode.desc));
                 }
 

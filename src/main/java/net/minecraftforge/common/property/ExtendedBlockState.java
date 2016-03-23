@@ -25,7 +25,7 @@ public class ExtendedBlockState extends BlockStateContainer
     public ExtendedBlockState(Block blockIn, IProperty<?>[] properties, IUnlistedProperty<?>[] unlistedProperties)
     {
         super(blockIn, properties, buildUnlistedMap(unlistedProperties));
-        ImmutableSet.Builder<IUnlistedProperty<?>> builder = ImmutableSet.<IUnlistedProperty<?>>builder();
+        ImmutableSet.Builder<IUnlistedProperty<?>> builder = ImmutableSet.builder();
         for(IUnlistedProperty<?> property : unlistedProperties)
         {
             builder.add(property);
@@ -40,7 +40,7 @@ public class ExtendedBlockState extends BlockStateContainer
 
     private static ImmutableMap<IUnlistedProperty<?>, Optional<?>> buildUnlistedMap(IUnlistedProperty<?>[] unlistedProperties)
     {
-        ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.<IUnlistedProperty<?>, Optional<?>>builder();
+        ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
         for(IUnlistedProperty<?> p : unlistedProperties)
         {
             builder.put(p, Optional.absent());
@@ -74,25 +74,27 @@ public class ExtendedBlockState extends BlockStateContainer
             {
                 throw new IllegalArgumentException("Cannot set property " + property + " as it does not exist in " + getBlock().getBlockState());
             }
-            else if (!property.getAllowedValues().contains(value))
-            {
-                throw new IllegalArgumentException("Cannot set property " + property + " to " + value + " on block " + Block.blockRegistry.getNameForObject(getBlock()) + ", it is not an allowed value");
-            }
             else
             {
-                if(this.getProperties().get(property) == value)
+                if (!property.getAllowedValues().contains(value))
                 {
-                    return this;
+                    throw new IllegalArgumentException("Cannot set property " + property + " to " + value + " on block " + Block.blockRegistry.getNameForObject(getBlock()) + ", it is not an allowed value");
+                } else
+                {
+                    if (this.getProperties().get(property) == value)
+                    {
+                        return this;
+                    }
+                    Map<IProperty<?>, Comparable<?>> map = Maps.newHashMap(getProperties());
+                    map.put(property, value);
+                    if (Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
+                    { // no dynamic properties present, looking up in the normal table
+                        return normalMap.get(map);
+                    }
+                    ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table = propertyValueTable;
+                    table = ((StateImplementation) table.get(property, value)).getPropertyValueTable();
+                    return new ExtendedStateImplementation(getBlock(), ImmutableMap.copyOf(map), unlistedProperties, table).setMap(this.normalMap);
                 }
-                Map<IProperty<?>, Comparable<?>> map = Maps.newHashMap(getProperties());
-                map.put(property, value);
-                if(Iterables.all(unlistedProperties.values(), Predicates.<Optional<?>>equalTo(Optional.absent())))
-                { // no dynamic properties present, looking up in the normal table
-                    return (IExtendedBlockState) normalMap.get(map);
-                }
-                ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table = propertyValueTable;
-                table = ((StateImplementation)table.get(property, value)).getPropertyValueTable();
-                return new ExtendedStateImplementation(getBlock(), ImmutableMap.copyOf(map), unlistedProperties, table).setMap(this.normalMap);
             }
         }
 

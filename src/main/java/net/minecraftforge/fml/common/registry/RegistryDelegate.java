@@ -52,18 +52,18 @@ public interface RegistryDelegate<T> {
      */
     final class Delegate<T> implements RegistryDelegate<T>
     {
-        private T referant;
+        private T referent;
         private ResourceLocation name;
         private final Class<T> type;
 
-        public Delegate(T referant, Class<T> type) {
-            this.referant = referant;
+        public Delegate(T referent, Class<T> type) {
+            this.referent = referent;
             this.type = type;
         }
 
         @Override
         public T get() {
-            return referant;
+            return referent;
         }
 
         @Override
@@ -82,7 +82,7 @@ public interface RegistryDelegate<T> {
 
         void changeReference(T newTarget)
         {
-            this.referant = newTarget;
+            this.referent = newTarget;
         }
 
         void setResourceName(ResourceLocation name) { this.name = name; }

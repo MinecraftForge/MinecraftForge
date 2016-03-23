@@ -18,7 +18,7 @@ public class FillBucketEvent extends PlayerEvent
      * If you set the result to 'ALLOW', it means that you have processed
      * the event and wants the basic functionality of adding the new
      * ItemStack to your inventory and reducing the stack size to process.
-     * setResult(ALLOW) is the same as the old setHandeled();
+     * setResult(ALLOW) is the same as the old setHandled();
      */
 
     private final ItemStack current;

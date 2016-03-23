@@ -102,7 +102,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
             catch (Throwable t)
             {
                 FMLLog.log(Level.ERROR, t, "There was a critical exception handling a packet on channel %s", channel);
-                dispatcher.rejectHandshake("A fatal error has occured, this connection is terminated");
+                dispatcher.rejectHandshake("A fatal error has occurred, this connection is terminated");
             }
         }
     }

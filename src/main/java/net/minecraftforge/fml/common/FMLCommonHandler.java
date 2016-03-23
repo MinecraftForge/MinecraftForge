@@ -215,7 +215,7 @@ public class FMLCommonHandler
     {
         if (brandings == null)
         {
-            Builder<String> brd = ImmutableList.<String>builder();
+            Builder<String> brd = ImmutableList.builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
             brd.add("Powered by Forge " + ForgeVersion.getVersion());
@@ -691,7 +691,7 @@ public class FMLCommonHandler
     }
 
     /**
-     * Loads a lang file, first searching for a marker to enable the 'extended' format {escape charaters}
+     * Loads a lang file, first searching for a marker to enable the 'extended' format {escape characters}
      * If the marker is not found it simply returns and let the vanilla code load things.
      * The Marker is 'PARSE_ESCAPES' by itself on a line starting with '#' as such:
      * #PARSE_ESCAPES

@@ -33,7 +33,7 @@ public enum Animation
     }
 
     /**
-     * Iternal hook, do not use.
+     * Internal hook, do not use.
      */
     public static void setClientPartialTickTime(float clientPartialTickTime) {
         Animation.INSTANCE.clientPartialTickTime = clientPartialTickTime;

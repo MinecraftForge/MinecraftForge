@@ -43,7 +43,7 @@ public abstract class CustomModLoadingErrorDisplayException extends EnhancedRunt
     private static final long serialVersionUID = 1L;
 
     /**
-     * Called after the GUI is inited by the parent code. You can do extra stuff here, maybe?
+     * Called after the GUI is initialized by the parent code. You can do extra stuff here, maybe?
      *
      * @param errorScreen The error screen we're painting
      * @param fontRenderer A font renderer for you

@@ -18,7 +18,7 @@ public class UseHoeEvent extends PlayerEvent
      * You can also set the result to ALLOW to mark the event as processed
      * and damage the hoe.
      *
-     * setResult(ALLOW) is the same as the old setHandeled();
+     * setResult(ALLOW) is the same as the old setHandled();
      */
 
     public final ItemStack current;

@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired via the {@link ForgeEventFactory#onPlayerInteract(EntityPlayer, Action, BlockPos, EnumFacing)}.
  * <br>
- * {@link #action} contains the Action the player performed durin this interaction. <br>
+ * {@link #action} contains the Action the player performed during this interaction. <br>
  * {@link #pos} contains the coordinate of where this event occurred.<br>
  * {@link #face} contains the face of the block that was interacted with. May be null if unknown. <br>
  * {@link #world} contains the world in which this event is occurring. <br>

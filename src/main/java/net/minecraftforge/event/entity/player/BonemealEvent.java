@@ -18,7 +18,7 @@ public class BonemealEvent extends PlayerEvent
      * You can also set the result to ALLOW to mark the event as processed
      * and use up a bonemeal from the stack but do no further processing.
      *
-     * setResult(ALLOW) is the same as the old setHandeled()
+     * setResult(ALLOW) is the same as the old setHandled()
      */
 
     public final World world;

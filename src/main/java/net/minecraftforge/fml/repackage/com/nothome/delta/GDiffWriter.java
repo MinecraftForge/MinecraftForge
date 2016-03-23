@@ -170,7 +170,7 @@ public class GDiffWriter implements DiffWriter {
     @Override
     public void close() throws IOException {
         this.flush();
-        output.write((byte)EOF);
+        output.write(EOF);
         output.close();
     }
 

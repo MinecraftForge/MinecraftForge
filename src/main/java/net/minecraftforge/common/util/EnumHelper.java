@@ -35,8 +35,7 @@ public class EnumHelper
     private static boolean isSetup               = false;
 
     //Some enums are decompiled with extra arguments, so lets check for that
-    @SuppressWarnings("rawtypes")
-    private static Class[][] commonTypes =
+    private static Class<?>[][] commonTypes =
     {
         {EnumAction.class},
         {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class},
@@ -69,8 +68,7 @@ public class EnumHelper
     {
         return addEnum(EnumCreatureAttribute.class, name);
     }
-    @SuppressWarnings("rawtypes")
-    public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
+    public static EnumCreatureType addCreatureType(String name, Class<?> typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
     {
         return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful, animal);
     }
@@ -147,11 +145,11 @@ public class EnumHelper
 
     private static < T extends Enum<? >> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception
     {
-        Object[] parms = new Object[additionalValues.length + 2];
-        parms[0] = value;
-        parms[1] = Integer.valueOf(ordinal);
-        System.arraycopy(additionalValues, 0, parms, 2, additionalValues.length);
-        return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] {parms}));
+        Object[] params = new Object[additionalValues.length + 2];
+        params[0] = value;
+        params[1] = ordinal;
+        System.arraycopy(additionalValues, 0, params, 2, additionalValues.length);
+        return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] {params}));
     }
 
     public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
@@ -189,10 +187,9 @@ public class EnumHelper
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
 
-    @SuppressWarnings("rawtypes")
-    public static <T extends Enum<? >> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues)
+    public static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
     {
-        for (Class[] lookup : map)
+        for (Class<?>[] lookup : map)
         {
             if (lookup[0] == enumType)
             {
@@ -335,7 +332,7 @@ public class EnumHelper
         {
             T[] previousValues = (T[])valuesField.get(enumType);
             List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
-            T newValue = (T)makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
+            T newValue = makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
             values.add(newValue);
             setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
             cleanEnumCache(enumType);

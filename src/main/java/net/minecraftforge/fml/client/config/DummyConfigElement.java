@@ -54,13 +54,13 @@ public class DummyConfigElement implements IConfigElement
     
     /**
      * This class provides a Dummy Category IConfigElement. It can be used to define a custom list of GUI entries that will 
-     * appear on the child screen or to specify a custom IGuiConfigListEntryfor a special category.
+     * appear on the child screen or to specify a custom IGuiConfigListEntry for a special category.
      */
     public static class DummyCategoryElement extends DummyConfigElement
     {
         public DummyCategoryElement(String name, String langKey, List<IConfigElement> childElements)
         {
-            this(name, langKey, childElements, (Class<? extends IConfigEntry>) null);
+            this(name, langKey, childElements, null);
         }
         
         public DummyCategoryElement(String name, String langKey, Class<? extends IConfigEntry> customListEntryClass)
@@ -70,7 +70,7 @@ public class DummyConfigElement implements IConfigElement
         
         public DummyCategoryElement(String name, String langKey, List<IConfigElement> childElements, Class<? extends IConfigEntry> customListEntryClass)
         {
-            super(name, (Object) null, ConfigGuiType.CONFIG_CATEGORY, langKey);
+            super(name, null, ConfigGuiType.CONFIG_CATEGORY, langKey);
             this.childElements = childElements;
             this.configEntryClass = customListEntryClass;
             isProperty = false;
@@ -84,7 +84,7 @@ public class DummyConfigElement implements IConfigElement
     {
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, Pattern validStringPattern, Object minValue, Object maxValue)
         {
-            super(name, (Object) null, type, langKey, minValue, maxValue);
+            super(name, null, type, langKey, minValue, maxValue);
             this.defaultValues = defaultValues;
             this.values = defaultValues;
             this.isListFixedLength = isListFixedLength;
@@ -95,52 +95,52 @@ public class DummyConfigElement implements IConfigElement
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey)
         {
-            this(name, defaultValues, type, langKey, false, -1, (Pattern) null, (Object) null, (Object) null);
+            this(name, defaultValues, type, langKey, false, -1, null, null, null);
         }
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength)
         {
-            this(name, defaultValues, type, langKey, isListFixedLength, -1, (Pattern) null, (Object) null, (Object) null);
+            this(name, defaultValues, type, langKey, isListFixedLength, -1, null, null, null);
         }
         
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, int maxListLength)
         {
-            this(name, defaultValues, type, langKey, false, maxListLength, (Pattern) null, (Object) null, (Object) null);
+            this(name, defaultValues, type, langKey, false, maxListLength, null, null, null);
         }
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, Object minValue, Object maxValue)
         {
-            this(name, defaultValues, type, langKey, false, -1, (Pattern) null, minValue, maxValue);
+            this(name, defaultValues, type, langKey, false, -1, null, minValue, maxValue);
         }
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, Object minValue, Object maxValue)
         {
-            this(name, defaultValues, type, langKey, isListFixedLength, -1, (Pattern) null, minValue, maxValue);
+            this(name, defaultValues, type, langKey, isListFixedLength, -1, null, minValue, maxValue);
         }
         
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, int maxListLength, Object minValue, Object maxValue)
         {
-            this(name, defaultValues, type, langKey, false, maxListLength, (Pattern) null, minValue, maxValue);
+            this(name, defaultValues, type, langKey, false, maxListLength, null, minValue, maxValue);
         }
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, int maxListLength, Object minValue, Object maxValue)
         {
-            this(name, defaultValues, type, langKey, isListFixedLength, maxListLength, (Pattern) null, minValue, maxValue);
+            this(name, defaultValues, type, langKey, isListFixedLength, maxListLength, null, minValue, maxValue);
         }
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, Pattern validStringPattern)
         {
-            this(name, defaultValues, type, langKey, false, -1, validStringPattern, (Object) null, (Object) null);
+            this(name, defaultValues, type, langKey, false, -1, validStringPattern, null, null);
         }
 
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, boolean isListFixedLength, Pattern validStringPattern)
         {
-            this(name, defaultValues, type, langKey, isListFixedLength, -1, validStringPattern, (Object) null, (Object) null);
+            this(name, defaultValues, type, langKey, isListFixedLength, -1, validStringPattern, null, null);
         }
         
         public DummyListElement(String name, Object[] defaultValues, ConfigGuiType type, String langKey, int maxListLength, Pattern validStringPattern)
         {
-            this(name, defaultValues, type, langKey, false, maxListLength, validStringPattern, (Object) null, (Object) null);
+            this(name, defaultValues, type, langKey, false, maxListLength, validStringPattern, null, null);
         }
         
         public DummyListElement setCustomEditListEntryClass(Class<? extends IArrayEntry> clazz)
@@ -168,18 +168,18 @@ public class DummyConfigElement implements IConfigElement
         if (minValue == null)
         {
             if (type == ConfigGuiType.INTEGER)
-                this.minValue = (Integer) Integer.MIN_VALUE;
+                this.minValue = Integer.MIN_VALUE;
             else if (type == ConfigGuiType.DOUBLE)
-                this.minValue = (Double) (-Double.MAX_VALUE);
+                this.minValue = -Double.MAX_VALUE;
         }
         else
             this.minValue = minValue;
         if (maxValue == null)
         {
             if (type == ConfigGuiType.INTEGER)
-                this.maxValue = (Integer) Integer.MAX_VALUE;
+                this.maxValue = Integer.MAX_VALUE;
             else if (type == ConfigGuiType.DOUBLE)
-                this.maxValue = (Double) Double.MAX_VALUE;
+                this.maxValue = Double.MAX_VALUE;
         }
         else
             this.maxValue = maxValue;
@@ -187,22 +187,22 @@ public class DummyConfigElement implements IConfigElement
     
     public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, Pattern validStringPattern)
     {
-        this(name, defaultValue, type, langKey, (String[]) null, validStringPattern, (Object) null, (Object) null);
+        this(name, defaultValue, type, langKey, null, validStringPattern, null, null);
     }
     
     public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, String[] validValues)
     {
-        this(name, defaultValue, type, langKey, validValues, (Pattern) null, (Object) null, (Object) null);
+        this(name, defaultValue, type, langKey, validValues, null, null, null);
     }
     
     public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey)
     {
-        this(name, defaultValue, type, langKey, (String[]) null, (Pattern) null, (Object) null, (Object) null);
+        this(name, defaultValue, type, langKey, null, null, null, null);
     }
     
     public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, Object minValue, Object maxValue)
     {
-        this(name, defaultValue, type, langKey, (String[]) null, (Pattern) null, minValue, maxValue);
+        this(name, defaultValue, type, langKey, null, null, minValue, maxValue);
     }
     
     public DummyConfigElement setCustomListEntryClass(Class<? extends IConfigEntry> clazz)

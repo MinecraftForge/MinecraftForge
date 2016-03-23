@@ -59,11 +59,11 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
             String buttonText = this.displayString;
             int glyphWidth = (int) (mc.fontRendererObj.getStringWidth(glyph) * glyphScale);
             int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
-            int elipsisWidth = mc.fontRendererObj.getStringWidth("...");
+            int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
             int totalWidth = strWidth + glyphWidth;
 
-            if (totalWidth > width - 6 && totalWidth > elipsisWidth)
-                buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, width - 6 - elipsisWidth).trim() + "...";
+            if (totalWidth > width - 6 && totalWidth > ellipsisWidth)
+                buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, width - 6 - ellipsisWidth).trim() + "...";
 
             strWidth = mc.fontRendererObj.getStringWidth(buttonText);
             totalWidth = glyphWidth + strWidth;

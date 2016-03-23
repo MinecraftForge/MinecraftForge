@@ -551,12 +551,12 @@ public class ModelBlockAnimation
         }
         catch(IOException e)
         {
-            FMLLog.log(Level.ERROR, e, "Exception loading vanilla model aniamtion %s, skipping", armatureLocation);
+            FMLLog.log(Level.ERROR, e, "Exception loading vanilla model animation %s, skipping", armatureLocation);
             return defaultModelBlockAnimation;
         }
         catch(JsonParseException e)
         {
-            FMLLog.log(Level.ERROR, e, "Exception loading vanilla model aniamtion %s, skipping", armatureLocation);
+            FMLLog.log(Level.ERROR, e, "Exception loading vanilla model animation %s, skipping", armatureLocation);
             return defaultModelBlockAnimation;
         }
     }

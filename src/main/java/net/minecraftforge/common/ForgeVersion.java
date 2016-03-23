@@ -119,7 +119,7 @@ public class ForgeVersion
             {
                 if (!ForgeModContainer.getConfig().get(ForgeModContainer.VERSION_CHECK_CAT, "Global", true).getBoolean())
                 {
-                    FMLLog.log("ForgeVersionCheck", Level.INFO, "Global Forge version check system disabeld, no futher processing.");
+                    FMLLog.log("ForgeVersionCheck", Level.INFO, "Global Forge version check system disabled, no further processing.");
                     return;
                 }
 

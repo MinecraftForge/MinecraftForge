@@ -44,7 +44,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override
     public File getMapFileFromName(String name)
     {
-        if (dataDir == null) //Delayed down here do that world has time to be initalized first.
+        if (dataDir == null) //Delayed down here do that world has time to be initialized first.
         {
             dataDir = new File(world.getChunkSaveLocation(), "data");
             dataDir.mkdirs();
@@ -76,7 +76,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             }
             catch (IOException e)
             {
-                FMLLog.log(Level.ERROR, e, "A critical error occured copying %s to world specific dat folder - new file will be created.", parentFile.getName());
+                FMLLog.log(Level.ERROR, e, "A critical error occurred copying %s to world specific dat folder - new file will be created.", parentFile.getName());
             }
         }
     }

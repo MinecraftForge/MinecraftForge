@@ -20,23 +20,15 @@ import java.util.regex.Pattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLeashKnot;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartContainer;
-import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -46,18 +38,14 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -83,7 +71,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
-import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -100,7 +87,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -129,7 +115,7 @@ public class ForgeHooks
 
     public static ItemStack getGrassSeed(Random rand, int fortune)
     {
-        SeedEntry entry = (SeedEntry)WeightedRandom.getRandomItem(rand, seedList);
+        SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
         if (entry == null || entry.seed == null)
         {
             return null;
@@ -426,7 +412,7 @@ public class ForgeHooks
 
             if (target.typeOfHit == RayTraceResult.Type.BLOCK)
             {
-                s1 = ((ResourceLocation)Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock())).toString();
+                s1 = Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
             }
             else if (target.typeOfHit == RayTraceResult.Type.ENTITY)
             {
@@ -461,7 +447,7 @@ public class ForgeHooks
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optfine, these methods are invoked using reflection, which
+    //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
     public static void onLivingSetAttackTarget(EntityLivingBase entity, EntityLivingBase target)
     {
@@ -481,7 +467,7 @@ public class ForgeHooks
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
     public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
@@ -568,7 +554,6 @@ public class ForgeHooks
         return world.getBlockState(pos).getBlock().getEnchantPowerBonus(world, pos);
     }
 
-    @SuppressWarnings("deprecation")
     public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
@@ -907,11 +892,11 @@ public class ForgeHooks
         {
             filled *= -1;
             //filled -= 0.11111111F; //Why this is needed.. not sure...
-            return eyes > (double)(pos.getY() + 1 + (1 - filled));
+            return eyes > pos.getY() + 1 + (1 - filled);
         }
         else
         {
-            return eyes < (double)(pos.getY() + 1 + filled);
+            return eyes < pos.getY() + 1 + filled;
         }
     }
 

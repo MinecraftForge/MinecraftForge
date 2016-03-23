@@ -9,13 +9,18 @@ import net.minecraft.entity.player.EntityPlayer;
  */
 public class PlayerFlyableFallEvent extends PlayerEvent
 {
-    public float distance;
-    public float multipler;
+    private float distance;
+    private float multiplier;
 
     public PlayerFlyableFallEvent(EntityPlayer player, float distance, float multiplier)
     {
         super(player);
         this.distance = distance;
-        this.multipler = multiplier;
+        this.multiplier = multiplier;
     }
+
+    public float getDistance() { return distance;}
+    public void setDistance(float distance) { this.distance = distance; }
+    public float getMultiplier() { return multiplier; }
+    public void setMultiplier(float multiplier) { this.multiplier = multiplier; }
 }

@@ -168,7 +168,7 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Gets a list of blocksnapshots for all blocks which were replaced by the
+         * Gets a list of BlockSnapshots for all blocks which were replaced by the
          * placement of the new blocks. Most of these blocks will just be of type AIR.
          *
          * @return immutable list of replaced BlockSnapshots

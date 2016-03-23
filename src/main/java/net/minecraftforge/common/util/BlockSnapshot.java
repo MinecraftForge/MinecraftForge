@@ -79,12 +79,12 @@ public class BlockSnapshot implements Serializable
     /**
      * Raw constructor designed for serialization usages.
      */
-    public BlockSnapshot(int dimension, BlockPos pos, String modid, String blockName, int meta, int flag, NBTTagCompound nbt)
+    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, NBTTagCompound nbt)
     {
         this.dimId = dimension;
         this.pos = pos.getImmutable();
         this.flag = flag;
-        this.blockIdentifier = new UniqueIdentifier(modid + ":" + blockName);
+        this.blockIdentifier = new UniqueIdentifier(modId + ":" + blockName);
         this.meta = meta;
         this.nbt = nbt;
     }

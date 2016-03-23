@@ -129,7 +129,8 @@ public abstract class GuiScrollingList
         return x >= left && x <= right && entryIndex >= 0 && relativeY >= 0 && entryIndex < this.getSize() ? entryIndex : -1;
     }
 
-    public void registerScrollButtons(@SuppressWarnings("rawtypes") List buttons, int upActionID, int downActionID)
+    // FIXME: is this correct/still needed?
+    public void registerScrollButtons(List<GuiButton> buttons, int upActionID, int downActionID)
     {
         this.scrollUpActionId = upActionID;
         this.scrollDownActionId = downActionID;

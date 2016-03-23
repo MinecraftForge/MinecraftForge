@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #world} contains the World this event is occuring in.<br>
+ * {@link #world} contains the World this event is occurring in.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/

@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.block.model.VariantList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -159,7 +158,7 @@ public class BlockStateLoader
         }
 
         /**
-         * Used to replace the base model with a retextured model containing submodels.
+         * Used to replace the base model with a re-textured model containing sub-models.
          */
         @Override
         public IModel process(IModel base)
@@ -176,9 +175,9 @@ public class BlockStateLoader
                     return base;
             }
 
-            // Apply rotation of base model to submodels.
+            // Apply rotation of base model to sub-models.
             // If baseRot is non-null, then that rotation will be applied instead of the base model's rotation.
-            // This is used to allow replacing base model with a submodel when there is no base model for a variant.
+            // This is used to allow replacing base model with a sub-model when there is no base model for a variant.
             IModelState baseTr = getState();
             ImmutableMap.Builder<String, Pair<IModel, IModelState>> models = ImmutableMap.builder();
             for (Entry<String, SubModel> entry : parts.entrySet())

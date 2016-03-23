@@ -10,6 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.functions.GenericIterableFactory;
+import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
+
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.Level;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -17,16 +26,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.util.IntIdentityHashBiMap;
-import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.Level;
-
-import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.functions.GenericIterableFactory;
-import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
 
 public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaultedByKey<ResourceLocation, I>
 {

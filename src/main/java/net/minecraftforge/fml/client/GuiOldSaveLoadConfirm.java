@@ -6,12 +6,10 @@ import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiWorldSelection;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.world.WorldSettings;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 
@@ -44,12 +42,12 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
 
         for (k = 0; k < this.buttonList.size(); ++k)
         {
-            ((GuiButton)this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
+            this.buttonList.get(k).drawButton(this.mc, mouseX, mouseY);
         }
 
         for (k = 0; k < this.labelList.size(); ++k)
         {
-            ((GuiLabel)this.labelList.get(k)).drawLabel(this.mc, mouseX, mouseY);
+            this.labelList.get(k).drawLabel(this.mc, mouseX, mouseY);
         }
     }
     @Override
@@ -84,7 +82,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
 
             try
             {
-                mc.launchIntegratedServer(dirName, saveName, (WorldSettings)null);
+                mc.launchIntegratedServer(dirName, saveName, null);
             }
             catch (StartupQuery.AbortedException e)
             {

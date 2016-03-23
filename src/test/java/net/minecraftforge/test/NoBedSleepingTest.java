@@ -86,7 +86,7 @@ public class NoBedSleepingTest
 
                 @Override
                 public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-                    return capability == SLEEP_CAP ? SLEEP_CAP.cast(inst) : null;
+                    return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }
 
                 @Override

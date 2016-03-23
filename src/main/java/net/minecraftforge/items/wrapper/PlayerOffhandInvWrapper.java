@@ -1,7 +1,6 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 
 public class PlayerOffhandInvWrapper extends RangedWrapper
 {

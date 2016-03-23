@@ -148,7 +148,7 @@ public class GuiIngameForge extends GuiIngame
             renderExperience(width, height);
         }
 
-        renderToolHightlight(res);
+        renderToolHighlight(res);
         renderHUDText(width, height);
         renderPotionIcons(res);
         renderRecordOverlay(width, height, partialTicks);
@@ -466,21 +466,21 @@ public class GuiIngameForge extends GuiIngame
             int x = left - i * 8 - 9;
             int y = top;
             int icon = 16;
-            byte backgound = 0;
+            byte background = 0;
 
             if (mc.thePlayer.isPotionActive(MobEffects.hunger))
             {
                 icon += 36;
-                backgound = 13;
+                background = 13;
             }
-            if (unused) backgound = 1; //Probably should be a += 1 but vanilla never uses this
+            if (unused) background = 1; //Probably should be a += 1 but vanilla never uses this
 
             if (player.getFoodStats().getSaturationLevel() <= 0.0F && updateCounter % (level * 3 + 1) == 0)
             {
                 y = top + (rand.nextInt(3) - 1);
             }
 
-            drawTexturedModalRect(x, y, 16 + backgound * 9, 27, 9, 9);
+            drawTexturedModalRect(x, y, 16 + background * 9, 27, 9, 9);
 
             if (unused)
             {
@@ -602,7 +602,7 @@ public class GuiIngameForge extends GuiIngame
         post(JUMPBAR);
     }
 
-    protected void renderToolHightlight(ScaledResolution res)
+    protected void renderToolHighlight(ScaledResolution res)
     {
         if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator())
         {

@@ -23,18 +23,17 @@ import net.minecraftforge.fml.common.FMLLog;
 
 public class PacketLoggingHandler
 {
-    @SuppressWarnings("rawtypes")
-	public static void register(NetworkManager manager)
+    public static void register(NetworkManager manager)
     {
         ChannelPipeline pipeline = manager.channel().pipeline();
         final EnumPacketDirection direction = manager.getDirection();
         if (manager.isLocalChannel())
         {
-            pipeline.addBefore("packet_handler", "splitter", new SimpleChannelInboundHandler<Packet>()
+            pipeline.addBefore("packet_handler", "splitter", new SimpleChannelInboundHandler<Packet<?>>()
             {
                 String prefix = (direction == EnumPacketDirection.SERVERBOUND ? "SERVER: C->S" : "CLIENT: S->C");
                 @Override
-                protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
+                protected void channelRead0(ChannelHandlerContext ctx, Packet<?> msg) throws Exception
                 {
                     PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
                     msg.writePacketData(buf);
@@ -48,10 +47,10 @@ public class PacketLoggingHandler
                 @Override
                 public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception
                 {
-                    if (msg instanceof Packet)
+                    if (msg instanceof Packet<?>)
                     {
                         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-                        ((Packet)msg).writePacketData(buf);
+                        ((Packet<?>)msg).writePacketData(buf);
                         FMLLog.log(Level.DEBUG, "%s %s:\n%s", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
                     }
                     ctx.write(msg, promise);

@@ -20,7 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
  * For more complex items, use {@link IFluidContainerItem} instead.
  *
  * Deprecated: We will eventually be moving this ALL away from a registry and instead EVERYTHING will use IFluidContainerItem.
- * We need to decide a way of swaping Items/Stacks.
+ * We need to decide a way of swapping Items/Stacks.
  */
 @Deprecated
 public abstract class FluidContainerRegistry

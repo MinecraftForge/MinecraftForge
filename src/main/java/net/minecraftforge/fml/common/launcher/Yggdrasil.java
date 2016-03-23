@@ -32,7 +32,7 @@ public class Yggdrasil
         {
             LogManager.getLogger("FMLTWEAK").error("-- Login failed!  " + e.getMessage());
             Throwables.propagate(e);
-            return; // dont set other variables
+            return; // don't set other variables
         }
 
         args.put("--username",       auth.getSelectedProfile().getName());

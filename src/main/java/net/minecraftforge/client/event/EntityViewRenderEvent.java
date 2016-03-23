@@ -1,6 +1,5 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;

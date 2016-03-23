@@ -71,7 +71,7 @@ public interface ISpecialArmor
         public int    AbsorbMax   = Integer.MAX_VALUE;
         public double AbsorbRatio = 0;
         public int    Slot        = 0;
-        private static final boolean DEBUG = false; //Only enable this if you wish to be spamed with debugging information.
+        private static final boolean DEBUG = false; //Only enable this if you wish to be spammed with debugging information.
                                                     //Left it in because I figured it'd be useful for modders developing custom armor.
 
         public ArmorProperties(int priority, double ratio, int max)

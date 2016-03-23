@@ -1,21 +1,16 @@
 package net.minecraftforge.event.world;
 
-import com.google.common.base.Preconditions;
-
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Base class for Noteblock Events
  *
  */
-@SuppressWarnings("unused")
 public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;

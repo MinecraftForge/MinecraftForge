@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Level;
  *
  */
 public class FMLInterModComms {
-    private static final ImmutableList<IMCMessage> emptyIMCList = ImmutableList.<IMCMessage>of();
+    private static final ImmutableList<IMCMessage> emptyIMCList = ImmutableList.of();
     private static ArrayListMultimap<String, IMCMessage> modMessages = ArrayListMultimap.create();
 
     /**

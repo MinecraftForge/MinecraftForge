@@ -21,7 +21,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -91,6 +90,7 @@ public class GameData
         return getMain().iBlockRegistry.getObject(new ResourceLocation(modId, name));
     }
 
+    @Deprecated
     static GameRegistry.UniqueIdentifier getUniqueName(Block block)
     {
         if (block == null)
@@ -101,6 +101,7 @@ public class GameData
         return new GameRegistry.UniqueIdentifier(name);
     }
 
+    @Deprecated
     static GameRegistry.UniqueIdentifier getUniqueName(Item item)
     {
         if (item == null)

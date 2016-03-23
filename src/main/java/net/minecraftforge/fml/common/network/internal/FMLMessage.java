@@ -7,22 +7,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.network.datasync.EntityDataManager;
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.relauncher.Side;
+
+import org.apache.logging.log4j.Level;
+
+import com.google.common.base.Throwables;
 
 public abstract class FMLMessage {
     public static class CompleteHandshake extends FMLMessage {

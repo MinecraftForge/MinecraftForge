@@ -31,7 +31,7 @@ public class MapModelState implements IModelState
 
     public MapModelState(Map<Wrapper, IModelState> map, IModelState def)
     {
-        this.map = ImmutableMap.<Wrapper, IModelState>copyOf(map);
+        this.map = ImmutableMap.copyOf(map);
         this.def = def;
     }
 	

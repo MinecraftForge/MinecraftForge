@@ -15,10 +15,31 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.Event;
+
 import org.apache.logging.log4j.Level;
+
+import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
@@ -29,6 +50,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MapMaker;
@@ -36,29 +58,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ClassInheritanceMultiMap;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.common.util.Constants;
-
-import javax.annotation.Nullable;
 
 /**
  * Manages chunkloading for mods.
@@ -422,7 +421,7 @@ public class ForgeChunkManager
 
     static void loadWorld(World world)
     {
-        ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.<String, Ticket>create();
+        ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.create();
         tickets.put(world, newTickets);
 
         forcedChunks.put(world, ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of());
@@ -439,7 +438,7 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
-            ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
+            ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
             try
@@ -454,7 +453,7 @@ public class ForgeChunkManager
             NBTTagList ticketList = forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < ticketList.tagCount(); i++)
             {
-                NBTTagCompound ticketHolder = (NBTTagCompound)ticketList.getCompoundTagAt(i);
+                NBTTagCompound ticketHolder = ticketList.getCompoundTagAt(i);
                 String modId = ticketHolder.getString("Owner");
                 boolean isPlayer = "Forge".equals(modId);
 
@@ -473,7 +472,7 @@ public class ForgeChunkManager
                 NBTTagList tickets = ticketHolder.getTagList("Tickets", Constants.NBT.TAG_COMPOUND);
                 for (int j = 0; j < tickets.tagCount(); j++)
                 {
-                    NBTTagCompound ticket = (NBTTagCompound) tickets.getCompoundTagAt(j);
+                    NBTTagCompound ticket = tickets.getCompoundTagAt(j);
                     modId = ticket.hasKey("ModId") ? ticket.getString("ModId") : modId;
                     Type type = Type.values()[ticket.getByte("Type")];
                     //byte ticketChunkDepth = ticket.getByte("ChunkListDepth");
@@ -940,7 +939,7 @@ public class ForgeChunkManager
         {
             for (ClassInheritanceMultiMap<Entity> eList : chunk.getEntityLists())
             {
-                Iterator<Entity> itr = (Iterator<Entity>)eList.iterator();
+                Iterator<Entity> itr = eList.iterator();
                 while (itr.hasNext())
                 {
                     (itr.next()).resetEntityId();
@@ -966,7 +965,7 @@ public class ForgeChunkManager
                 dest.delete();
             }
             cfgFile.renameTo(dest);
-            FMLLog.log(Level.ERROR, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
+            FMLLog.log(Level.ERROR, e, "A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
         }
         syncConfigDefaults();
     }
