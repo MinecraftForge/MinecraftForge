@@ -24,6 +24,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -315,6 +316,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void preInit(FMLPreInitializationEvent evt)
     {
         CapabilityItemHandler.register();
+        CapabilityAnimation.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);
