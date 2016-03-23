@@ -153,13 +153,14 @@ public class GuiModList extends GuiScreen
     @Override
     public void initGui()
     {
+        int slotHeight = 35;
         for (ModContainer mod : mods)
         {
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getName()) + 10);
-            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion()) + 10);
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion()) + 5 + slotHeight);
         }
         listWidth = Math.min(listWidth, 150);
-        this.modList = new GuiSlotModList(this, mods, listWidth);
+        this.modList = new GuiSlotModList(this, mods, listWidth, slotHeight);
 
         this.buttonList.add(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")));
         configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, "Config");
@@ -414,7 +415,7 @@ public class GuiModList extends GuiScreen
                 lines.add("Child mods: " + selectedMod.getMetadata().getChildModList());
 
             if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Avalible: " + (vercheck.url == null ? "" : vercheck.url));
+                lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
 
             lines.add(null);
             lines.add(selectedMod.getMetadata().description);
