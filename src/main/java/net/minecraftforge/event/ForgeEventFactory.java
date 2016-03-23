@@ -4,8 +4,11 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,6 +35,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
+import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
@@ -80,6 +84,16 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 public class ForgeEventFactory
 {
+
+    public static String onClientChat(EntityPlayerSP sender, String message){
+        ClientChatEvent event = new ClientChatEvent(sender, message);
+        MinecraftForge.EVENT_BUS.post(event);
+        String newmsg = event.getMessage();
+        if(event.isCanceled() || Strings.isNullOrEmpty(newmsg)){
+            newmsg = null;
+        }
+        return newmsg;
+    }
 
     public static MultiPlaceEvent onPlayerMultiBlockPlace(EntityPlayer player, List<BlockSnapshot> blockSnapshots, EnumFacing direction)
     {
