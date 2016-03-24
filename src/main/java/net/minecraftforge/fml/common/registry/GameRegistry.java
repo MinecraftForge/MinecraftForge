@@ -51,7 +51,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -135,7 +134,7 @@ public class GameRegistry
      */
     public static void registerItem(Item item)
     {
-        registerItem(item, item.getRegistryName());
+        registerItem(item, item.getRegistryName().toString());
     }
 
     /**
@@ -151,20 +150,6 @@ public class GameRegistry
             throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
         }
         GameData.getMain().registerItem(item, name);
-    }
-
-    /**
-     * Register the specified Item with a mod specific name : overrides the standard type based name
-     *
-     * @param item  The item to register
-     * @param name  The mod-unique name to register it as - null will remove a custom name
-     * @param modId deprecated, unused
-     */
-    @Deprecated // See version without modID remove in 1.9
-    public static Item registerItem(Item item, String name, String modId)
-    {
-        registerItem(item, name);
-        return item;
     }
 
     /**
@@ -190,7 +175,7 @@ public class GameRegistry
      */
     public static Block registerBlock(Block block)
     {
-        return registerBlock(block, block.getRegistryName());
+        return registerBlock(block, block.getRegistryName().toString());
     }
 
     /**
@@ -237,7 +222,7 @@ public class GameRegistry
      */
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs)
     {
-        return registerBlock(block, itemclass, block.getRegistryName(), itemCtorArgs);
+        return registerBlock(block, itemclass, block.getRegistryName().toString(), itemCtorArgs);
     }
 
     /**
@@ -388,111 +373,11 @@ public class GameRegistry
         return GameData.findItem(modId, name);
     }
 
-    /**
-     * Will be switching to using ResourceLocation, since it's used widely elsewhere
-     */
-    @Deprecated
-    public static final class UniqueIdentifier
-    {
-        public final String modId;
-        public final String name;
-
-        UniqueIdentifier(String modId, String name)
-        {
-            this.modId = modId;
-            this.name = name;
-        }
-
-        public UniqueIdentifier(String string)
-        {
-            String[] parts = string.split(":");
-            this.modId = parts[0];
-            this.name = parts[1];
-        }
-
-        public UniqueIdentifier(Object obj)
-        {
-            if (obj instanceof String)
-            {
-                String[] parts = ((String)obj).split(":");
-                this.modId = parts[0];
-                this.name = parts[1];
-            }
-            else if (obj instanceof ResourceLocation)
-            {
-                this.modId = ((ResourceLocation)obj).getResourceDomain();
-                this.name = ((ResourceLocation)obj).getResourcePath();
-            }
-            else
-            {
-                throw new IllegalArgumentException("UniqueIdentifier must be a String or ResourceLocation, was " + obj.getClass());
-            }
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            if (obj.getClass() != this.getClass())
-            {
-                return false;
-            }
-            final UniqueIdentifier other = (UniqueIdentifier)obj;
-            return Objects.equal(modId, other.modId) && Objects.equal(name, other.name);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hashCode(modId, name);
-        }
-
-        @Override
-        public String toString()
-        {
-            return String.format("%s:%s", modId, name);
-        }
-    }
-
     public enum Type
     {
         BLOCK,
         ITEM;
     }
-
-    /**
-     * Look up the mod identifier data for a block.
-     * <p/>
-     * Note: uniqueness and persistence is only guaranteed by mods using the game registry
-     * correctly.
-     *
-     * @param block to lookup
-     * @return a {@link UniqueIdentifier} for the block or null
-     */
-    @Deprecated
-    public static UniqueIdentifier findUniqueIdentifierFor(Block block)
-    {
-        return GameData.getUniqueName(block);
-    }
-
-    /**
-     * Look up the mod identifier data for an item.
-     * <p/>
-     * Note: uniqueness and persistence is only guaranteed by mods using the game registry
-     * correctly.
-     *
-     * @param item to lookup
-     * @return a {@link UniqueIdentifier} for the item or null
-     */
-    @Deprecated
-    public static UniqueIdentifier findUniqueIdentifierFor(Item item)
-    {
-        return GameData.getUniqueName(item);
-    }
-
 
     /**
      * ObjectHolder can be used to automatically populate public static final fields with entries

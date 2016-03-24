@@ -192,7 +192,7 @@ public final class ModelLoader extends ModelBakery
         {
             public int compare(Block b1, Block b2)
             {
-                return b1.getRegistryName().compareTo(b2.getRegistryName());
+                return b1.getRegistryName().toString().compareTo(b2.getRegistryName().toString());
             }
         });
         ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
@@ -201,7 +201,7 @@ public final class ModelLoader extends ModelBakery
 
         for(Block block : blocks)
         {
-            blockBar.step(block.getRegistryName());
+            blockBar.step(block.getRegistryName().toString());
             for(ResourceLocation location : mapper.getBlockstateLocations(block))
             {
                 loadBlock(mapper, block, location);
@@ -276,14 +276,14 @@ public final class ModelLoader extends ModelBakery
         {
             public int compare(Item i1, Item i2)
             {
-                return i1.getRegistryName().compareTo(i2.getRegistryName());
+                return i1.getRegistryName().toString().compareTo(i2.getRegistryName().toString());
             }
         });
 
         ProgressBar itemBar = ProgressManager.push("ModelLoader: items", items.size());
         for(Item item : items)
         {
-            itemBar.step(item.getRegistryName());
+            itemBar.step(item.getRegistryName().toString());
             for(String s : getVariantNames(item))
             {
                 ResourceLocation file = getItemLocation(s);
@@ -901,7 +901,7 @@ public final class ModelLoader extends ModelBakery
                 for(String s : getVariantNames(item))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
-                    reverseItemMap.put(memory, item.getRegistryName());
+                    reverseItemMap.put(memory, item.getRegistryName().toString());
                 }
             }
         }

@@ -1,7 +1,6 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,7 +23,6 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.item.Item;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -48,15 +46,21 @@ public class PersistentRegistryManager
         ACTIVE, FROZEN, STAGING;
 
         private final BiMap<ResourceLocation, FMLControlledNamespacedRegistry<?>> registries = HashBiMap.create();
-        private final BiMap<Class<?>, ResourceLocation> registrySuperTypes = HashBiMap.create();
+        private final BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> registrySuperTypes = HashBiMap.create();
 
         @SuppressWarnings("unchecked")
-        <T> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, Class<T> regType)
+        private <T extends IForgeRegistryEntry<T>> Class<T> getRegistrySuperType(ResourceLocation key)
+        {
+            return (Class<T>)registrySuperTypes.inverse().get(key);
+        }
+
+        @SuppressWarnings("unchecked")
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(ResourceLocation key, Class<T> regType)
         {
             return (FMLControlledNamespacedRegistry<T>)registries.get(key);
         }
 
-        <T> FMLControlledNamespacedRegistry<T> getOrShallowCopyRegistry(ResourceLocation key, Class<T> regType, FMLControlledNamespacedRegistry<T> other)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getOrShallowCopyRegistry(ResourceLocation key, Class<T> regType, FMLControlledNamespacedRegistry<T> other)
         {
             if (!registries.containsKey(key))
             {
@@ -66,12 +70,7 @@ public class PersistentRegistryManager
             return getRegistry(key, regType);
         }
 
-        private <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int minId, int maxId, boolean hasDelegates)
-        {
-            return this.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, hasDelegates, null);
-        }
-
-        private <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, boolean isDelegated, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, boolean isDelegated, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
         {
             Set<Class<?>> parents = Sets.newHashSet();
             findSuperTypes(type, parents);
@@ -119,7 +118,7 @@ public class PersistentRegistryManager
             return registries.containsValue(registry);
         }
 
-        public <T> FMLControlledNamespacedRegistry<T> getRegistry(Class<T> rootClass)
+        public <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> getRegistry(Class<T> rootClass)
         {
             ResourceLocation rl = registrySuperTypes.get(rootClass);
             return getRegistry(rl, rootClass);
@@ -131,14 +130,14 @@ public class PersistentRegistryManager
     public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
     public static final ResourceLocation BIOMES = new ResourceLocation("minecraft:biomes");
 
-    public static <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates, FMLControlledNamespacedRegistry.AddCallback<T> addCallback)
     {
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, hasDelegates, addCallback);
     }
 
-    public static <T> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates)
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int maxId, int minId, boolean hasDelegates)
     {
-        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, hasDelegates);
+        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, hasDelegates, null);
     }
 
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
@@ -157,7 +156,7 @@ public class PersistentRegistryManager
         // Load the snapshot into the "STAGING" registry
         for (Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapshotEntry : snapshot.entries.entrySet())
         {
-            loadPersistentDataToStagingRegistry(injectFrozenData, remaps, missing, snapshotEntry, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(snapshotEntry.getKey()));
+            loadPersistentDataToStagingRegistry(injectFrozenData, remaps, missing, snapshotEntry, PersistentRegistry.ACTIVE);
         }
 
         // Handle dummied blocks
@@ -215,7 +214,7 @@ public class PersistentRegistryManager
             // So we load it from the frozen persistent registry
             for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
             {
-                loadFrozenDataToStagingRegistry(remaps, r.getKey(), PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(r.getKey()));
+                loadFrozenDataToStagingRegistry(remaps, r.getKey(), PersistentRegistry.ACTIVE);
             }
         }
 
@@ -225,7 +224,7 @@ public class PersistentRegistryManager
         // Load the STAGING registry into the ACTIVE registry
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
         {
-            loadRegistry(r.getKey(), PersistentRegistry.STAGING, PersistentRegistry.ACTIVE, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(r.getKey()));
+            loadRegistry(r.getKey(), PersistentRegistry.STAGING, PersistentRegistry.ACTIVE, PersistentRegistry.ACTIVE);
         }
 
         // Dump the active registry
@@ -256,8 +255,9 @@ public class PersistentRegistryManager
         }
     }
 
-    private static <T> void loadRegistry(final ResourceLocation registryName, final PersistentRegistry from, final PersistentRegistry to, Class<T> regType)
+    private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final PersistentRegistry from, final PersistentRegistry to, PersistentRegistry typeRegistry)
     {
+        Class<T> regType = typeRegistry.getRegistrySuperType(registryName);
         FMLControlledNamespacedRegistry<T> fromRegistry = from.getRegistry(registryName, regType);
         if (fromRegistry == null)
         {
@@ -292,16 +292,18 @@ public class PersistentRegistryManager
         }
     }
 
-    private static <T> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, Class<T> regType)
+    private static <T extends IForgeRegistryEntry<T>> void loadFrozenDataToStagingRegistry(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, ResourceLocation registryName, PersistentRegistry typeRegistry)
     {
+        Class<T> regType = typeRegistry.getRegistrySuperType(registryName);
         FMLControlledNamespacedRegistry<T> frozenRegistry = PersistentRegistry.FROZEN.getRegistry(registryName, regType);
         FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, frozenRegistry);
         newRegistry.loadIds(frozenRegistry.getEntriesNotIn(newRegistry), Maps.<ResourceLocation, Integer>newLinkedHashMap(), remaps.get(registryName), frozenRegistry, registryName);
     }
 
-    private static <T> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
+    private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, PersistentRegistry typeRegistry)
     {
         ResourceLocation registryName = snapEntry.getKey();
+        Class<T> regType = typeRegistry.getRegistrySuperType(registryName);
 
         //Translate old names
         if ("fml:blocks".equals(registryName.toString())) registryName = PersistentRegistryManager.BLOCKS;
@@ -352,7 +354,7 @@ public class PersistentRegistryManager
         }
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
         {
-            loadRegistry(r.getKey(), PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(r.getKey()));
+            loadRegistry(r.getKey(), PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE, PersistentRegistry.ACTIVE);
         }
         // the id mapping has reverted, fire remap events for those that care about id changes
         Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of(), true);
@@ -367,7 +369,7 @@ public class PersistentRegistryManager
         FMLLog.fine("Freezing block and item id maps");
         for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
         {
-            loadRegistry(r.getKey(), PersistentRegistry.ACTIVE, PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(r.getKey()));
+            loadRegistry(r.getKey(), PersistentRegistry.ACTIVE, PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE);
         }
         forAllRegistries(PersistentRegistry.FROZEN, ValidateRegistryFunction.OPERATION);
     }
@@ -576,7 +578,7 @@ public class PersistentRegistryManager
         public final Map<ResourceLocation, Entry> entries = Maps.newHashMap();
     }
 
-    public static <T> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
+    public static <T extends IForgeRegistryEntry<T>> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
     {
         return PersistentRegistry.ACTIVE.getRegistry(rootClass).getDelegate(obj, rootClass);
     }

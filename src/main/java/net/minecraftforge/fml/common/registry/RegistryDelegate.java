@@ -24,22 +24,11 @@ public interface RegistryDelegate<T> {
     T get();
 
     /**
-     * Get the name of this delegate. This is completely static after registration has completed and will never change.
-     *
-     * Deprecated in favour of the resource location.
-     *
-     * @see #getResourceName()
-     * @return The name
-     */
-    @Deprecated
-    String name();
-
-    /**
      * Get the unique resource location for this delegate. Completely static after registration has completed, and
      * will never change.
      * @return The name
      */
-    ResourceLocation getResourceName();
+    ResourceLocation name();
 
     /**
      * Get the delegate type. It will be dependent on the registry this delegate is sourced from.
@@ -67,12 +56,7 @@ public interface RegistryDelegate<T> {
         }
 
         @Override
-        public String name() {
-            return name.toString();
-        }
-
-        @Override
-        public ResourceLocation getResourceName() { return name; }
+        public ResourceLocation name() { return name; }
 
         @Override
         public Class<T> type()
@@ -85,7 +69,7 @@ public interface RegistryDelegate<T> {
             this.referant = newTarget;
         }
 
-        void setResourceName(ResourceLocation name) { this.name = name; }
+        void setName(ResourceLocation name) { this.name = name; }
 
         @Override
         public boolean equals(Object obj)
