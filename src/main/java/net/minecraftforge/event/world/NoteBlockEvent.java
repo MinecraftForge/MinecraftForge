@@ -67,12 +67,22 @@ public class NoteBlockEvent extends BlockEvent
     @Cancelable
     public static class Play extends NoteBlockEvent
     {
-        public Instrument instrument;
+        private Instrument instrument;
 
         public Play(World world, BlockPos pos, IBlockState state, int note, int instrument)
         {
             super(world, pos, state, note);
-            this.instrument = Instrument.fromId(instrument);
+            this.setInstrument(Instrument.fromId(instrument));
+        }
+
+        public Instrument getInstrument()
+        {
+            return instrument;
+        }
+
+        public void setInstrument(Instrument instrument)
+        {
+            this.instrument = instrument;
         }
     }
 
@@ -83,14 +93,24 @@ public class NoteBlockEvent extends BlockEvent
     @Cancelable
     public static class Change extends NoteBlockEvent
     {
-        public final Note oldNote;
-        public final Octave oldOctave;
+        private final Note oldNote;
+        private final Octave oldOctave;
 
         public Change(World world, BlockPos pos, IBlockState state, int oldNote, int newNote)
         {
             super(world, pos, state, newNote);
             this.oldNote = Note.fromId(oldNote);
             this.oldOctave = Octave.fromId(oldNote);
+        }
+
+        public Note getOldNote()
+        {
+            return oldNote;
+        }
+
+        public Octave getOldOctave()
+        {
+            return oldOctave;
         }
     }
 

@@ -11,11 +11,16 @@ import net.minecraft.entity.player.EntityPlayer;
 @Cancelable
 public class PlayerPickupXpEvent extends PlayerEvent
 {
-    public final EntityXPOrb orb;
+    private final EntityXPOrb orb;
 
     public PlayerPickupXpEvent(EntityPlayer player, EntityXPOrb orb)
     {
         super(player);
         this.orb = orb;
+    }
+
+    public EntityXPOrb getOrb()
+    {
+        return orb;
     }
 }

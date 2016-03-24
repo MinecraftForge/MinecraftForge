@@ -56,7 +56,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -483,7 +482,7 @@ public class ForgeHooks
     public static float[] onLivingFall(EntityLivingBase entity, float distance, float damageMultiplier)
     {
         LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
-        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.distance, event.damageMultiplier});
+        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
     public static boolean isLivingOnLadder(IBlockState state, World world, BlockPos pos, EntityLivingBase entity)
@@ -544,9 +543,9 @@ public class ForgeHooks
 
         if (!player.worldObj.isRemote)
         {
-            player.getEntityWorld().spawnEntityInWorld(event.entityItem);
+            player.getEntityWorld().spawnEntityInWorld(event.getEntityItem());
         }
-        return event.entityItem;
+        return event.getEntityItem();
     }
 
     public static float getEnchantPower(World world, BlockPos pos)
@@ -648,7 +647,7 @@ public class ForgeHooks
     {
         PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player, openContainer);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
+        return event.getResult() == Event.Result.DEFAULT ? event.isCanInteractWith() : event.getResult() == Event.Result.ALLOW ? true : false;
     }
 
     public static int onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, BlockPos pos)
@@ -800,11 +799,11 @@ public class ForgeHooks
     {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
-        if (e.output == null) return true;
+        if (e.getOutput() == null) return true;
 
-        outputSlot.setInventorySlotContents(0, e.output);
-        container.maximumCost = e.cost;
-        container.materialCost = e.materialCost;
+        outputSlot.setInventorySlotContents(0, e.getOutput());
+        container.maximumCost = e.getCost();
+        container.materialCost = e.getMaterialCost();
         return false;
     }
 
@@ -812,7 +811,7 @@ public class ForgeHooks
     {
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
-        return e.breakChance;
+        return e.getBreakChance();
     }
 
     public static boolean onNoteChange(TileEntityNote te, byte old)

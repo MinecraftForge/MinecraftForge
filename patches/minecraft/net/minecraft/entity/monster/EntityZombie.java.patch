@@ -28,9 +28,9 @@
 -                int k = MathHelper.func_76128_c(this.field_70161_v);
 -                EntityZombie entityzombie = new EntityZombie(this.field_70170_p);
 +                EntityZombie entityzombie;
-+                if (summonAid.customSummonedAid != null && summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
++                if (summonAid.getCustomSummonedAid() != null && summonAid.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
 +                {
-+                    entityzombie = summonAid.customSummonedAid;
++                    entityzombie = summonAid.getCustomSummonedAid();
 +                }
 +                else
 +                {

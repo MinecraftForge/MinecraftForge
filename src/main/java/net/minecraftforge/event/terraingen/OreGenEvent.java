@@ -20,15 +20,30 @@ import net.minecraft.world.gen.feature.WorldGenerator;
  **/
 public class OreGenEvent extends Event
 {
-    public final World world;
-    public final Random rand;
-    public final BlockPos pos;
+    private final World world;
+    private final Random rand;
+    private final BlockPos pos;
 
     public OreGenEvent(World world, Random rand, BlockPos pos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
+    }
+
+    public World getWorld()
+    {
+        return world;
+    }
+
+    public Random getRand()
+    {
+        return rand;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
     }
 
     /**
@@ -89,14 +104,24 @@ public class OreGenEvent extends Event
     {
         public static enum EventType { COAL, DIAMOND, DIRT, GOLD, GRAVEL, IRON, LAPIS, REDSTONE, QUARTZ, DIORITE, GRANITE, ANDESITE, EMERALD, SILVERFISH, CUSTOM }
 
-        public final EventType type;
-        public final WorldGenerator generator;
+        private final EventType type;
+        private final WorldGenerator generator;
 
         public GenerateMinable(World world, Random rand, WorldGenerator generator, BlockPos pos, EventType type)
         {
             super(world, rand, pos);
             this.generator = generator;
             this.type = type;
+        }
+
+        public EventType getType()
+        {
+            return type;
+        }
+
+        public WorldGenerator getGenerator()
+        {
+            return generator;
         }
     }
 }

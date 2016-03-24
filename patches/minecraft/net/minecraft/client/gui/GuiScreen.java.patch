@@ -55,12 +55,12 @@
 +                    net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre event = new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.field_146292_n);
 +                    if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +                        break;
-+                    guibutton = event.button;
++                    guibutton = event.getButton();
                      this.field_146290_a = guibutton;
                      guibutton.func_146113_a(this.field_146297_k.func_147118_V());
                      this.func_146284_a(guibutton);
 +                    if (this.equals(this.field_146297_k.field_71462_r))
-+                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post(this, event.button, this.field_146292_n));
++                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post(this, event.getButton(), this.field_146292_n));
                  }
              }
          }

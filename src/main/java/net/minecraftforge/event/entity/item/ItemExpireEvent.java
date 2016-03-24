@@ -13,7 +13,7 @@ import net.minecraft.entity.item.EntityItem;
 public class ItemExpireEvent extends ItemEvent
 {
 
-    public int extraLife;
+    private int extraLife;
 
     /**
      * Creates a new event for an expiring EntityItem.
@@ -24,6 +24,16 @@ public class ItemExpireEvent extends ItemEvent
     public ItemExpireEvent(EntityItem entityItem, int extraLife)
     {
         super(entityItem);
+        this.setExtraLife(extraLife);
+    }
+
+    public int getExtraLife()
+    {
+        return extraLife;
+    }
+
+    public void setExtraLife(int extraLife)
+    {
         this.extraLife = extraLife;
     }
 }

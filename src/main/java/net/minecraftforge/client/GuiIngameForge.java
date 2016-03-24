@@ -779,7 +779,7 @@ public class GuiIngameForge extends GuiIngame
         if (MinecraftForge.EVENT_BUS.post(event)) return;
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)event.posX, (float)event.posY, 0.0F);
+        GlStateManager.translate((float) event.getPosX(), (float) event.getPosY(), 0.0F);
         persistantChatGUI.drawChat(updateCounter);
         GlStateManager.popMatrix();
 

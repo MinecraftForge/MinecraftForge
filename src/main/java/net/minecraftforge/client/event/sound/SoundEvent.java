@@ -6,10 +6,15 @@ import net.minecraft.client.audio.SoundManager;
 
 public class SoundEvent extends Event
 {
-    public final SoundManager manager;
+    private final SoundManager manager;
     public SoundEvent(SoundManager manager)
     {
         this.manager = manager;
+    }
+
+    public SoundManager getManager()
+    {
+        return manager;
     }
 
     public static class SoundSourceEvent extends SoundEvent

@@ -524,13 +524,23 @@ public class OreDictionary
 
     public static class OreRegisterEvent extends Event
     {
-        public final String Name;
-        public final ItemStack Ore;
+        private final String Name;
+        private final ItemStack Ore;
 
         public OreRegisterEvent(String name, ItemStack ore)
         {
             this.Name = name;
             this.Ore = ore;
+        }
+
+        public String getName()
+        {
+            return Name;
+        }
+
+        public ItemStack getOre()
+        {
+            return Ore;
         }
     }
 

@@ -52,11 +52,21 @@ public abstract class EntityViewRenderEvent extends Event
     @Cancelable
     public static class FogDensity extends EntityViewRenderEvent
     {
-        public float density;
+        private float density;
 
         public FogDensity(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float density)
         {
             super(renderer, entity, state, renderPartialTicks);
+            this.setDensity(density);
+        }
+
+        public float getDensity()
+        {
+            return density;
+        }
+
+        public void setDensity(float density)
+        {
             this.density = density;
         }
     }
@@ -67,14 +77,24 @@ public abstract class EntityViewRenderEvent extends Event
     @HasResult
     public static class RenderFogEvent extends EntityViewRenderEvent
     {
-        public final int fogMode;
-        public final float farPlaneDistance;
+        private final int fogMode;
+        private final float farPlaneDistance;
 
         public RenderFogEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, int fogMode, float farPlaneDistance)
         {
             super(renderer, entity, state, renderPartialTicks);
             this.fogMode = fogMode;
             this.farPlaneDistance = farPlaneDistance;
+        }
+
+        public int getFogMode()
+        {
+            return fogMode;
+        }
+
+        public float getFarPlaneDistance()
+        {
+            return farPlaneDistance;
         }
     }
 
@@ -84,17 +104,24 @@ public abstract class EntityViewRenderEvent extends Event
      */
     public static class FogColors extends EntityViewRenderEvent
     {
-        public float red;
-        public float green;
-        public float blue;
+        private float red;
+        private float green;
+        private float blue;
 
         public FogColors(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
         {
             super(renderer, entity, state, renderPartialTicks);
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
+            this.setRed(red);
+            this.setGreen(green);
+            this.setBlue(blue);
         }
+
+        public float getRed() { return red; }
+        public void setRed(float red) { this.red = red; }
+        public float getGreen() { return green; }
+        public void setGreen(float green) { this.green = green; }
+        public float getBlue() { return blue; }
+        public void setBlue(float blue) { this.blue = blue; }
     }
     
     /** 
@@ -102,17 +129,24 @@ public abstract class EntityViewRenderEvent extends Event
      */
     public static class CameraSetup extends EntityViewRenderEvent
     {
-        public float yaw;
-        public float pitch;
-        public float roll;
+        private float yaw;
+        private float pitch;
+        private float roll;
 
         public CameraSetup(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float yaw, float pitch, float roll)
         {
             super(renderer, entity, state, renderPartialTicks);
-            this.yaw = yaw;
-            this.pitch = pitch;
-            this.roll = roll;
+            this.setYaw(yaw);
+            this.setPitch(pitch);
+            this.setRoll(roll);
         }
+
+        public float getYaw() { return yaw; }
+        public void setYaw(float yaw) { this.yaw = yaw; }
+        public float getPitch() { return pitch; }
+        public void setPitch(float pitch) { this.pitch = pitch; }
+        public float getRoll() { return roll; }
+        public void setRoll(float roll) { this.roll = roll; }
     }
     
     /**

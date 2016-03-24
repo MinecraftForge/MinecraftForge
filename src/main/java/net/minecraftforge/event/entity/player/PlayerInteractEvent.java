@@ -42,14 +42,14 @@ public class PlayerInteractEvent extends PlayerEvent
         LEFT_CLICK_BLOCK
     }
 
-    public final Action action;
-    public final World world;
-    public final BlockPos pos;
-    public final EnumFacing face; // Can be null if unknown
-    public final Vec3d localPos; // Can be null if unknown
+    private final Action action;
+    private final World world;
+    private final BlockPos pos;
+    private final EnumFacing face; // Can be null if unknown
+    private final Vec3d localPos; // Can be null if unknown
 
-    public Result useBlock = DEFAULT;
-    public Result useItem = DEFAULT;
+    private Result useBlock = DEFAULT;
+    private Result useItem = DEFAULT;
 
     @Deprecated
     public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world)
@@ -63,7 +63,7 @@ public class PlayerInteractEvent extends PlayerEvent
         this.action = action;
         this.pos = pos;
         this.face = face;
-        if (face == null) useBlock = DENY;
+        if (face == null) setUseBlock(DENY);
         this.world = world;
         this.localPos = localPos;
     }
@@ -72,7 +72,17 @@ public class PlayerInteractEvent extends PlayerEvent
     public void setCanceled(boolean cancel)
     {
         super.setCanceled(cancel);
-        useBlock = (cancel ? DENY : useBlock == DENY ? DEFAULT : useBlock);
-        useItem = (cancel ? DENY : useItem == DENY ? DEFAULT : useItem);
+        setUseBlock((cancel ? DENY : getUseBlock() == DENY ? DEFAULT : getUseBlock()));
+        setUseItem((cancel ? DENY : getUseItem() == DENY ? DEFAULT : getUseItem()));
     }
+
+    public Action getAction() { return action; }
+    public World getWorld() { return world; }
+    public BlockPos getPos() { return pos; }
+    public EnumFacing getFace() { return face; }
+    public Vec3d getLocalPos() { return localPos; }
+    public Result getUseBlock() { return useBlock; }
+    public void setUseBlock(Result useBlock) { this.useBlock = useBlock; }
+    public Result getUseItem() { return useItem; }
+    public void setUseItem(Result useItem) { this.useItem = useItem; }
 }

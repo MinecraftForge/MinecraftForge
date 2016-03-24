@@ -6,13 +6,28 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 public abstract class LivingEntityUseItemEvent extends LivingEvent
 {
-    public final ItemStack item;
-    public int duration;
+    private final ItemStack item;
+    private int duration;
 
     private LivingEntityUseItemEvent(EntityLivingBase entity, ItemStack item, int duration)
     {
         super(entity);
         this.item = item;
+        this.setDuration(duration);
+    }
+
+    public ItemStack getItem()
+    {
+        return item;
+    }
+
+    public int getDuration()
+    {
+        return duration;
+    }
+
+    public void setDuration(int duration)
+    {
         this.duration = duration;
     }
 
@@ -84,10 +99,20 @@ public abstract class LivingEntityUseItemEvent extends LivingEvent
      */
     public static class Finish extends LivingEntityUseItemEvent
     {
-        public ItemStack result;
+        private ItemStack result;
         public Finish(EntityLivingBase entity, ItemStack item, int duration, ItemStack result)
         {
             super(entity, item, duration);
+            this.setResultStack(result);
+        }
+
+        public ItemStack getResultStack()
+        {
+            return result;
+        }
+
+        public void setResultStack(ItemStack result)
+        {
             this.result = result;
         }
     }

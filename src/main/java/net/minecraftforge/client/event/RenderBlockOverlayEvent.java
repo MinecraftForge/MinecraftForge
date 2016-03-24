@@ -12,25 +12,16 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  */
 @Cancelable
 public class RenderBlockOverlayEvent extends Event {
-    
+
     public static enum OverlayType {
         FIRE, BLOCK, WATER
     }
     
-    /**
-     * The player which the overlay will apply to
-     */
-    public final EntityPlayer player;
-    public final float renderPartialTicks;
-    /**
-     * The type of overlay to occur
-     */
-    public final OverlayType overlayType;
-    /**
-     * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
-     */
-    public final IBlockState blockForOverlay;
-    public final BlockPos blockPos;
+    private final EntityPlayer player;
+    private final float renderPartialTicks;
+    private final OverlayType overlayType;
+    private final IBlockState blockForOverlay;
+    private final BlockPos blockPos;
     
     @Deprecated
     public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, Block block, int x, int y, int z)
@@ -48,4 +39,18 @@ public class RenderBlockOverlayEvent extends Event {
         
     }
 
+    /**
+     * The player which the overlay will apply to
+     */
+    public EntityPlayer getPlayer() { return player; }
+    public float getRenderPartialTicks() { return renderPartialTicks; }
+    /**
+     * The type of overlay to occur
+     */
+    public OverlayType getOverlayType() { return overlayType; }
+    /**
+     * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
+     */
+    public IBlockState getBlockForOverlay() { return blockForOverlay; }
+    public BlockPos getBlockPos() { return blockPos; }
 }

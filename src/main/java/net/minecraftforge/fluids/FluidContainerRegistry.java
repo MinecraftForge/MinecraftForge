@@ -389,11 +389,16 @@ public abstract class FluidContainerRegistry
 
     public static class FluidContainerRegisterEvent extends Event
     {
-        public final FluidContainerData data;
+        private final FluidContainerData data;
 
         public FluidContainerRegisterEvent(FluidContainerData data)
         {
             this.data = data.copy();
+        }
+
+        public FluidContainerData getData()
+        {
+            return data;
         }
     }
 }

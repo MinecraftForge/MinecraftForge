@@ -16,7 +16,7 @@
      {
 +        net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_180648_1_, p_180648_2_, p_180648_3_, p_180648_5_, p_180648_4_);
 +        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
-+        p_180648_4_ = e.instrument.ordinal();
++        p_180648_4_ = e.getInstrument().ordinal();
 +        p_180648_5_ = e.getVanillaNoteId();
          float f = (float)Math.pow(2.0D, (double)(p_180648_5_ - 12) / 12.0D);
          p_180648_1_.func_184133_a((EntityPlayer)null, p_180648_2_, this.func_185576_e(p_180648_4_), SoundCategory.BLOCKS, 3.0F, f);

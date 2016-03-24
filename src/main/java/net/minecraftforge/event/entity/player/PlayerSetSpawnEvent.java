@@ -7,12 +7,8 @@ import net.minecraft.util.math.BlockPos;
 @Cancelable
 public class PlayerSetSpawnEvent extends PlayerEvent
 {
-    /**
-     * This event is called before a player's spawn point is changed.
-     * The event can be canceled, and no further processing will be done.
-     */
-    public final boolean forced;
-    public final BlockPos newSpawn;
+    private final boolean forced;
+    private final BlockPos newSpawn;
     
     public PlayerSetSpawnEvent(EntityPlayer player, BlockPos newSpawn, boolean forced) {
         super(player);
@@ -20,4 +16,17 @@ public class PlayerSetSpawnEvent extends PlayerEvent
         this.forced = forced;
     }
 
+    /**
+     * This event is called before a player's spawn point is changed.
+     * The event can be canceled, and no further processing will be done.
+     */
+    public boolean isForced()
+    {
+        return forced;
+    }
+
+    public BlockPos getNewSpawn()
+    {
+        return newSpawn;
+    }
 }

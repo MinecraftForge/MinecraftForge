@@ -57,21 +57,21 @@
 +    {
 +        net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor(this, field_76759_H);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
++        return event.getNewColor();
 +    }
 +
 +    public int getModdedBiomeGrassColor(int original)
 +    {
 +        net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor(this, original);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
++        return event.getNewColor();
 +    }
 +
 +    public int getModdedBiomeFoliageColor(int original)
 +    {
 +        net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor(this, original);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
++        return event.getNewColor();
 +    }
 +
 +    /**

@@ -1,7 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -15,11 +14,16 @@ import net.minecraft.world.biome.BiomeGenBase;
  **/
 public class BiomeEvent extends Event
 {
-    public final BiomeGenBase biome;
+    private final BiomeGenBase biome;
 
     public BiomeEvent(BiomeGenBase biome)
     {
         this.biome = biome;
+    }
+
+    public BiomeGenBase getBiome()
+    {
+        return biome;
     }
 
     /**
@@ -38,14 +42,29 @@ public class BiomeEvent extends Event
      **/
     public static class CreateDecorator extends BiomeEvent
     {
-        public final BiomeDecorator originalBiomeDecorator;
-        public BiomeDecorator newBiomeDecorator;
+        private final BiomeDecorator originalBiomeDecorator;
+        private BiomeDecorator newBiomeDecorator;
 
         public CreateDecorator(BiomeGenBase biome, BiomeDecorator original)
         {
             super(biome);
             originalBiomeDecorator = original;
-            newBiomeDecorator = original;
+            setNewBiomeDecorator(original);
+        }
+
+        public BiomeDecorator getOriginalBiomeDecorator()
+        {
+            return originalBiomeDecorator;
+        }
+
+        public BiomeDecorator getNewBiomeDecorator()
+        {
+            return newBiomeDecorator;
+        }
+
+        public void setNewBiomeDecorator(BiomeDecorator newBiomeDecorator)
+        {
+            this.newBiomeDecorator = newBiomeDecorator;
         }
     }
 
@@ -58,14 +77,29 @@ public class BiomeEvent extends Event
      **/
     public static class BiomeColor extends BiomeEvent
     {
-        public final int originalColor;
-        public int newColor;
+        private final int originalColor;
+        private int newColor;
 
         public BiomeColor(BiomeGenBase biome, int original)
         {
             super(biome);
             originalColor = original;
-            newColor = original;
+            setNewColor(original);
+        }
+
+        public int getOriginalColor()
+        {
+            return originalColor;
+        }
+
+        public int getNewColor()
+        {
+            return newColor;
+        }
+
+        public void setNewColor(int newColor)
+        {
+            this.newColor = newColor;
         }
     }
 
@@ -78,13 +112,28 @@ public class BiomeEvent extends Event
     @HasResult
     public static class GetVillageBlockID extends BiomeEvent
     {
-        public final IBlockState original;
-        public IBlockState replacement;
+        private final IBlockState original;
+        private IBlockState replacement;
 
         public GetVillageBlockID(BiomeGenBase biome, IBlockState original)
         {
             super(biome);
             this.original = original;
+        }
+
+        public IBlockState getOriginal()
+        {
+            return original;
+        }
+
+        public IBlockState getReplacement()
+        {
+            return replacement;
+        }
+
+        public void setReplacement(IBlockState replacement)
+        {
+            this.replacement = replacement;
         }
     }
 

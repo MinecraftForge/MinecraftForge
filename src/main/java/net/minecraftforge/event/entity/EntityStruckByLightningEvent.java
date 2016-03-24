@@ -21,11 +21,16 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 @Cancelable
 public class EntityStruckByLightningEvent extends EntityEvent
 {
-    public final EntityLightningBolt lightning;
+    private final EntityLightningBolt lightning;
 
     public EntityStruckByLightningEvent(Entity entity, EntityLightningBolt lightning)
     {
         super(entity);
         this.lightning = lightning;
+    }
+
+    public EntityLightningBolt getLightning()
+    {
+        return lightning;
     }
 }

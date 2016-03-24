@@ -14,7 +14,12 @@ public class ChunkGeneratorEvent extends Event
         this.gen = gen;
     }
 
-    public IChunkGenerator getGenerator() { return this.gen; }
+    public IChunkGenerator getGenerator() { return this.getGen(); }
+
+    public IChunkGenerator getGen()
+    {
+        return gen;
+    }
 
     /**
      * This event is fired when a chunks blocks are replaced by a biomes top and
@@ -25,10 +30,10 @@ public class ChunkGeneratorEvent extends Event
     @HasResult
     public static class ReplaceBiomeBlocks extends ChunkGeneratorEvent
     {
-        public final int x;
-        public final int z;
-        public final ChunkPrimer primer;
-        public final World world; // CAN BE NULL
+        private final int x;
+        private final int z;
+        private final ChunkPrimer primer;
+        private final World world; // CAN BE NULL
 
         public ReplaceBiomeBlocks(IChunkGenerator chunkProvider, int x, int z, ChunkPrimer primer, World world)
         {
@@ -39,6 +44,10 @@ public class ChunkGeneratorEvent extends Event
             this.world = world;
         }
 
+        public int getX() { return x; }
+        public int getZ() { return z; }
+        public ChunkPrimer getPrimer() { return primer; }
+        public World getWorld() { return world; }
     }
 
     /**
@@ -49,18 +58,18 @@ public class ChunkGeneratorEvent extends Event
     @HasResult
     public static class InitNoiseField extends ChunkGeneratorEvent
     {
-        public double[] noisefield;
-        public final int posX;
-        public final int posY;
-        public final int posZ;
-        public final int sizeX;
-        public final int sizeY;
-        public final int sizeZ;
+        private double[] noisefield;
+        private final int posX;
+        private final int posY;
+        private final int posZ;
+        private final int sizeX;
+        private final int sizeY;
+        private final int sizeZ;
 
         public InitNoiseField(IChunkGenerator chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
         {
             super(chunkProvider);
-            this.noisefield = noisefield;
+            this.setNoisefield(noisefield);
             this.posX = posX;
             this.posY = posY;
             this.posZ = posZ;
@@ -69,5 +78,13 @@ public class ChunkGeneratorEvent extends Event
             this.sizeZ = sizeZ;
         }
 
+        public double[] getNoisefield() { return noisefield; }
+        public void setNoisefield(double[] noisefield) { this.noisefield = noisefield; }
+        public int getPosX() { return posX; }
+        public int getPosY() { return posY; }
+        public int getPosZ() { return posZ; }
+        public int getSizeX() { return sizeX; }
+        public int getSizeY() { return sizeY; }
+        public int getSizeZ() { return sizeZ; }
     }
 }

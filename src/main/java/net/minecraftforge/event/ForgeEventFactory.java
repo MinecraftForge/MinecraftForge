@@ -125,7 +125,7 @@ public class ForgeEventFactory
     public static float getBreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
     {
         PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, state, original, pos);
-        return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.newSpeed);
+        return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
     }
 
     @Deprecated
@@ -182,28 +182,28 @@ public class ForgeEventFactory
         {
             return null;
         }
-        return event.list;
+        return event.getList();
     }
 
     public static int getMaxSpawnPackSize(EntityLiving entity)
     {
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
         MinecraftForge.EVENT_BUS.post(maxCanSpawnEvent);
-        return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.maxPackSize : entity.getMaxSpawnedInChunk();
+        return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnedInChunk();
     }
 
     public static String getPlayerDisplayName(EntityPlayer player, String username)
     {
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.displayname;
+        return event.getDisplayname();
     }
 
     public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
     {
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.dropChance;
+        return event.getDropChance();
     }
 
     public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, EntityPlayer entityPlayer, List<String> toolTip, boolean showAdvancedItemTooltips)
@@ -228,13 +228,13 @@ public class ForgeEventFactory
     public static int onItemUseStart(EntityLivingBase entity, ItemStack item, int duration)
     {
         LivingEntityUseItemEvent event = new LivingEntityUseItemEvent.Start(entity, item, duration);
-        return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
+        return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getDuration();
     }
 
     public static int onItemUseTick(EntityLivingBase entity, ItemStack item, int duration)
     {
         LivingEntityUseItemEvent event = new LivingEntityUseItemEvent.Tick(entity, item, duration);
-        return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.duration;
+        return MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getDuration();
     }
 
     public static boolean onUseItemStop(EntityLivingBase entity, ItemStack item, int duration)
@@ -246,7 +246,7 @@ public class ForgeEventFactory
     {
         LivingEntityUseItemEvent.Finish event = new LivingEntityUseItemEvent.Finish(entity, item, duration, result);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.result;
+        return event.getResultStack();
     }
 
     public static void onStartEntityTracking(Entity entity, EntityPlayer player)
@@ -279,7 +279,7 @@ public class ForgeEventFactory
     public static ITextComponent onClientChat(byte type, ITextComponent message)
     {
         ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : event.message;
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
     public static int onHoeUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos)
@@ -332,7 +332,7 @@ public class ForgeEventFactory
     {
         EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.canUpdate;
+        return event.getCanUpdate();
     }
 
     public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
@@ -347,7 +347,7 @@ public class ForgeEventFactory
         if (item == null) return -1;
         ItemExpireEvent event = new ItemExpireEvent(entity, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, entity.worldObj)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
-        return event.extraLife;
+        return event.getExtraLife();
     }
 
     public static int onItemPickup(EntityItem entityItem, EntityPlayer entityIn, ItemStack itemstack)
@@ -391,7 +391,7 @@ public class ForgeEventFactory
     {
         PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(player, pos);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.result;
+        return event.getResultStatus();
     }
 
     public static void onPlayerWakeup(EntityPlayer player, boolean wakeImmediately, boolean updateWorldFlag, boolean setSpawn)
@@ -442,7 +442,7 @@ public class ForgeEventFactory
     public static float onLivingHeal(EntityLivingBase entity, float amount)
     {
         LivingHealEvent event = new LivingHealEvent(entity, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
     public static boolean onPotionAttemptBrew(ItemStack[] stacks)

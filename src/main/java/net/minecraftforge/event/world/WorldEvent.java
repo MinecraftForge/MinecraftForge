@@ -22,11 +22,16 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  **/
 public class WorldEvent extends Event
 {
-    public final World world;
+    private final World world;
 
     public WorldEvent(World world)
     {
         this.world = world;
+    }
+
+    public World getWorld()
+    {
+        return world;
     }
 
     /**
@@ -96,9 +101,9 @@ public class WorldEvent extends Event
     @Cancelable
     public static class PotentialSpawns extends WorldEvent
     {
-        public final EnumCreatureType type;
-        public final BlockPos pos;
-        public final List<SpawnListEntry> list;
+        private final EnumCreatureType type;
+        private final BlockPos pos;
+        private final List<SpawnListEntry> list;
 
         public PotentialSpawns(World world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
         {
@@ -114,6 +119,21 @@ public class WorldEvent extends Event
                 this.list = new ArrayList<SpawnListEntry>();
             }
         }
+
+        public EnumCreatureType getType()
+        {
+            return type;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public List<SpawnListEntry> getList()
+        {
+            return list;
+        }
     }
 
     /**
@@ -123,11 +143,16 @@ public class WorldEvent extends Event
     @Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
-        public final WorldSettings settings;
+        private final WorldSettings settings;
         public CreateSpawnPosition(World world, WorldSettings settings)
         {
             super(world);
             this.settings = settings;
+        }
+
+        public WorldSettings getSettings()
+        {
+            return settings;
         }
     }
 }

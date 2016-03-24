@@ -26,7 +26,7 @@ public abstract class TerrainGen
     {
         InitMapGenEvent event = new InitMapGenEvent(type, original);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
-        return event.newGen;
+        return event.getNewGen();
     }
 
     public static boolean populate(IChunkGenerator chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Populate.EventType type)

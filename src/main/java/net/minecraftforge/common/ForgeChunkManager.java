@@ -370,24 +370,44 @@ public class ForgeChunkManager
     }
 
     public static class ForceChunkEvent extends Event {
-        public final Ticket ticket;
-        public final ChunkCoordIntPair location;
+        private final Ticket ticket;
+        private final ChunkCoordIntPair location;
 
         public ForceChunkEvent(Ticket ticket, ChunkCoordIntPair location)
         {
             this.ticket = ticket;
             this.location = location;
         }
+
+        public Ticket getTicket()
+        {
+            return ticket;
+        }
+
+        public ChunkCoordIntPair getLocation()
+        {
+            return location;
+        }
     }
 
     public static class UnforceChunkEvent extends Event {
-        public final Ticket ticket;
-        public final ChunkCoordIntPair location;
+        private final Ticket ticket;
+        private final ChunkCoordIntPair location;
 
         public UnforceChunkEvent(Ticket ticket, ChunkCoordIntPair location)
         {
             this.ticket = ticket;
             this.location = location;
+        }
+
+        public Ticket getTicket()
+        {
+            return ticket;
+        }
+
+        public ChunkCoordIntPair getLocation()
+        {
+            return location;
         }
     }
 

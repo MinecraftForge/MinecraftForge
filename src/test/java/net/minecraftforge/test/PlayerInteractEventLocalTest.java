@@ -22,8 +22,8 @@ public class PlayerInteractEventLocalTest
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        if(ENABLE && event.localPos != null) {
-            System.out.println(event.localPos.toString());
+        if(ENABLE && event.getLocalPos() != null) {
+            System.out.println(event.getLocalPos().toString());
         }
     }
 }

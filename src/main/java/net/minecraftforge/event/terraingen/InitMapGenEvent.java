@@ -9,14 +9,18 @@ public class InitMapGenEvent extends Event
      */
     public static enum EventType { CAVE, MINESHAFT, NETHER_BRIDGE, NETHER_CAVE, RAVINE, SCATTERED_FEATURE, STRONGHOLD, VILLAGE, OCEAN_MONUMENT, CUSTOM }
 
-    public final EventType type;
-    public final MapGenBase originalGen;
-    public MapGenBase newGen;
+    private final EventType type;
+    private final MapGenBase originalGen;
+    private MapGenBase newGen;
 
     InitMapGenEvent(EventType type, MapGenBase original)
     {
         this.type = type;
         this.originalGen = original;
-        this.newGen = original;
+        this.setNewGen(original);
     }
+    public EventType getType() { return type; }
+    public MapGenBase getOriginalGen() { return originalGen; }
+    public MapGenBase getNewGen() { return newGen; }
+    public void setNewGen(MapGenBase newGen) { this.newGen = newGen; }
 }

@@ -6,18 +6,9 @@ import net.minecraft.item.ItemStack;
 
 public class ItemTooltipEvent extends PlayerEvent
 {
-    /**
-     * Whether the advanced information on item tooltips is being shown, toggled by F3+H.
-     */
-    public final boolean showAdvancedItemTooltips;
-    /**
-     * The {@link ItemStack} with the tooltip.
-     */
-    public final ItemStack itemStack;
-    /**
-     * The {@link ItemStack} tooltip.
-     */
-    public final List<String> toolTip;
+    private final boolean showAdvancedItemTooltips;
+    private final ItemStack itemStack;
+    private final List<String> toolTip;
 
     /**
      * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, boolean)}, which in turn is called from it's respective GUIContainer.
@@ -28,5 +19,29 @@ public class ItemTooltipEvent extends PlayerEvent
         this.itemStack = itemStack;
         this.toolTip = toolTip;
         this.showAdvancedItemTooltips = showAdvancedItemTooltips;
+    }
+
+    /**
+     * Whether the advanced information on item tooltips is being shown, toggled by F3+H.
+     */
+    public boolean isShowAdvancedItemTooltips()
+    {
+        return showAdvancedItemTooltips;
+    }
+
+    /**
+     * The {@link ItemStack} with the tooltip.
+     */
+    public ItemStack getItemStack()
+    {
+        return itemStack;
+    }
+
+    /**
+     * The {@link ItemStack} tooltip.
+     */
+    public List<String> getToolTip()
+    {
+        return toolTip;
     }
 }

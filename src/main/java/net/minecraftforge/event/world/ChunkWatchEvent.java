@@ -16,15 +16,25 @@ import net.minecraft.entity.player.EntityPlayerMP;
  **/
 public class ChunkWatchEvent extends Event
 {
-    public final ChunkCoordIntPair chunk;
-    public final EntityPlayerMP player;
+    private final ChunkCoordIntPair chunk;
+    private final EntityPlayerMP player;
     
     public ChunkWatchEvent(ChunkCoordIntPair chunk, EntityPlayerMP player)
     {
         this.chunk = chunk;
         this.player = player;
     }
-    
+
+    public ChunkCoordIntPair getChunk()
+    {
+        return chunk;
+    }
+
+    public EntityPlayerMP getPlayer()
+    {
+        return player;
+    }
+
     /**
      * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in

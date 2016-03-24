@@ -7,11 +7,11 @@ import net.minecraft.entity.EntityLivingBase;
 
 public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Event
 {
-    public final EntityLivingBase entity;
-    public final RenderLivingBase<T> renderer;
-    public final double x;
-    public final double y;
-    public final double z;
+    private final EntityLivingBase entity;
+    private final RenderLivingBase<T> renderer;
+    private final double x;
+    private final double y;
+    private final double z;
 
     public RenderLivingEvent(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z)
     {
@@ -21,7 +21,13 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
         this.y = y;
         this.z = z;
     }
-    
+
+    public EntityLivingBase getEntity() { return entity; }
+    public RenderLivingBase<T> getRenderer() { return renderer; }
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public double getZ() { return z; }
+
     @Cancelable
     public static class Pre<T extends EntityLivingBase> extends RenderLivingEvent<T>
     {

@@ -63,9 +63,9 @@ public class ClientCommandHandler extends CommandHandler
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
                 {
-                    if (event.exception != null)
+                    if (event.getException() != null)
                     {
-                        throw event.exception;
+                        throw event.getException();
                     }
                     return 0;
                 }

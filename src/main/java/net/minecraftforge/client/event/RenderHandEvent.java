@@ -7,13 +7,28 @@ import net.minecraft.client.renderer.RenderGlobal;
 @Cancelable
 public class RenderHandEvent extends Event
 {
-    public final RenderGlobal context;
-    public final float partialTicks;
-    public final int renderPass;
+    private final RenderGlobal context;
+    private final float partialTicks;
+    private final int renderPass;
     public RenderHandEvent(RenderGlobal context, float partialTicks, int renderPass)
     {
         this.context = context;
         this.partialTicks = partialTicks;
         this.renderPass = renderPass;
+    }
+
+    public RenderGlobal getContext()
+    {
+        return context;
+    }
+
+    public float getPartialTicks()
+    {
+        return partialTicks;
+    }
+
+    public int getRenderPass()
+    {
+        return renderPass;
     }
 }

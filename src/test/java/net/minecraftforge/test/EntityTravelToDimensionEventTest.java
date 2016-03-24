@@ -22,7 +22,7 @@ public class EntityTravelToDimensionEventTest
     public void onDimensionTravel(EntityTravelToDimensionEvent event)
     {
         if(ENABLE) {
-            System.out.println("Travelling to Dimension " + event.dimension);
+            System.out.println("Travelling to Dimension " + event.getDimension());
             event.setCanceled(true);
         }
     }
