@@ -11,10 +11,7 @@ import net.minecraftforge.event.entity.EntityEvent;
  */
 public class ItemEvent extends EntityEvent
 {
-    /**
-     * The relevant EntityItem for this event, already cast for you.
-     */
-    public final EntityItem entityItem;
+    private final EntityItem entityItem;
 
     /**
      * Creates a new event for an EntityItem.
@@ -25,5 +22,13 @@ public class ItemEvent extends EntityEvent
     {
         super(itemEntity);
         this.entityItem = itemEntity;
+    }
+
+    /**
+     * The relevant EntityItem for this event, already cast for you.
+     */
+    public EntityItem getEntityItem()
+    {
+        return entityItem;
     }
 }

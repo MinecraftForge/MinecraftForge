@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class FMLNetworkEvent<T extends INetHandler> extends Event {
-    public final T handler;
-    public final NetworkManager manager;
+    private final T handler;
+    private final NetworkManager manager;
     private final Class<T> type;
 
     FMLNetworkEvent(T thing, Class<T> type, NetworkManager manager)
@@ -26,20 +26,45 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     
     public Class<T> getHandlerType()
     {
+        return getType();
+    }
+
+    public T getHandler()
+    {
+        return handler;
+    }
+
+    public NetworkManager getManager()
+    {
+        return manager;
+    }
+
+    public Class<T> getType()
+    {
         return type;
     }
-    
+
     /**
      * Fired at the client when a client connects to a server
      */
     public static class ClientConnectedToServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
-        public final boolean isLocal;
-        public final String connectionType;
+        private final boolean isLocal;
+        private final String connectionType;
         public ClientConnectedToServerEvent(NetworkManager manager, String connectionType)
         {
             super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager);
             this.isLocal = manager.isLocalChannel();
             this.connectionType = connectionType;
+        }
+
+        public boolean isLocal()
+        {
+            return isLocal;
+        }
+
+        public String getConnectionType()
+        {
+            return connectionType;
         }
     }
 
@@ -50,11 +75,16 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
      *
      */
     public static class ServerConnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {
-        public final boolean isLocal;
+        private final boolean isLocal;
         public ServerConnectionFromClientEvent(NetworkManager manager)
         {
             super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager);
             this.isLocal = manager.isLocalChannel();
+        }
+
+        public boolean isLocal()
+        {
+            return isLocal;
         }
     }
     /**
@@ -90,9 +120,9 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
      * @param <S> The side
      */
     public static class CustomPacketRegistrationEvent<S extends INetHandler> extends FMLNetworkEvent<S> {
-        public final ImmutableSet<String> registrations;
-        public final String operation;
-        public final Side side;
+        private final ImmutableSet<String> registrations;
+        private final String operation;
+        private final Side side;
         public CustomPacketRegistrationEvent(NetworkManager manager, Set<String> registrations, String operation, Side side, Class<S> type)
         {
             super(type.cast(manager.getNetHandler()), type, manager);
@@ -100,18 +130,27 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
             this.side = side;
             this.operation = operation;
         }
+
+        public ImmutableSet<String> getRegistrations()
+        {
+            return registrations;
+        }
+
+        public String getOperation()
+        {
+            return operation;
+        }
+
+        public Side getSide()
+        {
+            return side;
+        }
     }
 
     public static abstract class CustomPacketEvent<S extends INetHandler> extends FMLNetworkEvent<S> {
-        /**
-         * The packet that generated the event
-         */
-        public final FMLProxyPacket packet;
+        private final FMLProxyPacket packet;
 
-        /**
-         * Set this packet to reply to the originator
-         */
-        public FMLProxyPacket reply;
+        private FMLProxyPacket reply;
         CustomPacketEvent(S thing, Class<S> type, NetworkManager manager, FMLProxyPacket packet)
         {
             super(thing, type, manager);
@@ -119,6 +158,27 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         }
 
         public abstract Side side();
+
+        /**
+         * The packet that generated the event
+         */
+        public FMLProxyPacket getPacket()
+        {
+            return packet;
+        }
+
+        /**
+         * Set this packet to reply to the originator
+         */
+        public FMLProxyPacket getReply()
+        {
+            return reply;
+        }
+
+        public void setReply(FMLProxyPacket reply)
+        {
+            this.reply = reply;
+        }
     }
 
     /**
@@ -164,10 +224,15 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
      *
      */
     public static class CustomNetworkEvent extends Event {
-        public final Object wrappedEvent;
+        private final Object wrappedEvent;
         public CustomNetworkEvent(Object wrappedEvent)
         {
             this.wrappedEvent = wrappedEvent;
+        }
+
+        public Object getWrappedEvent()
+        {
+            return wrappedEvent;
         }
     }
 }

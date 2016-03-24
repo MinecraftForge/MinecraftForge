@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.RenderGlobal;
 @Cancelable
 public class DrawBlockHighlightEvent extends Event
 {
-    public final RenderGlobal context;
-    public final EntityPlayer player;
-    public final RayTraceResult target;
-    public final int subID;
-    public final float partialTicks;
+    private final RenderGlobal context;
+    private final EntityPlayer player;
+    private final RayTraceResult target;
+    private final int subID;
+    private final float partialTicks;
 
     public DrawBlockHighlightEvent(RenderGlobal context, EntityPlayer player, RayTraceResult target, int subID, float partialTicks)
     {
@@ -24,4 +24,9 @@ public class DrawBlockHighlightEvent extends Event
         this.partialTicks= partialTicks;
     }
 
+    public RenderGlobal getContext() { return context; }
+    public EntityPlayer getPlayer() { return player; }
+    public RayTraceResult getTarget() { return target; }
+    public int getSubID() { return subID; }
+    public float getPartialTicks() { return partialTicks; }
 }

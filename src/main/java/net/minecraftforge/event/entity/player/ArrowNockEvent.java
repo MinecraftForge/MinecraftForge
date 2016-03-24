@@ -31,6 +31,7 @@ public class ArrowNockEvent extends PlayerEvent
     }
 
     public ItemStack getBow() { return this.bow; }
+    public World getWorld() { return this.world; }
     public EnumHand getHand() { return this.hand; }
     public boolean hasAmmo() { return this.hasAmmo; }
     public ActionResult<ItemStack> getAction()

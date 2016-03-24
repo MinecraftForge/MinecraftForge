@@ -219,7 +219,7 @@ public class AccessTransformer implements IClassTransformer
             }
             else
             {
-                List<MethodNode> nowOverridable = Lists.newArrayList();
+                List<MethodNode> nowOverrideable = Lists.newArrayList();
                 for (MethodNode n : classNode.methods)
                 {
                     if ((n.name.equals(m.name) && n.desc.equals(m.desc)) || m.name.equals("*"))
@@ -236,7 +236,7 @@ public class AccessTransformer implements IClassTransformer
 
                             if (wasPrivate && !isNowPrivate)
                             {
-                                nowOverridable.add(n);
+                                nowOverrideable.add(n);
                             }
 
                         }
@@ -253,7 +253,7 @@ public class AccessTransformer implements IClassTransformer
                     }
                 }
 
-                replaceInvokeSpecial(classNode, nowOverridable);
+                replaceInvokeSpecial(classNode, nowOverrideable);
             }
         }
 
@@ -356,7 +356,7 @@ public class AccessTransformer implements IClassTransformer
 
         if (!hasTransformer)
         {
-            System.out.println("Culd not find a valid transformer to perform");
+            System.out.println("Could not find a valid transformer to perform");
             System.exit(1);
         }
 

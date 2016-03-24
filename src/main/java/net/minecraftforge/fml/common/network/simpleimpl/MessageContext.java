@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class MessageContext {
     /**
      * The {@link INetHandler} for this message. It could be a client or server handler, depending
-     * on the {@link #side} recieved.
+     * on the {@link #side} received.
      */
     public final INetHandler netHandler;
 

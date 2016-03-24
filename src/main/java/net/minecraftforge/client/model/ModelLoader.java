@@ -717,16 +717,13 @@ public final class ModelLoader extends ModelBakery
                 IModel model = ModelLoaderRegistry.getModel(loc);
 
                 // FIXME: is this the place? messes up dependency and texture resolution
-                if (v instanceof ISmartVariant)
+                model = v.process(model);
+                for(ResourceLocation location : model.getDependencies())
                 {
-                    model = ((ISmartVariant)v).process(model);
-                    for(ResourceLocation location : model.getDependencies())
-                    {
-                        ModelLoaderRegistry.getModelOrMissing(location);
-                    }
-                    //FMLLog.getLogger().error("Exception resolving indirect dependencies for model" + loc, e);
-                    textures.addAll(model.getTextures()); // Kick this, just in case.
+                    ModelLoaderRegistry.getModelOrMissing(location);
                 }
+                //FMLLog.getLogger().error("Exception resolving indirect dependencies for model" + loc, e);
+                textures.addAll(model.getTextures()); // Kick this, just in case.
 
                 models.add(model);
                 builder.add(Pair.of(model, v.getState()));
@@ -844,8 +841,8 @@ public final class ModelLoader extends ModelBakery
      */
     public static final class White extends TextureAtlasSprite
     {
-        public static ResourceLocation LOCATION = new ResourceLocation("white");
-        public static White INSTANCE = new White();
+        public static final ResourceLocation LOCATION = new ResourceLocation("white");
+        public static final White INSTANCE = new White();
 
         private White()
         {

@@ -136,7 +136,7 @@ public class DimensionManager
                 int leakCount = leakedWorlds.count(System.identityHashCode(w));
                 if (leakCount == 5)
                 {
-                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                    FMLLog.fine("The world %x (%s) may have leaked: first encounter (5 occurrences).\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
                 }
                 else if (leakCount % 5 == 0)
                 {
@@ -259,7 +259,7 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
+            FMLCommonHandler.instance().getFMLLogger().log(Level.ERROR, String.format("An error occurred trying to create an instance of WorldProvider %d (%s)",
                     dim, getProviderType(dim)),e);
             throw new RuntimeException(e);
         }
@@ -372,7 +372,7 @@ public class DimensionManager
     {
         if (DimensionManager.getWorld(0) != null)
         {
-            return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getWorldDirectory();
+            return DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory();
         }/*
         else if (MinecraftServer.getServer() != null)
         {

@@ -21,13 +21,23 @@ import net.minecraft.world.World;
  */
 public class ExplosionEvent extends Event
 {
-    public final World world;
-    public final Explosion explosion;
+    private final World world;
+    private final Explosion explosion;
 
     public ExplosionEvent(World world, Explosion explosion)
     {
         this.world = world;
         this.explosion = explosion;
+    }
+
+    public World getWorld()
+    {
+        return world;
+    }
+
+    public Explosion getExplosion()
+    {
+        return explosion;
     }
 
     /** ExplosionEvent.Start is fired before the explosion actually occurs.  Canceling this event will stop the explosion.<br>
@@ -64,7 +74,7 @@ public class ExplosionEvent extends Event
         /** return the list of blocks affected by the explosion. */
         public List<BlockPos> getAffectedBlocks()
         {
-            return explosion.getAffectedBlockPositions();
+            return getExplosion().getAffectedBlockPositions();
         }
 
         /** return the list of entities affected by the explosion. */

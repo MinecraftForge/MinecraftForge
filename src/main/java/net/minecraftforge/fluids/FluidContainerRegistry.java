@@ -20,7 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
  * For more complex items, use {@link IFluidContainerItem} instead.
  *
  * Deprecated: We will eventually be moving this ALL away from a registry and instead EVERYTHING will use IFluidContainerItem.
- * We need to decide a way of swaping Items/Stacks.
+ * We need to decide a way of swapping Items/Stacks.
  */
 @Deprecated
 public abstract class FluidContainerRegistry
@@ -389,11 +389,16 @@ public abstract class FluidContainerRegistry
 
     public static class FluidContainerRegisterEvent extends Event
     {
-        public final FluidContainerData data;
+        private final FluidContainerData data;
 
         public FluidContainerRegisterEvent(FluidContainerData data)
         {
             this.data = data.copy();
+        }
+
+        public FluidContainerData getData()
+        {
+            return data;
         }
     }
 }

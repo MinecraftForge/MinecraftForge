@@ -26,15 +26,22 @@ import net.minecraft.command.ICommandSender;
 public class CommandEvent extends Event
 {
 
-    public final ICommand command;
-    public final ICommandSender sender;
-    public String[] parameters;
-    public Throwable exception;
+    private final ICommand command;
+    private final ICommandSender sender;
+    private String[] parameters;
+    private Throwable exception;
 
     public CommandEvent(ICommand command, ICommandSender sender, String[] parameters)
     {
         this.command = command;
         this.sender = sender;
-        this.parameters = parameters;
+        this.setParameters(parameters);
     }
+
+    public ICommand getCommand() { return command; }
+    public ICommandSender getSender() { return sender; }
+    public String[] getParameters() { return parameters; }
+    public void setParameters(String[] parameters) { this.parameters = parameters; }
+    public Throwable getException() { return exception; }
+    public void setException(Throwable exception) { this.exception = exception; }
 }

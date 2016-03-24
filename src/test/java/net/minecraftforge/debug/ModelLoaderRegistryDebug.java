@@ -390,7 +390,6 @@ public class ModelLoaderRegistryDebug
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final OBJDirectionEye instance = new OBJDirectionEye();
         public static final String name = "OBJDirectionEye";
-        private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {FACING}, new IUnlistedProperty[]{OBJModel.OBJProperty.INSTANCE});
 
         private OBJDirectionEye()
         {
@@ -499,6 +498,7 @@ public class ModelLoaderRegistryDebug
         }
     }
 
+    @SuppressWarnings("unused")
     public static class OBJVertexColoring2TileEntity extends TileEntity
     {
         private int index = 0;

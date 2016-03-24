@@ -103,10 +103,10 @@ public class FMLEventChannel {
         if (event != null)
         {
             this.eventBus.post(event);
-            if (event.reply != null)
+            if (event.getReply() != null)
             {
                 ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);
-                ctx.writeAndFlush(event.reply).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                ctx.writeAndFlush(event.getReply()).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             }
         }
     }

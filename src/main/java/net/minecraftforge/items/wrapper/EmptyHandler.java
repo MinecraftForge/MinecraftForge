@@ -6,7 +6,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class EmptyHandler implements IItemHandlerModifiable
 {
-    public static IItemHandler INSTANCE = new EmptyHandler();
+    public static final IItemHandler INSTANCE = new EmptyHandler();
 
     @Override
     public int getSlots()

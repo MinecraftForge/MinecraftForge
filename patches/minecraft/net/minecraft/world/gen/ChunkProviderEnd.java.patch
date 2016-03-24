@@ -49,7 +49,7 @@
      {
 +        net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField(this, p_185963_1_, p_185963_2_, p_185963_3_, p_185963_4_, p_185963_5_, p_185963_6_, p_185963_7_);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.noisefield;
++        if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.getNoisefield();
 +
          if (p_185963_1_ == null)
          {

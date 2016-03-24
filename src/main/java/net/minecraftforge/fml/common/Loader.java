@@ -340,7 +340,7 @@ public class Loader
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "A problem occured instantiating the injected mod container %s", cont);
+                FMLLog.log(Level.ERROR, e, "A problem occurred instantiating the injected mod container %s", cont);
                 throw new LoaderException(e);
             }
             mods.add(new InjectedModContainer(mc,mc.getSource()));

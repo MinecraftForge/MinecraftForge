@@ -1,6 +1,5 @@
 package net.minecraftforge.server.command;
 
-import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.util.List;
 

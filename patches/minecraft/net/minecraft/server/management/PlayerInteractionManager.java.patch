@@ -63,7 +63,7 @@
 +            if (!iblockstate.func_177230_c().isAir(iblockstate, field_73092_a, p_180784_1_))
              {
 -                block.func_180649_a(this.field_73092_a, p_180784_1_, this.field_73090_b);
-+                if (event.useBlock != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++                if (event.getUseBlock() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +                {
 +                    block.func_180649_a(this.field_73092_a, p_180784_1_, this.field_73090_b);
 +                    this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_);
@@ -74,7 +74,7 @@
 +                }
                  f = iblockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180784_1_);
              }
-+            if (event.useItem == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++            if (event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +            {
 +                if (f >= 1.0F)
 +                {

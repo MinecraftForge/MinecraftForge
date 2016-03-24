@@ -325,9 +325,9 @@ public class GuiConfig extends GuiScreen
         if (title2 != null)
         {
             int strWidth = mc.fontRendererObj.getStringWidth(title2);
-            int elipsisWidth = mc.fontRendererObj.getStringWidth("...");
-            if (strWidth > width - 6 && strWidth > elipsisWidth)
-                title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - elipsisWidth).trim() + "...";
+            int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+            if (strWidth > width - 6 && strWidth > ellipsisWidth)
+                title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - ellipsisWidth).trim() + "...";
             this.drawCenteredString(this.fontRendererObj, title2, this.width / 2, 18, 16777215);
         }
 

@@ -286,7 +286,7 @@ public class ConfigCategory implements Map<String, Property>
         {
             Property prop = props[x];
 
-            if (prop.comment != null && !prop.comment.isEmpty())
+            if (prop.getComment() != null && !prop.getComment().isEmpty())
             {
                 if (x != 0)
                 {
@@ -294,7 +294,7 @@ public class ConfigCategory implements Map<String, Property>
                 }
 
                 Splitter splitter = Splitter.onPattern("\r?\n");
-                for (String commentLine : splitter.split(prop.comment))
+                for (String commentLine : splitter.split(prop.getComment()))
                 {
                     write(out, pad1, "# ", commentLine);
                 }

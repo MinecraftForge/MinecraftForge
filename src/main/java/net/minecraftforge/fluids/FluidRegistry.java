@@ -319,13 +319,23 @@ public abstract class FluidRegistry
 
     public static class FluidRegisterEvent extends Event
     {
-        public final String fluidName;
-        public final int fluidID;
+        private final String fluidName;
+        private final int fluidID;
 
         public FluidRegisterEvent(String fluidName, int fluidID)
         {
             this.fluidName = fluidName;
             this.fluidID = fluidID;
+        }
+
+        public String getFluidName()
+        {
+            return fluidName;
+        }
+
+        public int getFluidID()
+        {
+            return fluidID;
         }
     }
 

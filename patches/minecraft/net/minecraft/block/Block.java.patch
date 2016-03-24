@@ -196,7 +196,7 @@
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
          return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -844,6 +865,1167 @@
+@@ -844,6 +865,1168 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -280,10 +280,9 @@
 +        if (base_state.func_185896_q() && side == EnumFacing.UP) // Short circuit to vanilla function if its true
 +            return true;
 +
-+        IBlockState state = this.func_176221_a(base_state, world, pos);
-+
 +        if (this instanceof BlockSlab)
 +        {
++            IBlockState state = this.func_176221_a(base_state, world, pos);
 +            return base_state.func_185913_b()
 +                  || (state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.TOP    && side == EnumFacing.UP  )
 +                  || (state.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.BOTTOM && side == EnumFacing.DOWN);
@@ -294,6 +293,7 @@
 +        }
 +        else if (this instanceof BlockStairs)
 +        {
++            IBlockState state = this.func_176221_a(base_state, world, pos);
 +            boolean flipped = state.func_177229_b(BlockStairs.field_176308_b) == BlockStairs.EnumHalf.TOP;
 +            BlockStairs.EnumShape shape = (BlockStairs.EnumShape)state.func_177229_b(BlockStairs.field_176310_M);
 +            EnumFacing facing = (EnumFacing)state.func_177229_b(BlockStairs.field_176309_a);
@@ -314,6 +314,7 @@
 +        }
 +        else if (this instanceof BlockSnow)
 +        {
++            IBlockState state = this.func_176221_a(base_state, world, pos);
 +            return ((Integer)state.func_177229_b(BlockSnow.field_176315_a)) >= 8;
 +        }
 +        else if (this instanceof BlockHopper && side == EnumFacing.UP)
@@ -324,7 +325,7 @@
 +        {
 +            return true;
 +        }
-+        return isNormalCube(state, world, pos);
++        return isNormalCube(base_state, world, pos);
 +    }
 +
 +    /**

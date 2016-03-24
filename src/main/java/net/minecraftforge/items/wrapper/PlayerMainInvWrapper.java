@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
  */
 public class PlayerMainInvWrapper extends RangedWrapper
 {
-    public final InventoryPlayer inventoryPlayer;
+    private final InventoryPlayer inventoryPlayer;
 
     public PlayerMainInvWrapper(InventoryPlayer inv)
     {
@@ -28,15 +28,20 @@ public class PlayerMainInvWrapper extends RangedWrapper
             ItemStack inSlot = getStackInSlot(slot);
             if(inSlot != null)
             {
-                if (inventoryPlayer.player.worldObj.isRemote)
+                if (getInventoryPlayer().player.worldObj.isRemote)
                 {
                     inSlot.animationsToGo = 5;
                 }
-                else if(inventoryPlayer.player instanceof EntityPlayerMP) {
-                    inventoryPlayer.player.openContainer.detectAndSendChanges();
+                else if(getInventoryPlayer().player instanceof EntityPlayerMP) {
+                    getInventoryPlayer().player.openContainer.detectAndSendChanges();
                 }
             }
         }
         return rest;
+    }
+
+    public InventoryPlayer getInventoryPlayer()
+    {
+        return inventoryPlayer;
     }
 }

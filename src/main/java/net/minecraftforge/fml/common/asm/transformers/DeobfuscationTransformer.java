@@ -27,7 +27,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     private static final int WRITER_FLAGS = ClassWriter.COMPUTE_MAXS | (RECALC_FRAMES ? ClassWriter.COMPUTE_FRAMES : 0);
     private static final int READER_FLAGS = RECALC_FRAMES ? ClassReader.SKIP_FRAMES : ClassReader.EXPAND_FRAMES;
     // COMPUTE_FRAMES causes classes to be loaded, which could cause issues if the classes do not exist.
-    // However in testing this has not happened. {As we run post SideTransfromer}
+    // However in testing this has not happened. {As we run post SideTransformer}
     // If reported we need to add a custom implementation of ClassWriter.getCommonSuperClass
     // that does not cause class loading.
 

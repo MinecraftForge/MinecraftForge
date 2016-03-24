@@ -97,8 +97,7 @@ public class PotionBrewEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    @SuppressWarnings("deprecation")
-    public static class Post extends PotionBrewedEvent
+    public static class Post extends PotionBrewEvent
     {
         public Post(ItemStack[] stacks, World world, BlockPos pos)
         {

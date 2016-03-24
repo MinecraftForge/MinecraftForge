@@ -49,7 +49,7 @@ public class ClientCommandHandler extends CommandHandler
         String[] args = new String[temp.length - 1];
         String commandName = temp[0];
         System.arraycopy(temp, 1, args, 0, args.length);
-        ICommand icommand = (ICommand) getCommands().get(commandName);
+        ICommand icommand = getCommands().get(commandName);
 
         try
         {
@@ -63,9 +63,9 @@ public class ClientCommandHandler extends CommandHandler
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event))
                 {
-                    if (event.exception != null)
+                    if (event.getException() != null)
                     {
-                        throw event.exception;
+                        throw event.getException();
                     }
                     return 0;
                 }

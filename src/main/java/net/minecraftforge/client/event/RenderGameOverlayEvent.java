@@ -10,6 +10,21 @@ import net.minecraft.client.gui.ScaledResolution;
 @Cancelable
 public class RenderGameOverlayEvent extends Event
 {
+    public float getPartialTicks()
+    {
+        return partialTicks;
+    }
+
+    public ScaledResolution getResolution()
+    {
+        return resolution;
+    }
+
+    public ElementType getType()
+    {
+        return type;
+    }
+
     public static enum ElementType
     {
         ALL,
@@ -33,9 +48,9 @@ public class RenderGameOverlayEvent extends Event
         SUBTITLES
     }
 
-    public final float partialTicks;
-    public final ScaledResolution resolution;
-    public final ElementType type;
+    private final float partialTicks;
+    private final ScaledResolution resolution;
+    private final ElementType type;
 
     public RenderGameOverlayEvent(float partialTicks, ScaledResolution resolution)
     {
@@ -46,8 +61,8 @@ public class RenderGameOverlayEvent extends Event
 
     private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type)
     {
-        this.partialTicks = parent.partialTicks;
-        this.resolution = parent.resolution;
+        this.partialTicks = parent.getPartialTicks();
+        this.resolution = parent.getResolution();
         this.type = type;
     }
 
@@ -70,25 +85,55 @@ public class RenderGameOverlayEvent extends Event
 
     public static class Text extends Pre
     {
-        public final ArrayList<String> left;
-        public final ArrayList<String> right;
+        private final ArrayList<String> left;
+        private final ArrayList<String> right;
         public Text(RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right)
         {
             super(parent, ElementType.TEXT);
             this.left = left;
             this.right = right;
         }
+
+        public ArrayList<String> getLeft()
+        {
+            return left;
+        }
+
+        public ArrayList<String> getRight()
+        {
+            return right;
+        }
     }
 
     public static class Chat extends Pre
     {
-        public int posX;
-        public int posY;
+        private int posX;
+        private int posY;
 
         public Chat(RenderGameOverlayEvent parent, int posX, int posY)
         {
             super(parent, ElementType.CHAT);
+            this.setPosX(posX);
+            this.setPosY(posY);
+        }
+
+        public int getPosX()
+        {
+            return posX;
+        }
+
+        public void setPosX(int posX)
+        {
             this.posX = posX;
+        }
+
+        public int getPosY()
+        {
+            return posY;
+        }
+
+        public void setPosY(int posY)
+        {
             this.posY = posY;
         }
     }

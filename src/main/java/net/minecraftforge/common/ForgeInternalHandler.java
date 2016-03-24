@@ -1,30 +1,28 @@
 package net.minecraftforge.common;
 
-import com.google.common.base.Optional;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.event.entity.*;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ForgeInternalHandler
 {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
-        if (!event.world.isRemote)
+        if (!event.getWorld().isRemote)
         {
-            ForgeChunkManager.loadEntity(event.entity);
+            ForgeChunkManager.loadEntity(event.getEntity());
         }
 
-        Entity entity = event.entity;
+        Entity entity = event.getEntity();
         if (entity.getClass().equals(EntityItem.class))
         {
             ItemStack stack = ((EntityItem)entity).getEntityItem();
@@ -49,12 +47,12 @@ public class ForgeInternalHandler
 
             if (item.hasCustomEntity(stack))
             {
-                Entity newEntity = item.createEntity(event.world, entity, stack);
+                Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
                 if (newEntity != null)
                 {
                     entity.setDead();
                     event.setCanceled(true);
-                    event.world.spawnEntityInWorld(newEntity);
+                    event.getWorld().spawnEntityInWorld(newEntity);
                 }
             }
         }
@@ -63,20 +61,20 @@ public class ForgeInternalHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionLoad(WorldEvent.Load event)
     {
-        ForgeChunkManager.loadWorld(event.world);
+        ForgeChunkManager.loadWorld(event.getWorld());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionSave(WorldEvent.Save event)
     {
-    	ForgeChunkManager.saveWorld(event.world);
+    	ForgeChunkManager.saveWorld(event.getWorld());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionUnload(WorldEvent.Unload event)
     {
-        ForgeChunkManager.unloadWorld(event.world);
-        if (event.world instanceof WorldServer)
-            FakePlayerFactory.unloadWorld((WorldServer)event.world);
+        ForgeChunkManager.unloadWorld(event.getWorld());
+        if (event.getWorld() instanceof WorldServer)
+            FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
     }
 }

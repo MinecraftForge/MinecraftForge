@@ -42,7 +42,7 @@ public enum CapabilityManager
             public T call() throws Exception
             {
                 try {
-                    return (T)implementation.newInstance();
+                    return implementation.newInstance();
                 } catch (InstantiationException e) {
                     Throwables.propagate(e);
                 } catch (IllegalAccessException e) {

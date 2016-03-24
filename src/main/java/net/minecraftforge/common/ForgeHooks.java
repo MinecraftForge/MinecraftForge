@@ -20,23 +20,15 @@ import java.util.regex.Pattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLeashKnot;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartContainer;
-import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -46,18 +38,14 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -68,7 +56,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -83,7 +70,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
-import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -100,7 +86,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -129,7 +114,7 @@ public class ForgeHooks
 
     public static ItemStack getGrassSeed(Random rand, int fortune)
     {
-        SeedEntry entry = (SeedEntry)WeightedRandom.getRandomItem(rand, seedList);
+        SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
         if (entry == null || entry.seed == null)
         {
             return null;
@@ -426,7 +411,7 @@ public class ForgeHooks
 
             if (target.typeOfHit == RayTraceResult.Type.BLOCK)
             {
-                s1 = ((ResourceLocation)Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock())).toString();
+                s1 = Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
             }
             else if (target.typeOfHit == RayTraceResult.Type.ENTITY)
             {
@@ -461,7 +446,7 @@ public class ForgeHooks
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optfine, these methods are invoked using reflection, which
+    //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
     public static void onLivingSetAttackTarget(EntityLivingBase entity, EntityLivingBase target)
     {
@@ -481,7 +466,7 @@ public class ForgeHooks
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
     public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
@@ -497,7 +482,7 @@ public class ForgeHooks
     public static float[] onLivingFall(EntityLivingBase entity, float distance, float damageMultiplier)
     {
         LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
-        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.distance, event.damageMultiplier});
+        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
     public static boolean isLivingOnLadder(IBlockState state, World world, BlockPos pos, EntityLivingBase entity)
@@ -558,9 +543,9 @@ public class ForgeHooks
 
         if (!player.worldObj.isRemote)
         {
-            player.getEntityWorld().spawnEntityInWorld(event.entityItem);
+            player.getEntityWorld().spawnEntityInWorld(event.getEntityItem());
         }
-        return event.entityItem;
+        return event.getEntityItem();
     }
 
     public static float getEnchantPower(World world, BlockPos pos)
@@ -568,7 +553,6 @@ public class ForgeHooks
         return world.getBlockState(pos).getBlock().getEnchantPowerBonus(world, pos);
     }
 
-    @SuppressWarnings("deprecation")
     public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
@@ -663,7 +647,7 @@ public class ForgeHooks
     {
         PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player, openContainer);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
+        return event.getResult() == Event.Result.DEFAULT ? event.isCanInteractWith() : event.getResult() == Event.Result.ALLOW ? true : false;
     }
 
     public static int onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, BlockPos pos)
@@ -793,15 +777,15 @@ public class ForgeHooks
 
                 for (BlockSnapshot snap : blockSnapshots)
                 {
-                    int updateFlag = snap.flag;
-                    IBlockState oldBlock = snap.replacedBlock;
-                    IBlockState newBlock = world.getBlockState(snap.pos);
+                    int updateFlag = snap.getFlag();
+                    IBlockState oldBlock = snap.getReplacedBlock();
+                    IBlockState newBlock = world.getBlockState(snap.getPos());
                     if (newBlock != null && !(newBlock.getBlock().hasTileEntity(newBlock))) // Containers get placed automatically
                     {
-                        newBlock.getBlock().onBlockAdded(world, snap.pos, newBlock);
+                        newBlock.getBlock().onBlockAdded(world, snap.getPos(), newBlock);
                     }
 
-                    world.markAndNotifyBlock(snap.pos, null, oldBlock, newBlock, updateFlag);
+                    world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
                 player.addStat(StatList.func_188060_a(itemstack.getItem()));
             }
@@ -815,11 +799,11 @@ public class ForgeHooks
     {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
-        if (e.output == null) return true;
+        if (e.getOutput() == null) return true;
 
-        outputSlot.setInventorySlotContents(0, e.output);
-        container.maximumCost = e.cost;
-        container.materialCost = e.materialCost;
+        outputSlot.setInventorySlotContents(0, e.getOutput());
+        container.maximumCost = e.getCost();
+        container.materialCost = e.getMaterialCost();
         return false;
     }
 
@@ -827,7 +811,7 @@ public class ForgeHooks
     {
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
-        return e.breakChance;
+        return e.getBreakChance();
     }
 
     public static boolean onNoteChange(TileEntityNote te, byte old)
@@ -907,11 +891,11 @@ public class ForgeHooks
         {
             filled *= -1;
             //filled -= 0.11111111F; //Why this is needed.. not sure...
-            return eyes > (double)(pos.getY() + 1 + (1 - filled));
+            return eyes > pos.getY() + 1 + (1 - filled);
         }
         else
         {
-            return eyes < (double)(pos.getY() + 1 + filled);
+            return eyes < pos.getY() + 1 + filled;
         }
     }
 

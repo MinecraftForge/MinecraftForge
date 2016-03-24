@@ -128,7 +128,7 @@ public class GuiEditArrayEntries extends GuiListExtended
     public void addNewEntry(int index)
     {
         if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)
-            listEntries.add(index, new BooleanEntry(this.owningGui, this, this.configElement, Boolean.valueOf(true)));
+            listEntries.add(index, new BooleanEntry(this.owningGui, this, this.configElement, true));
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.INTEGER)
             listEntries.add(index, new IntegerEntry(this.owningGui, this, this.configElement, 0));
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.DOUBLE)
@@ -519,7 +519,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         @Override
         public Object getValue()
         {
-            return Boolean.valueOf(value);
+            return value;
         }
     }
 

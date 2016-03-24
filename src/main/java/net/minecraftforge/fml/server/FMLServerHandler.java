@@ -34,7 +34,6 @@ import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.ImmutableList;
@@ -215,10 +214,11 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return false;
     }
+
     @Override
     public void addModAsResource(ModContainer container)
     {
-        LanguageRegistry.instance().loadLanguagesFor(container, Side.SERVER);
+        // NOOP
     }
 
     @Override

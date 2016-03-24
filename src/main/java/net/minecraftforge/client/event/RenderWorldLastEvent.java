@@ -5,11 +5,21 @@ import net.minecraft.client.renderer.RenderGlobal;
 
 public class RenderWorldLastEvent extends Event
 {
-    public final RenderGlobal context;
-    public final float partialTicks;
+    private final RenderGlobal context;
+    private final float partialTicks;
     public RenderWorldLastEvent(RenderGlobal context, float partialTicks)
     {
         this.context = context;
         this.partialTicks = partialTicks;
+    }
+
+    public RenderGlobal getContext()
+    {
+        return context;
+    }
+
+    public float getPartialTicks()
+    {
+        return partialTicks;
     }
 }

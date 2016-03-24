@@ -37,7 +37,7 @@ public class AttachCapabilitiesEvent extends Event
     /**
      * Adds a capability to be attached to this object.
      * Keys MUST be unique, it is suggested that you set the domain to your mod ID.
-     * If the capability is an instance of INBTSerializeable, this key will be used when serializing this capability.
+     * If the capability is an instance of INBTSerializable, this key will be used when serializing this capability.
      *
      * @param key The name of owner of this capability provider.
      * @param cap The capability provider

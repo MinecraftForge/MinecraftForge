@@ -86,7 +86,7 @@ public class NoBedSleepingTest
 
                 @Override
                 public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-                    return capability == SLEEP_CAP ? SLEEP_CAP.cast(inst) : null;
+                    return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }
 
                 @Override
@@ -104,7 +104,7 @@ public class NoBedSleepingTest
         @SubscribeEvent
         public void onBedCheck(SleepingLocationCheckEvent evt)
         {
-            final IExtraSleeping sleep = evt.entityPlayer.getCapability(SLEEP_CAP, null);
+            final IExtraSleeping sleep = evt.getEntityPlayer().getCapability(SLEEP_CAP, null);
             if (sleep != null && sleep.isSleeping())
                 evt.setResult(Result.ALLOW);
         }
@@ -112,7 +112,7 @@ public class NoBedSleepingTest
         @SubscribeEvent
         public void onWakeUp(PlayerWakeUpEvent evt)
         {
-            final IExtraSleeping sleep = evt.entityPlayer.getCapability(SLEEP_CAP, null);
+            final IExtraSleeping sleep = evt.getEntityPlayer().getCapability(SLEEP_CAP, null);
             if (sleep != null)
                 sleep.setSleeping(false);
         }

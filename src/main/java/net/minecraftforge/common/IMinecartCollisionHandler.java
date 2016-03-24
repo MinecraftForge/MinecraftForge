@@ -14,7 +14,7 @@ public interface IMinecartCollisionHandler
 {
 
     /**
-     * This basically replaces the function of the same name in EnityMinecart.
+     * This basically replaces the function of the same name in EntityMinecart.
      * Code in IMinecartHooks.applyEntityCollisionHook is still run.
      * @param cart The cart that called the collision.
      * @param other The object it collided with.

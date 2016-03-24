@@ -30,7 +30,7 @@ import com.google.common.collect.Maps;
  * If created with matrix, should successfully decompose it to a composition
  * of easily interpolatable transformations (translation, first rotation, scale
  * (with generally speaking different factors for each axis) and second rotation.
- * If the inpit matrix is a composition of translation, rotation and scale (in
+ * If the input matrix is a composition of translation, rotation and scale (in
  * any order), then the interpolation of the derived primitive transformations
  * should result in the same transformation as the interpolation of the originals.
  * Decomposition happens lazily (and is hopefully fast enough), so performance

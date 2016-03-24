@@ -22,12 +22,17 @@ import net.minecraft.entity.EntityLivingBase;
 @Cancelable
 public class LivingFallEvent extends LivingEvent
 {
-    public float distance;
-    public float damageMultiplier;
+    private float distance;
+    private float damageMultiplier;
     public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier)
     {
         super(entity);
-        this.distance = distance;
-        this.damageMultiplier = damageMultiplier;
+        this.setDistance(distance);
+        this.setDamageMultiplier(damageMultiplier);
     }
+
+    public float getDistance() { return distance; }
+    public void setDistance(float distance) { this.distance = distance; }
+    public float getDamageMultiplier() { return damageMultiplier; }
+    public void setDamageMultiplier(float damageMultiplier) { this.damageMultiplier = damageMultiplier; }
 }

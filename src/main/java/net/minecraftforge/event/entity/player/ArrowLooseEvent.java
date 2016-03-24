@@ -38,6 +38,7 @@ public class ArrowLooseEvent extends PlayerEvent
     }
 
     public ItemStack getBow() { return this.bow; }
+    public World getWorld() { return this.world; }
     public boolean hasAmmo() { return this.hasAmmo; }
     public int getCharge() { return this.charge; }
     public void setCharge(int charge) { this.charge = charge; }

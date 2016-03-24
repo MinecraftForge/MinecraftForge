@@ -49,7 +49,7 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -414,5 +431,34 @@
+@@ -414,5 +431,86 @@
              {
                  return this.field_177239_a.func_185481_k(this);
              }
@@ -83,4 +83,56 @@
 +                return this.field_177239_a.doesSideBlockRendering(this, world, pos, side);
 +            }
          }
++
++    /**
++     * Forge added class to make building things easier.
++     * Will return an instance of BlockStateContainer appropriate for
++     * the list of properties passed in.
++     *
++     * Example usage:
++     *
++     *   protected BlockStateContainer createBlockState()
++     *   {
++     *       return (new BlockStateContainer.Builder(this)).add(FACING).add(SOME_UNLISTED).build();
++     *   }
++     *
++     */
++    public static class Builder
++    {
++        private final Block block;
++        private final List<IProperty<?>> listed = Lists.newArrayList();
++        private final List<net.minecraftforge.common.property.IUnlistedProperty<?>> unlisted = Lists.newArrayList();
++
++        public Builder(Block block)
++        {
++            this.block = block;
++        }
++
++        public Builder add(IProperty<?>... props)
++        {
++            for (IProperty<?> prop : props)
++                this.listed.add(prop);
++            return this;
++        }
++
++        public Builder add(net.minecraftforge.common.property.IUnlistedProperty<?>... props)
++        {
++            for (net.minecraftforge.common.property.IUnlistedProperty<?> prop : props)
++                this.unlisted.add(prop);
++            return this;
++        }
++
++        public BlockStateContainer build()
++        {
++            IProperty<?>[] listed = new IProperty[this.listed.size()];
++            listed = this.listed.toArray(listed);
++            if (this.unlisted.size() == 0)
++                return new BlockStateContainer(this.block, listed);
++
++            net.minecraftforge.common.property.IUnlistedProperty<?>[] unlisted = new net.minecraftforge.common.property.IUnlistedProperty[this.unlisted.size()];
++            unlisted = this.unlisted.toArray(unlisted);
++
++            return new net.minecraftforge.common.property.ExtendedBlockState(this.block, listed, unlisted);
++        }
++    }
  }

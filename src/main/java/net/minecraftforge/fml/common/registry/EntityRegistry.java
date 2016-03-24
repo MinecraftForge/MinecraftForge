@@ -13,12 +13,9 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -32,6 +29,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
@@ -114,7 +113,7 @@ public class EntityRegistry
 
     private static final EntityRegistry INSTANCE = new EntityRegistry();
 
-    private BitSet availableIndicies;
+    private BitSet availableIndices;
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
@@ -126,11 +125,11 @@ public class EntityRegistry
 
     private EntityRegistry()
     {
-        availableIndicies = new BitSet(256);
-        availableIndicies.set(1,255);
+        availableIndices = new BitSet(256);
+        availableIndices.set(1,255);
         for (Object id : EntityList.idToClassMapping.keySet())
         {
-            availableIndicies.clear((Integer)id);
+            availableIndices.clear((Integer)id);
         }
     }
 
@@ -310,11 +309,11 @@ public class EntityRegistry
             FMLLog.log(Level.ERROR, "The entity ID %d for mod %s is not an unsigned byte and may not work", id, Loader.instance().activeModContainer().getModId());
         }
 
-        if (!availableIndicies.get(realId))
+        if (!availableIndices.get(realId))
         {
             FMLLog.severe("The mod %s has attempted to register an entity ID %d which is already reserved. This could cause severe problems", Loader.instance().activeModContainer().getModId(), id);
         }
-        availableIndicies.clear(realId);
+        availableIndices.clear(realId);
         return realId;
     }
 
@@ -418,10 +417,10 @@ public class EntityRegistry
     @Deprecated
     public static int findGlobalUniqueEntityId()
     {
-        int res = instance().availableIndicies.nextSetBit(0);
+        int res = instance().availableIndices.nextSetBit(0);
         if (res < 0)
         {
-            throw new RuntimeException("No more entity indicies left");
+            throw new RuntimeException("No more entity indices left");
         }
         return res;
     }

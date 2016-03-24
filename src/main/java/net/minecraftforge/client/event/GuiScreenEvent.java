@@ -22,29 +22,44 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiScreenEvent extends Event 
 {
-    /**
-     * The GuiScreen object generating this event.
-     */
-    public final GuiScreen gui;
+    private final GuiScreen gui;
     
     public GuiScreenEvent(GuiScreen gui)
     {
         this.gui = gui;
     }
 
+    /**
+     * The GuiScreen object generating this event.
+     */
+    public GuiScreen getGui()
+    {
+        return gui;
+    }
+
     public static class InitGuiEvent extends GuiScreenEvent
     {
-        /**
-         * The {@code buttonList} field from the GuiScreen object referenced by {@code gui}.
-         */
-        public List<GuiButton> buttonList;
+        private List<GuiButton> buttonList;
         
         public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList)
         {
             super(gui);
+            this.setButtonList(buttonList);
+        }
+
+        /**
+         * The {@code buttonList} field from the GuiScreen object referenced by {@code gui}.
+         */
+        public List<GuiButton> getButtonList()
+        {
+            return buttonList;
+        }
+
+        public void setButtonList(List<GuiButton> buttonList)
+        {
             this.buttonList = buttonList;
         }
-        
+
         /**
          * This event fires just after initializing {@code GuiScreen.mc}, {@code GuiScreen.fontRendererObj}, 
          * {@code GuiScreen.width}, and {@code GuiScreen.height}, and just before calling {@code GuiScreen.buttonList.clear()} 
@@ -78,18 +93,9 @@ public class GuiScreenEvent extends Event
     
     public static class DrawScreenEvent extends GuiScreenEvent
     {
-        /**
-         * The x coordinate of the mouse pointer on the screen.
-         */
-        public final int mouseX;
-        /**
-         * The y coordinate of the mouse pointer on the screen.
-         */
-        public final int mouseY;
-        /**
-         * Partial render ticks elapsed.
-         */
-        public final float renderPartialTicks;
+        private final int mouseX;
+        private final int mouseY;
+        private final float renderPartialTicks;
 
         public DrawScreenEvent(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
         {
@@ -98,7 +104,31 @@ public class GuiScreenEvent extends Event
             this.mouseY = mouseY;
             this.renderPartialTicks = renderPartialTicks;
         }
-        
+
+        /**
+         * The x coordinate of the mouse pointer on the screen.
+         */
+        public int getMouseX()
+        {
+            return mouseX;
+        }
+
+        /**
+         * The y coordinate of the mouse pointer on the screen.
+         */
+        public int getMouseY()
+        {
+            return mouseY;
+        }
+
+        /**
+         * Partial render ticks elapsed.
+         */
+        public float getRenderPartialTicks()
+        {
+            return renderPartialTicks;
+        }
+
         /**
          * This event fires just before {@code GuiScreen.drawScreen()} is called.
          * Cancel this event to skip {@code GuiScreen.drawScreen()}.
@@ -162,22 +192,42 @@ public class GuiScreenEvent extends Event
     
     public static class ActionPerformedEvent extends GuiScreenEvent
     {
-        /**
-         * The button that was clicked.
-         */
-        public GuiButton button;
-        /**
-         * A COPY of the {@code buttonList} field from the GuiScreen referenced by {@code gui}.
-         */
-        public List<GuiButton> buttonList;
+        private GuiButton button;
+        private List<GuiButton> buttonList;
 
         public ActionPerformedEvent(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
         {
             super(gui);
-            this.button = button;
-            this.buttonList = new ArrayList<GuiButton>(buttonList);
+            this.setButton(button);
+            this.setButtonList(new ArrayList<GuiButton>(buttonList));
         }
-        
+
+        /**
+         * The button that was clicked.
+         */
+        public GuiButton getButton()
+        {
+            return button;
+        }
+
+        public void setButton(GuiButton button)
+        {
+            this.button = button;
+        }
+
+        /**
+         * A COPY of the {@code buttonList} field from the GuiScreen referenced by {@code gui}.
+         */
+        public List<GuiButton> getButtonList()
+        {
+            return buttonList;
+        }
+
+        public void setButtonList(List<GuiButton> buttonList)
+        {
+            this.buttonList = buttonList;
+        }
+
         /**
          * This event fires once it has been determined that a GuiButton object has been clicked.
          * Cancel this event to bypass {@code GuiScreen.actionPerformed()}.

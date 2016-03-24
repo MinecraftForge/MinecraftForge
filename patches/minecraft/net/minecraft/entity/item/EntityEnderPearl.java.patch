@@ -15,10 +15,10 @@
                      }
  
 -                    entitylivingbase.func_70634_a(this.field_70165_t, this.field_70163_u, this.field_70161_v);
-+                    entitylivingbase.func_70634_a(event.targetX, event.targetY, event.targetZ);
++                    entitylivingbase.func_70634_a(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                      entitylivingbase.field_70143_R = 0.0F;
 -                    entitylivingbase.func_70097_a(DamageSource.field_76379_h, 5.0F);
-+                    entitylivingbase.func_70097_a(DamageSource.field_76379_h, event.attackDamage);
++                    entitylivingbase.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
 +                    }
                  }
              }

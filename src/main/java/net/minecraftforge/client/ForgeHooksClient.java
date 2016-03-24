@@ -90,7 +90,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
@@ -110,7 +109,7 @@ public class ForgeHooksClient
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optfine, these methods are invoked using reflection, which
+    //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
     public static void orientBedCamera(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity)
     {
@@ -197,7 +196,7 @@ public class ForgeHooksClient
     {
         FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
-        return fovUpdateEvent.newfov;
+        return fovUpdateEvent.getNewfov();
     }
 
     public static float getFOVModifier(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float fov) {
@@ -296,7 +295,7 @@ public class ForgeHooksClient
     {
         PlaySoundEvent e = new PlaySoundEvent(manager, sound);
         MinecraftForge.EVENT_BUS.post(e);
-        return e.result;
+        return e.getResultSound();
     }
 
     //static RenderBlocks VertexBufferRB;
@@ -317,7 +316,7 @@ public class ForgeHooksClient
     public static float getFogDensity(EntityRenderer renderer, Entity entity, IBlockState state, float partial, float density)
     {
         EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(renderer, entity, state, partial, density);
-        if (MinecraftForge.EVENT_BUS.post(event)) return event.density;
+        if (MinecraftForge.EVENT_BUS.post(event)) return event.getDensity();
         return -1;
     }
 
@@ -325,31 +324,6 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, state, partial, mode, distance));
     }
-
-    /*
-    public static void setVertexBufferRB(RenderBlocks renderBlocks)
-    {
-        VertexBufferRB = renderBlocks;
-    }
-
-    public static void onPreRenderWorld(VertexBuffer VertexBuffer, int pass)
-    {
-        if(VertexBufferRB != null)
-        {
-            worldRenderPass = pass;
-            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Pre(VertexBuffer, (ChunkCache)VertexBufferRB.blockAccess, VertexBufferRB, pass));
-        }
-    }
-
-    public static void onPostRenderWorld(VertexBuffer VertexBuffer, int pass)
-    {
-        if(VertexBufferRB != null)
-        {
-            MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.Post(VertexBuffer, (ChunkCache)VertexBufferRB.blockAccess, VertexBufferRB, pass));
-            worldRenderPass = -1;
-        }
-    }
-    */
 
     public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {

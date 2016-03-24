@@ -29,10 +29,10 @@ import net.minecraft.entity.EntityLivingBase;
 @Cancelable
 public class LivingDropsEvent extends LivingEvent
 {
-    public final DamageSource source;
-    public final List<EntityItem> drops;
-    public final int lootingLevel;
-    public final boolean recentlyHit;
+    private final DamageSource source;
+    private final List<EntityItem> drops;
+    private final int lootingLevel;
+    private final boolean recentlyHit;
 
     public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
@@ -41,5 +41,25 @@ public class LivingDropsEvent extends LivingEvent
         this.drops = drops;
         this.lootingLevel = lootingLevel;
         this.recentlyHit = recentlyHit;
+    }
+
+    public DamageSource getSource()
+    {
+        return source;
+    }
+
+    public List<EntityItem> getDrops()
+    {
+        return drops;
+    }
+
+    public int getLootingLevel()
+    {
+        return lootingLevel;
+    }
+
+    public boolean isRecentlyHit()
+    {
+        return recentlyHit;
     }
 }

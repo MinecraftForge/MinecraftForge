@@ -167,7 +167,7 @@ public class FMLModContainer implements ModContainer
 
         if (descriptor.containsKey("useMetadata"))
         {
-            overridesMetadata = !((Boolean)descriptor.get("useMetadata")).booleanValue();
+            overridesMetadata = !((Boolean)descriptor.get("useMetadata"));
         }
 
         if (overridesMetadata || !modMetadata.useDependencyInformation)
@@ -400,7 +400,7 @@ public class FMLModContainer implements ModContainer
         });
     }
 
-    private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retreiver) throws IllegalAccessException
+    private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retriever) throws IllegalAccessException
     {
         String[] annName = annotationClassName.split("\\.");
         String annotationName = annName[annName.length - 1];
@@ -431,7 +431,7 @@ public class FMLModContainer implements ModContainer
                     f = clz.getDeclaredField(targets.getObjectName());
                     f.setAccessible(true);
                     isStatic = Modifier.isStatic(f.getModifiers());
-                    injectedMod = retreiver.apply(mc);
+                    injectedMod = retriever.apply(mc);
                 }
                 catch (Exception e)
                 {
@@ -473,7 +473,7 @@ public class FMLModContainer implements ModContainer
             {
                 len = certificates.length;
             }
-            Builder<String> certBuilder = ImmutableList.<String>builder();
+            Builder<String> certBuilder = ImmutableList.builder();
             for (int i = 0; i < len; i++)
             {
                 certBuilder.add(CertificateHelper.getFingerprint(certificates[i]));
@@ -508,7 +508,7 @@ public class FMLModContainer implements ModContainer
             List<Map<String, Object>> props = (List<Map<String, Object>>)descriptor.get("customProperties");
             if (props != null)
             {
-                com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
+                com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
                 for (Map<String, Object> p : props)
                 {
                     builder.put((String)p.get("k"), (String)p.get("v"));
@@ -663,7 +663,7 @@ public class FMLModContainer implements ModContainer
         {
             return false;
         }
-        return value.booleanValue();
+        return value;
     }
 
     @Override

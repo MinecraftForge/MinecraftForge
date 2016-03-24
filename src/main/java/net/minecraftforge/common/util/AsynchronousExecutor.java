@@ -57,28 +57,27 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         void callStage3(P parameter, T object, C callback) throws E;
     }
 
-    @SuppressWarnings("rawtypes")
-    static final AtomicIntegerFieldUpdater STATE_FIELD = AtomicIntegerFieldUpdater.newUpdater(AsynchronousExecutor.Task.class, "state");
+    private static class StateHolder {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static boolean set(AsynchronousExecutor.Task $this, int expected, int value) {
-        return STATE_FIELD.compareAndSet($this, expected, value);
+        protected static final int PENDING = 0x0;
+        protected static final int STAGE_1_ASYNC = PENDING + 1;
+        protected static final int STAGE_1_SYNC = STAGE_1_ASYNC + 1;
+        protected static final int STAGE_1_COMPLETE = STAGE_1_SYNC + 1;
+        protected static final int FINISHED = STAGE_1_COMPLETE + 1;
+
+        protected volatile int state = PENDING;
+
+        protected static final AtomicIntegerFieldUpdater<StateHolder> STATE = AtomicIntegerFieldUpdater.newUpdater(StateHolder.class, "state");
     }
 
-    class Task implements Runnable {
-        static final int PENDING = 0x0;
-        static final int STAGE_1_ASYNC = PENDING + 1;
-        static final int STAGE_1_SYNC = STAGE_1_ASYNC + 1;
-        static final int STAGE_1_COMPLETE = STAGE_1_SYNC + 1;
-        static final int FINISHED = STAGE_1_COMPLETE + 1;
+    private class Task extends StateHolder implements Runnable {
 
-        volatile int state = PENDING;
-        final P parameter;
-        T object;
-        final List<C> callbacks = new LinkedList<C>();
-        E t = null;
+        private final P parameter;
+        private T object;
+        private final List<C> callbacks = new LinkedList<C>();
+        private E t = null;
 
-        Task(final P parameter) {
+        private Task(final P parameter) {
             this.parameter = parameter;
         }
 
@@ -88,14 +87,14 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
             }
         }
 
-        boolean initAsync() {
-            if (set(this, PENDING, STAGE_1_ASYNC)) {
+        private boolean initAsync() {
+            if (STATE.compareAndSet(this, PENDING, STAGE_1_ASYNC)) {
                 boolean ret = true;
 
                 try {
                     init();
                 } finally {
-                    if (set(this, STAGE_1_ASYNC, STAGE_1_COMPLETE)) {
+                    if (STATE.compareAndSet(this, STAGE_1_ASYNC, STAGE_1_COMPLETE)) {
                         // No one is/will be waiting
                     } else {
                         // We know that the sync thread will be waiting
@@ -119,14 +118,14 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
             }
         }
 
-        void initSync() {
-            if (set(this, PENDING, STAGE_1_COMPLETE)) {
+        private void initSync() {
+            if (STATE.compareAndSet(this, PENDING, STAGE_1_COMPLETE)) {
                 // If we succeed that variable switch, good as done
                 init();
-            } else if (set(this, STAGE_1_ASYNC, STAGE_1_SYNC)) {
+            } else if (STATE.compareAndSet(this, STAGE_1_ASYNC, STAGE_1_SYNC)) {
                 // Async thread is running, but this shouldn't be likely; we need to sync to wait on them because of it.
                 synchronized (this) {
-                    if (set(this, STAGE_1_SYNC, PENDING)) { // They might NOT synchronized yet, atomic lock IS needed
+                    if (STATE.compareAndSet(this, STAGE_1_SYNC, PENDING)) { // They might NOT synchronized yet, atomic lock IS needed
                         // We are the first into the lock
                         while (state != STAGE_1_COMPLETE) {
                             try {
@@ -146,7 +145,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         }
 
         @SuppressWarnings("unchecked")
-        void init() {
+        private void init() {
             try {
                 object = provider.callStage1(parameter);
             } catch (final Throwable t) {
@@ -155,7 +154,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         }
 
         @SuppressWarnings("unchecked")
-        T get() throws E {
+        private T get() throws E {
             initSync();
             if (callbacks.isEmpty()) {
                 // 'this' is a placeholder to prevent callbacks from being empty during finish call
@@ -166,7 +165,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
             return object;
         }
 
-        void finish() throws E {
+        private void finish() throws E {
             switch (state) {
                 default:
                 case PENDING:
@@ -203,8 +202,8 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
             }
         }
 
-        boolean drop() {
-            if (set(this, PENDING, FINISHED)) {
+        private boolean drop() {
+            if (STATE.compareAndSet(this, PENDING, FINISHED)) {
                 // If we succeed that variable switch, good as forgotten
                 tasks.remove(parameter);
                 return true;
@@ -215,10 +214,10 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         }
     }
 
-    final CallBackProvider<P, T, C, E> provider;
-    final Queue<Task> finished = new ConcurrentLinkedQueue<Task>();
-    final Map<P, Task> tasks = new HashMap<P, Task>();
-    final ThreadPoolExecutor pool;
+    private final CallBackProvider<P, T, C, E> provider;
+    private final Queue<Task> finished = new ConcurrentLinkedQueue<Task>();
+    private final Map<P, Task> tasks = new HashMap<P, Task>();
+    private final ThreadPoolExecutor pool;
 
     /**
      * Uses a thread pool to pass executions to the provider.
@@ -314,7 +313,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
     /**
      * Processes a parameter as if it was in the queue, without ever passing to another thread.
      */
-    public T getSkipQueue(P parameter, @SuppressWarnings("unchecked")C... callbacks) throws E {
+    public T getSkipQueue(P parameter, C... callbacks) throws E {
         final CallBackProvider<P, T, C, E> provider = this.provider;
         final T object = skipQueue(parameter);
         for (C callback : callbacks) {

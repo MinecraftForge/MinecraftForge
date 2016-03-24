@@ -105,7 +105,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
         String listDesc            = tList.getDescriptor();
         String listDescM           = Type.getMethodDescriptor(tList);
 
-        for (MethodNode method : (List<MethodNode>)classNode.methods)
+        for (MethodNode method : classNode.methods)
         {
             if (method.name.equals("setup") && method.desc.equals(voidDesc) && (method.access & ACC_PROTECTED) == ACC_PROTECTED) hasSetup = true;
             if ((method.access & ACC_PUBLIC) == ACC_PUBLIC)
@@ -195,10 +195,10 @@ public class EventSubscriptionTransformer implements IClassTransformer
         method.instructions.add(new VarInsnNode(ALOAD, 0));
         method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "setup", voidDesc, false));
         method.instructions.add(new FieldInsnNode(GETSTATIC, classNode.name, "LISTENER_LIST", listDesc));
-        LabelNode initLisitener = new LabelNode();
-        method.instructions.add(new JumpInsnNode(IFNULL, initLisitener));
+        LabelNode initListener = new LabelNode();
+        method.instructions.add(new JumpInsnNode(IFNULL, initListener));
         method.instructions.add(new InsnNode(RETURN));
-        method.instructions.add(initLisitener);
+        method.instructions.add(initListener);
         method.instructions.add(new FrameNode(F_SAME, 0, null, 0, null));
         method.instructions.add(new TypeInsnNode(NEW, tList.getInternalName()));
         method.instructions.add(new InsnNode(DUP));

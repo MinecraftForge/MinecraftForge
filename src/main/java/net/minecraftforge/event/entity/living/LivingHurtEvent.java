@@ -25,13 +25,18 @@ import net.minecraft.entity.EntityLivingBase;
 @Cancelable
 public class LivingHurtEvent extends LivingEvent
 {
-    public final DamageSource source;
-    public float ammount;
-    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float ammount)
+    private final DamageSource source;
+    private float amount;
+    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float amount)
     {
         super(entity);
         this.source = source;
-        this.ammount = ammount;
+        this.amount = amount;
     }
 
+    public DamageSource getSource() { return source; }
+
+    public float getAmount() { return amount; }
+
+    public void setAmount(float amount) { this.amount = amount; }
 }

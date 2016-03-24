@@ -71,8 +71,8 @@ public class BiomeDictionary
         /**
          * Retrieves a Type value by name,
          * if one does not exist already it creates one.
-         * This can be used as interm measure for modders to
-         * add there own category of Biome.
+         * This can be used as intermediate measure for modders to
+         * add their own category of Biome.
          *
          * There are NO naming conventions besides:
          *   MUST be all upper case (enforced by name.toUpper())
@@ -187,7 +187,7 @@ public class BiomeDictionary
     {
         if(typeInfoList[type.ordinal()] != null)
         {
-            return (BiomeGenBase[])typeInfoList[type.ordinal()].toArray(new BiomeGenBase[0]);
+            return typeInfoList[type.ordinal()].toArray(new BiomeGenBase[0]);
         }
 
         return new BiomeGenBase[0];
@@ -202,7 +202,7 @@ public class BiomeDictionary
     public static Type[] getTypesForBiome(BiomeGenBase biome)
     {
     	checkRegistration(biome);
-    	return (Type[])getBiomeInfo(biome).typeList.toArray(new Type[0]);
+    	return getBiomeInfo(biome).typeList.toArray(new Type[0]);
     }
 
     /**

@@ -41,6 +41,6 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
 
         BiomeEvent.CreateDecorator event = new BiomeEvent.CreateDecorator(biome, wrapped);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
-        biome.theBiomeDecorator = event.newBiomeDecorator;
+        biome.theBiomeDecorator = event.getNewBiomeDecorator();
     }
 }

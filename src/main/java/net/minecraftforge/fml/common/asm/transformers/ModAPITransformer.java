@@ -63,7 +63,7 @@ public class ModAPITransformer implements IClassTransformer {
             }
             else
             {
-                stripMethod(classNode, (String)optional.getObjectName());
+                stripMethod(classNode, optional.getObjectName());
             }
 
         }

@@ -23,7 +23,7 @@ public class NeighborNotifyEventTest
     public void onNeighborNotify(NeighborNotifyEvent event) 
     {
         if(ENABLE) {
-            System.out.println(event.pos.toString());
+            System.out.println(event.getPos().toString());
             event.setCanceled(true);
         }
     }

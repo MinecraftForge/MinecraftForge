@@ -60,7 +60,7 @@ public enum B3DClip implements IClip
                 {
                     ret = ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
                 }
-                // TODO animated TRSR for speed?
+                // TODO animated TRSRTransformation for speed?
                 else
                 {
                     ret = ret.compose(endTr);

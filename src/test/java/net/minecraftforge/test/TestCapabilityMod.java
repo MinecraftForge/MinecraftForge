@@ -44,21 +44,21 @@ public class TestCapabilityMod
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent event)
     {
-        if (event.action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) return;
-        if (event.entityPlayer.inventory.getCurrentItem() == null) return;
-        if (event.entityPlayer.inventory.getCurrentItem().getItem() != Items.stick) return;
+        if (event.getAction() != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) return;
+        if (event.getEntityPlayer().inventory.getCurrentItem() == null) return;
+        if (event.getEntityPlayer().inventory.getCurrentItem().getItem() != Items.stick) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
-        TileEntity te = event.world.getTileEntity(event.pos);
-        if (te != null && te.hasCapability(TEST_CAP, event.face))
+        TileEntity te = event.getWorld().getTileEntity(event.getPos());
+        if (te != null && te.hasCapability(TEST_CAP, event.getFace()))
         {
             event.setCanceled(true);
-            IExampleCapability inv = te.getCapability(TEST_CAP, event.face);
+            IExampleCapability inv = te.getCapability(TEST_CAP, event.getFace());
             System.out.println("Hi I'm a " + inv.getOwnerType());
         }
-        if (event.world.getBlockState(event.pos).getBlock() == Blocks.dirt)
+        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.dirt)
         {
-            event.entityPlayer.addChatMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
+            event.getEntityPlayer().addChatMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
             event.setCanceled(true);
         }
     }

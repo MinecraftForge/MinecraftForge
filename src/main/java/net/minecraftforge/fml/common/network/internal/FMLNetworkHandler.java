@@ -104,7 +104,7 @@ public class FMLNetworkHandler
         }
         else
         {
-            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUIID: %s,%d", mc.getModId(), modGuiId);
+            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUI ID: %s,%d", mc.getModId(), modGuiId);
         }
 
     }

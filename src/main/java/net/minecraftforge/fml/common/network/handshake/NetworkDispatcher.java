@@ -50,8 +50,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
-@SuppressWarnings("rawtypes")
-public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> implements ChannelOutboundHandler {
+public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> implements ChannelOutboundHandler {
     private static boolean DEBUG_HANDSHAKE = Boolean.parseBoolean(System.getProperty("fml.debugNetworkHandshake", "false"));
     private static enum ConnectionState {
         OPENING, AWAITING_HANDSHAKE, HANDSHAKING, HANDSHAKECOMPLETE, FINALIZING, CONNECTED;
@@ -97,7 +96,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public NetworkDispatcher(NetworkManager manager)
     {
-        super(Packet.class, false);
+        super(false);
         this.manager = manager;
         this.scm = null;
         this.side = Side.CLIENT;
@@ -112,7 +111,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public NetworkDispatcher(NetworkManager manager, PlayerList scm)
     {
-        super(Packet.class, false);
+        super(false);
         this.manager = manager;
         this.scm = scm;
         this.side = Side.SERVER;
@@ -130,7 +129,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         this.player = player;
         insertIntoChannel();
         Boolean fml = this.manager.channel().attr(NetworkRegistry.FML_MARKER).get();
-        if (fml != null && fml.booleanValue())
+        if (fml != null && fml)
         {
             //FML on client, send server hello
             //TODO: Make this cleaner as it uses netty magic 0.o
@@ -189,7 +188,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
                 {
                     completeServerSideConnection(ConnectionType.MODDED);
                 }
-                // FORGE: sometimes the netqueue will tick while login is occuring, causing an NPE. We shouldn't tick until the connection is complete
+                // FORGE: sometimes the netqueue will tick while login is occurring, causing an NPE. We shouldn't tick until the connection is complete
                 if (this.playerEntity.playerNetServerHandler != this) return;
                 super.update();
             }
@@ -242,7 +241,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
+    protected void channelRead0(ChannelHandlerContext ctx, Packet<?> msg) throws Exception
     {
         boolean handled = false;
         if (msg instanceof CPacketCustomPayload)
@@ -305,7 +304,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     {
         kickWithMessage("This is modded. No modded response received. Bye!");
     }
-    @SuppressWarnings("unchecked")
+
     private void kickWithMessage(String message)
     {
         final TextComponentString TextComponentString = new TextComponentString(message);
@@ -322,7 +321,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
                 {
                     manager.closeChannel(TextComponentString);
                 }
-            }, new GenericFutureListener[0]);
+            }, (GenericFutureListener<? extends Future<? super Void>>[])null);
         }
         manager.channel().config().setAutoRead(false);
     }
@@ -613,7 +612,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
         public void processPart(PacketBuffer input) throws IOException
         {
-            int part = (int)(input.readByte() & 0xFF);
+            int part = input.readByte() & 0xFF;
             if (part != part_expected)
             {
                 throw new IOException("Received FML MultiPart packet out of order, Expected " + part_expected + " Got " + part);
