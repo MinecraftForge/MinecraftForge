@@ -35,7 +35,7 @@ public class ForgeBlockStatesLoaderDebug {
     public static final String MODID = "ForgeBlockStatesLoader";
     public static final String ASSETS = "forgeblockstatesloader:";
 
-    public static final Block blockCustom = new CustomMappedBlock();
+    //public static final Block blockCustom = new CustomMappedBlock();
     public static final String nameCustomWall = "custom_wall";
     public static final BlockWall blockCustomWall = new BlockWall(Blocks.cobblestone);
     public static final ItemMultiTexture itemCustomWall = (ItemMultiTexture)new ItemMultiTexture(blockCustomWall, blockCustomWall, new Function<ItemStack, String>()
@@ -50,8 +50,8 @@ public class ForgeBlockStatesLoaderDebug {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
-        GameRegistry.registerBlock(blockCustom);
+        //blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
+        //GameRegistry.registerBlock(blockCustom);
 
         blockCustomWall.setUnlocalizedName(MODID + ".customWall").setRegistryName(nameCustomWall);
         GameRegistry.registerBlock(blockCustomWall, (Class<? extends ItemBlock>)null);
@@ -65,7 +65,7 @@ public class ForgeBlockStatesLoaderDebug {
     @SideOnly(Side.CLIENT)
     public void preInitClient(FMLPreInitializationEvent event)
     {
-        ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
+        //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 
         ModelLoader.setCustomStateMapper(blockCustomWall, new IStateMapper()
         {
@@ -91,7 +91,8 @@ public class ForgeBlockStatesLoaderDebug {
     }
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to
-    public static class CustomMappedBlock extends Block
+    // disabling until we can make it a proper test
+    /*public static class CustomMappedBlock extends Block
     {
         public static final PropertyEnum<CustomVariant> VARIANT = PropertyEnum.create("type", CustomVariant.class);
 
@@ -127,5 +128,5 @@ public class ForgeBlockStatesLoaderDebug {
 
             public String getName() { return this.toString(); };
         }
-    }
+    }*/
 }

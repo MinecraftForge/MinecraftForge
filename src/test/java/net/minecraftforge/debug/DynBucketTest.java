@@ -87,6 +87,7 @@ public class DynBucketTest
             });
             ModelBakery.registerItemVariants(dynBottle, bottle);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, "simpletank")), 0, new ModelResourceLocation(new ResourceLocation(MODID, "simpletank"), "normal"));
+            ModelLoader.setCustomModelResourceLocation(GameRegistry.findItem(MODID, "testitem"), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
         }
     }
 
