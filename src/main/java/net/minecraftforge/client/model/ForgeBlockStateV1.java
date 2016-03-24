@@ -749,7 +749,7 @@ public class ForgeBlockStateV1 extends Marker
 
     public static class TRSRDeserializer implements JsonDeserializer<TRSRTransformation>
     {
-        public static TRSRDeserializer INSTANCE = new TRSRDeserializer();
+        public static final TRSRDeserializer INSTANCE = new TRSRDeserializer();
 
         public TRSRTransformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
         {

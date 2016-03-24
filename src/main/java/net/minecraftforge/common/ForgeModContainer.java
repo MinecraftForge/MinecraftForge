@@ -149,7 +149,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         Property prop;
 
         prop = config.get(CATEGORY_GENERAL, "disableVersionCheck", false);
-        prop.comment = "Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.";
+        prop.setComment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.");
         // Language keys are a good idea to implement if you are using config GUIs. This allows you to use a .lang file that will hold the
         // "pretty" version of the property name as well as allow others to provide their own localizations.
         // This language key is also used to get the tooltip for a property. The tooltip language key is langKey + ".tooltip".
@@ -170,13 +170,13 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
-        prop.comment = "Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipes. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.";
+        prop.setComment("Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipes. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.");
         prop.setLanguageKey("forge.configgui.sortRecipies").setRequiresMcRestart(true);
         shouldSortRecipies = prop.getBoolean(shouldSortRecipies);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringEntities", false);
-        prop.comment = "Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
+        prop.setComment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.");
         prop.setLanguageKey("forge.configgui.removeErroringEntities").setRequiresWorldRestart(true);
         removeErroringEntities = prop.getBoolean(false);
         propOrder.add(prop.getName());
@@ -187,7 +187,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
-        prop.comment = "Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.";
+        prop.setComment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.");
         prop.setLanguageKey("forge.configgui.removeErroringTileEntities").setRequiresWorldRestart(true);
         removeErroringTileEntities = prop.getBoolean(false);
         propOrder.add(prop.getName());
@@ -198,17 +198,17 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
-        prop.comment = "Set this to just disable the texture stitcher from writing the '{name}_{mipmap}.png files to disc. Just a small performance tweak. Default: true";
+        prop.setComment("Set this to just disable the texture stitcher from writing the '{name}_{mipmap}.png files to disc. Just a small performance tweak. Default: true");
         disableStitchedFileSaving = prop.getBoolean(true);
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
-        prop.comment = "Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false";
+        prop.setComment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false");
         prop.setLanguageKey("forge.configgui.fullBoundingBoxLadders").setRequiresWorldRestart(true);
         fullBoundingBoxLadders = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
-        prop.comment = "Control the range of sky blending for colored skies in biomes.";
+        prop.setComment("Control the range of sky blending for colored skies in biomes.");
         prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
         blendRanges = prop.getIntList();
         propOrder.add(prop.getName());
@@ -274,18 +274,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {
-        if (getMetadata().modId.equals(event.modID) && !event.isWorldRunning)
+        if (getMetadata().modId.equals(event.getModID()) && !event.isWorldRunning())
         {
-            if (Configuration.CATEGORY_GENERAL.equals(event.configID))
+            if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
             {
                 syncConfig(false);
             }
-            else if ("chunkLoader".equals(event.configID))
+            else if ("chunkLoader".equals(event.getConfigID()))
             {
                 ForgeChunkManager.syncConfigDefaults();
                 ForgeChunkManager.loadConfiguration();
             }
-            else if (VERSION_CHECK_CAT.equals(event.configID))
+            else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
             {
                 syncConfig(false);
             }

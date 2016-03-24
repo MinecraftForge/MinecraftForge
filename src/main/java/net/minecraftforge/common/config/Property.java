@@ -14,6 +14,16 @@ import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 
 public class Property
 {
+    public String getComment()
+    {
+        return comment;
+    }
+
+    public void setComment(String comment)
+    {
+        this.comment = comment;
+    }
+
     public enum Type
     {
         STRING,
@@ -45,7 +55,7 @@ public class Property
     private String name;
     private String value;
     private String defaultValue;
-    public String comment;
+    private String comment;
     private String[] values;
     private String[] defaultValues;
     private String[] validValues;
@@ -113,7 +123,7 @@ public class Property
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
         this.langKey = langKey;
-        this.comment = "";
+        this.setComment("");
     }
 
     public Property(String name, String[] values, Type type)
@@ -155,7 +165,7 @@ public class Property
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
         this.langKey = langKey;
-        this.comment = "";
+        this.setComment("");
     }
 
     /**

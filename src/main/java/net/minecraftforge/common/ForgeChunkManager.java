@@ -1003,37 +1003,37 @@ public class ForgeChunkManager
                 .setCategoryRequiresWorldRestart("defaults", true);
 
         Property temp = config.get("defaults", "enabled", true);
-        temp.comment = "Are mod overrides enabled?";
+        temp.setComment("Are mod overrides enabled?");
         temp.setLanguageKey("forge.configgui.enableModOverrides");
         overridesEnabled = temp.getBoolean(true);
         propOrder.add("enabled");
 
         temp = config.get("defaults", "maximumChunksPerTicket", 25);
-        temp.comment = "The default maximum number of chunks a mod can force, per ticket, \n" +
-                    "for a mod without an override. This is the maximum number of chunks a single ticket can force.";
+        temp.setComment("The default maximum number of chunks a mod can force, per ticket, \n" +
+                    "for a mod without an override. This is the maximum number of chunks a single ticket can force.");
         temp.setLanguageKey("forge.configgui.maximumChunksPerTicket");
         temp.setMinValue(0);
         defaultMaxChunks = temp.getInt(25);
         propOrder.add("maximumChunksPerTicket");
 
         temp = config.get("defaults", "maximumTicketCount", 200);
-        temp.comment = "The default maximum ticket count for a mod which does not have an override\n" +
-                    "in this file. This is the number of chunk loading requests a mod is allowed to make.";
+        temp.setComment("The default maximum ticket count for a mod which does not have an override\n" +
+                    "in this file. This is the number of chunk loading requests a mod is allowed to make.");
         temp.setLanguageKey("forge.configgui.maximumTicketCount");
         temp.setMinValue(0);
         defaultMaxCount = temp.getInt(200);
         propOrder.add("maximumTicketCount");
 
         temp = config.get("defaults", "playerTicketCount", 500);
-        temp.comment = "The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.";
+        temp.setComment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.");
         temp.setLanguageKey("forge.configgui.playerTicketCount");
         temp.setMinValue(0);
         playerTicketLength = temp.getInt(500);
         propOrder.add("playerTicketCount");
 
         temp = config.get("defaults", "dormantChunkCacheSize", 0);
-        temp.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
-                    "loading times. Specify the size (in chunks) of that cache here";
+        temp.setComment("Unloaded chunks can first be kept in a dormant cache for quicker\n" +
+                    "loading times. Specify the size (in chunks) of that cache here");
         temp.setLanguageKey("forge.configgui.dormantChunkCacheSize");
         temp.setMinValue(0);
         dormantChunkCacheSize = temp.getInt(0);
@@ -1048,9 +1048,9 @@ public class ForgeChunkManager
                 "for that mod");
 
         temp = config.get("Forge", "maximumTicketCount", 200);
-        temp.comment = "Maximum ticket count for the mod. Zero disables chunkloading capabilities.";
+        temp.setComment("Maximum ticket count for the mod. Zero disables chunkloading capabilities.");
         temp = config.get("Forge", "maximumChunksPerTicket", 25);
-        temp.comment = "Maximum chunks per ticket for the mod.";
+        temp.setComment("Maximum chunks per ticket for the mod.");
         for (String mod : config.getCategoryNames())
         {
             if (mod.equals("Forge") || mod.equals("defaults"))

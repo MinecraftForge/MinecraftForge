@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 
 public class PlayerArmorInvWrapper extends RangedWrapper
 {
-    public final InventoryPlayer inventoryPlayer;
+    private final InventoryPlayer inventoryPlayer;
 
     public PlayerArmorInvWrapper(InventoryPlayer inv)
     {
@@ -27,10 +27,15 @@ public class PlayerArmorInvWrapper extends RangedWrapper
             }
         }
         // check if it's valid for the armor slot
-        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, equ, inventoryPlayer.player))
+        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, equ, getInventoryPlayer().player))
         {
             return super.insertItem(slot, stack, simulate);
         }
         return stack;
+    }
+
+    public InventoryPlayer getInventoryPlayer()
+    {
+        return inventoryPlayer;
     }
 }

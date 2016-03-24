@@ -90,28 +90,6 @@ public class GameData
         return getMain().iBlockRegistry.getObject(new ResourceLocation(modId, name));
     }
 
-    @Deprecated
-    static GameRegistry.UniqueIdentifier getUniqueName(Block block)
-    {
-        if (block == null)
-        {
-            return null;
-        }
-        Object name = getMain().iBlockRegistry.getNameForObject(block);
-        return new GameRegistry.UniqueIdentifier(name);
-    }
-
-    @Deprecated
-    static GameRegistry.UniqueIdentifier getUniqueName(Item item)
-    {
-        if (item == null)
-        {
-            return null;
-        }
-        Object name = getMain().iItemRegistry.getNameForObject(item);
-        return new GameRegistry.UniqueIdentifier(name);
-    }
-
     protected static GameData getMain()
     {
         return mainData;

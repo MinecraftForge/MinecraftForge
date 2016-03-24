@@ -841,8 +841,8 @@ public final class ModelLoader extends ModelBakery
      */
     public static final class White extends TextureAtlasSprite
     {
-        public static ResourceLocation LOCATION = new ResourceLocation("white");
-        public static White INSTANCE = new White();
+        public static final ResourceLocation LOCATION = new ResourceLocation("white");
+        public static final White INSTANCE = new White();
 
         private White()
         {

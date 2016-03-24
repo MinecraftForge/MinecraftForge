@@ -777,15 +777,15 @@ public class ForgeHooks
 
                 for (BlockSnapshot snap : blockSnapshots)
                 {
-                    int updateFlag = snap.flag;
-                    IBlockState oldBlock = snap.replacedBlock;
-                    IBlockState newBlock = world.getBlockState(snap.pos);
+                    int updateFlag = snap.getFlag();
+                    IBlockState oldBlock = snap.getReplacedBlock();
+                    IBlockState newBlock = world.getBlockState(snap.getPos());
                     if (newBlock != null && !(newBlock.getBlock().hasTileEntity(newBlock))) // Containers get placed automatically
                     {
-                        newBlock.getBlock().onBlockAdded(world, snap.pos, newBlock);
+                        newBlock.getBlock().onBlockAdded(world, snap.getPos(), newBlock);
                     }
 
-                    world.markAndNotifyBlock(snap.pos, null, oldBlock, newBlock, updateFlag);
+                    world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
                 player.addStat(StatList.func_188060_a(itemstack.getItem()));
             }

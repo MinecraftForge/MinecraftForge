@@ -36,9 +36,9 @@ import java.util.List;
 public class UniversalBucket extends Item implements IFluidContainerItem
 {
 
-    public final int capacity; // how much the bucket holds
-    public final ItemStack empty; // empty item to return and recognize when filling
-    public final boolean nbtSensitive;
+    private final int capacity; // how much the bucket holds
+    private final ItemStack empty; // empty item to return and recognize when filling
+    private final boolean nbtSensitive;
 
     public UniversalBucket()
     {
@@ -68,7 +68,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
             // add all fluids that the bucket can be filled  with
-            FluidStack fs = new FluidStack(fluid, capacity);
+            FluidStack fs = new FluidStack(fluid, getCapacity());
             ItemStack stack = new ItemStack(this);
             if (fill(stack, fs, true) == fs.amount)
             {
@@ -83,9 +83,9 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         FluidStack fluidStack = getFluid(stack);
         if (fluidStack == null)
         {
-            if(empty != null)
+            if(getEmpty() != null)
             {
-                return empty.getDisplayName();
+                return getEmpty().getDisplayName();
             }
             return super.getItemStackDisplayName(stack);
         }
@@ -132,7 +132,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                         player.addStat(StatList.func_188057_b(this));
 
                         itemstack.stackSize--;
-                        ItemStack emptyStack = empty != null ? empty.copy() : new ItemStack(this);
+                        ItemStack emptyStack = getEmpty() != null ? getEmpty().copy() : new ItemStack(this);
 
                         // check whether we replace the item or add the empty one to the inventory
                         if (itemstack.stackSize <= 0)
@@ -210,8 +210,8 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
         // not for us to handle
         if (event.getEmptyBucket() == null ||
-                !event.getEmptyBucket().isItemEqual(empty) ||
-                (nbtSensitive && ItemStack.areItemStackTagsEqual(event.getEmptyBucket(), empty)))
+                !event.getEmptyBucket().isItemEqual(getEmpty()) ||
+                (isNbtSensitive() && ItemStack.areItemStackTagsEqual(event.getEmptyBucket(), getEmpty())))
         {
             return;
         }
@@ -233,7 +233,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
             {
                 FluidStack drained = fluidBlock.drain(world, pos, false);
                 // check if it fits exactly
-                if (drained != null && drained.amount == capacity)
+                if (drained != null && drained.amount == getCapacity())
                 {
                     // check if the container accepts it
                     ItemStack filledBucket = new ItemStack(this);
@@ -262,7 +262,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     public static ItemStack getFilledBucket(UniversalBucket item, Fluid fluid)
     {
         ItemStack stack = new ItemStack(item);
-        item.fill(stack, new FluidStack(fluid, item.capacity), true);
+        item.fill(stack, new FluidStack(fluid, item.getCapacity()), true);
         return stack;
     }
 
@@ -277,7 +277,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     @Override
     public int getCapacity(ItemStack container)
     {
-        return capacity;
+        return getCapacity();
     }
 
     @Override
@@ -290,7 +290,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         // can only fill exact capacity
-        if (resource == null || resource.amount != capacity)
+        if (resource == null || resource.amount != getCapacity())
         {
             return 0;
         }
@@ -310,14 +310,14 @@ public class UniversalBucket extends Item implements IFluidContainerItem
             resource.writeToNBT(tag);
             container.setTagCompound(tag);
         }
-        return capacity;
+        return getCapacity();
     }
 
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain)
     {
         // can only drain everything at once
-        if (maxDrain < capacity)
+        if (maxDrain < getCapacity())
         {
             return null;
         }
@@ -325,11 +325,11 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         FluidStack fluidStack = getFluid(container);
         if (doDrain && fluidStack != null)
         {
-            if(empty != null)
+            if(getEmpty() != null)
             {
-                container.setItem(empty.getItem());
-                container.setTagCompound(empty.getTagCompound());
-                container.setItemDamage(empty.getItemDamage());
+                container.setItem(getEmpty().getItem());
+                container.setTagCompound(getEmpty().getTagCompound());
+                container.setItemDamage(getEmpty().getItemDamage());
             }
             else {
                 container.stackSize = 0;
@@ -337,5 +337,20 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         return fluidStack;
+    }
+
+    public int getCapacity()
+    {
+        return capacity;
+    }
+
+    public ItemStack getEmpty()
+    {
+        return empty;
+    }
+
+    public boolean isNbtSensitive()
+    {
+        return nbtSensitive;
     }
 }

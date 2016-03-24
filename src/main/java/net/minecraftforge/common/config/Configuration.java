@@ -706,7 +706,7 @@ public class Configuration
             }
 
             prop.setDefaultValue(defaultValue);
-            prop.comment = comment;
+            prop.setComment(comment);
             return prop;
         }
         else if (defaultValue != null)
@@ -715,7 +715,7 @@ public class Configuration
             prop.setValue(defaultValue); //Set and mark as dirty to signify it should save
             cat.put(key, prop);
             prop.setDefaultValue(defaultValue);
-            prop.comment = comment;
+            prop.setComment(comment);
             return prop;
         }
         else
@@ -754,7 +754,7 @@ public class Configuration
             }
 
             prop.setDefaultValues(defaultValues);
-            prop.comment = comment;
+            prop.setComment(comment);
 
             return prop;
         }
@@ -762,7 +762,7 @@ public class Configuration
         {
             Property prop = new Property(key, defaultValues, type);
             prop.setDefaultValues(defaultValues);
-            prop.comment = comment;
+            prop.setComment(comment);
             cat.put(key, prop);
             return prop;
         }
@@ -1517,7 +1517,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidationPattern(pattern);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
     }
 
@@ -1552,7 +1552,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
     }
 
@@ -1598,7 +1598,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidValues(validValues);
-        prop.comment = comment + " [default: " + prop.getDefault() + "]";
+        prop.setComment(comment + " [default: " + prop.getDefault() + "]");
         return prop.getStringList();
     }
 
@@ -1630,7 +1630,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getBoolean(defaultValue);
     }
 
@@ -1666,7 +1666,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setComment(comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]");
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
@@ -1704,7 +1704,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, Float.toString(defaultValue), name);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setComment(comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]");
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         try

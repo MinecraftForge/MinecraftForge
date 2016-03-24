@@ -108,7 +108,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     private static Map<String, SortEntry>   entries = Maps.newHashMap();
     private static Map<Class<?>, Integer>      priorities = Maps.newHashMap();
 
-    public static RecipeSorter INSTANCE = new RecipeSorter();
+    public static final RecipeSorter INSTANCE = new RecipeSorter();
     private static boolean isDirty = true;
 
     private static SortEntry before = new SortEntry("Before", null, UNKNOWN, "");

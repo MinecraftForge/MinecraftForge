@@ -148,7 +148,7 @@ public class ConfigElement implements IConfigElement
     @Override
     public String getComment()
     {
-        return isProperty ? prop.comment : category.getComment();
+        return isProperty ? prop.getComment() : category.getComment();
     }
 
     @Override

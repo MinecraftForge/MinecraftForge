@@ -154,7 +154,7 @@ public class BlockEvent extends Event
 
         public PlaceEvent(BlockSnapshot blockSnapshot, IBlockState placedAgainst, EntityPlayer player)
         {
-            super(blockSnapshot.world, blockSnapshot.pos, blockSnapshot.getCurrentBlock());
+            super(blockSnapshot.getWorld(), blockSnapshot.getPos(), blockSnapshot.getCurrentBlock());
             this.player = player;
             this.itemInHand = player.getHeldItemMainhand();
             this.blockSnapshot = blockSnapshot;

@@ -511,7 +511,7 @@ public class B3DModel
 
     public static class Texture
     {
-        public static Texture White = new Texture("builtin/white", 0, 0, new Vector2f(0, 0), new Vector2f(1, 1), 0);
+        public static final Texture White = new Texture("builtin/white", 0, 0, new Vector2f(0, 0), new Vector2f(1, 1), 0);
         private final String path;
         private final int flags;
         private final int blend;
