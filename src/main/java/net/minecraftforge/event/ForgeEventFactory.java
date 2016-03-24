@@ -548,7 +548,7 @@ public class ForgeEventFactory
 
     public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, int x, int z, boolean hasVillageGenerated)
     {
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated));
+        MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, world.rand, x, z, hasVillageGenerated));
     }
 
 }
