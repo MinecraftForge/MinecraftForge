@@ -14,6 +14,7 @@ package net.minecraftforge.fml.client.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -66,14 +67,11 @@ public class GuiSelectString extends GuiScreen
                 "\n" + TextFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
 
         if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
-                    TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + comment, 300);
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + comment).split("\n"));
         else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
-                    TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + configElement.getComment(), 300);
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + configElement.getComment()).split("\n"));
         else
-            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
-                    TextFormatting.GREEN + propName + "\n" + TextFormatting.RED + "No tooltip defined.", 300);
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.RED + "No tooltip defined.").split("\n"));
 
         if (parentScreen instanceof GuiConfig)
         {
@@ -178,6 +176,6 @@ public class GuiSelectString extends GuiScreen
 
     public void drawToolTip(List<String> stringList, int x, int y)
     {
-        this.drawHoveringText(stringList, x, y);
+        GuiUtils.drawHoveringText(stringList, x, y, width, height, 300, fontRendererObj);
     }
 }

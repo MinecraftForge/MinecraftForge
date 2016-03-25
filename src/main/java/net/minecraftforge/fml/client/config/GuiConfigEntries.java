@@ -16,6 +16,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -1490,6 +1491,7 @@ public class GuiConfigEntries extends GuiListExtended
             this.defaultHoverChecker = new HoverChecker(this.btnDefault, 800);
             this.undoToolTip = Arrays.asList(new String[] { I18n.format("fml.configgui.tooltip.undoChanges") });
             this.defaultToolTip = Arrays.asList(new String[] { I18n.format("fml.configgui.tooltip.resetToDefault") });
+            this.toolTip = new ArrayList<String>();
 
             this.drawLabel = true;
 
@@ -1498,23 +1500,19 @@ public class GuiConfigEntries extends GuiListExtended
             comment = I18n.format(configElement.getLanguageKey() + ".tooltip").replace("\\n", "\n");
 
             if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-                toolTip = new ArrayList<String>(this.mc.fontRendererObj.listFormattedStringToWidth(
-                        TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + comment, 300));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + comment).split("\n"));
             else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-                toolTip = new ArrayList<String>(this.mc.fontRendererObj.listFormattedStringToWidth(
-                        TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + configElement.getComment(), 300));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.YELLOW + configElement.getComment()).split("\n"));
             else
-                toolTip = new ArrayList<String>(this.mc.fontRendererObj.listFormattedStringToWidth(
-                        TextFormatting.GREEN + name + "\n" + TextFormatting.RED + "No tooltip defined.", 300));
+                Collections.addAll(toolTip, (TextFormatting.GREEN + name + "\n" + TextFormatting.RED + "No tooltip defined.").split("\n"));
 
             if ((configElement.getType() == ConfigGuiType.INTEGER
                     && (Integer.valueOf(configElement.getMinValue().toString()) != Integer.MIN_VALUE || Integer.valueOf(configElement.getMaxValue().toString()) != Integer.MAX_VALUE))
                     || (configElement.getType() == ConfigGuiType.DOUBLE
                     && (Double.valueOf(configElement.getMinValue().toString()) != -Double.MAX_VALUE || Double.valueOf(configElement.getMaxValue().toString()) != Double.MAX_VALUE)))
-                toolTip.addAll(this.mc.fontRendererObj.listFormattedStringToWidth(
-                        TextFormatting.AQUA + I18n.format("fml.configgui.tooltip.defaultNumeric", configElement.getMinValue(), configElement.getMaxValue(), configElement.getDefault()), 300));
+                Collections.addAll(toolTip, (TextFormatting.AQUA + I18n.format("fml.configgui.tooltip.defaultNumeric", configElement.getMinValue(), configElement.getMaxValue(), configElement.getDefault())).split("\n"));
             else if (configElement.getType() != ConfigGuiType.CONFIG_CATEGORY)
-                toolTip.addAll(this.mc.fontRendererObj.listFormattedStringToWidth(TextFormatting.AQUA + I18n.format("fml.configgui.tooltip.default", configElement.getDefault()),300));
+                Collections.addAll(toolTip, (TextFormatting.AQUA + I18n.format("fml.configgui.tooltip.default", configElement.getDefault())).split("\n"));
 
             if (configElement.requiresMcRestart() || owningScreen.allRequireMcRestart)
                 toolTip.add(TextFormatting.RED + "[" + I18n.format("fml.configgui.gameRestartTitle") + "]");
