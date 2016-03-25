@@ -17,6 +17,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -336,15 +337,15 @@ public class GuiConfig extends GuiScreen
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.entryList.drawScreenPost(mouseX, mouseY, partialTicks);
         if (this.undoHoverChecker.checkHover(mouseX, mouseY))
-            this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.undoAll"), 300), mouseX, mouseY);
+            this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.undoAll").split("\n")), mouseX, mouseY);
         if (this.resetHoverChecker.checkHover(mouseX, mouseY))
-            this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.resetAll"), 300), mouseX, mouseY);
+            this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.resetAll").split("\n")), mouseX, mouseY);
         if (this.checkBoxHoverChecker.checkHover(mouseX, mouseY))
-            this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.applyGlobally"), 300), mouseX, mouseY);
+            this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.applyGlobally").split("\n")), mouseX, mouseY);
     }
 
     public void drawToolTip(List<String> stringList, int x, int y)
     {
-        this.drawHoveringText(stringList, x, y);
+        GuiUtils.drawHoveringText(stringList, x, y, width, height, 300, fontRendererObj);
     }
 }
