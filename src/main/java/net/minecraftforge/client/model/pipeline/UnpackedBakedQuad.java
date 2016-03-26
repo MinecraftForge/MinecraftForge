@@ -70,7 +70,7 @@ public class UnpackedBakedQuad extends BakedQuad
         private int tint = -1;
         private EnumFacing orientation;
         private TextureAtlasSprite texture;
-        private boolean applyDiffuseLighting;
+        private boolean applyDiffuseLighting = true;
 
         private int vertices = 0;
         private int elements = 0;
