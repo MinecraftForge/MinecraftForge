@@ -194,6 +194,7 @@ public class GuiIngameForge extends GuiIngame
     {
         if (pre(CROSSHAIRS)) return;
         bind(Gui.icons);
+        GlStateManager.enableBlend();
         super.renderAttackIndicator(partialTicks, res);
         post(CROSSHAIRS);
     }
