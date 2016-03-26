@@ -68,6 +68,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
@@ -198,6 +199,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("FML will not run in demo mode", new RuntimeException());
             return;
         }
+
+        resourceManager.registerReloadListener(Animation.INSTANCE);
 
         FMLCommonHandler.instance().beginLoading(this);
         try

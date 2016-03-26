@@ -26,6 +26,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.event.ClickEvent;
@@ -63,6 +64,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -73,6 +75,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -905,5 +908,33 @@ public class ForgeHooks
         ItemStack stack = player.getCurrentEquippedItem();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
+    }
+
+    public static boolean onTravelToDimension(Entity entity, int dimension)
+    {
+        EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled())
+        {
+            // Revert variable back to true as it would have been set to false
+            if (entity instanceof EntityMinecartContainer)
+            {
+               ((EntityMinecartContainer) entity).dropContentsWhenDead = true;
+            }
+        }
+        return !event.isCanceled();
+    }
+
+    public static MovingObjectPosition rayTraceEyes(EntityLivingBase entity, double length)
+    {
+        Vec3 startPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        Vec3 endPos = startPos.add(new Vec3(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
+        return entity.worldObj.rayTraceBlocks(startPos, endPos);
+    }
+
+    public static Vec3 rayTraceEyeHitVec(EntityLivingBase entity, double length)
+    {
+        MovingObjectPosition movingObjectPosition = rayTraceEyes(entity, length);
+        return movingObjectPosition == null ? null : movingObjectPosition.hitVec;
     }
 }

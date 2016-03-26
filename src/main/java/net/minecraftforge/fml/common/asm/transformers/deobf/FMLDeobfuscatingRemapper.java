@@ -313,6 +313,17 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String methodDescriptor = name+desc;
         return methodMap!=null && methodMap.containsKey(methodDescriptor) ? methodMap.get(methodDescriptor) : name;
     }
+    
+    @Override
+    public String mapSignature(String signature, boolean typeSignature)
+    {
+        // JDT decorates some lambdas with this and SignatureReader chokes on it
+        if (signature != null && signature.contains("!*"))
+        {
+            return null;
+        }
+        return super.mapSignature(signature, typeSignature);
+    }
 
     private Map<String,String> getFieldMap(String className)
     {

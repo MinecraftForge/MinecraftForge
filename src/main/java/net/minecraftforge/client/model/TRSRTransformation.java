@@ -157,6 +157,12 @@ public class TRSRTransformation implements IModelState, ITransformation
         return ret;
     }
 
+    public static Vector3f toYXZDegrees(Quat4f q)
+    {
+        Vector3f yxz = toYXZ(q);
+        return new Vector3f((float)Math.toDegrees(yxz.x), (float)Math.toDegrees(yxz.y), (float)Math.toDegrees(yxz.z));
+    }
+
     public static Vector3f toYXZ(Quat4f q)
     {
         float w2 = q.w * q.w;
@@ -164,19 +170,19 @@ public class TRSRTransformation implements IModelState, ITransformation
         float y2 = q.y * q.y;
         float z2 = q.z * q.z;
         float l = w2 + x2 + y2 + z2;
-        float sx = 2 * q.y * q.z - 2 * q.w * q.x;
+        float sx = 2 * q.w * q.x - 2 * q.y * q.z;
         float x = (float)Math.asin(sx / l);
         if(Math.abs(sx) > .999f * l)
         {
             return new Vector3f(
-                 2 * (float)Math.atan2(q.y, q.w),
                  x,
+                 2 * (float)Math.atan2(q.y, q.w),
                  0
             );
         }
         return new Vector3f(
-            (float)Math.atan2(2 * q.x * q.z + 2 * q.y * q.w, w2 - x2 - y2 + z2),
             x,
+            (float)Math.atan2(2 * q.x * q.z + 2 * q.y * q.w, w2 - x2 - y2 + z2),
             (float)Math.atan2(2 * q.x * q.y + 2 * q.w * q.z, w2 - x2 + y2 - z2)
         );
     }
@@ -443,7 +449,7 @@ public class TRSRTransformation implements IModelState, ITransformation
      */
     public ItemTransformVec3f toItemTransform()
     {
-        return new ItemTransformVec3f(toLwjgl(getTranslation()), toLwjgl(toYXZ(getLeftRot())), toLwjgl(getScale()));
+        return new ItemTransformVec3f(toLwjgl(toYXZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
     }
 
     public Matrix4f getMatrix()

@@ -9,15 +9,7 @@
          return this.field_72817_c[i][j].func_177424_a(p_175625_1_, Chunk.EnumCreateEntityType.IMMEDIATE);
      }
  
-@@ -84,6 +86,7 @@
-         {
-             int i = (p_180495_1_.func_177958_n() >> 4) - this.field_72818_a;
-             int j = (p_180495_1_.func_177952_p() >> 4) - this.field_72816_b;
-+            if (i < 0 || i >= field_72817_c.length || j < 0 || i >= field_72817_c[i].length) return Blocks.field_150350_a.func_176223_P();
- 
-             if (i >= 0 && i < this.field_72817_c.length && j >= 0 && j < this.field_72817_c[i].length)
-             {
-@@ -139,6 +142,8 @@
+@@ -139,6 +141,8 @@
              {
                  int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
                  int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -26,7 +18,7 @@
                  return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
-@@ -150,7 +155,7 @@
+@@ -150,7 +154,7 @@
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
@@ -35,15 +27,15 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -160,6 +165,7 @@
+@@ -160,6 +164,7 @@
          {
              int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
              int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
-+            if (i < 0 || i >= field_72817_c.length || j < 0 || i >= field_72817_c[i].length) return p_175628_1_.field_77198_c;
++            if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return p_175628_1_.field_77198_c;
              return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
-@@ -179,4 +185,15 @@
+@@ -179,4 +184,16 @@
      {
          return this.field_72815_e.func_175624_G();
      }
@@ -54,7 +46,8 @@
 +        int x = (pos.func_177958_n() >> 4) - this.field_72818_a;
 +        int z = (pos.func_177952_p() >> 4) - this.field_72816_b;
 +        if (pos.func_177956_o() >= 0 && pos.func_177956_o() < 256) return _default;
-+        if (x < 0 || x >= field_72817_c.length || z < 0 || x >= field_72817_c[x].length) return _default;
++        if (x < 0 || x >= field_72817_c.length || z < 0 || z >= field_72817_c[x].length) return _default;
++        if (field_72817_c[x][z] == null) return _default;
 +
 +        return func_180495_p(pos).func_177230_c().isSideSolid(this, pos, side);
 +    }

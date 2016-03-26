@@ -65,7 +65,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -279,4 +293,176 @@
+@@ -279,4 +293,183 @@
          func_145826_a(TileEntityFlowerPot.class, "FlowerPot");
          func_145826_a(TileEntityBanner.class, "Banner");
      }
@@ -212,6 +212,15 @@
 +        // NOOP
 +    }
 +
++    /**
++     * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
++     * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
++     */
++    public boolean hasFastRenderer()
++    {
++        return false;
++    }
++
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    public TileEntity()
 +    {
@@ -220,8 +229,6 @@
 +
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
 +    {
-+        if (getCapability(capability, facing) != null)
-+            return true;
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +

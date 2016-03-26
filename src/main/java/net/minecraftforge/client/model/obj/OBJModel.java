@@ -32,17 +32,7 @@ import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelCustomData;
-import net.minecraftforge.client.model.IModelPart;
-import net.minecraftforge.client.model.IModelState;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IRetexturableModel;
-import net.minecraftforge.client.model.ISmartBlockModel;
-import net.minecraftforge.client.model.ISmartItemModel;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -64,7 +54,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("deprecation")
-public class OBJModel implements IRetexturableModel, IModelCustomData
+public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel>
 {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;

@@ -148,3 +148,4 @@ fml.menu.mods.normal=Normal
 fml.menu.mods.search=Search:
 fml.menu.modoptions=Mod Options...
 
+item.forge.bucketFilled.name=%s Bucket

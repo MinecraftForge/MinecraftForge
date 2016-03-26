@@ -8,7 +8,7 @@
 +    {
 +        for (int y = 0; y < height; y++)
 +        {
-+            if (func_175162_d(pos.func_177982_a(0, y, 0))) return false;
++            if (!func_175162_d(pos.func_177982_a(0, y, 0))) return false;
 +        }
 +        return true;
 +    }
@@ -21,9 +21,9 @@
              double d1 = p_145771_5_ - (double)blockpos.func_177952_p();
  
 -            if (!this.func_175162_d(blockpos))
-+            int entHeight = Math.max(Math.round(this.field_70131_O), 1);
++            int entHeight = Math.max((int)Math.ceil(this.field_70131_O), 1);
 +
-+            boolean inTranslucentBlock = this.isHeadspaceFree(blockpos, entHeight);
++            boolean inTranslucentBlock = !this.isHeadspaceFree(blockpos, entHeight);
 +
 +            if (inTranslucentBlock)
              {
@@ -31,31 +31,40 @@
                  double d2 = 9999.0D;
  
 -                if (this.func_175162_d(blockpos.func_177976_e()) && d0 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177976_e(), entHeight) && d0 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177976_e(), entHeight) && d0 < d2)
                  {
                      d2 = d0;
                      i = 0;
                  }
  
 -                if (this.func_175162_d(blockpos.func_177974_f()) && 1.0D - d0 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177974_f(), entHeight) && 1.0D - d0 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177974_f(), entHeight) && 1.0D - d0 < d2)
                  {
                      d2 = 1.0D - d0;
                      i = 1;
                  }
  
 -                if (this.func_175162_d(blockpos.func_177978_c()) && d1 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177978_c(), entHeight) && d1 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177978_c(), entHeight) && d1 < d2)
                  {
                      d2 = d1;
                      i = 4;
                  }
  
 -                if (this.func_175162_d(blockpos.func_177968_d()) && 1.0D - d1 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177968_d(), entHeight) && 1.0D - d1 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177968_d(), entHeight) && 1.0D - d1 < d2)
                  {
                      d2 = 1.0D - d1;
                      i = 5;
+@@ -415,7 +428,7 @@
+ 
+     private boolean func_175162_d(BlockPos p_175162_1_)
+     {
+-        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().func_149721_r() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_177230_c().func_149721_r();
++        return !this.field_70170_p.func_180495_p(p_175162_1_).func_177230_c().func_149721_r();
+     }
+ 
+     public void func_70031_b(boolean p_70031_1_)
 @@ -448,6 +461,12 @@
  
      public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)

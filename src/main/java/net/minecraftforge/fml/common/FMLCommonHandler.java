@@ -47,6 +47,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -337,6 +338,7 @@ public class FMLCommonHandler
 
     public void onRenderTickStart(float timer)
     {
+        Animation.setClientPartialTickTime(timer);
         bus().post(new TickEvent.RenderTickEvent(Phase.START, timer));
     }
 

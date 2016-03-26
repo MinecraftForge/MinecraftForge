@@ -9,12 +9,21 @@
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
      private WorldSettings.GameType field_73091_c = WorldSettings.GameType.NOT_SET;
+@@ -116,7 +118,7 @@
+             else
+             {
+                 int k = this.field_73100_i - this.field_73089_e;
+-                float f1 = block1.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, this.field_180241_i) * (float)(k + 1);
++                float f1 = block1.func_180647_a(this.field_73090_b, this.field_73090_b.field_70170_p, this.field_180240_f) * (float)(k + 1); //Forge: Fix network break progress using wrong position
+                 int l = (int)(f1 * 10.0F);
+ 
+                 if (l != this.field_73094_o)
 @@ -130,6 +132,14 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
 +        net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_73090_b,
-+                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, field_73092_a, p_180784_1_, p_180784_2_);
++                net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.LEFT_CLICK_BLOCK, field_73092_a, p_180784_1_, p_180784_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(field_73090_b, getBlockReachDistance() + 1));
 +        if (event.isCanceled())
 +        {
 +            field_73090_b.field_71135_a.func_147359_a(new S23PacketBlockChange(field_73092_a, p_180784_1_));
@@ -177,7 +186,7 @@
          {
 -            if (!p_180236_1_.func_70093_af() || p_180236_1_.func_70694_bm() == null)
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(p_180236_1_,
-+                    net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, p_180236_2_, p_180236_4_, p_180236_5_);
++                    net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, p_180236_2_, p_180236_4_, p_180236_5_, new net.minecraft.util.Vec3(p_180236_6_, p_180236_7_, p_180236_8_));
 +            if (event.isCanceled())
              {
 -                IBlockState iblockstate = p_180236_2_.func_180495_p(p_180236_4_);

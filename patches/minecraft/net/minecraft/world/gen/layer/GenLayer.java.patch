@@ -4,7 +4,7 @@
              i = 6;
          }
  
-+        i = getModdedBiomeSize(p_180781_2_, j);
++        i = getModdedBiomeSize(p_180781_2_, i);
 +
          GenLayer lvt_8_1_ = GenLayerZoom.func_75915_a(1000L, genlayer4, 0);
          GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, lvt_8_1_);

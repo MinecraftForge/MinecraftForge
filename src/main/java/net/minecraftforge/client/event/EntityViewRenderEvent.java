@@ -7,8 +7,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes of
- * fog the player sees.
+ * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes
+ *  the player sees.
  */
 public abstract class EntityViewRenderEvent extends Event
 {
@@ -92,6 +92,28 @@ public abstract class EntityViewRenderEvent extends Event
             this.yaw = yaw;
             this.pitch = pitch;
             this.roll = roll;
+        }
+    }
+    
+    /**
+     * Event that allows mods to alter the raw FOV itself.
+     * This directly affects to the FOV without being modified.
+     * */
+    public static class FOVModifier extends EntityViewRenderEvent
+    {
+        private float fov;
+        
+        public FOVModifier(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float fov) {
+            super(renderer, entity, block, renderPartialTicks);
+            this.setFOV(fov);
+        }
+
+        public float getFOV() {
+            return fov;
+        }
+
+        public void setFOV(float fov) {
+            this.fov = fov;
         }
     }
 }

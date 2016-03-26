@@ -1,50 +1,64 @@
 package net.minecraftforge.debug;
 
+import java.io.IOException;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ISmartBlockModel;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelState;
+import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.MultiModel;
+import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.animation.AnimationModelBase;
+import net.minecraftforge.client.model.animation.AnimationTESR;
+import net.minecraftforge.client.model.animation.Event;
+import net.minecraftforge.client.model.animation.IAnimationProvider;
+import net.minecraftforge.client.model.animation.ITimeValue;
+import net.minecraftforge.client.model.animation.TimeValues.VariableValue;
 import net.minecraftforge.client.model.b3d.B3DLoader;
-import net.minecraftforge.client.model.b3d.B3DLoader.B3DFrameProperty;
-import net.minecraftforge.client.model.b3d.B3DLoader.B3DState;
+import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import org.lwjgl.opengl.GL11;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.collect.ImmutableMap;
 
 @Mod(modid = ModelAnimationDebug.MODID, version = ModelAnimationDebug.VERSION)
 public class ModelAnimationDebug
@@ -54,12 +68,14 @@ public class ModelAnimationDebug
 
     public static String blockName = "test_animation_block";
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
-    public static final PropertyBool STATIC = PropertyBool.create("static");;
+
+    @Instance(MODID)
+    public static ModelAnimationDebug instance;
 
     @SidedProxy
     public static CommonProxy proxy;
 
-    public static class CommonProxy
+    public static abstract class CommonProxy
     {
         public void preInit(FMLPreInitializationEvent event)
         {
@@ -73,7 +89,7 @@ public class ModelAnimationDebug
                 @Override
                 public ExtendedBlockState createBlockState()
                 {
-                    return new ExtendedBlockState(this, new IProperty[]{ FACING, STATIC }, new IUnlistedProperty[]{ B3DFrameProperty.instance });
+                    return new ExtendedBlockState(this, new IProperty[]{ FACING, Properties.StaticProperty }, new IUnlistedProperty[]{ Properties.AnimationProperty });
                 }
 
                 @Override
@@ -105,12 +121,12 @@ public class ModelAnimationDebug
 
                 @Override
                 public TileEntity createTileEntity(World world, IBlockState state) {
-                    return new Chest(state);
+                    return new Chest();
                 }
 
                 @Override
                 public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-                    return state.withProperty(STATIC, true);
+                    return state.withProperty(Properties.StaticProperty, true);
                 }
 
                 /*@Override
@@ -131,18 +147,25 @@ public class ModelAnimationDebug
                         TileEntity te = world.getTileEntity(pos);
                         if(te instanceof Chest)
                         {
-                            ((Chest)te).click();
+                            ((Chest)te).click(player.isSneaking());
                         }
                     }
-                    return false;
+                    return true;
                 }
             }, blockName);
+            GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
         }
 
-        public void init(FMLInitializationEvent event) {}
+        public abstract IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters);
     }
 
-    public static class ServerProxy extends CommonProxy {}
+    public static class ServerProxy extends CommonProxy
+    {
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
+        {
+            return null;
+        }
+    }
 
     public static class ClientProxy extends CommonProxy
     {
@@ -152,142 +175,212 @@ public class ModelAnimationDebug
             super.preInit(event);
             B3DLoader.instance.addDomain(MODID);
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
-            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, ChestRenderer.instance);
+            ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
+            {
+                @Override
+                public void handleEvents(Chest chest, float time, Iterable<Event> pastEvents)
+                {
+                    chest.handleEvents(time, pastEvents);
+                }
+            });
+            String entityName = MODID + ":entity_chest";
+            //EntityRegistry.registerGlobalEntityID(EntityChest.class, entityName, EntityRegistry.findGlobalUniqueEntityId());
+            EntityRegistry.registerModEntity(EntityChest.class, entityName, 0, ModelAnimationDebug.instance, 64, 20, true, 0xFFAAAA00, 0xFFDDDD00);
+            RenderingRegistry.registerEntityRenderingHandler(EntityChest.class, new IRenderFactory<EntityChest>()
+            {
+                public Render<EntityChest> createRenderFor(RenderManager manager)
+                {
+                    try
+                    {
+                        /*model = ModelLoaderRegistry.getModel(new ResourceLocation(ModelLoaderRegistryDebug.MODID, "block/chest.b3d"));
+                        if(model instanceof IRetexturableModel)
+                        {
+                            model = ((IRetexturableModel)model).retexture(ImmutableMap.of("#chest", "entity/chest/normal"));
+                        }
+                        if(model instanceof IModelCustomData)
+                        {
+                            model = ((IModelCustomData)model).process(ImmutableMap.of("mesh", "[\"Base\", \"Lid\"]"));
+                        }*/
+                        IModel base = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine"));
+                        IModel ring = ModelLoaderRegistry.getModel(new ResourceLocation(ModelAnimationDebug.MODID, "block/engine_ring"));
+                        ImmutableMap<String, String> textures = ImmutableMap.of(
+                            "base", "blocks/stone",
+                            "front", "blocks/log_oak",
+                            "chamber", "blocks/redstone_block",
+                            "trunk", "blocks/end_stone"
+                        );
+                        if(base instanceof IRetexturableModel)
+                        {
+                            base = ((IRetexturableModel)base).retexture(textures);
+                        }
+                        if(ring instanceof IRetexturableModel)
+                        {
+                            ring = ((IRetexturableModel)ring).retexture(textures);
+                        }
+                        IModel model = new MultiModel(
+                            new ResourceLocation(ModelAnimationDebug.MODID, "builtin/engine"),
+                            ring,
+                            TRSRTransformation.identity(),
+                            ImmutableMap.of(
+                                "base", Pair.<IModel, IModelState>of(base, TRSRTransformation.identity())
+                            )
+                        );
+                        return new RenderLiving<EntityChest>(manager, new AnimationModelBase<EntityChest>(model, new VertexLighterSmoothAo())
+                            {
+                                @Override
+                                public void handleEvents(EntityChest chest, float time, Iterable<Event> pastEvents)
+                                {
+                                    chest.handleEvents(time, pastEvents);
+                                }
+                            }, 0.5f)
+                        {
+                            protected ResourceLocation getEntityTexture(EntityChest entity)
+                            {
+                                return TextureMap.locationBlocksTexture;
+                            }
+                        };
+                    }
+                    catch(IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
         }
 
-        @Override
-        public void init(FMLInitializationEvent event)
+        public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
         {
-            super.init(event);
+            return Animation.INSTANCE.load(location, parameters);
         }
+
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
 
-    @EventHandler
-    public void init(FMLInitializationEvent event) { proxy.init(event); }
-
-    private static class Chest extends TileEntity implements ITickable
+    public static class Chest extends TileEntity implements IAnimationProvider
     {
-        private final int minFrame = 1;
-        private final int maxFrame = 10;
-        private int tick = minFrame;
-        private boolean opening = false;
-        private boolean closing = false;
+        private final IAnimationStateMachine asm;
+        private final VariableValue cycleLength = new VariableValue(4);
+        private final VariableValue clickTime = new VariableValue(Float.NEGATIVE_INFINITY);
+        //private final VariableValue offset = new VariableValue(0);
 
-        public Chest(IBlockState state) {
+        public Chest() {
+            /*asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/chest.json"), ImmutableMap.<String, ITimeValue>of(
+                "click_time", clickTime
+            ));*/
+            asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
+                "cycle_length", cycleLength,
+                "click_time", clickTime
+                //"offset", offset
+            ));
+        }
+
+        public void handleEvents(float time, Iterable<Event> pastEvents)
+        {
+            for(Event event : pastEvents)
+            {
+                System.out.println("Event: " + event.event() + " " + event.offset() + " " + getPos() + " " + time);
+            }
+        }
+
+        @Override
+        public boolean hasFastRenderer()
+        {
+            return true;
         }
 
         /*public IExtendedBlockState getState(IExtendedBlockState state) {
             return state.withProperty(B3DFrameProperty.instance, curState);
         }*/
 
-        public void click()
+        public void click(boolean sneaking)
         {
-            if(opening || tick == maxFrame)
+            if(asm != null)
             {
-                opening = false;
-                closing = true;
-                return;
-            }
-            if(closing || tick == minFrame)
-            {
-                closing = false;
-                opening = true;
-                return;
-            }
-            opening = true;
-        }
-
-        @Override
-        public void update()
-        {
-            if(opening)
-            {
-                tick++;
-                if(tick >= maxFrame)
+                if(sneaking)
                 {
-                    tick = maxFrame;
-                    opening = false;
+                    cycleLength.setValue(6 - cycleLength.apply(0));
                 }
-            }
-            if(closing)
-            {
-                tick--;
-                if(tick <= minFrame)
+                /*else if(asm.currentState().equals("closed"))
                 {
-                    tick = minFrame;
-                    closing = false;
+                    clickTime.setValue(Animation.getWorldTime(getWorld()));
+                    asm.transition("opening");
+                }
+                else if(asm.currentState().equals("open"))
+                {
+                    clickTime.setValue(Animation.getWorldTime(getWorld()));
+                    asm.transition("closing");
+                }*/
+                else if(asm.currentState().equals("default"))
+                {
+                    float time = Animation.getWorldTime(getWorld(), Animation.getPartialTickTime());
+                    clickTime.setValue(time);
+                    //offset.setValue(time);
+                    //asm.transition("moving");
+                    asm.transition("starting");
+                }
+                else if(asm.currentState().equals("moving"))
+                {
+                    clickTime.setValue(Animation.getWorldTime(getWorld(), Animation.getPartialTickTime()));
+                    asm.transition("stopping");
                 }
             }
         }
 
-        public int getCurFrame()
+        public IAnimationStateMachine asm()
         {
-            return tick;
-        }
-
-        public int getNextFrame()
-        {
-            if(opening) return Math.min(tick + 1, maxFrame);
-            if(closing) return Math.max(tick - 1, minFrame);
-            return tick;
+            return asm;
         }
     }
 
-    private static class ChestRenderer extends TileEntitySpecialRenderer<Chest>
+    public static class EntityChest extends EntityLiving implements IAnimationProvider
     {
-        public static ChestRenderer instance = new ChestRenderer();
-        private ChestRenderer() {}
+        private final IAnimationStateMachine asm;
+        private VariableValue cycleLength;
 
-        private BlockRendererDispatcher blockRenderer;
-
-        public void renderTileEntityAt(Chest te, double x, double y, double z, float partialTick, int breakStage)
+        public EntityChest(World world)
         {
-            if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-            IBlockState state = te.getWorld().getBlockState(te.getPos());
-            state = state.withProperty(STATIC, false);
-            IBakedModel model = this.blockRenderer.getBlockModelShapes().getModelForState(state);
-            if(state instanceof IExtendedBlockState)
+            super(world);
+            setSize(1, 1);
+            if(cycleLength == null)
             {
-                IExtendedBlockState exState = (IExtendedBlockState)state;
-                if(exState.getUnlistedNames().contains(B3DFrameProperty.instance))
+                cycleLength = new VariableValue(getHealth() / 5);
+            }
+            asm = proxy.load(new ResourceLocation(MODID.toLowerCase(), "asms/block/engine.json"), ImmutableMap.<String, ITimeValue>of(
+                "cycle_length", cycleLength
+            ));
+        }
+
+        public void handleEvents(float time, Iterable<Event> pastEvents)
+        {
+            // TODO Auto-generated method stub
+        }
+
+        public IAnimationStateMachine asm()
+        {
+            return asm;
+        }
+
+        @Override
+        public void onDataWatcherUpdate(int id)
+        {
+            super.onDataWatcherUpdate(id);
+            if(id == 6) // health
+            {
+                if(cycleLength == null)
                 {
-                    exState = exState.withProperty(B3DFrameProperty.instance, new B3DState(null, te.getCurFrame(), te.getNextFrame(), partialTick));
-                    if(model instanceof ISmartBlockModel)
-                    {
-                        model = ((ISmartBlockModel)model).handleBlockState(exState);
-                    }
+                    cycleLength = new VariableValue(0);
                 }
+                cycleLength.setValue(getHealth() / 5);
             }
+        }
 
-            Tessellator tessellator = Tessellator.getInstance();
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            this.bindTexture(TextureMap.locationBlocksTexture);
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GlStateManager.enableBlend();
-            GlStateManager.disableCull();
-
-            if (Minecraft.isAmbientOcclusionEnabled())
-            {
-                GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            }
-            else
-            {
-                GlStateManager.shadeModel(GL11.GL_FLAT);
-            }
-
-            worldrenderer.begin(7, DefaultVertexFormats.BLOCK);
-            worldrenderer.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
-
-            this.blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, te.getPos(), worldrenderer, false);
-
-            worldrenderer.setTranslation(0, 0, 0);
-            tessellator.draw();
-
-            RenderHelper.enableStandardItemLighting();
+        @Override
+        protected void applyEntityAttributes()
+        {
+            super.applyEntityAttributes();
+            this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60);
         }
     }
 }

@@ -51,12 +51,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.IRegistry;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -80,6 +75,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -164,7 +160,7 @@ public class ForgeHooksClient
 
     public static ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int slotID, ModelBiped _default)
     {
-        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID);
+        ModelBiped model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slotID, _default);
         return model == null ? _default : model;
     }
 
@@ -199,6 +195,12 @@ public class ForgeHooksClient
         FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.newfov;
+    }
+    
+    public static float getFOVModifier(EntityRenderer renderer, Entity entity, Block block, double renderPartialTicks, float fov) {
+        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, block, renderPartialTicks, fov);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getFOV();
     }
 
     private static int skyX, skyZ;
@@ -412,28 +414,30 @@ public class ForgeHooksClient
     public static void preDraw(EnumUsage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
         VertexFormatElement attr = format.getElement(element);
+        int count = attr.getElementCount();
+        int constant = attr.getType().getGlConstant();
         buffer.position(format.func_181720_d(element));
         switch(attrType)
         {
             case POSITION:
-                glVertexPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glVertexPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_VERTEX_ARRAY);
                 break;
             case NORMAL:
-                if(attr.getElementCount() != 3)
+                if(count != 3)
                 {
                     throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
                 }
-                glNormalPointer(attr.getType().getGlConstant(), stride, buffer);
+                glNormalPointer(constant, stride, buffer);
                 glEnableClientState(GL_NORMAL_ARRAY);
                 break;
             case COLOR:
-                glColorPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glColorPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_COLOR_ARRAY);
                 break;
             case UV:
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-                glTexCoordPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glTexCoordPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 break;
@@ -441,7 +445,7 @@ public class ForgeHooksClient
                 break;
             case GENERIC:
                 glEnableVertexAttribArray(attr.getIndex());
-                glVertexAttribPointer(attr.getIndex(), attr.getElementCount(), attr.getType().getGlConstant(), false, stride, buffer);
+                glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
                 FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
         }
@@ -575,5 +579,17 @@ public class ForgeHooksClient
     {
         if(part.isPresent()) return Optional.absent();
         return Optional.of(new TRSRTransformation(matrix));
+    }
+
+    public static void loadEntityShader(Entity entity, EntityRenderer entityRenderer)
+    {
+        if (entity != null)
+        {
+            ResourceLocation shader = ClientRegistry.getEntityShader(entity.getClass());
+            if (shader != null)
+            {
+                entityRenderer.loadShader(shader);
+            }
+        }
     }
 }

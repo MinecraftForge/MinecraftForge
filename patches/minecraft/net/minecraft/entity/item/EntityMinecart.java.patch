@@ -117,8 +117,9 @@
          }
  
 -        double d0 = 0.0078125D;
+-        BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_180460_2_.func_177229_b(blockrailbase.func_176560_l());
 +        double slopeAdjustment = getSlopeAdjustment();
-         BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_180460_2_.func_177229_b(blockrailbase.func_176560_l());
++        BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = blockrailbase.getRailDirection(field_70170_p, p_180460_1_, p_180460_2_, this);
  
          switch (blockrailbase$enumraildirection)
          {
@@ -190,6 +191,24 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
+@@ -654,7 +679,7 @@
+ 
+         if (BlockRailBase.func_176563_d(iblockstate))
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(field_70170_p, new BlockPos(i, j, k), iblockstate, this);
+             p_70495_3_ = (double)j;
+ 
+             if (blockrailbase$enumraildirection.func_177018_c())
+@@ -703,7 +728,7 @@
+ 
+         if (BlockRailBase.func_176563_d(iblockstate))
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(field_70170_p, new BlockPos(i, j, k), iblockstate, this);
+             int[][] aint = field_70500_g[blockrailbase$enumraildirection.func_177015_a()];
+             double d0 = 0.0D;
+             double d1 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
 @@ -817,13 +842,20 @@
  
      public void func_70108_f(Entity p_70108_1_)

@@ -170,7 +170,7 @@
                              int i = itemstack != null ? itemstack.field_77994_a : 0;
  
 +
-+                            boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, this.field_71441_e, blockpos, this.field_71476_x.field_178784_b).isCanceled();
++                            boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK, this.field_71441_e, blockpos, this.field_71476_x.field_178784_b, this.field_71476_x.field_72307_f).isCanceled();
 +                            if (result) { //Forge: Kept separate to simplify patch
                              if (this.field_71442_b.func_178890_a(this.field_71439_g, this.field_71441_e, itemstack, blockpos, this.field_71476_x.field_178784_b, this.field_71476_x.field_72307_f))
                              {
@@ -186,7 +186,7 @@
                  ItemStack itemstack1 = this.field_71439_g.field_71071_by.func_70448_g();
  
 -                if (itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
-+                boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, field_71441_e, null, null).isCanceled();
++                boolean result = !net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_71439_g, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, field_71441_e, null, null, null).isCanceled();
 +                if (result && itemstack1 != null && this.field_71442_b.func_78769_a(this.field_71439_g, this.field_71441_e, itemstack1))
                  {
                      this.field_71460_t.field_78516_c.func_78445_c();
