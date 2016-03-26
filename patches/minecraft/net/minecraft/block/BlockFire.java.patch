@@ -36,6 +36,15 @@
          this.field_149849_a.put(p_180686_1_, Integer.valueOf(p_180686_2_));
          this.field_149848_b.put(p_180686_1_, Integer.valueOf(p_180686_3_));
      }
+@@ -139,7 +146,7 @@
+ 
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
+-        if (p_180650_1_.func_82736_K().func_82766_b("doFireTick"))
++        if (p_180650_1_.func_82736_K().func_82766_b("doFireTick") && net.minecraftforge.common.ForgeHooks.onFireTick(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_))
+         {
+             if (!this.func_176196_c(p_180650_1_, p_180650_2_))
+             {
 @@ -147,13 +154,8 @@
              }
  

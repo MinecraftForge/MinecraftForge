@@ -90,6 +90,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.FireTickEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -937,4 +938,12 @@ public class ForgeHooks
         MovingObjectPosition movingObjectPosition = rayTraceEyes(entity, length);
         return movingObjectPosition == null ? null : movingObjectPosition.hitVec;
     }
+    
+    public static boolean onFireTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+    	FireTickEvent fte = new FireTickEvent(worldIn, pos, state, rand);
+    	MinecraftForge.EVENT_BUS.post(fte);
+    	return !fte.isCanceled();
+    }
+
 }
