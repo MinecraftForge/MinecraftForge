@@ -18,7 +18,7 @@ If you wish to use the Eclipse IDE, run gradle eclipse instead of gradle setupDe
 To get the decompiled classes:
 If you have Gradle: gradle setupDecompWorkspace
 If you DO NOT have Gradle installed:
-Windows: ./gradlew.bat setupDecompWorkspace
+Windows: gradlew.bat setupDecompWorkspace
 MacOS/Linux: ./gradlew setupDecompWorkspace
 
 For Contributors: (Note: This assumes you have Gradle installed. If you don't, use ./gradlew(.bat) instead of gradle.
