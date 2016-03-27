@@ -68,6 +68,7 @@ import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.smelting.ItemSmeltEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
@@ -519,6 +520,22 @@ public class ForgeEventFactory
             return player.worldObj.getBlockState(player.playerLocation).getBlock().isBed(player.worldObj, player.playerLocation, player);
         else
             return canContinueSleep == Result.ALLOW;
+    }
+
+    public static int[] onItemAttemptSmelt(World world, BlockPos pos, ItemStack[] smeltingItemStacks, int cookTime, int totalCookTime)
+    {
+        int[] returnTimes = new int[2];
+        ItemSmeltEvent.Pre event = new ItemSmeltEvent.Pre(world, pos, smeltingItemStacks, cookTime, totalCookTime);
+        boolean cancel = MinecraftForge.EVENT_BUS.post(event);
+        returnTimes[0] = event.getCookTime();
+        returnTimes[1] = event.getTotalCookTime();
+        if(!cancel)++returnTimes[0];
+        return returnTimes;
+    }
+
+    public static void onItemSmelted(World world, BlockPos pos, ItemStack[] smeltingItemStacks)
+    {
+        MinecraftForge.EVENT_BUS.post(new ItemSmeltEvent.Post(world, pos, smeltingItemStacks));
     }
 
 }

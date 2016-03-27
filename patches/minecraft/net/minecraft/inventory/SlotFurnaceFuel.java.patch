@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotFurnaceFuel.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnaceFuel.java
+@@ -23,6 +23,6 @@
+ 
+     public static boolean func_178173_c_(ItemStack p_178173_0_)
+     {
+-        return p_178173_0_ != null && p_178173_0_.func_77973_b() != null && p_178173_0_.func_77973_b() == Items.field_151133_ar;
++        return p_178173_0_ != null && p_178173_0_.func_77973_b() != null && net.minecraftforge.fluids.FluidContainerRegistry.isEmptyContainer(p_178173_0_);
+     }
+ }
