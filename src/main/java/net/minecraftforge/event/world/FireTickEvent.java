@@ -28,11 +28,15 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 @Cancelable
 public class FireTickEvent extends BlockEvent {
 	
-	public final Random rand;
+	private final Random rand;
 
 	public FireTickEvent(World world, BlockPos pos, IBlockState state, Random random) {
 		super(world, pos, state);
 		rand = random;
 	}
 
+	public Random getRandom()
+	{
+		return rand;
+	}
 }
