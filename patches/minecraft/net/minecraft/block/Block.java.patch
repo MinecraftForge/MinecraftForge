@@ -188,15 +188,20 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -747,6 +767,7 @@
+@@ -747,9 +767,11 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
 +    @Deprecated // Forge: Use more sensitive version below: getPickBlock
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
-         return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -844,6 +865,1168 @@
+-        return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
++        Item item = Item.func_150898_a(this);
++        return item == null ? null : new ItemStack(item, 1, this.func_180651_a(p_185473_3_));
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -844,6 +866,1168 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
