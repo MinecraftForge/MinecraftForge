@@ -65,10 +65,29 @@ public class Capability<T>
      * the fully qualified class name for the target interface.
      */
     public String getName() { return name; }
+
     /**
      * @return An instance of the default storage handler. You can safely use this store your default implementation in NBT.
      */
     public IStorage<T> getStorage() { return storage; }
+    
+    /**
+     * Quick access to the IStorage's readNBT. 
+     * See {@link IStorage#readNBT(Capability, Object, EnumFacing, NBTBase)}  for documentation.
+     */
+    public void readNBT(T instance, EnumFacing side, NBTBase nbt)
+    {
+    	storage.readNBT(this, instance, side, nbt); 
+    }
+    
+    /**
+     * Quick access to the IStorage's writeNBT. 
+     * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
+     */
+    public NBTBase writeNBT(T instance, EnumFacing side)
+    {
+    	return storage.writeNBT(this, instance, side);
+    }
 
     /**
      * A NEW instance of the default implementation.
