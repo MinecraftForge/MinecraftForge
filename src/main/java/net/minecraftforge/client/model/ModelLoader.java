@@ -818,6 +818,10 @@ public final class ModelLoader extends ModelBakery
 
         public IModel loadModel(ResourceLocation modelLocation) throws Exception
         {
+            if(modelLocation.equals(MODEL_MISSING))
+            {
+                return loader.getMissingModel();
+            }
             String modelPath = modelLocation.getResourcePath();
             if(modelLocation.getResourcePath().startsWith("models/"))
             {
