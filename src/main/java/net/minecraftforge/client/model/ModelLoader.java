@@ -714,7 +714,16 @@ public final class ModelLoader extends ModelBakery
                  * Vanilla eats this, which makes it only show variants that have models.
                  * But that doesn't help debugging, so throw the exception
                  */
-                IModel model = ModelLoaderRegistry.getModel(loc);
+                IModel model;
+                if(loc.equals(MODEL_MISSING))
+                {
+                    // explicit missing location, happens if blockstate has "model"=null
+                    model = ModelLoaderRegistry.getMissingModel();
+                }
+                else
+                {
+                    model = ModelLoaderRegistry.getModel(loc);
+                }
 
                 // FIXME: is this the place? messes up dependency and texture resolution
                 model = v.process(model);
@@ -818,7 +827,7 @@ public final class ModelLoader extends ModelBakery
 
         public IModel loadModel(ResourceLocation modelLocation) throws Exception
         {
-            if(modelLocation.equals(MODEL_MISSING))
+            if(modelLocation.equals(MODEL_MISSING) && loader.missingModel != null)
             {
                 return loader.getMissingModel();
             }
@@ -830,7 +839,12 @@ public final class ModelLoader extends ModelBakery
             ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
             ModelBlockAnimation animation = ModelBlockAnimation.loadVanillaAnimation(loader.resourceManager, armatureLocation);
             ModelBlock model = loader.loadModel(modelLocation);
-            return loader.new VanillaModelWrapper(modelLocation, model, false, animation);
+            IModel iModel = loader.new VanillaModelWrapper(modelLocation, model, false, animation);
+            if(loader.missingModel == null && modelLocation.equals(MODEL_MISSING))
+            {
+                loader.missingModel = iModel;
+            }
+            return iModel;
         }
 
         @Override
