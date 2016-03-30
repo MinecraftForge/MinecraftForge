@@ -58,7 +58,7 @@ public class BlockSnapshot implements Serializable
     {
         this.setWorld(world);
         this.dimId = world.provider.getDimension();
-        this.pos = pos.getImmutable();
+        this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
         this.registryName = new ResourceLocation(state.getBlock().getRegistryName());
         this.meta = state.getBlock().getMetaFromState(state);
@@ -82,7 +82,7 @@ public class BlockSnapshot implements Serializable
     public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, NBTTagCompound nbt)
     {
         this.dimId = dimension;
-        this.pos = pos.getImmutable();
+        this.pos = pos.toImmutable();
         this.setFlag(flag);
         this.registryName = new ResourceLocation(modId, blockName);
         this.meta = meta;
