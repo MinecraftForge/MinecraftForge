@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityArmorStand.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityArmorStand.java
+@@ -329,7 +329,7 @@
+ 
+     public boolean func_174825_a(EntityPlayer p_174825_1_, Vec3 p_174825_2_)
+     {
+-        if (!this.field_70170_p.field_72995_K && !p_174825_1_.func_175149_v())
++        if (!this.field_70170_p.field_72995_K && !p_174825_1_.func_175149_v() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.EntityInteractEvent(p_174825_1_, this)))
+         {
+             byte b0 = 0;
+             ItemStack itemstack = p_174825_1_.func_71045_bC();
