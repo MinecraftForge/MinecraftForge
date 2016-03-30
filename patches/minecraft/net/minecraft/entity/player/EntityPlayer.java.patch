@@ -202,20 +202,19 @@
  
                  if (enumhand == EnumHand.MAIN_HAND)
                  {
-@@ -1001,8 +1065,12 @@
+@@ -1001,7 +1065,10 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
+-            p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
 +            p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
 +            if (p_70665_2_ <= 0) return;
-             p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
-             p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
 +            p_70665_2_ = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, field_71071_by.field_70460_b, p_70665_1_, p_70665_2_);
 +            if (p_70665_2_ <= 0) return;
+             p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
              p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-             this.func_110149_m(this.func_110139_bj() - (f - p_70665_2_));
-@@ -1067,6 +1135,7 @@
+@@ -1067,6 +1134,7 @@
          }
          else
          {
@@ -223,7 +222,7 @@
              ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.func_77946_l() : null;
  
              if (!p_184822_1_.func_184230_a(this, p_184822_2_, p_184822_3_))
-@@ -1123,6 +1192,7 @@
+@@ -1123,6 +1191,7 @@
  
      public void func_71059_n(Entity p_71059_1_)
      {
@@ -231,7 +230,7 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1410,6 +1480,8 @@
+@@ -1410,6 +1479,8 @@
  
      public EntityPlayer.EnumStatus func_180469_a(BlockPos p_180469_1_)
      {
@@ -240,7 +239,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              if (this.func_70608_bn() || !this.func_70089_S())
-@@ -1449,9 +1521,10 @@
+@@ -1449,9 +1520,10 @@
  
          this.func_70105_a(0.2F, 0.2F);
  
@@ -254,7 +253,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1514,13 +1587,14 @@
+@@ -1514,13 +1586,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -272,7 +271,7 @@
  
              if (blockpos == null)
              {
-@@ -1529,6 +1603,10 @@
+@@ -1529,6 +1602,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -283,7 +282,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1547,14 +1625,15 @@
+@@ -1547,14 +1624,15 @@
  
      private boolean func_175143_p()
      {
@@ -302,7 +301,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1569,16 +1648,17 @@
+@@ -1569,16 +1647,17 @@
          }
          else
          {
@@ -323,7 +322,7 @@
  
              switch (enumfacing)
              {
-@@ -1618,16 +1698,24 @@
+@@ -1618,16 +1697,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -350,7 +349,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1822,6 +1910,10 @@
+@@ -1822,6 +1909,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -361,7 +360,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2022,6 +2114,18 @@
+@@ -2022,6 +2113,18 @@
          this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
@@ -380,7 +379,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -2120,7 +2224,10 @@
+@@ -2120,7 +2223,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -392,7 +391,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2129,7 +2236,7 @@
+@@ -2129,7 +2235,7 @@
  
      public float func_70047_e()
      {
@@ -401,7 +400,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2340,6 +2447,161 @@
+@@ -2340,6 +2446,161 @@
          return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
      }
  

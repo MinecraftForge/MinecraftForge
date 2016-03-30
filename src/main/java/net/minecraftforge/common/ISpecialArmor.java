@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
  */
 public interface ISpecialArmor
 {
+    //TODO: Change 'int slot' to EnumArmorType
     /**
      * Retrieves the modifiers to be used when calculating armor damage.
      *
