@@ -15,7 +15,7 @@ public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;
 
-    NoteBlockEvent(World world, BlockPos pos, IBlockState state, int note)
+    protected NoteBlockEvent(World world, BlockPos pos, IBlockState state, int note)
     {
         super(world, pos, state);
         this.noteId = note;
