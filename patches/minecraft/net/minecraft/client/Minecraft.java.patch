@@ -469,3 +469,11 @@
                                      {
                                          Minecraft.this.func_152346_Z().func_152930_t();
                                      }
+@@ -2985,6 +2918,7 @@
+                 {
+                     this.field_152353_at.func_152910_a(false);
+                 }
++                else if (this.field_71462_r instanceof GuiControls) ((GuiControls)this.field_71462_r).field_146491_f = null;
+             }
+         }
+     }
