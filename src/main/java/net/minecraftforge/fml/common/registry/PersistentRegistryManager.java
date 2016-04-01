@@ -373,7 +373,7 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.FROZEN, ValidateRegistryFunction.OPERATION);
     }
 
-    public static List<String> processIdRematches(Iterable<FMLMissingMappingsEvent.MissingMapping> missedMappings, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
+    public static List<String> processIdRematches(Iterable<FMLMissingMappingsEvent.MissingMapping> missedMappings, boolean isLocalWorld, Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
     {
         List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
@@ -398,6 +398,7 @@ public class PersistentRegistryManager
                     newName = active.getRegistry(BLOCKS, Block.class).getNameForObject((Block)remap.getTarget());
                     FMLLog.fine("The Block %s is being remapped to %s.", remap.name, newName);
 
+                    missingBlocks.remove(new ResourceLocation(remap.name));
                     newId = staging.getRegistry(BLOCKS, Block.class).add(remap.id, newName, (Block)remap.getTarget());
                     staging.getRegistry(BLOCKS, Block.class).addAlias(remap.resourceLocation, newName);
                 }
@@ -407,6 +408,7 @@ public class PersistentRegistryManager
                     newName = active.getRegistry(ITEMS, Item.class).getNameForObject((Item)remap.getTarget());
                     FMLLog.fine("The Item %s is being remapped to %s.", remap.name, newName);
 
+                    missingItems.remove(new ResourceLocation(remap.name));
                     newId = staging.getRegistry(ITEMS, Item.class).add(remap.id, newName, (Item)remap.getTarget());
                     staging.getRegistry(ITEMS, Item.class).addAlias(remap.resourceLocation, newName);
                 }
