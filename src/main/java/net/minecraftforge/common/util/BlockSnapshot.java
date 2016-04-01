@@ -38,7 +38,7 @@ public class BlockSnapshot implements Serializable
         this.dimId = world.provider.getDimension();
         this.pos = pos;
         this.setReplacedBlock(state);
-        this.registryName = new ResourceLocation(state.getBlock().getRegistryName());
+        this.registryName = state.getBlock().getRegistryName();
         this.meta = state.getBlock().getMetaFromState(state);
         this.setFlag(3);
         TileEntity te = world.getTileEntity(pos);
@@ -60,7 +60,7 @@ public class BlockSnapshot implements Serializable
         this.dimId = world.provider.getDimension();
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
-        this.registryName = new ResourceLocation(state.getBlock().getRegistryName());
+        this.registryName = state.getBlock().getRegistryName();
         this.meta = state.getBlock().getMetaFromState(state);
         this.setFlag(3);
         this.nbt = nbt;

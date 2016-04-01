@@ -48,7 +48,7 @@ import com.google.common.eventbus.Subscribe;
  * @author cpw
  *
  */
-public class FMLContainer extends DummyModContainer implements WorldAccessContainer
+public final class FMLContainer extends DummyModContainer implements WorldAccessContainer
 {
     public FMLContainer()
     {

@@ -1,8 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -58,8 +58,8 @@
+@@ -56,10 +56,10 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
- public class Item
+-public class Item
++public class Item extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Item>
  {
 -    public static final RegistryNamespaced<ResourceLocation, Item> field_150901_e = new RegistryNamespaced();
 -    private static final Map<Block, Item> field_179220_a = Maps.<Block, Item>newHashMap();
@@ -11,17 +14,7 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -104,6 +104,9 @@
-     private Item field_77700_c;
-     private String field_77774_bZ;
- 
-+    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate =
-+            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_150901_e).getDelegate(this, Item.class);
-+
-     public static int func_150891_b(Item p_150891_0_)
-     {
-         return p_150891_0_ == null ? 0 : field_150901_e.func_148757_b(p_150891_0_);
-@@ -192,6 +195,7 @@
+@@ -192,6 +192,7 @@
          return p_77654_1_;
      }
  
@@ -29,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -312,6 +316,7 @@
+@@ -312,6 +313,7 @@
          return this.field_77700_c;
      }
  
@@ -37,7 +30,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -367,7 +372,7 @@
+@@ -367,7 +369,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -46,7 +39,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -385,6 +390,10 @@
+@@ -385,6 +387,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -57,7 +50,7 @@
          Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
-@@ -422,11 +431,606 @@
+@@ -422,11 +428,557 @@
          return false;
      }
  
@@ -575,55 +568,6 @@
 +        return !oldStack.equals(newStack); //!ItemStack.areItemStacksEqual(oldStack, newStack);
 +    }
 +
-+    private ResourceLocation registryName = null;
-+    /**
-+     * Sets a unique name for this Item. This should be used for uniquely identify the instance of the Item.
-+     * This is the valid replacement for the atrocious 'getUnlocalizedName().substring(6)' stuff that everyone does.
-+     * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
-+     *
-+     * The supplied name will be prefixed with the currently active mod's modId.
-+     * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
-+     *
-+     * If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.
-+     *
-+     * Returns 'this' to allow for chaining.
-+     *
-+     * @param name Unique registry name
-+     * @return This instance
-+     */
-+    public final Item setRegistryName(String name)
-+    {
-+        if (getRegistryName() != null)
-+            throw new IllegalStateException("Attempted to set registry name on block with exisiting registry name! New: " + name + " Old: " + getRegistryName());
-+        int index = name.lastIndexOf(':');
-+        String oldPrefix = index == -1 ? "" : name.substring(0, index);
-+        name = index == -1 ? name : name.substring(index + 1);
-+        net.minecraftforge.fml.common.ModContainer mc = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String prefix = mc == null ? "minecraft" : mc.getModId();
-+        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
-+        {
-+            net.minecraftforge.fml.common.FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", oldPrefix, name);
-+            prefix = oldPrefix;
-+        }
-+        this.registryName = new ResourceLocation(prefix, name);
-+        return this;
-+    }
-+    public final Item setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
-+    public final Item setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-+
-+    /**
-+     * A unique identifier for this block, if this block is registered in the game registry it will return that name.
-+     * Otherwise it will return the name set in setRegistryName().
-+     * If neither are valid null is returned.
-+     *
-+     * @return Unique identifier or null.
-+     */
-+    public final String getRegistryName()
-+    {
-+        if (delegate.getResourceName() != null) return delegate.getResourceName().toString();
-+        return registryName != null ? registryName.toString() : null;
-+    }
-+
 +    /**
 +     * Called from ItemStack.setItem, will hold extra data for the life of this ItemStack.
 +     * Can be retrieved from stack.getCapabilities()
@@ -664,7 +608,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -935,6 +1539,10 @@
+@@ -935,6 +1487,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -675,7 +619,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -969,9 +1577,36 @@
+@@ -969,9 +1525,36 @@
              return this.field_78008_j;
          }
  

@@ -51,7 +51,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -128,14 +127,19 @@ public class GameRegistry
         sortedGeneratorList = ImmutableList.copyOf(list);
     }
 
+    public static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation location)
+    {
+        return GameData.register(object, location);
+    }
     /**
      * Register an item with the item registry with a the name specified in Item.getRegistryName()
      *
      * @param item The item to register
      */
+    @Deprecated
     public static void registerItem(Item item)
     {
-        registerItem(item, item.getRegistryName());
+        registerItem(item, item.getRegistryName().toString());
     }
 
     /**
@@ -144,6 +148,7 @@ public class GameRegistry
      * @param item The item to register
      * @param name The mod-unique name of the item
      */
+    @Deprecated
     public static void registerItem(Item item, String name)
     {
         if (Strings.isNullOrEmpty(name))
@@ -151,20 +156,6 @@ public class GameRegistry
             throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
         }
         GameData.getMain().registerItem(item, name);
-    }
-
-    /**
-     * Register the specified Item with a mod specific name : overrides the standard type based name
-     *
-     * @param item  The item to register
-     * @param name  The mod-unique name to register it as - null will remove a custom name
-     * @param modId deprecated, unused
-     */
-    @Deprecated // See version without modID remove in 1.9
-    public static Item registerItem(Item item, String name, String modId)
-    {
-        registerItem(item, name);
-        return item;
     }
 
     /**
@@ -188,9 +179,10 @@ public class GameRegistry
      *
      * @param block The block to register
      */
+    @Deprecated
     public static Block registerBlock(Block block)
     {
-        return registerBlock(block, block.getRegistryName());
+        return registerBlock(block, block.getRegistryName().toString());
     }
 
     /**
@@ -199,6 +191,7 @@ public class GameRegistry
      * @param block The block to register
      * @param name  The mod-unique name to register it as, will get prefixed by your modid.
      */
+    @Deprecated
     public static Block registerBlock(Block block, String name)
     {
         return registerBlock(block, ItemBlock.class, name);
@@ -210,6 +203,7 @@ public class GameRegistry
      * @param block     The block to register
      * @param itemclass The item type to register with it : null registers a block without associated item.
      */
+    @Deprecated
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass)
     {
         return registerBlock(block, itemclass, block.getRegistryName());
@@ -222,6 +216,7 @@ public class GameRegistry
      * @param itemclass The item type to register with it : null registers a block without associated item.
      * @param name      The mod-unique name to register it as, will get prefixed by your modid.
      */
+    @Deprecated
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
     {
         return registerBlock(block, itemclass, name, new Object[] {});
@@ -235,9 +230,10 @@ public class GameRegistry
      * @param itemclass    The item type to register with it : null registers a block without associated item.
      * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
+    @Deprecated
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs)
     {
-        return registerBlock(block, itemclass, block.getRegistryName(), itemCtorArgs);
+        return registerBlock(block, itemclass, block.getRegistryName().toString(), itemCtorArgs);
     }
 
     /**
@@ -248,6 +244,7 @@ public class GameRegistry
      * @param name         The mod-unique name to register it as, will get prefixed by your modid.
      * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
+    @Deprecated
     public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
     {
         if (Strings.isNullOrEmpty(name))
@@ -371,6 +368,7 @@ public class GameRegistry
      * @param name  The name of the block itself
      * @return The block or null if not found
      */
+    @Deprecated
     public static Block findBlock(String modId, String name)
     {
         return GameData.findBlock(modId, name);
@@ -383,6 +381,7 @@ public class GameRegistry
      * @param name  The name of the item itself
      * @return The item or null if not found
      */
+    @Deprecated
     public static Item findItem(String modId, String name)
     {
         return GameData.findItem(modId, name);

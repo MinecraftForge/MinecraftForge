@@ -1,7 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -46,8 +46,9 @@
- public class Block
+@@ -43,11 +43,12 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class Block
++public class Block extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Block>
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
 -    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey(field_176230_a);
@@ -12,17 +16,7 @@
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      public static final AxisAlignedBB field_185506_k = null;
      private CreativeTabs field_149772_a;
-@@ -70,6 +71,9 @@
-     private IBlockState field_176228_M;
-     private String field_149770_b;
- 
-+    public final net.minecraftforge.fml.common.registry.RegistryDelegate<Block> delegate =
-+            ((net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry)field_149771_c).getDelegate(this, Block.class);
-+
-     public static int func_149682_b(Block p_149682_0_)
-     {
-         return field_149771_c.func_148757_b(p_149682_0_);
-@@ -83,7 +87,8 @@
+@@ -83,7 +84,8 @@
  
      public static Block func_149729_e(int p_149729_0_)
      {
@@ -32,7 +26,7 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
-@@ -268,7 +273,7 @@
+@@ -268,7 +270,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
      {
@@ -41,7 +35,7 @@
      }
  
      public Block func_149711_c(float p_149711_1_)
-@@ -305,9 +310,10 @@
+@@ -305,9 +307,10 @@
          return this.field_149789_z;
      }
  
@@ -53,7 +47,7 @@
      }
  
      public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
-@@ -346,13 +352,13 @@
+@@ -346,13 +349,13 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
@@ -69,7 +63,7 @@
          }
          else
          {
-@@ -415,7 +421,7 @@
+@@ -415,7 +418,7 @@
                  }
          }
  
@@ -78,7 +72,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -472,6 +478,10 @@
+@@ -472,6 +475,10 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -89,7 +83,7 @@
      }
  
      public int func_149745_a(Random p_149745_1_)
-@@ -486,8 +496,7 @@
+@@ -486,8 +493,7 @@
  
      public float func_180647_a(IBlockState p_180647_1_, EntityPlayer p_180647_2_, World p_180647_3_, BlockPos p_180647_4_)
      {
@@ -99,7 +93,7 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -497,20 +506,16 @@
+@@ -497,20 +503,16 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -125,7 +119,7 @@
                  }
              }
          }
-@@ -518,8 +523,13 @@
+@@ -518,8 +520,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -140,7 +134,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -588,7 +598,7 @@
+@@ -588,7 +595,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -149,7 +143,7 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, ItemStack p_180639_6_, EnumFacing p_180639_7_, float p_180639_8_, float p_180639_9_, float p_180639_10_)
-@@ -638,25 +648,35 @@
+@@ -638,25 +645,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.025F);
  
@@ -188,20 +182,15 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -747,9 +767,11 @@
+@@ -747,6 +764,7 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
 +    @Deprecated // Forge: Use more sensitive version below: getPickBlock
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
--        return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-+        Item item = Item.func_150898_a(this);
-+        return item == null ? null : new ItemStack(item, 1, this.func_180651_a(p_185473_3_));
-     }
- 
-     @SideOnly(Side.CLIENT)
-@@ -844,6 +866,1191 @@
+         return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
+@@ -844,6 +862,1120 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1286,23 +1275,11 @@
 +
 +     /**
 +     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
-+     * 
-+     * @deprecated New method with state sensitivity: {@link #canRenderInLayer(IBlockState, BlockRenderLayer)}
++     * ISmartBlockModel can use MinecraftForgeClient.getRenderLayer to alter their model based on layer
 +     */
-+    @Deprecated
 +    public boolean canRenderInLayer(BlockRenderLayer layer)
 +    {
 +        return func_180664_k() == layer;
-+    }
-+    
-+     /**
-+     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
-+     */
-+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
-+    {
-+        return canRenderInLayer(layer);
 +    }
 +
 +    // For Internal use only to capture droped items inside getDrops
@@ -1329,65 +1306,6 @@
 +        }
 +    }
 +
-+    private ResourceLocation registryName = null;
-+    /**
-+     * Sets a unique name for this Block. This should be used for uniquely identify the instance of the Block.
-+     * This is the valid replacement for the atrocious 'getUnlocalizedName().substring(6)' stuff that everyone does.
-+     * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
-+     *
-+     * The supplied name will be prefixed with the currently active mod's modId.
-+     * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
-+     *
-+     * If a name already exists, or this Block is already registered in a registry, then an IllegalStateException is thrown.
-+     *
-+     * Returns 'this' to allow for chaining.
-+     *
-+     * @param name Unique registry name
-+     * @return This instance
-+     */
-+    public final Block setRegistryName(String name)
-+    {
-+        if (getRegistryName() != null)
-+            throw new IllegalStateException("Attempted to set registry name on block with exisiting registry name! New: " + name + " Old: " + getRegistryName());
-+        int index = name.lastIndexOf(':');
-+        String oldPrefix = index == -1 ? "" : name.substring(0, index);
-+        name = index == -1 ? name : name.substring(index + 1);
-+        net.minecraftforge.fml.common.ModContainer mc = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
-+        String prefix = mc == null ? "minecraft" : mc.getModId();
-+        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
-+        {
-+            net.minecraftforge.fml.common.FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", oldPrefix, name);
-+            prefix = oldPrefix;
-+        }
-+        this.registryName = new ResourceLocation(prefix, name);
-+        return this;
-+    }
-+    public final Block setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
-+    public final Block setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-+
-+    /**
-+     * A unique identifier for this block, if this block is registered in the game registry it will return that name.
-+     * Otherwise it will return the name set in setRegistryName().
-+     * If neither are valid null is returned.
-+     *
-+     * @return Unique identifier or null.
-+     */
-+    public final String getRegistryName()
-+    {
-+        if (delegate.getResourceName() != null) return delegate.getResourceName().toString();
-+        return registryName != null ? registryName.toString() : null;
-+    }
-+
-+    /**
-+     * Add information to the blocks tooltip, called from the default implementation of {@link ItemBlock#addInformation(ItemStack, EntityPlayer, List, boolean)}
-+     * @param stack The stack the tooltip is being retrieved for
-+     * @param player The player retrieving the tooltip
-+     * @param tooltip The lines to be displayed on the tooltip
-+     * @param advanced If the client has advanced debug tooltips enabled
-+     */
-+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
-+    {
-+    }
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()

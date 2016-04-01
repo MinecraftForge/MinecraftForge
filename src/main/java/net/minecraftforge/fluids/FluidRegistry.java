@@ -433,13 +433,7 @@ public abstract class FluidRegistry
         }
 
         @Override
-        public String name()
-        {
-            return name;
-        }
-
-        @Override
-        public ResourceLocation getResourceName() {
+        public ResourceLocation name() {
             return new ResourceLocation(name);
         }
 

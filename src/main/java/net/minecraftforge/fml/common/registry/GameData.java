@@ -14,6 +14,7 @@ package net.minecraftforge.fml.common.registry;
 
 import java.util.Map;
 
+import com.google.common.collect.HashBiMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -27,7 +28,6 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
 public class GameData
 {
@@ -35,12 +35,22 @@ public class GameData
     static final int MAX_BLOCK_ID = 4095;
     static final int MIN_ITEM_ID = 4096;
     static final int MAX_ITEM_ID = 31999;
-    public static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
-    public static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
-    public static final int MIN_BIOME_ID = 0; // 0-~31 are vanilla, forge start at 32
-    public static final int MAX_BIOME_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
+    static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
+    static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
+    static final int MIN_BIOME_ID = 0; // 0-~31 are vanilla, forge start at 32
+    static final int MAX_BIOME_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
+    private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
+    private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
 
     private static final GameData mainData = new GameData();
+
+    public GameData()
+    {
+        iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MIN_BLOCK_ID, MAX_BLOCK_ID, true, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE);
+        iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
+        iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE);
+        iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, BiomeGenBase.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE);
+    }
     // public api
 
     /**
@@ -96,10 +106,10 @@ public class GameData
     }
 
     // internal registry objects
-    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MAX_BLOCK_ID, MIN_BLOCK_ID, true, BlockStateCapture.INSTANCE);
-    private final FMLControlledNamespacedRegistry<Item> iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MAX_ITEM_ID, MIN_ITEM_ID, true, ItemBlockCapture.INSTANCE);
-    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MAX_POTION_ID, MIN_POTION_ID, false, PotionArrayCapture.INSTANCE);
-    private final FMLControlledNamespacedRegistry<BiomeGenBase> iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, BiomeGenBase.class, null, MAX_BIOME_ID, MIN_BIOME_ID, false, BiomeCapture.INSTANCE);
+    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
+    private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
+    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry;
+    private final FMLControlledNamespacedRegistry<BiomeGenBase> iBiomeRegistry;
 
     int registerItem(Item item, String name) // from GameRegistry
     {
@@ -152,42 +162,45 @@ public class GameData
     void registerSubstitutionAlias(String name, GameRegistry.Type type, Object toReplace) throws ExistingSubstitutionException
     {
         ResourceLocation nameToSubstitute = new ResourceLocation(name);
+        final BiMap<Block, Item> blockItemMap = getBlockItemMap();
         if (type == GameRegistry.Type.BLOCK)
         {
             iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
             Block orig = iBlockRegistry.activateSubstitution(nameToSubstitute);
-            if (BLOCK_TO_ITEM.containsKey(orig))
+            if (blockItemMap.containsKey(orig))
             {
-                Item i = BLOCK_TO_ITEM.get(orig);
-                BLOCK_TO_ITEM.forcePut((Block)toReplace,i);
+                Item i = blockItemMap.get(orig);
+                blockItemMap.forcePut((Block)toReplace,i);
             }
         }
         else if (type == GameRegistry.Type.ITEM)
         {
             iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
             Item orig = iItemRegistry.activateSubstitution(nameToSubstitute);
-            if (BLOCK_TO_ITEM.containsValue(orig))
+            if (blockItemMap.containsValue(orig))
             {
-                Block b = BLOCK_TO_ITEM.inverse().get(orig);
-                BLOCK_TO_ITEM.forcePut(b, (Item)toReplace);
+                Block b = blockItemMap.inverse().get(orig);
+                blockItemMap.forcePut(b, (Item)toReplace);
             }
         }
     }
 
-    private static BiMap<Block, Item> BLOCK_TO_ITEM = HashBiMap.create();
-
-    //Internal: DO NOT USE, will change without warning.
-    public static Map<Block, Item> getBlockItemMap()
+    @SuppressWarnings("unchecked")
+    public static BiMap<Block,Item> getBlockItemMap()
     {
-        return BLOCK_TO_ITEM;
+        return (BiMap<Block,Item>)getMain().iItemRegistry.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+    }
+    static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation location)
+    {
+        final IForgeRegistry<K> registry = PersistentRegistryManager.findRegistry(object);
+        registry.register(object);
+        return object;
     }
 
-    private static ClearableObjectIntIdentityMap<IBlockState> BLOCKSTATE_TO_ID = new ClearableObjectIntIdentityMap<IBlockState>();
-
-    //Internal: DO NOT USE, will change without warning.
-    public static ClearableObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
+    @SuppressWarnings("unchecked")
+    public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
     {
-        return BLOCKSTATE_TO_ID;
+        return (ObjectIntIdentityMap<IBlockState>)getMain().iBlockRegistry.getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -200,55 +213,115 @@ public class GameData
         }
     }
 
-    public <T> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
+    public <T extends IForgeRegistryEntry<T>> RegistryDelegate<T> makeDelegate(T obj, Class<T> rootClass)
     {
         return PersistentRegistryManager.makeDelegate(obj, rootClass);
     }
 
-    private static class BlockStateCapture implements FMLControlledNamespacedRegistry.AddCallback<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>,IForgeRegistry.ClearCallback<Block>,IForgeRegistry.CreateCallback<Block>
     {
-        static final BlockStateCapture INSTANCE = new BlockStateCapture();
+        static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
+        @SuppressWarnings("unchecked")
         @Override
-        public void onAdd(Block block, int blockId)
+        public void onAdd(Block block, int blockId, Map<ResourceLocation,?> slaves)
         {
+            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = (ClearableObjectIntIdentityMap<IBlockState>)slaves.get(BLOCKSTATE_TO_ID);
             for (IBlockState state : block.getBlockState().getValidStates())
             {
-                GameData.BLOCKSTATE_TO_ID.put(state, blockId << 4 | block.getMetaFromState(state));
+                blockstateMap.put(state, blockId << 4 | block.getMetaFromState(state));
             }
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onClear(Map<ResourceLocation, ?> slaveset)
+        {
+            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = (ClearableObjectIntIdentityMap<IBlockState>)slaveset.get(BLOCKSTATE_TO_ID);
+            blockstateMap.clear();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        {
+            final ClearableObjectIntIdentityMap<Block> idMap = new ClearableObjectIntIdentityMap<Block>();
+            ((Map<ResourceLocation,Object>)slaveset).put(BLOCKSTATE_TO_ID, idMap);
+
         }
     }
 
-    private static class ItemBlockCapture implements FMLControlledNamespacedRegistry.AddCallback<Item>
+    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>,IForgeRegistry.ClearCallback<Item>,IForgeRegistry.CreateCallback<Item>
     {
-        static final ItemBlockCapture INSTANCE = new ItemBlockCapture();
+        static final ItemCallbacks INSTANCE = new ItemCallbacks();
 
         @Override
-        public void onAdd(Item item, int blockId)
+        public void onAdd(Item item, int blockId, Map<ResourceLocation, ?> slaves)
         {
             if (item instanceof ItemBlock)
             {
                 ItemBlock itemBlock = (ItemBlock)item;
-                BLOCK_TO_ITEM.forcePut(itemBlock.getBlock().delegate.get(), item);
+                @SuppressWarnings("unchecked") BiMap<Block, Item> blockToItem = (BiMap<Block, Item>)slaves.get(BLOCK_TO_ITEM);
+                blockToItem.forcePut(itemBlock.getBlock().delegate.get(), item);
             }
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onClear(Map<ResourceLocation, ?> slaveset)
+        {
+            Map<Block,Item> map = (Map<Block, Item>)slaveset.get(BLOCK_TO_ITEM);
+            map.clear();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        {
+            final HashBiMap<Block, Item> map = HashBiMap.create();
+            ((Map<ResourceLocation,Object>)slaveset).put(BLOCK_TO_ITEM, map);
         }
     }
 
-    private static class PotionArrayCapture implements FMLControlledNamespacedRegistry.AddCallback<Potion>
+    private static class PotionCallbacks implements IForgeRegistry.AddCallback<Potion>,IForgeRegistry.ClearCallback<Potion>,IForgeRegistry.CreateCallback<Potion>
     {
-        static final PotionArrayCapture INSTANCE = new PotionArrayCapture();
+        static final PotionCallbacks INSTANCE = new PotionCallbacks();
 
         @Override
-        public void onAdd(Potion potion, int id) {
+        public void onAdd(Potion potion, int id, Map<ResourceLocation, ?> slaves) {
+            // no op for the minute?
+        }
+
+        @Override
+        public void onClear(Map<ResourceLocation, ?> slaveset)
+        {
+            // no op for the minute?
+        }
+
+        @Override
+        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        {
             // no op for the minute?
         }
     }
-    private static class BiomeCapture implements FMLControlledNamespacedRegistry.AddCallback<BiomeGenBase>
+    private static class BiomeCallbacks implements IForgeRegistry.AddCallback<BiomeGenBase>,IForgeRegistry.ClearCallback<BiomeGenBase>,IForgeRegistry.CreateCallback<BiomeGenBase>
     {
-        static final BiomeCapture INSTANCE = new BiomeCapture();
+        static final BiomeCallbacks INSTANCE = new BiomeCallbacks();
 
         @Override
-        public void onAdd(BiomeGenBase potion, int id) {
+        public void onAdd(BiomeGenBase potion, int id, Map<ResourceLocation, ?> slaves) {
+            // no op for the minute?
+        }
+
+        @Override
+        public void onClear(Map<ResourceLocation, ?> slaveset)
+        {
+            // no op for the minute?
+        }
+
+        @Override
+        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        {
             // no op for the minute?
         }
     }
