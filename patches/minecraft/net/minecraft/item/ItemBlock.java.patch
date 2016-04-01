@@ -27,7 +27,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -159,4 +151,26 @@
+@@ -159,4 +151,32 @@
      {
          return this.field_150939_a;
      }
@@ -52,5 +52,11 @@
 +        }
 +
 +        return true;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
++    {
++        field_150939_a.addInformation(stack, playerIn, tooltip, advanced);
 +    }
  }
