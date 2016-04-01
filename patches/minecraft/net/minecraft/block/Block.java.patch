@@ -201,7 +201,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -844,6 +866,1179 @@
+@@ -844,6 +866,1191 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1286,11 +1286,23 @@
 +
 +     /**
 +     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use MinecraftForgeClient.getRenderLayer to alter their model based on layer
++     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
++     * 
++     * @deprecated New method with state sensitivity: {@link #canRenderInLayer(IBlockState, BlockRenderLayer)}
 +     */
++    @Deprecated
 +    public boolean canRenderInLayer(BlockRenderLayer layer)
 +    {
 +        return func_180664_k() == layer;
++    }
++    
++     /**
++     * Queries if this block should render in a given layer.
++     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
++     */
++    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
++    {
++        return canRenderInLayer(layer);
 +    }
 +
 +    // For Internal use only to capture droped items inside getDrops
