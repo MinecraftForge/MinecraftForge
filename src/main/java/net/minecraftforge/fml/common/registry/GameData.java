@@ -44,11 +44,11 @@ public class GameData
     private static final int MIN_BIOME_ID = 0;
     private static final int MAX_BIOME_ID = 255; // Maximum number in a byte in the chunk
     private static final int MIN_SOUND_ID = 0; // Varint
-    private static final int MAX_SOUND_ID = Integer.MAX_VALUE; // Varint (SPacketSoundEffect)
+    private static final int MAX_SOUND_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSoundEffect)
     private static final int MIN_POTIONTYPE_ID = 0; // Int
-    private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE; // Int (SPacketEffect)
+    private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MIN_ENCHANTMENT_ID = 0; // Int
-    private static final int MAX_ENCHANTMENT_ID = Integer.MAX_VALUE; // Int - not serialized as an ID?
+    private static final int MAX_ENCHANTMENT_ID = Integer.MAX_VALUE >> 5; // Int - not serialized as an ID?
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
