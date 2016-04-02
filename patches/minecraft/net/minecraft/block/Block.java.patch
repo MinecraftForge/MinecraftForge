@@ -182,15 +182,20 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -747,6 +764,7 @@
+@@ -747,9 +764,11 @@
          p_176216_2_.field_70181_x = 0.0D;
      }
  
 +    @Deprecated // Forge: Use more sensitive version below: getPickBlock
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
-         return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
-@@ -844,6 +862,1120 @@
+-        return new ItemStack(Item.func_150898_a(this), 1, this.func_180651_a(p_185473_3_));
++        Item item = Item.func_150898_a(this);
++        return item == null ? null : new ItemStack(item, 1, this.func_180651_a(p_185473_3_));
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -844,6 +863,1141 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1275,13 +1280,24 @@
 +
 +     /**
 +     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use MinecraftForgeClient.getRenderLayer to alter their model based on layer
++     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
++     *
++     * @deprecated New method with state sensitivity: {@link #canRenderInLayer(IBlockState, BlockRenderLayer)}
 +     */
++    @Deprecated
 +    public boolean canRenderInLayer(BlockRenderLayer layer)
 +    {
 +        return func_180664_k() == layer;
 +    }
 +
++     /**
++     * Queries if this block should render in a given layer.
++     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
++     */
++    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
++    {
++        return canRenderInLayer(layer);
++    }
 +    // For Internal use only to capture droped items inside getDrops
 +    protected static ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
 +    {
@@ -1306,6 +1322,16 @@
 +        }
 +    }
 +
++    /**
++     * Add information to the blocks tooltip, called from the default implementation of {@link ItemBlock#addInformation(ItemStack, EntityPlayer, List, boolean)}
++     * @param stack The stack the tooltip is being retrieved for
++     * @param player The player retrieving the tooltip
++     * @param tooltip The lines to be displayed on the tooltip
++     * @param advanced If the client has advanced debug tooltips enabled
++     */
++    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
++    {
++    }
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
