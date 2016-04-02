@@ -60,6 +60,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class GameRegistry
 {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
@@ -127,9 +128,34 @@ public class GameRegistry
         sortedGeneratorList = ImmutableList.copyOf(list);
     }
 
-    public static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation location)
+    /**
+     * Register the previously named {@link IForgeRegistry} object with the registry system.
+     * Always ensure the object is already named using {@link IForgeRegistryEntry#setRegistryName(ResourceLocation)}
+     * or another mechanism.
+     *
+     * @param object The object to register with a registry
+     * @param <K> The registry supertype
+     * @throws IllegalArgumentException if the object is not yet named (use {@link #register(IForgeRegistryEntry, ResourceLocation)} instead)
+     * @return The object
+     */
+    public static <K extends IForgeRegistryEntry<K>> K register(K object)
     {
-        return GameData.register(object, location);
+        return GameData.register(object);
+    }
+
+    /**
+     * Register the unnamed {@link IForgeRegistry} object with the registry system.
+     * Always make sure you have not previously named the object.
+     *
+     * @param object The object to register
+     * @param name The name to register it with
+     * @param <K> The registry supertype
+     * @throws IllegalStateException if the object already has an existing name (use {@link #register(IForgeRegistryEntry)} instead)
+     * @return The object
+     */
+    public static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation name)
+    {
+        return GameData.register(object, name);
     }
     /**
      * Register an item with the item registry with a the name specified in Item.getRegistryName()

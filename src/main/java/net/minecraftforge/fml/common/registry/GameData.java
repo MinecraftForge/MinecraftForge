@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
+import org.apache.logging.log4j.Level;
 
 public class GameData
 {
@@ -211,6 +212,27 @@ public class GameData
     }
     static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation location)
     {
+        if (object == null)
+        {
+            FMLLog.getLogger().log(Level.ERROR, "Attempt to register a null object");
+            throw new NullPointerException("Attempt to register a null object");
+        }
+        object.setRegistryName(location);
+        return register(object);
+    }
+
+    static <K extends IForgeRegistryEntry<K>> K register(K object)
+    {
+        if (object == null)
+        {
+            FMLLog.getLogger().log(Level.ERROR, "Attempt to register a null object");
+            throw new NullPointerException("Attempt to register a null object");
+        }
+        if (object.getRegistryName() == null)
+        {
+            FMLLog.getLogger().log(Level.ERROR, "Attempt to register object without having set a registry name {} (type {})", object, object.getClass().getName());
+            throw new IllegalArgumentException(String.format("No registry name set for object %s (%s)", object, object.getClass().getName()));
+        }
         final IForgeRegistry<K> registry = PersistentRegistryManager.findRegistry(object);
         registry.register(object);
         return object;
