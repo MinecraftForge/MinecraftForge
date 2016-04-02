@@ -139,10 +139,10 @@ public class PersistentRegistryManager
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, addCallback, clearCallback, createCallback);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> findRegistry(IForgeRegistryEntry<?> entry)
     {
-        final Class<V> registryType = (Class<V>)entry.getRegistryType();
+        final Class<V> registryType = (Class<V>)(Class)entry.getRegistryType();
         final FMLControlledNamespacedRegistry<V> registry = PersistentRegistry.ACTIVE.getRegistry(registryType);
         if (registry == null)
         {
