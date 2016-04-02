@@ -244,6 +244,11 @@ public class GameData
         return (ObjectIntIdentityMap<IBlockState>)getMain().iBlockRegistry.getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
     }
 
+    public static void vanillaSnapshot()
+    {
+        PersistentRegistryManager.freezeVanilla();
+    }
+
     //Lets us clear the map so we can rebuild it.
     static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
     {

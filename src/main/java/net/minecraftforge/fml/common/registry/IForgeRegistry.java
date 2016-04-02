@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @param <V> The top level type for the registry
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
     public Class<V> getRegistrySuperType();

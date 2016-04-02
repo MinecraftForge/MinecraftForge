@@ -388,6 +388,19 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.FROZEN, ValidateRegistryFunction.OPERATION);
     }
 
+    public static void freezeVanilla()
+    {
+        FMLLog.fine("Creating vanilla freeze snapshot");
+        for (Map.Entry<ResourceLocation, FMLControlledNamespacedRegistry<?>> r : PersistentRegistry.ACTIVE.registries.entrySet())
+        {
+            // This has to be performed prior to invoking the method so the compiler can precompute the type bounds for the method
+            final Class<? extends IForgeRegistryEntry> registrySuperType = PersistentRegistry.ACTIVE.getRegistrySuperType(r.getKey());
+            loadRegistry(r.getKey(), PersistentRegistry.ACTIVE, PersistentRegistry.VANILLA, registrySuperType);
+        }
+        forAllRegistries(PersistentRegistry.VANILLA, ValidateRegistryFunction.OPERATION);
+        FMLLog.fine("Vanilla freeze snapshot created");
+    }
+
     public static List<String> processIdRematches(Iterable<FMLMissingMappingsEvent.MissingMapping> missedMappings, boolean isLocalWorld, Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
     {
         List<String> failed = Lists.newArrayList();
