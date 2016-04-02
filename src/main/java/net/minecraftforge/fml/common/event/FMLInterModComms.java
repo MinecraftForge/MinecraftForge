@@ -16,6 +16,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -130,6 +131,15 @@ public class FMLInterModComms {
         public String getStringValue()
         {
             return (String) value;
+        }
+        /**
+         * Get the ResourceLocation value from this message.
+         * @throws ClassCastException if this message doesn't contain a ResourceLocation value
+         * @return The string value
+         */
+        public ResourceLocation getResourceLocationValue()
+        {
+            return (ResourceLocation) value;
         }
 
         /**
@@ -246,6 +256,18 @@ public class FMLInterModComms {
      * Send a startup time message
      * @param modId The modid to send it to
      * @param key The mod specific key
+     * @param value A ResourceLocation value
+     * @return if the message was enqueued successfully and will be processed during startup
+     */
+    public static boolean sendMessage(String modId, String key, ResourceLocation value)
+    {
+        return enqueueStartupMessage(modId, new IMCMessage(key, value));
+    }
+
+    /**
+     * Send a startup time message
+     * @param modId The modid to send it to
+     * @param key The mod specific key
      * @param value A String value
      * @return if the message was enqueued successfully and will be processed during startup
      */
@@ -253,7 +275,6 @@ public class FMLInterModComms {
     {
         return enqueueStartupMessage(modId, new IMCMessage(key, value));
     }
-
     /**
      * Send a startup time function message
      * @param modId The modid to send it to
@@ -303,6 +324,17 @@ public class FMLInterModComms {
         enqueueMessage(sourceMod, modId, new IMCMessage(key, value));
     }
 
+    /**
+     * Send a post-startup message
+     * @param sourceMod The mod sending the message
+     * @param modId The modid to send it to
+     * @param key The mod specific key
+     * @param value A string value
+     */
+    public static void sendRuntimeMessage(Object sourceMod, String modId, String key, ResourceLocation value)
+    {
+        enqueueMessage(sourceMod, modId, new IMCMessage(key, value));
+    }
     /**
      * Send a post-startup function message.
      *
