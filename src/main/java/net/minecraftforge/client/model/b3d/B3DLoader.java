@@ -722,6 +722,7 @@ public enum B3DLoader implements ICustomModelLoader
                 for(Face f : faces)
                 {
                     UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
+                    quadBuilder.setContractUVs(true);
                     quadBuilder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
                     List<Texture> textures = null;
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();

@@ -70,6 +70,17 @@
          this.func_178404_a(p_188015_1_, j, p_188015_2_, vector3f, i, p_188015_6_, p_188015_4_);
      }
  
+@@ -139,8 +155,8 @@
+         p_178404_1_[i + 1] = Float.floatToRawIntBits(p_178404_4_.y);
+         p_178404_1_[i + 2] = Float.floatToRawIntBits(p_178404_4_.z);
+         p_178404_1_[i + 3] = p_178404_5_;
+-        p_178404_1_[i + 4] = Float.floatToRawIntBits(p_178404_6_.func_94214_a((double)p_178404_7_.func_178348_a(p_178404_3_)));
+-        p_178404_1_[i + 4 + 1] = Float.floatToRawIntBits(p_178404_6_.func_94207_b((double)p_178404_7_.func_178346_b(p_178404_3_)));
++        p_178404_1_[i + 4] = Float.floatToRawIntBits(p_178404_6_.func_94214_a((double)p_178404_7_.func_178348_a(p_178404_3_) * .999 + p_178404_7_.func_178348_a((p_178404_3_ + 2) % 4) * .001));
++        p_178404_1_[i + 4 + 1] = Float.floatToRawIntBits(p_178404_6_.func_94207_b((double)p_178404_7_.func_178346_b(p_178404_3_) * .999 + p_178404_7_.func_178346_b((p_178404_3_ + 2) % 4) * .001));
+     }
+ 
+     private void func_178407_a(Vector3f p_178407_1_, BlockPartRotation p_178407_2_)
 @@ -189,14 +205,19 @@
  
      public int func_188011_a(Vector3f p_188011_1_, EnumFacing p_188011_2_, int p_188011_3_, ModelRotation p_188011_4_)
