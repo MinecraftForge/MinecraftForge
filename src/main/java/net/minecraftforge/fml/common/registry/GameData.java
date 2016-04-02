@@ -17,11 +17,15 @@ import java.util.Map;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -31,14 +35,21 @@ import com.google.common.collect.BiMap;
 
 public class GameData
 {
-    static final int MIN_BLOCK_ID = 0;
-    static final int MAX_BLOCK_ID = 4095;
-    static final int MIN_ITEM_ID = 4096;
-    static final int MAX_ITEM_ID = 31999;
-    static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
-    static final int MAX_POTION_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
-    static final int MIN_BIOME_ID = 0; // 0-~31 are vanilla, forge start at 32
-    static final int MAX_BIOME_ID = 255; // S1DPacketEntityEffect sends bytes, we can only use 255
+    private static final int MIN_BLOCK_ID = 0;
+    private static final int MAX_BLOCK_ID = 4095;
+    private static final int MIN_ITEM_ID = 4096;
+    private static final int MAX_ITEM_ID = 31999;
+    private static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
+    private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
+    private static final int MIN_BIOME_ID = 0;
+    private static final int MAX_BIOME_ID = 255; // Maximum number in a byte in the chunk
+    private static final int MIN_SOUND_ID = 0; // Varint
+    private static final int MAX_SOUND_ID = Integer.MAX_VALUE; // Varint (SPacketSoundEffect)
+    private static final int MIN_POTIONTYPE_ID = 0; // Int
+    private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE; // Int (SPacketEffect)
+    private static final int MIN_ENCHANTMENT_ID = 0; // Int
+    private static final int MAX_ENCHANTMENT_ID = Integer.MAX_VALUE; // Int - not serialized as an ID?
+
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
 
@@ -50,51 +61,63 @@ public class GameData
         iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
         iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE);
         iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, BiomeGenBase.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE);
+        iSoundEventRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.SOUNDEVENTS, SoundEvent.class, null, MIN_SOUND_ID, MAX_SOUND_ID, false, null, null, null);
+        ResourceLocation WATER = new ResourceLocation("water");
+        iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null);
+        iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null);
     }
-    // public api
+    // internal registry objects
+    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
+    private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
+    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry;
+    private final FMLControlledNamespacedRegistry<BiomeGenBase> iBiomeRegistry;
+    private final FMLControlledNamespacedRegistry<SoundEvent> iSoundEventRegistry;
+    private final FMLControlledNamespacedRegistry<PotionType> iPotionTypeRegistry;
+    private final FMLControlledNamespacedRegistry<Enchantment> iEnchantmentRegistry;
 
-    /**
-     * Get the currently active block registry.
-     *
-     * @return Block Registry.
-     */
+    /** INTERNAL ONLY */
+    @Deprecated
     public static FMLControlledNamespacedRegistry<Block> getBlockRegistry()
     {
         return getMain().iBlockRegistry;
     }
 
-    /**
-     * Get the currently active item registry.
-     *
-     * @return Item Registry.
-     */
+    /** INTERNAL ONLY */
+    @Deprecated
     public static FMLControlledNamespacedRegistry<Item> getItemRegistry()
     {
         return getMain().iItemRegistry;
     }
 
-    /**
-      * Get the currently active potion registry.
-      *
-      * @return Potion Registry.
-      */
+    /** INTERNAL ONLY */
+    @Deprecated
     public static FMLControlledNamespacedRegistry<Potion> getPotionRegistry() {
         return getMain().iPotionRegistry;
     }
 
+    /** INTERNAL ONLY */
+    @Deprecated
     public static FMLControlledNamespacedRegistry<BiomeGenBase> getBiomeRegistry() { return getMain().iBiomeRegistry; }
 
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static FMLControlledNamespacedRegistry<SoundEvent> getSoundEventRegistry() { return getMain().iSoundEventRegistry; }
 
-    /***************************************************
-     * INTERNAL CODE FROM HERE ON DO NOT USE!
-     ***************************************************/
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static FMLControlledNamespacedRegistry<PotionType> getPotionTypesRegistry() { return getMain().iPotionTypeRegistry; }
 
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static FMLControlledNamespacedRegistry<Enchantment> getEnchantmentRegistry() { return getMain().iEnchantmentRegistry; }
 
+    @Deprecated
     static Item findItem(String modId, String name)
     {
         return getMain().iItemRegistry.getObject(new ResourceLocation(modId, name));
     }
 
+    @Deprecated
     static Block findBlock(String modId, String name)
     {
         return getMain().iBlockRegistry.getObject(new ResourceLocation(modId, name));
@@ -105,17 +128,13 @@ public class GameData
         return mainData;
     }
 
-    // internal registry objects
-    private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
-    private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
-    private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry;
-    private final FMLControlledNamespacedRegistry<BiomeGenBase> iBiomeRegistry;
-
+    @Deprecated
     int registerItem(Item item, String name) // from GameRegistry
     {
         return iItemRegistry.add(-1, addPrefix(name), item);
     }
 
+    @Deprecated
     int registerBlock(Block block, String name) // from GameRegistry
     {
         return iBlockRegistry.add(-1, addPrefix(name), block);

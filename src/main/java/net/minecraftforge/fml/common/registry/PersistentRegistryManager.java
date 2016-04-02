@@ -130,6 +130,9 @@ public class PersistentRegistryManager
     public static final ResourceLocation ITEMS = new ResourceLocation("minecraft:items");
     public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
     public static final ResourceLocation BIOMES = new ResourceLocation("minecraft:biomes");
+    public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
+    public static final ResourceLocation POTIONTYPES = new ResourceLocation("minecraft:potiontypes");
+    public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
 
     public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int minId, int maxId, boolean hasDelegates, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback)
     {

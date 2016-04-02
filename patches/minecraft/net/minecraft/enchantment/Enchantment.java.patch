@@ -1,5 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -12,9 +12,9 @@
+ import net.minecraft.util.registry.RegistryNamespaced;
+ import net.minecraft.util.text.translation.I18n;
+ 
+-public abstract class Enchantment
++public abstract class Enchantment extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Enchantment>
+ {
+-    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = new RegistryNamespaced();
++    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = net.minecraftforge.fml.common.registry.GameData.getEnchantmentRegistry();
+     private final EntityEquipmentSlot[] field_185263_a;
+     private final Enchantment.Rarity field_77333_a;
+     public EnumEnchantmentType field_77351_y;
 @@ -118,7 +118,7 @@
  
      public boolean func_92089_a(ItemStack p_92089_1_)
