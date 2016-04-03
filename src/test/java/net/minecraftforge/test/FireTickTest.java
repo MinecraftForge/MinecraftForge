@@ -13,10 +13,10 @@ public class FireTickTest {
 	public static final boolean ENABLE = false;
 	
 	@EventHandler
-    public void init(FMLInitializationEvent event) 
-    {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+	public void init(FMLInitializationEvent event) 
+	{
+		MinecraftForge.EVENT_BUS.register(this);
+	}
 	
 	@SubscribeEvent
 	public void onFireBurn(FireTickEvent event)
