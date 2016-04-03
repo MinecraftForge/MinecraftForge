@@ -57,7 +57,7 @@ public interface IForgeRegistryEntry<V>
             String oldPrefix = index == -1 ? "" : name.substring(0, index);
             name = index == -1 ? name : name.substring(index + 1);
             ModContainer mc = Loader.instance().activeModContainer();
-            String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId();
+            String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase();
             if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
             {
                 FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", oldPrefix, name);
