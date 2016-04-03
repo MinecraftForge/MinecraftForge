@@ -474,7 +474,15 @@
      }
  
      public boolean func_70002_Q()
-@@ -3192,4 +3084,10 @@
+@@ -3066,6 +2958,7 @@
+                         this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
+                     }
+                 }
++                else if (this.field_71462_r instanceof GuiControls) ((GuiControls)this.field_71462_r).field_146491_f = null;
+             }
+         }
+     }
+@@ -3192,4 +3085,10 @@
      {
          return this.field_184127_aH;
      }
