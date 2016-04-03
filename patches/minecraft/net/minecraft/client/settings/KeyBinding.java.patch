@@ -53,7 +53,7 @@
      public boolean func_151470_d()
      {
 -        return this.field_74513_e;
-+        return this.field_74513_e && getKeyConflictContext().isActive() && (!allowsKeyModifiers || getKeyModifier().isActive());
++        return this.field_74513_e && getKeyConflictContext().isActive() && getKeyModifier().isActive();
      }
  
      public String func_151466_e()
@@ -110,7 +110,7 @@
 +     */
 +    public boolean isActiveAndMatches(int keyCode)
 +    {
-+        return keyCode == this.func_151463_i() && getKeyConflictContext().isActive() && (!allowsKeyModifiers || getKeyModifier().isActive());
++        return keyCode == this.func_151463_i() && getKeyConflictContext().isActive() && getKeyModifier().isActive();
 +    }
 +
 +    public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext)
@@ -136,7 +136,7 @@
 +        }
 +        else
 +        {
-+            return net.minecraftforge.client.settings.KeyModifier.NONE;
++            return net.minecraftforge.client.settings.KeyModifier.NOT_SUPPORTED;
 +        }
 +    }
 +
