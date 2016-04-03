@@ -941,9 +941,9 @@ public class ForgeHooks
     
     public static boolean onFireTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-    	FireTickEvent fte = new FireTickEvent(worldIn, pos, state, rand);
-    	MinecraftForge.EVENT_BUS.post(fte);
-    	return !fte.isCanceled();
+        FireTickEvent fte = new FireTickEvent(worldIn, pos, state, rand);
+        MinecraftForge.EVENT_BUS.post(fte);
+        return !fte.isCanceled();
     }
 
 }
