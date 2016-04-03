@@ -22,8 +22,6 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
- * 
- * @author Artem226
  */
 @Cancelable
 public class FireTickEvent extends BlockEvent {
