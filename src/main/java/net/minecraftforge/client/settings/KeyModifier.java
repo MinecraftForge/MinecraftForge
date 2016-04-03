@@ -88,6 +88,25 @@ public enum KeyModifier {
         {
             return keyName;
         }
+    },
+    NOT_SUPPORTED {
+        @Override
+        protected boolean matches(int keyCode)
+        {
+            return true;
+        }
+
+        @Override
+        public boolean isActive()
+        {
+            return true;
+        }
+
+        @Override
+        public String getLocalizedComboName(String keyName)
+        {
+            return keyName;
+        }
     };
 
     public static final KeyModifier[] MODIFIER_VALUES = {SHIFT, CONTROL, ALT};

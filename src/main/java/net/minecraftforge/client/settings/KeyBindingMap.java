@@ -22,7 +22,17 @@ public class KeyBindingMap
     public KeyBinding lookupActive(int keyCode)
     {
         KeyModifier activeModifier = KeyModifier.isKeyCodeModifier(keyCode) ? KeyModifier.NONE : KeyModifier.getActiveModifier();
-        Collection<KeyBinding> bindings = map.get(activeModifier).lookup(keyCode);
+        KeyBinding binding = getBinding(keyCode, activeModifier);
+        if (binding != null)
+        {
+            return binding;
+        }
+        return getBinding(keyCode, KeyModifier.NOT_SUPPORTED);
+    }
+
+    private KeyBinding getBinding(int keyCode, KeyModifier keyModifier)
+    {
+        Collection<KeyBinding> bindings = map.get(keyModifier).lookup(keyCode);
         if (bindings != null)
         {
             for (KeyBinding binding : bindings)
