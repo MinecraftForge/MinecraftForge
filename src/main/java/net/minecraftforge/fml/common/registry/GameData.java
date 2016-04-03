@@ -210,32 +210,38 @@ public class GameData
     {
         return (BiMap<Block,Item>)getMain().iItemRegistry.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
     }
-    static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation location)
+
+    @SuppressWarnings("unchecked")
+    static <K extends IForgeRegistryEntry<K>> K register_impl(Object object, ResourceLocation location)
     {
         if (object == null)
         {
             FMLLog.getLogger().log(Level.ERROR, "Attempt to register a null object");
             throw new NullPointerException("Attempt to register a null object");
         }
-        object.setRegistryName(location);
-        return register(object);
+        ((K)object).setRegistryName(location);
+        // explicit type is needed for some reason
+        return GameData.<K>register_impl(object);
     }
 
-    static <K extends IForgeRegistryEntry<K>> K register(K object)
+    // argument is Object due to incorrect inferrence of the type if source level = 6, probably related to https://bugs.openjdk.java.net/browse/JDK-8026527
+    @SuppressWarnings("unchecked")
+    static <K extends IForgeRegistryEntry<K>> K register_impl(Object object)
     {
+        K castedObj = (K)object;
         if (object == null)
         {
             FMLLog.getLogger().log(Level.ERROR, "Attempt to register a null object");
             throw new NullPointerException("Attempt to register a null object");
         }
-        if (object.getRegistryName() == null)
+        if (castedObj.getRegistryName() == null)
         {
             FMLLog.getLogger().log(Level.ERROR, "Attempt to register object without having set a registry name {} (type {})", object, object.getClass().getName());
             throw new IllegalArgumentException(String.format("No registry name set for object %s (%s)", object, object.getClass().getName()));
         }
-        final IForgeRegistry<K> registry = PersistentRegistryManager.findRegistry(object);
-        registry.register(object);
-        return object;
+        final IForgeRegistry<K> registry = PersistentRegistryManager.findRegistry(castedObj);
+        registry.register(castedObj);
+        return castedObj;
     }
 
     @SuppressWarnings("unchecked")

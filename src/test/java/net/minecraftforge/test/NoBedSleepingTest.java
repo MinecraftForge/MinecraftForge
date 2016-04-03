@@ -47,7 +47,7 @@ public class NoBedSleepingTest
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerItem(ItemSleepingPill.instance, ItemSleepingPill.name);
+            GameRegistry.register(ItemSleepingPill.instance);
             CapabilityManager.INSTANCE.register(IExtraSleeping.class, new Storage(), DefaultImpl.class);
             MinecraftForge.EVENT_BUS.register(new EventHandler());
         }
@@ -154,6 +154,7 @@ public class NoBedSleepingTest
         {
             setCreativeTab(CreativeTabs.tabMisc);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override

@@ -1,5 +1,6 @@
 package net.minecraftforge.debug;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -49,6 +51,8 @@ public class DynBucketTest
     public static final String MODID = "DynBucketTest";
     public static final Item dynBucket = new DynBucket();
     public static final Item dynBottle = new DynBottle();
+    private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
+    private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
     static
     {
@@ -86,8 +90,8 @@ public class DynBucketTest
                 }
             });
             ModelBakery.registerItemVariants(dynBottle, bottle);
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, "simpletank")), 0, new ModelResourceLocation(new ResourceLocation(MODID, "simpletank"), "normal"));
-            ModelLoader.setCustomModelResourceLocation(GameRegistry.findItem(MODID, "testitem"), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
+            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
         }
     }
 
@@ -95,15 +99,17 @@ public class DynBucketTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        GameRegistry.registerItem(new TestItem(), "testitem");
-        GameRegistry.registerBlock(new BlockSimpleTank(), "simpletank");
+        GameRegistry.register(new TestItem(), testItemName);
+        Block tank = new BlockSimpleTank();
+        GameRegistry.register(tank, simpleTankName);
+        GameRegistry.register(new ItemBlock(tank), simpleTankName);
         GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
 
         FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
         FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestGas.name));
 
         //GameRegistry.registerItem(dynBucket, "dynbucket");
-        GameRegistry.registerItem(dynBottle, "dynbottle");
+        GameRegistry.register(dynBottle);
 
         // register fluid containers
         int i = 0;
@@ -232,6 +238,7 @@ public class DynBucketTest
         {
             super(250, new ItemStack(Items.glass_bottle), true);
             setUnlocalizedName("dynbottle");
+            setRegistryName(new ResourceLocation(MODID, "dynbottle"));
             setMaxStackSize(16);
             setHasSubtypes(true);
             setCreativeTab(CreativeTabs.tabMisc);

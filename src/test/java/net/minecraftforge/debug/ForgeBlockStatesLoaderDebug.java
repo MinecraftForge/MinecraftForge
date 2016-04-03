@@ -54,8 +54,8 @@ public class ForgeBlockStatesLoaderDebug {
         //GameRegistry.registerBlock(blockCustom);
 
         blockCustomWall.setUnlocalizedName(MODID + ".customWall").setRegistryName(nameCustomWall);
-        GameRegistry.registerBlock(blockCustomWall, (Class<? extends ItemBlock>)null);
-        GameRegistry.registerItem(itemCustomWall);
+        GameRegistry.register(blockCustomWall);
+        GameRegistry.register(itemCustomWall);
         GameData.getBlockItemMap().put(blockCustomWall, itemCustomWall);
 
         if (event.getSide() == Side.CLIENT)

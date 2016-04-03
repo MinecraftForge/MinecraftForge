@@ -8,7 +8,9 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -44,7 +46,8 @@ public class ItemTileDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerBlock(TestBlock.instance, TestBlock.name);
+            GameRegistry.register(TestBlock.instance);
+            GameRegistry.register(new ItemBlock(TestBlock.instance).setRegistryName(TestBlock.instance.getRegistryName()));
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
 
@@ -123,6 +126,7 @@ public class ItemTileDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override

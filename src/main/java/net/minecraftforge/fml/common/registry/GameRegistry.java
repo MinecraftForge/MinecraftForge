@@ -140,9 +140,10 @@ public class GameRegistry
      * @throws IllegalArgumentException if the object is not yet named (use {@link #register(IForgeRegistryEntry, ResourceLocation)} instead)
      * @return The object
      */
-    public static <K extends IForgeRegistryEntry<K>> K register(K object)
+    @SuppressWarnings("unchecked")
+    public static <K extends IForgeRegistryEntry<?>> K register(K object)
     {
-        return GameData.register(object);
+        return (K)GameData.register_impl(object);
     }
 
     /**
@@ -159,9 +160,10 @@ public class GameRegistry
      * @throws IllegalStateException if the object already has an existing name (use {@link #register(IForgeRegistryEntry)} instead)
      * @return The object
      */
-    public static <K extends IForgeRegistryEntry<K>> K register(K object, ResourceLocation name)
+    @SuppressWarnings("unchecked")
+    public static <K extends IForgeRegistryEntry<?>> K register(K object, ResourceLocation name)
     {
-        return GameData.register(object, name);
+        return (K)GameData.register_impl(object, name);
     }
 
 

@@ -64,6 +64,7 @@ public class ModelAnimationDebug
     public static final String VERSION = "0.0";
 
     public static String blockName = "test_animation_block";
+    public static ResourceLocation blockId = new ResourceLocation(MODID, blockName);
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
     @Instance(MODID)
@@ -76,11 +77,12 @@ public class ModelAnimationDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerBlock(new Block(Material.wood)
+            GameRegistry.register(new Block(Material.wood)
             {
                 {
                     setCreativeTab(CreativeTabs.tabBlock);
                     setUnlocalizedName(MODID + "." + blockName);
+                    setRegistryName(blockId);
                 }
 
                 @Override
@@ -149,15 +151,15 @@ public class ModelAnimationDebug
                     }
                     return true;
                 }
-            }, null, blockName);
-            GameRegistry.registerItem(new ItemBlock(GameRegistry.findBlock(MODID, blockName))
+            });
+            GameRegistry.register(new ItemBlock(Block.blockRegistry.getObject(blockId))
             {
                 @Override
                 public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
                 {
                     return new ItemAnimationHolder();
                 }
-            }, blockName);
+            }.setRegistryName(blockId));
             GameRegistry.registerTileEntity(Chest.class, MODID + ":" + "tile_" + blockName);
         }
 
@@ -179,7 +181,7 @@ public class ModelAnimationDebug
         {
             super.preInit(event);
             B3DLoader.INSTANCE.addDomain(MODID);
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {
                 @Override

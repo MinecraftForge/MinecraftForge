@@ -21,11 +21,13 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -54,7 +56,7 @@ public class ModelBakeEventDebug
     public static final String VERSION = "1.0";
     public static final int cubeSize = 3;
 
-    private static String blockName = MODID.toLowerCase() + ":" + CustomModelBlock.name;
+    private static ResourceLocation blockName = new ResourceLocation(MODID, CustomModelBlock.name);
 
     @SuppressWarnings("unchecked")
     public static final IUnlistedProperty<Integer>[] properties = new IUnlistedProperty[6];
@@ -77,7 +79,8 @@ public class ModelBakeEventDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
+            GameRegistry.register(CustomModelBlock.instance);
+            GameRegistry.register(new ItemBlock(CustomModelBlock.instance).setRegistryName(CustomModelBlock.instance.getRegistryName()));
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
     }
@@ -132,6 +135,7 @@ public class ModelBakeEventDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(blockName);
         }
 
         @Override

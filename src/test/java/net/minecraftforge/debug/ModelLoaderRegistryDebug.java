@@ -24,6 +24,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -63,14 +64,20 @@ public class ModelLoaderRegistryDebug
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        GameRegistry.registerBlock(CustomModelBlock.instance, CustomModelBlock.name);
-        GameRegistry.registerBlock(OBJTesseractBlock.instance, OBJTesseractBlock.name);
-        GameRegistry.registerBlock(OBJVertexColoring1.instance, OBJVertexColoring1.name);
-        //GameRegistry.registerBlock(OBJDirectionEye.instance, OBJDirectionEye.name);
-        GameRegistry.registerBlock(OBJVertexColoring2.instance, OBJVertexColoring2.name);
-        GameRegistry.registerBlock(OBJDirectionBlock.instance, OBJDirectionBlock.name);
-        GameRegistry.registerBlock(OBJCustomDataBlock.instance, OBJCustomDataBlock.name);
-        //GameRegistry.registerBlock(OBJDynamicEye.instance, OBJDynamicEye.name);
+        List<Block> blocks = Lists.newArrayList();
+        blocks.add(CustomModelBlock.instance);
+        blocks.add(OBJTesseractBlock.instance);
+        blocks.add(OBJVertexColoring1.instance);
+        //blocks.add(OBJDirectionEye.instance);
+        blocks.add(OBJVertexColoring2.instance);
+        blocks.add(OBJDirectionBlock.instance);
+        blocks.add(OBJCustomDataBlock.instance);
+        //blocks.add(OBJDynamicEye.instance);
+        for(Block block : blocks)
+        {
+            GameRegistry.register(block);
+            GameRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        }
         GameRegistry.registerTileEntity(OBJTesseractTileEntity.class, OBJTesseractBlock.name);
         GameRegistry.registerTileEntity(OBJVertexColoring2TileEntity.class, OBJVertexColoring2.name);
         //GameRegistry.registerTileEntity(OBJDynamicEyeTileEntity.class, OBJDynamicEye.name);
@@ -121,6 +128,7 @@ public class ModelLoaderRegistryDebug
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -220,6 +228,7 @@ public class ModelLoaderRegistryDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -365,6 +374,7 @@ public class ModelLoaderRegistryDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -397,6 +407,7 @@ public class ModelLoaderRegistryDebug
             setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -479,6 +490,7 @@ public class ModelLoaderRegistryDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -582,6 +594,7 @@ public class ModelLoaderRegistryDebug
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -669,6 +682,7 @@ public class ModelLoaderRegistryDebug
             this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, false).withProperty(SOUTH, false).withProperty(WEST, false).withProperty(EAST, false));
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
@@ -724,6 +738,7 @@ public class ModelLoaderRegistryDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
