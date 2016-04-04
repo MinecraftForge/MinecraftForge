@@ -3,12 +3,13 @@ package net.minecraftforge.client.settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.GameSettings;
 import org.lwjgl.input.Keyboard;
 
 public enum KeyModifier {
     CONTROL {
         @Override
-        protected boolean matches(int keyCode)
+        public boolean matches(int keyCode)
         {
             if (Minecraft.isRunningOnMac)
             {
@@ -27,14 +28,15 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(String keyName)
+        public String getLocalizedComboName(int keyCode)
         {
+            String keyName = GameSettings.getKeyDisplayString(keyCode);
             return I18n.format("forge.controlsgui.control", keyName);
         }
     },
     SHIFT {
         @Override
-        protected boolean matches(int keyCode)
+        public boolean matches(int keyCode)
         {
             return keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT;
         }
@@ -46,14 +48,15 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(String keyName)
+        public String getLocalizedComboName(int keyCode)
         {
+            String keyName = GameSettings.getKeyDisplayString(keyCode);
             return I18n.format("forge.controlsgui.shift", keyName);
         }
     },
     ALT {
         @Override
-        protected boolean matches(int keyCode)
+        public boolean matches(int keyCode)
         {
             return keyCode == Keyboard.KEY_LMENU || keyCode == Keyboard.KEY_RMENU;
         }
@@ -65,35 +68,17 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(String keyName)
+        public String getLocalizedComboName(int keyCode)
         {
+            String keyName = GameSettings.getKeyDisplayString(keyCode);
             return I18n.format("forge.controlsgui.alt", keyName);
         }
     },
     NONE {
         @Override
-        protected boolean matches(int keyCode)
+        public boolean matches(int keyCode)
         {
-            return true;
-        }
-
-        @Override
-        public boolean isActive()
-        {
-            return !SHIFT.isActive()  && !CONTROL.isActive() && !ALT.isActive();
-        }
-
-        @Override
-        public String getLocalizedComboName(String keyName)
-        {
-            return keyName;
-        }
-    },
-    NOT_SUPPORTED {
-        @Override
-        protected boolean matches(int keyCode)
-        {
-            return true;
+            return false;
         }
 
         @Override
@@ -103,9 +88,9 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(String keyName)
+        public String getLocalizedComboName(int keyCode)
         {
-            return keyName;
+            return GameSettings.getKeyDisplayString(keyCode);
         }
     };
 
@@ -135,9 +120,9 @@ public enum KeyModifier {
         return false;
     }
 
-    protected abstract boolean matches(int keyCode);
+    public abstract boolean matches(int keyCode);
 
     public abstract boolean isActive();
 
-    public abstract String getLocalizedComboName(String keyName);
+    public abstract String getLocalizedComboName(int keyCode);
 }
