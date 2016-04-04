@@ -132,6 +132,7 @@ public class OreDictionary
             registerOre("chestWood",   Blocks.chest);
             registerOre("chestEnder",  Blocks.ender_chest);
             registerOre("chestTrapped", Blocks.trapped_chest);
+            registerOre("string", Items.string);
         }
 
         // Build our list of items to replace with ore tags
@@ -156,6 +157,7 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.chest), "chestWood");
         replacements.put(new ItemStack(Blocks.ender_chest), "chestEnder");
         replacements.put(new ItemStack(Blocks.trapped_chest), "chestTrapped");
+        replacements.put(new ItemStack(Items.string), "string");
 
         // Register dyes
         String[] dyes =
