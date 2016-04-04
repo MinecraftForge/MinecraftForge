@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiBossOverlay.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiBossOverlay.java
+@@ -34,6 +34,7 @@
+ 
+             for (BossInfoLerping bossinfolerping : this.field_184060_g.values())
+             {
++                if (net.minecraftforge.event.ForgeEventFactory.onBossRender(bossinfolerping)) continue;
+                 int k = i / 2 - 91;
+                 GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+                 this.field_184059_f.func_110434_K().func_110577_a(field_184058_a);
