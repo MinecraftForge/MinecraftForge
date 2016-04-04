@@ -97,7 +97,7 @@
              {
                  float f = iblockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
-@@ -234,13 +259,18 @@
+@@ -234,13 +259,17 @@
  
      private boolean func_180235_c(BlockPos p_180235_1_)
      {
@@ -110,7 +110,6 @@
 +    private boolean removeBlock(BlockPos pos, boolean canHarvest)
 +    {
 +        IBlockState iblockstate = this.field_73092_a.func_180495_p(pos);
-+        iblockstate.func_177230_c().func_176208_a(this.field_73092_a, pos, iblockstate, this.field_73090_b);
 +        boolean flag = iblockstate.func_177230_c().removedByPlayer(iblockstate, field_73092_a, pos, field_73090_b, canHarvest);
 +
          if (flag)
@@ -120,7 +119,7 @@
          }
  
          return flag;
-@@ -248,7 +278,8 @@
+@@ -248,7 +277,8 @@
  
      public boolean func_180237_b(BlockPos p_180237_1_)
      {
@@ -130,7 +129,7 @@
          {
              return false;
          }
-@@ -264,41 +295,22 @@
+@@ -264,41 +294,22 @@
              }
              else
              {
@@ -177,7 +176,7 @@
  
                      if (itemstack1 != null)
                      {
-@@ -310,12 +322,18 @@
+@@ -310,12 +321,18 @@
                          }
                      }
  
@@ -196,7 +195,7 @@
                  return flag1;
              }
          }
-@@ -359,6 +377,7 @@
+@@ -359,6 +376,7 @@
                  if (itemstack.field_77994_a == 0)
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
@@ -204,7 +203,7 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
-@@ -445,4 +464,13 @@
+@@ -445,4 +463,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }
