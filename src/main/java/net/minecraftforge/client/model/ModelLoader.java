@@ -295,7 +295,7 @@ public final class ModelLoader extends ModelBakery
                 {
                     model = ModelLoaderRegistry.getModel(file);
                 }
-                catch(Exception e)
+                catch(Exception normalException)
                 {
                     // try blockstate json if the item model is missing
                     FMLLog.fine("Item json isn't found for '" + memory + "', trying to load the variant from the blockstate json");
@@ -303,9 +303,9 @@ public final class ModelLoader extends ModelBakery
                     {
                         model = ModelLoaderRegistry.getModel(memory);
                     }
-                    catch (Exception ex)
+                    catch (Exception blockstateException)
                     {
-                        exception = new Exception("Could not load item model either from the normal location " + file + " or from the blockstate", ex);
+                        exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
                     }
                 }
                 stateModels.put(memory, model);
@@ -571,7 +571,7 @@ public final class ModelLoader extends ModelBakery
                         }
                     }
                     return super.getQuads(state, side, rand);
-                };
+                }
 
                 @Override
                 public ItemOverrideList getOverrides()
@@ -895,6 +895,19 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    private static class ItemLoadingException extends ModelLoaderRegistry.LoaderException
+    {
+        private final Exception normalException;
+        private final Exception blockstateException;
+
+        public ItemLoadingException(String message, Exception normalException, Exception blockstateException)
+        {
+            super(message);
+            this.normalException = normalException;
+            this.blockstateException = blockstateException;
+        }
+    }
+
     /**
      * Internal, do not use.
      */
@@ -967,7 +980,16 @@ public final class ModelLoader extends ModelBakery
                                 }
                             }
                         }
-                        FMLLog.getLogger().error(errorMsg, entry.getValue());
+                        if(entry.getValue() instanceof ItemLoadingException)
+                        {
+                            ItemLoadingException ex = (ItemLoadingException)entry.getValue();
+                            FMLLog.getLogger().error(errorMsg + ", normal location exception: ", ex.normalException);
+                            FMLLog.getLogger().error(errorMsg + ", blockstate location exception: ", ex.blockstateException);
+                        }
+                        else
+                        {
+                            FMLLog.getLogger().error(errorMsg, entry.getValue());
+                        }
                         ResourceLocation blockstateLocation = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
                         if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
                         {
