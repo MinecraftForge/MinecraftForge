@@ -108,6 +108,7 @@ public final class ModelLoader extends ModelBakery
     }
 
     private final boolean enableVerboseMissingInfo = (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment") || Boolean.parseBoolean(System.getProperty("forge.verboseMissingModelLogging", "false"));
+    private final int verboseMissingInfoCount = Integer.parseInt(System.getProperty("forge.verboseMissingModelLoggingCount", "5"));
 
     public ModelLoader(IResourceManager manager, TextureMap map, BlockModelShapes shapes)
     {
@@ -901,6 +902,7 @@ public final class ModelLoader extends ModelBakery
     {
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
         Map<String, Integer> modelErrors = Maps.newHashMap();
+        Set<ResourceLocation> printedBlockStateErrors = Sets.newHashSet();
         Multimap<ModelResourceLocation, IBlockState> reverseBlockMap = null;
         Multimap<ModelResourceLocation, String> reverseItemMap = null;
         if(enableVerboseMissingInfo)
@@ -934,7 +936,7 @@ public final class ModelLoader extends ModelBakery
                     Integer errorCountBox = modelErrors.get(domain);
                     int errorCount = errorCountBox == null ? 0 : errorCountBox;
                     errorCount++;
-                    if(errorCount < 5)
+                    if(errorCount < verboseMissingInfoCount)
                     {
                         String errorMsg = "Exception loading model for variant " + entry.getKey();
                         if(enableVerboseMissingInfo)
@@ -966,6 +968,12 @@ public final class ModelLoader extends ModelBakery
                             }
                         }
                         FMLLog.getLogger().error(errorMsg, entry.getValue());
+                        ResourceLocation blockstateLocation = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
+                        if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
+                        {
+                            FMLLog.getLogger().error("Exception loading blockstate for the variant " + location + ": ", loadingExceptions.get(blockstateLocation));
+                            printedBlockStateErrors.add(blockstateLocation);
+                        }
                     }
                     modelErrors.put(domain, errorCount);
                 }
@@ -984,7 +992,7 @@ public final class ModelLoader extends ModelBakery
                 Integer errorCountBox = modelErrors.get(domain);
                 int errorCount = errorCountBox == null ? 0 : errorCountBox;
                 errorCount++;
-                if(errorCount < 5)
+                if(errorCount < verboseMissingInfoCount)
                 {
                     FMLLog.severe("Model definition for location %s not found", missing);
                 }
@@ -997,9 +1005,9 @@ public final class ModelLoader extends ModelBakery
         }
         for(Map.Entry<String, Integer> e : modelErrors.entrySet())
         {
-            if(e.getValue() >= 5)
+            if(e.getValue() >= verboseMissingInfoCount)
             {
-                FMLLog.severe("Suppressed additional %s model loading errors for domain %s", e.getValue(), e.getKey());
+                FMLLog.severe("Suppressed additional %s model loading errors for domain %s", e.getValue() - verboseMissingInfoCount, e.getKey());
             }
         }
         isLoading = false;
