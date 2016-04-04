@@ -142,7 +142,7 @@ public class ItemHandlerHelper
         World world = player.worldObj;
 
         // try adding it into the inventory
-        ItemStack remainder = null;
+        ItemStack remainder = stack;
         // insert into preferred slot first
         if(preferredSlot >= 0)
         {
@@ -151,7 +151,7 @@ public class ItemHandlerHelper
         // then into the inventory in general
         if(remainder != null)
         {
-            remainder = insertItemStacked(inventory, stack, false);
+            remainder = insertItemStacked(inventory, remainder, false);
         }
 
         // play sound if something got picked up
