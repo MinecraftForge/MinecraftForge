@@ -2,6 +2,7 @@ package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 
+import net.minecraft.world.BossInfoLerping;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -31,7 +32,8 @@ public class RenderGameOverlayEvent extends Event
         HELMET,
         PORTAL,
         CROSSHAIRS,
-        BOSSHEALTH,
+        BOSSHEALTH, // All boss bars
+        BOSSINFO,    // Individual boss bar
         ARMOR,
         HEALTH,
         FOOD,
@@ -81,6 +83,63 @@ public class RenderGameOverlayEvent extends Event
             super(parent, type);
         }
         @Override public boolean isCancelable(){ return false; }
+    }
+
+    public static class BossInfo extends Pre
+    {
+        private final BossInfoLerping bossInfo;
+        private final int x;
+        private final int y;
+        private int increment;
+        public BossInfo(RenderGameOverlayEvent parent, ElementType type, BossInfoLerping bossInfo, int x, int y, int increment)
+        {
+            super(parent, type);
+            this.bossInfo = bossInfo;
+            this.x = x;
+            this.y = y;
+            this.increment = increment;
+        }
+
+        /**
+         * @return The {@link BossInfoLerping} currently being rendered
+         */
+        public BossInfoLerping getBossInfo()
+        {
+            return bossInfo;
+        }
+
+        /**
+         * @return The current x position we are rendering at
+         */
+        public int getX()
+        {
+            return x;
+        }
+
+        /**
+         * @return The current y position we are rendering at
+         */
+        public int getY()
+        {
+            return y;
+        }
+
+        /**
+         * @return How much to move down before rendering the next bar
+         */
+        public int getIncrement()
+        {
+            return increment;
+        }
+
+        /**
+         * Sets the amount to move down before rendering the next bar
+         * @param increment The increment to set
+         */
+        public void setIncrement(int increment)
+        {
+            this.increment = increment;
+        }
     }
 
     public static class Text extends Pre
