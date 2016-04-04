@@ -212,6 +212,15 @@
      }
  
      public boolean func_72838_d(Entity p_72838_1_)
+@@ -1058,7 +1097,7 @@
+     {
+         for (Entity entity : Lists.newArrayList(p_175650_1_))
+         {
+-            if (this.func_184165_i(entity))
++            if (this.func_184165_i(entity) && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entity, this)))
+             {
+                 this.field_72996_f.add(entity);
+                 this.func_72923_a(entity);
 @@ -1161,6 +1200,7 @@
      public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
