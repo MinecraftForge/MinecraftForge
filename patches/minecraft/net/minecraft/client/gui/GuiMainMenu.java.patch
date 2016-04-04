@@ -1,16 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -216,7 +216,8 @@
+@@ -67,6 +67,8 @@
+     private GuiButton field_175372_K;
+     private boolean field_183502_L;
+     private GuiScreen field_183503_M;
++    private GuiButton modButton;
++    private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
+ 
+     public GuiMainMenu()
+     {
+@@ -210,13 +212,15 @@
+             this.field_183503_M.func_183500_a(this.field_146294_l, this.field_146295_m);
+             this.field_183503_M.func_73866_w_();
+         }
++        modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, modButton);
+     }
+ 
+     private void func_73969_a(int p_73969_1_, int p_73969_2_)
      {
          this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer", new Object[0])));
          this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer", new Object[0])));
 -        this.field_146292_n.add(this.field_175372_K = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
 +        this.field_146292_n.add(this.field_175372_K = new GuiButton(14, this.field_146294_l / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online", new Object[0]).replace("Minecraft", "").trim()));
-+        this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("fml.menu.mods")));
++        this.field_146292_n.add(modButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("fml.menu.mods")));
      }
  
      private void func_73972_b(int p_73972_1_, int p_73972_2_)
-@@ -264,6 +265,11 @@
+@@ -264,6 +268,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -22,7 +38,7 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -512,7 +518,16 @@
+@@ -512,7 +521,16 @@
              s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
          }
  
@@ -40,3 +56,11 @@
          String s1 = "Copyright Mojang AB. Do not distribute!";
          this.func_73731_b(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.func_78256_a(s1) - 2, this.field_146295_m - 10, -1);
  
+@@ -529,6 +547,7 @@
+         {
+             this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+         }
++        modUpdateNotification.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+     }
+ 
+     protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException

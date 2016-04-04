@@ -85,13 +85,54 @@ public class ForgeVersion
 
     public static enum Status
     {
-        PENDING,
-        FAILED,
-        UP_TO_DATE,
-        OUTDATED,
-        AHEAD,
-        BETA,
-        BETA_OUTDATED
+        PENDING(),
+        FAILED(),
+        UP_TO_DATE(),
+        OUTDATED(3, true),
+        AHEAD(),
+        BETA(),
+        BETA_OUTDATED(6, true);
+        
+        final int sheetOffset;
+        final boolean draw, animated;
+
+        Status()
+        {
+            this(0, false, false);
+        }
+        
+        Status(int sheetOffset)
+        {
+            this(sheetOffset, true, false);
+        }
+        
+        Status(int sheetOffset, boolean animated)
+        {
+            this(sheetOffset, true, animated);
+        }
+        
+        Status(int sheetOffset, boolean draw, boolean animated)
+        {
+            this.sheetOffset = sheetOffset;
+            this.draw = draw;
+            this.animated = animated;
+        }
+        
+        public int getSheetOffset()
+        {
+            return sheetOffset;
+        }
+        
+        public boolean shouldDraw()
+        {
+            return draw;
+        }
+        
+        public boolean isAnimated()
+        {
+            return animated;
+        }
+        
     }
 
     public static class CheckResult
