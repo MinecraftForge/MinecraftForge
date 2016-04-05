@@ -51,7 +51,7 @@ public class CapabilityItemHandler
                     NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
                     int j = itemTags.getInteger("Slot");
 
-                    if (j > 0 && j < instance.getSlots())
+                    if (j >= 0 && j < instance.getSlots())
                     {
                         itemHandlerModifiable.setStackInSlot(j, ItemStack.loadItemStackFromNBT(itemTags));
                     }
