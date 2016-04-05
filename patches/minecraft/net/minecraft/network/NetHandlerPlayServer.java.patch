@@ -31,14 +31,7 @@
              itemstack = null;
          }
      }
-@@ -703,12 +709,14 @@
- 
-         if (itemstack != null)
-         {
-+            //TODO: Hook interact event here... we don't know the type of itneration tho...
-             this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
-             itemstack = this.field_147369_b.func_184586_b(enumhand);
- 
+@@ -709,6 +715,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  this.field_147369_b.func_184611_a(enumhand, (ItemStack)null);
@@ -46,7 +39,7 @@
                  itemstack = null;
              }
          }
-@@ -888,7 +896,9 @@
+@@ -888,7 +895,9 @@
              }
              else
              {
@@ -57,6 +50,14 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
+@@ -1018,6 +1027,7 @@
+                 {
+                     EnumHand enumhand1 = p_147340_1_.func_186994_b();
+                     ItemStack itemstack1 = this.field_147369_b.func_184586_b(enumhand1);
++                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), itemstack1, enumhand1)) return;
+                     entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), itemstack1, enumhand1);
+                 }
+                 else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
 @@ -1057,7 +1067,7 @@
                          return;
                      }

@@ -42,11 +42,10 @@ public class TestCapabilityMod
     }
 
     @SubscribeEvent
-    public void onInteract(PlayerInteractEvent event)
+    public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.getAction() != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) return;
-        if (event.getEntityPlayer().inventory.getCurrentItem() == null) return;
-        if (event.getEntityPlayer().inventory.getCurrentItem().getItem() != Items.stick) return;
+        if (event.getItemStack() == null) return;
+        if (event.getItemStack().getItem() != Items.stick) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
         TileEntity te = event.getWorld().getTileEntity(event.getPos());

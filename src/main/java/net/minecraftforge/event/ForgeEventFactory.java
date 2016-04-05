@@ -61,7 +61,6 @@ import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
-import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -69,8 +68,6 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -126,19 +123,6 @@ public class ForgeEventFactory
     {
         PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, state, original, pos);
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
-    }
-
-    @Deprecated
-    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face)
-    {
-        return onPlayerInteract(player, action, world, pos, face, null);
-    }
-
-    public static PlayerInteractEvent onPlayerInteract(EntityPlayer player, Action action, World world, BlockPos pos, EnumFacing face, Vec3d localPos)
-    {
-        PlayerInteractEvent event = new PlayerInteractEvent(player, action, pos, face, world, localPos);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
     }
 
     public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack, EnumHand hand)
@@ -367,11 +351,6 @@ public class ForgeEventFactory
                 player.dropItemAndGetStack(item);
             }
         }
-    }
-
-    public static boolean canInteractWith(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
-    {
-        return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity, item, hand));
     }
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
