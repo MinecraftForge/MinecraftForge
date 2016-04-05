@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /** Simple mod to test fov modifier. */
-@Mod(modid="fovmodifiertest", name="FOV Modifier Test", version="0.0.0")
+@Mod(modid="fovmodifiertest", name="FOV Modifier Test", version="0.0.0", clientSideOnly = true)
 public class FOVModifierTest {
 
     @EventHandler

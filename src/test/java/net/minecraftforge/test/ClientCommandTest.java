@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 
-@Mod(modid="clientcommandtest", name="Client Command Test", version="0.0.0")
+@Mod(modid="clientcommandtest", name="Client Command Test", version="0.0.0", clientSideOnly = true)
 public class ClientCommandTest {
     @EventHandler
     public void init(FMLInitializationEvent event)
