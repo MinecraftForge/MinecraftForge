@@ -12,18 +12,21 @@
  */
 package net.minecraftforge.fml.server;
 
-import java.io.File;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipFile;
 
 import net.minecraft.command.ServerCommand;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -37,6 +40,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -218,7 +222,42 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public void addModAsResource(ModContainer container)
     {
-        // NOOP
+        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
+        File source = container.getSource();
+        InputStream stream = null;
+        ZipFile zip = null;
+        try
+        {
+            if (source.isDirectory() && (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"))
+            {
+                stream = new FileInputStream(new File(source.toURI().resolve(langFile).getPath()));
+            }
+            else
+            {
+                try
+                {
+                    zip = new ZipFile(source);
+                    stream = zip.getInputStream(zip.getEntry(langFile));
+                }
+                finally
+                {
+                    if(zip != null) zip.close();
+                }
+            }
+            LanguageMap.inject(stream);
+        }
+        catch (IOException e)
+        {
+            // hush
+        }
+        catch(Exception e)
+        {
+            FMLLog.getLogger().error(e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     @Override
