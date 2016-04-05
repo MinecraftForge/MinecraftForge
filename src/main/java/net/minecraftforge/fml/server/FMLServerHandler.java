@@ -13,9 +13,11 @@
 package net.minecraftforge.fml.server;
 
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.minecraft.command.ServerCommand;
@@ -234,15 +236,10 @@ public class FMLServerHandler implements IFMLSidedHandler
             }
             else
             {
-                try
-                {
-                    zip = new ZipFile(source);
-                    stream = zip.getInputStream(zip.getEntry(langFile));
-                }
-                finally
-                {
-                    if(zip != null) zip.close();
-                }
+                zip = new ZipFile(source);
+                ZipEntry entry = zip.getEntry(langFile);
+                if(entry == null) throw new FileNotFoundException();
+                stream = zip.getInputStream(entry);
             }
             LanguageMap.inject(stream);
         }
@@ -257,6 +254,14 @@ public class FMLServerHandler implements IFMLSidedHandler
         finally
         {
             IOUtils.closeQuietly(stream);
+            try
+            {
+                zip.close();
+            }
+            catch (IOException e)
+            {
+                // shush
+            }
         }
     }
 
