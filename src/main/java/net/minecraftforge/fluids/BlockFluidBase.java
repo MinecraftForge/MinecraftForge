@@ -12,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.BlockRenderLayer;
@@ -639,5 +640,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         float remaining = quantaRemaining / quantaPerBlockFloat;
         if (remaining > 1) remaining = 1.0f;
         return remaining * (density > 0 ? 1 : -1);
+    }
+
+    @Override
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return null;
     }
 }
