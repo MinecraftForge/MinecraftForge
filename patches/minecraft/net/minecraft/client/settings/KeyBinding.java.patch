@@ -57,7 +57,7 @@
      }
  
      public String func_151466_e()
-@@ -158,4 +158,102 @@
+@@ -158,4 +158,130 @@
  
          return i;
      }
@@ -66,7 +66,6 @@
 +    private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
 +    private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +    private net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext = net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL;
-+    private boolean allowsKeyModifiers = false;
 +
 +    /**
 +     * Convenience constructor for creating KeyBindings with keyConflictContext set.
@@ -88,21 +87,13 @@
 +        this.keyConflictContext = keyConflictContext;
 +        this.keyModifier = keyModifier;
 +        this.keyModifierDefault = keyModifier;
-+        if (keyModifier != net.minecraftforge.client.settings.KeyModifier.NONE)
-+            setAllowsKeyModifiers();
++        if (this.keyModifier.matches(keyCode))
++        {
++            this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++        }
 +        field_74516_a.add(this);
 +        field_74514_b.addKey(keyCode, this);
 +        field_151473_c.add(category);
-+    }
-+
-+    /**
-+     * Call this method to let Forge know that your KeyBinding and code can handle players setting modifiers.
-+     * Handling modifiers is made easy by using {@link KeyBinding#isActiveAndMatches(int)} or {@link KeyBinding#isPressed()}
-+     * Vanilla code does not handle modifiers, so vanilla keyBinds do not have this set.
-+     */
-+    public void setAllowsKeyModifiers()
-+    {
-+        this.allowsKeyModifiers = true;
 +    }
 +
 +    /**
@@ -130,33 +121,70 @@
 +
 +    public net.minecraftforge.client.settings.KeyModifier getKeyModifier()
 +    {
-+        if (allowsKeyModifiers)
-+        {
-+            return keyModifier;
-+        }
-+        else
-+        {
-+            return net.minecraftforge.client.settings.KeyModifier.NOT_SUPPORTED;
-+        }
++        return keyModifier;
 +    }
 +
-+    public void setKeyModifier(net.minecraftforge.client.settings.KeyModifier keyModifier)
++    public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier keyModifier, int keyCode)
 +    {
++        this.field_74512_d = keyCode;
++        if (keyModifier.matches(keyCode))
++        {
++            keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++        }
 +        field_74514_b.removeKey(this);
 +        this.keyModifier = keyModifier;
-+        field_74514_b.addKey(field_74512_d, this);
++        field_74514_b.addKey(keyCode, this);
 +    }
 +
++    public void setToDefault()
++    {
++        setKeyModifierAndCode(getKeyModifierDefault(), func_151469_h());
++    }
++
++    public boolean isSetToDefaultValue()
++    {
++        return func_151463_i() == func_151469_h() && getKeyModifier() == getKeyModifierDefault();
++    }
++
++	/**
++     * Returns true when the other keyBinding conflicts with this one
++     */
 +    public boolean conflicts(KeyBinding other)
 +    {
 +        if (getKeyConflictContext().conflicts(other.getKeyConflictContext()) || other.getKeyConflictContext().conflicts(getKeyConflictContext()))
 +        {
-+            if (!allowsKeyModifiers || !other.allowsKeyModifiers || getKeyModifier() == other.getKeyModifier())
++            net.minecraftforge.client.settings.KeyModifier keyModifier = getKeyModifier();
++            net.minecraftforge.client.settings.KeyModifier otherKeyModifier = other.getKeyModifier();
++            if (keyModifier.matches(other.func_151463_i()) || otherKeyModifier.matches(func_151463_i()))
++            {
++                return true;
++            }
++            else if (keyModifier == otherKeyModifier || keyModifier == net.minecraftforge.client.settings.KeyModifier.NONE || otherKeyModifier == net.minecraftforge.client.settings.KeyModifier.NONE)
 +            {
 +                return func_151463_i() == other.func_151463_i();
 +            }
 +        }
 +        return false;
++    }
++
++    /**
++     * Returns true when one of the bindings' key codes conflicts with the other's modifier.
++     */
++    public boolean hasKeyCodeModifierConflict(KeyBinding other)
++    {
++        if (getKeyConflictContext().conflicts(other.getKeyConflictContext()) || other.getKeyConflictContext().conflicts(getKeyConflictContext()))
++        {
++            if (getKeyModifier().matches(other.func_151463_i()) || other.getKeyModifier().matches(func_151463_i()))
++            {
++                return true;
++            }
++        }
++        return false;
++    }
++
++    public String getDisplayName()
++    {
++        return getKeyModifier().getLocalizedComboName(func_151463_i());
 +    }
 +    /****************** Forge End *****************************/
  }

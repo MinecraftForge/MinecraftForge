@@ -21,6 +21,15 @@
          this.field_152350_aA = new SkinManager(this.field_71446_o, new File(this.field_110446_Y, "skins"), this.field_152355_az);
          this.field_71469_aa = new AnvilSaveConverter(new File(this.field_71412_D, "saves"), this.field_184131_U);
          this.field_147127_av = new SoundHandler(this.field_110451_am, this.field_71474_y);
+@@ -460,7 +459,7 @@
+             {
+                 try
+                 {
+-                    return String.format(p_74535_1_, new Object[] {GameSettings.func_74298_c(Minecraft.this.field_71474_y.field_151445_Q.func_151463_i())});
++                    return String.format(p_74535_1_, new Object[] {Minecraft.this.field_71474_y.field_151445_Q.getDisplayName()});
+                 }
+                 catch (Exception exception)
+                 {
 @@ -469,6 +468,8 @@
              }
          });
@@ -492,7 +501,18 @@
      }
  
      public boolean func_70002_Q()
-@@ -3066,6 +2958,7 @@
+@@ -3057,15 +2949,16 @@
+             {
+                 if (Keyboard.getEventKeyState())
+                 {
+-                    if (i == this.field_71474_y.field_152395_am.func_151463_i())
++                    if (this.field_71474_y.field_152395_am.isActiveAndMatches(i))
+                     {
+                         this.func_71352_k();
+                     }
+-                    else if (i == this.field_71474_y.field_151447_Z.func_151463_i())
++                    else if (this.field_71474_y.field_151447_Z.isActiveAndMatches(i))
+                     {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
                  }

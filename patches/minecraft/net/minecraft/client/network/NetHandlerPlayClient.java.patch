@@ -40,6 +40,15 @@
          EntityTracker.func_187254_a(entitylivingbase, d0, d1, d2);
          entitylivingbase.field_70761_aq = entitylivingbase.field_70759_as = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
          Entity[] aentity = entitylivingbase.func_70021_al();
+@@ -919,7 +926,7 @@
+ 
+                     if (entity1 == this.field_147299_f.field_71439_g && !flag)
+                     {
+-                        this.field_147299_f.field_71456_v.func_110326_a(I18n.func_135052_a("mount.onboard", new Object[] {GameSettings.func_74298_c(this.field_147299_f.field_71474_y.field_74311_E.func_151463_i())}), false);
++                        this.field_147299_f.field_71456_v.func_110326_a(I18n.func_135052_a("mount.onboard", new Object[] {this.field_147299_f.field_71474_y.field_74311_E.getDisplayName()}), false);
+                     }
+                 }
+             }
 @@ -1179,6 +1186,10 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
@@ -51,6 +60,25 @@
  
              if (flag && this.field_147299_f.field_71462_r instanceof GuiCommandBlock)
              {
+@@ -1276,15 +1287,15 @@
+             }
+             else if (f == 101.0F)
+             {
+-                this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(new TextComponentTranslation("demo.help.movement", new Object[] {GameSettings.func_74298_c(gamesettings.field_74351_w.func_151463_i()), GameSettings.func_74298_c(gamesettings.field_74370_x.func_151463_i()), GameSettings.func_74298_c(gamesettings.field_74368_y.func_151463_i()), GameSettings.func_74298_c(gamesettings.field_74366_z.func_151463_i())}));
++                this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(new TextComponentTranslation("demo.help.movement", new Object[] {gamesettings.field_74351_w.getDisplayName(), gamesettings.field_74370_x.getDisplayName(), gamesettings.field_74368_y.getDisplayName(), gamesettings.field_74366_z.getDisplayName()}));
+             }
+             else if (f == 102.0F)
+             {
+-                this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(new TextComponentTranslation("demo.help.jump", new Object[] {GameSettings.func_74298_c(gamesettings.field_74314_A.func_151463_i())}));
++                this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(new TextComponentTranslation("demo.help.jump", new Object[] {gamesettings.field_74314_A.getDisplayName()}));
+             }
+             else if (f == 103.0F)
+             {
+-                this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(new TextComponentTranslation("demo.help.inventory", new Object[] {GameSettings.func_74298_c(gamesettings.field_151445_Q.func_151463_i())}));
++                this.field_147299_f.field_71456_v.func_146158_b().func_146227_a(new TextComponentTranslation("demo.help.inventory", new Object[] {gamesettings.field_151445_Q.getDisplayName()}));
+             }
+         }
+         else if (i == 6)
 @@ -1378,7 +1389,7 @@
  
          if (entity instanceof EntityLivingBase)

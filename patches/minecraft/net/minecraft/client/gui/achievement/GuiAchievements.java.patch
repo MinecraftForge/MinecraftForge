@@ -34,7 +34,7 @@
      }
  
      protected void func_146284_a(GuiButton p_146284_1_) throws IOException
-@@ -74,6 +87,16 @@
+@@ -74,12 +87,22 @@
              {
                  this.field_146297_k.func_147108_a(this.field_146562_a);
              }
@@ -51,6 +51,13 @@
          }
      }
  
+     protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
+     {
+-        if (p_73869_2_ == this.field_146297_k.field_71474_y.field_151445_Q.func_151463_i())
++        if (this.field_146297_k.field_71474_y.field_151445_Q.isActiveAndMatches(p_73869_2_))
+         {
+             this.field_146297_k.func_147108_a((GuiScreen)null);
+             this.field_146297_k.func_71381_h();
 @@ -257,7 +280,9 @@
          GlStateManager.func_179143_c(518);
          GlStateManager.func_179094_E();
