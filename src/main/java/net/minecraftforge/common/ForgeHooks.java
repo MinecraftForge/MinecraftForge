@@ -86,6 +86,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -933,5 +934,45 @@ public class ForgeHooks
     {
         RayTraceResult git = rayTraceEyes(entity, length);
         return git == null ? null : git.hitVec;
+    }
+
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, ItemStack stack, EnumHand hand)
+    {
+        Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
+        return onInteractEntityAt(player, entity, vec3d, stack, hand);
+    }
+
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, ItemStack stack, EnumHand hand)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteractSpecific(player, hand, stack, entity, vec3d));
+    }
+
+    public static boolean onInteractEntity(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, hand, item, entity));
+    }
+
+    public static boolean onItemRightClick(EntityPlayer player, EnumHand hand, ItemStack stack)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(player, hand, stack));
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    {
+        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, hitVec);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    {
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, stack, pos, face, hitVec);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static void onEmptyClick(EntityPlayer player, EnumHand hand)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
 }

@@ -218,7 +218,7 @@
          }
          else
          {
-+            if (!net.minecraftforge.event.ForgeEventFactory.canInteractWith(this, p_184822_1_, p_184822_2_, p_184822_3_)) return EnumActionResult.PASS;
++            if (net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_184822_1_, p_184822_2_, p_184822_3_)) return EnumActionResult.PASS;
              ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.func_77946_l() : null;
  
              if (!p_184822_1_.func_184230_a(this, p_184822_2_, p_184822_3_))
