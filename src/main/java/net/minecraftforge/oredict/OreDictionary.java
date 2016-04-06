@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.block.BlockPrismarine;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
@@ -55,6 +56,7 @@ public class OreDictionary
     {
         if (!hasInit)
         {
+            // wood-related things
             registerOre("logWood",     new ItemStack(Blocks.log, 1, WILDCARD_VALUE));
             registerOre("logWood",     new ItemStack(Blocks.log2, 1, WILDCARD_VALUE));
             registerOre("plankWood",   new ItemStack(Blocks.planks, 1, WILDCARD_VALUE));
@@ -69,6 +71,8 @@ public class OreDictionary
             registerOre("treeSapling", new ItemStack(Blocks.sapling, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Blocks.leaves, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Blocks.leaves2, 1, WILDCARD_VALUE));
+
+            // Ores
             registerOre("oreGold",     Blocks.gold_ore);
             registerOre("oreIron",     Blocks.iron_ore);
             registerOre("oreLapis",    Blocks.lapis_ore);
@@ -77,6 +81,25 @@ public class OreDictionary
             registerOre("oreEmerald",  Blocks.emerald_ore);
             registerOre("oreQuartz",   Blocks.quartz_ore);
             registerOre("oreCoal",     Blocks.coal_ore);
+
+            // ingots/nuggets
+            registerOre("ingotIron",     Items.iron_ingot);
+            registerOre("ingotGold",     Items.gold_ingot);
+            registerOre("ingotBrick",    Items.brick);
+            registerOre("ingotBrickNether", Items.netherbrick);
+            registerOre("nuggetGold",  Items.gold_nugget);
+
+            // gems and dusts
+            registerOre("gemDiamond",  Items.diamond);
+            registerOre("gemEmerald",  Items.emerald);
+            registerOre("gemQuartz",   Items.quartz);
+            registerOre("gemPrismarine", Items.prismarine_shard);
+            registerOre("dustPrismarine", Items.prismarine_crystals);
+            registerOre("dustRedstone",  Items.redstone);
+            registerOre("dustGlowstone", Items.glowstone_dust);
+            registerOre("gemLapis",    new ItemStack(Items.dye, 1, 4));
+
+            // storage blocks
             registerOre("blockGold",     Blocks.gold_block);
             registerOre("blockIron",     Blocks.iron_block);
             registerOre("blockLapis",    Blocks.lapis_block);
@@ -85,35 +108,30 @@ public class OreDictionary
             registerOre("blockEmerald",  Blocks.emerald_block);
             registerOre("blockQuartz",   Blocks.quartz_block);
             registerOre("blockCoal",     Blocks.coal_block);
-            registerOre("blockGlassColorless", Blocks.glass);
-            registerOre("blockGlass",    Blocks.glass);
-            registerOre("blockGlass",    new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
-            //blockGlass{Color} is added below with dyes
-            registerOre("paneGlassColorless", Blocks.glass_pane);
-            registerOre("paneGlass",     Blocks.glass_pane);
-            registerOre("paneGlass",     new ItemStack(Blocks.stained_glass_pane, 1, WILDCARD_VALUE));
-            //paneGlass{Color} is added below with dyes
-            registerOre("ingotIron",     Items.iron_ingot);
-            registerOre("ingotGold",     Items.gold_ingot);
-            registerOre("ingotBrick",    Items.brick);
-            registerOre("ingotBrickNether", Items.netherbrick);
-            registerOre("nuggetGold",  Items.gold_nugget);
-            registerOre("gemDiamond",  Items.diamond);
-            registerOre("gemEmerald",  Items.emerald);
-            registerOre("gemQuartz",   Items.quartz);
-            registerOre("dustRedstone",  Items.redstone);
-            registerOre("dustGlowstone", Items.glowstone_dust);
-            registerOre("gemLapis",    new ItemStack(Items.dye, 1, 4));
-            registerOre("slimeball",   Items.slime_ball);
-            registerOre("glowstone",   Blocks.glowstone);
+
+            // crops
             registerOre("cropWheat",   Items.wheat);
             registerOre("cropPotato",  Items.potato);
             registerOre("cropCarrot",  Items.carrot);
-            registerOre("stone",       Blocks.stone);
-            registerOre("cobblestone", Blocks.cobblestone);
-            registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
-            registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
+            registerOre("cropNetherWart", Items.nether_wart);
+            registerOre("sugarcane",   Items.reeds);
+
+            // misc materials
             registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
+            registerOre("paper",       new ItemStack(Items.paper));
+
+            // mob drops
+            registerOre("slimeball",   Items.slime_ball);
+            registerOre("enderpearl",  Items.ender_pearl);
+            registerOre("bone",        Items.bone);
+            registerOre("gunpowder",   Items.gunpowder);
+            registerOre("string", Items.string);
+            registerOre("netherStar",  Items.nether_star);
+            registerOre("leather",     Items.leather);
+            registerOre("feather",     Items.feather);
+            registerOre("egg",         Items.egg);
+
+            // records
             registerOre("record",      Items.record_13);
             registerOre("record",      Items.record_cat);
             registerOre("record",      Items.record_blocks);
@@ -126,6 +144,32 @@ public class OreDictionary
             registerOre("record",      Items.record_ward);
             registerOre("record",      Items.record_11);
             registerOre("record",      Items.record_wait);
+
+            // blocks
+            registerOre("dirt",        Blocks.dirt);
+            registerOre("endstone",    Blocks.end_stone);
+            registerOre("stone",       Blocks.stone);
+            registerOre("cobblestone", Blocks.cobblestone);
+            registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
+            registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
+            registerOre("torch",       Blocks.torch);
+            registerOre("glowstone",   Blocks.glowstone);
+            registerOre("blockPrismarine",
+                    new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.ROUGH.getMetadata()));
+            registerOre("blockPrismarineBrick",
+                    new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.BRICKS.getMetadata()));
+            registerOre("blockDarkPrismarine",
+                    new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.DARK.getMetadata()));
+            registerOre("blockGlassColorless", Blocks.glass);
+            registerOre("blockGlass",    Blocks.glass);
+            registerOre("blockGlass",    new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
+            //blockGlass{Color} is added below with dyes
+            registerOre("paneGlassColorless", Blocks.glass_pane);
+            registerOre("paneGlass",     Blocks.glass_pane);
+            registerOre("paneGlass",     new ItemStack(Blocks.stained_glass_pane, 1, WILDCARD_VALUE));
+            //paneGlass{Color} is added below with dyes
+
+            // chests
             registerOre("chest",       Blocks.chest);
             registerOre("chest",       Blocks.ender_chest);
             registerOre("chest",       Blocks.trapped_chest);
@@ -136,23 +180,52 @@ public class OreDictionary
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
+
+        // wood-related things
         replacements.put(new ItemStack(Items.stick), "stickWood");
         replacements.put(new ItemStack(Blocks.planks), "plankWood");
         replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE), "slabWood");
+
+        // Ores
+        // ingots/nuggets
+        replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
+        replacements.put(new ItemStack(Items.iron_ingot), "ingotIron");
+
+        // gems and dusts
+        replacements.put(new ItemStack(Items.diamond), "gemDiamond");
+        replacements.put(new ItemStack(Items.emerald), "gemEmerald");
+        replacements.put(new ItemStack(Items.prismarine_shard), "gemPrismarine");
+        replacements.put(new ItemStack(Items.prismarine_crystals), "dustPrismarine");
+        replacements.put(new ItemStack(Items.redstone), "dustRedstone");
+        replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
+
+        // storage blocks
+        // crops
+        replacements.put(new ItemStack(Items.reeds), "sugarcane");
+
+        // misc materials
+        replacements.put(new ItemStack(Items.paper), "paper");
+
+        // mob drops
+        replacements.put(new ItemStack(Items.slime_ball), "slimeball");
+        replacements.put(new ItemStack(Items.string), "string");
+        replacements.put(new ItemStack(Items.leather), "leather");
+        replacements.put(new ItemStack(Items.ender_pearl), "enderpearl");
+        replacements.put(new ItemStack(Items.gunpowder), "gunpowder");
+        replacements.put(new ItemStack(Items.nether_star), "netherStar");
+        replacements.put(new ItemStack(Items.feather), "feather");
+        replacements.put(new ItemStack(Items.bone), "bone");
+
+        // blocks
         replacements.put(new ItemStack(Blocks.stone), "stone");
         //replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
-        replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
-        replacements.put(new ItemStack(Items.iron_ingot), "ingotIron");
-        replacements.put(new ItemStack(Items.diamond), "gemDiamond");
-        replacements.put(new ItemStack(Items.emerald), "gemEmerald");
-        replacements.put(new ItemStack(Items.redstone), "dustRedstone");
-        replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
-        replacements.put(new ItemStack(Items.slime_ball), "slimeball");
         replacements.put(new ItemStack(Blocks.glass), "blockGlassColorless");
+
+        // chests
         replacements.put(new ItemStack(Blocks.chest), "chestWood");
         replacements.put(new ItemStack(Blocks.ender_chest), "chestEnder");
         replacements.put(new ItemStack(Blocks.trapped_chest), "chestTrapped");
