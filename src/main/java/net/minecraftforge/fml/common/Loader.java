@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
@@ -780,7 +781,7 @@ public class Loader
         return "Minecraft " + mccversion;
     }
 
-    public boolean serverStarting(Object server)
+    public boolean serverStarting(MinecraftServer server)
     {
         try
         {
@@ -795,15 +796,15 @@ public class Loader
         return true;
     }
 
-    public void serverStarted()
+    public void serverStarted(MinecraftServer server)
     {
-        modController.distributeStateMessage(LoaderState.SERVER_STARTED);
+        modController.distributeStateMessage(LoaderState.SERVER_STARTED, server);
         modController.transition(LoaderState.SERVER_STARTED, false);
     }
 
-    public void serverStopping()
+    public void serverStopping(MinecraftServer server)
     {
-        modController.distributeStateMessage(LoaderState.SERVER_STOPPING);
+        modController.distributeStateMessage(LoaderState.SERVER_STOPPING, server);
         modController.transition(LoaderState.SERVER_STOPPING, false);
     }
 
@@ -842,10 +843,10 @@ public class Loader
         return String.format("MCP %s", mcpversion);
     }
 
-    public void serverStopped()
+    public void serverStopped(MinecraftServer server)
     {
         PersistentRegistryManager.revertToFrozen();
-        modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
+        modController.distributeStateMessage(LoaderState.SERVER_STOPPED, server);
         modController.transition(LoaderState.SERVER_STOPPED, true);
         modController.transition(LoaderState.AVAILABLE, true);
     }
