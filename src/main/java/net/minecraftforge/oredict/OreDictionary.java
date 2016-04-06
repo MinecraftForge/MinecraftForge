@@ -110,8 +110,20 @@ public class OreDictionary
             registerOre("cropPotato",  Items.potato);
             registerOre("cropCarrot",  Items.carrot);
             registerOre("stone",       Blocks.stone);
+            // 1.8 START
+            registerOre("stoneGranite",          new ItemStack(Blocks.stone, 1, 1));
+            registerOre("stoneGranitePolished",  new ItemStack(Blocks.stone, 1, 2));
+            registerOre("stoneDiorite",          new ItemStack(Blocks.stone, 1, 3));
+            registerOre("stoneDioritePolished",  new ItemStack(Blocks.stone, 1, 4));
+            registerOre("stoneAndesite",         new ItemStack(Blocks.stone, 1, 5));
+            registerOre("stoneAndesitePolished", new ItemStack(Blocks.stone, 1, 6));
+            // 1.8 END
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
+            // 1.8 START
+            registerOre("sandstone",   new ItemStack(Blocks.red_sandstone, 1, WILDCARD_VALUE));
+            registerOre("prismarine",  Blocks.prismarine);
+            // 1.8 END
             registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
             registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
             registerOre("record",      Items.record_13);
@@ -141,7 +153,15 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE), "slabWood");
         replacements.put(new ItemStack(Blocks.stone), "stone");
-        //replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
+        // 1.8 START
+        replacements.put(new ItemStack(Blocks.stone, 1, 1), "stoneGranite");
+        replacements.put(new ItemStack(Blocks.stone, 1, 2), "stoneGranitePolished");
+        replacements.put(new ItemStack(Blocks.stone, 1, 3), "stoneDiorite");
+        replacements.put(new ItemStack(Blocks.stone, 1, 4), "stoneDioritePolished");
+        replacements.put(new ItemStack(Blocks.stone, 1, 5), "stoneAndesite");
+        replacements.put(new ItemStack(Blocks.stone, 1, 6), "stoneAndesitePolished");
+        replacements.put(new ItemStack(Blocks.prismarine), "prismarine");
+        // 1.8 END
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
         replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
