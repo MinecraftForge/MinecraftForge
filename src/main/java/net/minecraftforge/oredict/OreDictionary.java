@@ -154,7 +154,9 @@ public class OreDictionary
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("gravel",      Blocks.gravel);
             registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
+            registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
             registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
+            registerOre("sandstone",   new ItemStack(Blocks.red_sandstone, 1, WILDCARD_VALUE));
             registerOre("netherrack",  Blocks.netherrack);
             registerOre("obsidian",    Blocks.obsidian);
             registerOre("glowstone",   Blocks.glowstone);
@@ -167,6 +169,12 @@ public class OreDictionary
                     new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.BRICKS.getMetadata()));
             registerOre("blockDarkPrismarine",
                     new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.DARK.getMetadata()));
+            registerOre("stoneGranite",          new ItemStack(Blocks.stone, 1, 1));
+            registerOre("stoneGranitePolished",  new ItemStack(Blocks.stone, 1, 2));
+            registerOre("stoneDiorite",          new ItemStack(Blocks.stone, 1, 3));
+            registerOre("stoneDioritePolished",  new ItemStack(Blocks.stone, 1, 4));
+            registerOre("stoneAndesite",         new ItemStack(Blocks.stone, 1, 5));
+            registerOre("stoneAndesitePolished", new ItemStack(Blocks.stone, 1, 6));
             registerOre("blockGlassColorless", Blocks.glass);
             registerOre("blockGlass",    Blocks.glass);
             registerOre("blockGlass",    new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
@@ -232,6 +240,14 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
         replacements.put(new ItemStack(Blocks.glass), "blockGlassColorless");
+        replacements.put(new ItemStack(Blocks.prismarine), "prismarine");
+        replacements.put(new ItemStack(Blocks.stone, 1, 1), "stoneGranite");
+        replacements.put(new ItemStack(Blocks.stone, 1, 2), "stoneGranitePolished");
+        replacements.put(new ItemStack(Blocks.stone, 1, 3), "stoneDiorite");
+        replacements.put(new ItemStack(Blocks.stone, 1, 4), "stoneDioritePolished");
+        replacements.put(new ItemStack(Blocks.stone, 1, 5), "stoneAndesite");
+        replacements.put(new ItemStack(Blocks.stone, 1, 6), "stoneAndesitePolished");
+
 
         // chests
         replacements.put(new ItemStack(Blocks.chest), "chestWood");
