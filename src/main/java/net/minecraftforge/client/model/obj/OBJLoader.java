@@ -27,6 +27,7 @@ public enum OBJLoader implements ICustomModelLoader {
     private IResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<String>();
     private final Map<ResourceLocation, OBJModel> cache = new HashMap<ResourceLocation, OBJModel>();
+    private final Map<ResourceLocation, Exception> errors = new HashMap<ResourceLocation, Exception>();
 
     public void addDomain(String domain)
     {
@@ -38,6 +39,7 @@ public enum OBJLoader implements ICustomModelLoader {
     {
         this.manager = resourceManager;
         cache.clear();
+        errors.clear();
     }
 
     public boolean accepts(ResourceLocation modelLocation)
@@ -69,13 +71,17 @@ public enum OBJLoader implements ICustomModelLoader {
             {
                 model = parser.parse();
             }
+            catch (Exception e)
+            {
+                errors.put(modelLocation, e);
+            }
             finally
             {
                 cache.put(modelLocation, model);
             }
         }
         OBJModel model = cache.get(file);
-        if (model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file);
+        if (model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file, errors.get(modelLocation));
         return model;
     }
 }
