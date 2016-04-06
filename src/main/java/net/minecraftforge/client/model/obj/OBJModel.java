@@ -45,6 +45,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.core.helpers.Strings;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -201,212 +202,164 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             return this.groupList;
         }
 
+        private float[] parseFloats(String[] data) // Helper converting strings to floats
+        {
+            float[] ret = new float[data.length];
+            for (int i = 0; i < data.length; i++)
+                ret[i] = Float.parseFloat(data[i]);
+            return ret;
+        }
+
+        //Partial reading of the OBJ format. Documentation taken from http://paulbourke.net/dataformats/obj/
         public OBJModel parse() throws IOException
         {
             String currentLine = "";
             Material material = new Material();
             material.setName(Material.DEFAULT_NAME);
             int usemtlCounter = 0;
-
-//            float[] minUVBounds = new float[] {0.0f, 0.0f};
-//            float[] maxUVBounds = new float[] {1.0f, 1.0f};
+            int lineNum = 0;
 
             for (;;)
             {
+                lineNum++;
                 currentLine = objReader.readLine();
                 if (currentLine == null) break;
                 currentLine.trim();
                 if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
 
-                String[] fields = WHITE_SPACE.split(currentLine, 2);
-                String key = fields[0];
-                String data = fields[1];
-                String[] splitData = WHITE_SPACE.split(data);
-
-                if (key.equalsIgnoreCase("mtllib"))
-                    this.materialLibrary.parseMaterials(manager, data, objFrom);
-                else if (key.equalsIgnoreCase("usemtl"))
+                try
                 {
-                    material = this.materialLibrary.materials.get(data);
-                    usemtlCounter++;
-                }
-                else if (key.equalsIgnoreCase("v"))
-                {
-                    float[] floatSplitData = new float[splitData.length];
-                    for (int i = 0; i < splitData.length; i++)
-                        floatSplitData[i] = Float.parseFloat(splitData[i]);
-                    Vector4f pos = new Vector4f(floatSplitData[0], floatSplitData[1], floatSplitData[2], floatSplitData.length == 4 ? floatSplitData[3] : 1);
-                    Vertex vertex = new Vertex(pos, material);
-                    this.vertices.add(vertex);
-                }
-                else if (key.equalsIgnoreCase("vn"))
-                {
-                    float[] floatSplitData = new float[splitData.length];
-                    for (int i = 0; i < splitData.length; i++)
-                        floatSplitData[i] = Float.parseFloat(splitData[i]);
-                    Normal normal = new Normal(floatSplitData);
-                    this.normals.add(normal);
-                }
-                else if (key.equalsIgnoreCase("vt"))
-                {
-                    float[] floatSplitData = new float[splitData.length];
-                    for (int i = 0; i < splitData.length; i++)
-                        floatSplitData[i] = Float.parseFloat(splitData[i]);
-                    TextureCoordinate texCoord = new TextureCoordinate(new Vector3f(floatSplitData[0], floatSplitData[1], floatSplitData.length == 3 ? floatSplitData[2] : 1));
-                    if (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f)
-                        throw new UVsOutOfBoundsException(this.objFrom);
-//                    this.UVsOutOfBounds = (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f);
+                    String[] fields = WHITE_SPACE.split(currentLine, 2);
+                    String key = fields[0];
+                    String data = fields[1];
+                    String[] splitData = WHITE_SPACE.split(data);
 
-//                    if (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f)
-//                    {
-//                        this.UVsOutOfBounds = true;
-//                        texCoord.u -= Math.floor(texCoord.u);
-//                        texCoord.v -= Math.floor(texCoord.v);
-//                    }
-
-//                    minUVBounds[0] = floatSplitData[0] < minUVBounds[0] ? floatSplitData[0] : minUVBounds[0];
-//                    minUVBounds[1] = floatSplitData[1] < minUVBounds[1] ? floatSplitData[1] : minUVBounds[1];
-//                    maxUVBounds[0] = floatSplitData[0] > maxUVBounds[0] ? floatSplitData[0] : maxUVBounds[0];
-//                    maxUVBounds[1] = floatSplitData[1] > maxUVBounds[1] ? floatSplitData[1] : maxUVBounds[1];
-//                    FMLLog.info("u: [%f, %f] v: [%f, %f]", minUVBounds[]);
-                    this.texCoords.add(texCoord);
-                }
-                else if (key.equalsIgnoreCase("f"))
-                {
-                    String[][] splitSlash = new String[splitData.length][];
-                    if (splitData.length > 4) FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
-
-                    int vert = 0;
-                    int texCoord = 0;
-                    int norm = 0;
-
-                    List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
-//                    List<TextureCoordinate> t = Lists.newArrayListWithCapacity(splitData.length);
-//                    List<Normal> n = Lists.newArrayListWithCapacity(splitData.length);
-
-                    for (int i = 0; i < splitData.length; i++)
+                    if (key.equalsIgnoreCase("mtllib"))
                     {
-                        if (splitData[i].contains("//"))
+                        this.materialLibrary.parseMaterials(manager, data, objFrom);
+                    }
+                    else if (key.equalsIgnoreCase("usemtl"))
+                    {
+                        material = this.materialLibrary.materials.get(data);
+                        usemtlCounter++;
+                    }
+                    else if (key.equalsIgnoreCase("v")) // Vertices: x y z [w] - w Defaults to 1.0
+                    {
+                        float[] coords = parseFloats(splitData);
+                        Vector4f pos = new Vector4f(coords[0], coords[1], coords[2], coords.length == 4 ? coords[3] : 1.0F);
+                        this.vertices.add(new Vertex(pos, material));
+                    }
+                    else if (key.equalsIgnoreCase("vn")) // Vertex normals: x y z
+                    {
+                        this.normals.add(new Normal(parseFloats(splitData)));
+                    }
+                    else if (key.equalsIgnoreCase("vt")) // Vertex Textures: u [v] [w] - v/w Defaults to 0
+                    {
+                        float[] coords = parseFloats(splitData);
+                        TextureCoordinate texCoord = new TextureCoordinate(coords[0],
+                                coords.length >= 2 ? coords[1] : 0.0F,
+                                coords.length >= 3 ? coords[2] : 0.0F);
+                        if (texCoord.u < 0.0f || texCoord.u > 1.0f || texCoord.v < 0.0f || texCoord.v > 1.0f)
+                            throw new UVsOutOfBoundsException(this.objFrom);
+                        this.texCoords.add(texCoord);
+                    }
+                    else if (key.equalsIgnoreCase("f")) // Face Elements: f v1[/vt1][/vn1] ...
+                    {
+                        if (splitData.length > 4)
+                            FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+
+                        List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
+
+                        for (int i = 0; i < splitData.length; i++)
                         {
-                            splitSlash[i] = splitData[i].split("//");
+                            String[] pts = splitData[i].split("/");
 
-                            vert = Integer.parseInt(splitSlash[i][0]);
+                            int vert = Integer.parseInt(pts[0]);
+                            Integer texture = pts.length < 2 || Strings.isEmpty(pts[1]) ? null : Integer.parseInt(pts[1]);
+                            Integer normal = pts.length < 3 || Strings.isEmpty(pts[2]) ? null : Integer.parseInt(pts[2]);
+
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
-                            norm = Integer.parseInt(splitSlash[i][1]);
-                            norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
-
                             Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
-                            newV.setNormal(this.normals.get(norm));
+
+                            if (texture != null)
+                                newV.setTextureCoordinate(this.texCoords.get(texture < 0 ? this.texCoords.size() - 1 : texture - 1));
+                            if (normal != null)
+                                newV.setNormal(this.normals.get(normal < 0 ? this.normals.size() - 1 : normal - 1));
 
                             v.add(newV);
-//                            n.add(this.normals.get(norm));
                         }
-                        else if (splitData[i].contains("/"))
-                        {
-                            splitSlash[i] = splitData[i].split("/");
 
-                            vert = Integer.parseInt(splitSlash[i][0]);
-                            vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
-                            texCoord = Integer.parseInt(splitSlash[i][1]);
-                            texCoord = texCoord < 0 ? this.texCoords.size() - 1 : texCoord - 1;
-                            if (splitSlash[i].length > 2)
+                        Vertex[] va = v.toArray(new Vertex[v.size()]);
+
+                        Face face = new Face(va, material.name);
+                        if (usemtlCounter < this.vertices.size())
+                        {
+                            for (Vertex ver : face.getVertices())
                             {
-                                norm = Integer.parseInt(splitSlash[i][2]);
-                                norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
+                                ver.setMaterial(material);
                             }
-
-                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
-                            newV.setTextureCoordinate(this.texCoords.get(texCoord));
-                            newV.setNormal(splitSlash[i].length > 2 ? this.normals.get(norm) : null);
-
-                            v.add(newV);
-//                            t.add(this.texCoords.get(texCoord));
-//                            if (splitSlash[i].length > 2) n.add(this.normals.get(norm));
                         }
-                        else
-                        {
-                            splitSlash[i] = splitData[i].split("");
 
-                            vert = Integer.parseInt(splitSlash[i][0]);
-                            vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
-
-                            Vertex newV = new Vertex(new Vector4f(this.vertices.get(vert).getPos()), this.vertices.get(vert).getMaterial());
-                            v.add(newV);
-                        }
-                    }
-
-                    Vertex[] va = new Vertex[v.size()];
-                    v.toArray(va);
-//                    TextureCoordinate[] ta = new TextureCoordinate[t.size()];
-//                    t.toArray(ta);
-//                    Normal[] na = new Normal[n.size()];
-//                    n.toArray(na);
-                    Face face = new Face(va, material.name);
-                    if (usemtlCounter < this.vertices.size())
-                    {
-                        for (Vertex ver : face.getVertices())
+                        if (groupList.isEmpty())
                         {
-                            ver.setMaterial(material);
-                        }
-                    }
-
-                    if (groupList.isEmpty())
-                    {
-                        if (this.materialLibrary.getGroups().containsKey(Group.DEFAULT_NAME))
-                        {
-                            this.materialLibrary.getGroups().get(Group.DEFAULT_NAME).addFace(face);
-                        }
-                        else
-                        {
-                            Group def = new Group(Group.DEFAULT_NAME, null);
-                            def.addFace(face);
-                            this.materialLibrary.getGroups().put(Group.DEFAULT_NAME, def);
-                        }
-                    }
-                    else
-                    {
-                        for (String s : groupList)
-                        {
-                            if (this.materialLibrary.getGroups().containsKey(s))
+                            if (this.materialLibrary.getGroups().containsKey(Group.DEFAULT_NAME))
                             {
-                                this.materialLibrary.getGroups().get(s).addFace(face);
+                                this.materialLibrary.getGroups().get(Group.DEFAULT_NAME).addFace(face);
                             }
                             else
                             {
-                                Group e = new Group(s, null);
-                                e.addFace(face);
-                                this.materialLibrary.getGroups().put(s, e);
+                                Group def = new Group(Group.DEFAULT_NAME, null);
+                                def.addFace(face);
+                                this.materialLibrary.getGroups().put(Group.DEFAULT_NAME, def);
+                            }
+                        }
+                        else
+                        {
+                            for (String s : groupList)
+                            {
+                                if (this.materialLibrary.getGroups().containsKey(s))
+                                {
+                                    this.materialLibrary.getGroups().get(s).addFace(face);
+                                }
+                                else
+                                {
+                                    Group e = new Group(s, null);
+                                    e.addFace(face);
+                                    this.materialLibrary.getGroups().put(s, e);
+                                }
                             }
                         }
                     }
-                }
-                else if (key.equalsIgnoreCase("g") || key.equalsIgnoreCase("o"))
-                {
-                    groupList.clear();
-                    if (key.equalsIgnoreCase("g"))
+                    else if (key.equalsIgnoreCase("g") || key.equalsIgnoreCase("o"))
                     {
-                        String[] splitSpace = data.split(" ");
-                        for (String s : splitSpace)
-                            groupList.add(s);
+                        groupList.clear();
+                        if (key.equalsIgnoreCase("g"))
+                        {
+                            String[] splitSpace = data.split(" ");
+                            for (String s : splitSpace)
+                                groupList.add(s);
+                        }
+                        else
+                        {
+                            groupList.add(data);
+                        }
                     }
                     else
                     {
-                        groupList.add(data);
+                        if (!unknownObjectCommands.contains(key))
+                        {
+                            unknownObjectCommands.add(key);
+                            FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping. Line: %d '%s'", key, objFrom, lineNum, currentLine);
+                        }
                     }
                 }
-                else
+                catch (RuntimeException e)
                 {
-                    if (!unknownObjectCommands.contains(key))
-                    {
-                        unknownObjectCommands.add(key);
-                        FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping", key, objFrom);
-                    }
+                    throw new RuntimeException(String.format("OBJLoader.Parser: Exception parsing line #%d: `%s`", lineNum, currentLine), e);
                 }
             }
 
-            OBJModel model = new OBJModel(this.materialLibrary, this.objFrom);
-//            model.getMatLib().setUVBounds(minUVBounds[0], maxUVBounds[0], minUVBounds[1], maxUVBounds[1]);
-            return model;
+            return new OBJModel(this.materialLibrary, this.objFrom);
         }
     }
 
@@ -825,8 +778,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         {
             return this.materialName;
         }
-        
-        public boolean isTriangles() 
+
+        public boolean isTriangles()
         {
             return isTri;
         }
