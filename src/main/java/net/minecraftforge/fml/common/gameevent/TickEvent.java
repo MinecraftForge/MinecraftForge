@@ -2,7 +2,9 @@ package net.minecraftforge.fml.common.gameevent;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -24,10 +26,29 @@ public class TickEvent extends Event {
         this.phase = phase;
     }
 
-    public static class ServerTickEvent extends TickEvent {
+    public static class ServerTickEvent extends TickEvent
+    {
+        private final MinecraftServer server;
+
+        /**
+         * @deprecated use {@link #ServerTickEvent(MinecraftServer, Phase)}
+         */
+        @Deprecated
         public ServerTickEvent(Phase phase)
         {
             super(Type.SERVER, Side.SERVER, phase);
+            this.server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        }
+
+        public ServerTickEvent(MinecraftServer server, Phase phase)
+        {
+            super(Type.SERVER, Side.SERVER, phase);
+            this.server = server;
+        }
+
+        public MinecraftServer getServer()
+        {
+            return this.server;
         }
     }
 
