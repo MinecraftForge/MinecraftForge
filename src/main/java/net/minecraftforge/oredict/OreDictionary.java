@@ -154,7 +154,6 @@ public class OreDictionary
             registerOre("cobblestone", Blocks.cobblestone);
             registerOre("gravel",      Blocks.gravel);
             registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
-            registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
             registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
             registerOre("sandstone",   new ItemStack(Blocks.red_sandstone, 1, WILDCARD_VALUE));
             registerOre("netherrack",  Blocks.netherrack);
@@ -203,7 +202,6 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE), "slabWood");
 
-        // Ores
         // ingots/nuggets
         replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
         replacements.put(new ItemStack(Items.iron_ingot), "ingotIron");
@@ -216,9 +214,9 @@ public class OreDictionary
         replacements.put(new ItemStack(Items.redstone), "dustRedstone");
         replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
 
-        // storage blocks
         // crops
         replacements.put(new ItemStack(Items.reeds), "sugarcane");
+        replacements.put(new ItemStack(Blocks.cactus), "blockCactus");
 
         // misc materials
         replacements.put(new ItemStack(Items.paper), "paper");
@@ -232,10 +230,10 @@ public class OreDictionary
         replacements.put(new ItemStack(Items.nether_star), "netherStar");
         replacements.put(new ItemStack(Items.feather), "feather");
         replacements.put(new ItemStack(Items.bone), "bone");
+        replacements.put(new ItemStack(Items.egg), "egg");
 
         // blocks
         replacements.put(new ItemStack(Blocks.stone), "stone");
-        //replacements.put(new ItemStack(Blocks.stone, 1, WILDCARD_VALUE), "stone");
         replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
         replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
         replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
@@ -247,7 +245,6 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.stone, 1, 4), "stoneDioritePolished");
         replacements.put(new ItemStack(Blocks.stone, 1, 5), "stoneAndesite");
         replacements.put(new ItemStack(Blocks.stone, 1, 6), "stoneAndesitePolished");
-
 
         // chests
         replacements.put(new ItemStack(Blocks.chest), "chestWood");
