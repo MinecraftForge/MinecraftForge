@@ -324,7 +324,7 @@ public final class ModelFluid implements IModelCustomData
 
         public boolean isAmbientOcclusion()
         {
-            return false;
+            return true;
         }
 
         public boolean isGui3d()
