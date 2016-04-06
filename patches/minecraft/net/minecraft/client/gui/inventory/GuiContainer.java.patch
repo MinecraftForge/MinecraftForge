@@ -35,7 +35,7 @@
      {
          super.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
 -        boolean flag = p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100;
-+        boolean flag = this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ + 100);
++        boolean flag = this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100);
          Slot slot = this.func_146975_c(p_73864_1_, p_73864_2_);
          long i = Minecraft.func_71386_F();
          this.field_146993_M = this.field_146998_K == slot && i - this.field_146997_J < 250L && this.field_146992_L == p_73864_3_;
@@ -52,7 +52,7 @@
                      if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() == null)
                      {
 -                        if (p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
-+                        if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ + 100))
++                        if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100))
                          {
                              this.func_184098_a(slot, l, p_73864_3_, ClickType.CLONE);
                          }
@@ -61,7 +61,7 @@
                              this.field_146987_F = 1;
                          }
 -                        else if (p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
-+                        else if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ + 100))
++                        else if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100))
                          {
                              this.field_146987_F = 2;
                          }
@@ -78,6 +78,15 @@
          int k = -1;
  
          if (slot != null)
+@@ -575,7 +580,7 @@
+             }
+             else if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() != null)
+             {
+-                if (p_146286_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
++                if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_146286_3_ - 100))
+                 {
+                     this.func_184098_a(slot, k, p_146286_3_, ClickType.CLONE);
+                 }
 @@ -627,7 +632,7 @@
  
      protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
