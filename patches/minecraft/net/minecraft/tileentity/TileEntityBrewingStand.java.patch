@@ -1,5 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+@@ -54,9 +54,9 @@
+ 
+     public void func_73660_a()
+     {
+-        if (this.field_184278_m <= 0 && this.field_145945_j[4] != null && this.field_145945_j[4].func_77973_b() == Items.field_151065_br)
++        if (this.field_184278_m <= 0 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isFuel(this.field_145945_j[4]))
+         {
+-            this.field_184278_m = 20;
++            field_184278_m = net.minecraftforge.common.brewing.BrewingRecipeRegistry.getFuelValue(this.field_145945_j[4]);
+             --this.field_145945_j[4].field_77994_a;
+ 
+             if (this.field_145945_j[4].field_77994_a <= 0)
 @@ -140,7 +140,7 @@
  
      private boolean func_145934_k()

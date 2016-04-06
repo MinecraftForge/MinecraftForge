@@ -2,16 +2,23 @@ package net.minecraftforge.common.brewing;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.annotation.Nullable;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-public class BrewingRecipeRegistry {
+public class BrewingRecipeRegistry
+{
 
     private static List<IBrewingRecipe> recipes = new ArrayList<IBrewingRecipe>();
+    private static List<FuelEntry> fuels = new CopyOnWriteArrayList<FuelEntry>();
 
     static
     {
         addRecipe(new VanillaBrewingRecipe());
+        addFuel(new ItemStack(Items.blaze_powder), 20);
     }
 
     /**
@@ -167,5 +174,128 @@ public class BrewingRecipeRegistry {
     public static List<IBrewingRecipe> getRecipes()
     {
         return Collections.unmodifiableList(recipes);
+    }
+
+    /**
+     * Returns an unmodifiable list of all fuels in the registry.
+     */
+    public static List<FuelEntry> getFuels()
+    {
+        return Collections.unmodifiableList(fuels);
+    }
+
+    /**
+     * Adds a new fuel for brewing stands. Fuel value MUST BE positive.
+     */
+    public static void addFuel(ItemStack item, int fuelValue)
+    {
+        for (FuelEntry e : fuels) {
+            if (ItemStack.areItemStacksEqual(e.getItem(), item))
+            {
+                if (e.getFuelValue() < fuelValue)
+                {
+                    e.power = fuelValue;
+                }
+                return;
+            }
+        }
+        fuels.add(new FuelEntry(item, fuelValue));
+    }
+
+    /**
+     * Overrides the fuel value of a fuel. Fuel value MUST BE positive.
+     *
+     * @return True if the value is overridden
+     */
+    public static boolean setFuelValue(ItemStack fuel, int value)
+    {
+        for (FuelEntry e : fuels) {
+            if (ItemStack.areItemStacksEqual(e.getItem(), fuel))
+            {
+                e.power = value;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes a fuel.
+     *
+     * @return True if the fuel is removed
+     */
+    public static boolean removeFuel(ItemStack fuel)
+    {
+        Iterator<FuelEntry> itr = fuels.iterator();
+        while (itr.hasNext())
+        {
+            FuelEntry fuelEntry = itr.next();
+            if (ItemStack.areItemStacksEqual(fuelEntry.getItem(), fuel))
+            {
+                itr.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check whether an item is a fuel of brewing stands.
+     */
+    public static boolean isFuel(@Nullable ItemStack item)
+    {
+        if (item == null)
+        {
+            return false;
+        }
+        for (FuelEntry e : fuels)
+        {
+            if (ItemStack.areItemStacksEqual(e.getItem(), item))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the fuel value of an item.
+     */
+    public static int getFuelValue(@Nullable ItemStack fuel)
+    {
+        if (fuel == null)
+        {
+            return 0;
+        }
+        for (FuelEntry e : fuels)
+        {
+            if (ItemStack.areItemStacksEqual(e.getItem(), fuel))
+            {
+                return e.getFuelValue();
+            }
+        }
+        return 0;
+    }
+
+    public static final class FuelEntry
+    {
+        private ItemStack item;
+        private int power;
+
+        private FuelEntry(ItemStack itemStack, int fuelValue)
+        {
+            item = itemStack;
+            power = fuelValue;
+        }
+
+        public ItemStack getItem()
+        {
+            return item;
+        }
+
+        public int getFuelValue()
+        {
+            return power;
+        }
     }
 }
