@@ -42,7 +42,7 @@
              }
  
              for (SoundCategory soundcategory : SoundCategory.values())
-@@ -1184,4 +1189,25 @@
+@@ -1184,4 +1189,24 @@
              return p_148264_1_;
          }
      }
@@ -58,7 +58,6 @@
 +        field_74311_E.setKeyConflictContext(inGame);
 +        field_151444_V.setKeyConflictContext(inGame);
 +        field_74312_F.setKeyConflictContext(inGame);
-+        field_74322_I.setKeyConflictContext(inGame);
 +        field_74310_D.setKeyConflictContext(inGame);
 +        field_74321_H.setKeyConflictContext(inGame);
 +        field_74323_J.setKeyConflictContext(inGame);
