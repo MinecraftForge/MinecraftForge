@@ -22,11 +22,15 @@ public class KeyBindingMap
     public KeyBinding lookupActive(int keyCode)
     {
         KeyModifier activeModifier = KeyModifier.getActiveModifier();
-        if (activeModifier.matches(keyCode))
+        if (!activeModifier.matches(keyCode))
         {
-            activeModifier = KeyModifier.NONE;
+            KeyBinding binding = getBinding(keyCode, activeModifier);
+            if (binding != null)
+            {
+                return binding;
+            }
         }
-        return getBinding(keyCode, activeModifier);
+        return getBinding(keyCode, KeyModifier.NONE);
     }
 
     private KeyBinding getBinding(int keyCode, KeyModifier keyModifier)
