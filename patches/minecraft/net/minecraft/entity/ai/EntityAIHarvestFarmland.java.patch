@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIHarvestFarmland.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIHarvestFarmland.java
+@@ -68,7 +68,7 @@
+             IBlockState iblockstate = world.func_180495_p(blockpos);
+             Block block = iblockstate.func_177230_c();
+ 
+-            if (this.field_179501_f == 0 && block instanceof BlockCrops && ((BlockCrops)block).func_185525_y(iblockstate))
++            if (this.field_179501_f == 0 && block instanceof BlockCrops && ((BlockCrops)block).func_185525_y(iblockstate) && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179504_c, blockpos, Blocks.field_150350_a.func_176223_P()))
+             {
+                 world.func_175655_b(blockpos, true);
+             }
+@@ -83,22 +83,22 @@
+ 
+                     if (itemstack != null)
+                     {
+-                        if (itemstack.func_77973_b() == Items.field_151014_N)
++                        if (itemstack.func_77973_b() == Items.field_151014_N && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179504_c, blockpos, Blocks.field_150464_aj.func_176223_P()))
+                         {
+                             world.func_180501_a(blockpos, Blocks.field_150464_aj.func_176223_P(), 3);
+                             flag = true;
+                         }
+-                        else if (itemstack.func_77973_b() == Items.field_151174_bG)
++                        else if (itemstack.func_77973_b() == Items.field_151174_bG && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179504_c, blockpos, Blocks.field_150469_bN.func_176223_P()))
+                         {
+                             world.func_180501_a(blockpos, Blocks.field_150469_bN.func_176223_P(), 3);
+                             flag = true;
+                         }
+-                        else if (itemstack.func_77973_b() == Items.field_151172_bF)
++                        else if (itemstack.func_77973_b() == Items.field_151172_bF && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179504_c, blockpos, Blocks.field_150459_bM.func_176223_P()))
+                         {
+                             world.func_180501_a(blockpos, Blocks.field_150459_bM.func_176223_P(), 3);
+                             flag = true;
+                         }
+-                        else if (itemstack.func_77973_b() == Items.field_185163_cU)
++                        else if (itemstack.func_77973_b() == Items.field_185163_cU && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179504_c, blockpos, Blocks.field_185773_cZ.func_176223_P()))
+                         {
+                             world.func_180501_a(blockpos, Blocks.field_185773_cZ.func_176223_P(), 3);
+                             flag = true;

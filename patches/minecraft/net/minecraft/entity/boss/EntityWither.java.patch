@@ -5,7 +5,7 @@
                                  Block block = iblockstate.func_177230_c();
  
 -                                if (iblockstate.func_185904_a() != Material.field_151579_a && func_181033_a(block))
-+                                if (!block.isAir(iblockstate, this.field_70170_p, blockpos))
++                                if (!block.isAir(iblockstate, this.field_70170_p, blockpos) && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(this, blockpos, Blocks.field_150350_a.func_176223_P()))
                                  {
                                      flag = this.field_70170_p.func_175655_b(blockpos, true) || flag;
                                  }

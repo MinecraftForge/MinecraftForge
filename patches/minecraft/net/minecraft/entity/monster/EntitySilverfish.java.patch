@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
+@@ -209,9 +209,10 @@
+                     BlockPos blockpos = (new BlockPos(this.field_179485_a.field_70165_t, this.field_179485_a.field_70163_u + 0.5D, this.field_179485_a.field_70161_v)).func_177972_a(this.field_179483_b);
+                     IBlockState iblockstate = world.func_180495_p(blockpos);
+ 
+-                    if (BlockSilverfish.func_176377_d(iblockstate))
++                    IBlockState state = Blocks.field_150418_aU.func_176223_P().func_177226_a(BlockSilverfish.field_176378_a, BlockSilverfish.EnumType.func_176878_a(iblockstate));
++                    if (BlockSilverfish.func_176377_d(iblockstate) && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179485_a, blockpos, state))
+                     {
+-                        world.func_180501_a(blockpos, Blocks.field_150418_aU.func_176223_P().func_177226_a(BlockSilverfish.field_176378_a, BlockSilverfish.EnumType.func_176878_a(iblockstate)), 3);
++                        world.func_180501_a(blockpos, state, 3);
+                         this.field_179485_a.func_70656_aK();
+                         this.field_179485_a.func_70106_y();
+                     }
+@@ -263,11 +264,11 @@
+ 
+                                 if (iblockstate.func_177230_c() == Blocks.field_150418_aU)
+                                 {
+-                                    if (world.func_82736_K().func_82766_b("mobGriefing"))
++                                    if (world.func_82736_K().func_82766_b("mobGriefing") && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179464_a, blockpos1, Blocks.field_150350_a.func_176223_P()))
+                                     {
+                                         world.func_175655_b(blockpos1, true);
+                                     }
+-                                    else
++                                    else if(!net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179464_a, blockpos1, ((BlockSilverfish.EnumType)iblockstate.func_177229_b(BlockSilverfish.field_176378_a)).func_176883_d()))
+                                     {
+                                         world.func_180501_a(blockpos1, ((BlockSilverfish.EnumType)iblockstate.func_177229_b(BlockSilverfish.field_176378_a)).func_176883_d(), 3);
+                                     }
