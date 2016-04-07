@@ -161,13 +161,11 @@ public class OreDictionary
             registerOre("glowstone",   Blocks.glowstone);
             registerOre("endstone",    Blocks.end_stone);
             registerOre("torch",       Blocks.torch);
+            registerOre("workbench",   Blocks.crafting_table);
             registerOre("blockSlime",    Blocks.slime_block);
-            registerOre("blockPrismarine",
-                    new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.ROUGH.getMetadata()));
-            registerOre("blockPrismarineBrick",
-                    new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.BRICKS.getMetadata()));
-            registerOre("blockDarkPrismarine",
-                    new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.DARK.getMetadata()));
+            registerOre("blockPrismarine", new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.ROUGH.getMetadata()));
+            registerOre("blockPrismarineBrick", new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.BRICKS.getMetadata()));
+            registerOre("blockPrismarineDark", new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.DARK.getMetadata()));
             registerOre("stoneGranite",          new ItemStack(Blocks.stone, 1, 1));
             registerOre("stoneGranitePolished",  new ItemStack(Blocks.stone, 1, 2));
             registerOre("stoneDiorite",          new ItemStack(Blocks.stone, 1, 3));
@@ -190,7 +188,6 @@ public class OreDictionary
             registerOre("chestWood",   Blocks.chest);
             registerOre("chestEnder",  Blocks.ender_chest);
             registerOre("chestTrapped", Blocks.trapped_chest);
-            registerOre("workbench",   Blocks.crafting_table);
         }
 
         // Build our list of items to replace with ore tags
