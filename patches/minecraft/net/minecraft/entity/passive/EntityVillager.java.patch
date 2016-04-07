@@ -55,7 +55,15 @@
          this.field_70956_bz = p_70037_1_.func_74762_e("Riches");
          this.field_175563_bv = p_70037_1_.func_74762_e("Career");
          this.field_175562_bw = p_70037_1_.func_74762_e("CareerLevel");
-@@ -334,6 +346,26 @@
+@@ -327,6 +339,7 @@
+     public void func_70938_b(int p_70938_1_)
+     {
+         this.field_70180_af.func_187227_b(field_184752_bw, Integer.valueOf(p_70938_1_));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, p_70938_1_);
+     }
+ 
+     public int func_70946_n()
+@@ -334,6 +347,27 @@
          return Math.max(((Integer)this.field_70180_af.func_187225_a(field_184752_bw)).intValue() % 5, 0);
      }
  
@@ -64,6 +72,7 @@
 +    {
 +        this.field_70180_af.func_187227_b(PROFESSION_STR, prof.getRegistryName().toString());
 +        this.prof = prof;
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, prof);
 +    }
 +
 +    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getProfessionForge()
@@ -82,7 +91,7 @@
      public boolean func_70941_o()
      {
          return this.field_70952_f;
-@@ -533,15 +565,13 @@
+@@ -533,15 +567,13 @@
  
      private void func_175554_cu()
      {
@@ -99,7 +108,7 @@
              this.field_175562_bw = 1;
          }
  
-@@ -552,7 +582,7 @@
+@@ -552,7 +584,7 @@
  
          int i = this.field_175563_bv - 1;
          int j = this.field_175562_bw - 1;
@@ -108,7 +117,7 @@
  
          if (j >= 0 && j < aentityvillager$itradelist1.length)
          {
-@@ -647,9 +677,14 @@
+@@ -647,9 +679,14 @@
                      }
              }
  
@@ -124,7 +133,7 @@
                  textcomponenttranslation.func_150256_b().func_150209_a(this.func_174823_aP());
                  textcomponenttranslation.func_150256_b().func_179989_a(this.func_110124_au().toString());
  
-@@ -708,7 +743,7 @@
+@@ -708,7 +745,7 @@
      public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, IEntityLivingData p_180482_2_)
      {
          p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);
