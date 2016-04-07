@@ -30,3 +30,21 @@
      public boolean func_70823_r()
      {
          return ((Boolean)this.field_70180_af.func_187225_a(field_184719_bw)).booleanValue();
+@@ -484,7 +498,7 @@
+                 IBlockState iblockstate1 = world.func_180495_p(blockpos.func_177977_b());
+                 IBlockState iblockstate2 = this.field_179475_a.func_175489_ck();
+ 
+-                if (iblockstate2 != null && this.func_188518_a(world, blockpos, iblockstate2.func_177230_c(), iblockstate, iblockstate1))
++                if (iblockstate2 != null && this.func_188518_a(world, blockpos, iblockstate2.func_177230_c(), iblockstate, iblockstate1) && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179475_a, blockpos, iblockstate2))
+                 {
+                     world.func_180501_a(blockpos, iblockstate2, 3);
+                     this.field_179475_a.func_175490_a((IBlockState)null);
+@@ -524,7 +538,7 @@
+                 RayTraceResult raytraceresult = world.func_147447_a(new Vec3d((double)((float)MathHelper.func_76128_c(this.field_179473_a.field_70165_t) + 0.5F), (double)((float)j + 0.5F), (double)((float)MathHelper.func_76128_c(this.field_179473_a.field_70161_v) + 0.5F)), new Vec3d((double)((float)i + 0.5F), (double)((float)j + 0.5F), (double)((float)k + 0.5F)), false, true, false);
+                 boolean flag = raytraceresult != null && raytraceresult.func_178782_a().equals(blockpos);
+ 
+-                if (EntityEnderman.field_70827_d.contains(block) && flag)
++                if (EntityEnderman.field_70827_d.contains(block) && flag && !net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(field_179473_a, blockpos, Blocks.field_150350_a.func_176223_P()))
+                 {
+                     this.field_179473_a.func_175490_a(iblockstate);
+                     world.func_175698_g(blockpos);

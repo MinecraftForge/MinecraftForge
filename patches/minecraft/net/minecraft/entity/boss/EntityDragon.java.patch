@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -474,13 +474,13 @@
+@@ -474,16 +474,17 @@
                      IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
                      Block block = iblockstate.func_177230_c();
  
@@ -16,3 +16,7 @@
                          {
                              if (block != Blocks.field_150483_bI && block != Blocks.field_185776_dc && block != Blocks.field_185777_dd && block != Blocks.field_150411_aY && block != Blocks.field_185775_db)
                              {
++                                if(!net.minecraftforge.event.ForgeEventFactory.onLivingUpdateBlock(this, blockpos, Blocks.field_150350_a.func_176223_P()))
+                                 flag1 = this.field_70170_p.func_175698_g(blockpos) || flag1;
+                             }
+                             else
