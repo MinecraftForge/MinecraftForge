@@ -500,7 +500,7 @@
                      IBlockState iblockstate = this.func_180495_p(blockpos$pooledmutableblockpos.func_185343_d(k1, l1, i2));
  
 -                    if (iblockstate.func_185904_a() != Material.field_151579_a)
-+                    if (iblockstate.func_177230_c().isAir(iblockstate, this, new BlockPos(k1, l1, i2)))
++                    if (!iblockstate.func_177230_c().isAir(iblockstate, this, new BlockPos(k1, l1, i2)))
                      {
                          blockpos$pooledmutableblockpos.func_185344_t();
                          return true;
