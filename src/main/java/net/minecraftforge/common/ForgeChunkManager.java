@@ -598,7 +598,7 @@ public class ForgeChunkManager
         forcedChunks.remove(world);
         dormantChunkCache.remove(world);
         // integrated server is shutting down
-        if (FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning())
+        if (!FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning())
         {
             playerTickets.clear();
             tickets.clear();
