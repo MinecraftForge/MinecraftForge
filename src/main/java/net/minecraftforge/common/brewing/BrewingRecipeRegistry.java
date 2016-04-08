@@ -4,21 +4,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.annotation.Nullable;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 
 public class BrewingRecipeRegistry
 {
 
     private static List<IBrewingRecipe> recipes = new ArrayList<IBrewingRecipe>();
     private static List<FuelEntry> fuels = new CopyOnWriteArrayList<FuelEntry>();
+    @CapabilityInject(IBrewingStandFuel.class)
+    private static final Capability<IBrewingStandFuel> BREWING_CAP = null;
 
     static
     {
         addRecipe(new VanillaBrewingRecipe());
         addFuel(new ItemStack(Items.blaze_powder), 20);
+        CapabilityManager.INSTANCE.register(IBrewingStandFuel.class, BrewingStandFuelStroage.INSTANCE, BrewingStandFuelImpl.class);
     }
 
     /**
@@ -248,6 +258,11 @@ public class BrewingRecipeRegistry
         {
             return false;
         }
+        if (item.hasCapability(BREWING_CAP, null))
+        {
+            IBrewingStandFuel brewingStandFuel = item.getCapability(BREWING_CAP, null);
+            return brewingStandFuel != null && brewingStandFuel.getFuelValue() > 0;
+        }
         for (FuelEntry e : fuels)
         {
             if (ItemStack.areItemStacksEqual(e.getItem(), item))
@@ -266,6 +281,11 @@ public class BrewingRecipeRegistry
         if (fuel == null)
         {
             return 0;
+        }
+        if (fuel.hasCapability(BREWING_CAP, null))
+        {
+            IBrewingStandFuel brewingStandFuel = fuel.getCapability(BREWING_CAP, null);
+            return brewingStandFuel == null || brewingStandFuel.getFuelValue() <= 0 ? 0 : brewingStandFuel.getFuelValue();
         }
         for (FuelEntry e : fuels)
         {
@@ -298,4 +318,56 @@ public class BrewingRecipeRegistry
             return power;
         }
     }
+
+    public interface IBrewingStandFuel
+    {
+        int getFuelValue();
+
+        void setFuelValue(int value);
+    }
+
+    public static final class BrewingStandFuelImpl implements IBrewingStandFuel
+    {
+        private int fuelValue = 0;
+
+        @Override
+        public int getFuelValue()
+        {
+            return fuelValue;
+        }
+
+        @Override
+        public void setFuelValue(int value)
+        {
+            this.fuelValue = value;
+        }
+    }
+
+    private static final class BrewingStandFuelStroage implements Capability.IStorage<IBrewingStandFuel>
+    {
+
+        private static final BrewingStandFuelStroage INSTANCE = new BrewingStandFuelStroage();
+
+        private BrewingStandFuelStroage()
+        {
+        }
+
+        @Override
+        public NBTBase writeNBT(Capability<IBrewingStandFuel> capability, IBrewingStandFuel instance, EnumFacing side)
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setShort("BrewingStandFuel", (short) instance.getFuelValue());
+            return tag;
+        }
+
+        @Override
+        public void readNBT(Capability<IBrewingStandFuel> capability, IBrewingStandFuel instance, EnumFacing side, NBTBase nbt)
+        {
+            if (!(nbt instanceof NBTTagCompound))
+            {
+                return;
+            }
+        }
+    }
+
 }
