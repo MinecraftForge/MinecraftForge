@@ -273,6 +273,18 @@ public class BlockEvent extends Event
 		{
 			return state;
 		}
+		
+		/**
+		 * Does the same thing as {@link RandomTickEvent}, but it isn't cancelable and it is called just after the block updated. Sure, if the block has been registred in {@link RandomBlockTickEventRegistry}
+		 * 
+		 *
+		 */
+		public static class Post extends RandomTickEvent
+		{
+			public Post(World world, BlockPos pos, IBlockState state) {
+				super(world, pos, state);
+			}
+		}
 
 		/**
 		 * A class to register {@link BlockEvent.RandomTickEvent} behavior for the block

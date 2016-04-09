@@ -985,6 +985,8 @@ public class ForgeHooks
     		if(!rte.isCanceled())
     		{
     			state.getBlock().randomTick(worldIn, pos, state, random);
+    			BlockEvent.RandomTickEvent.Post post = new BlockEvent.RandomTickEvent.Post(worldIn, pos, state);
+        		MinecraftForge.EVENT_BUS.post(post);
     		}
     		else
     		{
