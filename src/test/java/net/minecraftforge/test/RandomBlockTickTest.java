@@ -22,7 +22,7 @@ public class RandomBlockTickTest {
     public void preInit(FMLPreInitializationEvent event)
     {
     	if(!ENABLE)return;
-    	FMLLog.info("{Artem226} Preinit test mod");
+    	FMLLog.info("[RandomBlockTickEventTest] Preinit test mod");
     	BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.registerEventForBlock(BlockFire.class);
     	MinecraftForge.EVENT_BUS.register(this);
     }
