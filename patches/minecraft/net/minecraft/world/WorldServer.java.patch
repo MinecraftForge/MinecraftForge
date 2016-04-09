@@ -108,6 +108,15 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
+@@ -453,7 +465,7 @@
+ 
+                                 if (block.func_149653_t())
+                                 {
+-                                    block.func_180645_a(this, new BlockPos(k1 + j, i2 + extendedblockstorage.func_76662_d(), l1 + k), iblockstate, this.field_73012_v);
++                                    net.minecraftforge.common.ForgeHooks.onBlockRandomTick(this, new BlockPos(k1 + j, i2 + extendedblockstorage.func_76662_d(), l1 + k), iblockstate, this.field_73012_v);
+                                 }
+ 
+                                 this.field_72984_F.func_76319_b();
 @@ -527,6 +539,9 @@
              if (p_175654_2_.func_149698_L())
              {

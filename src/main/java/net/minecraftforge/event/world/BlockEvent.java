@@ -1,8 +1,11 @@
 package net.minecraftforge.event.world;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -232,5 +236,100 @@ public class BlockEvent extends Event
         {
             return notifiedSides;
         }
+    }
+    
+    /**
+     * Fired when a world fires the random tick on the block, registred by the {@link BlockEvent.RandomBlockTickEventRegistry}. 
+     * <br>
+     * This event is called in WorldServer.updateBlocks
+     * <br>
+     * 
+     * If this event is canceled, the block won't do updates!
+     * <br>
+     * This event is called on the {@link MinecraftForge.#EVENT_BUS}
+     * <br>
+     * 
+     * This event is {@link Cancelable}
+     * 
+     * <br><br>
+     * <strong>!!!WARNING!!! If the block isn't registred by {@link RandomTickEvent.RandomTickEventRegistry}, the event won't be sent!!!</strong>
+     */
+    @Cancelable
+    public static class RandomTickEvent extends BlockEvent
+    {
+    	private final Random rand;
+
+		public RandomTickEvent(World world, BlockPos pos, IBlockState state, Random rand) {
+			super(world, pos, state);
+			this.rand = rand;
+		}
+    	
+		/**
+         * 
+         * @return The Random of the world which sent this event
+         */
+		public Random getRandom() {
+			return rand;
+		}
+
+
+		/**
+		 * A class to register {@link BlockEvent.RandomTickEvent} behavior for the block
+		 * 
+		 * <br><br>
+		 * 
+		 * <strong>!!!WARNING!!! Please, don't register too many blocks, because it may reduce Minecraft's performance!</strong><br>
+		 * <strong>Before you register the event for a block, try to look for alternative ways!</strong>
+		 * <br><br>
+		 * 
+		 * <strong> !!!Fires only if the block.getTickRandomly() is true!!!
+		 * 
+		 *
+		 */
+		public static abstract class RandomBlockTickEventRegistry
+		{
+			private RandomBlockTickEventRegistry(){}
+			
+			public static List<Class<? extends Block>> getBlockList() {
+				return blockList;
+			}
+
+			public static void setBlockList(List<Class<? extends Block>> blockList) {
+				RandomBlockTickEventRegistry.blockList = blockList;
+			}
+
+			private static List<Class<? extends Block>> blockList = new ArrayList<Class<? extends Block>>();
+			
+			public static boolean isEventRegistredForBlock(Class<? extends Block> blockClazz)
+			{
+				return blockList.contains(blockClazz);
+			}
+			
+			public static boolean isEventRegistredForBlock(Block block)
+			{
+				return blockList.contains(block.getClass());
+			}
+			
+			public static void registerEventForBlock(Class<? extends Block> blockClazz)
+			{
+				if(isEventRegistredForBlock(blockClazz))
+				{
+					FMLLog.warning("Random Block Tick Event has just been tried to be added to the registry, but it has been already registred!");
+					return;
+				}
+				blockList.add(blockClazz);
+			}
+			
+			public static void registerEventForBlock(Block block)
+			{
+				if(isEventRegistredForBlock(block))
+				{
+					FMLLog.warning("Random Block Tick Event for block with unlocalized name - "+block.getUnlocalizedName()+" has just been tried to be added to the registry, but it has been already registred!");
+					return;
+				}
+				
+				registerEventForBlock(block.getClass());
+			}
+		}
     }
 }
