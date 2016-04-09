@@ -80,15 +80,24 @@ public abstract class PlayerUseItemEvent extends PlayerEvent
      * If you wish to cancel those effects, you should cancel one of the above events.
      * 
      * The result item stack is the stack that is placed in the player's inventory in replacement of the stack that is currently being used.
+     * The previous stack size is the stack size before it finished being used.
      *
      */
     public static class Finish extends PlayerUseItemEvent
     {
         public ItemStack result;
-        public Finish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
+        public final int previousStackSize;
+        public Finish(EntityPlayer player, ItemStack item, int duration, ItemStack result, int previous)
         {
             super(player, item, duration);
             this.result = result;
+            this.previousStackSize = previous;
+        }
+        
+        @Deprecated
+        public Finish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
+        {
+            this(player, item, duration, result, -1);
         }
     }
 }

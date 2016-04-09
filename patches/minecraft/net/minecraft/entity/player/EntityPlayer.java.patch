@@ -74,7 +74,7 @@
              int i = this.field_71074_e.field_77994_a;
              ItemStack itemstack = this.field_71074_e.func_77950_b(this.field_70170_p, this);
  
-+            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, field_71074_e, field_71072_f, itemstack);
++            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, field_71074_e, field_71072_f, itemstack, i);
              if (itemstack != this.field_71074_e || itemstack != null && itemstack.field_77994_a != i)
              {
                  this.field_71071_by.field_70462_a[this.field_71071_by.field_70461_c] = itemstack;
