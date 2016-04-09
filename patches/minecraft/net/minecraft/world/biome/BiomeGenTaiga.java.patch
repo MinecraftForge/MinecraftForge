@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenTaiga.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenTaiga.java
+@@ -58,7 +58,7 @@
+ 
+     public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
+     {
+-        if (this.field_150644_aH == 1 || this.field_150644_aH == 2)
++        if (this.field_150644_aH == 1 || this.field_150644_aH == 2 && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SPIKE))
+         {
+             int i = p_180624_2_.nextInt(3);
+ 
+@@ -72,7 +72,7 @@
+         }
+ 
+         field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.FERN);
+-
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS)){
+         for (int i1 = 0; i1 < 7; ++i1)
+         {
+             int j1 = p_180624_2_.nextInt(16) + 8;
+@@ -80,7 +80,7 @@
+             int l1 = p_180624_2_.nextInt(p_180624_1_.func_175645_m(p_180624_3_.func_177982_a(j1, 0, k1)).func_177956_o() + 32);
+             field_180280_ag.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(j1, l1, k1));
+         }
+-
++        }
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+     }
+ 

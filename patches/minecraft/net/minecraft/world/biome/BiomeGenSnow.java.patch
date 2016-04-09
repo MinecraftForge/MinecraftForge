@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenSnow.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenSnow.java
+@@ -30,7 +30,8 @@
+ 
+     public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
+     {
+-        if (this.field_150615_aC)
++        boolean doGen = net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SPIKE);
++        if (this.field_150615_aC && doGen)
+         {
+             for (int i = 0; i < 3; ++i)
+             {

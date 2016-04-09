@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenSavanna.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenSavanna.java
+@@ -41,7 +41,8 @@
+     public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
+     {
+         field_180280_ag.func_180710_a(BlockDoublePlant.EnumPlantType.GRASS);
+-
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
++        {
+         for (int i = 0; i < 7; ++i)
+         {
+             int j = p_180624_2_.nextInt(16) + 8;
+@@ -49,7 +50,7 @@
+             int l = p_180624_2_.nextInt(p_180624_1_.func_175645_m(p_180624_3_.func_177982_a(j, 0, k)).func_177956_o() + 32);
+             field_180280_ag.func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(j, l, k));
+         }
+-
++        }
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+     }
+ 
