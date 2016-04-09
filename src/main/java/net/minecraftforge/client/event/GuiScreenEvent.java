@@ -189,6 +189,20 @@ public class GuiScreenEvent extends Event
             return mouseY;
         }
     }
+
+    /**
+     * This event fires in {@code InventoryEffectRenderer.updateActivePotionEffects()}
+     * when potion effects are active and the gui wants to move over.
+     * Cancel this event to prevent the Gui from being moved.
+     */
+    @Cancelable
+    public static class PotionShiftEvent extends GuiScreenEvent
+    {
+        public PotionShiftEvent(GuiScreen gui)
+        {
+            super(gui);
+        }
+    }
     
     public static class ActionPerformedEvent extends GuiScreenEvent
     {
