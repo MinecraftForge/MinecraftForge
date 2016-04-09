@@ -257,21 +257,10 @@ public class BlockEvent extends Event
     @Cancelable
     public static class RandomTickEvent extends BlockEvent
     {
-    	private final Random rand;
 
 		public RandomTickEvent(World world, BlockPos pos, IBlockState state, Random rand) {
 			super(world, pos, state);
-			this.rand = rand;
 		}
-    	
-		/**
-         * 
-         * @return The Random of the world which sent this event
-         */
-		public Random getRandom() {
-			return rand;
-		}
-
 
 		/**
 		 * A class to register {@link BlockEvent.RandomTickEvent} behavior for the block
