@@ -258,7 +258,7 @@ public class BlockEvent extends Event
     public static class RandomTickEvent extends BlockEvent
     {
 
-		public RandomTickEvent(World world, BlockPos pos, IBlockState state, Random rand) {
+		public RandomTickEvent(World world, BlockPos pos, IBlockState state) {
 			super(world, pos, state);
 		}
 

@@ -980,7 +980,7 @@ public class ForgeHooks
     {
     	if(BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.isEventRegistredForBlock(state.getBlock()))
     	{
-    		BlockEvent.RandomTickEvent rte = new BlockEvent.RandomTickEvent(worldIn, pos, state, random);
+    		BlockEvent.RandomTickEvent rte = new BlockEvent.RandomTickEvent(worldIn, pos, state);
     		MinecraftForge.EVENT_BUS.post(rte);
     		if(!rte.isCanceled())
     			state.getBlock().randomTick(worldIn, pos, state, random);
