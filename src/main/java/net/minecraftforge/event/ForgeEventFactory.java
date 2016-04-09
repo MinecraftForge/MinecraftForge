@@ -232,9 +232,17 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new PlayerUseItemEvent.Stop(player, item, duration));
     }
 
+    @Deprecated
     public static ItemStack onItemUseFinish(EntityPlayer player, ItemStack item, int duration, ItemStack result)
     {
         PlayerUseItemEvent.Finish event = new PlayerUseItemEvent.Finish(player, item, duration, result);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.result;
+    }
+    
+    public static ItemStack onItemUseFinish(EntityPlayer player, ItemStack item, int duration, ItemStack result, int previous)
+    {
+        PlayerUseItemEvent.Finish event = new PlayerUseItemEvent.Finish(player, item, duration, result, previous);
         MinecraftForge.EVENT_BUS.post(event);
         return event.result;
     }
