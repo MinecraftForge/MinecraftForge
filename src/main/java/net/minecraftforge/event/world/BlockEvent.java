@@ -239,12 +239,12 @@ public class BlockEvent extends Event
     }
     
     /**
-     * Fired when a world fires the random tick on the block, registred by the {@link BlockEvent.RandomBlockTickEventRegistry}. 
+     * Fired before a world fires the random tick on the block, registred by the {@link BlockEvent.RandomBlockTickEventRegistry}. 
      * <br>
      * This event is called in WorldServer.updateBlocks
      * <br>
      * 
-     * If this event is canceled, the block won't do updates!
+     * If this event is canceled, the block won't do updates, but if you changed the IBlockState variable, the block in the world would be changed to the new one.
      * <br>
      * This event is called on the {@link MinecraftForge.#EVENT_BUS}
      * <br>
@@ -257,9 +257,21 @@ public class BlockEvent extends Event
     @Cancelable
     public static class RandomTickEvent extends BlockEvent
     {
-
+    	private IBlockState state;
+    	
 		public RandomTickEvent(World world, BlockPos pos, IBlockState state) {
 			super(world, pos, state);
+			this.state = state;
+		}
+		
+		public void setState(IBlockState state)
+		{
+			this.state = state;
+		}
+		
+		public IBlockState getState()
+		{
+			return state;
 		}
 
 		/**

@@ -983,7 +983,19 @@ public class ForgeHooks
     		BlockEvent.RandomTickEvent rte = new BlockEvent.RandomTickEvent(worldIn, pos, state);
     		MinecraftForge.EVENT_BUS.post(rte);
     		if(!rte.isCanceled())
+    		{
     			state.getBlock().randomTick(worldIn, pos, state, random);
+    		}
+    		else
+    		{
+    			if(!(rte.getState() == state))
+    			{
+    				if(!worldIn.isRemote)
+    				{
+    					worldIn.setBlockState(pos, rte.getState(), 3);
+    				}
+    			}
+    		}
     	}
     	else
     		state.getBlock().randomTick(worldIn, pos, state, random);
