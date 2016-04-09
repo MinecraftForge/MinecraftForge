@@ -1,14 +1,5 @@
 package net.minecraftforge.common;
 
-import static net.minecraft.init.Blocks.diamond_block;
-import static net.minecraft.init.Blocks.diamond_ore;
-import static net.minecraft.init.Blocks.emerald_block;
-import static net.minecraft.init.Blocks.emerald_ore;
-import static net.minecraft.init.Blocks.gold_block;
-import static net.minecraft.init.Blocks.gold_ore;
-import static net.minecraft.init.Blocks.lit_redstone_ore;
-import static net.minecraft.init.Blocks.redstone_ore;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -217,7 +208,11 @@ public class ForgeHooks
         }
 
         Blocks.obsidian.setHarvestLevel("pickaxe", 3);
-        for (Block block : new Block[]{emerald_ore, emerald_block, diamond_ore, diamond_block, gold_ore, gold_block, redstone_ore, lit_redstone_ore})
+        Block[] oreBlocks = new Block[] {
+                Blocks.emerald_ore, Blocks.emerald_block, Blocks.diamond_ore, Blocks.diamond_block,
+                Blocks.gold_ore, Blocks.gold_block, Blocks.redstone_ore, Blocks.lit_redstone_ore
+        };
+        for (Block block : oreBlocks)
         {
             block.setHarvestLevel("pickaxe", 2);
         }
