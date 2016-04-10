@@ -23,7 +23,7 @@ public class RandomBlockTickTest {
     {
     	if(!ENABLE)return;
     	FMLLog.info("[RandomBlockTickEventTest] Preinit test mod");
-    	BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.registerEventForBlock(BlockFire.class);
+    	BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.registerBlockForEvent(BlockFire.class);
     	MinecraftForge.EVENT_BUS.register(this);
     }
     
@@ -31,5 +31,7 @@ public class RandomBlockTickTest {
     public void onBlockRandomTick(BlockEvent.RandomTickEvent event)
     {
     	System.out.println("Block "+event.getState().getBlock().getUnlocalizedName()+ " at "+event.getPos().toString()+" tries to do a random tick!");
+    	event.setState(Blocks.tnt.getDefaultState());
+    	event.setCanceled(true);
     }
 }

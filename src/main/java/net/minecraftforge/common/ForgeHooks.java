@@ -978,7 +978,7 @@ public class ForgeHooks
 
     public static void onBlockRandomTick(World worldIn, BlockPos pos, IBlockState state, Random random)
     {
-    	if(BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.isEventRegistredForBlock(state.getBlock()))
+    	if(BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.isBlockRegistred(state.getBlock()))
     	{
     		BlockEvent.RandomTickEvent rte = new BlockEvent.RandomTickEvent(worldIn, pos, state);
     		MinecraftForge.EVENT_BUS.post(rte);
@@ -990,7 +990,7 @@ public class ForgeHooks
     		}
     		else
     		{
-    			if(!(rte.getState() == state))
+    			if(rte.getState() != state)
     			{
     				if(!worldIn.isRemote)
     				{

@@ -1,5 +1,6 @@
 package net.minecraftforge.event.world;
 
+import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -275,9 +276,9 @@ public class BlockEvent extends Event
 		}
 		
 		/**
-		 * Does the same thing as {@link RandomTickEvent}, but it isn't cancelable and it is called just after the block updated. Sure, if the block has been registred in {@link RandomBlockTickEventRegistry}
+		 * Fired after updating the block registred in {@link BlockEvent.RandomBlockTickEventRegistry}. 
 		 * 
-		 *
+		 * <br> This event isn't {@link Cancelable}
 		 */
 		public static class Post extends RandomTickEvent
 		{
@@ -299,7 +300,7 @@ public class BlockEvent extends Event
 		 * 
 		 *
 		 */
-		public static abstract class RandomBlockTickEventRegistry
+		public static class RandomBlockTickEventRegistry
 		{
 			private RandomBlockTickEventRegistry(){}
 			
@@ -313,19 +314,19 @@ public class BlockEvent extends Event
 
 			private static List<Class<? extends Block>> blockList = new ArrayList<Class<? extends Block>>();
 			
-			public static boolean isEventRegistredForBlock(Class<? extends Block> blockClazz)
+			public static boolean isBlockRegistred(Class<? extends Block> blockClazz)
 			{
 				return blockList.contains(blockClazz);
 			}
 			
-			public static boolean isEventRegistredForBlock(Block block)
+			public static boolean isBlockRegistred(Block block)
 			{
 				return blockList.contains(block.getClass());
 			}
 			
-			public static void registerEventForBlock(Class<? extends Block> blockClazz)
+			public static void registerBlockForEvent(Class<? extends Block> blockClazz)
 			{
-				if(isEventRegistredForBlock(blockClazz))
+				if(isBlockRegistred(blockClazz))
 				{
 					FMLLog.warning("Random Block Tick Event has just been tried to be added to the registry, but it has been already registred!");
 					return;
@@ -333,15 +334,15 @@ public class BlockEvent extends Event
 				blockList.add(blockClazz);
 			}
 			
-			public static void registerEventForBlock(Block block)
+			public static void registerBlockForEvent(Block block)
 			{
-				if(isEventRegistredForBlock(block))
+				if(isBlockRegistred(block))
 				{
 					FMLLog.warning("Random Block Tick Event for block with unlocalized name - "+block.getUnlocalizedName()+" has just been tried to be added to the registry, but it has been already registred!");
 					return;
 				}
 				
-				registerEventForBlock(block.getClass());
+				registerBlockForEvent(block.getClass());
 			}
 		}
     }
