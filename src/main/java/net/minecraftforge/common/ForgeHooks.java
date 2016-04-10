@@ -212,6 +212,7 @@ public class ForgeHooks
         }
 
         Blocks.obsidian.setHarvestLevel("pickaxe", 3);
+        Blocks.enchanting_table.setHarvestLevel("pickaxe", 0);
         for (Block block : new Block[]{emerald_ore, emerald_block, diamond_ore, diamond_block, gold_ore, gold_block, redstone_ore, lit_redstone_ore})
         {
             block.setHarvestLevel("pickaxe", 2);
