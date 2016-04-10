@@ -120,6 +120,22 @@ public enum KeyModifier {
         return false;
     }
 
+    public static KeyModifier valueFromString(String stringValue)
+    {
+        try
+        {
+            return valueOf(stringValue);
+        }
+        catch (NullPointerException ignored)
+        {
+            return NONE;
+        }
+        catch (IllegalArgumentException ignored)
+        {
+            return NONE;
+        }
+    }
+
     public abstract boolean matches(int keyCode);
 
     public abstract boolean isActive();
