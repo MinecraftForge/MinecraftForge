@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -84,8 +85,9 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
     @Subscribe
     public void modPreinitialization(FMLPreInitializationEvent evt)
     {
-        // Initialize the villager registry
-        VillagerRegistry.instance();
+        // Initialize all Forge/Vanilla registries {invoke the static init)
+        if (ForgeRegistries.ITEMS == null)
+            throw new RuntimeException("Something horrible went wrong in init, ForgeRegistres didn't create...");
     }
 
     @NetworkCheckHandler

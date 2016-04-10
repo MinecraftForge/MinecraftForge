@@ -185,6 +185,19 @@ public class GameRegistry
     }
 
     /**
+     * Retrieves the registry associated with this super class type.
+     * If the return is non-null it is HIGHLY recommended that modders cache this
+     * value as the return will never change for a given type in a single run of Minecraft once set.
+     *
+     * @param registryType The base class of items in this registry.
+     * @return The registry, Null if none is registered.
+     */
+    public static <K extends IForgeRegistryEntry<K>> IForgeRegistry<K> findRegistry(Class<K> registryType)
+    {
+        return PersistentRegistryManager.findRegistryByType(registryType);
+    }
+
+    /**
      * Add a forced persistent substitution alias for the block or item to another block or item. This will have
      * the effect of using the substituted block or item instead of the original, where ever it is
      * referenced.

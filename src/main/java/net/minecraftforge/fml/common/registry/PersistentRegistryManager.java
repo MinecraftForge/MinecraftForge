@@ -152,6 +152,11 @@ public class PersistentRegistryManager
         return registry;
     }
 
+    static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> findRegistryByType(Class<V> registryType)
+    {
+        return PersistentRegistry.ACTIVE.getRegistry(registryType);
+    }
+
 
     public static List<String> injectSnapshot(GameDataSnapshot snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
