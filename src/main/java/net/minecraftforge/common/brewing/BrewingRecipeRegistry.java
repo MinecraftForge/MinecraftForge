@@ -11,23 +11,25 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.IFuelHandler;
 
 public class BrewingRecipeRegistry
 {
 
     private static List<IBrewingRecipe> recipes = new ArrayList<IBrewingRecipe>();
-    private static List<FuelEntry> fuels = new CopyOnWriteArrayList<FuelEntry>();
+    private static List<IFuelHandler> fuels = new CopyOnWriteArrayList<IFuelHandler>();
     @CapabilityInject(IBrewingStandFuel.class)
     private static final Capability<IBrewingStandFuel> BREWING_CAP = null;
 
     static
     {
         addRecipe(new VanillaBrewingRecipe());
-        addFuel(new ItemStack(Items.blaze_powder), 20);
+        addFuelHandler(BlazePowderFuelHandler.INSTANCE);
         CapabilityManager.INSTANCE.register(IBrewingStandFuel.class, BrewingStandFuelStroage.INSTANCE, BrewingStandFuelImpl.class);
     }
 
@@ -187,142 +189,100 @@ public class BrewingRecipeRegistry
     }
 
     /**
-     * Returns an unmodifiable list of all fuels in the registry.
+     * Returns an unmodifiable list of all fuel handlers in the registry.
+     *
+     * @return The list of fuel handlers
      */
-    public static List<FuelEntry> getFuels()
+    public static List<IFuelHandler> getFuels()
     {
         return Collections.unmodifiableList(fuels);
     }
 
     /**
-     * Adds a new fuel for brewing stands. Fuel value MUST BE positive.
-     */
-    public static void addFuel(ItemStack item, int fuelValue)
-    {
-        for (FuelEntry e : fuels) {
-            if (ItemStack.areItemStacksEqual(e.getItem(), item))
-            {
-                if (e.getFuelValue() < fuelValue)
-                {
-                    e.power = fuelValue;
-                }
-                return;
-            }
-        }
-        fuels.add(new FuelEntry(item, fuelValue));
-    }
-
-    /**
-     * Overrides the fuel value of a fuel. Fuel value MUST BE positive.
+     * Adds a new fuel handler for brewing stands.
      *
-     * @return True if the value is overridden
+     * @param handler The new fuel handler
      */
-    public static boolean setFuelValue(ItemStack fuel, int value)
+    public static void addFuelHandler(IFuelHandler handler)
     {
-        for (FuelEntry e : fuels) {
-            if (ItemStack.areItemStacksEqual(e.getItem(), fuel))
-            {
-                e.power = value;
-                return true;
-            }
-        }
-        return false;
+        fuels.add(handler);
     }
 
     /**
-     * Removes a fuel.
+     * Removes a fuel handler.
      *
-     * @return True if the fuel is removed
+     * @return True if the fuel handler is removed
      */
-    public static boolean removeFuel(ItemStack fuel)
+    public static boolean removeFuelHandler(IFuelHandler toRemove)
     {
-        Iterator<FuelEntry> itr = fuels.iterator();
-        while (itr.hasNext())
-        {
-            FuelEntry fuelEntry = itr.next();
-            if (ItemStack.areItemStacksEqual(fuelEntry.getItem(), fuel))
-            {
-                itr.remove();
-                return true;
-            }
-        }
-        return false;
+        return fuels.remove(toRemove);
     }
 
     /**
-     * Check whether an item is a fuel of brewing stands.
+     * Checks whether an item is a fuel of brewing stands.
+     *
+     * @param item The item for checking
+     * @return Whether it is a fuel
      */
     public static boolean isFuel(@Nullable ItemStack item)
     {
-        if (item == null)
+        if (item == null || item.getItem() == null)
         {
             return false;
+        }
+        for (IFuelHandler e : fuels)
+        {
+            if (e.getBurnTime(item) > 0)
+                return true;
         }
         if (item.hasCapability(BREWING_CAP, null))
         {
             IBrewingStandFuel brewingStandFuel = item.getCapability(BREWING_CAP, null);
-            return brewingStandFuel != null && brewingStandFuel.getFuelValue() > 0;
-        }
-        for (FuelEntry e : fuels)
-        {
-            if (ItemStack.areItemStacksEqual(e.getItem(), item))
-            {
-                return true;
-            }
+            return brewingStandFuel != null;
         }
         return false;
     }
 
     /**
      * Gets the fuel value of an item.
+     *
+     * @param fuel The item stack
+     * @return The fuel value
      */
     public static int getFuelValue(@Nullable ItemStack fuel)
     {
-        if (fuel == null)
+        if (fuel == null || fuel.getItem() == null)
         {
             return 0;
+        }
+        int max = 0;
+        for (IFuelHandler e : fuels)
+        {
+            max = Math.max(e.getBurnTime(fuel), max);
         }
         if (fuel.hasCapability(BREWING_CAP, null))
         {
             IBrewingStandFuel brewingStandFuel = fuel.getCapability(BREWING_CAP, null);
-            return brewingStandFuel == null || brewingStandFuel.getFuelValue() <= 0 ? 0 : brewingStandFuel.getFuelValue();
+            if (brewingStandFuel != null)
+                max = Math.max(brewingStandFuel.getFuelValue(), max);
         }
-        for (FuelEntry e : fuels)
-        {
-            if (ItemStack.areItemStacksEqual(e.getItem(), fuel))
-            {
-                return e.getFuelValue();
-            }
-        }
-        return 0;
-    }
-
-    public static final class FuelEntry
-    {
-        private ItemStack item;
-        private int power;
-
-        private FuelEntry(ItemStack itemStack, int fuelValue)
-        {
-            item = itemStack;
-            power = fuelValue;
-        }
-
-        public ItemStack getItem()
-        {
-            return item;
-        }
-
-        public int getFuelValue()
-        {
-            return power;
-        }
+        return max;
     }
 
     public interface IBrewingStandFuel
     {
+        /**
+         * Gets the fuel value of this capability content.
+         *
+         * @return The fuel value
+         */
         int getFuelValue();
 
+        /**
+         * Sets the fuel value of this capability content.
+         *
+         * @param value The fuel value
+         */
         void setFuelValue(int value);
     }
 
@@ -345,29 +305,33 @@ public class BrewingRecipeRegistry
 
     private static final class BrewingStandFuelStroage implements Capability.IStorage<IBrewingStandFuel>
     {
-
         private static final BrewingStandFuelStroage INSTANCE = new BrewingStandFuelStroage();
 
-        private BrewingStandFuelStroage()
-        {
-        }
+        private BrewingStandFuelStroage() {}
 
         @Override
         public NBTBase writeNBT(Capability<IBrewingStandFuel> capability, IBrewingStandFuel instance, EnumFacing side)
         {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setShort("BrewingStandFuel", (short) instance.getFuelValue());
-            return tag;
+            return new NBTTagShort((short) instance.getFuelValue());
         }
 
         @Override
         public void readNBT(Capability<IBrewingStandFuel> capability, IBrewingStandFuel instance, EnumFacing side, NBTBase nbt)
         {
-            if (!(nbt instanceof NBTTagCompound))
-            {
-                return;
-            }
+            instance.setFuelValue(((NBTBase.NBTPrimitive) nbt).getShort());
         }
     }
 
+    public static final class BlazePowderFuelHandler implements IFuelHandler
+    {
+        public static final BlazePowderFuelHandler INSTANCE = new BlazePowderFuelHandler();
+
+        private BlazePowderFuelHandler() {}
+
+        @Override
+        public int getBurnTime(ItemStack fuel)
+        {
+            return fuel.getItem() == Items.blaze_powder ? 20 : 0;
+        }
+    }
 }
