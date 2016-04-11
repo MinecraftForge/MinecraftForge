@@ -34,3 +34,5 @@ Requirements (for both mod devs and contributors):
   You must have a JDK installed and accessible.
   If you do not wish to use the gradle wrapper, you can install Gradle from http://www.gradle.org/ .
  
+
+Join the chat at https://gitter.im/MinecraftForge/MinecraftForge
