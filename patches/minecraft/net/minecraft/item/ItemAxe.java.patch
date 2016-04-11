@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemAxe.java
++++ ../src-work/minecraft/net/minecraft/item/ItemAxe.java
+@@ -20,6 +20,14 @@
+         this.field_185065_c = field_185067_n[p_i45327_1_.ordinal()];
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    protected ItemAxe(Item.ToolMaterial material, float attackDamage, float attackSpeed) {
++        super(material, field_150917_c);
++        this.field_77865_bY = attackDamage;
++        this.field_185065_c = attackSpeed;
++    }
++    /* ======================================== FORGE END =====================================*/
++
+     public float func_150893_a(ItemStack p_150893_1_, IBlockState p_150893_2_)
+     {
+         Material material = p_150893_2_.func_185904_a();
