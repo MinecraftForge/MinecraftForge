@@ -83,7 +83,8 @@ public class ComparableVersion
     /**
      * @noextend This class is not intended to be subclassed by clients.
      */
-    public static abstract class Item implements Comparable<Item>
+    public static abstract class Item
+        implements Comparable<Item>
     {
         public static final int INTEGER_ITEM = 0;
         public static final int STRING_ITEM = 1;
@@ -119,7 +120,8 @@ public class ComparableVersion
     /**
      * Represents a numeric item in the version item list.
      */
-    public static final class IntegerItem extends Item
+    public static final class IntegerItem
+        extends Item
     {
     	private static final BigInteger BigInteger_ZERO = new BigInteger( "0" );
 
@@ -183,7 +185,8 @@ public class ComparableVersion
     /**
      * Represents a string in the version item list, usually a qualifier.
      */
-    public static final class StringItem extends Item
+    public static final class StringItem
+        extends Item
     {
         private static final String[] QUALIFIERS = { "alpha", "beta", "milestone", "rc", "snapshot", "", "sp" };
 
@@ -291,7 +294,9 @@ public class ComparableVersion
     /**
      * Represents a version list item. This class is used both for the global item list and for sub-lists (which start with '-(number)' in the version specification).
      */
-    public static final class ListItem extends Item implements List<Item>
+    public static final class ListItem
+        extends Item
+        implements List<Item>
     {
         private final List<Item> items = new ArrayList<Item>();
 
