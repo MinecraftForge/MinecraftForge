@@ -106,6 +106,11 @@ public interface ISpecialArmor
             ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
             for(EntityEquipmentSlot x : EntityEquipmentSlot.values())
             {
+                if(x.getSlotType() != EntityEquipmentSlot.Type.ARMOR)
+                {
+                    continue;
+                }
+                
                 ItemStack stack = inventory[x.getIndex()];
                 if (stack == null)
                 {
