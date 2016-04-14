@@ -8,22 +8,6 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
-@@ -624,13 +625,13 @@
-                 ItemArmor itemarmor = (ItemArmor)itemstack.func_77973_b();
-                 ItemArmor itemarmor1 = (ItemArmor)itemstack1.func_77973_b();
- 
--                if (itemarmor.field_77879_b == itemarmor1.field_77879_b)
-+                if (itemarmor.armorAmount == itemarmor1.armorAmount)
-                 {
-                     flag = itemstack.func_77960_j() > itemstack1.func_77960_j() || itemstack.func_77942_o() && !itemstack1.func_77942_o();
-                 }
-                 else
-                 {
--                    flag = itemarmor.field_77879_b > itemarmor1.field_77879_b;
-+                    flag = itemarmor.armorAmount > itemarmor1.armorAmount;
-                 }
-             }
-             else
 @@ -699,10 +700,22 @@
  
      protected void func_70623_bb()

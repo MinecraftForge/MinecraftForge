@@ -238,7 +238,7 @@ public class ForgeHooks
                 }
                 else if (stack != null && stack.getItem() instanceof ItemArmor)
                 {
-                    ret += ((ItemArmor)stack.getItem()).armorAmount;
+                    ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
                 }  
             }
         }
