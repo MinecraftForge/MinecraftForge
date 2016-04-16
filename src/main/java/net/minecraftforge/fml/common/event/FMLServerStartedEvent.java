@@ -12,6 +12,7 @@
 
 package net.minecraftforge.fml.common.event;
 
+import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
 /**
@@ -19,7 +20,9 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  *
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @deprecated Use {@link ServerLifecycleEvent.Started} instead.
  */
+@Deprecated
 public class FMLServerStartedEvent extends FMLStateEvent
 {
 

@@ -40,10 +40,15 @@ public enum LoaderState
     INITIALIZATION("Initializing mods", FMLInitializationEvent.class),
     POSTINITIALIZATION("Post-initializing mods", FMLPostInitializationEvent.class),
     AVAILABLE("Mod loading complete", FMLLoadCompleteEvent.class),
+    @Deprecated
     SERVER_ABOUT_TO_START("Server about to start", FMLServerAboutToStartEvent.class),
+    @Deprecated
     SERVER_STARTING("Server starting", FMLServerStartingEvent.class),
+    @Deprecated
     SERVER_STARTED("Server started", FMLServerStartedEvent.class),
+    @Deprecated
     SERVER_STOPPING("Server stopping", FMLServerStoppingEvent.class),
+    @Deprecated
     SERVER_STOPPED("Server stopped", FMLServerStoppedEvent.class),
     ERRORED("Mod Loading errored",null);
 

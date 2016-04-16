@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.common.event;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
 /**
@@ -22,7 +23,9 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  * You can obtain a reference to the server with this event.
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @deprecated Use {@link ServerLifecycleEvent.Starting} instead.
  */
+@Deprecated
 public class FMLServerAboutToStartEvent extends FMLStateEvent {
 
     private MinecraftServer server;

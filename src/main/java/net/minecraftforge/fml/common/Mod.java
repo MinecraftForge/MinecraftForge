@@ -231,16 +231,9 @@ public @interface Mod
      * send {@link FMLInterModComms} messages to other mods.</li>
      * <li> {@link FMLPostInitializationEvent} : Handle interaction with other mods, complete your setup based on this.</li>
      * </ul>
-     * <p>These are the server lifecycle events. They are fired whenever a server is running, or about to run. Each time a server
-     * starts they will be fired in this sequence.
-     * <ul>
-     * <li> {@link FMLServerAboutToStartEvent} : Use if you need to handle something before the server has even been created.</li>
-     * <li> {@link FMLServerStartingEvent} : Do stuff you need to do to set up the server. register commands, tweak the server.</li>
-     * <li> {@link FMLServerStartedEvent} : Do what you need to with the running server.</li>
-     * <li> {@link FMLServerStoppingEvent} : Do what you need to before the server has started it's shutdown sequence.</li>
-     * <li> {@link FMLServerStoppedEvent} : Do whatever cleanup you need once the server has shutdown. Generally only useful
-     * on the integrated server.</li>
-     * </ul>
+     * <p>The server lifecycle events {@link FMLServerAboutToStartEvent}, {@link FMLServerStartingEvent}, {@link FMLServerStartedEvent},
+     * {@link FMLServerStoppingEvent} and {@link FMLServerStoppedEvent} are deprecated. Use their replacements which are fired
+     * on the Forge event bus.
      * The second set of events are more specialized, for receiving notification of specific
      * information.
      * <ul>

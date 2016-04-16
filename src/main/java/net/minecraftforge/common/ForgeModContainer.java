@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.command.CommandHandler;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
@@ -26,6 +27,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
+import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -353,10 +355,10 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         FluidRegistry.validateFluidRegistry();
     }
 
-    @Subscribe
-    public void serverStarting(FMLServerStartingEvent evt)
+    @SubscribeEvent
+    public void serverStarting(ServerLifecycleEvent.Starting evt)
     {
-        evt.registerServerCommand(new ForgeCommand());
+        ((CommandHandler)evt.getServer().getCommandManager()).registerCommand(new ForgeCommand());
     }
     @Override
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)

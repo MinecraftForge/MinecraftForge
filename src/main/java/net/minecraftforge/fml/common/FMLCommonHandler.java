@@ -50,6 +50,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -276,7 +277,12 @@ public class FMLCommonHandler
 
     public boolean handleServerAboutToStart(MinecraftServer server)
     {
-        return Loader.instance().serverAboutToStart(server);
+        if(!Loader.instance().serverAboutToStart(server))
+        {
+            return false;
+        }
+        MinecraftForge.EVENT_BUS.post(new ServerLifecycleEvent.Starting(server));
+        return true;
     }
 
     public boolean handleServerStarting(MinecraftServer server)
@@ -284,18 +290,21 @@ public class FMLCommonHandler
         return Loader.instance().serverStarting(server);
     }
 
-    public void handleServerStarted()
+    public void handleServerStarted(MinecraftServer server)
     {
         Loader.instance().serverStarted();
+        MinecraftForge.EVENT_BUS.post(new ServerLifecycleEvent.Started(server));
         sidedDelegate.allowLogins();
     }
 
-    public void handleServerStopping()
+    public void handleServerStopping(MinecraftServer server)
     {
+        MinecraftForge.EVENT_BUS.post(new ServerLifecycleEvent.Stopping(server));
         Loader.instance().serverStopping();
     }
 
-    public File getSavesDirectory() {
+    public File getSavesDirectory()
+    {
         return sidedDelegate.getSavesDirectory();
     }
 
@@ -483,10 +492,10 @@ public class FMLCommonHandler
         System.exit(retVal);
     }
 
-    public void handleServerStopped()
+    public void handleServerStopped(MinecraftServer server)
     {
         sidedDelegate.serverStopped();
-        MinecraftServer server = getMinecraftServerInstance();
+        MinecraftForge.EVENT_BUS.post(new ServerLifecycleEvent.Stopped(server));
         Loader.instance().serverStopped();
         // FORCE the internal server to stop: hello optifine workaround!
         if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v", "u", "serverStopped");

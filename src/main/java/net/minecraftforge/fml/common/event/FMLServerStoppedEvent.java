@@ -12,6 +12,7 @@
 
 package net.minecraftforge.fml.common.event;
 
+import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 
 /**
@@ -21,7 +22,9 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  *
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @deprecated Use {@link ServerLifecycleEvent.Stopped} instead.
  */
+@Deprecated
 public class FMLServerStoppedEvent extends FMLStateEvent {
 
     public FMLServerStoppedEvent(Object... data)
