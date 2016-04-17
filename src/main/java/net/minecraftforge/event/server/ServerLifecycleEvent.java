@@ -18,7 +18,7 @@ public class ServerLifecycleEvent extends Event
     }
     
     /**
-     * This event is fired before the server starts.
+     * This event is fired before the server starts.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -35,7 +35,7 @@ public class ServerLifecycleEvent extends Event
     }
 
     /**
-     * This event is fired after the server starts.
+     * This event is fired after the server starts.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -52,7 +52,7 @@ public class ServerLifecycleEvent extends Event
     }
 
     /**
-     * This event is fired before the server shuts down.
+     * This event is fired before the server shuts down.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -69,7 +69,7 @@ public class ServerLifecycleEvent extends Event
     }
 
     /**
-     * This event is fired after the server shuts down.
+     * This event is fired after the server shuts down.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
