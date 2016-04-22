@@ -143,7 +143,7 @@ public class Configuration
     public Configuration(String configVersion)
     {
         this.definedConfigVersion = configVersion;
-        String basePath = ((File)(FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
+        /*String basePath = ((File)(FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null)
         {
@@ -168,7 +168,7 @@ public class Configuration
                 file.renameTo(fileBak);
                 load();
             }
-        }
+        }*/
     }
 
     public Configuration(String configVersion, boolean caseSensitiveCustomCategories)
@@ -850,8 +850,6 @@ public class Configuration
             return;
         }
 
-        BufferedReader buffer = null;
-        UnicodeInputStreamReader input = null;
         try
         {
             if (file.getParentFile() != null)
