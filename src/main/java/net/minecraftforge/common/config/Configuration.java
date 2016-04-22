@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Reader;
@@ -60,6 +61,7 @@ public class Configuration
     public static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
     private static Configuration PARENT = null;
 
+    @Deprecated
     File file;
 
     private Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
@@ -83,6 +85,7 @@ public class Configuration
     /**
      * Create a configuration file for the file given in parameter.
      */
+    @Deprecated
     public Configuration(File file)
     {
         this(file, null);
@@ -91,6 +94,7 @@ public class Configuration
     /**
      * Create a configuration file for the file given in parameter with the provided config version number.
      */
+    @Deprecated
     public Configuration(File file, String configVersion)
     {
         this.file = file;
@@ -123,15 +127,59 @@ public class Configuration
         }
     }
 
+    @Deprecated
     public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
     {
         this(file, configVersion);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
     }
 
+    @Deprecated
     public Configuration(File file, boolean caseSensitiveCustomCategories)
     {
         this(file, null, caseSensitiveCustomCategories);
+    }
+    
+    public Configuration(String configVersion)
+    {
+        this.definedConfigVersion = configVersion;
+        String basePath = ((File)(FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
+        String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
+        if (PARENT != null)
+        {
+            PARENT.setChild(path, this);
+            isChild = true;
+        }
+        else
+        {
+            fileName = path;
+            try
+            {
+                load();
+            }
+            catch (Throwable e)
+            {
+                File fileBak = new File(file.getAbsolutePath() + "_" +
+                        new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
+                FMLLog.severe("An exception occurred while loading config file %s. This file will be renamed to %s " +
+                		"and a new config file will be generated.", file.getName(), fileBak.getName());
+                e.printStackTrace();
+
+                file.renameTo(fileBak);
+                load();
+            }
+        }
+    }
+
+    public Configuration(String configVersion, boolean caseSensitiveCustomCategories)
+    {
+        this(configVersion);
+        this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+    }
+
+    public Configuration(boolean caseSensitiveCustomCategories)
+    {
+        this((String) null, caseSensitiveCustomCategories);
     }
 
     @Override
@@ -788,8 +836,14 @@ public class Configuration
         ConfigCategory cat = categories.get(category);
         return cat != null && cat.containsKey(key);
     }
-
+    
+    @Deprecated
     public void load()
+    {
+        load(file);
+    }
+
+    public void load(File file)
     {
         if (PARENT != null && PARENT != this)
         {
@@ -816,213 +870,231 @@ public class Configuration
 
             if (file.canRead())
             {
-                input = new UnicodeInputStreamReader(new FileInputStream(file), defaultEncoding);
-                defaultEncoding = input.getEncoding();
-                buffer = new BufferedReader(input);
+                read(new FileInputStream(file));
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-                String line;
-                ConfigCategory currentCat = null;
-                Property.Type type = null;
-                ArrayList<String> tmpList = null;
-                int lineNum = 0;
-                String name = null;
-                loadedConfigVersion = null;
+    public void read(InputStream in){
+        if (PARENT != null && PARENT != this)
+        {
+            return;
+        }
 
-                while (true)
+        BufferedReader buffer = null;
+        UnicodeInputStreamReader input = null;
+        try
+        {
+            input = new UnicodeInputStreamReader(in, defaultEncoding);
+            defaultEncoding = input.getEncoding();
+            buffer = new BufferedReader(input);
+
+            String line;
+            ConfigCategory currentCat = null;
+            Property.Type type = null;
+            ArrayList<String> tmpList = null;
+            int lineNum = 0;
+            String name = null;
+            loadedConfigVersion = null;
+
+            while (true)
+            {
+                lineNum++;
+                line = buffer.readLine();
+
+                if (line == null)
                 {
-                    lineNum++;
-                    line = buffer.readLine();
+                    if (lineNum == 1)
+                        loadedConfigVersion = definedConfigVersion;
+                    break;
+                }
 
-                    if (line == null)
+                Matcher start = CONFIG_START.matcher(line);
+                Matcher end = CONFIG_END.matcher(line);
+
+                if (start.matches())
+                {
+                    fileName = start.group(1);
+                    categories = new TreeMap<String, ConfigCategory>();
+                    continue;
+                }
+                else if (end.matches())
+                {
+                    fileName = end.group(1);
+                    Configuration child = new Configuration();
+                    child.categories = categories;
+                    this.children.put(fileName, child);
+                    continue;
+                }
+
+                int nameStart = -1, nameEnd = -1;
+                boolean skip = false;
+                boolean quoted = false;
+                boolean isFirstNonWhitespaceCharOnLine = true;
+
+                for (int i = 0; i < line.length() && !skip; ++i)
+                {
+                    if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1 || (quoted && line.charAt(i) != '"'))
                     {
-                        if (lineNum == 1)
-                            loadedConfigVersion = definedConfigVersion;
-                        break;
-                    }
-
-                    Matcher start = CONFIG_START.matcher(line);
-                    Matcher end = CONFIG_END.matcher(line);
-
-                    if (start.matches())
-                    {
-                        fileName = start.group(1);
-                        categories = new TreeMap<String, ConfigCategory>();
-                        continue;
-                    }
-                    else if (end.matches())
-                    {
-                        fileName = end.group(1);
-                        Configuration child = new Configuration();
-                        child.categories = categories;
-                        this.children.put(fileName, child);
-                        continue;
-                    }
-
-                    int nameStart = -1, nameEnd = -1;
-                    boolean skip = false;
-                    boolean quoted = false;
-                    boolean isFirstNonWhitespaceCharOnLine = true;
-
-                    for (int i = 0; i < line.length() && !skip; ++i)
-                    {
-                        if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1 || (quoted && line.charAt(i) != '"'))
+                        if (nameStart == -1)
                         {
-                            if (nameStart == -1)
+                            nameStart = i;
+                        }
+
+                        nameEnd = i;
+                        isFirstNonWhitespaceCharOnLine = false;
+                    }
+                    else if (Character.isWhitespace(line.charAt(i)))
+                    {
+                        // ignore space characters
+                    }
+                    else
+                    {
+                        switch (line.charAt(i))
+                        {
+                        case '#':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            skip = true;
+                            continue;
+
+                        case '"':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            if (quoted)
                             {
-                                nameStart = i;
+                                quoted = false;
+                            }
+                            if (!quoted && nameStart == -1)
+                            {
+                                quoted = true;
+                            }
+                            break;
+
+                        case '{':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            name = line.substring(nameStart, nameEnd + 1);
+                            String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
+
+                            ConfigCategory cat = categories.get(qualifiedName);
+                            if (cat == null)
+                            {
+                                currentCat = new ConfigCategory(name, currentCat);
+                                categories.put(qualifiedName, currentCat);
+                            }
+                            else
+                            {
+                                currentCat = cat;
+                            }
+                            name = null;
+
+                            break;
+
+                        case '}':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            if (currentCat == null)
+                            {
+                                throw new RuntimeException(String.format("Config file corrupt, attempted to close to many categories '%s:%d'", fileName, lineNum));
+                            }
+                            currentCat = currentCat.parent;
+                            break;
+
+                        case '=':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            name = line.substring(nameStart, nameEnd + 1);
+
+                            if (currentCat == null)
+                            {
+                                throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
                             }
 
-                            nameEnd = i;
-                            isFirstNonWhitespaceCharOnLine = false;
-                        }
-                        else if (Character.isWhitespace(line.charAt(i)))
-                        {
-                            // ignore space characters
-                        }
-                        else
-                        {
-                            switch (line.charAt(i))
+                            Property prop = new Property(name, line.substring(i + 1), type, true);
+                            i = line.length();
+
+                            currentCat.put(name, prop);
+
+                            break;
+
+                        case ':':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            type = Property.Type.tryParse(line.substring(nameStart, nameEnd + 1).charAt(0));
+                            nameStart = nameEnd = -1;
+                            break;
+
+                        case '<':
+                            if ((tmpList != null && i + 1 == line.length()) || (tmpList == null && i + 1 != line.length()))
                             {
-                                case '#':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    skip = true;
-                                    continue;
-
-                                case '"':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    if (quoted)
-                                    {
-                                        quoted = false;
-                                    }
-                                    if (!quoted && nameStart == -1)
-                                    {
-                                        quoted = true;
-                                    }
-                                    break;
-
-                                case '{':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    name = line.substring(nameStart, nameEnd + 1);
-                                    String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
-
-                                    ConfigCategory cat = categories.get(qualifiedName);
-                                    if (cat == null)
-                                    {
-                                        currentCat = new ConfigCategory(name, currentCat);
-                                        categories.put(qualifiedName, currentCat);
-                                    }
-                                    else
-                                    {
-                                        currentCat = cat;
-                                    }
-                                    name = null;
-
-                                    break;
-
-                                case '}':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    if (currentCat == null)
-                                    {
-                                        throw new RuntimeException(String.format("Config file corrupt, attempted to close to many categories '%s:%d'", fileName, lineNum));
-                                    }
-                                    currentCat = currentCat.parent;
-                                    break;
-
-                                case '=':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    name = line.substring(nameStart, nameEnd + 1);
-
-                                    if (currentCat == null)
-                                    {
-                                        throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
-                                    }
-
-                                    Property prop = new Property(name, line.substring(i + 1), type, true);
-                                    i = line.length();
-
-                                    currentCat.put(name, prop);
-
-                                    break;
-
-                                case ':':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    type = Property.Type.tryParse(line.substring(nameStart, nameEnd + 1).charAt(0));
-                                    nameStart = nameEnd = -1;
-                                    break;
-
-                                case '<':
-                                    if ((tmpList != null && i + 1 == line.length()) || (tmpList == null && i + 1 != line.length()))
-                                    {
-                                        throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
-                                    }
-                                    else if (i + 1 == line.length())
-                                    {
-                                        name = line.substring(nameStart, nameEnd + 1);
-
-                                        if (currentCat == null)
-                                        {
-                                            throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
-                                        }
-
-                                        tmpList = new ArrayList<String>();
-
-                                        skip = true;
-                                    }
-
-                                    break;
-
-                                case '>':
-                                    if (tmpList == null)
-                                    {
-                                        throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
-                                    }
-
-                                    if (isFirstNonWhitespaceCharOnLine)
-                                    {
-                                        currentCat.put(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
-                                        name = null;
-                                        tmpList = null;
-                                        type = null;
-                                    } // else allow special characters as part of string lists
-                                    break;
-
-                                case '~':
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-
-                                    if (line.startsWith(CONFIG_VERSION_MARKER))
-                                    {
-                                        int colon = line.indexOf(':');
-                                        if (colon != -1)
-                                            loadedConfigVersion = line.substring(colon + 1).trim();
-
-                                        skip = true;
-                                    }
-                                    break;
-
-                                default:
-                                    if (tmpList != null) // allow special characters as part of string lists
-                                        break;
-                                    throw new RuntimeException(String.format("Unknown character '%s' in '%s:%d'", line.charAt(i), fileName, lineNum));
+                                throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
                             }
-                            isFirstNonWhitespaceCharOnLine = false;
-                        }
-                    }
+                            else if (i + 1 == line.length())
+                            {
+                                name = line.substring(nameStart, nameEnd + 1);
 
-                    if (quoted)
-                    {
-                        throw new RuntimeException(String.format("Unmatched quote in '%s:%d'", fileName, lineNum));
+                                if (currentCat == null)
+                                {
+                                    throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
+                                }
+
+                                tmpList = new ArrayList<String>();
+
+                                skip = true;
+                            }
+
+                            break;
+
+                        case '>':
+                            if (tmpList == null)
+                            {
+                                throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
+                            }
+
+                            if (isFirstNonWhitespaceCharOnLine)
+                            {
+                                currentCat.put(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
+                                name = null;
+                                tmpList = null;
+                                type = null;
+                            } // else allow special characters as part of string lists
+                            break;
+
+                        case '~':
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+
+                            if (line.startsWith(CONFIG_VERSION_MARKER))
+                            {
+                                int colon = line.indexOf(':');
+                                if (colon != -1)
+                                    loadedConfigVersion = line.substring(colon + 1).trim();
+
+                                skip = true;
+                            }
+                            break;
+
+                        default:
+                            if (tmpList != null) // allow special characters as part of string lists
+                                break;
+                            throw new RuntimeException(String.format("Unknown character '%s' in '%s:%d'", line.charAt(i), fileName, lineNum));
+                        }
+                        isFirstNonWhitespaceCharOnLine = false;
                     }
-                    else if (tmpList != null && !skip)
-                    {
-                        tmpList.add(line.trim());
-                    }
+                }
+
+                if (quoted)
+                {
+                    throw new RuntimeException(String.format("Unmatched quote in '%s:%d'", fileName, lineNum));
+                }
+                else if (tmpList != null && !skip)
+                {
+                    tmpList.add(line.trim());
                 }
             }
         }
@@ -1046,19 +1118,25 @@ public class Configuration
                     input.close();
                 } catch (IOException e){}
             }
+            if (in != null)
+            {
+                try
+                {
+                    in.close();
+                } catch (IOException e){}
+            }
         }
 
         resetChangedState();
     }
 
-    public void save()
-    {
-        if (PARENT != null && PARENT != this)
-        {
-            PARENT.save();
-            return;
-        }
+    @Deprecated
+    public void save(){
+        save(file);
+    }
 
+    public void save(File file)
+    {
         try
         {
             if (file.getParentFile() != null)
@@ -1073,31 +1151,48 @@ public class Configuration
 
             if (file.canWrite())
             {
-                FileOutputStream fos = new FileOutputStream(file);
-                BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, defaultEncoding));
-
-                buffer.write("# Configuration file" + NEW_LINE + NEW_LINE);
-
-                if (this.definedConfigVersion != null)
-                    buffer.write(CONFIG_VERSION_MARKER + ": " + this.definedConfigVersion + NEW_LINE + NEW_LINE);
-
-                if (children.isEmpty())
-                {
-                    save(buffer);
-                }
-                else
-                {
-                    for (Map.Entry<String, Configuration> entry : children.entrySet())
-                    {
-                        buffer.write("START: \"" + entry.getKey() + "\"" + NEW_LINE);
-                        entry.getValue().save(buffer);
-                        buffer.write("END: \"" + entry.getKey() + "\"" + NEW_LINE + NEW_LINE);
-                    }
-                }
-
-                buffer.close();
-                fos.close();
+                write(new FileOutputStream(file));
             }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void write(OutputStream out)
+    {
+        if (PARENT != null && PARENT != this)
+        {
+            PARENT.write(out);
+            return;
+        }
+
+        try
+        {
+            BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(out, defaultEncoding));
+
+            buffer.write("# Configuration file" + NEW_LINE + NEW_LINE);
+
+            if (this.definedConfigVersion != null)
+                buffer.write(CONFIG_VERSION_MARKER + ": " + this.definedConfigVersion + NEW_LINE + NEW_LINE);
+
+            if (children.isEmpty())
+            {
+                save(buffer);
+            }
+            else
+            {
+                for (Map.Entry<String, Configuration> entry : children.entrySet())
+                {
+                    buffer.write("START: \"" + entry.getKey() + "\"" + NEW_LINE);
+                    entry.getValue().save(buffer);
+                    buffer.write("END: \"" + entry.getKey() + "\"" + NEW_LINE + NEW_LINE);
+                }
+            }
+
+            buffer.close();
+            out.close();
         }
         catch (IOException e)
         {
@@ -1718,6 +1813,7 @@ public class Configuration
         return defaultValue;
     }
 
+    @Deprecated
     public File getConfigFile()
     {
         return file;
