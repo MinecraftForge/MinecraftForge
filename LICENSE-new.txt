@@ -19,7 +19,7 @@ A note on infectivity:
 The LGPL is chosen specifically so that projects may depend on Forge
 features without being infected with its license. That is the 
 purpose of the LGPL. Mods and others using or distributing this
-are specifically not bound by it's license for their code.
+are specifically not bound by Forge's license for the Mod code.
 
 
                   GNU LESSER GENERAL PUBLIC LICENSE
