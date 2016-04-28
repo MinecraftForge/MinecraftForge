@@ -232,9 +232,12 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2371,6 +2437,14 @@
+@@ -2369,8 +2435,16 @@
+         {
+             ItemStack itemstack = this.func_184586_b(this.func_184600_cs());
  
-             if (itemstack == this.field_184627_bm)
+-            if (itemstack == this.field_184627_bm)
++            if (itemstack == this.field_184627_bm && itemstack != null)
              {
 +                field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
 +                if (field_184628_bn <= 0)
