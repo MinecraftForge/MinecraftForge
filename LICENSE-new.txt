@@ -15,6 +15,12 @@ Consent:
 All contributions to Forge must consent to the release of any
 patch content to the Forge project.
 
+A note on infectivity:
+The LGPL is chosen specifically so that projects may depend on Forge
+features without being infected with its license. That is the 
+purpose of the LGPL. Mods and others using or distributing this
+are specifically not bound by it's license for their code.
+
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
