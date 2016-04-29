@@ -82,7 +82,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.stackSize;
+            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot1)) - stackInSlot.stackSize;
 
             if (stack.stackSize <= m)
             {
@@ -115,7 +115,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         }
         else
         {
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
+            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot1));
             if (m < stack.stackSize)
             {
                 // copy the stack to not modify the original one
@@ -185,4 +185,11 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             return inv.decrStackSize(slot1, m);
         }
     }
+
+    @Override
+    public int getSlotLimit(int slot)
+    {
+        return inv.getInventoryStackLimit();
+    }
+
 }
