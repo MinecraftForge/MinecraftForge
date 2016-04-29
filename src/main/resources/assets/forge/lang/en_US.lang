@@ -145,6 +145,7 @@ fml.configgui.tooltip.defaultNumeric=[range: %s ~ %s, default: %s]
 
 forge.controlsgui.shift=SHIFT + %s
 forge.controlsgui.control=CTRL + %s
+forge.controlsgui.control.mac=CMD + %s
 forge.controlsgui.alt=ALT + %s
 
 fml.menu.mods=Mods
