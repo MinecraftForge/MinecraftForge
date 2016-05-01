@@ -84,5 +84,33 @@ public class PotionRegistryDebug {
       buf.pos((double) x,          (double) y,           0.0D).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
       tessellator.draw();
     }
+
+    @Override
+    public void renderHUDEffect(int x, int y, PotionEffect effect, Minecraft mc, float alpha) {
+      Potion potion = effect.getPotion();
+
+      mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+      TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/tnt_side");
+
+      x += 3;
+      y += 3;
+
+      int width = 18;
+      int height = width;
+
+      float r = (float)(potion.getLiquidColor() >> 24 & 255) / 255.0F;
+      float g = (float)(potion.getLiquidColor() >> 16 & 255) / 255.0F;
+      float b = (float)(potion.getLiquidColor() >> 8  & 255) / 255.0F;
+
+      Tessellator tessellator = Tessellator.getInstance();
+      VertexBuffer buf = tessellator.getBuffer();
+      buf.begin(7, DefaultVertexFormats.POSITION_TEX);
+      GlStateManager.color(r, g, b, alpha);
+      buf.pos((double) x,          (double)(y + height), 0.0D).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double)(y + height), 0.0D).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double) y,           0.0D).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
+      buf.pos((double) x,          (double) y,           0.0D).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
+      tessellator.draw();
+    }
   }
 }
