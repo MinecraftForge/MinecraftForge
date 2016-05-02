@@ -18,7 +18,24 @@
              int k = this.field_148152_e + this.field_148155_a / 2 - this.func_148139_c() / 2 + 2;
              int l = this.field_148153_b + 4 - (int)this.field_148169_q;
  
-@@ -458,4 +451,18 @@
+@@ -358,7 +351,7 @@
+ 
+             int i2 = Mouse.getEventDWheel();
+ 
+-            if (i2 != 0)
++            if (false && i2 != 0)
+             {
+                 if (i2 > 0)
+                 {
+@@ -371,6 +364,7 @@
+ 
+                 this.field_148169_q += (float)(i2 * this.field_148149_f / 2);
+             }
++            if (i2 != 0) this.field_148169_q -= Math.min((i2 / 120.0F) * this.field_148149_f, (this.field_148154_c - this.field_148153_b - 4) / 4);
+         }
+     }
+ 
+@@ -458,4 +452,18 @@
      {
          return this.field_148149_f;
      }
