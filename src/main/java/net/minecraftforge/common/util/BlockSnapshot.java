@@ -178,6 +178,7 @@ public class BlockSnapshot implements Serializable
             if (te != null)
             {
                 te.readFromNBT(nbt);
+                te.markDirty();
             }
         }
 
@@ -213,6 +214,7 @@ public class BlockSnapshot implements Serializable
             if (te != null)
             {
                 te.readFromNBT(nbt);
+                te.markDirty();
             }
         }
 
