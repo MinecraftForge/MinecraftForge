@@ -56,6 +56,7 @@ import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import static net.minecraft.util.text.TextFormatting.*;
 
 import org.apache.logging.log4j.Level;
+import org.lwjgl.input.Mouse;
 
 import com.google.common.base.Strings;
 
@@ -310,6 +311,18 @@ public class GuiModList extends GuiScreen
         int x = ((10 + modList.right) / 2) - (getFontRenderer().getStringWidth(text) / 2);
         getFontRenderer().drawString(text, x, modList.bottom + 5, 0xFFFFFF);
         search.drawTextBox();
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException
+    {
+        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+
+        super.handleMouseInput();
+        if (this.modInfo != null)
+            this.modInfo.handleMouseInput(mouseX, mouseY);
+        this.modList.handleMouseInput(mouseX, mouseY);
     }
 
     Minecraft getMinecraftInstance()
