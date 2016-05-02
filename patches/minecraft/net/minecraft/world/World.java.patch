@@ -141,7 +141,7 @@
 +                if (!this.field_72995_K && (flags & 1) != 0)
                  {
 -                    this.func_175722_b(p_180501_1_, iblockstate.func_177230_c());
-+                    this.func_175722_b(pos, new_.func_177230_c());
++                    this.func_175722_b(pos, old.func_177230_c());
  
 -                    if (block.func_149740_M())
 +                    if (new_.func_177230_c().func_149740_M())
