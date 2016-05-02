@@ -78,6 +78,15 @@
          int k = -1;
  
          if (slot != null)
+@@ -488,7 +493,7 @@
+                 {
+                     for (Slot slot2 : this.field_147002_h.field_75151_b)
+                     {
+-                        if (slot2 != null && slot2.func_82869_a(this.field_146297_k.field_71439_g) && slot2.func_75216_d() && slot2.field_75224_c == slot.field_75224_c && Container.func_94527_a(slot2, this.field_146994_N, true))
++                        if (slot2 != null && slot2.func_82869_a(this.field_146297_k.field_71439_g) && slot2.func_75216_d() && slot2.isSameInventory(slot) && Container.func_94527_a(slot2, this.field_146994_N, true))
+                         {
+                             this.func_184098_a(slot2, slot2.field_75222_d, p_146286_3_, ClickType.QUICK_MOVE);
+                         }
 @@ -575,7 +580,7 @@
              }
              else if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() != null)
