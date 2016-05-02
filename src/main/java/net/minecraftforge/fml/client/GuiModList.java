@@ -289,6 +289,16 @@ public class GuiModList extends GuiScreen
         super.actionPerformed(button);
     }
 
+    public void handleMouseInput() throws IOException
+    {
+        if (modList.handleMouseInput())
+            return;
+        if (modInfo != null && modInfo.handleMouseInput())
+            return;
+        
+        super.handleMouseInput();
+    }
+
     public int drawLine(String line, int offset, int shifty)
     {
         this.fontRendererObj.drawString(line, offset, shifty, 0xd7edea);
@@ -488,7 +498,7 @@ public class GuiModList extends GuiScreen
                 }
 
                 ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                ret.addAll(GuiUtilRenderComponents.splitText(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
+                ret.addAll(GuiUtilRenderComponents.splitText(chat, this.getViewWidth(), GuiModList.this.fontRendererObj, false, true));
             }
             return ret;
         }
@@ -512,7 +522,7 @@ public class GuiModList extends GuiScreen
               height += 10;
           }
           height += (lines.size() * 10);
-          if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
+          //if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
           return height;
         }
 

@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -38,8 +39,8 @@ public abstract class GuiScrollingList
     protected final int right;
     protected final int left;
     protected final int slotHeight;
-    private int scrollUpActionId;
-    private int scrollDownActionId;
+    protected final int border;
+    protected final int scrollBarWidth;
     protected int mouseX;
     protected int mouseY;
     private float initialMouseClickY = -2.0F;
@@ -57,7 +58,7 @@ public abstract class GuiScrollingList
     {
        this(client, width, height, top, bottom, left, entryHeight, width, height);
     }
-    public GuiScrollingList(Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight)
+    public GuiScrollingList(Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight, int border, int scrollBarWidth)
     {
         this.client = client;
         this.listWidth = width;
@@ -69,6 +70,12 @@ public abstract class GuiScrollingList
         this.right = width + this.left;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        this.border = border;
+        this.scrollBarWidth = scrollBarWidth;
+    }
+    public GuiScrollingList(Minecraft client, int width, int height, int top, int bottom, int left, int entryHeight, int screenWidth, int screenHeight)
+    {
+    	this(client, width, height, top, bottom, left, entryHeight, screenWidth, screenHeight, 4, 6);
     }
 
     public void func_27258_a(boolean p_27258_1_)
@@ -90,9 +97,37 @@ public abstract class GuiScrollingList
 
     protected abstract boolean isSelected(int index);
 
+    protected int getBoxHeight()
+    {
+        return this.bottom - this.top;
+    }
+
+    protected int getViewWidth()
+    {
+        return listWidth - scrollBarWidth - scrollBarWidth;
+    }
+
+    protected int getViewHeight()
+    {
+        return this.getBoxHeight() - this.border;
+    }
+
     protected int getContentHeight()
     {
         return this.getSize() * this.slotHeight + this.headerHeight;
+    }
+
+    protected int getOverflowHeight()
+    {
+        return this.getContentHeight() - this.getViewHeight();
+    }
+
+    protected int getScrollerHeight()
+    {
+        int boxHeight = this.getBoxHeight();
+        int height = this.getViewHeight() * boxHeight / this.getContentHeight();
+        return MathHelper.clamp_int(height,
+                32, boxHeight);
     }
 
     protected abstract void drawBackground();
@@ -124,55 +159,36 @@ public abstract class GuiScrollingList
     {
         int left = this.left + 1;
         int right = this.left + this.listWidth - 7;
-        int relativeY = y - this.top - this.headerHeight + (int)this.scrollDistance - 4;
+        int relativeY = y - this.top - this.headerHeight + (int)this.scrollDistance - this.border;
         int entryIndex = relativeY / this.slotHeight;
         return x >= left && x <= right && entryIndex >= 0 && relativeY >= 0 && entryIndex < this.getSize() ? entryIndex : -1;
     }
 
-    // FIXME: is this correct/still needed?
-    public void registerScrollButtons(List<GuiButton> buttons, int upActionID, int downActionID)
-    {
-        this.scrollUpActionId = upActionID;
-        this.scrollDownActionId = downActionID;
-    }
-
     private void applyScrollLimits()
     {
-        int listHeight = this.getContentHeight() - (this.bottom - this.top - 4);
+        int overflow = this.getOverflowHeight();
 
-        if (listHeight < 0)
-        {
-            listHeight /= 2;
-        }
-
-        if (this.scrollDistance < 0.0F)
-        {
-            this.scrollDistance = 0.0F;
-        }
-
-        if (this.scrollDistance > (float)listHeight)
-        {
-            this.scrollDistance = (float)listHeight;
-        }
+        if (overflow < 0)
+            this.scrollDistance = overflow / 2;
+        else
+            this.scrollDistance = MathHelper.clamp_float(scrollDistance, 0, overflow);
     }
 
-    public void actionPerformed(GuiButton button)
+    public boolean handleMouseInput()
     {
-        if (button.enabled)
+        if (this.mouseX < this.left || this.mouseX > this.left + this.listWidth ||
+                this.mouseY < this.top || this.mouseY > this.bottom)
+            return false;
+
+        float scroll = Mouse.getEventDWheel();
+        if (scroll != 0)
         {
-            if (button.id == this.scrollUpActionId)
-            {
-                this.scrollDistance -= (float)(this.slotHeight * 2 / 3);
-                this.initialMouseClickY = -2.0F;
-                this.applyScrollLimits();
-            }
-            else if (button.id == this.scrollDownActionId)
-            {
-                this.scrollDistance += (float)(this.slotHeight * 2 / 3);
-                this.initialMouseClickY = -2.0F;
-                this.applyScrollLimits();
-            }
+            scroll = -scroll / 120 * Math.min(25, this.getViewHeight() / 4);
+
+            this.scrollDistance += scroll;
         }
+
+        return true;
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
@@ -184,13 +200,11 @@ public abstract class GuiScrollingList
         boolean isHovering = mouseX >= this.left && mouseX <= this.left + this.listWidth &&
                              mouseY >= this.top && mouseY <= this.bottom;
         int listLength     = this.getSize();
-        int scrollBarWidth = 6;
         int scrollBarRight = this.left + this.listWidth;
-        int scrollBarLeft  = scrollBarRight - scrollBarWidth;
+        int scrollBarLeft  = scrollBarRight - this.scrollBarWidth;
         int entryLeft      = this.left;
         int entryRight     = scrollBarLeft - 1;
-        int viewHeight     = this.bottom - this.top;
-        int border         = 4;
+        int boxHeight      = this.getBoxHeight();
 
         if (Mouse.isButtonDown(0))
         {
@@ -215,16 +229,10 @@ public abstract class GuiScrollingList
                     if (mouseX >= scrollBarLeft && mouseX <= scrollBarRight)
                     {
                         this.scrollFactor = -1.0F;
-                        int scrollHeight = this.getContentHeight() - viewHeight - border;
+                        int scrollHeight = getOverflowHeight();
                         if (scrollHeight < 1) scrollHeight = 1;
 
-                        int var13 = (int)((float)(viewHeight * viewHeight) / (float)this.getContentHeight());
-
-                        if (var13 < 32) var13 = 32;
-                        if (var13 > viewHeight - border*2)
-                            var13 = viewHeight - border*2;
-
-                        this.scrollFactor /= (float)(viewHeight - var13) / (float)scrollHeight;
+                        this.scrollFactor /= (float)(boxHeight - getScrollerHeight()) / scrollHeight;
                     }
                     else
                     {
@@ -246,18 +254,6 @@ public abstract class GuiScrollingList
         }
         else
         {
-            while (isHovering && Mouse.next())
-            {
-                int scroll = Mouse.getEventDWheel();
-                if (scroll != 0)
-                {
-                    if      (scroll > 0) scroll = -1;
-                    else if (scroll < 0) scroll =  1;
-
-                    this.scrollDistance += (float)(scroll * this.slotHeight / 2);
-                }
-            }
-
             this.initialMouseClickY = -1.0F;
         }
 
@@ -271,7 +267,7 @@ public abstract class GuiScrollingList
         double scaleH = client.displayHeight / res.getScaledHeight_double();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor((int)(left      * scaleW), (int)(client.displayHeight - (bottom * scaleH)),
-                       (int)(listWidth * scaleW), (int)(viewHeight * scaleH));
+                       (int)(listWidth * scaleW), (int)(boxHeight * scaleH));
 
         if (this.client.theWorld != null)
         {
@@ -330,21 +326,14 @@ public abstract class GuiScrollingList
 
         GlStateManager.disableDepth();
 
-        int extraHeight = this.getContentHeight() - viewHeight - border;
+        int extraHeight = getOverflowHeight();
         if (extraHeight > 0)
         {
-            int height = viewHeight * viewHeight / this.getContentHeight();
+            int height = getScrollerHeight();
 
-            if (height < 32) height = 32;
-
-            if (height > viewHeight - border*2)
-                height = viewHeight - border*2;
-
-            int barTop = (int)this.scrollDistance * (viewHeight - height) / extraHeight + this.top;
+            int barTop = (int) (this.scrollDistance * (boxHeight - height) / extraHeight) + this.top;
             if (barTop < this.top)
-            {
                 barTop = this.top;
-            }
 
             GlStateManager.disableTexture2D();
             worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
