@@ -209,18 +209,25 @@ public final class ModelFluid implements IModelCustomData
                 float s = MathHelper.sin(flow) * scale;
 
                 EnumFacing side = gas ? EnumFacing.DOWN : EnumFacing.UP;
-                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-                builder.setQuadOrientation(side);
-                builder.setTexture(topSprite);
-                for(int i = gas ? 3 : 0; i != (gas ? -1 : 4); i+= (gas ? -1 : 1))
+                UnpackedBakedQuad.Builder builder;
+                ImmutableList.Builder<BakedQuad> topFaceBuilder = ImmutableList.builder();
+                for(int k = 0; k < 2; k++)
                 {
-                    putVertex(
-                        builder, side,
-                        x[i], y[i], z[i],
-                        topSprite.getInterpolatedU(8 + c * (x[i] * 2 - 1) + s * (z[i] * 2 - 1)),
-                        topSprite.getInterpolatedV(8 + c * (x[(i + 1) % 4] * 2 - 1) + s * (z[(i + 1) % 4] * 2 - 1)));
+                    builder = new UnpackedBakedQuad.Builder(format);
+                    builder.setQuadOrientation(side);
+                    builder.setTexture(topSprite);
+                    for (int i = gas ? 3 : 0; i != (gas ? -1 : 4); i += (gas ? -1 : 1))
+                    {
+                        int l = (k * 3) + (1 - 2 * k) * i;
+                        putVertex(
+                            builder, side,
+                            x[l], y[l], z[l],
+                            topSprite.getInterpolatedU(8 + c * (x[l] * 2 - 1) + s * (z[l] * 2 - 1)),
+                            topSprite.getInterpolatedV(8 + c * (x[(l + 1) % 4] * 2 - 1) + s * (z[(l + 1) % 4] * 2 - 1)));
+                    }
+                    topFaceBuilder.add(builder.build());
                 }
-                faceQuads.put(side, ImmutableList.<BakedQuad>of(builder.build()));
+                faceQuads.put(side, topFaceBuilder.build());
 
                 // bottom
 
