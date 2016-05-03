@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
  * @author King Lemming
  *
  */
+@Deprecated
 public class TileFluidHandler extends TileEntity implements IFluidHandler
 {
     protected FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);

@@ -11,6 +11,8 @@ import net.minecraft.util.EnumFacing;
  * @author King Lemming
  *
  */
+// Deprecated: To be removed in 1.9. Use the Capability version.
+@Deprecated
 public interface IFluidHandler
 {
     /**
