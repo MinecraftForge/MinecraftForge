@@ -119,7 +119,8 @@ public class InvWrapper implements IItemHandlerModifiable
             {
                 if (!simulate)
                 {
-                    inv.setInventorySlotContents(slot, stack);
+                    // copy the stack to not preserve the reference from the original into the inventory
+                    inv.setInventorySlotContents(slot, stack.copy());
                     inv.markDirty();
                 }
                 return null;
