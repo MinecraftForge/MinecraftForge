@@ -145,6 +145,15 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
+@@ -291,7 +336,7 @@
+         }
+         else
+         {
+-            TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_110574_e.get(p_174942_1_);
++            TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_110574_e.get(p_174942_1_.toString());
+ 
+             if (textureatlassprite == null)
+             {
 @@ -317,4 +362,37 @@
      {
          return this.field_94249_f;
