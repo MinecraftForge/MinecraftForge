@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
+@@ -45,7 +45,7 @@
+     {
+         int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
+         int j = Math.max(1, MathHelper.func_76125_a(Runtime.getRuntime().availableProcessors(), 1, i / 5));
+-        this.field_188249_c = MathHelper.func_76125_a(j * 10, 1, i);
++        this.field_188249_c = getRenderBuilderCount(j * 10, 1, i);
+ 
+         if (j > 1)
+         {
+@@ -363,4 +363,21 @@
+             return Doubles.compare(this.field_188242_c, p_compareTo_1_.field_188242_c);
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Each {@link RegionRenderCacheBuilder} instance creates a direct byte buffer (10MiB per instance).<br>
++     * This method should be overridden to limit the amount of {@link RegionRenderCacheBuilder}
++     * instances and therefore safe a fair amount of memory.
++     *
++     * @param count The amount of instances, based on the amount of cores and available memory.
++     * @param min The minimum amount of instances.
++     * @param max The maximum amount of instances.
++     * @return The amount of {@link RegionRenderCacheBuilder} objects that should be created by
++     * this object.
++     */
++    protected int getRenderBuilderCount(int count, int min, int max) {
++        return MathHelper.func_76125_a(count, min, max);
++    }
++    /* ========================================= FORGE END ======================================*/
+ }
