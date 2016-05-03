@@ -63,8 +63,13 @@
          this.func_180454_a(p_184390_1_, p_184390_4_);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -426,10 +411,11 @@
+@@ -424,12 +409,16 @@
+                 p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
+                 GlStateManager.func_179145_e();
                  GlStateManager.func_179126_j();
++                // Fixes opaque cooldown overlay a bit lower
++                // TODO: check if enabled blending still screws things up down the line.
++                GlStateManager.func_179147_l();
              }
  
 -            if (p_180453_2_.func_77951_h())
@@ -78,16 +83,7 @@
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -440,7 +426,7 @@
-                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
-                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, 12, 1, (255 - i) / 4, 64, 0, 255);
-                 this.func_181565_a(vertexbuffer, p_180453_3_ + 2, p_180453_4_ + 13, j, 1, 255 - i, i, 0, 255);
--                GlStateManager.func_179147_l();
-+                //GlStateManager.enableBlend(); // Forge: Disable Blend because it screws with a lot of things down the line.
-                 GlStateManager.func_179141_d();
-                 GlStateManager.func_179098_w();
-                 GlStateManager.func_179145_e();
-@@ -1053,6 +1039,7 @@
+@@ -1053,6 +1042,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");
