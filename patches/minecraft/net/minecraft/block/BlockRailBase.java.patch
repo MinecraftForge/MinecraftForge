@@ -48,7 +48,7 @@
              {
                  flag = true;
              }
-@@ -160,6 +160,81 @@
+@@ -160,6 +160,98 @@
  
      public abstract IProperty<BlockRailBase.EnumRailDirection> func_176560_l();
  
@@ -147,7 +147,7 @@
      public static enum EnumRailDirection implements IStringSerializable
      {
          NORTH_SOUTH(0, "north_south"),
-@@ -230,6 +305,7 @@
+@@ -230,6 +322,7 @@
          private IBlockState field_180366_e;
          private final boolean field_150656_f;
          private final List<BlockPos> field_150657_g = Lists.<BlockPos>newArrayList();
@@ -155,10 +155,11 @@
  
          public Rail(World p_i45739_2_, BlockPos p_i45739_3_, IBlockState p_i45739_4_)
          {
-@@ -238,7 +314,8 @@
+@@ -237,8 +330,9 @@
+             this.field_180367_c = p_i45739_3_;
              this.field_180366_e = p_i45739_4_;
              this.field_180365_d = (BlockRailBase)p_i45739_4_.func_177230_c();
-             BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(this.field_180365_d.func_176560_l());
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)p_i45739_4_.func_177229_b(this.field_180365_d.func_176560_l());
 -            this.field_150656_f = this.field_180365_d.field_150053_a;
 +            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = field_180365_d.getRailDirection(p_i45739_2_, p_i45739_3_, p_i45739_4_, null);
 +            this.field_150656_f = !this.field_180365_d.isFlexibleRail(p_i45739_2_, p_i45739_3_);
@@ -166,7 +167,7 @@
              this.func_180360_a(blockrailbase$enumraildirection);
          }
  
-@@ -429,7 +506,7 @@
+@@ -429,7 +523,7 @@
                  }
              }
  
@@ -175,7 +176,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -442,7 +519,7 @@
+@@ -442,7 +536,7 @@
                  }
              }
  
@@ -184,7 +185,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos3.func_177984_a()))
                  {
-@@ -585,7 +662,7 @@
+@@ -585,7 +679,7 @@
                  }
              }
  
@@ -193,7 +194,7 @@
              {
                  if (BlockRailBase.func_176562_d(this.field_150660_b, blockpos.func_177984_a()))
                  {
-@@ -598,7 +675,7 @@
+@@ -598,7 +692,7 @@
                  }
              }
  
