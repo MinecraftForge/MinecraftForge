@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2012, 2014  Wesley Wolfe
+ * Copyright (C) 2016  rainwarrior@fry.su
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
 package net.minecraftforge.common.util;
 
 import java.util.HashMap;
@@ -25,7 +43,6 @@ import net.minecraftforge.fml.common.FMLLog;
  * @param <T> The type of object you provide. This is created in stage 1, and passed to stage 2, 3, and returned if get() is called.
  * @param <C> The type of callback you provide. You may register many of these to be passed to the provider in stage 3, one at a time.
  * @param <E> A type of exception you may throw and expect to be handled by the main thread
- * @author Wesley Wolfe (c) 2012, 2014
  */
 public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
 
