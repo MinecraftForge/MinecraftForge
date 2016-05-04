@@ -7,7 +7,6 @@ class QueuedChunk {
     final net.minecraft.world.chunk.storage.AnvilChunkLoader loader;
     final net.minecraft.world.World world;
     final net.minecraft.world.gen.ChunkProviderServer provider;
-    net.minecraft.nbt.NBTTagCompound compound;
 
     public QueuedChunk(int x, int z, net.minecraft.world.chunk.storage.AnvilChunkLoader loader, net.minecraft.world.World world, net.minecraft.world.gen.ChunkProviderServer provider) {
         this.x = x;
@@ -43,7 +42,7 @@ class QueuedChunk {
         result.append(" z: " + z + NEW_LINE);
         result.append(" loader: " + loader + NEW_LINE );
         result.append(" world: " + world.getWorldInfo().getWorldName() + NEW_LINE);
-        result.append(" dimension: " + world.provider.getDimensionId() + NEW_LINE);
+        result.append(" dimension: " + world.provider.getDimension() + NEW_LINE);
         result.append(" provider: " + world.provider.getClass().getName() + NEW_LINE);
         result.append("}");
 

@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.io.IOException;
 
+import net.minecraft.world.gen.structure.template.TemplateManager;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.io.Files;
@@ -38,34 +39,52 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override public void saveWorldInfo(WorldInfo var1){ parent.saveWorldInfo(var1); }
     @Override public IPlayerFileData getPlayerNBTManager() { return parent.getPlayerNBTManager(); }
     @Override public void flush() { parent.flush(); }
-    @Override public String getWorldDirectoryName() { return parent.getWorldDirectoryName(); }
     @Override public File getWorldDirectory() { return parent.getWorldDirectory(); }
 
     @Override
     public File getMapFileFromName(String name)
     {
-        if (dataDir == null) //Delayed down here do that world has time to be initalized first.
+        if (dataDir == null) //Delayed down here do that world has time to be initialized first.
         {
             dataDir = new File(world.getChunkSaveLocation(), "data");
             dataDir.mkdirs();
         }
         File file = new File(dataDir, name + ".dat");
-        if (!file.exists() && name.equalsIgnoreCase("FORTRESS") && world.provider.getDimensionId() == -1) //Only copy over the fortress.dat for the vanilla nether.
+        if (!file.exists())
         {
-            File parentFile = parent.getMapFileFromName(name);
-            if (parentFile.exists())
+            switch (world.provider.getDimension())
             {
-                try
-                {
-                    Files.copy(parentFile, file);
-                }
-                catch (IOException e)
-                {
-                    FMLLog.log(Level.ERROR, e, "A critical error occured copying fortress.dat to world specific dat folder - new file will be created.");
-                }
+                case -1:
+                    if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);
+                    break;
+                case 1:
+                    if (name.equalsIgnoreCase("VILLAGES_END")) copyFile(name, file);
+                    break;
             }
         }
         return file;
+    }
+
+    private void copyFile(String name, File to)
+    {
+        File parentFile = parent.getMapFileFromName(name);
+        if (parentFile.exists())
+        {
+            try
+            {
+                Files.copy(parentFile, to);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.ERROR, e, "A critical error occurred copying %s to world specific dat folder - new file will be created.", parentFile.getName());
+            }
+        }
+    }
+
+    @Override
+    public TemplateManager getStructureTemplateManager()
+    {
+        return parent.getStructureTemplateManager();
     }
 
 }

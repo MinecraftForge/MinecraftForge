@@ -1,8 +1,9 @@
 package net.minecraftforge.debug;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -26,7 +27,7 @@ public class ItemLayerModelDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerItem(TestItem.instance, TestItem.name);
+            GameRegistry.register(TestItem.instance);
         }
     }
 
@@ -52,6 +53,7 @@ public class ItemLayerModelDebug
         {
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
     }
 }

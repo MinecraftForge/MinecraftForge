@@ -44,13 +44,12 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     }
 
     public abstract void encodeInto(ChannelHandlerContext ctx, A msg, ByteBuf target) throws Exception;
+
     @Override
     protected final void encode(ChannelHandlerContext ctx, A msg, List<Object> out) throws Exception
     {
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        @SuppressWarnings("unchecked") // Stupid unnecessary cast I can't seem to kill
-        Class<? extends A> clazz = (Class<? extends A>) msg.getClass();
-        byte discriminator = types.get(clazz);
+        byte discriminator = types.get(msg.getClass());
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
         FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -175,8 +175,11 @@
+@@ -176,8 +176,11 @@
          GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
          this.field_73735_i = 200.0F;
          this.field_146296_j.field_77023_b = 200.0F;
@@ -13,9 +13,9 @@
          this.field_73735_i = 0.0F;
          this.field_146296_j.field_77023_b = 0.0F;
      }
-@@ -239,13 +242,12 @@
+@@ -240,13 +243,12 @@
  
-         if (itemstack == null)
+         if (itemstack == null && p_146977_1_.func_111238_b())
          {
 -            String s1 = p_146977_1_.func_178171_c();
 +            TextureAtlasSprite textureatlassprite = p_146977_1_.getBackgroundSprite();
@@ -30,7 +30,16 @@
                  this.func_175175_a(i, j, textureatlassprite, 16, 16);
                  GlStateManager.func_179145_e();
                  flag1 = true;
-@@ -326,6 +328,7 @@
+@@ -316,7 +318,7 @@
+     protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
+     {
+         super.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
+-        boolean flag = p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100;
++        boolean flag = this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100);
+         Slot slot = this.func_146975_c(p_73864_1_, p_73864_2_);
+         long i = Minecraft.func_71386_F();
+         this.field_146993_M = this.field_146998_K == slot && i - this.field_146997_J < 250L && this.field_146992_L == p_73864_3_;
+@@ -327,6 +329,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = p_73864_1_ < j || p_73864_2_ < k || p_73864_1_ >= j + this.field_146999_f || p_73864_2_ >= k + this.field_147000_g;
@@ -38,7 +47,25 @@
              int l = -1;
  
              if (slot != null)
-@@ -463,10 +466,12 @@
+@@ -364,7 +367,7 @@
+                 {
+                     if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() == null)
+                     {
+-                        if (p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
++                        if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100))
+                         {
+                             this.func_184098_a(slot, l, p_73864_3_, ClickType.CLONE);
+                         }
+@@ -402,7 +405,7 @@
+                         {
+                             this.field_146987_F = 1;
+                         }
+-                        else if (p_73864_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
++                        else if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73864_3_ - 100))
+                         {
+                             this.field_146987_F = 2;
+                         }
+@@ -464,10 +467,12 @@
  
      protected void func_146286_b(int p_146286_1_, int p_146286_2_, int p_146286_3_)
      {
@@ -51,7 +78,48 @@
          int k = -1;
  
          if (slot != null)
-@@ -685,4 +690,16 @@
+@@ -575,7 +580,7 @@
+             }
+             else if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o() != null)
+             {
+-                if (p_146286_3_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i() + 100)
++                if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_146286_3_ - 100))
+                 {
+                     this.func_184098_a(slot, k, p_146286_3_, ClickType.CLONE);
+                 }
+@@ -627,7 +632,7 @@
+ 
+     protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
+     {
+-        if (p_73869_2_ == 1 || p_73869_2_ == this.field_146297_k.field_71474_y.field_151445_Q.func_151463_i())
++        if (p_73869_2_ == 1 || this.field_146297_k.field_71474_y.field_151445_Q.isActiveAndMatches(p_73869_2_))
+         {
+             this.field_146297_k.field_71439_g.func_71053_j();
+         }
+@@ -636,11 +641,11 @@
+ 
+         if (this.field_147006_u != null && this.field_147006_u.func_75216_d())
+         {
+-            if (p_73869_2_ == this.field_146297_k.field_71474_y.field_74322_I.func_151463_i())
++            if (this.field_146297_k.field_71474_y.field_74322_I.isActiveAndMatches(p_73869_2_))
+             {
+                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, 0, ClickType.CLONE);
+             }
+-            else if (p_73869_2_ == this.field_146297_k.field_71474_y.field_74316_C.func_151463_i())
++            else if (this.field_146297_k.field_71474_y.field_74316_C.isActiveAndMatches(p_73869_2_))
+             {
+                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, func_146271_m() ? 1 : 0, ClickType.THROW);
+             }
+@@ -653,7 +658,7 @@
+         {
+             for (int i = 0; i < 9; ++i)
+             {
+-                if (p_146983_1_ == this.field_146297_k.field_71474_y.field_151456_ac[i].func_151463_i())
++                if (this.field_146297_k.field_71474_y.field_151456_ac[i].isActiveAndMatches(p_146983_1_))
+                 {
+                     this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
+                     return true;
+@@ -686,4 +691,16 @@
              this.field_146297_k.field_71439_g.func_71053_j();
          }
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSword.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSword.java
-@@ -101,7 +101,9 @@
+@@ -88,7 +88,9 @@
  
      public boolean func_82789_a(ItemStack p_82789_1_, ItemStack p_82789_2_)
      {
@@ -10,4 +10,4 @@
 +        return super.func_82789_a(p_82789_1_, p_82789_2_);
      }
  
-     public Multimap<String, AttributeModifier> func_111205_h()
+     public Multimap<String, AttributeModifier> func_111205_h(EntityEquipmentSlot p_111205_1_)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -296,7 +296,7 @@
+@@ -292,7 +292,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -9,33 +9,31 @@
  
          if (i <= 0)
          {
-@@ -345,7 +345,7 @@
-     public static List<EnchantmentData> func_77513_b(Random p_77513_0_, ItemStack p_77513_1_, int p_77513_2_)
+@@ -339,7 +339,7 @@
      {
+         List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
 -        int i = item.func_77619_b();
 +        int i = item.getItemEnchantability(p_77513_1_);
  
          if (i <= 0)
          {
-@@ -387,7 +387,9 @@
+@@ -380,7 +380,8 @@
  
-                             for (EnchantmentData enchantmentdata1 : list)
-                             {
--                                if (!enchantmentdata1.field_76302_b.func_77326_a(Enchantment.func_180306_c(integer.intValue())))
-+                                Enchantment e1 = enchantmentdata1.field_76302_b;
-+                                Enchantment e2 = Enchantment.func_180306_c(integer.intValue());
-+                                if (!e1.func_77326_a(e2) || !e2.func_77326_a(e1)) //Forge BugFix: Let Both enchantments veto being together
-                                 {
-                                     flag = false;
-                                     break;
-@@ -421,7 +423,8 @@
- 
-         for (Enchantment enchantment : Enchantment.field_77331_b)
+         while (iterator.hasNext())
          {
--            if (enchantment != null && (enchantment.field_77351_y.func_77557_a(item) || flag))
-+            if (enchantment == null) continue;
-+            if (enchantment.canApplyAtEnchantingTable(p_77505_1_) || (flag && enchantment.isAllowedOnBooks()))
+-            if (!p_185282_1_.field_76302_b.func_77326_a(((EnchantmentData)iterator.next()).field_76302_b))
++            Enchantment e2 = iterator.next().field_76302_b;
++            if (!p_185282_1_.field_76302_b.func_77326_a(e2) || !e2.func_77326_a(p_185282_1_.field_76302_b)) //Forge BugFix: Let Both enchantments veto being together
              {
-                 for (int i = enchantment.func_77319_d(); i <= enchantment.func_77325_b(); ++i)
+                 iterator.remove();
+             }
+@@ -395,7 +396,7 @@
+ 
+         for (Enchantment enchantment : Enchantment.field_185264_b)
+         {
+-            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.field_77351_y.func_77557_a(item) || flag))
++            if ((!enchantment.func_185261_e() || p_185291_2_) && (enchantment.canApplyAtEnchantingTable(p_185291_1_) || (flag && enchantment.isAllowedOnBooks())))
+             {
+                 for (int i = enchantment.func_77325_b(); i > enchantment.func_77319_d() - 1; --i)
                  {

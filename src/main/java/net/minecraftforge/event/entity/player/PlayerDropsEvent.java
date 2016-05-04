@@ -18,7 +18,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 @Cancelable
 public class PlayerDropsEvent extends LivingDropsEvent
 {
-    public final EntityPlayer entityPlayer;
+    private final EntityPlayer entityPlayer;
 
     /**
      * Creates a new event containing all the items that will drop into the
@@ -35,5 +35,10 @@ public class PlayerDropsEvent extends LivingDropsEvent
             recentlyHit);
 
         this.entityPlayer = entity;
+    }
+
+    public EntityPlayer getEntityPlayer()
+    {
+        return entityPlayer;
     }
 }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/shader/Framebuffer.java
 +++ ../src-work/minecraft/net/minecraft/client/shader/Framebuffer.java
-@@ -119,8 +119,17 @@
+@@ -118,8 +118,17 @@
              if (this.field_147619_e)
              {
                  OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, this.field_147624_h);
@@ -18,7 +18,7 @@
              }
  
              this.func_147614_f();
-@@ -280,4 +289,36 @@
+@@ -279,4 +288,36 @@
          GlStateManager.func_179086_m(i);
          this.func_147609_e();
      }

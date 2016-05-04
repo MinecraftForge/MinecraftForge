@@ -1,22 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStairs.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStairs.java
-@@ -68,6 +68,19 @@
-         return false;
+@@ -443,6 +443,17 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176309_a, field_176308_b, field_176310_M});
      }
  
 +    @Override
-+    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face)
-+	{
-+        if ( func_149662_c() )
++    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
++    {
++        if ( state.func_185914_p() )
 +            return true;
-+        
-+        // face is on the block being rendered, not this block.
-+        IBlockState iblockstate = world.func_180495_p(pos);
-+        EnumHalf half = iblockstate.func_177229_b(field_176308_b);
-+        EnumFacing side = iblockstate.func_177229_b(field_176309_a);
-+        return side == face.func_176734_d() || (half == EnumHalf.TOP && face == EnumFacing.DOWN) || (half == EnumHalf.BOTTOM && face == EnumFacing.UP);
++
++        EnumHalf half = state.func_177229_b(field_176308_b);
++        EnumFacing side = state.func_177229_b(field_176309_a);
++        return side == face || (half == EnumHalf.TOP && face == EnumFacing.UP) || (half == EnumHalf.BOTTOM && face == EnumFacing.DOWN);
 +    }
 +
-     public boolean func_149686_d()
+     public static enum EnumHalf implements IStringSerializable
      {
-         return false;
+         TOP("top"),

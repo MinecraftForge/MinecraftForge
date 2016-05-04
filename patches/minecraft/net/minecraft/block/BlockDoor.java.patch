@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -154,7 +154,7 @@
+@@ -107,7 +107,7 @@
      {
          if (this.field_149764_J == Material.field_151573_f)
          {
@@ -9,12 +9,12 @@
          }
          else
          {
-@@ -272,7 +272,7 @@
+@@ -219,7 +219,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return p_176196_2_.func_177956_o() >= 255 ? false : World.func_175683_a(p_176196_1_, p_176196_2_.func_177977_b()) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
-+        return p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1 ? false : World.func_175683_a(p_176196_1_, p_176196_2_.func_177977_b()) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
+-        return p_176196_2_.func_177956_o() >= 255 ? false : p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
++        return p_176196_2_.func_177956_o() >= p_176196_1_.func_72800_K() - 1 ? false : p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_,  p_176196_2_.func_177977_b(), EnumFacing.UP) && super.func_176196_c(p_176196_1_, p_176196_2_) && super.func_176196_c(p_176196_1_, p_176196_2_.func_177984_a());
      }
  
-     public int func_149656_h()
+     public EnumPushReaction func_149656_h(IBlockState p_149656_1_)

@@ -8,11 +8,11 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public abstract class RenderPlayerEvent extends PlayerEvent
 {
-    public final RenderPlayer renderer;
-    public final float partialRenderTick;
-    public final double x;
-    public final double y;
-    public final double z;
+    private final RenderPlayer renderer;
+    private final float partialRenderTick;
+    private final double x;
+    private final double y;
+    private final double z;
 
     public RenderPlayerEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick, double x, double y, double z)
     {
@@ -23,6 +23,12 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         this.y = y;
         this.z = z;
     }
+
+    public RenderPlayer getRenderer() { return renderer; }
+    public float getPartialRenderTick() { return partialRenderTick; }
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public double getZ() { return z; }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent
@@ -50,10 +56,17 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         @Cancelable
         public static class Pre extends Specials
         {
-            public boolean renderHelmet = true;
-            public boolean renderCape = true;
-            public boolean renderItem = true;
+            private boolean renderHelmet = true;
+            private boolean renderCape = true;
+            private boolean renderItem = true;
             public Pre(EntityPlayer player, RenderPlayer renderer, float partialTicks){ super(player, renderer, partialTicks); }
+
+            public boolean shouldRenderHelmet() { return renderHelmet; }
+            public void setRenderHelmet(boolean renderHelmet) { this.renderHelmet = renderHelmet; }
+            public boolean shouldRenderCape() { return renderCape; }
+            public void setRenderCape(boolean renderCape) { this.renderCape = renderCape; }
+            public boolean shouldRenderItem() { return renderItem; }
+            public void setRenderItem(boolean renderItem) { this.renderItem = renderItem; }
         }
 
         public static class Post extends Specials
@@ -65,18 +78,38 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     @Deprecated
     public static class SetArmorModel extends RenderPlayerEvent
     {
-        /**
-         * Setting this to any value besides -1 will result in the function being 
-         * Immediately exited with the return value specified.
-         */
-        public int result = -1;
-        public final int slot;
-        public final ItemStack stack;
+        private int result = -1;
+        private final int slot;
+        private final ItemStack stack;
         public SetArmorModel(EntityPlayer player, RenderPlayer renderer, int slot, float partialTick, ItemStack stack)
         {
             super(player, renderer, partialTick, 0D, 0D, 0D);
             this.slot = slot;
             this.stack = stack;
+        }
+
+        /**
+         * Setting this to any value besides -1 will result in the function being
+         * Immediately exited with the return value specified.
+         */
+        public int getResultValue()
+        {
+            return result;
+        }
+
+        public void setResult(int result)
+        {
+            this.result = result;
+        }
+
+        public int getSlot()
+        {
+            return slot;
+        }
+
+        public ItemStack getStack()
+        {
+            return stack;
         }
     }
 }

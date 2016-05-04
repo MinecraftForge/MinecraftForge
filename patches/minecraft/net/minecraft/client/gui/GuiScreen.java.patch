@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -143,7 +143,8 @@
+@@ -141,7 +141,8 @@
              }
          }
  
@@ -10,7 +10,7 @@
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -153,7 +154,13 @@
+@@ -151,7 +152,13 @@
  
      protected void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
@@ -25,7 +25,7 @@
          {
              GlStateManager.func_179101_C();
              RenderHelper.func_74518_a();
-@@ -436,6 +443,7 @@
+@@ -421,6 +428,7 @@
          {
              this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
          }
@@ -33,23 +33,23 @@
  
          this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
      }
-@@ -450,9 +458,15 @@
+@@ -435,9 +443,15 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
 +                    net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre event = new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.field_146292_n);
 +                    if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +                        break;
-+                    guibutton = event.button;
++                    guibutton = event.getButton();
                      this.field_146290_a = guibutton;
                      guibutton.func_146113_a(this.field_146297_k.func_147118_V());
                      this.func_146284_a(guibutton);
 +                    if (this.equals(this.field_146297_k.field_71462_r))
-+                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post(this, event.button, this.field_146292_n));
++                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post(this, event.getButton(), this.field_146292_n));
                  }
              }
          }
-@@ -482,8 +496,12 @@
+@@ -467,8 +481,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
@@ -62,7 +62,7 @@
      }
  
      public void func_183500_a(int p_183500_1_, int p_183500_2_)
-@@ -502,7 +520,9 @@
+@@ -487,7 +505,9 @@
          {
              while (Mouse.next())
              {
@@ -72,7 +72,7 @@
              }
          }
  
-@@ -510,7 +530,9 @@
+@@ -495,7 +515,9 @@
          {
              while (Keyboard.next())
              {
@@ -82,7 +82,7 @@
              }
          }
      }
-@@ -570,6 +592,7 @@
+@@ -557,6 +579,7 @@
      public void func_146276_q_()
      {
          this.func_146270_b(0);

@@ -1,22 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -272,12 +272,8 @@
-         {
-             if (this.field_70462_a[j] == null)
+@@ -270,13 +270,8 @@
+ 
+             if (itemstack == null)
              {
--                this.field_70462_a[j] = new ItemStack(item, 0, p_70452_1_.func_77960_j());
+-                itemstack = new ItemStack(item, 0, p_70452_1_.func_77960_j());
 -
 -                if (p_70452_1_.func_77942_o())
 -                {
--                    this.field_70462_a[j].func_77982_d((NBTTagCompound)p_70452_1_.func_77978_p().func_74737_b());
+-                    itemstack.func_77982_d((NBTTagCompound)p_70452_1_.func_77978_p().func_74737_b());
 -                }
-+                this.field_70462_a[j] = p_70452_1_.func_77946_l(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
-+                this.field_70462_a[j].field_77994_a = 0;
+-
++                itemstack = p_70452_1_.func_77946_l(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
++                itemstack.field_77994_a = 0;
+                 this.func_70299_a(j, itemstack);
              }
  
-             int k = i;
-@@ -315,6 +311,14 @@
-                 this.field_70462_a[i].func_77945_a(this.field_70458_d.field_70170_p, this.field_70458_d, i, this.field_70461_c == i);
+@@ -344,6 +339,14 @@
+                 }
              }
          }
 +
@@ -29,4 +30,4 @@
 +        }
      }
  
-     public boolean func_146026_a(Item p_146026_1_)
+     public boolean func_70441_a(final ItemStack p_70441_1_)

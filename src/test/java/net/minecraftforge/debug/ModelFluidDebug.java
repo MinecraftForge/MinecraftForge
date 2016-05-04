@@ -4,10 +4,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
@@ -41,9 +42,12 @@ public class ModelFluidDebug
             FluidRegistry.registerFluid(TestFluid.instance);
             FluidRegistry.registerFluid(TestGas.instance);
             FluidRegistry.registerFluid(milkFluid);
-            GameRegistry.registerBlock(TestFluidBlock.instance, TestFluidBlock.name);
-            GameRegistry.registerBlock(TestGasBlock.instance, TestGasBlock.name);
-            GameRegistry.registerBlock(MilkFluidBlock.instance, MilkFluidBlock.name);
+            GameRegistry.register(TestFluidBlock.instance);
+            GameRegistry.register(new ItemBlock(TestFluidBlock.instance).setRegistryName(TestFluidBlock.instance.getRegistryName()));
+            GameRegistry.register(TestGasBlock.instance);
+            GameRegistry.register(new ItemBlock(TestGasBlock.instance).setRegistryName(TestGasBlock.instance.getRegistryName()));
+            GameRegistry.register(MilkFluidBlock.instance);
+            GameRegistry.register(new ItemBlock(MilkFluidBlock.instance).setRegistryName(MilkFluidBlock.instance.getRegistryName()));
         }
     }
 
@@ -157,6 +161,7 @@ public class ModelFluidDebug
             super(TestFluid.instance, Material.water);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
     }
 
@@ -170,6 +175,7 @@ public class ModelFluidDebug
             super(milkFluid, Material.water);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
     }
 
@@ -183,6 +189,7 @@ public class ModelFluidDebug
             super(TestGas.instance, Material.lava);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
     }
 }

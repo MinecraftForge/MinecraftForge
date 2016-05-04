@@ -227,7 +227,7 @@ public class CoreModManager {
 
         if (loadPlugins.isEmpty())
         {
-            throw new RuntimeException("A fatal error has occured - no valid fml load plugin was found - this is a completely corrupt FML installation.");
+            throw new RuntimeException("A fatal error has occurred - no valid fml load plugin was found - this is a completely corrupt FML installation.");
         }
 
         FMLRelaunchLog.fine("All fundamental core mods are successfully located");
@@ -613,7 +613,7 @@ public class CoreModManager {
 
         Launch.blackboard.put("fml.deobfuscatedEnvironment", deobfuscatedEnvironment);
         tweaker.injectCascadingTweak("net.minecraftforge.fml.common.launcher.FMLDeobfTweaker");
-        tweakSorting.put("net.minecraftforge.fml.common.launcher.FMLDeobfTweaker", Integer.valueOf(1000));
+        tweakSorting.put("net.minecraftforge.fml.common.launcher.FMLDeobfTweaker", 1000);
     }
 
     public static void injectCoreModTweaks(FMLInjectionAndSortingTweaker fmlInjectionAndSortingTweaker)

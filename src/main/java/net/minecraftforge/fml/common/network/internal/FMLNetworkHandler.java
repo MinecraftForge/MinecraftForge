@@ -27,7 +27,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -59,7 +59,7 @@ public class FMLNetworkHandler
     public static final int LOGIN_TIMEOUT = Integers.parseInt(System.getProperty("fml.loginTimeout","600"),600);
     private static EnumMap<Side, FMLEmbeddedChannel> channelPair;
 
-    public static void fmlServerHandshake(ServerConfigurationManager scm, NetworkManager manager, EntityPlayerMP player)
+    public static void fmlServerHandshake(PlayerList scm, NetworkManager manager, EntityPlayerMP player)
     {
         NetworkDispatcher dispatcher = NetworkDispatcher.allocAndSet(manager, scm);
         dispatcher.serverToClientHandshake(player);
@@ -104,17 +104,9 @@ public class FMLNetworkHandler
         }
         else
         {
-            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUIID: %s,%d", mc.getModId(), modGuiId);
+            FMLLog.fine("Invalid attempt to open a local GUI on a dedicated server. This is likely a bug. GUI ID: %s,%d", mc.getModId(), modGuiId);
         }
 
-    }
-
-    public static void makeEntitySpawnAdjustment(Entity entity, EntityPlayerMP player, int serverX, int serverY, int serverZ)
-    {
-        EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-        embeddedChannel.writeOutbound(new FMLMessage.EntityAdjustMessage(entity, serverX, serverY, serverZ));
     }
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)

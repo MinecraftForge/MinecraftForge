@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /** Simple mod to test fov modifier. */
-@Mod(modid="fovmodifiertest", name="FOV Modifier Test", version="0.0.0")
+@Mod(modid="fovmodifiertest", name="FOV Modifier Test", version="0.0.0", clientSideOnly = true)
 public class FOVModifierTest {
 
     @EventHandler
@@ -20,7 +20,7 @@ public class FOVModifierTest {
     
     @SubscribeEvent
     public void getFOVModifier(EntityViewRenderEvent.FOVModifier event) {
-        if(event.block.getMaterial() == Material.water)
+        if(event.getState().getMaterial() == Material.water)
             event.setFOV(event.getFOV() / 60.0f * 50.0f);
     }
 }

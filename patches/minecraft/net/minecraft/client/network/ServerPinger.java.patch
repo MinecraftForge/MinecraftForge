@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/network/ServerPinger.java
++++ ../src-work/minecraft/net/minecraft/client/network/ServerPinger.java
+@@ -150,6 +150,7 @@
+                         p_147224_1_.func_147407_a((String)null);
+                     }
+ 
++                    net.minecraftforge.fml.client.FMLClientHandler.instance().bindServerListData(p_147224_1_, serverstatusresponse);
+                     this.field_175092_e = Minecraft.func_71386_F();
+                     networkmanager.func_179290_a(new CPacketPing(this.field_175092_e));
+                     this.field_147403_d = true;

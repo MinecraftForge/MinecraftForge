@@ -1,113 +1,69 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -49,7 +49,7 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -76,7 +76,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
 -public abstract class Entity implements ICommandSender
 +public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
+     private static final Logger field_184243_a = LogManager.getLogger();
      private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-     private static int field_70152_a;
-@@ -129,6 +129,15 @@
-     protected UUID field_96093_i;
-     private final CommandResultStats field_174837_as;
+@@ -195,8 +195,16 @@
+         this.field_70180_af.func_187214_a(field_184242_az, "");
+         this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
+         this.func_70088_a();
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+     }
  
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
 +    public boolean captureDrops = false;
 +    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
-+
-+    @Deprecated //ToDo: Move to Capabilities?
-+    protected java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties> extendedProperties = new java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties>();
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -172,6 +181,9 @@
-         this.field_70180_af.func_75682_a(2, "");
-         this.field_70180_af.func_75682_a(4, Byte.valueOf((byte)0));
-         this.func_70088_a();
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, p_i1582_1_);
-+        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-     }
+@@ -1134,12 +1142,12 @@
+             BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
+             IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
-     protected abstract void func_70088_a();
-@@ -996,12 +1008,12 @@
-         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
-         Block block = iblockstate.func_177230_c();
- 
-+        Boolean result = block.isEntityInsideMaterial(this.field_70170_p, blockpos, iblockstate, this, d0, p_70055_1_, true);
-+        if (result != null) return result;
++            Boolean result = iblockstate.func_177230_c().isEntityInsideMaterial(this.field_70170_p, blockpos, iblockstate, this, d0, p_70055_1_, true);
++            if (result != null) return result;
 +
-         if (block.func_149688_o() == p_70055_1_)
-         {
--            float f = BlockLiquid.func_149801_b(iblockstate.func_177230_c().func_176201_c(iblockstate)) - 0.11111111F;
--            float f1 = (float)(blockpos.func_177956_o() + 1) - f;
--            boolean flag = d0 < (double)f1;
--            return !flag && this instanceof EntityPlayer ? false : flag;
-+            return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(p_70055_1_, this, blockpos);
-         }
-         else
-         {
-@@ -1356,6 +1368,23 @@
-                 p_70109_1_.func_74757_a("Silent", this.func_174814_R());
+             if (iblockstate.func_185904_a() == p_70055_1_)
+             {
+-                float f = BlockLiquid.func_149801_b(iblockstate.func_177230_c().func_176201_c(iblockstate)) - 0.11111111F;
+-                float f1 = (float)(blockpos.func_177956_o() + 1) - f;
+-                boolean flag = d0 < (double)f1;
+-                return !flag && this instanceof EntityPlayer ? false : flag;
++                return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(p_70055_1_, this, blockpos);
+             }
+             else
+             {
+@@ -1534,6 +1542,9 @@
+                 p_70109_1_.func_74782_a("Tags", nbttaglist);
              }
  
 +            if (customEntityData != null) p_70109_1_.func_74782_a("ForgeData", customEntityData);
-+            for (String identifier : this.extendedProperties.keySet())
-+            {
-+                try
-+                {
-+                    net.minecraftforge.common.IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.saveNBTData(p_70109_1_);
-+                }
-+                catch (Throwable t)
-+                {
-+                    net.minecraftforge.fml.common.FMLLog.severe("Failed to save extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
-+
 +            if (this.capabilities != null) p_70109_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
 +
              this.func_70014_b(p_70109_1_);
  
-             if (this.field_70154_o != null)
-@@ -1438,6 +1467,30 @@
-             this.func_174805_g(p_70020_1_.func_74767_n("CustomNameVisible"));
-             this.field_174837_as.func_179668_a(p_70020_1_);
+             if (this.func_184207_aI())
+@@ -1629,6 +1640,9 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
-+
+             this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
+ 
 +            if (p_70020_1_.func_74764_b("ForgeData")) customEntityData = p_70020_1_.func_74775_l("ForgeData");
-+            for (String identifier : this.extendedProperties.keySet())
-+            {
-+                try
-+                {
-+                    net.minecraftforge.common.IExtendedEntityProperties props = this.extendedProperties.get(identifier);
-+                    props.loadNBTData(p_70020_1_);
-+                }
-+                catch (Throwable t)
-+                {
-+                    net.minecraftforge.fml.common.FMLLog.severe("Failed to load extended properties for %s.  This is a mod issue.", identifier);
-+                    t.printStackTrace();
-+                }
-+            }
-+
-+            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly TODO: Remove in 1.9
-+            if (p_70020_1_.func_74764_b("PersistentIDMSB") && p_70020_1_.func_74764_b("PersistentIDLSB"))
-+            {
-+                this.field_96093_i = new UUID(p_70020_1_.func_74763_f("PersistentIDMSB"), p_70020_1_.func_74763_f("PersistentIDLSB"));
-+            }
-+
 +            if (this.capabilities != null && p_70020_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_70020_1_.func_74775_l("ForgeCaps"));
 +
-             this.func_70037_a(p_70020_1_);
- 
-             if (this.func_142008_O())
-@@ -1512,7 +1565,10 @@
+             if (p_70020_1_.func_150297_b("Tags", 9))
+             {
+                 this.field_184236_aF.clear();
+@@ -1715,7 +1729,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -119,23 +75,23 @@
              return entityitem;
          }
          else
-@@ -1655,6 +1711,7 @@
+@@ -1824,6 +1841,7 @@
  
-     public void func_70078_a(Entity p_70078_1_)
+     public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_)
      {
-+        if(!(this instanceof EntityLivingBase) && !net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_70078_1_, true)){ return; }
-         this.field_70149_e = 0.0D;
-         this.field_70147_f = 0.0D;
- 
-@@ -2049,6 +2106,7 @@
++        if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_184205_1_, true)) return false;
+         if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
+         {
+             if (this.func_184218_aH())
+@@ -2279,6 +2297,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
-+            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_71027_1_)) return;
++            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return null;
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
-             MinecraftServer minecraftserver = MinecraftServer.func_71276_C();
+             MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2092,7 +2150,7 @@
+@@ -2372,7 +2391,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -144,11 +100,10 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2353,4 +2411,209 @@
- 
+@@ -2662,6 +2681,165 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
-+
+ 
 +    /* ================================== Forge Start =====================================*/
 +    /**
 +     * Returns a NBTTagCompound that can be used to store custom data for this entity.
@@ -179,7 +134,7 @@
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
-+    public ItemStack getPickedResult(MovingObjectPosition target)
++    public ItemStack getPickedResult(RayTraceResult target)
 +    {
 +        if (this instanceof net.minecraft.entity.item.EntityPainting)
 +        {
@@ -207,24 +162,23 @@
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityBoat)
 +        {
-+            return new ItemStack(net.minecraft.init.Items.field_151124_az);
++            return new ItemStack(((EntityBoat)this).func_184455_j());
 +        }
 +        else if (this instanceof net.minecraft.entity.item.EntityArmorStand)
 +        {
 +            return new ItemStack(net.minecraft.init.Items.field_179565_cj);
 +        }
++        else if (this instanceof net.minecraft.entity.item.EntityEnderCrystal)
++        {
++            return new ItemStack(net.minecraft.init.Items.field_185158_cP);
++        }
 +        else
 +        {
-+            int id = EntityList.func_75619_a(this);
-+            if (id > 0 && EntityList.field_75627_a.containsKey(id))
-+            {
-+                return new ItemStack(net.minecraft.init.Items.field_151063_bx, 1, id);
-+            }
 +            String name = EntityList.func_75621_b(this);
-+            if (name != null && net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().containsKey(name))
++            if (EntityList.field_75627_a.containsKey(name))
 +            {
 +                ItemStack stack = new ItemStack(net.minecraft.init.Items.field_151063_bx);
-+                stack.func_77983_a("entity_name", new net.minecraft.nbt.NBTTagString(name));
++                net.minecraft.item.ItemMonsterPlacer.func_185078_a(stack, name);
 +                return stack;
 +            }
 +        }
@@ -259,51 +213,6 @@
 +    {
 +        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).func_104002_bU()) return false;
 +        return type.func_75598_a().isAssignableFrom(this.getClass());
-+    }
-+
-+    /**
-+     * Register the instance of IExtendedProperties into the entity's collection.
-+     * @param identifier The identifier which you can use to retrieve these properties for the entity.
-+     * @param properties The instanceof IExtendedProperties to register
-+     * @return The identifier that was used to register the extended properties.  Empty String indicates an error.  If your requested key already existed, this will return a modified one that is unique.
-+     */
-+    public String registerExtendedProperties(String identifier, net.minecraftforge.common.IExtendedEntityProperties properties)
-+    {
-+        if (identifier == null)
-+        {
-+            net.minecraftforge.fml.common.FMLLog.warning("Someone is attempting to register extended properties using a null identifier.  This is not allowed.  Aborting.  This may have caused instability.");
-+            return "";
-+        }
-+        if (properties == null)
-+        {
-+            net.minecraftforge.fml.common.FMLLog.warning("Someone is attempting to register null extended properties.  This is not allowed.  Aborting.  This may have caused instability.");
-+            return "";
-+        }
-+
-+        String baseIdentifier = identifier;
-+        int identifierModCount = 1;
-+        while (this.extendedProperties.containsKey(identifier))
-+        {
-+            identifier = String.format("%s%d", baseIdentifier, identifierModCount++);
-+        }
-+
-+        if (baseIdentifier != identifier)
-+        {
-+            net.minecraftforge.fml.common.FMLLog.info("An attempt was made to register exended properties using an existing key.  The duplicate identifier (%s) has been remapped to %s.", baseIdentifier, identifier);
-+        }
-+
-+        this.extendedProperties.put(identifier, properties);
-+        return identifier;
-+    }
-+
-+    /**
-+     * Gets the extended properties identified by the passed in key
-+     * @param identifier The key that identifies the extended properties.
-+     * @return The instance of IExtendedProperties that was found, or null.
-+     */
-+    public net.minecraftforge.common.IExtendedEntityProperties getExtendedProperties(String identifier)
-+    {
-+        return this.extendedProperties.get(identifier);
 +    }
 +
 +    /**
@@ -353,4 +262,7 @@
 +        return ret;
 +    }
 +    /* ================================== Forge End =====================================*/
- }
++
+     public void func_184178_b(EntityPlayerMP p_184178_1_)
+     {
+     }

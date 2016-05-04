@@ -1,25 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -138,6 +138,10 @@
+@@ -51,7 +51,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
-     public BiomeGenBase(int p_i1971_1_)
-     {
-+        this(p_i1971_1_, true);
-+    }
-+    public BiomeGenBase(int p_i1971_1_, boolean register)
-+    {
-         this.field_76748_D = field_150596_a.field_150777_a;
-         this.field_76749_E = field_150596_a.field_150776_b;
-         this.field_76750_F = 0.5F;
-@@ -152,6 +156,7 @@
-         this.field_76758_O = new WorldGenBigTree(false);
-         this.field_76763_Q = new WorldGenSwamp();
-         this.field_76756_M = p_i1971_1_;
-+        if (register)
-         field_76773_a[p_i1971_1_] = this;
-         this.field_76760_I = this.func_76729_a();
-         this.field_76762_K.add(new BiomeGenBase.SpawnListEntry(EntitySheep.class, 12, 4, 4));
-@@ -168,11 +173,12 @@
+-public abstract class BiomeGenBase
++public abstract class BiomeGenBase extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<BiomeGenBase>
+ {
+     private static final Logger field_150586_aC = LogManager.getLogger();
+     protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
+@@ -70,7 +70,7 @@
+     protected static final WorldGenTrees field_76757_N = new WorldGenTrees(false);
+     protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
+     protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
+-    public static final RegistryNamespaced<ResourceLocation, BiomeGenBase> field_185377_q = new RegistryNamespaced();
++    public static final RegistryNamespaced<ResourceLocation, BiomeGenBase> field_185377_q = net.minecraftforge.fml.common.registry.GameData.getBiomeRegistry();
+     private final String field_76791_y;
+     private final float field_76748_D;
+     private final float field_76749_E;
+@@ -128,11 +128,12 @@
          this.field_76761_J.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
          this.field_76755_L.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
          this.field_82914_M.add(new BiomeGenBase.SpawnListEntry(EntityBat.class, 10, 8, 8));
@@ -32,8 +31,8 @@
 +        return getModdedBiomeDecorator(new BiomeDecorator());
      }
  
-     public BiomeGenBase func_76732_a(float p_76732_1_, float p_76732_2_)
-@@ -342,7 +348,7 @@
+     public boolean func_185363_b()
+@@ -228,7 +229,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -41,8 +40,8 @@
 +        return getModdedBiomeGrassColor(ColorizerGrass.func_77480_a(d0, d1));
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -350,7 +356,7 @@
+     public final void func_180628_b(World p_180628_1_, Random p_180628_2_, ChunkPrimer p_180628_3_, int p_180628_4_, int p_180628_5_, double p_180628_6_)
+@@ -321,7 +322,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -50,9 +49,9 @@
 +        return getModdedBiomeFoliageColor(ColorizerFoliage.func_77470_a(d0, d1));
      }
  
-     public boolean func_150559_j()
-@@ -497,6 +503,84 @@
-         }
+     public Class <? extends BiomeGenBase > func_150562_l()
+@@ -386,6 +387,83 @@
+         return this.field_76766_R;
      }
  
 +    /* ========================================= FORGE START ======================================*/
@@ -67,21 +66,21 @@
 +    {
 +        net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor(this, field_76759_H);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
++        return event.getNewColor();
 +    }
 +
 +    public int getModdedBiomeGrassColor(int original)
 +    {
 +        net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor(this, original);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
++        return event.getNewColor();
 +    }
 +
 +    public int getModdedBiomeFoliageColor(int original)
 +    {
 +        net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor event = new net.minecraftforge.event.terraingen.BiomeEvent.GetFoliageColor(this, original);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        return event.newColor;
++        return event.getNewColor();
 +    }
 +
 +    /**
@@ -130,9 +129,8 @@
 +        world.func_180501_a(pos, flower.state, 3);
 +    }
 +
-+
 +    /* ========================================= FORGE END ======================================*/
 +
-     static
+     public static void func_185358_q()
      {
-         field_76772_c.func_150566_k();
+         func_185354_a(0, "ocean", new BiomeGenOcean((new BiomeGenBase.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));

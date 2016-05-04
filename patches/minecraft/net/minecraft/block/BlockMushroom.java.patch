@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMushroom.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMushroom.java
-@@ -71,7 +71,7 @@
+@@ -78,7 +78,7 @@
          if (p_180671_2_.func_177956_o() >= 0 && p_180671_2_.func_177956_o() < 256)
          {
              IBlockState iblockstate = p_180671_1_.func_180495_p(p_180671_2_.func_177977_b());
--            return iblockstate.func_177230_c() == Blocks.field_150391_bh ? true : (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.PODZOL ? true : p_180671_1_.func_175699_k(p_180671_2_) < 13 && this.func_149854_a(iblockstate.func_177230_c()));
-+            return iblockstate.func_177230_c() == Blocks.field_150391_bh ? true : (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.PODZOL ? true : p_180671_1_.func_175699_k(p_180671_2_) < 13 && iblockstate.func_177230_c().canSustainPlant(p_180671_1_, p_180671_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this));
+-            return iblockstate.func_177230_c() == Blocks.field_150391_bh ? true : (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.PODZOL ? true : p_180671_1_.func_175699_k(p_180671_2_) < 13 && this.func_185514_i(iblockstate));
++            return iblockstate.func_177230_c() == Blocks.field_150391_bh ? true : (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.PODZOL ? true : p_180671_1_.func_175699_k(p_180671_2_) < 13 && iblockstate.func_177230_c().canSustainPlant(iblockstate, p_180671_1_, p_180671_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this));
          }
          else
          {

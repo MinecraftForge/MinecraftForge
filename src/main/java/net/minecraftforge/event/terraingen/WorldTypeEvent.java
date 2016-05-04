@@ -15,11 +15,16 @@ import net.minecraft.world.WorldType;
  **/
 public class WorldTypeEvent extends Event
 {
-    public final WorldType worldType;
+    private final WorldType worldType;
 
     public WorldTypeEvent(WorldType worldType)
     {
         this.worldType = worldType;
+    }
+
+    public WorldType getWorldType()
+    {
+        return worldType;
     }
 
     /**
@@ -39,14 +44,29 @@ public class WorldTypeEvent extends Event
      **/
     public static class BiomeSize extends WorldTypeEvent
     {
-        public final int originalSize;
-        public int newSize;
+        private final int originalSize;
+        private int newSize;
 
         public BiomeSize(WorldType worldType, int original)
         {
             super(worldType);
             originalSize = original;
-            newSize = original;
+            setNewSize(original);
+        }
+
+        public int getOriginalSize()
+        {
+            return originalSize;
+        }
+
+        public int getNewSize()
+        {
+            return newSize;
+        }
+
+        public void setNewSize(int newSize)
+        {
+            this.newSize = newSize;
         }
     }
 
@@ -68,16 +88,36 @@ public class WorldTypeEvent extends Event
      **/
     public static class InitBiomeGens extends WorldTypeEvent
     {
-        public final long seed;
-        public final GenLayer[] originalBiomeGens;
-        public GenLayer[] newBiomeGens;
+        private final long seed;
+        private final GenLayer[] originalBiomeGens;
+        private GenLayer[] newBiomeGens;
 
         public InitBiomeGens(WorldType worldType, long seed, GenLayer[] original)
         {
             super(worldType);
             this.seed = seed;
             originalBiomeGens = original;
-            newBiomeGens = original.clone();
+            setNewBiomeGens(original.clone());
+        }
+
+        public long getSeed()
+        {
+            return seed;
+        }
+
+        public GenLayer[] getOriginalBiomeGens()
+        {
+            return originalBiomeGens;
+        }
+
+        public GenLayer[] getNewBiomeGens()
+        {
+            return newBiomeGens;
+        }
+
+        public void setNewBiomeGens(GenLayer[] newBiomeGens)
+        {
+            this.newBiomeGens = newBiomeGens;
         }
     }
 }

@@ -28,7 +28,7 @@ public class FMLRelaunchLog {
      * Our special logger for logging issues to. We copy various assets from the
      * Minecraft logger to achieve a similar appearance.
      */
-    public static FMLRelaunchLog log = new FMLRelaunchLog();
+    public static final FMLRelaunchLog log = new FMLRelaunchLog();
 
     static File minecraftHome;
     private static boolean configured;

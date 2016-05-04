@@ -8,6 +8,7 @@
 
 #idea
 /.idea
+/classes
 *.iml
 
 #gradle
@@ -20,7 +21,6 @@
 /buildSrc
 
 #Patch rejects
-*.rej
 /patches-/
 
 # FML changelog

@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
-@@ -28,11 +28,18 @@
+@@ -28,11 +28,19 @@
  
-         for (BiomeGenBase biomegenbase : BiomeGenBase.func_150565_n())
+         for (BiomeGenBase biomegenbase : BiomeGenBase.field_185377_q)
          {
--            if (biomegenbase != null && biomegenbase.field_76748_D > 0.0F)
-+            if (biomegenbase != null && biomegenbase.field_76748_D > 0.0F && !net.minecraftforge.common.BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
+-            if (biomegenbase != null && biomegenbase.func_185355_j() > 0.0F)
++            if (biomegenbase != null && biomegenbase.func_185355_j() > 0.0F && !net.minecraftforge.common.BiomeManager.strongHoldBiomesBlackList.contains(biomegenbase))
              {
                  this.field_151546_e.add(biomegenbase);
              }
          }
++
 +        for (BiomeGenBase biome : net.minecraftforge.common.BiomeManager.strongHoldBiomes)
 +        {
 +            if (!this.field_151546_e.contains(biome))

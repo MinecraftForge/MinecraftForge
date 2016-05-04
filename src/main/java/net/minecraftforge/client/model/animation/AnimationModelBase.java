@@ -6,19 +6,24 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
-import net.minecraftforge.client.model.pipeline.WorldRendererConsumer;
+import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.animation.IEventHandler;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.animation.CapabilityAnimation;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
@@ -28,14 +33,14 @@ import org.lwjgl.opengl.GL11;
  * Some quirks are still left, deprecated for the moment.
  */
 @Deprecated
-public class AnimationModelBase<T extends Entity & IAnimationProvider> extends ModelBase implements IEventHandler<T>
+public class AnimationModelBase<T extends Entity> extends ModelBase implements IEventHandler<T>
 {
     private final VertexLighterFlat lighter;
-    private final IModel model;
+    private final ResourceLocation modelLocation;
 
-    public AnimationModelBase(IModel model, VertexLighterFlat lighter)
+    public AnimationModelBase(ResourceLocation modelLocation, VertexLighterFlat lighter)
     {
-        this.model = model;
+        this.modelLocation = modelLocation;
         this.lighter = lighter;
     }
 
@@ -43,13 +48,14 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
     {
-        if(!(entity instanceof IAnimationProvider))
+        if(!(entity.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)))
         {
-            throw new ClassCastException("AnimationModelBase expects IAnimationProvider");
+            return;
         }
 
-        Pair<IModelState, Iterable<Event>> pair = ((IAnimationProvider)entity).asm().apply(timeAlive / 20);
+        Pair<IModelState, Iterable<Event>> pair = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null).apply(timeAlive / 20);
         handleEvents((T)entity, timeAlive / 20, pair.getRight());
+        IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
         IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
 
         BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.height, entity.posZ);
@@ -58,16 +64,16 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
         GlStateManager.pushMatrix();
         GlStateManager.rotate(180, 0, 0, 1);
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        worldRenderer.setTranslation(-0.5, -1.5, -0.5);
+        VertexBuffer VertexBuffer = tessellator.getBuffer();
+        VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        VertexBuffer.setTranslation(-0.5, -1.5, -0.5);
 
-        lighter.setParent(new WorldRendererConsumer(worldRenderer));
+        lighter.setParent(new VertexBufferConsumer(VertexBuffer));
         lighter.setWorld(entity.worldObj);
-        lighter.setBlock(Blocks.air);
+        lighter.setState(Blocks.air.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = bakedModel.getGeneralQuads();
+        List<BakedQuad> quads = bakedModel.getQuads(null, null, 0);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -79,7 +85,7 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = bakedModel.getFaceQuads(side);
+            quads = bakedModel.getQuads(null, side, 0);
             if(!quads.isEmpty())
             {
                 if(empty) lighter.updateBlockInfo();
@@ -92,12 +98,12 @@ public class AnimationModelBase<T extends Entity & IAnimationProvider> extends M
         }
 
         // debug quad
-        /*worldRenderer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
-        worldRenderer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
-        worldRenderer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
-        worldRenderer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();*/
+        /*VertexBuffer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
+        VertexBuffer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
+        VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
+        VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();*/
 
-        worldRenderer.setTranslation(0, 0, 0);
+        VertexBuffer.setTranslation(0, 0, 0);
 
         tessellator.draw();
         GlStateManager.popMatrix();

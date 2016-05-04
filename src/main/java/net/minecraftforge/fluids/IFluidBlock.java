@@ -1,14 +1,12 @@
 package net.minecraftforge.fluids;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
  * Implement this interface on Block classes which represent world-placeable Fluids.
  *
  * NOTE: Using/extending the reference implementations {@link BlockFluidBase} is encouraged.
- *
- * @author King Lemming
  *
  */
 public interface IFluidBlock

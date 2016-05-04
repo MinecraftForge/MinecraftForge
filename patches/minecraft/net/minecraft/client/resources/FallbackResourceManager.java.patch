@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/FallbackResourceManager.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/FallbackResourceManager.java
-@@ -67,6 +67,7 @@
+@@ -68,6 +68,7 @@
          throw new FileNotFoundException(p_110536_1_.toString());
      }
  

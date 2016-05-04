@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -51,26 +51,12 @@
+@@ -52,26 +52,12 @@
  
      protected void func_76572_b()
      {
@@ -9,34 +9,27 @@
 -        if (worldtype == WorldType.field_77138_c)
 -        {
 -            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
--            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.func_180276_a(flatgeneratorinfo.func_82648_a(), BiomeGenBase.field_180279_ad), 0.5F);
+-            this.field_76578_c = new BiomeProviderSingle(BiomeGenBase.func_180276_a(flatgeneratorinfo.func_82648_a(), Biomes.field_180279_ad));
 -        }
 -        else if (worldtype == WorldType.field_180272_g)
 -        {
--            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76772_c, 0.0F);
+-            this.field_76578_c = new BiomeProviderSingle(Biomes.field_76772_c);
 -        }
 -        else
 -        {
--            this.field_76578_c = new WorldChunkManager(this.field_76579_a);
+-            this.field_76578_c = new BiomeProvider(this.field_76579_a.func_72912_H());
 -        }
-+        this.field_76578_c = field_76577_b.getChunkManager(field_76579_a);
++        this.field_76578_c = field_76577_b.getBiomeProvider(field_76579_a);
      }
  
-     public IChunkProvider func_76555_c()
+     public IChunkGenerator func_186060_c()
      {
--        return (IChunkProvider)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
+-        return (IChunkGenerator)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : (this.field_76577_b == WorldType.field_180272_g ? new ChunkProviderDebug(this.field_76579_a) : (this.field_76577_b == WorldType.field_180271_f ? new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderOverworld(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c))));
 +        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -153,13 +139,13 @@
- 
-     public static WorldProvider func_76570_a(int p_76570_0_)
-     {
--        return (WorldProvider)(p_76570_0_ == -1 ? new WorldProviderHell() : (p_76570_0_ == 0 ? new WorldProviderSurface() : (p_76570_0_ == 1 ? new WorldProviderEnd() : null)));
-+        return net.minecraftforge.common.DimensionManager.createProviderFor(p_76570_0_);
-     }
- 
+@@ -156,7 +142,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -45,7 +38,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -175,13 +161,13 @@
+@@ -172,13 +158,13 @@
  
      public int func_76557_i()
      {
@@ -61,25 +54,30 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -223,4 +209,319 @@
-     {
+@@ -212,6 +198,327 @@
          return new WorldBorder();
      }
-+
+ 
 +    /*======================================= Forge Start =========================================*/
 +    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
++    private int dimensionId;
 +
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
++     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
 +     *
 +     * @param dim Dimension ID
 +     */
 +    public void setDimension(int dim)
 +    {
-+        this.field_76574_g = dim;
++        this.dimensionId = dim;
++    }
++    public int getDimension()
++    {
++        return this.dimensionId;
 +    }
 +
 +    /**
@@ -89,7 +87,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (field_76574_g == 0 ? null : "DIM" + field_76574_g);
++        return (dimensionId == 0 ? null : "DIM" + dimensionId);
 +    }
 +
 +    /**
@@ -184,14 +182,14 @@
 +        BlockPos ret = this.field_76579_a.func_175694_M();
 +
 +        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == WorldSettings.GameType.ADVENTURE;
-+        int spawnFuzz = field_76577_b.getSpawnFuzz();
++        int spawnFuzz = this.field_76579_a instanceof WorldServer ? field_76577_b.getSpawnFuzz((WorldServer)this.field_76579_a, this.field_76579_a.func_73046_m()) : 1;
 +        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
 +        if (border < spawnFuzz) spawnFuzz = border;
-+        if (spawnFuzz < 1) spawnFuzz = 1;
-+        int spawnFuzzHalf = spawnFuzz / 2;
 +
-+        if (!func_177495_o() && !isAdventure)
++        if (!func_177495_o() && !isAdventure && spawnFuzz != 0)
 +        {
++            if (spawnFuzz < 2) spawnFuzz = 2;
++            int spawnFuzzHalf = spawnFuzz / 2;
 +            ret = field_76579_a.func_175672_r(ret.func_177982_a(field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz, 0, field_76579_a.field_73012_v.nextInt(spawnFuzzHalf) - spawnFuzz));
 +        }
 +
@@ -208,7 +206,7 @@
 +     */
 +    public boolean shouldMapSpin(String entity, double x, double y, double z)
 +    {
-+        return field_76574_g < 0;
++        return dimensionId < 0;
 +    }
 +
 +    /**
@@ -258,15 +256,15 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
++    public Vec3d getSkyColor(net.minecraft.entity.Entity cameraEntity, float partialTicks)
 +    {
 +        return field_76579_a.getSkyColorBody(cameraEntity, partialTicks);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawClouds(float partialTicks)
++    public Vec3d getCloudColor(float partialTicks)
 +    {
-+        return field_76579_a.drawCloudsBody(partialTicks);
++        return field_76579_a.getCloudColorBody(partialTicks);
 +    }
 +
 +    /**
@@ -380,4 +378,7 @@
 +    {
 +        return true;
 +    }
- }
++
+     public void func_186061_a(EntityPlayerMP p_186061_1_)
+     {
+     }

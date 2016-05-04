@@ -23,12 +23,12 @@ public class ConfigElement implements IConfigElement
     private Property prop;
     private Property.Type type;
     private boolean isProperty;
-    private ConfigCategory ctgy;
+    private ConfigCategory category;
     private boolean categoriesFirst = true;
 
-    public ConfigElement(ConfigCategory ctgy)
+    public ConfigElement(ConfigCategory category)
     {
-        this.ctgy = ctgy;
+        this.category = category;
         isProperty = false;
     }
 
@@ -51,8 +51,8 @@ public class ConfigElement implements IConfigElement
         if (!isProperty)
         {
             List<IConfigElement> elements = new ArrayList<IConfigElement>();
-            Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
-            Iterator<Property> pI = ctgy.getOrderedValues().iterator();
+            Iterator<ConfigCategory> ccI = category.getChildren().iterator();
+            Iterator<Property> pI = category.getOrderedValues().iterator();
             @SuppressWarnings("unused")
             int index = 0;
 
@@ -87,7 +87,7 @@ public class ConfigElement implements IConfigElement
     @Override
     public String getName()
     {
-        return isProperty ? prop.getName() : ctgy.getName();
+        return isProperty ? prop.getName() : category.getName();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ConfigElement implements IConfigElement
     @Override
     public Class<? extends IConfigEntry> getConfigEntryClass()
     {
-        return isProperty ? prop.getConfigEntryClass() : ctgy.getConfigEntryClass();
+        return isProperty ? prop.getConfigEntryClass() : category.getConfigEntryClass();
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ConfigElement implements IConfigElement
     @Override
     public String getQualifiedName()
     {
-        return isProperty ? prop.getName() : ctgy.getQualifiedName();
+        return isProperty ? prop.getName() : category.getQualifiedName();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class ConfigElement implements IConfigElement
     @Override
     public String getComment()
     {
-        return isProperty ? prop.comment : ctgy.getComment();
+        return isProperty ? prop.getComment() : category.getComment();
     }
 
     @Override
@@ -167,19 +167,19 @@ public class ConfigElement implements IConfigElement
     @Override
     public boolean requiresWorldRestart()
     {
-        return isProperty ? prop.requiresWorldRestart() : ctgy.requiresWorldRestart();
+        return isProperty ? prop.requiresWorldRestart() : category.requiresWorldRestart();
     }
 
     @Override
     public boolean showInGui()
     {
-        return isProperty ? prop.showInGui() : ctgy.showInGui();
+        return isProperty ? prop.showInGui() : category.showInGui();
     }
 
     @Override
     public boolean requiresMcRestart()
     {
-        return isProperty ? prop.requiresMcRestart() : ctgy.requiresMcRestart();
+        return isProperty ? prop.requiresMcRestart() : category.requiresMcRestart();
     }
 
     @Override
@@ -191,7 +191,7 @@ public class ConfigElement implements IConfigElement
     @Override
     public String getLanguageKey()
     {
-        return isProperty ? prop.getLanguageKey() : ctgy.getLanguagekey();
+        return isProperty ? prop.getLanguageKey() : category.getLanguagekey();
     }
 
     @Override

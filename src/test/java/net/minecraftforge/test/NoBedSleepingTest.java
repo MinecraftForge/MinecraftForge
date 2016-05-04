@@ -1,19 +1,32 @@
 package net.minecraftforge.test;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTBase.NBTPrimitive;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.Capability.IStorage;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,64 +37,112 @@ public class NoBedSleepingTest
 {
     public static final String MODID = "ForgeDebugNoBedSleeping";
     public static final String VERSION = "1.0";
+    @CapabilityInject(IExtraSleeping.class)
+    private static final Capability<IExtraSleeping> SLEEP_CAP = null;
+
+    @SidedProxy
+    public static CommonProxy proxy = null;
+
+    public static abstract class CommonProxy
+    {
+        public void preInit(FMLPreInitializationEvent event)
+        {
+            GameRegistry.register(ItemSleepingPill.instance);
+            CapabilityManager.INSTANCE.register(IExtraSleeping.class, new Storage(), DefaultImpl.class);
+            MinecraftForge.EVENT_BUS.register(new EventHandler());
+        }
+    }
+
+    public static final class ServerProxy extends CommonProxy {}
+
+    public static final class ClientProxy extends CommonProxy
+    {
+        @Override
+        public void preInit(FMLPreInitializationEvent event)
+        {
+            super.preInit(event);
+            ModelLoader.setCustomModelResourceLocation(ItemSleepingPill.instance, 0, new ModelResourceLocation(new ResourceLocation(MODID, ItemSleepingPill.name), "inventory"));
+        }
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        GameRegistry.registerItem(ItemSleepingPill.instance, ItemSleepingPill.name);
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        proxy.preInit(event);
     }
 
     public static class EventHandler
     {
         @SubscribeEvent
-        public void onEntityConstruct(EntityConstructing evt)
+        public void onEntityConstruct(AttachCapabilitiesEvent evt)
         {
-            evt.entity.registerExtendedProperties(ExtendedPropertySleeping.name, new ExtendedPropertySleeping());
+            evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<NBTPrimitive>()
+            {
+                IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
+                @Override
+                public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+                    return capability == SLEEP_CAP;
+                }
+
+                @Override
+                public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+                    return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
+                }
+
+                @Override
+                public NBTPrimitive serializeNBT() {
+                    return (NBTPrimitive)SLEEP_CAP.getStorage().writeNBT(SLEEP_CAP, inst, null);
+                }
+
+                @Override
+                public void deserializeNBT(NBTPrimitive nbt) {
+                    SLEEP_CAP.getStorage().readNBT(SLEEP_CAP, inst, null, nbt);
+                }
+            });
         }
 
         @SubscribeEvent
         public void onBedCheck(SleepingLocationCheckEvent evt)
         {
-            final IExtendedEntityProperties property = evt.entityPlayer.getExtendedProperties(ExtendedPropertySleeping.name);
-            if (property instanceof ExtendedPropertySleeping && ((ExtendedPropertySleeping) property).isSleeping)
+            final IExtraSleeping sleep = evt.getEntityPlayer().getCapability(SLEEP_CAP, null);
+            if (sleep != null && sleep.isSleeping())
                 evt.setResult(Result.ALLOW);
         }
 
         @SubscribeEvent
         public void onWakeUp(PlayerWakeUpEvent evt)
         {
-            final IExtendedEntityProperties property = evt.entityPlayer.getExtendedProperties(ExtendedPropertySleeping.name);
-            if (property instanceof ExtendedPropertySleeping)
-                ((ExtendedPropertySleeping) property).isSleeping = false;
+            final IExtraSleeping sleep = evt.getEntityPlayer().getCapability(SLEEP_CAP, null);
+            if (sleep != null)
+                sleep.setSleeping(false);
         }
     }
 
-    public static class ExtendedPropertySleeping implements IExtendedEntityProperties
+    public interface IExtraSleeping {
+        boolean isSleeping();
+        void setSleeping(boolean value);
+    }
+
+    public static class Storage implements IStorage<IExtraSleeping>
     {
-        private static final String TAG_NAME = "IsSleepingExt";
-
-        public static final String name = "is_sleeping";
-
-        public boolean isSleeping;
-
         @Override
-        public void saveNBTData(NBTTagCompound compound)
+        public NBTBase writeNBT(Capability<IExtraSleeping> capability, IExtraSleeping instance, EnumFacing side)
         {
-            compound.setBoolean(TAG_NAME, isSleeping);
+            return new NBTTagByte((byte)(instance.isSleeping() ? 1 : 0));
         }
 
         @Override
-        public void loadNBTData(NBTTagCompound compound)
+        public void readNBT(Capability<IExtraSleeping> capability, IExtraSleeping instance, EnumFacing side, NBTBase nbt)
         {
-            this.isSleeping = compound.getBoolean(TAG_NAME);
+            instance.setSleeping(((NBTPrimitive)nbt).getByte() == 1);
         }
+    }
 
-        @Override
-        public void init(Entity entity, World world)
-        {
-        }
-
+    public static class DefaultImpl implements IExtraSleeping
+    {
+        private boolean isSleeping = false;
+        @Override public boolean isSleeping() { return isSleeping; }
+        @Override public void setSleeping(boolean value) { this.isSleeping = value; }
     }
 
     public static class ItemSleepingPill extends Item
@@ -93,21 +154,24 @@ public class NoBedSleepingTest
         {
             setCreativeTab(CreativeTabs.tabMisc);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
-        public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
+        @Override
+        public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
         {
-            if (!worldIn.isRemote)
+            if (!world.isRemote)
             {
-                final EnumStatus result = playerIn.trySleep(playerIn.getPosition());
+                final EnumStatus result = player.trySleep(player.getPosition());
                 if (result == EnumStatus.OK)
                 {
-                    final IExtendedEntityProperties property = playerIn.getExtendedProperties(ExtendedPropertySleeping.name);
-                    if (property instanceof ExtendedPropertySleeping)
-                        ((ExtendedPropertySleeping) property).isSleeping = true;
+                    final IExtraSleeping sleep = player.getCapability(SLEEP_CAP, null);
+                    if (sleep != null)
+                        sleep.setSleeping(true);
+                    return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
                 }
             }
-            return itemStackIn;
+            return ActionResult.newResult(EnumActionResult.PASS, stack);
         }
     }
 }

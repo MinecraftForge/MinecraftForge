@@ -22,7 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
 import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
@@ -64,14 +64,14 @@ public class GuiEditArray extends GuiScreen
         String comment;
 
         comment = I18n.format(configElement.getLanguageKey() + ".tooltip",
-                "\n" + EnumChatFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
+                "\n" + TextFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
 
         if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-            Collections.addAll(toolTip, (EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment).split("\n"));
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + comment).split("\n"));
         else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-            Collections.addAll(toolTip, (EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + configElement.getComment()).split("\n"));
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + configElement.getComment()).split("\n"));
         else
-            Collections.addAll(toolTip, (EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.").split("\n"));
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.RED + "No tooltip defined.").split("\n"));
 
         if (parentScreen instanceof GuiConfig)
         {

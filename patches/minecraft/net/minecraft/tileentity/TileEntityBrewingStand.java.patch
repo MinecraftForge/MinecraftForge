@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -104,7 +104,7 @@
+@@ -140,7 +140,7 @@
  
      private boolean func_145934_k()
      {
@@ -9,16 +9,7 @@
          {
              ItemStack itemstack = this.field_145945_j[3];
  
-@@ -118,7 +118,7 @@
- 
-                 for (int i = 0; i < 3; ++i)
-                 {
--                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
-+                    if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
-                     {
-                         int j = this.field_145945_j[i].func_77960_j();
-                         int k = this.func_145936_c(j, itemstack);
-@@ -145,19 +145,22 @@
+@@ -165,25 +165,23 @@
          }
          else
          {
@@ -29,61 +20,57 @@
  
      private void func_145940_l()
      {
-+        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBreaw(field_145945_j)) return;
-         if (this.func_145934_k())
++        if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(field_145945_j)) return;
+         ItemStack itemstack = this.field_145945_j[3];
+ 
+-        for (int i = 0; i < 3; ++i)
+-        {
+-            this.field_145945_j[i] = PotionHelper.func_185212_d(itemstack, this.field_145945_j[i]);
+-        }
++        net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j[3], field_145947_i);
+ 
+         --itemstack.field_77994_a;
+         BlockPos blockpos = this.func_174877_v();
+ 
+-        if (itemstack.func_77973_b().func_77634_r())
++        if (itemstack.func_77973_b().hasContainerItem(itemstack))
          {
-+            net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, field_145945_j[3], field_145947_i);
-             ItemStack itemstack = this.field_145945_j[3];
+-            ItemStack itemstack1 = new ItemStack(itemstack.func_77973_b().func_77668_q());
++            ItemStack itemstack1 = itemstack.func_77973_b().getContainerItem(itemstack);
  
-+            if (false) { // Code moved to net.minecraftforge.common.brewing.VanillaBrewingRecipe
-             for (int i = 0; i < 3; ++i)
+             if (itemstack.field_77994_a <= 0)
              {
--                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() == Items.field_151068_bn)
-+                if (this.field_145945_j[i] != null && this.field_145945_j[i].func_77973_b() instanceof ItemPotion)
-                 {
-                     int j = this.field_145945_j[i].func_77960_j();
-                     int k = this.func_145936_c(j, itemstack);
-@@ -177,10 +180,11 @@
-                     }
-                 }
-             }
-+            }
+@@ -202,6 +200,7 @@
  
--            if (itemstack.func_77973_b().func_77634_r())
-+            if (itemstack.func_77973_b().hasContainerItem(itemstack))
-             {
--                this.field_145945_j[3] = new ItemStack(itemstack.func_77973_b().func_77668_q());
-+                this.field_145945_j[3] = itemstack.func_77973_b().getContainerItem(itemstack);
-             }
-             else
-             {
-@@ -191,6 +195,7 @@
-                     this.field_145945_j[3] = null;
-                 }
-             }
-+            net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
-         }
+         this.field_145945_j[3] = itemstack;
+         this.field_145850_b.func_175718_b(1035, blockpos, 0);
++        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
      }
  
-@@ -310,7 +315,9 @@
- 
-     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
+     public void func_145839_a(NBTTagCompound p_145839_1_)
+@@ -303,12 +302,12 @@
      {
--        return p_94041_1_ == 3 ? p_94041_2_.func_77973_b().func_150892_m(p_94041_2_) : p_94041_2_.func_77973_b() == Items.field_151068_bn || p_94041_2_.func_77973_b() == Items.field_151069_bo;
-+        if (p_94041_1_ == 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_94041_2_)) return true;
-+        else if (p_94041_1_ != 3 && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_)) return true;
-+        return false;
-     }
- 
-     public boolean[] func_174902_m()
-@@ -386,4 +393,18 @@
-             this.field_145945_j[i] = null;
+         if (p_94041_1_ == 3)
+         {
+-            return PotionHelper.func_185205_a(p_94041_2_);
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_94041_2_);
+         }
+         else
+         {
+             Item item = p_94041_2_.func_77973_b();
+-            return p_94041_1_ == 4 ? item == Items.field_151065_br : item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo;
++            return p_94041_1_ == 4 ? item == Items.field_151065_br : net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_);
          }
      }
-+
+ 
+@@ -362,6 +361,21 @@
+         }
+     }
+ 
 +    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
 +    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
 +
++    @SuppressWarnings("unchecked")
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {
@@ -94,4 +81,7 @@
 +                return (T) handlerOutput;
 +        return super.getCapability(capability, facing);
 +    }
- }
++
+     public int func_174890_g()
+     {
+         return 2;

@@ -8,4 +8,4 @@
 +
          if (p_75208_1_.func_77973_b() == Items.field_151042_j)
          {
-             this.field_75229_a.func_71029_a(AchievementList.field_76016_k);
+             this.field_75229_a.func_71029_a(AchievementList.field_187987_k);

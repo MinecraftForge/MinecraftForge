@@ -1,40 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBush.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBush.java
-@@ -13,7 +13,7 @@
+@@ -14,7 +14,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public class BlockBush extends Block
 +public class BlockBush extends Block implements net.minecraftforge.common.IPlantable
  {
-     protected BlockBush()
-     {
-@@ -36,7 +36,7 @@
+     protected static final AxisAlignedBB field_185515_b = new AxisAlignedBB(0.30000001192092896D, 0.0D, 0.30000001192092896D, 0.699999988079071D, 0.6000000238418579D, 0.699999988079071D);
+ 
+@@ -37,7 +37,8 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
--        return super.func_176196_c(p_176196_1_, p_176196_2_) && this.func_149854_a(p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c());
-+        return super.func_176196_c(p_176196_1_, p_176196_2_) && p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c().canSustainPlant(p_176196_1_, p_176196_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
+-        return super.func_176196_c(p_176196_1_, p_176196_2_) && this.func_185514_i(p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()));
++        IBlockState soil = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++        return super.func_176196_c(p_176196_1_, p_176196_2_) && soil.func_177230_c().canSustainPlant(soil, p_176196_1_, p_176196_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
      }
  
-     protected boolean func_149854_a(Block p_149854_1_)
-@@ -66,7 +66,10 @@
+     protected boolean func_185514_i(IBlockState p_185514_1_)
+@@ -67,6 +68,11 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
--        return this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
-+        BlockPos down = p_180671_2_.func_177977_b();
-+        Block soil = p_180671_1_.func_180495_p(down).func_177230_c();
-+        if (p_180671_3_.func_177230_c() != this) return this.func_149854_a(soil); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-+        return soil.canSustainPlant(p_180671_1_, down, net.minecraft.util.EnumFacing.UP, this);
++        if (p_180671_3_.func_177230_c() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++        {
++            IBlockState soil = p_180671_1_.func_180495_p(p_180671_2_.func_177977_b());
++            return soil.func_177230_c().canSustainPlant(soil, p_180671_1_, p_180671_2_.func_177977_b(), net.minecraft.util.EnumFacing.UP, this);
++        }
+         return this.func_185514_i(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()));
      }
  
-     public AxisAlignedBB func_180640_a(World p_180640_1_, BlockPos p_180640_2_, IBlockState p_180640_3_)
-@@ -89,4 +92,33 @@
-     {
-         return EnumWorldBlockLayer.CUTOUT;
+@@ -90,6 +96,35 @@
+         return false;
      }
-+
+ 
 +    @Override
 +    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
 +    {
@@ -63,4 +63,7 @@
 +        if (state.func_177230_c() != this) return func_176223_P();
 +        return state;
 +    }
- }
++
+     @SideOnly(Side.CLIENT)
+     public BlockRenderLayer func_180664_k()
+     {

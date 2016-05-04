@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference;
 
 import com.google.common.base.Objects;
 
-public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler
+public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandlerModifiable
 {
     // Dummy cache value to signify that we have checked and definitely found no adjacent chests
     public static final VanillaDoubleChestItemHandler NO_ADJACENT_CHESTS_INSTANCE = new VanillaDoubleChestItemHandler(null, null, false);
@@ -89,6 +89,22 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
         return chest != null ? chest.getStackInSlot(targetSlot) : null;
+    }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack)
+    {
+        boolean accessingUpperChest = slot < 27;
+        int targetSlot = accessingUpperChest ? slot : slot - 27;
+        TileEntityChest chest = getChest(accessingUpperChest);
+        if (chest != null)
+        {
+            IItemHandler singleHandler = chest.getSingleChestHandler();
+            if (singleHandler instanceof IItemHandlerModifiable)
+            {
+                ((IItemHandlerModifiable) singleHandler).setStackInSlot(targetSlot, stack);
+            }
+        }
     }
 
     @Override

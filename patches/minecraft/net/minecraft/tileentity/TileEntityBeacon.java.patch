@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -169,7 +169,7 @@
+@@ -179,7 +179,7 @@
                      {
                          Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
  
@@ -9,7 +9,7 @@
                          {
                              flag1 = false;
                              break;
-@@ -368,7 +368,7 @@
+@@ -371,7 +371,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {

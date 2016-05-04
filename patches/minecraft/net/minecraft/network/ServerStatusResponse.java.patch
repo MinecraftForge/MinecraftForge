@@ -1,23 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/network/ServerStatusResponse.java
 +++ ../src-work/minecraft/net/minecraft/network/ServerStatusResponse.java
 @@ -29,6 +29,7 @@
-     public void func_151315_a(IChatComponent p_151315_1_)
+     public void func_151315_a(ITextComponent p_151315_1_)
      {
          this.field_151326_a = p_151315_1_;
 +        invalidateJson();
      }
  
-     public ServerStatusResponse.PlayerCountData func_151318_b()
+     public ServerStatusResponse.Players func_151318_b()
 @@ -39,6 +40,7 @@
-     public void func_151319_a(ServerStatusResponse.PlayerCountData p_151319_1_)
+     public void func_151319_a(ServerStatusResponse.Players p_151319_1_)
      {
          this.field_151324_b = p_151319_1_;
 +        invalidateJson();
      }
  
-     public ServerStatusResponse.MinecraftProtocolVersionIdentifier func_151322_c()
+     public ServerStatusResponse.Version func_151322_c()
 @@ -49,11 +51,13 @@
-     public void func_151321_a(ServerStatusResponse.MinecraftProtocolVersionIdentifier p_151321_1_)
+     public void func_151321_a(ServerStatusResponse.Version p_151321_1_)
      {
          this.field_151325_c = p_151321_1_;
 +        invalidateJson();
@@ -30,7 +30,7 @@
      }
  
      public String func_151316_d()
-@@ -215,6 +219,7 @@
+@@ -176,6 +180,7 @@
                      serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
                  }
  
@@ -38,7 +38,7 @@
                  return serverstatusresponse;
              }
  
-@@ -242,7 +247,47 @@
+@@ -203,10 +208,50 @@
                      jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
                  }
  
@@ -46,7 +46,7 @@
                  return jsonobject;
              }
          }
-+
+ 
 +    private java.util.concurrent.Semaphore mutex = new java.util.concurrent.Semaphore(1);
 +    private String json = null;
 +    /**
@@ -69,7 +69,7 @@
 +            ret = this.json;
 +            if (ret == null)
 +            {
-+                ret = net.minecraft.network.status.server.S00PacketServerInfo.field_149297_a.toJson(this);
++                ret = net.minecraft.network.status.server.SPacketServerInfo.field_149297_a.toJson(this);
 +                this.json = ret;
 +            }
 +            mutex.release();
@@ -85,4 +85,7 @@
 +    {
 +        this.json = null;
 +    }
- }
++
+     public static class Version
+         {
+             private final String field_151306_a;

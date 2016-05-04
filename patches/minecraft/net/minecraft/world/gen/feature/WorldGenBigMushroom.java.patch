@@ -1,33 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigMushroom.java
-@@ -54,7 +54,7 @@
+@@ -56,9 +56,9 @@
+                     {
+                         if (j >= 0 && j < 256)
                          {
-                             Block block = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c();
+-                            Material material = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_185904_a();
++                            IBlockState state = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1));
  
--                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (!block.isAir(p_180709_1_, blockpos$mutableblockpos) && !block.isLeaves(p_180709_1_, blockpos$mutableblockpos))
+-                            if (material != Material.field_151579_a && material != Material.field_151584_j)
++                            if (!state.func_177230_c().isAir(state, p_180709_1_, blockpos$mutableblockpos) && !state.func_177230_c().isLeaves(state, p_180709_1_, blockpos$mutableblockpos))
                              {
                                  flag = false;
                              }
-@@ -190,7 +190,7 @@
+@@ -193,8 +193,9 @@
+                                 if (p_180709_3_.func_177956_o() >= p_180709_3_.func_177956_o() + i - 1 || blockhugemushroom$enumtype != BlockHugeMushroom.EnumType.ALL_INSIDE)
                                  {
                                      BlockPos blockpos = new BlockPos(l1, l2, i2);
++                                    IBlockState state = p_180709_1_.func_180495_p(blockpos);
  
--                                    if (!p_180709_1_.func_180495_p(blockpos).func_177230_c().func_149730_j())
-+                                    if (p_180709_1_.func_180495_p(blockpos).func_177230_c().canBeReplacedByLeaves(p_180709_1_, blockpos))
+-                                    if (!p_180709_1_.func_180495_p(blockpos).func_185913_b())
++                                    if (state.func_177230_c().canBeReplacedByLeaves(state, p_180709_1_, blockpos))
                                      {
-                                         this.func_175903_a(p_180709_1_, blockpos, this.field_76523_a.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, blockhugemushroom$enumtype));
+                                         this.func_175903_a(p_180709_1_, blockpos, block.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, blockhugemushroom$enumtype));
                                      }
-@@ -201,9 +201,10 @@
- 
-                     for (int i3 = 0; i3 < i; ++i3)
+@@ -207,7 +208,7 @@
                      {
--                        Block block2 = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(i3)).func_177230_c();
-+                        BlockPos upN = p_180709_3_.func_177981_b(i3);
-+                        net.minecraft.block.state.IBlockState state = p_180709_1_.func_180495_p(upN);
+                         IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(i3));
  
--                        if (!block2.func_149730_j())
-+                        if (state.func_177230_c().canBeReplacedByLeaves(p_180709_1_, upN))
+-                        if (!iblockstate.func_185913_b())
++                        if (iblockstate.func_177230_c().canBeReplacedByLeaves(iblockstate, p_180709_1_, p_180709_3_.func_177981_b(i3)))
                          {
-                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(i3), this.field_76523_a.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, BlockHugeMushroom.EnumType.STEM));
+                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(i3), block.func_176223_P().func_177226_a(BlockHugeMushroom.field_176380_a, BlockHugeMushroom.EnumType.STEM));
                          }

@@ -1,6 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
 +++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
-@@ -994,6 +994,7 @@
+@@ -147,6 +147,7 @@
+ 
+     public GameSettings(Minecraft p_i46326_1_, File p_i46326_2_)
+     {
++        setForgeKeybindProperties();
+         this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X}, this.field_151456_ac);
+         this.field_74318_M = EnumDifficulty.NORMAL;
+         this.field_74332_R = "";
+@@ -171,6 +172,7 @@
+ 
+     public GameSettings()
+     {
++        setForgeKeybindProperties();
+         this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X}, this.field_151456_ac);
+         this.field_74318_M = EnumDifficulty.NORMAL;
+         this.field_74332_R = "";
+@@ -846,6 +848,7 @@
+                         if (astring[0].equals("key_" + keybinding.func_151464_g()))
+                         {
+                             keybinding.func_151462_b(Integer.parseInt(astring[1]));
++                            if (astring.length == 3) keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(astring[2]), Integer.parseInt(astring[1]));
+                         }
+                     }
+ 
+@@ -887,6 +890,7 @@
  
      public void func_74303_b()
      {
@@ -8,3 +32,38 @@
          try
          {
              PrintWriter printwriter = new PrintWriter(new FileWriter(this.field_74354_ai));
+@@ -955,7 +959,8 @@
+ 
+             for (KeyBinding keybinding : this.field_74324_K)
+             {
+-                printwriter.println("key_" + keybinding.func_151464_g() + ":" + keybinding.func_151463_i());
++                String keyString = "key_" + keybinding.func_151464_g() + ":" + keybinding.func_151463_i();
++                printwriter.println(keybinding.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? keyString + ":" + keybinding.getKeyModifier() : keyString);
+             }
+ 
+             for (SoundCategory soundcategory : SoundCategory.values())
+@@ -1184,4 +1189,24 @@
+             return p_148264_1_;
+         }
+     }
++
++    /******* Forge Start ***********/
++    private void setForgeKeybindProperties() {
++        net.minecraftforge.client.settings.KeyConflictContext inGame = net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
++        field_74351_w.setKeyConflictContext(inGame);
++        field_74370_x.setKeyConflictContext(inGame);
++        field_74368_y.setKeyConflictContext(inGame);
++        field_74366_z.setKeyConflictContext(inGame);
++        field_74314_A.setKeyConflictContext(inGame);
++        field_74311_E.setKeyConflictContext(inGame);
++        field_151444_V.setKeyConflictContext(inGame);
++        field_74312_F.setKeyConflictContext(inGame);
++        field_74310_D.setKeyConflictContext(inGame);
++        field_74321_H.setKeyConflictContext(inGame);
++        field_74323_J.setKeyConflictContext(inGame);
++        field_151457_aa.setKeyConflictContext(inGame);
++        field_151458_ab.setKeyConflictContext(inGame);
++        field_186718_X.setKeyConflictContext(inGame);
++    }
++    /******* Forge End ***********/
+ }

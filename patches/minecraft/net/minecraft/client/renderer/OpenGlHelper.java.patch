@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
-@@ -83,6 +83,10 @@
+@@ -92,6 +92,10 @@
      public static int field_176089_P;
      public static int field_148826_e;
  
@@ -11,7 +11,7 @@
      public static void func_77474_a()
      {
          ContextCapabilities contextcapabilities = GLContext.getCapabilities();
-@@ -843,6 +847,12 @@
+@@ -852,6 +856,12 @@
          {
              GL13.glMultiTexCoord2f(p_77475_0_, p_77475_1_, p_77475_2_);
          }

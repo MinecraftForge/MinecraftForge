@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -313,7 +313,7 @@
- 
-         if (this.field_78453_b != null)
-         {
--            if (this.field_78453_b.func_77973_b() == Items.field_151098_aY)
-+            if (this.field_78453_b.func_77973_b() instanceof net.minecraft.item.ItemMap)
-             {
-                 this.func_178097_a(abstractclientplayer, f2, f, f1);
+@@ -360,7 +360,7 @@
+                 this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
              }
-@@ -365,6 +365,7 @@
+         }
+-        else if (p_187457_6_.func_77973_b() == Items.field_151098_aY)
++        else if (p_187457_6_.func_77973_b() instanceof net.minecraft.item.ItemMap)
+         {
+             if (flag && this.field_187468_e == null)
+             {
+@@ -444,6 +444,7 @@
          if (this.field_78455_a.field_71439_g.func_70094_T())
          {
              IBlockState iblockstate = this.field_78455_a.field_71441_e.func_180495_p(new BlockPos(this.field_78455_a.field_71439_g));
@@ -17,7 +17,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -378,11 +379,13 @@
+@@ -457,11 +458,13 @@
                  if (iblockstate1.func_177230_c().func_176214_u())
                  {
                      iblockstate = iblockstate1;
@@ -25,13 +25,13 @@
                  }
              }
  
-             if (iblockstate.func_177230_c().func_149645_b() != -1)
+             if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE)
              {
 +                if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
                  this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -391,11 +394,13 @@
+@@ -470,11 +473,13 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
@@ -45,16 +45,14 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -512,6 +517,12 @@
+@@ -596,8 +601,8 @@
+         else
          {
-             if (!this.field_78453_b.func_179549_c(itemstack))
-             {
-+                if (!this.field_78453_b.func_77973_b().shouldCauseReequipAnimation(this.field_78453_b, itemstack, field_78450_g != entityplayer.field_71071_by.field_70461_c))
-+                {
-+                    this.field_78453_b = itemstack;
-+                    this.field_78450_g = entityplayer.field_71071_by.field_70461_c;
-+                    return;
-+                }
-                 flag = true;
-             }
+             float f = entityplayersp.func_184825_o(1.0F);
+-            this.field_187469_f += MathHelper.func_76131_a((Objects.equal(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
+-            this.field_187471_h += MathHelper.func_76131_a((float)(Objects.equal(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
++            this.field_187469_f += MathHelper.func_76131_a((!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
++            this.field_187471_h += MathHelper.func_76131_a((float)(!net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
          }
+ 
+         if (this.field_187469_f < 0.1F)

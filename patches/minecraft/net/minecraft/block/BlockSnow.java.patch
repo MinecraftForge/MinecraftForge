@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -79,7 +79,7 @@
+@@ -73,7 +73,7 @@
      {
          IBlockState iblockstate = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
          Block block = iblockstate.func_177230_c();
--        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (block.func_149688_o() == Material.field_151584_j ? true : (block == this && ((Integer)iblockstate.func_177229_b(field_176315_a)).intValue() >= 7 ? true : block.func_149662_c() && block.field_149764_J.func_76230_c())) : false;
-+        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (block.isLeaves(p_176196_1_, p_176196_2_.func_177977_b()) ? true : (block == this && ((Integer)iblockstate.func_177229_b(field_176315_a)).intValue() >= 7 ? true : block.func_149662_c() && block.field_149764_J.func_76230_c())) : false;
+-        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (iblockstate.func_185904_a() == Material.field_151584_j ? true : (block == this && ((Integer)iblockstate.func_177229_b(field_176315_a)).intValue() >= 7 ? true : iblockstate.func_185914_p() && iblockstate.func_185904_a().func_76230_c())) : false;
++        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (iblockstate.func_177230_c().isLeaves(iblockstate, p_176196_1_, p_176196_2_.func_177977_b()) ? true : (block == this && ((Integer)iblockstate.func_177229_b(field_176315_a)).intValue() >= 7 ? true : iblockstate.func_185914_p() && iblockstate.func_185904_a().func_76230_c())) : false;
      }
  
      public void func_176204_a(World p_176204_1_, BlockPos p_176204_2_, IBlockState p_176204_3_, Block p_176204_4_)
-@@ -91,7 +91,6 @@
+@@ -85,7 +85,6 @@
      {
          if (!this.func_176196_c(p_176314_1_, p_176314_2_))
          {
@@ -17,18 +17,18 @@
              p_176314_1_.func_175698_g(p_176314_2_);
              return false;
          }
-@@ -103,9 +102,8 @@
+@@ -97,9 +96,8 @@
  
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_, ItemStack p_180657_6_)
      {
 -        func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Items.field_151126_ay, ((Integer)p_180657_4_.func_177229_b(field_176315_a)).intValue() + 1, 0));
-+        super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
++        super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
          p_180657_1_.func_175698_g(p_180657_3_);
--        p_180657_2_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
+-        p_180657_2_.func_71029_a(StatList.func_188055_a(this));
      }
  
      public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -115,14 +113,13 @@
+@@ -109,14 +107,13 @@
  
      public int func_149745_a(Random p_149745_1_)
      {
@@ -44,10 +44,12 @@
              p_180650_1_.func_175698_g(p_180650_2_);
          }
      }
-@@ -152,4 +149,6 @@
-     {
-         return new BlockState(this, new IProperty[] {field_176315_a});
+@@ -150,6 +147,8 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176315_a)).intValue() - 1;
      }
-+
+ 
 +    @Override public int quantityDropped(IBlockState state, int fortune, Random random){ return ((Integer)state.func_177229_b(field_176315_a)) + 1; }
- }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176315_a});

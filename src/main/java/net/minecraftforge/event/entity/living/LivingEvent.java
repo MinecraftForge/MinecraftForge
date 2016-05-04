@@ -13,13 +13,18 @@ import net.minecraftforge.event.entity.EntityEvent;
  **/
 public class LivingEvent extends EntityEvent
 {
-    public final EntityLivingBase entityLiving;
+    private final EntityLivingBase entityLiving;
     public LivingEvent(EntityLivingBase entity)
     {
         super(entity);
         entityLiving = entity;
     }
-    
+
+    public EntityLivingBase getEntityLiving()
+    {
+        return entityLiving;
+    }
+
     /**
      * LivingUpdateEvent is fired when an Entity is updated. <br>
      * This event is fired whenever an Entity is updated in 

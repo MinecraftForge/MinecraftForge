@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
-@@ -40,28 +40,20 @@
+@@ -37,28 +37,20 @@
      public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
      {
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
@@ -36,9 +36,9 @@
      }
  
      public void func_180622_a(World p_180622_1_, Random p_180622_2_, ChunkPrimer p_180622_3_, int p_180622_4_, int p_180622_5_, double p_180622_6_)
-@@ -97,4 +89,23 @@
-     {
-         return (new BiomeGenHills(p_180277_1_, false)).func_150633_b(this);
+@@ -86,4 +78,24 @@
+         EXTRA_TREES,
+         MUTATED;
      }
 +
 +    private static class EmeraldGenerator extends WorldGenerator
@@ -51,7 +51,8 @@
 +            {
 +                BlockPos blockpos = pos.func_177982_a(rand.nextInt(16), rand.nextInt(28) + 4, rand.nextInt(16));
 +
-+                if (worldIn.func_180495_p(blockpos).func_177230_c().isReplaceableOreGen(worldIn, blockpos, net.minecraft.block.state.pattern.BlockHelper.func_177642_a(Blocks.field_150348_b)))
++                net.minecraft.block.state.IBlockState state = worldIn.func_180495_p(blockpos);
++                if (state.func_177230_c().isReplaceableOreGen(state, worldIn, blockpos, net.minecraft.block.state.pattern.BlockMatcher.func_177642_a(Blocks.field_150348_b)))
 +                {
 +                    worldIn.func_180501_a(blockpos, Blocks.field_150412_bA.func_176223_P(), 2);
 +                }

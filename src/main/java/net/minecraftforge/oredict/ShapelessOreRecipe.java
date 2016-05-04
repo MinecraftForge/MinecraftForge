@@ -60,12 +60,12 @@ public class ShapelessOreRecipe implements IRecipe
     {
         output = recipe.getRecipeOutput();
 
-        for(ItemStack ingred : ((List<ItemStack>)recipe.recipeItems))
+        for(ItemStack ingredient : recipe.recipeItems)
         {
-            Object finalObj = ingred;
+            Object finalObj = ingredient;
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
-                if(OreDictionary.itemMatches(replace.getKey(), ingred, false))
+                if(OreDictionary.itemMatches(replace.getKey(), ingredient, false))
                 {
                     finalObj = OreDictionary.getOres(replace.getValue());
                     break;

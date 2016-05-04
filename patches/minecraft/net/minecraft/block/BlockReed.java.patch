@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -18,7 +18,7 @@
+@@ -19,7 +19,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -8,20 +8,22 @@
 +public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
  {
      public static final PropertyInteger field_176355_a = PropertyInteger.func_177719_a("age", 0, 15);
+     protected static final AxisAlignedBB field_185701_b = new AxisAlignedBB(0.125D, 0.0D, 0.125D, 0.875D, 1.0D, 0.875D);
+@@ -69,7 +69,9 @@
  
-@@ -65,6 +65,7 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
-         Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
-+        if (block.canSustainPlant(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP, this)) return true;
+-        Block block = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c();
++        IBlockState state = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++        Block block = state.func_177230_c();
++        if (block.canSustainPlant(state, p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP, this)) return true;
  
          if (block == this)
          {
-@@ -164,4 +165,15 @@
-     {
-         return new BlockState(this, new IProperty[] {field_176355_a});
+@@ -162,6 +164,17 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176355_a)).intValue();
      }
-+
+ 
 +    @Override
 +    public net.minecraftforge.common.EnumPlantType getPlantType(IBlockAccess world, BlockPos pos)
 +    {
@@ -32,4 +34,7 @@
 +    {
 +        return this.func_176223_P();
 +    }
- }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176355_a});

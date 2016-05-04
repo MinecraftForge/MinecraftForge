@@ -1,27 +1,27 @@
 package net.minecraftforge.client.model.b3d;
 
-import net.minecraftforge.client.model.TRSRTransformation;
-import net.minecraftforge.client.model.animation.Event;
-import net.minecraftforge.client.model.animation.IClip;
-import net.minecraftforge.client.model.animation.IJoint;
-import net.minecraftforge.client.model.animation.IJointClip;
-import net.minecraftforge.client.model.animation.JointClips;
 import net.minecraftforge.client.model.b3d.B3DLoader.NodeJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
+import net.minecraftforge.common.animation.Event;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.model.animation.IClip;
+import net.minecraftforge.common.model.animation.IJoint;
+import net.minecraftforge.common.model.animation.IJointClip;
+import net.minecraftforge.common.model.animation.JointClips;
 
 import com.google.common.collect.ImmutableSet;
 
 // FIXME: is this fast enough?
 public enum B3DClip implements IClip
 {
-    instance;
+    INSTANCE;
 
     public IJointClip apply(final IJoint joint)
     {
         if(!(joint instanceof NodeJoint))
         {
-            return JointClips.IdentityJointClip.instance;
+            return JointClips.IdentityJointClip.INSTANCE;
         }
         return new NodeClip(((NodeJoint)joint).getNode());
     }
@@ -60,7 +60,7 @@ public enum B3DClip implements IClip
                 {
                     ret = ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
                 }
-                // TODO animated TRSR for speed?
+                // TODO animated TRSRTransformation for speed?
                 else
                 {
                     ret = ret.compose(endTr);

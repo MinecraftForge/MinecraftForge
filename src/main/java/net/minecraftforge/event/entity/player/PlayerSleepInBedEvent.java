@@ -2,7 +2,7 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.
@@ -20,8 +20,8 @@ import net.minecraft.util.BlockPos;
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
-    public EnumStatus result = null;
-    public final BlockPos pos;
+    private EnumStatus result = null;
+    private final BlockPos pos;
 
     public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos)
     {
@@ -29,4 +29,18 @@ public class PlayerSleepInBedEvent extends PlayerEvent
         this.pos = pos;
     }
 
+    public EnumStatus getResultStatus()
+    {
+        return result;
+    }
+
+    public void setResult(EnumStatus result)
+    {
+        this.result = result;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
+    }
 }

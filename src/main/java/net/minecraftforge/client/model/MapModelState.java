@@ -2,6 +2,10 @@ package net.minecraftforge.client.model;
 
 import java.util.Map;
 
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
@@ -27,7 +31,7 @@ public class MapModelState implements IModelState
 
     public MapModelState(Map<Wrapper, IModelState> map, IModelState def)
     {
-        this.map = ImmutableMap.<Wrapper, IModelState>copyOf(map);
+        this.map = ImmutableMap.copyOf(map);
         this.def = def;
     }
 	

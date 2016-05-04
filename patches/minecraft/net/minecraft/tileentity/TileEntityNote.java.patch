@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityNote.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityNote.java
-@@ -27,7 +27,9 @@
+@@ -29,7 +29,9 @@
  
      public void func_145877_a()
      {

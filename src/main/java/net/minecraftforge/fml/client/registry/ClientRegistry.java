@@ -57,7 +57,7 @@ public class ClientRegistry
 
     /**
      * Register a shader for an entity. This shader gets activated when a spectator begins spectating an entity.
-     * Vanilla examples of this are the green effect for creepers and the invert effect for endermans.
+     * Vanilla examples of this are the green effect for creepers and the invert effect for endermen.
      *
      * @param entityClass
      * @param shader

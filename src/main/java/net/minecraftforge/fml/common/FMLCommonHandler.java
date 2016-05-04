@@ -40,10 +40,10 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
-import net.minecraft.network.login.server.S00PacketDisconnect;
+import net.minecraft.network.login.server.SPacketDisconnect;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -215,7 +215,7 @@ public class FMLCommonHandler
     {
         if (brandings == null)
         {
-            Builder<String> brd = ImmutableList.<String>builder();
+            Builder<String> brd = ImmutableList.builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
             brd.add("Powered by Forge " + ForgeVersion.getVersion());
@@ -609,9 +609,9 @@ public class FMLCommonHandler
     {
         if (!shouldAllowPlayerLogins())
         {
-            ChatComponentText text = new ChatComponentText("Server is still starting! Please wait before reconnecting.");
+            TextComponentString text = new TextComponentString("Server is still starting! Please wait before reconnecting.");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
-            manager.sendPacket(new S00PacketDisconnect(text));
+            manager.sendPacket(new SPacketDisconnect(text));
             manager.closeChannel(text);
             return false;
         }
@@ -619,9 +619,9 @@ public class FMLCommonHandler
         if (packet.getRequestedState() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
         {
             manager.setConnectionState(EnumConnectionState.LOGIN);
-            ChatComponentText text = new ChatComponentText("This server requires FML/Forge to be installed. Contact your server admin for more details.");
+            TextComponentString text = new TextComponentString("This server requires FML/Forge to be installed. Contact your server admin for more details.");
             FMLLog.info("Disconnecting Player: " + text.getUnformattedText());
-            manager.sendPacket(new S00PacketDisconnect(text));
+            manager.sendPacket(new SPacketDisconnect(text));
             manager.closeChannel(text);
             return false;
         }
@@ -691,7 +691,7 @@ public class FMLCommonHandler
     }
 
     /**
-     * Loads a lang file, first searching for a marker to enable the 'extended' format {escape charaters}
+     * Loads a lang file, first searching for a marker to enable the 'extended' format {escape characters}
      * If the marker is not found it simply returns and let the vanilla code load things.
      * The Marker is 'PARSE_ESCAPES' by itself on a line starting with '#' as such:
      * #PARSE_ESCAPES

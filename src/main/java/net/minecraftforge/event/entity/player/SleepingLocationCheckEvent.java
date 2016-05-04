@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 public class SleepingLocationCheckEvent extends PlayerEvent
 {
 
-    public final BlockPos sleepingLocation;
+    private final BlockPos sleepingLocation;
 
     public SleepingLocationCheckEvent(EntityPlayer player, BlockPos sleepingLocation)
     {
@@ -25,4 +25,8 @@ public class SleepingLocationCheckEvent extends PlayerEvent
         this.sleepingLocation = sleepingLocation;
     }
 
+    public BlockPos getSleepingLocation()
+    {
+        return sleepingLocation;
+    }
 }

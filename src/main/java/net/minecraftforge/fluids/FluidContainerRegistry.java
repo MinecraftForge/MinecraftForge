@@ -19,9 +19,10 @@ import net.minecraftforge.common.MinecraftForge;
  *
  * For more complex items, use {@link IFluidContainerItem} instead.
  *
- * @author King Lemming
- *
+ * Deprecated: We will eventually be moving this ALL away from a registry and instead EVERYTHING will use IFluidContainerItem.
+ * We need to decide a way of swapping Items/Stacks.
  */
+@Deprecated
 public abstract class FluidContainerRegistry
 {
     // Holder object that implements HashCode for an ItemStack,
@@ -168,8 +169,8 @@ public abstract class FluidContainerRegistry
         }
         if (data.fluid == null || data.fluid.getFluid() == null)
         {
-        	FMLLog.bigWarning("Invalid registration attempt for a fluid container item %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", data.filledContainer.getItem().getUnlocalizedName(data.filledContainer));
-        	return false;
+            FMLLog.bigWarning("Invalid registration attempt for a fluid container item %s has occurred. The registration has been denied to prevent crashes. The mod responsible for the registration needs to correct this.", data.filledContainer.getItem().getUnlocalizedName(data.filledContainer));
+            return false;
         }
         containerFluidMap.put(new ContainerKey(data.filledContainer), data);
 
@@ -388,11 +389,16 @@ public abstract class FluidContainerRegistry
 
     public static class FluidContainerRegisterEvent extends Event
     {
-        public final FluidContainerData data;
+        private final FluidContainerData data;
 
         public FluidContainerRegisterEvent(FluidContainerData data)
         {
             this.data = data.copy();
+        }
+
+        public FluidContainerData getData()
+        {
+            return data;
         }
     }
 }

@@ -6,7 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 /**
@@ -18,11 +18,16 @@ import net.minecraftforge.event.entity.living.LivingEvent;
  **/
 public class PlayerEvent extends LivingEvent
 {
-    public final EntityPlayer entityPlayer;
+    private final EntityPlayer entityPlayer;
     public PlayerEvent(EntityPlayer player)
     {
         super(player);
         entityPlayer = player;
+    }
+
+    public EntityPlayer getEntityPlayer()
+    {
+        return entityPlayer;
     }
 
     /**
@@ -43,15 +48,19 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class HarvestCheck extends PlayerEvent
     {
-        public final Block block;
-        public boolean success;
+        private final IBlockState state;
+        private boolean success;
 
-        public HarvestCheck(EntityPlayer player, Block block, boolean success)
+        public HarvestCheck(EntityPlayer player, IBlockState state, boolean success)
         {
             super(player);
-            this.block = block;
+            this.state = state;
             this.success = success;
         }
+
+        public IBlockState getTargetBlock() { return this.state; }
+        public boolean canHarvest() { return this.success; }
+        public void setCanHarvest(boolean success){ this.success = success; }
     }
 
     /**
@@ -76,19 +85,25 @@ public class PlayerEvent extends LivingEvent
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
     {
-        public final IBlockState state;
-        public final float originalSpeed;
-        public float newSpeed = 0.0f;
-        public final BlockPos pos; // Y position of -1 notes unknown location
+        private final IBlockState state;
+        private final float originalSpeed;
+        private float newSpeed = 0.0f;
+        private final BlockPos pos; // Y position of -1 notes unknown location
 
         public BreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
         {
             super(player);
             this.state = state;
             this.originalSpeed = original;
-            this.newSpeed = original;
+            this.setNewSpeed(original);
             this.pos = pos;
         }
+
+        public IBlockState getState() { return state; }
+        public float getOriginalSpeed() { return originalSpeed; }
+        public float getNewSpeed() { return newSpeed; }
+        public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
+        public BlockPos getPos() { return pos; }
     }
 
     /**
@@ -109,13 +124,28 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class NameFormat extends PlayerEvent
     {
-        public final String username;
-        public String displayname;
+        private final String username;
+        private String displayname;
 
         public NameFormat(EntityPlayer player, String username) {
             super(player);
             this.username = username;
-            this.displayname = username;
+            this.setDisplayname(username);
+        }
+
+        public String getUsername()
+        {
+            return username;
+        }
+
+        public String getDisplayname()
+        {
+            return displayname;
+        }
+
+        public void setDisplayname(String displayname)
+        {
+            this.displayname = displayname;
         }
     }
 
@@ -125,21 +155,31 @@ public class PlayerEvent extends LivingEvent
      */
     public static class Clone extends PlayerEvent
     {
-        /**
-         * The old EntityPlayer that this new entity is a clone of.
-         */
-        public final EntityPlayer original;
-        /**
-         * True if this event was fired because the player died.
-         * False if it was fired because the entity switched dimensions.
-         */
-        public final boolean wasDeath;
+        private final EntityPlayer original;
+        private final boolean wasDeath;
 
         public Clone(EntityPlayer _new, EntityPlayer oldPlayer, boolean wasDeath)
         {
             super(_new);
             this.original = oldPlayer;
             this.wasDeath = wasDeath;
+        }
+
+        /**
+         * The old EntityPlayer that this new entity is a clone of.
+         */
+        public EntityPlayer getOriginal()
+        {
+            return original;
+        }
+
+        /**
+         * True if this event was fired because the player died.
+         * False if it was fired because the entity switched dimensions.
+         */
+        public boolean isWasDeath()
+        {
+            return wasDeath;
         }
     }
 
@@ -149,10 +189,7 @@ public class PlayerEvent extends LivingEvent
      */
     public static class StartTracking extends PlayerEvent {
 
-        /**
-         * The Entity now being tracked.
-         */
-        public final Entity target;
+        private final Entity target;
 
         public StartTracking(EntityPlayer player, Entity target)
         {
@@ -160,6 +197,13 @@ public class PlayerEvent extends LivingEvent
             this.target = target;
         }
 
+        /**
+         * The Entity now being tracked.
+         */
+        public Entity getTarget()
+        {
+            return target;
+        }
     }
 
     /**
@@ -168,10 +212,7 @@ public class PlayerEvent extends LivingEvent
      */
     public static class StopTracking extends PlayerEvent {
 
-        /**
-         * The Entity no longer being tracked.
-         */
-        public final Entity target;
+        private final Entity target;
 
         public StopTracking(EntityPlayer player, Entity target)
         {
@@ -179,6 +220,13 @@ public class PlayerEvent extends LivingEvent
             this.target = target;
         }
 
+        /**
+         * The Entity no longer being tracked.
+         */
+        public Entity getTarget()
+        {
+            return target;
+        }
     }
 
     /**
@@ -188,16 +236,8 @@ public class PlayerEvent extends LivingEvent
      * containing additional mod related player data.
      */
     public static class LoadFromFile extends PlayerEvent {
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public final File playerDirectory;
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public final String playerUUID;
+        private final File playerDirectory;
+        private final String playerUUID;
 
         public LoadFromFile(EntityPlayer player, File originDirectory, String playerUUID)
         {
@@ -214,7 +254,25 @@ public class PlayerEvent extends LivingEvent
         public File getPlayerFile(String suffix)
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
+        }
+
+        /**
+         * The directory where player data is being stored. Use this
+         * to locate your mod additional file.
+         */
+        public File getPlayerDirectory()
+        {
+            return playerDirectory;
+        }
+
+        /**
+         * The UUID is the standard for player related file storage.
+         * It is broken out here for convenience for quick file generation.
+         */
+        public String getPlayerUUID()
+        {
+            return playerUUID;
         }
     }
     /**
@@ -231,16 +289,8 @@ public class PlayerEvent extends LivingEvent
      * corrupt the world state.
      */
     public static class SaveToFile extends PlayerEvent {
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public final File playerDirectory;
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public final String playerUUID;
+        private final File playerDirectory;
+        private final String playerUUID;
 
         public SaveToFile(EntityPlayer player, File originDirectory, String playerUUID)
         {
@@ -257,7 +307,25 @@ public class PlayerEvent extends LivingEvent
         public File getPlayerFile(String suffix)
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
+        }
+
+        /**
+         * The directory where player data is being stored. Use this
+         * to locate your mod additional file.
+         */
+        public File getPlayerDirectory()
+        {
+            return playerDirectory;
+        }
+
+        /**
+         * The UUID is the standard for player related file storage.
+         * It is broken out here for convenience for quick file generation.
+         */
+        public String getPlayerUUID()
+        {
+            return playerUUID;
         }
     }
 }

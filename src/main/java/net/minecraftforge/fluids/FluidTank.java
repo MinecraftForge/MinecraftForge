@@ -6,9 +6,6 @@ import net.minecraft.tileentity.TileEntity;
 
 /**
  * Reference implementation of {@link IFluidTank}. Use/extend this or implement your own.
- *
- * @author King Lemming, cpw (LiquidTank)
- *
  */
 public class FluidTank implements IFluidTank
 {

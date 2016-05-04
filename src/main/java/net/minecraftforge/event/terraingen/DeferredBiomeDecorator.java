@@ -1,7 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -41,6 +41,6 @@ public class DeferredBiomeDecorator extends BiomeDecorator {
 
         BiomeEvent.CreateDecorator event = new BiomeEvent.CreateDecorator(biome, wrapped);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
-        biome.theBiomeDecorator = event.newBiomeDecorator;
+        biome.theBiomeDecorator = event.getNewBiomeDecorator();
     }
 }

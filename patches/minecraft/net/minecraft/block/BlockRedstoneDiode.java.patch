@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
-@@ -198,6 +198,8 @@
+@@ -204,6 +204,8 @@
      {
-         EnumFacing enumfacing = (EnumFacing)p_176400_3_.func_177229_b(field_176387_N);
+         EnumFacing enumfacing = (EnumFacing)p_176400_3_.func_177229_b(field_185512_D);
          BlockPos blockpos = p_176400_2_.func_177972_a(enumfacing.func_176734_d());
 +        if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_176400_1_, p_176400_2_, p_176400_1_.func_180495_p(p_176400_2_), java.util.EnumSet.of(enumfacing.func_176734_d())).isCanceled())
 +            return;

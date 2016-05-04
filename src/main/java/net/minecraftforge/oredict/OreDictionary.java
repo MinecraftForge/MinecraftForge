@@ -52,7 +52,7 @@ public class OreDictionary
         initVanillaEntries();
     }
 
-    public static void initVanillaEntries()
+    private static void initVanillaEntries()
     {
         if (!hasInit)
         {
@@ -351,7 +351,7 @@ public class OreDictionary
                     continue;
                 }
 
-                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
+                if(containsMatch(true, recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
                 {
                     recipesToRemove.add((IRecipe)obj);
                     IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
@@ -364,7 +364,7 @@ public class OreDictionary
         recipes.addAll(recipesToAdd);
         if (recipesToRemove.size() > 0)
         {
-            FMLLog.info("Replaced %d ore recipies", recipesToRemove.size());
+            FMLLog.info("Replaced %d ore recipes", recipesToRemove.size());
         }
     }
 
@@ -402,11 +402,11 @@ public class OreDictionary
     }
 
     /**
-     * Gets all the integer ID for the ores that the specified item stakc is registered to.
+     * Gets all the integer ID for the ores that the specified item stack is registered to.
      * If the item stack is not linked to any ore, this will return an empty array and no new entry will be created.
      *
      * @param stack The item stack of the ore.
-     * @return An array of ids that this ore is registerd as.
+     * @return An array of ids that this ore is registered as.
      */
     public static int[] getOreIDs(ItemStack stack)
     {
@@ -417,7 +417,7 @@ public class OreDictionary
         // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
         // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
         // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
-        ResourceLocation registryName = stack.getItem().delegate.getResourceName();
+        ResourceLocation registryName = stack.getItem().delegate.name();
         int id;
         if (registryName == null)
         {
@@ -579,7 +579,7 @@ public class OreDictionary
         // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
         // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
         // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
-        ResourceLocation registryName = ore.getItem().delegate.getResourceName();
+        ResourceLocation registryName = ore.getItem().delegate.name();
         int hash;
         if (registryName == null)
         {
@@ -615,13 +615,23 @@ public class OreDictionary
 
     public static class OreRegisterEvent extends Event
     {
-        public final String Name;
-        public final ItemStack Ore;
+        private final String Name;
+        private final ItemStack Ore;
 
         public OreRegisterEvent(String name, ItemStack ore)
         {
             this.Name = name;
             this.Ore = ore;
+        }
+
+        public String getName()
+        {
+            return Name;
+        }
+
+        public ItemStack getOre()
+        {
+            return Ore;
         }
     }
 
@@ -636,7 +646,7 @@ public class OreDictionary
             for (ItemStack ore : ores)
             {
                 // HACK: use the registry name's ID. It is unique and it knows about substitutions
-                ResourceLocation name = ore.getItem().delegate.getResourceName();
+                ResourceLocation name = ore.getItem().delegate.name();
                 int hash;
                 if (name == null)
                 {

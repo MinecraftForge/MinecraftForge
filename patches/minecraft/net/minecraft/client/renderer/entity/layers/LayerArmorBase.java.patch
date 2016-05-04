@@ -1,47 +1,46 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -55,29 +55,28 @@
-             T t = this.func_177175_a(p_177182_9_);
-             t.func_178686_a(this.field_177190_a.func_177087_b());
-             t.func_78086_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_4_);
-+            t = getArmorModelHook(p_177182_1_, itemstack, p_177182_9_, t);
-             this.func_177179_a(t, p_177182_9_);
-             boolean flag = this.func_177180_b(p_177182_9_);
--            this.field_177190_a.func_110776_a(this.func_177181_a(itemarmor, flag));
-+            this.field_177190_a.func_110776_a(this.getArmorResource(p_177182_1_, itemstack, flag ? 2 : 1, null));
+@@ -59,29 +59,27 @@
+                 T t = this.func_188360_a(p_188361_9_);
+                 t.func_178686_a(this.field_177190_a.func_177087_b());
+                 t.func_78086_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_4_);
++                t = getArmorModelHook(p_188361_1_, itemstack, p_188361_9_, t);
+                 this.func_188359_a(t, p_188361_9_);
+                 boolean flag = this.func_188363_b(p_188361_9_);
+-                this.field_177190_a.func_110776_a(this.func_177181_a(itemarmor, flag));
++                this.field_177190_a.func_110776_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, null));
  
--            switch (itemarmor.func_82812_d())
--            {
--                case LEATHER:
-                     int i = itemarmor.func_82814_b(itemstack);
-+            {
-+                if (i != -1) // Allow this for anything, not only cloth.
+-                switch (itemarmor.func_82812_d())
+-                {
+-                    case LEATHER:
+                         int i = itemarmor.func_82814_b(itemstack);
 +                {
-                     float f = (float)(i >> 16 & 255) / 255.0F;
-                     float f1 = (float)(i >> 8 & 255) / 255.0F;
-                     float f2 = (float)(i & 255) / 255.0F;
-                     GlStateManager.func_179131_c(this.field_177184_f * f, this.field_177185_g * f1, this.field_177192_h * f2, this.field_177187_e);
-                     t.func_78088_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
--                    this.field_177190_a.func_110776_a(this.func_177178_a(itemarmor, flag, "overlay"));
--                case CHAIN:
--                case IRON:
--                case GOLD:
--                case DIAMOND:
-+                    this.field_177190_a.func_110776_a(this.getArmorResource(p_177182_1_, itemstack, flag ? 2 : 1, "overlay"));
-+                }
-+                { // Non-colored
-                     GlStateManager.func_179131_c(this.field_177184_f, this.field_177185_g, this.field_177192_h, this.field_177187_e);
-                     t.func_78088_a(p_177182_1_, p_177182_2_, p_177182_3_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
--                default:
++                    if (i != 0xFFFFFF) // Allow this for anything, not only cloth
++                    {
+                         float f = (float)(i >> 16 & 255) / 255.0F;
+                         float f1 = (float)(i >> 8 & 255) / 255.0F;
+                         float f2 = (float)(i & 255) / 255.0F;
+                         GlStateManager.func_179131_c(this.field_177184_f * f, this.field_177185_g * f1, this.field_177192_h * f2, this.field_177187_e);
+                         t.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
+-                        this.field_177190_a.func_110776_a(this.func_177178_a(itemarmor, flag, "overlay"));
+-                    case CHAIN:
+-                    case IRON:
+-                    case GOLD:
+-                    case DIAMOND:
++                        this.field_177190_a.func_110776_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, "overlay"));
++                    }
++                    { // Non-colored
+                         GlStateManager.func_179131_c(this.field_177184_f, this.field_177185_g, this.field_177192_h, this.field_177187_e);
+                         t.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
+-                    default:
 -
--                    if (!this.field_177193_i && itemstack.func_77948_v())
-+                }
-+                // Default
-+                    if (!this.field_177193_i && itemstack.func_77962_s())
-                     {
-                         this.func_177183_a(p_177182_1_, t, p_177182_2_, p_177182_3_, p_177182_4_, p_177182_5_, p_177182_6_, p_177182_7_, p_177182_8_);
-                     }
-@@ -135,11 +134,13 @@
+-                        if (!this.field_177193_i && itemstack.func_77948_v())
++                    } // Default
++                        if (!this.field_177193_i && itemstack.func_77962_s())
+                         {
+                             func_188364_a(this.field_177190_a, p_188361_1_, t, p_188361_2_, p_188361_3_, p_188361_4_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
+                         }
+@@ -140,11 +138,13 @@
          GlStateManager.func_179084_k();
      }
  
@@ -55,21 +54,21 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -157,4 +158,49 @@
+@@ -162,4 +162,49 @@
      protected abstract void func_177177_a();
  
-     protected abstract void func_177179_a(T p_177179_1_, int p_177179_2_);
+     protected abstract void func_188359_a(T p_188359_1_, EntityEquipmentSlot p_188359_2_);
 +
 +    /*=================================== FORGE START =========================================*/
 +
 +    /**
 +     * Hook to allow item-sensitive armor model. for LayerBipedArmor.
 +     */
-+    protected T getArmorModelHook(EntityLivingBase entity, ItemStack itemStack, int slot, T model)
++    protected T getArmorModelHook(EntityLivingBase entity, ItemStack itemStack, EntityEquipmentSlot slot, T model)
 +    {
 +        return model;
 +    }
-+ 
++
 +    /**
 +     * More generic ForgeHook version of the above function, it allows for Items to have more control over what texture they provide.
 +     *
@@ -79,7 +78,7 @@
 +     * @param type Subtype, can be null or "overlay"
 +     * @return ResourceLocation pointing at the armor's texture
 +     */
-+    public ResourceLocation getArmorResource(net.minecraft.entity.Entity entity, ItemStack stack, int slot, String type)
++    public ResourceLocation getArmorResource(net.minecraft.entity.Entity entity, ItemStack stack, EntityEquipmentSlot slot, String type)
 +    {
 +        ItemArmor item = (ItemArmor)stack.func_77973_b();
 +        String texture = item.func_82812_d().func_179242_c();
@@ -90,7 +89,7 @@
 +            domain = texture.substring(0, idx);
 +            texture = texture.substring(idx + 1);
 +        }
-+        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (slot == 2 ? 2 : 1), type == null ? "" : String.format("_%s", type));
++        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (func_188363_b(slot) ? 2 : 1), type == null ? "" : String.format("_%s", type));
 +
 +        s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
 +        ResourceLocation resourcelocation = (ResourceLocation)field_177191_j.get(s1);

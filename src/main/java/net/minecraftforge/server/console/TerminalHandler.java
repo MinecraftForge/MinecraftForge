@@ -9,7 +9,7 @@ import com.google.common.base.Function;
 
 import jline.console.ConsoleReader;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 
 public final class TerminalHandler
 {
@@ -60,7 +60,7 @@ public final class TerminalHandler
                 @Override
                 public String apply(String text)
                 {
-                    return EnumChatFormatting.getTextWithoutFormattingCodes(text);
+                    return TextFormatting.getTextWithoutFormattingCodes(text);
                 }
 
             });

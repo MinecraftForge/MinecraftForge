@@ -1,10 +1,16 @@
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.util.MathHelper;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.util.math.MathHelper;
 
 
 public class VertexLighterSmoothAo extends VertexLighterFlat
 {
+    public VertexLighterSmoothAo(BlockColors colors)
+    {
+        super(colors);
+    }
+
     @Override
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
     {

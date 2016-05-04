@@ -19,7 +19,7 @@ public class BrewingOreRecipe extends AbstractBrewingRecipe<List<ItemStack>> {
     @Override
     public boolean isIngredient(ItemStack stack)
     {
-        for (ItemStack target : this.ingredient)
+        for (ItemStack target : this.getIngredient())
         {
             if (OreDictionary.itemMatches(target, stack, false))
             {

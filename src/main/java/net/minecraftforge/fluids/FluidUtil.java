@@ -5,12 +5,14 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.items.IItemHandler;
@@ -26,7 +28,7 @@ public class FluidUtil
     {
     }
 
-    /** Returns true if intercation was successful. */
+    /** Returns true if interaction was successful. */
     public static boolean interactWithTank(ItemStack stack, EntityPlayer player, IFluidHandler tank, EnumFacing side)
     {
         if (stack == null || player.worldObj.isRemote)
@@ -191,7 +193,7 @@ public class FluidUtil
      * @param tank      The tank to fill from
      * @param side      Side to access the tank from
      * @param player    The player that tries to fill the bucket. Needed if the input itemstack has a stacksize > 1 to determine where the filled container goes.
-     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accomodate for anything done in this method. New Itemstacks might have been added to the players inventory.
+     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
      */
     public static boolean tryFillFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
@@ -217,7 +219,7 @@ public class FluidUtil
      * @param inventory  An inventory where any additionally created item (filled container if multiple empty are present) are put
      * @param max        Maximum amount to take from the tank. Uses IFluidContainerItem capacity if <= 0
      * @param player     The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accomodate for anything done in this method. New Itemstacks might have been added to the players inventory.
+     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
      */
     public static boolean tryFillFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, IItemHandler inventory, int max, EntityPlayer player)
     {
@@ -390,7 +392,7 @@ public class FluidUtil
         return false;
     }
 
-    private static boolean insertItemIntoo(ItemStack stack, IInventory inventory, World world, BlockPos pos, boolean isCreative)
+    private static boolean insertItemInto(ItemStack stack, IInventory inventory, World world, BlockPos pos, boolean isCreative)
     {
         if (stack == null)
         {
@@ -402,7 +404,7 @@ public class FluidUtil
         {
             if (world != null && pos != null)
             {
-                world.playSoundEffect(pos.getX(), pos.getY(), pos.getZ(), "random.pop", 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.entity_item_pickup, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             }
             return true;
         }
@@ -543,8 +545,8 @@ public class FluidUtil
             {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
-                crashreportcategory.addCrashSection("Item ID", Integer.valueOf(Item.getIdFromItem(itemstack.getItem())));
-                crashreportcategory.addCrashSection("Item data", Integer.valueOf(itemstack.getMetadata()));
+                crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemstack.getItem()));
+                crashreportcategory.addCrashSection("Item data", itemstack.getMetadata());
                 crashreportcategory.addCrashSectionCallable("Item name", new Callable<String>()
                 {
                     public String call() throws Exception

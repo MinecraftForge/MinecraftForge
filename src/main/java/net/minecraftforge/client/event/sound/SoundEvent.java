@@ -3,29 +3,25 @@ package net.minecraftforge.client.event.sound;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraft.client.audio.SoundPoolEntry;
-import net.minecraftforge.common.MinecraftForge;
 
 public class SoundEvent extends Event
 {
-    public final SoundManager manager;
+    private final SoundManager manager;
     public SoundEvent(SoundManager manager)
     {
         this.manager = manager;
     }
 
-    @Deprecated
-    public static SoundPoolEntry getResult(SoundResultEvent event)
+    public SoundManager getManager()
     {
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.result;
+        return manager;
     }
 
     public static class SoundSourceEvent extends SoundEvent
     {
-        public final ISound sound;
-        public final String uuid;
-        public final String name;
+        private final ISound sound;
+        private final String uuid;
+        private final String name;
 
         public SoundSourceEvent(SoundManager manager, ISound sound, String uuid)
         {
@@ -33,6 +29,21 @@ public class SoundEvent extends Event
             this.name = sound.getSoundLocation().getResourcePath();
             this.sound = sound;
             this.uuid = uuid;
+        }
+
+        public ISound getSound()
+        {
+            return sound;
+        }
+
+        public String getUuid()
+        {
+            return uuid;
+        }
+
+        public String getName()
+        {
+            return name;
         }
     }
 }

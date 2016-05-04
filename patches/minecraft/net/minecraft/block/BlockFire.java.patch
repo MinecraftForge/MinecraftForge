@@ -1,34 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFire.java
-@@ -41,18 +41,24 @@
-         int j = p_176221_3_.func_177956_o();
-         int k = p_176221_3_.func_177952_p();
+@@ -37,7 +37,15 @@
  
--        if (!World.func_175683_a(p_176221_2_, p_176221_3_.func_177977_b()) && !Blocks.field_150480_ab.func_176535_e(p_176221_2_, p_176221_3_.func_177977_b()))
-+        if (!World.func_175683_a(p_176221_2_, p_176221_3_.func_177977_b()) && !Blocks.field_150480_ab.canCatchFire(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP))
-         {
-             boolean flag = (i + j + k & 1) == 1;
-             boolean flag1 = (i / 2 + j / 2 + k / 2 & 1) == 1;
-             int l = 0;
+     public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
+     {
+-        return !p_176221_2_.func_180495_p(p_176221_3_.func_177977_b()).func_185896_q() && !Blocks.field_150480_ab.func_176535_e(p_176221_2_, p_176221_3_.func_177977_b()) ? p_176221_1_.func_177226_a(field_176545_N, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177978_c()))).func_177226_a(field_176546_O, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177974_f()))).func_177226_a(field_176541_P, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177968_d()))).func_177226_a(field_176539_Q, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177976_e()))).func_177226_a(field_176542_R, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177984_a()))) : this.func_176223_P();
++        if (!p_176221_2_.func_180495_p(p_176221_3_.func_177977_b()).isSideSolid(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP) && !Blocks.field_150480_ab.canCatchFire(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP))
++        {
++            return p_176221_1_.func_177226_a(field_176545_N, this.canCatchFire(p_176221_2_, p_176221_3_.func_177978_c(), EnumFacing.SOUTH))
++                        .func_177226_a(field_176546_O,  this.canCatchFire(p_176221_2_, p_176221_3_.func_177974_f(), EnumFacing.WEST))
++                        .func_177226_a(field_176541_P, this.canCatchFire(p_176221_2_, p_176221_3_.func_177968_d(), EnumFacing.NORTH))
++                        .func_177226_a(field_176539_Q,  this.canCatchFire(p_176221_2_, p_176221_3_.func_177976_e(), EnumFacing.EAST))
++                        .func_177226_a(field_176542_R, this.canCatchFire(p_176221_2_, p_176221_3_.func_177984_a(), EnumFacing.DOWN));
++        }
++        return this.func_176223_P();
+     }
  
--            if (this.func_176535_e(p_176221_2_, p_176221_3_.func_177984_a()))
-+            if (this.canCatchFire(p_176221_2_, p_176221_3_.func_177984_a(), EnumFacing.DOWN))
-             {
-                 l = flag ? 1 : 2;
-             }
- 
--            return p_176221_1_.func_177226_a(field_176545_N, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177978_c()))).func_177226_a(field_176546_O, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177974_f()))).func_177226_a(field_176541_P, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177968_d()))).func_177226_a(field_176539_Q, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177976_e()))).func_177226_a(field_176542_R, Integer.valueOf(l)).func_177226_a(field_176540_b, Boolean.valueOf(flag1)).func_177226_a(field_176544_M, Boolean.valueOf(flag));
-+            return p_176221_1_.func_177226_a(field_176545_N, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177978_c(), EnumFacing.SOUTH)))
-+                        .func_177226_a(field_176546_O, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177974_f(),  EnumFacing.EAST )))
-+                        .func_177226_a(field_176541_P, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177968_d(), EnumFacing.NORTH)))
-+                        .func_177226_a(field_176539_Q, Boolean.valueOf(this.canCatchFire(p_176221_2_, p_176221_3_.func_177976_e(),  EnumFacing.EAST )))
-+                        .func_177226_a(field_176542_R, Integer.valueOf(l))
-+                        .func_177226_a(field_176540_b, Boolean.valueOf(flag1))
-+                        .func_177226_a(field_176544_M, Boolean.valueOf(flag));
-         }
-         else
-         {
-@@ -108,6 +114,7 @@
+     protected BlockFire()
+@@ -90,6 +98,7 @@
  
      public void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_)
      {
@@ -36,7 +25,7 @@
          this.field_149849_a.put(p_180686_1_, Integer.valueOf(p_180686_2_));
          this.field_149848_b.put(p_180686_1_, Integer.valueOf(p_180686_3_));
      }
-@@ -147,13 +154,8 @@
+@@ -129,13 +138,8 @@
              }
  
              Block block = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_177230_c();
@@ -48,10 +37,19 @@
 -                flag = true;
 -            }
 -
-             if (!flag && p_180650_1_.func_72896_J() && this.func_176537_d(p_180650_1_, p_180650_2_))
-             {
-                 p_180650_1_.func_175698_g(p_180650_2_);
-@@ -182,7 +184,7 @@
+             int i = ((Integer)p_180650_3_.func_177229_b(field_176543_a)).intValue();
+ 
+             if (!flag && p_180650_1_.func_72896_J() && this.func_176537_d(p_180650_1_, p_180650_2_) && p_180650_4_.nextFloat() < 0.2F + (float)i * 0.03F)
+@@ -156,7 +160,7 @@
+                 {
+                     if (!this.func_176533_e(p_180650_1_, p_180650_2_))
+                     {
+-                        if (!p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_185896_q() || i > 3)
++                        if (!p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).isSideSolid(p_180650_1_, p_180650_2_.func_177977_b(), EnumFacing.UP) || i > 3)
+                         {
+                             p_180650_1_.func_175698_g(p_180650_2_);
+                         }
+@@ -164,7 +168,7 @@
                          return;
                      }
  
@@ -60,7 +58,7 @@
                      {
                          p_180650_1_.func_175698_g(p_180650_2_);
                          return;
-@@ -197,12 +199,12 @@
+@@ -179,12 +183,12 @@
                      j = -50;
                  }
  
@@ -79,7 +77,7 @@
  
                  for (int k = -1; k <= 1; ++k)
                  {
-@@ -261,22 +263,30 @@
+@@ -243,45 +247,53 @@
          return false;
      }
  
@@ -104,14 +102,44 @@
 +        this.tryCatchFire(p_176536_1_, p_176536_2_, p_176536_3_, p_176536_4_, p_176536_5_, EnumFacing.UP);
 +    }
  
-+    private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, EnumFacing face)
+-        if (p_176536_4_.nextInt(p_176536_3_) < i)
++    private void tryCatchFire(World worldIn, BlockPos pos, int chance, Random random, int age, EnumFacing face)
 +    {
-+        int i = p_176536_1_.func_180495_p(p_176536_2_).func_177230_c().getFlammability(p_176536_1_, p_176536_2_, face);
++        int i = worldIn.func_180495_p(pos).func_177230_c().getFlammability(worldIn, pos, face);
 +
-         if (p_176536_4_.nextInt(p_176536_3_) < i)
++        if (random.nextInt(chance) < i)
          {
-             IBlockState iblockstate = p_176536_1_.func_180495_p(p_176536_2_);
-@@ -308,7 +318,7 @@
+-            IBlockState iblockstate = p_176536_1_.func_180495_p(p_176536_2_);
++            IBlockState iblockstate = worldIn.func_180495_p(pos);
+ 
+-            if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_))
++            if (random.nextInt(age + 10) < 5 && !worldIn.func_175727_C(pos))
+             {
+-                int j = p_176536_5_ + p_176536_4_.nextInt(5) / 4;
++                int j = age + random.nextInt(5) / 4;
+ 
+                 if (j > 15)
+                 {
+                     j = 15;
+                 }
+ 
+-                p_176536_1_.func_180501_a(p_176536_2_, this.func_176223_P().func_177226_a(field_176543_a, Integer.valueOf(j)), 3);
++                worldIn.func_180501_a(pos, this.func_176223_P().func_177226_a(field_176543_a, Integer.valueOf(j)), 3);
+             }
+             else
+             {
+-                p_176536_1_.func_175698_g(p_176536_2_);
++                worldIn.func_175698_g(pos);
+             }
+ 
+             if (iblockstate.func_177230_c() == Blocks.field_150335_W)
+             {
+-                Blocks.field_150335_W.func_176206_d(p_176536_1_, p_176536_2_, iblockstate.func_177226_a(BlockTNT.field_176246_a, Boolean.valueOf(true)));
++                Blocks.field_150335_W.func_176206_d(worldIn, pos, iblockstate.func_177226_a(BlockTNT.field_176246_a, Boolean.valueOf(true)));
+             }
+         }
+     }
+@@ -290,7 +302,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
@@ -120,7 +148,7 @@
              {
                  return true;
              }
-@@ -329,7 +339,7 @@
+@@ -311,7 +323,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.values())
              {
@@ -129,7 +157,7 @@
              }
  
              return i;
-@@ -341,9 +351,10 @@
+@@ -323,9 +335,10 @@
          return false;
      }
  
@@ -141,57 +169,57 @@
      }
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
-@@ -382,9 +393,9 @@
-             p_180655_1_.func_72980_b((double)((float)p_180655_2_.func_177958_n() + 0.5F), (double)((float)p_180655_2_.func_177956_o() + 0.5F), (double)((float)p_180655_2_.func_177952_p() + 0.5F), "fire.fire", 1.0F + p_180655_4_.nextFloat(), p_180655_4_.nextFloat() * 0.7F + 0.3F, false);
+@@ -364,9 +377,9 @@
+             p_180655_2_.func_184134_a((double)((float)p_180655_3_.func_177958_n() + 0.5F), (double)((float)p_180655_3_.func_177956_o() + 0.5F), (double)((float)p_180655_3_.func_177952_p() + 0.5F), SoundEvents.field_187643_bs, SoundCategory.BLOCKS, 1.0F + p_180655_4_.nextFloat(), p_180655_4_.nextFloat() * 0.7F + 0.3F, false);
          }
  
--        if (!World.func_175683_a(p_180655_1_, p_180655_2_.func_177977_b()) && !Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177977_b()))
-+        if (!World.func_175683_a(p_180655_1_, p_180655_2_.func_177977_b()) && !Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177977_b(), EnumFacing.UP))
+-        if (!p_180655_2_.func_180495_p(p_180655_3_.func_177977_b()).func_185896_q() && !Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177977_b()))
++        if (!p_180655_2_.func_180495_p(p_180655_3_.func_177977_b()).isSideSolid(p_180655_2_, p_180655_3_.func_177977_b(), EnumFacing.UP) && !Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177977_b(), EnumFacing.UP))
          {
--            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177976_e()))
-+            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177976_e(), EnumFacing.EAST))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177976_e()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177976_e(), EnumFacing.EAST))
              {
                  for (int j = 0; j < 2; ++j)
                  {
-@@ -395,7 +406,7 @@
+@@ -377,7 +390,7 @@
                  }
              }
  
--            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177974_f()))
-+            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177974_f(), EnumFacing.WEST))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177974_f()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177974_f(), EnumFacing.WEST))
              {
                  for (int k = 0; k < 2; ++k)
                  {
-@@ -406,7 +417,7 @@
+@@ -388,7 +401,7 @@
                  }
              }
  
--            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177978_c()))
-+            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177978_c(), EnumFacing.SOUTH))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177978_c()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177978_c(), EnumFacing.SOUTH))
              {
                  for (int l = 0; l < 2; ++l)
                  {
-@@ -417,7 +428,7 @@
+@@ -399,7 +412,7 @@
                  }
              }
  
--            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177968_d()))
-+            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177968_d(), EnumFacing.NORTH))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177968_d()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177968_d(), EnumFacing.NORTH))
              {
                  for (int i1 = 0; i1 < 2; ++i1)
                  {
-@@ -428,7 +439,7 @@
+@@ -410,7 +423,7 @@
                  }
              }
  
--            if (Blocks.field_150480_ab.func_176535_e(p_180655_1_, p_180655_2_.func_177984_a()))
-+            if (Blocks.field_150480_ab.canCatchFire(p_180655_1_, p_180655_2_.func_177984_a(), EnumFacing.DOWN))
+-            if (Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177984_a()))
++            if (Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177984_a(), EnumFacing.DOWN))
              {
                  for (int j1 = 0; j1 < 2; ++j1)
                  {
-@@ -476,4 +487,19 @@
+@@ -458,4 +471,19 @@
      {
-         return new BlockState(this, new IProperty[] {field_176543_a, field_176545_N, field_176546_O, field_176541_P, field_176539_Q, field_176542_R, field_176540_b, field_176544_M});
+         return new BlockStateContainer(this, new IProperty[] {field_176543_a, field_176545_N, field_176546_O, field_176541_P, field_176539_Q, field_176542_R});
      }
 +
 +    /*================================= Forge Start ======================================*/

@@ -2,7 +2,7 @@ package net.minecraftforge.client.model;
 
 import com.google.common.collect.ImmutableMap;
 
-public interface IRetexturableModel<M extends IRetexturableModel<M>> extends IModel
+public interface IRetexturableModel extends IModel
 {
     /**
      * Applies new textures to the model.
@@ -21,6 +21,5 @@ public interface IRetexturableModel<M extends IRetexturableModel<M>> extends IMo
      * @param textures New
      * @return Model with textures applied.
      */
-    // 1.9: change IModel to M
     IModel retexture(ImmutableMap<String, String> textures);
 }

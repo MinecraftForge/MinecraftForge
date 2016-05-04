@@ -7,13 +7,16 @@
             "base": "forgedebugmultilayermodel:test_layer_block#aux",
             // per-layer models
             "Solid": "forgedebugmultilayermodel:test_layer_block#aux",
-            "Translucent": "minecraft:pink_stained_glass_pane#east=true,north=false,south=false,west=true"
+            "Translucent": "forgedebugmultilayermodel:test_layer_block#pane"
         },
         "transform": "forge:default-block"
      },
     "variants": {
         "normal": [{}],
         "inventory": [{}],
+        "pane": [{
+            "model": "minecraft:pink_stained_glass_pane_noside"
+        }],
         "aux": [{
             "model": "cube_all",
             "textures": { "all": "blocks/slime" },

@@ -1,7 +1,6 @@
 package net.minecraftforge.client.model.obj;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,11 +21,13 @@ import org.apache.logging.log4j.Level;
  * To enable your mod call instance.addDomain(modid).
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-public class OBJLoader implements ICustomModelLoader {
-    public static final OBJLoader instance = new OBJLoader();
+public enum OBJLoader implements ICustomModelLoader {
+    INSTANCE;
+
     private IResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<String>();
     private final Map<ResourceLocation, OBJModel> cache = new HashMap<ResourceLocation, OBJModel>();
+    private final Map<ResourceLocation, Exception> errors = new HashMap<ResourceLocation, Exception>();
 
     public void addDomain(String domain)
     {
@@ -38,6 +39,7 @@ public class OBJLoader implements ICustomModelLoader {
     {
         this.manager = resourceManager;
         cache.clear();
+        errors.clear();
     }
 
     public boolean accepts(ResourceLocation modelLocation)
@@ -45,45 +47,41 @@ public class OBJLoader implements ICustomModelLoader {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
     }
 
-    public IModel loadModel(ResourceLocation modelLocation) throws IOException
+    public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         if (!cache.containsKey(file))
         {
+            IResource resource = null;
             try
             {
-                IResource resource = null;
-                try
-                {
-                    resource = manager.getResource(file);
-                }
-                catch (FileNotFoundException e)
-                {
-                    if (modelLocation.getResourcePath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
-                    else if (modelLocation.getResourcePath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
-                    else throw e;
-                }
-                OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
-                OBJModel model = null;
-                try
-                {
-                	model = parser.parse();
-                }
-                finally
-                {
-                	cache.put(modelLocation, model);
-                }
+                resource = manager.getResource(file);
             }
-            catch (IOException e)
+            catch (FileNotFoundException e)
             {
-//                FMLLog.log(Level.ERROR, e, "Exception loading model '%s' with OBJ loader, skipping", modelLocation);
-                throw e;
+                if (modelLocation.getResourcePath().startsWith("models/block/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
+                else if (modelLocation.getResourcePath().startsWith("models/item/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
+                else throw e;
+            }
+            OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
+            OBJModel model = null;
+            try
+            {
+                model = parser.parse();
+            }
+            catch (Exception e)
+            {
+                errors.put(modelLocation, e);
+            }
+            finally
+            {
+                cache.put(modelLocation, model);
             }
         }
         OBJModel model = cache.get(file);
-        if (model == null) return ModelLoaderRegistry.getMissingModel();
+        if (model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file, errors.get(modelLocation));
         return model;
     }
 }

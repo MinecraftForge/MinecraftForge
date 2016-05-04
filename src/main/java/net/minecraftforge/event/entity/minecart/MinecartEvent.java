@@ -14,11 +14,16 @@ import net.minecraftforge.event.entity.EntityEvent;
  **/
 public class MinecartEvent extends EntityEvent
 {
-    public final EntityMinecart minecart;
+    private final EntityMinecart minecart;
 
     public MinecartEvent(EntityMinecart minecart)
     {
         super(minecart);
         this.minecart = minecart;
+    }
+
+    public EntityMinecart getMinecart()
+    {
+        return minecart;
     }
 }

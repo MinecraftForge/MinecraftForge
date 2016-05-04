@@ -18,16 +18,17 @@
                  return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
-@@ -150,7 +154,7 @@
+@@ -150,7 +154,8 @@
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
--        return this.func_180495_p(p_175623_1_).func_177230_c().func_149688_o() == Material.field_151579_a;
-+        return this.func_180495_p(p_175623_1_).func_177230_c().isAir(this, p_175623_1_);
+-        return this.func_180495_p(p_175623_1_).func_185904_a() == Material.field_151579_a;
++        IBlockState state = this.func_180495_p(p_175623_1_);
++        return state.func_177230_c().isAir(state, this, p_175623_1_);
      }
  
      @SideOnly(Side.CLIENT)
-@@ -160,6 +164,7 @@
+@@ -160,6 +165,7 @@
          {
              int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
              int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -35,7 +36,7 @@
              return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
-@@ -179,4 +184,16 @@
+@@ -178,4 +184,17 @@
      {
          return this.field_72815_e.func_175624_G();
      }
@@ -49,6 +50,7 @@
 +        if (x < 0 || x >= field_72817_c.length || z < 0 || z >= field_72817_c[x].length) return _default;
 +        if (field_72817_c[x][z] == null) return _default;
 +
-+        return func_180495_p(pos).func_177230_c().isSideSolid(this, pos, side);
++        IBlockState state = func_180495_p(pos);
++        return state.func_177230_c().isSideSolid(state, this, pos, side);
 +    }
  }

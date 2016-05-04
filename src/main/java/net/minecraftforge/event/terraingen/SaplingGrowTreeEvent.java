@@ -2,7 +2,7 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -24,13 +24,23 @@ import net.minecraftforge.event.world.WorldEvent;
 @HasResult
 public class SaplingGrowTreeEvent extends WorldEvent
 {
-    public final BlockPos pos;
-    public final Random rand;
+    private final BlockPos pos;
+    private final Random rand;
 
     public SaplingGrowTreeEvent(World world, Random rand, BlockPos pos)
     {
         super(world);
         this.rand = rand;
         this.pos = pos;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
+    }
+
+    public Random getRand()
+    {
+        return rand;
     }
 }

@@ -1,12 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityHanging.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityHanging.java
-@@ -123,6 +123,9 @@
-                 {
-                     BlockPos blockpos1 = blockpos.func_177967_a(enumfacing, k).func_177981_b(l);
-                     Block block = this.field_70170_p.func_180495_p(blockpos1).func_177230_c();
-+                    
-+                    if ( block.isSideSolid( this.field_70170_p, blockpos1, this.field_174860_b ))
-+                        continue;
+@@ -139,6 +139,9 @@
+                     BlockPos blockpos1 = blockpos.func_177967_a(enumfacing, k + i1).func_177981_b(l + j1);
+                     IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos1);
  
-                     if (!block.func_149688_o().func_76220_a() && !BlockRedstoneDiode.func_149909_d(block))
++                    if (iblockstate.isSideSolid(this.field_70170_p, blockpos1, this.field_174860_b))
++                        continue;
++
+                     if (!iblockstate.func_185904_a().func_76220_a() && !BlockRedstoneDiode.func_185546_B(iblockstate))
                      {
+                         return false;

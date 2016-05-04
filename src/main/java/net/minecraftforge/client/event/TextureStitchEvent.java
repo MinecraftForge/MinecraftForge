@@ -6,11 +6,16 @@ import net.minecraft.client.renderer.texture.TextureMap;
 
 public class TextureStitchEvent extends Event
 {
-    public final TextureMap map;
+    private final TextureMap map;
 
     public TextureStitchEvent(TextureMap map)
     {
         this.map = map;
+    }
+
+    public TextureMap getMap()
+    {
+        return map;
     }
 
     /**

@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -527,7 +527,7 @@
+@@ -506,7 +506,7 @@
  
      private boolean func_176456_n(World p_176456_1_, BlockPos p_176456_2_)
      {
--        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).func_177230_c().func_149721_r();
-+        return p_176456_1_.isSideSolid(p_176456_2_.func_177984_a(), EnumFacing.DOWN, false);
+-        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).func_185915_l();
++        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).isSideSolid(p_176456_1_, p_176456_2_.func_177984_a(), EnumFacing.DOWN);
      }
  
      private boolean func_176453_o(World p_176453_1_, BlockPos p_176453_2_)

@@ -14,6 +14,16 @@ import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 
 public class Property
 {
+    public String getComment()
+    {
+        return comment;
+    }
+
+    public void setComment(String comment)
+    {
+        this.comment = comment;
+    }
+
     public enum Type
     {
         STRING,
@@ -45,7 +55,7 @@ public class Property
     private String name;
     private String value;
     private String defaultValue;
-    public String comment;
+    private String comment;
     private String[] values;
     private String[] defaultValues;
     private String[] validValues;
@@ -113,7 +123,7 @@ public class Property
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
         this.langKey = langKey;
-        this.comment = "";
+        this.setComment("");
     }
 
     public Property(String name, String[] values, Type type)
@@ -155,7 +165,7 @@ public class Property
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
         this.langKey = langKey;
-        this.comment = "";
+        this.setComment("");
     }
 
     /**
@@ -670,14 +680,7 @@ public class Property
      */
     public int getInt()
     {
-        try
-        {
-            return Integer.parseInt(value);
-        }
-        catch (NumberFormatException e)
-        {
-            return Integer.parseInt(defaultValue);
-        }
+        return getInt(Integer.parseInt(defaultValue));
     }
 
     /**
@@ -709,6 +712,54 @@ public class Property
         try
         {
             Integer.parseInt(value);
+            return true;
+        }
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the value in this property as a long,
+     * if the value is not a valid long, it will return the initially provided default.
+     *
+     * @return The value
+     */
+    public long getLong()
+    {
+        return getLong(Long.parseLong(defaultValue));
+    }
+
+    /**
+     * Returns the value in this property as a long,
+     * if the value is not a valid long, it will return the
+     * provided default.
+     *
+     * @param _default The default to provide if the current value is not a validlong
+     * @return The value
+     */
+    public long getLong(long _default)
+    {
+        try
+        {
+            return Long.parseLong(value);
+        }
+        catch (NumberFormatException e)
+        {
+            return _default;
+        }
+    }
+
+    /**
+     * Checks if the current value stored in this property can be converted to a long.
+     * @return True if the type of the Property is an Long
+     */
+    public boolean isLongValue()
+    {
+        try
+        {
+            Long.parseLong(value);
             return true;
         }
         catch (NumberFormatException e)
@@ -1138,6 +1189,7 @@ public class Property
         this.setValues(values);
     }
     public void set(int     value){ set(Integer.toString(value)); }
+    public void set(long    value){ set(Long.toString(value));    }
     public void set(boolean value){ set(Boolean.toString(value)); }
     public void set(double  value){ set(Double.toString(value));  }
 }

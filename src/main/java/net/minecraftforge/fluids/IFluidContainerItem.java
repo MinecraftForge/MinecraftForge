@@ -5,18 +5,16 @@ import net.minecraft.item.ItemStack;
 /**
  * Implement this interface on Item classes that support external manipulation of their internal
  * fluid storage.
- * 
+ *
  * A reference implementation is provided {@link ItemFluidContainer}.
- * 
+ *
  * NOTE: Use of NBT data on the containing ItemStack is encouraged.
- * 
- * @author King Lemming
- * 
+ *
  */
 public interface IFluidContainerItem
 {
     /**
-     * 
+     *
      * @param container
      *            ItemStack which is the fluid container.
      * @return FluidStack representing the fluid in the container, null if the container is empty.
@@ -24,7 +22,7 @@ public interface IFluidContainerItem
     FluidStack getFluid(ItemStack container);
 
     /**
-     * 
+     *
      * @param container
      *            ItemStack which is the fluid container.
      * @return Capacity of this fluid container.
@@ -32,7 +30,7 @@ public interface IFluidContainerItem
     int getCapacity(ItemStack container);
 
     /**
-     * 
+     *
      * @param container
      *            ItemStack which is the fluid container.
      * @param resource
@@ -45,7 +43,7 @@ public interface IFluidContainerItem
     int fill(ItemStack container, FluidStack resource, boolean doFill);
 
     /**
-     * 
+     *
      * @param container
      *            ItemStack which is the fluid container.
      * @param maxDrain

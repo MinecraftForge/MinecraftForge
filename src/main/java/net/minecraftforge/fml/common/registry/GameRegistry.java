@@ -39,6 +39,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
@@ -50,7 +51,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import org.apache.logging.log4j.Level;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -60,6 +60,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class GameRegistry
 {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
@@ -94,7 +95,7 @@ public class GameRegistry
      * @param chunkGenerator The chunk generator
      * @param chunkProvider  The chunk provider
      */
-    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
     {
         if (sortedGeneratorList == null)
         {
@@ -128,42 +129,72 @@ public class GameRegistry
     }
 
     /**
-     * Register an item with the item registry with a the name specified in Item.getRegistryName()
+     * Register the previously named {@link IForgeRegistry} object with the registry system.
+     * Always ensure the object is already named using {@link IForgeRegistryEntry#setRegistryName(ResourceLocation)}
+     * or another mechanism.
      *
-     * @param item The item to register
+     * Note: That DOES NOT create the ItemBlock for you if this is a Block, you should register that item separately.
+     *
+     * @param object The object to register with a registry
+     * @param <K> The registry supertype
+     * @throws IllegalArgumentException if the object is not yet named (use {@link #register(IForgeRegistryEntry, ResourceLocation)} instead)
+     * @return The object
      */
-    public static void registerItem(Item item)
+    @SuppressWarnings("unchecked")
+    public static <K extends IForgeRegistryEntry<?>> K register(K object)
     {
-        registerItem(item, item.getRegistryName());
+        return (K)GameData.register_impl(object);
     }
 
     /**
-     * Register an item with the item registry with a custom name : this allows for easier server->client resolution
+     * Register the unnamed {@link IForgeRegistry} object with the registry system.
+     * Always make sure you have not previously named the object.
      *
-     * @param item The item to register
-     * @param name The mod-unique name of the item
+     * It is advised that you set the object's registry name and use {@link #register(IForgeRegistryEntry)} instead.
+     *
+     * Note: That DOES NOT create the ItemBlock for you if this is a Block, you should register that item separately.
+     *
+     * @param object The object to register
+     * @param name The name to register it with
+     * @param <K> The registry supertype
+     * @throws IllegalStateException if the object already has an existing name (use {@link #register(IForgeRegistryEntry)} instead)
+     * @return The object
      */
-    public static void registerItem(Item item, String name)
+    @SuppressWarnings("unchecked")
+    public static <K extends IForgeRegistryEntry<?>> K register(K object, ResourceLocation name)
     {
-        if (Strings.isNullOrEmpty(name))
-        {
-            throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
-        }
-        GameData.getMain().registerItem(item, name);
+        return (K)GameData.register_impl(object, name);
+    }
+
+
+    /**
+     * Registers a named block with the Block registry. This WILL create a new ItemBlock for you with the
+     * same name and register it with the ItemRegistry. This method is created as a convince method for
+     * modder and SHOULD NOT be used. Modders should create and register their ItemBlocks like normal items.
+     *
+     * @param block The block to register with a registry
+     * @throws IllegalArgumentException if the object is not yet named
+     * @return The block
+     */
+    @Deprecated //Modders SHOULD NOT use this, so it'll stay deprecated. Purely added to make lazy modders happy -.-
+    public static Block registerWithItem(Block block)
+    {
+        register(block);
+        register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        return block;
     }
 
     /**
-     * Register the specified Item with a mod specific name : overrides the standard type based name
+     * Retrieves the registry associated with this super class type.
+     * If the return is non-null it is HIGHLY recommended that modders cache this
+     * value as the return will never change for a given type in a single run of Minecraft once set.
      *
-     * @param item  The item to register
-     * @param name  The mod-unique name to register it as - null will remove a custom name
-     * @param modId deprecated, unused
+     * @param registryType The base class of items in this registry.
+     * @return The registry, Null if none is registered.
      */
-    @Deprecated // See version without modID remove in 1.9
-    public static Item registerItem(Item item, String name, String modId)
+    public static <K extends IForgeRegistryEntry<K>> IForgeRegistry<K> findRegistry(Class<K> registryType)
     {
-        registerItem(item, name);
-        return item;
+        return PersistentRegistryManager.findRegistryByType(registryType);
     }
 
     /**
@@ -180,111 +211,6 @@ public class GameRegistry
     public static void addSubstitutionAlias(String nameToSubstitute, GameRegistry.Type type, Object object) throws ExistingSubstitutionException
     {
         GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
-    }
-
-    /**
-     * Register a block with the name that Block.getRegistryName returns.
-     *
-     * @param block The block to register
-     */
-    public static Block registerBlock(Block block)
-    {
-        return registerBlock(block, block.getRegistryName());
-    }
-
-    /**
-     * Register a block with the specified mod specific name
-     *
-     * @param block The block to register
-     * @param name  The mod-unique name to register it as, will get prefixed by your modid.
-     */
-    public static Block registerBlock(Block block, String name)
-    {
-        return registerBlock(block, ItemBlock.class, name);
-    }
-
-    /**
-     * Register a block with the world, with the specified item class using Block.getRegistryName's name
-     *
-     * @param block     The block to register
-     * @param itemclass The item type to register with it : null registers a block without associated item.
-     */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass)
-    {
-        return registerBlock(block, itemclass, block.getRegistryName());
-    }
-
-    /**
-     * Register a block with the world, with the specified item class and block name
-     *
-     * @param block     The block to register
-     * @param itemclass The item type to register with it : null registers a block without associated item.
-     * @param name      The mod-unique name to register it as, will get prefixed by your modid.
-     */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
-    {
-        return registerBlock(block, itemclass, name, new Object[] {});
-    }
-
-
-    /**
-     * Register a block with the world, with the specified item class using Block.getRegistryName's name
-     *
-     * @param block        The block to register
-     * @param itemclass    The item type to register with it : null registers a block without associated item.
-     * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
-     */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs)
-    {
-        return registerBlock(block, itemclass, block.getRegistryName(), itemCtorArgs);
-    }
-
-    /**
-     * Register a block with the world, with the specified item class, block name and owning modId
-     *
-     * @param block        The block to register
-     * @param itemclass    The item type to register with it : null registers a block without associated item.
-     * @param name         The mod-unique name to register it as, will get prefixed by your modid.
-     * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
-     */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
-    {
-        if (Strings.isNullOrEmpty(name))
-        {
-            throw new IllegalArgumentException("Attempted to register a block with no name: " + block);
-        }
-        if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
-        {
-            FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
-        }
-        try
-        {
-            assert block != null : "registerBlock: block cannot be null";
-            ItemBlock i = null;
-            if (itemclass != null)
-            {
-                Class<?>[] ctorArgClasses = new Class<?>[itemCtorArgs.length + 1];
-                ctorArgClasses[0] = Block.class;
-                for (int idx = 1; idx < ctorArgClasses.length; idx++)
-                {
-                    ctorArgClasses[idx] = itemCtorArgs[idx - 1].getClass();
-                }
-                Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
-                i = itemCtor.newInstance(ObjectArrays.concat(block, itemCtorArgs));
-            }
-            // block registration has to happen first
-            GameData.getMain().registerBlock(block, name);
-            if (i != null)
-            {
-                GameData.getMain().registerItem(i, name);
-                GameData.getBlockItemMap().put(block, i);
-            }
-            return block;
-        } catch (Exception e)
-        {
-            FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
-            throw new LoaderException(e);
-        }
     }
 
     public static void addRecipe(ItemStack output, Object... params)
@@ -363,135 +289,11 @@ public class GameRegistry
         return fuelValue;
     }
 
-    /**
-     * Look up a mod block in the global "named item list"
-     *
-     * @param modId The modid owning the block
-     * @param name  The name of the block itself
-     * @return The block or null if not found
-     */
-    public static Block findBlock(String modId, String name)
-    {
-        return GameData.findBlock(modId, name);
-    }
-
-    /**
-     * Look up a mod item in the global "named item list"
-     *
-     * @param modId The modid owning the item
-     * @param name  The name of the item itself
-     * @return The item or null if not found
-     */
-    public static Item findItem(String modId, String name)
-    {
-        return GameData.findItem(modId, name);
-    }
-
-    /**
-     * Will be switching to using ResourceLocation, since it's used widely elsewhere
-     */
-    @Deprecated
-    public static final class UniqueIdentifier
-    {
-        public final String modId;
-        public final String name;
-
-        UniqueIdentifier(String modId, String name)
-        {
-            this.modId = modId;
-            this.name = name;
-        }
-
-        public UniqueIdentifier(String string)
-        {
-            String[] parts = string.split(":");
-            this.modId = parts[0];
-            this.name = parts[1];
-        }
-
-        public UniqueIdentifier(Object obj)
-        {
-            if (obj instanceof String)
-            {
-                String[] parts = ((String)obj).split(":");
-                this.modId = parts[0];
-                this.name = parts[1];
-            }
-            else if (obj instanceof ResourceLocation)
-            {
-                this.modId = ((ResourceLocation)obj).getResourceDomain();
-                this.name = ((ResourceLocation)obj).getResourcePath();
-            }
-            else
-            {
-                throw new IllegalArgumentException("UniqueIdentifier must be a String or ResourceLocation, was " + obj.getClass());
-            }
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            if (obj.getClass() != this.getClass())
-            {
-                return false;
-            }
-            final UniqueIdentifier other = (UniqueIdentifier)obj;
-            return Objects.equal(modId, other.modId) && Objects.equal(name, other.name);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hashCode(modId, name);
-        }
-
-        @Override
-        public String toString()
-        {
-            return String.format("%s:%s", modId, name);
-        }
-    }
-
     public enum Type
     {
         BLOCK,
         ITEM;
     }
-
-    /**
-     * Look up the mod identifier data for a block.
-     * <p/>
-     * Note: uniqueness and persistence is only guaranteed by mods using the game registry
-     * correctly.
-     *
-     * @param block to lookup
-     * @return a {@link UniqueIdentifier} for the block or null
-     */
-    @Deprecated
-    public static UniqueIdentifier findUniqueIdentifierFor(Block block)
-    {
-        return GameData.getUniqueName(block);
-    }
-
-    /**
-     * Look up the mod identifier data for an item.
-     * <p/>
-     * Note: uniqueness and persistence is only guaranteed by mods using the game registry
-     * correctly.
-     *
-     * @param item to lookup
-     * @return a {@link UniqueIdentifier} for the item or null
-     */
-    @Deprecated
-    public static UniqueIdentifier findUniqueIdentifierFor(Item item)
-    {
-        return GameData.getUniqueName(item);
-    }
-
 
     /**
      * ObjectHolder can be used to automatically populate public static final fields with entries
@@ -594,4 +396,132 @@ public class GameRegistry
         return is;
     }
 
+
+
+
+    // ============================= DEPRECATED/INTERNAL MODDERS DO NOT USE =================================
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated public static void registerItem(Item item){ register(item); }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated
+    public static void registerItem(Item item, String name)
+    {
+        if (item.getRegistryName() == null && Strings.isNullOrEmpty(name))
+            throw new IllegalArgumentException("Attempted to register a item with no name: " + item);
+        if (item.getRegistryName() != null && !item.getRegistryName().toString().equals(name))
+            throw new IllegalArgumentException("Attempted to register a item with conflicting names. Old: " + item.getRegistryName() + " New: " + name);
+        register(item.getRegistryName() == null ? item.setRegistryName(name) : item);
+    }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated
+    public static Block registerBlock(Block block)
+    {
+        register(block);
+        register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        return block;
+    }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated
+    public static Block registerBlock(Block block, String name)
+    {
+        if (block.getRegistryName() == null && Strings.isNullOrEmpty(name))
+            throw new IllegalArgumentException("Attempted to register a Block with no name: " + block);
+        if (block.getRegistryName() != null && !block.getRegistryName().toString().equals(name))
+            throw new IllegalArgumentException("Attempted to register a Block with conflicting names. Old: " + block.getRegistryName() + " New: " + name);
+        return registerBlock(block.getRegistryName() != null ? block : block.setRegistryName(name));
+    }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass){ return registerBlock(block, itemclass, block.getRegistryName()); }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name){ return registerBlock(block, itemclass, name, new Object[] {}); }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs){ return registerBlock(block, itemclass, block.getRegistryName().toString(), itemCtorArgs); }
+    /**
+     * Use {@link #register(IForgeRegistryEntry)} instead
+     */
+    @Deprecated
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
+    {
+        if (Strings.isNullOrEmpty(name))
+        {
+            throw new IllegalArgumentException("Attempted to register a block with no name: " + block);
+        }
+        if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
+        {
+            FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
+        }
+        try
+        {
+            assert block != null : "registerBlock: block cannot be null";
+            if (block.getRegistryName() != null && !block.getRegistryName().toString().equals(name))
+                throw new IllegalArgumentException("Attempted to register a Block with conflicting names. Old: " + block.getRegistryName() + " New: " + name);
+            ItemBlock i = null;
+            if (itemclass != null)
+            {
+                Class<?>[] ctorArgClasses = new Class<?>[itemCtorArgs.length + 1];
+                ctorArgClasses[0] = Block.class;
+                for (int idx = 1; idx < ctorArgClasses.length; idx++)
+                {
+                    ctorArgClasses[idx] = itemCtorArgs[idx - 1].getClass();
+                }
+                Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
+                i = itemCtor.newInstance(ObjectArrays.concat(block, itemCtorArgs));
+            }
+            // block registration has to happen first
+            register(block.getRegistryName() == null ? block.setRegistryName(name) : block);
+            if (i != null)
+                register(i.setRegistryName(name));
+            return block;
+        } catch (Exception e)
+        {
+            FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
+            throw new LoaderException(e);
+        }
+    }
+
+    /**
+     *
+     * Use Block.REGISTRY.getValue(ResourceLocation) instead!
+     *
+     *
+     * Look up a mod block in the global "named item list"
+     *
+     * @param modId The modid owning the block
+     * @param name  The name of the block itself
+     * @return The block or null if not found
+     */
+    @Deprecated
+    public static Block findBlock(String modId, String name)
+    {
+        return GameData.findBlock(modId, name);
+    }
+
+    /**
+     * Use Item.REGISTRY.getValue(ResourceLocation) instead!
+     *
+     * Look up a mod item in the global "named item list"
+     *
+     * @param modId The modid owning the item
+     * @param name  The name of the item itself
+     * @return The item or null if not found
+     */
+    @Deprecated
+    public static Item findItem(String modId, String name)
+    {
+        return GameData.findItem(modId, name);
+    }
 }

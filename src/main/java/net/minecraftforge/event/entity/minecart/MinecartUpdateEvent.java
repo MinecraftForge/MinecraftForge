@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.minecart;
 
 import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * MinecartUpdateEvent is fired when a minecart is updated.<br>
@@ -18,11 +18,16 @@ import net.minecraft.util.BlockPos;
  **/
 public class MinecartUpdateEvent extends MinecartEvent
 {
-    public final BlockPos pos;
+    private final BlockPos pos;
 
     public MinecartUpdateEvent(EntityMinecart minecart, BlockPos pos)
     {
         super(minecart);
         this.pos = pos;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
     }
 }

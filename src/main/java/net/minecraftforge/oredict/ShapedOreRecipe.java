@@ -135,15 +135,15 @@ public class ShapedOreRecipe implements IRecipe
 
         for(int i = 0; i < input.length; i++)
         {
-            ItemStack ingred = recipe.recipeItems[i];
+            ItemStack ingredient = recipe.recipeItems[i];
 
-            if(ingred == null) continue;
+            if(ingredient == null) continue;
 
             input[i] = recipe.recipeItems[i];
 
             for(Entry<ItemStack, String> replace : replacements.entrySet())
             {
-                if(OreDictionary.itemMatches(replace.getKey(), ingred, true))
+                if(OreDictionary.itemMatches(replace.getKey(), ingredient, true))
                 {
                     input[i] = OreDictionary.getOres(replace.getValue());
                     break;

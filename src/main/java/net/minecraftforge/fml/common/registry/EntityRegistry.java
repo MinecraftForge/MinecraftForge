@@ -13,12 +13,9 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -32,6 +29,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
@@ -114,12 +113,10 @@ public class EntityRegistry
 
     private static final EntityRegistry INSTANCE = new EntityRegistry();
 
-    private BitSet availableIndicies;
+    private BitSet availableIndices;
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
-    private Map<String, EntityList.EntityEggInfo> entityEggs = Maps.newHashMap();
-    private Map<String, EntityList.EntityEggInfo> entityEggsUn = Collections.unmodifiableMap(entityEggs);
 
     public static EntityRegistry instance()
     {
@@ -128,11 +125,11 @@ public class EntityRegistry
 
     private EntityRegistry()
     {
-        availableIndicies = new BitSet(256);
-        availableIndicies.set(1,255);
+        availableIndices = new BitSet(256);
+        availableIndices.set(1,255);
         for (Object id : EntityList.idToClassMapping.keySet())
         {
-            availableIndicies.clear((Integer)id);
+            availableIndices.clear((Integer)id);
         }
     }
 
@@ -214,26 +211,20 @@ public class EntityRegistry
      * @throws IllegalArgumentException if entityClass is not registered in classToStringMapping.
      *
      */
+
     public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
     {
-        if (!EntityList.classToStringMapping.containsKey(entityClass))
-            throw new IllegalArgumentException("Entity not registered in classToString map: " + entityClass);
-
-        String name = (String)EntityList.classToStringMapping.get(entityClass);
-        EntityRegistry.instance().entityEggs.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
-        FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
+        if (EntityList.classToStringMapping.containsKey(entityClass))
+        {
+            String name = EntityList.classToStringMapping.get(entityClass);
+            EntityList.entityEggs.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
+            FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
+        }
+        else
+        {
+            FMLLog.fine("Failed registering entity egg %s (No entity found)", entityClass.getName());
+        }
     }
-
-    /**
-     * Returns a Unmodifiable view of the registered entity eggs list.
-     *
-     * @return An Unmodifiable view of the registered entity eggs list.
-     */
-    public static Map<String, EntityList.EntityEggInfo> getEggs()
-    {
-        return instance().entityEggsUn;
-    }
-
     /**
      * Registers in the minecraft Entity ID list. This is generally not a good idea and shouldn't be used.
      * Simply use {@link #registerModEntity(Class, String, int, Object, int, int, boolean, int, int)} instead.
@@ -318,11 +309,11 @@ public class EntityRegistry
             FMLLog.log(Level.ERROR, "The entity ID %d for mod %s is not an unsigned byte and may not work", id, Loader.instance().activeModContainer().getModId());
         }
 
-        if (!availableIndicies.get(realId))
+        if (!availableIndices.get(realId))
         {
             FMLLog.severe("The mod %s has attempted to register an entity ID %d which is already reserved. This could cause severe problems", Loader.instance().activeModContainer().getModId(), id);
         }
-        availableIndicies.clear(realId);
+        availableIndices.clear(realId);
         return realId;
     }
 
@@ -426,10 +417,10 @@ public class EntityRegistry
     @Deprecated
     public static int findGlobalUniqueEntityId()
     {
-        int res = instance().availableIndicies.nextSetBit(0);
+        int res = instance().availableIndices.nextSetBit(0);
         if (res < 0)
         {
-            throw new RuntimeException("No more entity indicies left");
+            throw new RuntimeException("No more entity indices left");
         }
         return res;
     }

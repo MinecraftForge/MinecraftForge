@@ -77,7 +77,7 @@ public class ProxyInjector
             }
             catch (Exception e)
             {
-                FMLLog.log(Level.ERROR, e, "An error occured trying to load a proxy into %s.%s", targ.getAnnotationInfo(), targ.getClassName(), targ.getObjectName());
+                FMLLog.log(Level.ERROR, e, "An error occurred trying to load a proxy into %s.%s", targ.getAnnotationInfo(), targ.getClassName(), targ.getObjectName());
                 throw new LoaderException(e);
             }
         }

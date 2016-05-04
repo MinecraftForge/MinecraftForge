@@ -25,10 +25,10 @@ import net.minecraftforge.fml.common.Mod;
  */
 public class FMLFingerprintViolationEvent extends FMLEvent {
 
-    public final boolean isDirectory;
-    public final Set<String> fingerprints;
-    public final File source;
-    public final String expectedFingerprint;
+    private final boolean isDirectory;
+    private final Set<String> fingerprints;
+    private final File source;
+    private final String expectedFingerprint;
 
     public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint)
     {
@@ -38,4 +38,9 @@ public class FMLFingerprintViolationEvent extends FMLEvent {
         this.fingerprints = fingerprints;
         this.expectedFingerprint = expectedFingerprint;
     }
+
+    public boolean isDirectory() { return isDirectory; }
+    public Set<String> getFingerprints() { return fingerprints; }
+    public File getSource() { return source; }
+    public String getExpectedFingerprint() { return expectedFingerprint; }
 }

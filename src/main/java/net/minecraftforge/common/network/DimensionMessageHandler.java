@@ -2,6 +2,7 @@ package net.minecraftforge.common.network;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.network.ForgeMessage.DimensionRegisterMessage;
 import org.apache.logging.log4j.Level;
@@ -13,7 +14,7 @@ public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMe
     {
         if (!DimensionManager.isDimensionRegistered(msg.dimensionId))
         {
-            DimensionManager.registerDimension(msg.dimensionId, msg.providerId);
+            DimensionManager.registerDimension(msg.dimensionId, DimensionType.valueOf(msg.providerId));
         }
     }
     @Override

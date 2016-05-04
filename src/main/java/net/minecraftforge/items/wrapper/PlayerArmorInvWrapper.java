@@ -1,53 +1,41 @@
 package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-public class PlayerArmorInvWrapper extends InvWrapper
+public class PlayerArmorInvWrapper extends RangedWrapper
 {
-    public final InventoryPlayer inventoryPlayer;
-    public final int offset;
+    private final InventoryPlayer inventoryPlayer;
 
     public PlayerArmorInvWrapper(InventoryPlayer inv)
     {
-        super(inv);
-
+        super(new InvWrapper(inv), inv.mainInventory.length, inv.mainInventory.length + inv.armorInventory.length);
         inventoryPlayer = inv;
-        offset = inventoryPlayer.mainInventory.length;
-    }
-
-    @Override
-    public int getSlots()
-    {
-        return inventoryPlayer.armorInventory.length;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slot)
-    {
-        return super.getStackInSlot(slot + offset);
     }
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
     {
-        // check if it's valid for the armor slot
-        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, 3 - slot, inventoryPlayer.player))
+        EntityEquipmentSlot equ = null;
+        for (EntityEquipmentSlot s : EntityEquipmentSlot.values())
         {
-            return super.insertItem(slot + offset, stack, simulate);
+            if (s.getSlotType() == EntityEquipmentSlot.Type.ARMOR && s.getIndex() == slot)
+            {
+                equ = s;
+                break;
+            }
+        }
+        // check if it's valid for the armor slot
+        if (slot < 4 && stack != null && stack.getItem().isValidArmor(stack, equ, getInventoryPlayer().player))
+        {
+            return super.insertItem(slot, stack, simulate);
         }
         return stack;
     }
 
-    @Override
-    public void setStackInSlot(int slot, ItemStack stack)
+    public InventoryPlayer getInventoryPlayer()
     {
-        super.setStackInSlot(slot + offset, stack);
-    }
-
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
-        return super.extractItem(slot + offset, amount, simulate);
+        return inventoryPlayer;
     }
 }

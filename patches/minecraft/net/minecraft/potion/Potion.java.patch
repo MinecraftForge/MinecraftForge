@@ -1,49 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/potion/Potion.java
 +++ ../src-work/minecraft/net/minecraft/potion/Potion.java
-@@ -21,7 +21,7 @@
+@@ -21,9 +21,9 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
  
- public class Potion
+-public class Potion
++public class Potion extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Potion>
  {
--    public static final Potion[] field_76425_a = new Potion[32];
-+    public static final Potion[] field_76425_a = new Potion[256];
-     private static final Map<ResourceLocation, Potion> field_180150_I = Maps.<ResourceLocation, Potion>newHashMap();
-     public static final Potion field_180151_b = null;
-     public static final Potion field_76424_c = (new Potion(1, new ResourceLocation("speed"), false, 8171462)).func_76390_b("potion.moveSpeed").func_76399_b(0, 0).func_111184_a(SharedMonsterAttributes.field_111263_d, "91AEAA56-376B-4498-935B-2F7F68070635", 0.20000000298023224D, 2);
-@@ -64,10 +64,10 @@
-     private double field_76412_L;
-     private boolean field_76413_M;
- 
-+    @Deprecated // use the Constructor without potion ID or everything will explode.
-     protected Potion(int p_i45897_1_, ResourceLocation p_i45897_2_, boolean p_i45897_3_, int p_i45897_4_)
-     {
--        this.field_76415_H = p_i45897_1_;
--        field_76425_a[p_i45897_1_] = this;
-+        net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().func_177775_a(p_i45897_1_, p_i45897_2_, this);
-         field_180150_I.put(p_i45897_2_, this);
-         this.field_76418_K = p_i45897_3_;
- 
-@@ -83,14 +83,18 @@
-         this.field_76414_N = p_i45897_4_;
-     }
- 
-+    protected Potion(ResourceLocation location, boolean badEffect, int potionColor) {
-+        this(-1, location, badEffect, potionColor);
-+    }
-+
-     public static Potion func_180142_b(String p_180142_0_)
-     {
--        return (Potion)field_180150_I.get(new ResourceLocation(p_180142_0_));
-+        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().func_82594_a(new ResourceLocation(p_180142_0_));
-     }
- 
-     public static Set<ResourceLocation> func_181168_c()
-     {
--        return field_180150_I.keySet();
-+        return net.minecraftforge.fml.common.registry.GameData.getPotionRegistry().func_148742_b();
-     }
- 
-     protected Potion func_76399_b(int p_76399_1_, int p_76399_2_)
-@@ -230,7 +234,6 @@
+-    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced();
++    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.fml.common.registry.GameData.getPotionRegistry();
+     private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
+     private final boolean field_76418_K;
+     private final int field_76414_N;
+@@ -195,7 +195,6 @@
          return this.field_76417_J;
      }
  
@@ -51,11 +20,10 @@
      public boolean func_76398_f()
      {
          return this.field_76418_K;
-@@ -310,4 +313,34 @@
-     {
+@@ -266,7 +265,61 @@
          return p_111183_2_.func_111164_d() * (double)(p_111183_1_ + 1);
      }
-+
+ 
 +    /* ======================================== FORGE START =====================================*/
 +
 +    /**
@@ -76,6 +44,16 @@
 +    }
 +
 +    /**
++     * If the Potion effect should be displayed in the player's ingame HUD
++     * @param effect the active PotionEffect
++     * @return true to display it (default), false to hide it.
++     */
++    public boolean shouldRenderHUD(PotionEffect effect)
++    {
++        return true;
++    }
++
++    /**
 +     * Called to draw the this Potion onto the player's inventory when it's active.
 +     * This can be used to e.g. render Potion icons from your own texture.
 +     * @param x the x coordinate
@@ -83,6 +61,24 @@
 +     * @param effect the active PotionEffect
 +     * @param mc the Minecraft instance, for convenience
 +     */
-+    @SideOnly(Side.CLIENT)
+     @SideOnly(Side.CLIENT)
 +    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
- }
++
++    /**
++     * Called to draw the this Potion onto the player's ingame HUD when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param effect the active PotionEffect
++     * @param mc the Minecraft instance, for convenience
++     * @param alpha the alpha value, blinks when the potion is about to run out
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) { }
++
++    /* ======================================== FORGE END =====================================*/
++
++    @SideOnly(Side.CLIENT)
+     public boolean func_188408_i()
+     {
+         return this.field_188415_h;

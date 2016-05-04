@@ -12,14 +12,14 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Cancelable
 public class MouseEvent extends Event
 {
-    public final int x;
-    public final int y;
-    public final int dx;
-    public final int dy;
-    public final int dwheel;
-    public final int button;
-    public final boolean buttonstate;
-    public final long nanoseconds;
+    private final int x;
+    private final int y;
+    private final int dx;
+    private final int dy;
+    private final int dwheel;
+    private final int button;
+    private final boolean buttonstate;
+    private final long nanoseconds;
 
     public MouseEvent()
     {
@@ -32,4 +32,13 @@ public class MouseEvent extends Event
         this.buttonstate = Mouse.getEventButtonState();
         this.nanoseconds = Mouse.getEventNanoseconds();
     }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getDx() { return dx; }
+    public int getDy() { return dy; }
+    public int getDwheel() { return dwheel; }
+    public int getButton() { return button; }
+    public boolean isButtonstate() { return buttonstate; }
+    public long getNanoseconds() { return nanoseconds; }
 }

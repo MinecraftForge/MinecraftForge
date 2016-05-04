@@ -20,6 +20,11 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         stacks = new ItemStack[size];
     }
 
+    public ItemStackHandler(ItemStack[] stacks)
+    {
+        this.stacks = stacks;
+    }
+
     public void setSize(int size)
     {
         stacks = new ItemStack[size];

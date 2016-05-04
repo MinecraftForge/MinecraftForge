@@ -1,39 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
-@@ -9,7 +9,7 @@
- import net.minecraft.util.EnumParticleTypes;
+@@ -13,7 +13,7 @@
  import net.minecraft.world.World;
+ import net.minecraft.world.storage.loot.LootTableList;
  
 -public class EntityMooshroom extends EntityCow
 +public class EntityMooshroom extends EntityCow implements net.minecraftforge.common.IShearable
  {
      public EntityMooshroom(World p_i1687_1_)
      {
-@@ -18,6 +18,7 @@
+@@ -22,6 +22,7 @@
          this.field_175506_bl = Blocks.field_150391_bh;
      }
  
 +    @SuppressWarnings("unused")
-     public boolean func_70085_c(EntityPlayer p_70085_1_)
+     public boolean func_184645_a(EntityPlayer p_184645_1_, EnumHand p_184645_2_, ItemStack p_184645_3_)
      {
-         ItemStack itemstack = p_70085_1_.field_71071_by.func_70448_g();
+         if (p_184645_3_ != null && p_184645_3_.func_77973_b() == Items.field_151054_z && this.func_70874_b() >= 0 && !p_184645_1_.field_71075_bZ.field_75098_d)
 @@ -37,7 +38,7 @@
-             }
-         }
  
--        if (itemstack != null && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0)
-+        if (false && itemstack != null && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) //Forge Disable, Moved to onSheared
+             return true;
+         }
+-        else if (p_184645_3_ != null && p_184645_3_.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0)
++        else if (false && p_184645_3_ != null && p_184645_3_.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) //Forge Disable, Moved to onSheared
          {
              this.func_70106_y();
              this.field_70170_p.func_175688_a(EnumParticleTypes.EXPLOSION_LARGE, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D, new int[0]);
-@@ -77,4 +78,33 @@
-     {
+@@ -78,6 +79,35 @@
          return new EntityMooshroom(this.field_70170_p);
      }
-+
-+    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos){ return func_70874_b() >= 0; }
+ 
++    @Override public boolean isShearable(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.math.BlockPos pos){ return func_70874_b() >= 0; }
 +    @Override
-+    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.BlockPos pos, int fortune)
++    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, net.minecraft.util.math.BlockPos pos, int fortune)
 +    {
 +        this.func_70106_y();
 +        this.field_70170_p.func_175688_a(EnumParticleTypes.EXPLOSION_LARGE, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D, new int[0]);
@@ -56,7 +55,10 @@
 +            ret.add(new ItemStack(Blocks.field_150337_Q));
 +        }
 +
-+        this.func_85030_a("mob.sheep.shear", 1.0F, 1.0F);
++        this.func_184185_a(SoundEvents.field_187784_dt, 1.0F, 1.0F);
 +        return ret;
 +    }
- }
++
+     protected ResourceLocation func_184647_J()
+     {
+         return LootTableList.field_186400_H;

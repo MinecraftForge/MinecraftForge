@@ -13,6 +13,6 @@ public class BrewingRecipe extends AbstractBrewingRecipe<ItemStack> {
     @Override
     public boolean isIngredient(ItemStack stack)
     {
-        return OreDictionary.itemMatches(this.ingredient, stack, false);
+        return OreDictionary.itemMatches(this.getIngredient(), stack, false);
     }
 }

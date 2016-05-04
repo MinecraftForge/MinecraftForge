@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -58,12 +58,17 @@
+@@ -56,18 +56,24 @@
      {
          Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
          Arrays.sort((Object[])astitcher$holder);
@@ -18,15 +18,14 @@
                  throw new StitcherException(stitcher$holder, s);
              }
          }
-@@ -73,6 +78,7 @@
-             this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
-             this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
-         }
+ 
+         this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
+         this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
 +        net.minecraftforge.fml.common.ProgressManager.pop(bar);
      }
  
      public List<TextureAtlasSprite> func_94309_g()
-@@ -260,7 +266,7 @@
+@@ -238,7 +244,7 @@
  
              public String toString()
              {

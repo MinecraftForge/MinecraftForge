@@ -19,11 +19,16 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 @Cancelable
 public class EntityTravelToDimensionEvent extends EntityEvent
 {
-    public final int dimension;
+    private final int dimension;
 
     public EntityTravelToDimensionEvent(Entity entity, int dimension)
     {
         super(entity);
         this.dimension = dimension;
+    }
+
+    public int getDimension()
+    {
+        return dimension;
     }
 }

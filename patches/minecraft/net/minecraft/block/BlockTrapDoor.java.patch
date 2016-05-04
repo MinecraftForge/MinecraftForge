@@ -1,43 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
-@@ -25,6 +25,8 @@
- 
- public class BlockTrapDoor extends Block
- {
-+    /** Set this to allow trapdoors to remain free-floating */
-+    public static boolean disableValidation = false;
-     public static final PropertyDirection field_176284_a = PropertyDirection.func_177712_a("facing", EnumFacing.Plane.HORIZONTAL);
-     public static final PropertyBool field_176283_b = PropertyBool.func_177716_a("open");
-     public static final PropertyEnum<BlockTrapDoor.DoorHalf> field_176285_M = PropertyEnum.<BlockTrapDoor.DoorHalf>func_177709_a("half", BlockTrapDoor.DoorHalf.class);
-@@ -140,9 +142,10 @@
-     {
-         if (!p_176204_1_.field_72995_K)
-         {
-+            EnumFacing direction = (EnumFacing)p_176204_3_.func_177229_b(field_176284_a);
-             BlockPos blockpos = p_176204_2_.func_177972_a(((EnumFacing)p_176204_3_.func_177229_b(field_176284_a)).func_176734_d());
- 
--            if (!func_150119_a(p_176204_1_.func_180495_p(blockpos).func_177230_c()))
-+            if (!(func_150119_a(p_176204_1_.func_180495_p(blockpos).func_177230_c()) || p_176204_1_.isSideSolid(blockpos, direction, true)))
-             {
-                 p_176204_1_.func_175698_g(p_176204_2_);
-                 this.func_176226_b(p_176204_1_, p_176204_2_, p_176204_3_, 0);
-@@ -186,7 +189,10 @@
- 
-     public boolean func_176198_a(World p_176198_1_, BlockPos p_176198_2_, EnumFacing p_176198_3_)
-     {
--        return !p_176198_3_.func_176740_k().func_176720_b() && func_150119_a(p_176198_1_.func_180495_p(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d())).func_177230_c());
-+        if (disableValidation) return true;
-+        EnumFacing dir = p_176198_3_.func_176734_d();
-+        p_176198_2_ = p_176198_2_.func_177972_a(dir);
-+        return !p_176198_3_.func_176740_k().func_176720_b() && (func_150119_a(p_176198_1_.func_180495_p(p_176198_2_).func_177230_c()) || p_176198_1_.isSideSolid(p_176198_2_, p_176198_3_, true));
+@@ -241,6 +241,18 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176284_a, field_176283_b, field_176285_M});
      }
  
-     protected static EnumFacing func_176281_b(int p_176281_0_)
-@@ -223,6 +229,7 @@
- 
-     private static boolean func_150119_a(Block p_150119_0_)
++    @Override
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
++    {
++        if (state.func_177229_b(field_176283_b))
++        {
++            IBlockState down = world.func_180495_p(pos.func_177977_b());
++            if (down.func_177230_c() == net.minecraft.init.Blocks.field_150468_ap)
++                return down.func_177229_b(BlockLadder.field_176382_a) == state.func_177229_b(field_176284_a);
++        }
++        return false;
++    }
++
+     public static enum DoorHalf implements IStringSerializable
      {
-+        if (disableValidation) return true;
-         return p_150119_0_.field_149764_J.func_76218_k() && p_150119_0_.func_149686_d() || p_150119_0_ == Blocks.field_150426_aN || p_150119_0_ instanceof BlockSlab || p_150119_0_ instanceof BlockStairs;
-     }
- 
+         TOP("top"),

@@ -2,12 +2,15 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -43,7 +46,8 @@ public class ItemTileDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerBlock(TestBlock.instance, TestBlock.name);
+            GameRegistry.register(TestBlock.instance);
+            GameRegistry.register(new ItemBlock(TestBlock.instance).setRegistryName(TestBlock.instance.getRegistryName()));
             GameRegistry.registerTileEntity(CustomTileEntity.class, MODID.toLowerCase() + ":custom_tile_entity");
         }
 
@@ -54,7 +58,7 @@ public class ItemTileDebug
 
     public static class ClientProxy extends CommonProxy
     {
-        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "inventory");
+        private static ModelResourceLocation itemLocation = new ModelResourceLocation(blockName, "normal");
 
         @SuppressWarnings("deprecation")
         @Override
@@ -82,7 +86,7 @@ public class ItemTileDebug
         @SubscribeEvent
         public void onModelBakeEvent(ModelBakeEvent event)
         {
-            event.modelManager.getBlockModelShapes().registerBuiltInBlocks(TestBlock.instance);
+            event.getModelManager().getBlockModelShapes().registerBuiltInBlocks(TestBlock.instance);
         }
     }
 
@@ -122,13 +126,14 @@ public class ItemTileDebug
             super(Material.iron);
             setCreativeTab(CreativeTabs.tabBlock);
             setUnlocalizedName(MODID + ":" + name);
+            setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
-        public boolean isOpaqueCube() { return false; }
+        public boolean isOpaqueCube(IBlockState state) { return false; }
 
         @Override
-        public boolean isFullCube() { return false; }
+        public boolean isFullCube(IBlockState state) { return false; }
 
         @Override
         public boolean isVisuallyOpaque() { return false; }

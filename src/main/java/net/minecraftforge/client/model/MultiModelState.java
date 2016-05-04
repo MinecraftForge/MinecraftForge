@@ -1,5 +1,9 @@
 package net.minecraftforge.client.model;
 
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Objects;
@@ -7,7 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class MultiModelState implements IModelState
+public final class MultiModelState implements IModelState
 {
     private final ImmutableMap<MultiModelPart, ? extends IModelState> states;
 

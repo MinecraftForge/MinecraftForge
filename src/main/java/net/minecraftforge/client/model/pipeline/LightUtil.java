@@ -1,15 +1,15 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.IColoredBakedQuad;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -71,17 +71,15 @@ public class LightUtil
         }
     }
 
-    private static final LoadingCache<VertexFormat, int[]> formatMaps = CacheBuilder.newBuilder()
+    private static final LoadingCache<Pair<VertexFormat, VertexFormat>, int[]> formatMaps = CacheBuilder.newBuilder()
         .maximumSize(10)
-        .build(new CacheLoader<VertexFormat, int[]>()
+        .build(new CacheLoader<Pair<VertexFormat, VertexFormat>, int[]>()
         {
-            public int[] load(VertexFormat format)
+            public int[] load(Pair<VertexFormat, VertexFormat> pair)
             {
-                return mapFormats(format, DefaultVertexFormats.ITEM);
+                return mapFormats(pair.getLeft(), pair.getRight());
             }
         });
-
-    private static final int itemCount = DefaultVertexFormats.ITEM.getElementCount();
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
@@ -90,22 +88,21 @@ public class LightUtil
         {
             consumer.setQuadTint(quad.getTintIndex());
         }
-        if(quad instanceof IColoredBakedQuad)
-        {
-            consumer.setQuadColored();
-        }
+        consumer.setApplyDiffuseLighting(quad.shouldApplyDiffuseLighting());
         //int[] eMap = mapFormats(consumer.getVertexFormat(), DefaultVertexFormats.ITEM);
         float[] data = new float[4];
-        VertexFormat format = consumer.getVertexFormat();
-        int count = format.getElementCount();
-        int[] eMap = formatMaps.getUnchecked(format);
+        VertexFormat formatFrom = consumer.getVertexFormat();
+        VertexFormat formatTo = quad.getFormat();
+        int countFrom = formatFrom.getElementCount();
+        int countTo = formatTo.getElementCount();
+        int[] eMap = formatMaps.getUnchecked(Pair.of(formatFrom, formatTo));
         for(int v = 0; v < 4; v++)
         {
-            for(int e = 0; e < count; e++)
+            for(int e = 0; e < countFrom; e++)
             {
-                if(eMap[e] != itemCount)
+                if(eMap[e] != countTo)
                 {
-                    unpack(quad.getVertexData(), data, DefaultVertexFormats.ITEM, v, eMap[e]);
+                    unpack(quad.getVertexData(), data, quad.getFormat(), v, eMap[e]);
                     consumer.put(e, data);
                 }
                 else
@@ -143,7 +140,7 @@ public class LightUtil
     {
         int length = 4 < to.length ? 4 : to.length;
         VertexFormatElement element = formatFrom.getElement(e);
-        int vertexStart = v * formatFrom.getNextOffset() + formatFrom.func_181720_d(e);
+        int vertexStart = v * formatFrom.getNextOffset() + formatFrom.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.EnumType type = element.getType();
         int size = type.getSize();
@@ -197,7 +194,7 @@ public class LightUtil
     public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e)
     {
         VertexFormatElement element = formatTo.getElement(e);
-        int vertexStart = v * formatTo.getNextOffset() + formatTo.func_181720_d(e);
+        int vertexStart = v * formatTo.getNextOffset() + formatTo.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.EnumType type = element.getType();
         int size = type.getSize();
@@ -240,8 +237,8 @@ public class LightUtil
         if(tessellator == null)
         {
             Tessellator tes = Tessellator.getInstance();
-            WorldRenderer wr = tes.getWorldRenderer();
-            tessellator = new WorldRendererConsumer(wr);
+            VertexBuffer wr = tes.getBuffer();
+            tessellator = new VertexBufferConsumer(wr);
         }
         return tessellator;
     }
@@ -257,16 +254,16 @@ public class LightUtil
     }
 
     // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(WorldRenderer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColorSlow(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         ItemConsumer cons;
-        if(wr == Tessellator.getInstance().getWorldRenderer())
+        if(wr == Tessellator.getInstance().getBuffer())
         {
             cons = getItemConsumer();
         }
         else
         {
-            cons = new ItemConsumer(new WorldRendererConsumer(wr));
+            cons = new ItemConsumer(new VertexBufferConsumer(wr));
         }
         float b = (float)(auxColor & 0xFF) / 0xFF;
         float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
@@ -277,22 +274,14 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(WorldRenderer wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(VertexBuffer wr, BakedQuad quad, int auxColor)
     {
         wr.addVertexData(quad.getVertexData());
-        if(quad instanceof IColoredBakedQuad)
-        {
-            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
-        }
-        else
-        {
-            wr.putColor4(auxColor);
-        }
+        ForgeHooksClient.putQuadColor(wr, quad, auxColor);
     }
 
     public static class ItemConsumer extends VertexTransformer
     {
-        private boolean colored = false;
         private int vertices = 0;
 
         private float[] auxColor = new float[]{1, 1, 1, 1};
@@ -308,23 +297,14 @@ public class LightUtil
             System.arraycopy(auxColor, 0, this.auxColor, 0, this.auxColor.length);
         }
 
-        @Override
-        public void setQuadColored()
-        {
-            colored = true;
-        }
-
         public void put(int element, float... data)
         {
             if(getVertexFormat().getElement(element).getUsage() == EnumUsage.COLOR)
             {
                 System.arraycopy(auxColor, 0, buf, 0, buf.length);
-                if(colored)
+                for(int i = 0; i < 4; i++)
                 {
-                    for(int i = 0; i < 4; i++)
-                    {
-                        buf[i] *= data[i];
-                    }
+                    buf[i] *= data[i];
                 }
                 super.put(element, buf);
             }
@@ -338,7 +318,6 @@ public class LightUtil
                 if(vertices == 4)
                 {
                     vertices = 0;
-                    colored = false;
                 }
             }
         }

@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -89,7 +89,7 @@
+@@ -87,7 +87,7 @@
      private boolean func_176529_d(World p_176529_1_, BlockPos p_176529_2_)
      {
          Block block = p_176529_1_.func_180495_p(p_176529_2_.func_177984_a()).func_177230_c();
 -        return block instanceof BlockCrops || block instanceof BlockStem;
-+        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(p_176529_1_, p_176529_2_, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
++        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(p_176529_1_.func_180495_p(p_176529_2_), p_176529_1_, p_176529_2_, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
      }
  
      private boolean func_176530_e(World p_176530_1_, BlockPos p_176530_2_)

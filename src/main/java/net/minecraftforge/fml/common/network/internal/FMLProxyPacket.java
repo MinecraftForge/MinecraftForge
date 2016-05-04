@@ -13,8 +13,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.INetHandlerPlayServer;
-import net.minecraft.network.play.client.C17PacketCustomPayload;
-import net.minecraft.network.play.server.S3FPacketCustomPayload;
+import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLNetworkException;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -39,13 +39,13 @@ public class FMLProxyPacket implements Packet<INetHandler> {
     private static Multiset<String> badPackets = ConcurrentHashMultiset.create();
     private static int packetCountWarning = Integers.parseInt(System.getProperty("fml.badPacketCounter", "100"), 100);
 
-    public FMLProxyPacket(S3FPacketCustomPayload original)
+    public FMLProxyPacket(SPacketCustomPayload original)
     {
         this(original.getBufferData(), original.getChannelName());
         this.target = Side.CLIENT;
     }
 
-    public FMLProxyPacket(C17PacketCustomPayload original)
+    public FMLProxyPacket(CPacketCustomPayload original)
     {
         this(original.getBufferData(), original.getChannelName());
         this.target = Side.SERVER;
@@ -102,7 +102,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
             catch (Throwable t)
             {
                 FMLLog.log(Level.ERROR, t, "There was a critical exception handling a packet on channel %s", channel);
-                dispatcher.rejectHandshake("A fatal error has occured, this connection is terminated");
+                dispatcher.rejectHandshake("A fatal error has occurred, this connection is terminated");
             }
         }
     }
@@ -121,10 +121,11 @@ public class FMLProxyPacket implements Packet<INetHandler> {
     }
     public Packet<INetHandlerPlayServer> toC17Packet()
     {
-        return new C17PacketCustomPayload(channel, payload);
+        return new CPacketCustomPayload(channel, payload);
     }
 
     static final int PART_SIZE = 0x1000000 - 0x50; // Make it a constant so that it gets inlined below.
+    // FIXME int overflow
     public static final int MAX_LENGTH = PART_SIZE * 255;
     public List<Packet<INetHandlerPlayClient>> toS3FPackets() throws IOException
     {
@@ -133,7 +134,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
 
         if (data.length < PART_SIZE)
         {
-            ret.add(new S3FPacketCustomPayload(channel, new PacketBuffer(payload.duplicate())));
+            ret.add(new SPacketCustomPayload(channel, new PacketBuffer(payload.duplicate())));
         }
         else
         {
@@ -146,7 +147,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
             preamble.writeString(channel);
             preamble.writeByte(parts);
             preamble.writeInt(data.length);
-            ret.add(new S3FPacketCustomPayload("FML|MP", preamble));
+            ret.add(new SPacketCustomPayload("FML|MP", preamble));
 
             int offset = 0;
             for (int x = 0; x < parts; x++)
@@ -156,7 +157,7 @@ public class FMLProxyPacket implements Packet<INetHandler> {
                 tmp[0] = (byte)(x & 0xFF);
                 System.arraycopy(data, offset, tmp, 1, tmp.length - 1);
                 offset += tmp.length - 1;
-                ret.add(new S3FPacketCustomPayload("FML|MP", new PacketBuffer(Unpooled.wrappedBuffer(tmp))));
+                ret.add(new SPacketCustomPayload("FML|MP", new PacketBuffer(Unpooled.wrappedBuffer(tmp))));
             }
         }
         return ret;

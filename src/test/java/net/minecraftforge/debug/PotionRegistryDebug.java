@@ -6,13 +6,18 @@ import gnu.trove.set.hash.TIntHashSet;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameData;
 
 @Mod(modid=PotionRegistryDebug.MODID)
 public class PotionRegistryDebug {
@@ -20,8 +25,10 @@ public class PotionRegistryDebug {
 
   @Mod.EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    new PotionForge(new ResourceLocation("forge", "forge"), false, 0xff00ff); // test automatic id distribution
-    new PotionForge(200, new ResourceLocation("forge", "forgy"), true, 0x00ff00); // test that ids above 127 work
+    Potion forge = new PotionForge(new ResourceLocation("forge", "forge"), false, 0xff00ff); // test automatic id distribution
+    Potion forgy = new PotionForge(new ResourceLocation("forge", "forgy"), true, 0x00ff00); // test that ids above 127 work
+    GameData.getPotionRegistry().register(-1, new ResourceLocation("forge", "forge"), forge); //TODo: Generic this out in GameRegistry, 'RegistryEntry' base type?
+    GameData.getPotionRegistry().register(200, new ResourceLocation("forge", "forgy"), forgy);
 
     Random rand = new Random();
     TIntSet taken = new TIntHashSet(100);
@@ -29,7 +36,7 @@ public class PotionRegistryDebug {
     taken.add(ra);
 
     // a new potion with a random id so that forge has to remap it
-    new PotionForge(ra, new ResourceLocation("forge", "realRandomPotion"), false, 0x0000ff);
+    //new PotionForge(ra, new ResourceLocation("forge", "realRandomPotion"), false, 0x0000ff);
 
     for(int i = 0; i < 20; i++) {
       int r = rand.nextInt(200) + 35;
@@ -39,25 +46,19 @@ public class PotionRegistryDebug {
       taken.add(r);
       // this potions will most likely not have the same IDs between server and client.
       // The forge handshake on connect should fix this.
-      new PotionForge(r, new ResourceLocation("forge", "randomPotion" + r), false, 0xff00ff);
+      //new PotionForge(new ResourceLocation("forge", "randomPotion" + r), false, 0xff00ff);
     }
   }
 
   protected class PotionForge extends Potion {
-
-    public PotionForge(int potionID, ResourceLocation location, boolean badEffect, int potionColor) {
-      super(potionID, location, badEffect, potionColor);
-      setPotionName("potion." + location.getResourcePath());
-    }
-
     protected PotionForge(ResourceLocation location, boolean badEffect, int potionColor) {
-      super(location, badEffect, potionColor);
+      super(badEffect, potionColor);
       setPotionName("potion." + location.getResourcePath());
     }
 
     @Override
     public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) {
-      Potion potion = Potion.potionTypes[effect.getPotionID()];
+      Potion potion = effect.getPotion();
 
       mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
       TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_0");
@@ -67,16 +68,49 @@ public class PotionRegistryDebug {
 
       int width = 18;
       int height = width;
-/*
+
+      float r = (float)(potion.getLiquidColor() >> 24 & 255) / 255.0F;
+      float g = (float)(potion.getLiquidColor() >> 16 & 255) / 255.0F;
+      float b = (float)(potion.getLiquidColor() >> 8  & 255) / 255.0F;
+      float a = (float)(potion.getLiquidColor()       & 255) / 255.0F;
+
       Tessellator tessellator = Tessellator.getInstance();
-      WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-      worldrenderer.startDrawingQuads();
-      worldrenderer.setColorOpaque_I(potion.getLiquidColor());
-      worldrenderer.addVertexWithUV((double) x, (double) (y + height), 0.0D, sprite.getMinU(), sprite.getMaxV());
-      worldrenderer.addVertexWithUV((double)(x + width), (double)(y + height), 0.0D, sprite.getMaxU(), sprite.getMaxV());
-      worldrenderer.addVertexWithUV((double)(x + width), (double)y, 0.0D, sprite.getMaxU(), sprite.getMinV());
-      worldrenderer.addVertexWithUV((double)x, (double)y, 0.0D, sprite.getMinU(), sprite.getMinV());
-      tessellator.draw();*/
+      VertexBuffer buf = tessellator.getBuffer();
+      buf.begin(7, DefaultVertexFormats.POSITION_TEX);
+      GlStateManager.color(r, g, b, a);
+      buf.pos((double) x,          (double)(y + height), 0.0D).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double)(y + height), 0.0D).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double) y,           0.0D).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
+      buf.pos((double) x,          (double) y,           0.0D).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
+      tessellator.draw();
+    }
+
+    @Override
+    public void renderHUDEffect(int x, int y, PotionEffect effect, Minecraft mc, float alpha) {
+      Potion potion = effect.getPotion();
+
+      mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+      TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/tnt_side");
+
+      x += 3;
+      y += 3;
+
+      int width = 18;
+      int height = width;
+
+      float r = (float)(potion.getLiquidColor() >> 24 & 255) / 255.0F;
+      float g = (float)(potion.getLiquidColor() >> 16 & 255) / 255.0F;
+      float b = (float)(potion.getLiquidColor() >> 8  & 255) / 255.0F;
+
+      Tessellator tessellator = Tessellator.getInstance();
+      VertexBuffer buf = tessellator.getBuffer();
+      buf.begin(7, DefaultVertexFormats.POSITION_TEX);
+      GlStateManager.color(r, g, b, alpha);
+      buf.pos((double) x,          (double)(y + height), 0.0D).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double)(y + height), 0.0D).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
+      buf.pos((double)(x + width), (double) y,           0.0D).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
+      buf.pos((double) x,          (double) y,           0.0D).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
+      tessellator.draw();
     }
   }
 }

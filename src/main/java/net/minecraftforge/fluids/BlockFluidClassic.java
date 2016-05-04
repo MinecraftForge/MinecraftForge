@@ -2,11 +2,10 @@ package net.minecraftforge.fluids;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -14,8 +13,6 @@ import net.minecraft.world.World;
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
  *
  * It is highly recommended that you use/extend this class for "classic" fluid blocks.
- *
- * @author King Lemming
  *
  */
 public class BlockFluidClassic extends BlockFluidBase
@@ -56,14 +53,14 @@ public class BlockFluidClassic extends BlockFluidBase
             return -1;
         }
 
-        int quantaRemaining = quantaPerBlock - ((Integer)state.getValue(LEVEL)).intValue();
+        int quantaRemaining = quantaPerBlock - state.getValue(LEVEL);
         return quantaRemaining;
     }
 
     @Override
     public boolean canCollideCheck(IBlockState state, boolean fullHit)
     {
-        return fullHit && ((Integer)state.getValue(LEVEL)).intValue() == 0;
+        return fullHit && state.getValue(LEVEL) == 0;
     }
 
     @Override
@@ -73,20 +70,20 @@ public class BlockFluidClassic extends BlockFluidBase
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, BlockPos pos)
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         if (maxScaledLight == 0)
         {
-            return super.getLightValue(world, pos);
+            return super.getLightValue(state, world, pos);
         }
-        int data = quantaPerBlock - ((Integer)world.getBlockState(pos).getValue(LEVEL)).intValue() - 1;
+        int data = quantaPerBlock - state.getValue(LEVEL) - 1;
         return (int) (data / quantaPerBlockFloat * maxScaledLight);
     }
 
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
-        int quantaRemaining = quantaPerBlock - ((Integer)state.getValue(LEVEL)).intValue();
+        int quantaRemaining = quantaPerBlock - state.getValue(LEVEL);
         int expQuanta = -101;
 
         // check adjacent block levels if non-source
@@ -171,7 +168,8 @@ public class BlockFluidClassic extends BlockFluidBase
 
     public boolean isSourceBlock(IBlockAccess world, BlockPos pos)
     {
-        return world.getBlockState(pos).getBlock() == this && ((Integer)world.getBlockState(pos).getValue(LEVEL)).intValue() == 0;
+        IBlockState state = world.getBlockState(pos);
+        return state.getBlock() == this && state.getValue(LEVEL) == 0;
     }
 
     protected boolean[] getOptimalFlowDirections(World world, BlockPos pos)
@@ -280,18 +278,18 @@ public class BlockFluidClassic extends BlockFluidBase
     {
         if (world.isAirBlock(pos)) return true;
 
-        Block block = world.getBlockState(pos).getBlock();
-        if (block == this)
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() == this)
         {
             return true;
         }
 
-        if (displacements.containsKey(block))
+        if (displacements.containsKey(state.getBlock()))
         {
-            return displacements.get(block);
+            return displacements.get(state.getBlock());
         }
 
-        Material material = block.getMaterial();
+        Material material = state.getMaterial();
         if (material.blocksMovement()  ||
             material == Material.water ||
             material == Material.lava  ||
@@ -312,7 +310,7 @@ public class BlockFluidClassic extends BlockFluidBase
         }
         else
         {
-        	return false;
+            return false;
         }
     }
 

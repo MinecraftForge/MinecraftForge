@@ -1,24 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -58,7 +58,7 @@
+@@ -38,7 +38,7 @@
      {
          if (!p_180650_1_.field_72995_K)
          {
--            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_177230_c().func_149717_k() > 2)
-+            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_177230_c().getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
+-            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
++            if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) > 2)
              {
                  p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
              }
-@@ -72,7 +72,7 @@
-                         Block block = p_180650_1_.func_180495_p(blockpos.func_177984_a()).func_177230_c();
-                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos);
+@@ -58,7 +58,7 @@
+                         IBlockState iblockstate = p_180650_1_.func_180495_p(blockpos.func_177984_a());
+                         IBlockState iblockstate1 = p_180650_1_.func_180495_p(blockpos);
  
--                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && block.func_149717_k() <= 2)
-+                        if (iblockstate.func_177230_c() == Blocks.field_150346_d && iblockstate.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && block.getLightOpacity(p_180650_1_, blockpos.func_177984_a()) <= 2)
+-                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate.func_185891_c() <= 2)
++                        if (iblockstate1.func_177230_c() == Blocks.field_150346_d && iblockstate1.func_177229_b(BlockDirt.field_176386_a) == BlockDirt.DirtType.DIRT && p_180650_1_.func_175671_l(blockpos.func_177984_a()) >= 4 && iblockstate.getLightOpacity(p_180650_1_, p_180650_2_.func_177984_a()) <= 2)
                          {
                              p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
                          }
-@@ -110,7 +110,7 @@
+@@ -96,7 +96,7 @@
              {
                  if (j >= i / 16)
                  {

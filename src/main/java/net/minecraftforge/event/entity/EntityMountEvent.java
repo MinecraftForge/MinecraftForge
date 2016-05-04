@@ -23,9 +23,9 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 public class EntityMountEvent extends EntityEvent
 {
     
-    public final Entity entityMounting;
-    public final Entity entityBeingMounted;
-    public final World worldObj;
+    private final Entity entityMounting;
+    private final Entity entityBeingMounted;
+    private final World worldObj;
     
     private final boolean isMounting;
 
@@ -48,4 +48,18 @@ public class EntityMountEvent extends EntityEvent
         return !isMounting;
     }
 
+    public Entity getEntityMounting()
+    {
+        return entityMounting;
+    }
+
+    public Entity getEntityBeingMounted()
+    {
+        return entityBeingMounted;
+    }
+
+    public World getWorldObj()
+    {
+        return worldObj;
+    }
 }

@@ -1,14 +1,5 @@
 package net.minecraftforge.common;
 
-import static net.minecraft.init.Blocks.diamond_block;
-import static net.minecraft.init.Blocks.diamond_ore;
-import static net.minecraft.init.Blocks.emerald_block;
-import static net.minecraft.init.Blocks.emerald_ore;
-import static net.minecraft.init.Blocks.gold_block;
-import static net.minecraft.init.Blocks.gold_ore;
-import static net.minecraft.init.Blocks.lit_redstone_ore;
-import static net.minecraft.init.Blocks.redstone_ore;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -22,21 +13,22 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.event.ClickEvent;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
@@ -45,32 +37,30 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S23PacketBlockChange;
+import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
-import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -87,16 +77,18 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class ForgeHooks
 {
+    //TODO: Loot tables?
     static class SeedEntry extends WeightedRandom.Item
     {
         public final ItemStack seed;
@@ -105,17 +97,21 @@ public class ForgeHooks
             super(weight);
             this.seed = seed;
         }
+        public ItemStack getStack(Random rand, int fortune)
+        {
+            return seed.copy();
+        }
     }
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
-    public static ItemStack getGrassSeed(Random rand)
+    public static ItemStack getGrassSeed(Random rand, int fortune)
     {
-        SeedEntry entry = (SeedEntry)WeightedRandom.getRandomItem(rand, seedList);
+        SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
         if (entry == null || entry.seed == null)
         {
             return null;
         }
-        return entry.seed.copy();
+        return entry.getStack(rand, fortune);
     }
 
     private static boolean toolInit = false;
@@ -123,24 +119,24 @@ public class ForgeHooks
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, IBlockAccess world, BlockPos pos)
     {
-        if (block.getMaterial().isToolNotRequired())
+        IBlockState state = world.getBlockState(pos);
+        state = state.getBlock().getActualState(state, world, pos);
+        if (state.getMaterial().isToolNotRequired())
         {
             return true;
         }
 
         ItemStack stack = player.inventory.getCurrentItem();
-        IBlockState state = world.getBlockState(pos);
-        state = state.getBlock().getActualState(state, world, pos);
         String tool = block.getHarvestTool(state);
         if (stack == null || tool == null)
         {
-            return player.canHarvestBlock(block);
+            return player.canHarvestBlock(state);
         }
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool);
         if (toolLevel < 0)
         {
-            return player.canHarvestBlock(block);
+            return player.canHarvestBlock(state);
         }
 
         return toolLevel >= block.getHarvestLevel(state);
@@ -157,7 +153,7 @@ public class ForgeHooks
 
     public static float blockStrength(IBlockState state, EntityPlayer player, World world, BlockPos pos)
     {
-        float hardness = state.getBlock().getBlockHardness(world, pos);
+        float hardness = state.getBlockHardness(world, pos);
         if (hardness < 0.0F)
         {
             return 0.0F;
@@ -212,7 +208,11 @@ public class ForgeHooks
         }
 
         Blocks.obsidian.setHarvestLevel("pickaxe", 3);
-        for (Block block : new Block[]{emerald_ore, emerald_block, diamond_ore, diamond_block, gold_ore, gold_block, redstone_ore, lit_redstone_ore})
+        Block[] oreBlocks = new Block[] {
+                Blocks.emerald_ore, Blocks.emerald_block, Blocks.diamond_ore, Blocks.diamond_block,
+                Blocks.gold_ore, Blocks.gold_block, Blocks.redstone_ore, Blocks.lit_redstone_ore
+        };
+        for (Block block : oreBlocks)
         {
             block.setHarvestLevel("pickaxe", 2);
         }
@@ -243,83 +243,83 @@ public class ForgeHooks
 
     static
     {
-        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10));
+        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10)
+        {
+            public ItemStack getStack(Random rand, int fortune)
+            {
+                return new ItemStack(Items.wheat_seeds, 1 + rand.nextInt(fortune * 2 + 1));
+            }
+        });
         initTools();
     }
 
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
-    public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
+    public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
     {
         /*
-            int i = 0;
-            boolean flag1 = false;
             TileEntity tileentity = null;
-            Item item;
+            ItemStack itemstack;
 
-            if (this.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
             {
                 BlockPos blockpos = this.objectMouseOver.getBlockPos();
-                Block block = this.theWorld.getBlockState(blockpos).getBlock();
+                IBlockState iblockstate = this.theWorld.getBlockState(blockpos);
+                Block block = iblockstate.getBlock();
 
-                if (block.getMaterial() == Material.air)
+                if (iblockstate.getMaterial() == Material.air)
                 {
                     return;
                 }
 
-                item = block.getItem(this.theWorld, blockpos);
+                itemstack = block.func_185473_a(this.theWorld, blockpos, iblockstate);
 
-                if (item == null)
+                if (itemstack == null)
                 {
                     return;
                 }
 
-                if (flag && GuiScreen.isCtrlKeyDown())
+                if (flag && GuiScreen.isCtrlKeyDown() && block.hasTileEntity())
                 {
                     tileentity = this.theWorld.getTileEntity(blockpos);
                 }
-
-                Block block1 = item instanceof ItemBlock && !block.isFlowerPot() ? Block.getBlockFromItem(item) : block;
-                i = block1.getDamageValue(this.theWorld, blockpos);
-                flag1 = item.getHasSubtypes();
             }
             else
             {
-                if (this.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
+                if (this.objectMouseOver.typeOfHit != RayTraceResult.Type.ENTITY || this.objectMouseOver.entityHit == null || !flag)
                 {
                     return;
                 }
 
                 if (this.objectMouseOver.entityHit instanceof EntityPainting)
                 {
-                    item = Items.painting;
+                    itemstack = new ItemStack(Items.painting);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
                 {
-                    item = Items.lead;
+                    itemstack = new ItemStack(Items.lead);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
                 {
                     EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
-                    ItemStack itemstack = entityitemframe.getDisplayedItem();
+                    ItemStack itemstack1 = entityitemframe.getDisplayedItem();
 
-                    if (itemstack == null)
+                    if (itemstack1 == null)
                     {
-                        item = Items.item_frame;
+                        itemstack = new ItemStack(Items.item_frame);
                     }
                     else
                     {
-                        item = itemstack.getItem();
-                        i = itemstack.getMetadata();
-                        flag1 = true;
+                        itemstack = ItemStack.copyItemStack(itemstack1);
                     }
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
                 {
                     EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
+                    Item item;
 
-                    switch (entityminecart.getMinecartType())
+                    switch (entityminecart.func_184264_v())
                     {
                         case FURNACE:
                             item = Items.furnace_minecart;
@@ -339,61 +339,56 @@ public class ForgeHooks
                         default:
                             item = Items.minecart;
                     }
+
+                    itemstack = new ItemStack(item);
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityBoat)
                 {
-                    item = Items.boat;
+                    itemstack = new ItemStack(((EntityBoat)this.objectMouseOver.entityHit).func_184455_j());
                 }
                 else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
                 {
-                    item = Items.armor_stand;
+                    itemstack = new ItemStack(Items.armor_stand);
+                }
+                else if (this.objectMouseOver.entityHit instanceof EntityEnderCrystal)
+                {
+                    itemstack = new ItemStack(Items.field_185158_cP);
                 }
                 else
                 {
-                    item = Items.spawn_egg;
-                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
-                    flag1 = true;
+                    String s = EntityList.getEntityString(this.objectMouseOver.entityHit);
 
-                    if (!EntityList.entityEggs.containsKey(Integer.valueOf(i)))
+                    if (!EntityList.entityEggs.containsKey(s))
                     {
                         return;
                     }
+
+                    itemstack = new ItemStack(Items.spawn_egg);
+                    ItemMonsterPlacer.func_185078_a(itemstack, s);
                 }
-            }
-
-            InventoryPlayer inventoryplayer = this.thePlayer.inventory;
-
-            if (tileentity == null)
-            {
-                inventoryplayer.setCurrentItem(item, i, flag1, flag);
-            }
-            else
-            {
-                ItemStack itemstack1 = this.func_181036_a(item, i, tileentity);
-                inventoryplayer.setInventorySlotContents(inventoryplayer.currentItem, itemstack1);
             }
          */
         ItemStack result = null;
         boolean isCreative = player.capabilities.isCreativeMode;
         TileEntity te = null;
 
-        if (target.typeOfHit == MovingObjectType.BLOCK)
+        if (target.typeOfHit == RayTraceResult.Type.BLOCK)
         {
             IBlockState state = world.getBlockState(target.getBlockPos());
 
-            if (state.getBlock().isAir(world, target.getBlockPos()))
+            if (state.getBlock().isAir(state, world, target.getBlockPos()))
             {
                 return false;
             }
 
-            if (isCreative && GuiScreen.isCtrlKeyDown())
+            if (isCreative && GuiScreen.isCtrlKeyDown() && state.getBlock().hasTileEntity(state))
                 te = world.getTileEntity(target.getBlockPos());
 
-            result = state.getBlock().getPickBlock(target, world, target.getBlockPos(), player);
+            result = state.getBlock().getPickBlock(state, target, world, target.getBlockPos(), player);
         }
         else
         {
-            if (target.typeOfHit != MovingObjectType.ENTITY || target.entityHit == null || !isCreative)
+            if (target.typeOfHit != RayTraceResult.Type.ENTITY || target.entityHit == null || !isCreative)
             {
                 return false;
             }
@@ -406,48 +401,48 @@ public class ForgeHooks
             return false;
         }
 
+        if (result.getItem() == null)
+        {
+            String s1 = "";
+
+            if (target.typeOfHit == RayTraceResult.Type.BLOCK)
+            {
+                s1 = Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
+            }
+            else if (target.typeOfHit == RayTraceResult.Type.ENTITY)
+            {
+                s1 = EntityList.getEntityString(target.entityHit);
+            }
+
+            FMLLog.warning("Picking on: [%s] %s gave null item", target.typeOfHit, s1);
+            return true;
+        }
+
         if (te != null)
         {
-            NBTTagCompound nbt = new NBTTagCompound();
-            te.writeToNBT(nbt);
-            result.setTagInfo("BlockEntityTag", nbt);
-
-            NBTTagCompound display = new NBTTagCompound();
-            result.setTagInfo("display", display);
-
-            NBTTagList lore = new NBTTagList();
-            display.setTag("Lore", lore);
-            lore.appendTag(new NBTTagString("(+NBT)"));
+            Minecraft.getMinecraft().storeTEInStack(result, te);
         }
 
-        for (int x = 0; x < 9; x++)
+        if (isCreative)
         {
-            ItemStack stack = player.inventory.getStackInSlot(x);
-            if (stack != null && stack.isItemEqual(result) && ItemStack.areItemStackTagsEqual(stack, result))
-            {
-                player.inventory.currentItem = x;
-                return true;
-            }
+            player.inventory.func_184434_a(result);
+            Minecraft.getMinecraft().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
+            return true;
         }
-
-        if (!isCreative)
+        int slot = player.inventory.getSlotFor(result);
+        if (slot != -1)
         {
-            return false;
+            if (InventoryPlayer.isHotbar(slot))
+                player.inventory.currentItem = slot;
+            else
+                Minecraft.getMinecraft().playerController.pickItem(slot);
+            return true;
         }
-
-        int slot = player.inventory.getFirstEmptyStack();
-        if (slot < 0 || slot >= 9)
-        {
-            slot = player.inventory.currentItem;
-        }
-
-        player.inventory.setInventorySlotContents(slot, result);
-        player.inventory.currentItem = slot;
-        return true;
+        return false;
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optfine, these methods are invoked using reflection, which
+    //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
     public static void onLivingSetAttackTarget(EntityLivingBase entity, EntityLivingBase target)
     {
@@ -467,7 +462,7 @@ public class ForgeHooks
     public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
     public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
@@ -483,16 +478,16 @@ public class ForgeHooks
     public static float[] onLivingFall(EntityLivingBase entity, float distance, float damageMultiplier)
     {
         LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
-        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.distance, event.damageMultiplier});
+        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static boolean isLivingOnLadder(Block block, World world, BlockPos pos, EntityLivingBase entity)
+    public static boolean isLivingOnLadder(IBlockState state, World world, BlockPos pos, EntityLivingBase entity)
     {
         boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).isSpectator());
         if (isSpectator) return false;
         if (!ForgeModContainer.fullBoundingBoxLadders)
         {
-            return block != null && block.isLadder(world, pos, entity);
+            return state != null && state.getBlock().isLadder(state, world, pos, entity);
         }
         else
         {
@@ -507,7 +502,8 @@ public class ForgeHooks
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
-                        if (world.getBlockState(tmp).getBlock().isLadder(world, tmp, entity))
+                        state = world.getBlockState(tmp);
+                        if (state.getBlock().isLadder(state, world, tmp, entity))
                         {
                             return true;
                         }
@@ -541,8 +537,11 @@ public class ForgeHooks
             return null;
         }
 
-        player.joinEntityItemWithWorld(event.entityItem);
-        return event.entityItem;
+        if (!player.worldObj.isRemote)
+        {
+            player.getEntityWorld().spawnEntityInWorld(event.getEntityItem());
+        }
+        return event.getEntityItem();
     }
 
     public static float getEnchantPower(World world, BlockPos pos)
@@ -550,15 +549,14 @@ public class ForgeHooks
         return world.getBlockState(pos).getBlock().getEnchantPowerBonus(world, pos);
     }
 
-    @SuppressWarnings("deprecation")
-    public static ChatComponentTranslation onServerChatEvent(NetHandlerPlayServer net, String raw, ChatComponentTranslation comp)
+    public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.playerEntity, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
         }
-        return event.component;
+        return event.getComponent();
     }
 
 
@@ -568,13 +566,13 @@ public class ForgeHooks
             "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_\\.]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
             Pattern.CASE_INSENSITIVE);
 
-    public static IChatComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
-    public static IChatComponent newChatWithLinks(String string, boolean allowMissingHeader)
+    public static ITextComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
+    public static ITextComponent newChatWithLinks(String string, boolean allowMissingHeader)
     {
         // Includes ipv4 and domain pattern
         // Matches an ip (xx.xxx.xx.xxx) or a domain (something.com) with or
         // without a protocol or path.
-        IChatComponent ichat = null;
+        ITextComponent ichat = null;
         Matcher matcher = URL_PATTERN.matcher(string);
         int lastEnd = 0;
 
@@ -589,13 +587,13 @@ public class ForgeHooks
             if (part.length() > 0)
             {
                 if (ichat == null)
-                    ichat = new ChatComponentText(part);
+                    ichat = new TextComponentString(part);
                 else
                     ichat.appendText(part);
             }
             lastEnd = end;
             String url = string.substring(start, end);
-            IChatComponent link = new ChatComponentText(url);
+            ITextComponent link = new TextComponentString(url);
 
             try
             {
@@ -605,7 +603,7 @@ public class ForgeHooks
                     if (!allowMissingHeader)
                     {
                         if (ichat == null)
-                            ichat = new ChatComponentText(url);
+                            ichat = new TextComponentString(url);
                         else
                             ichat.appendText(url);
                         continue;
@@ -616,7 +614,7 @@ public class ForgeHooks
             catch (URISyntaxException e)
             {
                 // Bad syntax bail out!
-                if (ichat == null) ichat = new ChatComponentText(url);
+                if (ichat == null) ichat = new TextComponentString(url);
                 else ichat.appendText(url);
                 continue;
             }
@@ -625,7 +623,7 @@ public class ForgeHooks
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
             link.getChatStyle().setChatClickEvent(click);
             link.getChatStyle().setUnderlined(true);
-            link.getChatStyle().setColor(EnumChatFormatting.BLUE);
+            link.getChatStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
                 ichat = link;
             else
@@ -635,7 +633,7 @@ public class ForgeHooks
         // Append the rest of the message.
         String end = string.substring(lastEnd);
         if (ichat == null)
-            ichat = new ChatComponentText(end);
+            ichat = new TextComponentString(end);
         else if (end.length() > 0)
             ichat.appendText(string.substring(lastEnd));
         return ichat;
@@ -645,14 +643,14 @@ public class ForgeHooks
     {
         PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player, openContainer);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.DEFAULT ? event.canInteractWith : event.getResult() == Event.Result.ALLOW ? true : false;
+        return event.getResult() == Event.Result.DEFAULT ? event.isCanInteractWith() : event.getResult() == Event.Result.ALLOW ? true : false;
     }
 
     public static int onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, BlockPos pos)
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
-        if (gameType.isCreative() && entityPlayer.getHeldItem() != null && entityPlayer.getHeldItem().getItem() instanceof ItemSword)
+        if (gameType.isCreative() && entityPlayer.getHeldItemMainhand() != null && entityPlayer.getHeldItemMainhand().getItem() instanceof ItemSword)
             preCancelEvent = true;
 
         if (gameType.isAdventure())
@@ -662,7 +660,7 @@ public class ForgeHooks
 
             if (!entityPlayer.isAllowEdit())
             {
-                ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
+                ItemStack itemstack = entityPlayer.getHeldItemMainhand();
                 if (itemstack == null || !itemstack.canDestroy(world.getBlockState(pos).getBlock()))
                     preCancelEvent = true;
             }
@@ -671,7 +669,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (world.getTileEntity(pos) == null)
         {
-            S23PacketBlockChange packet = new S23PacketBlockChange(world, pos);
+            SPacketBlockChange packet = new SPacketBlockChange(world, pos);
             packet.blockState = Blocks.air.getDefaultState();
             entityPlayer.playerNetServerHandler.sendPacket(packet);
         }
@@ -686,7 +684,7 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.playerNetServerHandler.sendPacket(new S23PacketBlockChange(world, pos));
+            entityPlayer.playerNetServerHandler.sendPacket(new SPacketBlockChange(world, pos));
 
             // Update any tile entity data for this block
             TileEntity tileentity = world.getTileEntity(pos);
@@ -702,7 +700,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static boolean onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public static EnumActionResult onPlaceItemIntoWorld(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
     {
         // handle all placement events here
         int meta = itemstack.getItemDamage();
@@ -718,10 +716,10 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        boolean flag = itemstack.getItem().onItemUse(itemstack, player, world, pos, side, hitX, hitY, hitZ);
+        EnumActionResult ret = itemstack.getItem().onItemUse(itemstack, player, world, pos, hand, side, hitX, hitY, hitZ);
         world.captureBlockSnapshots = false;
 
-        if (flag)
+        if (ret == EnumActionResult.SUCCESS)
         {
             // save new item data
             int newMeta = itemstack.getItemDamage();
@@ -754,7 +752,7 @@ public class ForgeHooks
 
             if (placeEvent != null && (placeEvent.isCanceled()))
             {
-                flag = false; // cancel placement
+                ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
                 for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots)
                 {
@@ -775,33 +773,33 @@ public class ForgeHooks
 
                 for (BlockSnapshot snap : blockSnapshots)
                 {
-                    int updateFlag = snap.flag;
-                    IBlockState oldBlock = snap.replacedBlock;
-                    IBlockState newBlock = world.getBlockState(snap.pos);
+                    int updateFlag = snap.getFlag();
+                    IBlockState oldBlock = snap.getReplacedBlock();
+                    IBlockState newBlock = world.getBlockState(snap.getPos());
                     if (newBlock != null && !(newBlock.getBlock().hasTileEntity(newBlock))) // Containers get placed automatically
                     {
-                        newBlock.getBlock().onBlockAdded(world, snap.pos, newBlock);
+                        newBlock.getBlock().onBlockAdded(world, snap.getPos(), newBlock);
                     }
 
-                    world.markAndNotifyBlock(snap.pos, null, oldBlock, newBlock, updateFlag);
+                    world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.objectUseStats[Item.getIdFromItem(itemstack.getItem())], 1);
+                player.addStat(StatList.func_188060_a(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
 
-        return flag;
+        return ret;
     }
 
     public static boolean onAnvilChange(ContainerRepair container, ItemStack left, ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
-        if (e.output == null) return true;
+        if (e.getOutput() == null) return true;
 
-        outputSlot.setInventorySlotContents(0, e.output);
-        container.maximumCost = e.cost;
-        container.materialCost = e.materialCost;
+        outputSlot.setInventorySlotContents(0, e.getOutput());
+        container.maximumCost = e.getCost();
+        container.materialCost = e.getMaterialCost();
         return false;
     }
 
@@ -809,7 +807,7 @@ public class ForgeHooks
     {
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
-        return e.breakChance;
+        return e.getBreakChance();
     }
 
     public static boolean onNoteChange(TileEntityNote te, byte old)
@@ -861,17 +859,12 @@ public class ForgeHooks
             stack = stack.getItem().getContainerItem(stack);
             if (stack != null && stack.isItemStackDamageable() && stack.getMetadata() > stack.getMaxDamage())
             {
-                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(craftingPlayer.get(), stack));
+                ForgeEventFactory.onPlayerDestroyItem(craftingPlayer.get(), stack, null);
                 return null;
             }
             return stack;
         }
         return null;
-    }
-
-    public static WorldGeneratorBonusChest getBonusChest(Random rand)
-    {
-        return new WorldGeneratorBonusChest(ChestGenHooks.getItems(ChestGenHooks.BONUS_CHEST, rand), ChestGenHooks.getCount(ChestGenHooks.BONUS_CHEST, rand));
     }
 
     public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
@@ -894,18 +887,18 @@ public class ForgeHooks
         {
             filled *= -1;
             //filled -= 0.11111111F; //Why this is needed.. not sure...
-            return eyes > (double)(pos.getY() + 1 + (1 - filled));
+            return eyes > pos.getY() + 1 + (1 - filled);
         }
         else
         {
-            return eyes < (double)(pos.getY() + 1 + filled);
+            return eyes < pos.getY() + 1 + filled;
         }
     }
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
     {
         if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
-        ItemStack stack = player.getCurrentEquippedItem();
+        ItemStack stack = player.getHeldItemMainhand();
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
     }
@@ -925,16 +918,56 @@ public class ForgeHooks
         return !event.isCanceled();
     }
 
-    public static MovingObjectPosition rayTraceEyes(EntityLivingBase entity, double length)
+    public static RayTraceResult rayTraceEyes(EntityLivingBase entity, double length)
     {
-        Vec3 startPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
-        Vec3 endPos = startPos.add(new Vec3(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
+        Vec3d startPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        Vec3d endPos = startPos.add(new Vec3d(entity.getLookVec().xCoord * length, entity.getLookVec().yCoord * length, entity.getLookVec().zCoord * length));
         return entity.worldObj.rayTraceBlocks(startPos, endPos);
     }
 
-    public static Vec3 rayTraceEyeHitVec(EntityLivingBase entity, double length)
+    public static Vec3d rayTraceEyeHitVec(EntityLivingBase entity, double length)
     {
-        MovingObjectPosition movingObjectPosition = rayTraceEyes(entity, length);
-        return movingObjectPosition == null ? null : movingObjectPosition.hitVec;
+        RayTraceResult git = rayTraceEyes(entity, length);
+        return git == null ? null : git.hitVec;
+    }
+
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, ItemStack stack, EnumHand hand)
+    {
+        Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
+        return onInteractEntityAt(player, entity, vec3d, stack, hand);
+    }
+
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, ItemStack stack, EnumHand hand)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteractSpecific(player, hand, stack, entity, vec3d));
+    }
+
+    public static boolean onInteractEntity(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, hand, item, entity));
+    }
+
+    public static boolean onItemRightClick(EntityPlayer player, EnumHand hand, ItemStack stack)
+    {
+        return MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(player, hand, stack));
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    {
+        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, hitVec);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    {
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, stack, pos, face, hitVec);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static void onEmptyClick(EntityPlayer player, EnumHand hand)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
 }

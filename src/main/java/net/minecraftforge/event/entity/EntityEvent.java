@@ -14,13 +14,18 @@ import net.minecraft.entity.Entity;
  **/
 public class EntityEvent extends Event
 {
-    public final Entity entity;
+    private final Entity entity;
 
     public EntityEvent(Entity entity)
     {
         this.entity = entity;
     }
-    
+
+    public Entity getEntity()
+    {
+        return entity;
+    }
+
     /**
      * EntityConstructing is fired when an Entity is being created. <br>
      * This event is fired within the constructor of the Entity.<br>
@@ -54,10 +59,20 @@ public class EntityEvent extends Event
      **/
     public static class CanUpdate extends EntityEvent
     {
-        public boolean canUpdate = false;
+        private boolean canUpdate = false;
         public CanUpdate(Entity entity)
         {
             super(entity);
+        }
+
+        public boolean getCanUpdate()
+        {
+            return canUpdate;
+        }
+
+        public void setCanUpdate(boolean canUpdate)
+        {
+            this.canUpdate = canUpdate;
         }
     }
     
@@ -74,18 +89,27 @@ public class EntityEvent extends Event
      **/
     public static class EnteringChunk extends EntityEvent
     {
-        public int newChunkX;
-        public int newChunkZ;
-        public int oldChunkX;
-        public int oldChunkZ;
+        private int newChunkX;
+        private int newChunkZ;
+        private int oldChunkX;
+        private int oldChunkZ;
 
         public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ)
         {
             super(entity);
-            this.newChunkX = newChunkX;
-            this.newChunkZ = newChunkZ;
-            this.oldChunkX = oldChunkX;
-            this.oldChunkZ = oldChunkZ;
+            this.setNewChunkX(newChunkX);
+            this.setNewChunkZ(newChunkZ);
+            this.setOldChunkX(oldChunkX);
+            this.setOldChunkZ(oldChunkZ);
         }
+
+        public int getNewChunkX() { return newChunkX; }
+        public void setNewChunkX(int newChunkX) { this.newChunkX = newChunkX; }
+        public int getNewChunkZ() { return newChunkZ; }
+        public void setNewChunkZ(int newChunkZ) { this.newChunkZ = newChunkZ; }
+        public int getOldChunkX() { return oldChunkX; }
+        public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
+        public int getOldChunkZ() { return oldChunkZ; }
+        public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
     }
 }

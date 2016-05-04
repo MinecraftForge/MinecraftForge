@@ -1,32 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -109,16 +109,7 @@
+@@ -110,7 +110,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
 -        if (!p_180653_1_.field_72995_K)
--        {
--            TileEntityPiston tileentitypiston = this.func_176422_e(p_180653_1_, p_180653_2_);
--
--            if (tileentitypiston != null)
--            {
--                IBlockState iblockstate = tileentitypiston.func_174927_b();
--                iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
--            }
--        }
++        if (false && !p_180653_1_.field_72995_K) // Forge: Noop this out
+         {
+             TileEntityPiston tileentitypiston = this.func_185589_c(p_180653_1_, p_180653_2_);
+ 
+@@ -120,6 +120,7 @@
+                 iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
+             }
+         }
 +        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
      }
  
-     public MovingObjectPosition func_180636_a(World p_180636_1_, BlockPos p_180636_2_, Vec3 p_180636_3_, Vec3 p_180636_4_)
-@@ -282,4 +273,16 @@
+     public RayTraceResult func_180636_a(IBlockState p_180636_1_, World p_180636_2_, BlockPos p_180636_3_, Vec3d p_180636_4_, Vec3d p_180636_5_)
+@@ -190,4 +191,16 @@
      {
-         return new BlockState(this, new IProperty[] {field_176426_a, field_176425_b});
+         return new BlockStateContainer(this, new IProperty[] {field_176426_a, field_176425_b});
      }
 +
 +    @Override
 +    public java.util.List<net.minecraft.item.ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
-+        TileEntityPiston tileentitypiston = this.func_176422_e(world, pos);
++        TileEntityPiston tileentitypiston = this.func_185589_c(world, pos);
 +        if (tileentitypiston != null)
 +        {
 +            IBlockState pushed = tileentitypiston.func_174927_b();

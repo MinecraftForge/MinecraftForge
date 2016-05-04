@@ -26,16 +26,16 @@ public class JsonUtils
         public ImmutableList<?> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
         {
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
-            final Type parameterizedType = listOf(typeArguments[0]).getType();
-            final List<?> list = context.deserialize(json, parameterizedType);
+            final Type parametrizedType = listOf(typeArguments[0]).getType();
+            final List<?> list = context.deserialize(json, parametrizedType);
             return ImmutableList.copyOf(list);
         }
 
         public JsonElement serialize(ImmutableList<?> src, Type type, JsonSerializationContext context)
         {
             final Type[] typeArguments = ((ParameterizedType) type).getActualTypeArguments();
-            final Type parameterizedType = listOf(typeArguments[0]).getType();
-            return context.serialize(src, parameterizedType);
+            final Type parametrizedType = listOf(typeArguments[0]).getType();
+            return context.serialize(src, parametrizedType);
         }
     }
 
