@@ -12,6 +12,15 @@
      private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
      private final boolean field_76418_K;
      private final int field_76414_N;
+@@ -82,7 +82,7 @@
+         {
+             if (p_76394_1_.func_110143_aJ() > 1.0F)
+             {
+-                p_76394_1_.func_70097_a(DamageSource.field_76376_m, 1.0F);
++                p_76394_1_.func_70097_a(DamageSource.causePotionEffectDamage(MobEffects.field_76436_u), 1.0F);
+             }
+         }
+         else if (this == MobEffects.field_82731_v)
 @@ -195,7 +195,6 @@
          return this.field_76417_J;
      }

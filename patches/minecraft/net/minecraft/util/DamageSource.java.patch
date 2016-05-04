@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/util/DamageSource.java
++++ ../src-work/minecraft/net/minecraft/util/DamageSource.java
+@@ -39,6 +39,7 @@
+     private boolean field_76381_t;
+     private boolean field_82730_x;
+     private boolean field_76378_k;
++    final private net.minecraft.potion.Potion potion;
+     public String field_76373_n;
+ 
+     public static DamageSource func_76358_a(EntityLivingBase p_76358_0_)
+@@ -91,6 +92,11 @@
+         return p_188405_0_ != null ? (new EntityDamageSource("explosion.player", p_188405_0_)).func_76351_m().func_94540_d() : (new DamageSource("explosion")).func_76351_m().func_94540_d();
+     }
+ 
++    public static DamageSource causePotionEffectDamage(net.minecraft.potion.Potion potion)
++    {
++        return (new DamageSource(potion == net.minecraft.init.MobEffects.field_76436_u ? "magic" : potion.getRegistryName().func_110624_b() + "." + potion.getRegistryName().func_110623_a(), potion)).func_76348_h().func_82726_p();
++    }
++
+     public boolean func_76352_a()
+     {
+         return this.field_76382_s;
+@@ -136,8 +142,15 @@
+     public DamageSource(String p_i1566_1_)
+     {
+         this.field_76373_n = p_i1566_1_;
++        this.potion = null;
+     }
+ 
++    public DamageSource(String damageTypeIn, net.minecraft.potion.Potion potion)
++    {
++        this.field_76373_n = damageTypeIn;
++        this.potion = potion;
++    }
++
+     public Entity func_76364_f()
+     {
+         return this.func_76346_g();
+@@ -148,6 +161,11 @@
+         return null;
+     }
+ 
++    public net.minecraft.potion.Potion getPotion()
++    {
++       return potion;
++    }
++
+     public DamageSource func_76348_h()
+     {
+         this.field_76374_o = true;
