@@ -20,7 +20,7 @@
                          if (astring[0].equals("key_" + keybinding.func_151464_g()))
                          {
                              keybinding.func_151462_b(Integer.parseInt(astring[1]));
-+                            if (astring.length == 3) keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueOf(astring[2]), Integer.parseInt(astring[1]));
++                            if (astring.length == 3) keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(astring[2]), Integer.parseInt(astring[1]));
                          }
                      }
  

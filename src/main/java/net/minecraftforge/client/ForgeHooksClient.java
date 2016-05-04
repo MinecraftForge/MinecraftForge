@@ -1,5 +1,6 @@
 package net.minecraftforge.client;
 
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 import static org.lwjgl.opengl.GL11.*;
@@ -7,6 +8,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.vecmath.Matrix3f;
@@ -22,6 +24,7 @@ import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -61,6 +64,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.BossInfoLerping;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -70,12 +74,14 @@ import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -84,8 +90,12 @@ import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.GuiJava8Error;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Java8VersionException;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
@@ -261,7 +271,8 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
+    private static int updatescrollcounter = 0;
+    public static String renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height, String splashText)
     {
         Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
@@ -271,6 +282,17 @@ public class ForgeHooksClient
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
             line = I18n.format("forge.update.beta.2");
             gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+        }
+
+        if (!Loader.instance().java8)
+        {
+            String line = I18n.format("fml.messages.java8warning.1", TextFormatting.RED, TextFormatting.RESET);
+            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (8 * (font.FONT_HEIGHT + 1)), -1);
+            line = I18n.format("fml.messages.java8warning.2");
+            gui.drawString(font, line, (width - font.getStringWidth(line)) / 2, 4 + (9 * (font.FONT_HEIGHT + 1)), -1);
+            splashText = updatescrollcounter < 50 ? "UPDATE!" : "JAVA!";
+            updatescrollcounter+=1;
+            updatescrollcounter%=100;
         }
 
         String line = null;
@@ -288,6 +310,24 @@ public class ForgeHooksClient
         {
             // if we have a line, render it in the bottom right, above Mojang's copyright line
             gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
+        }
+
+        return splashText;
+    }
+
+    public static void mainMenuMouseClick(int mouseX, int mouseY, int mouseButton, FontRenderer font, int width)
+    {
+        if (!Loader.instance().java8)
+        {
+            if (mouseY >= (4 + (8 * 10)) && mouseY < (4 + (10 * 10)))
+            {
+                int w = font.getStringWidth(I18n.format("fml.messages.java8warning.1", TextFormatting.RED, TextFormatting.RESET));
+                w = Math.max(w, font.getStringWidth(I18n.format("fml.messages.java8warning.2")));
+                if (mouseX >= ((width - w) / 2) && mouseX <= ((width + w) / 2))
+                {
+                    FMLClientHandler.instance().showGuiScreen(new GuiJava8Error(new Java8VersionException(Collections.<ModContainer>emptyList())));
+                }
+            }
         }
     }
 
@@ -651,5 +691,18 @@ public class ForgeHooksClient
         rot.transform(rv);
         int angle = MathHelper.normalizeAngle(-(int)Math.round(Math.toDegrees(Math.atan2(rv.y, rv.x)) / 90) * 90, 360);
         return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
+    }
+
+    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(ScaledResolution res, BossInfoLerping bossInfo, int x, int y, int increment)
+    {
+        RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res),
+                BOSSINFO, bossInfo, x, y, increment);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static void bossBarRenderPost(ScaledResolution res)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
     }
 }

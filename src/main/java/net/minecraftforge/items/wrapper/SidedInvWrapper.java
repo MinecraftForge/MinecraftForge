@@ -144,7 +144,10 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     @Override
     public void setStackInSlot(int slot, ItemStack stack)
     {
-        inv.setInventorySlotContents(slot, stack);
+        int slot1 = getSlot(inv, slot, side);
+
+        if (slot1 != -1)
+            inv.setInventorySlotContents(slot1, stack);
     }
 
     @Override

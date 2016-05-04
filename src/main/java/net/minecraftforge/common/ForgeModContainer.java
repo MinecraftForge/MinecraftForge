@@ -14,6 +14,7 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static long java8Reminder = 0;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -259,12 +261,24 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
+                "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
+        java8Reminder = prop.getLong(java8Reminder);
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
 
         if (config.hasChanged())
         {
             config.save();
         }
+    }
+
+    public static void updateNag()
+    {
+        Property prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder);
+        prop.set((new Date()).getTime());
+        config.save();
     }
 
     /**

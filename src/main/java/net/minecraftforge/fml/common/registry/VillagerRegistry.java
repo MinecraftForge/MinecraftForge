@@ -277,6 +277,29 @@ public class VillagerRegistry
         entity.setProfession(rand.nextInt(entries.size()));
     }
 
+    public static void onSetProfession(EntityVillager entity, VillagerProfession prof)
+    {
+        int network = INSTANCE.professions.getId(prof);
+        if (network == -1 || prof != INSTANCE.professions.getObjectById(network))
+        {
+            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
+        }
+
+        if (network != entity.getProfession())
+            entity.setProfession(network);
+    }
+    public static void onSetProfession(EntityVillager entity, int network)
+    {
+        VillagerProfession prof = INSTANCE.professions.getObjectById(network);
+        if (prof == null || INSTANCE.professions.getId(prof) != network)
+        {
+            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
+        }
+
+        if (prof != entity.getProfessionForge())
+            entity.setProfession(prof);
+    }
+
     //TODO: Figure out a good generic system for this. Put on hold for Patches.
 
     private static class VanillaTrades

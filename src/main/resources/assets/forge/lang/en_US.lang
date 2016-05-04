@@ -1,5 +1,5 @@
 commands.forge.usage=Use /forge <subcommand>. Subcommands are tps, track
-commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are te (Tile Entities). Duration is < 60. 
+commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are te (Tile Entities). Duration is < 60.
 commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
@@ -145,6 +145,7 @@ fml.configgui.tooltip.defaultNumeric=[range: %s ~ %s, default: %s]
 
 forge.controlsgui.shift=SHIFT + %s
 forge.controlsgui.control=CTRL + %s
+forge.controlsgui.control.mac=CMD + %s
 forge.controlsgui.alt=ALT + %s
 
 fml.menu.mods=Mods
@@ -153,3 +154,17 @@ fml.menu.mods.search=Search:
 fml.menu.modoptions=Mod Options...
 
 item.forge.bucketFilled.name=%s Bucket
+
+fml.messages.java8problem=%s%sJava Update Required%s
+fml.messages.java8recommended=%s%sJava Update Recommended%s
+fml.messages.modslistedbelow=The mods listed below %s
+fml.messages.requirejava8=require Java 8
+fml.messages.java8warning.1=%sJAVA VERSION WARNING%s UPDATE JAVA!
+fml.messages.java8warning.2=You need to update Java
+fml.messages.javaversion=Your Java version is Java %s (version string %s)
+fml.messages.upgradejavaorremove=%s%sUpdate Java%s or remove these mods to play
+fml.messages.upgradejava=\n\nPros of updating to Java 8\n- Better Performance\n- Better Security\n- Better Compatibility with newer mods
+fml.messages.countbadandgood=%s of %s mods have this problem
+
+fml.button.visitjavadownloads=Oracle Java SE Downloads
+fml.button.continue=Continue

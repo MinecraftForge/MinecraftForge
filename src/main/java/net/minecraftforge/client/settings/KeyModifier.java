@@ -31,7 +31,8 @@ public enum KeyModifier {
         public String getLocalizedComboName(int keyCode)
         {
             String keyName = GameSettings.getKeyDisplayString(keyCode);
-            return I18n.format("forge.controlsgui.control", keyName);
+            String localizationFormatKey = Minecraft.isRunningOnMac ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
+            return I18n.format(localizationFormatKey, keyName);
         }
     },
     SHIFT {
@@ -118,6 +119,22 @@ public enum KeyModifier {
             }
         }
         return false;
+    }
+
+    public static KeyModifier valueFromString(String stringValue)
+    {
+        try
+        {
+            return valueOf(stringValue);
+        }
+        catch (NullPointerException ignored)
+        {
+            return NONE;
+        }
+        catch (IllegalArgumentException ignored)
+        {
+            return NONE;
+        }
     }
 
     public abstract boolean matches(int keyCode);

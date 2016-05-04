@@ -12,6 +12,7 @@
 
 package net.minecraftforge.fml.client;
 
+import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -71,6 +72,7 @@ public abstract class GuiScrollingList
         this.screenHeight = screenHeight;
     }
 
+    @Deprecated // Unused, remove in 1.9.3?
     public void func_27258_a(boolean p_27258_1_)
     {
         this.highlightSelected = p_27258_1_;
@@ -120,6 +122,7 @@ public abstract class GuiScrollingList
      */
     protected void drawScreen(int mouseX, int mouseY) { func_27257_b(mouseX, mouseY); }
 
+    @Deprecated // Unused, Remove in 1.9.3?
     public int func_27256_c(int x, int y)
     {
         int left = this.left + 1;
@@ -172,6 +175,21 @@ public abstract class GuiScrollingList
                 this.initialMouseClickY = -2.0F;
                 this.applyScrollLimits();
             }
+        }
+    }
+
+
+    public void handleMouseInput(int mouseX, int mouseY) throws IOException
+    {
+        boolean isHovering = mouseX >= this.left && mouseX <= this.left + this.listWidth &&
+                             mouseY >= this.top && mouseY <= this.bottom;
+        if (!isHovering)
+            return;
+
+        int scroll = Mouse.getEventDWheel();
+        if (scroll != 0)
+        {
+            this.scrollDistance += (float)((-1 * scroll / 120.0F) * this.slotHeight / 2);
         }
     }
 
@@ -246,18 +264,6 @@ public abstract class GuiScrollingList
         }
         else
         {
-            while (isHovering && Mouse.next())
-            {
-                int scroll = Mouse.getEventDWheel();
-                if (scroll != 0)
-                {
-                    if      (scroll > 0) scroll = -1;
-                    else if (scroll < 0) scroll =  1;
-
-                    this.scrollDistance += (float)(scroll * this.slotHeight / 2);
-                }
-            }
-
             this.initialMouseClickY = -1.0F;
         }
 
@@ -330,10 +336,10 @@ public abstract class GuiScrollingList
 
         GlStateManager.disableDepth();
 
-        int extraHeight = this.getContentHeight() - viewHeight - border;
+        int extraHeight = (this.getContentHeight() + border) - viewHeight;
         if (extraHeight > 0)
         {
-            int height = viewHeight * viewHeight / this.getContentHeight();
+            int height = (viewHeight * viewHeight) / this.getContentHeight();
 
             if (height < 32) height = 32;
 

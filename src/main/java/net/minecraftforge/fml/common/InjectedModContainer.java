@@ -214,4 +214,16 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.getUpdateUrl();
     }
+
+    @Override
+    public void setClassVersion(int classVersion)
+    {
+        wrappedContainer.setClassVersion(classVersion);
+    }
+
+    @Override
+    public int getClassVersion()
+    {
+        return wrappedContainer.getClassVersion();
+    }
 }

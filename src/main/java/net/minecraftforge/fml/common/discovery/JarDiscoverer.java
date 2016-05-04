@@ -83,6 +83,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                         table.addContainer(container);
                         foundMods.add(container);
                         container.bindMetadata(mc);
+                        container.setClassVersion(modParser.getClassVersion());
                     }
                 }
             }

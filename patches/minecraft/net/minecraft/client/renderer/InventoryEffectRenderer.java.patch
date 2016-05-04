@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/InventoryEffectRenderer.java
-@@ -28,7 +28,12 @@
+@@ -28,8 +28,14 @@
  
      protected void func_175378_g()
      {
@@ -12,9 +12,11 @@
 +        }
 +        if (!this.field_146297_k.field_71439_g.func_70651_bq().isEmpty() && hasVisibleEffect)
          {
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent(this))) this.field_147003_i = (this.field_146294_l - this.field_146999_f) / 2; else
              this.field_147003_i = 160 + (this.field_146294_l - this.field_146999_f - 200) / 2;
              this.field_147045_u = true;
-@@ -71,6 +76,7 @@
+         }
+@@ -71,6 +77,7 @@
              for (PotionEffect potioneffect : Ordering.natural().sortedCopy(collection))
              {
                  Potion potion = potioneffect.func_188419_a();
@@ -22,7 +24,7 @@
                  GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
                  this.field_146297_k.func_110434_K().func_110577_a(field_147001_a);
                  this.func_73729_b(i, j, 0, 166, 140, 32);
-@@ -81,6 +87,8 @@
+@@ -81,6 +88,8 @@
                      this.func_73729_b(i + 6, j + 7, 0 + i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
                  }
  
