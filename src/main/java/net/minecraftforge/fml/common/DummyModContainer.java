@@ -32,6 +32,7 @@ public class DummyModContainer implements ModContainer
     private ModMetadata md;
     private ArtifactVersion processedVersion;
     private String label;
+    private int classVersion;
 
     public DummyModContainer(ModMetadata md)
     {
@@ -212,5 +213,17 @@ public class DummyModContainer implements ModContainer
     public URL getUpdateUrl()
     {
         return null;
+    }
+
+    @Override
+    public void setClassVersion(int classVersion)
+    {
+        this.classVersion = classVersion;
+    }
+
+    @Override
+    public int getClassVersion()
+    {
+        return this.classVersion;
     }
 }

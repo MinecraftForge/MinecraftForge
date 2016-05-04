@@ -35,6 +35,7 @@ public class ASMDataTable
         private String annotationName;
         private String className;
         private String objectName;
+        private int classVersion;
         private Map<String,Object> annotationInfo;
         public ASMData(ModCandidate candidate, String annotationName, String className, String objectName, Map<String,Object> info)
         {

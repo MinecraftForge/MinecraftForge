@@ -38,7 +38,16 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -512,7 +521,16 @@
+@@ -493,6 +502,8 @@
+             this.func_73729_b(j + 155, k + 0, 0, 45, 155, 44);
+         }
+ 
++        this.field_73975_c = net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m, this.field_73975_c);
++
+         GlStateManager.func_179094_E();
+         GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
+         GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
+@@ -512,7 +523,15 @@
              s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
          }
  
@@ -52,11 +61,10 @@
 +                this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215);
 +            }
 +        }
-+        net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m);
          String s1 = "Copyright Mojang AB. Do not distribute!";
          this.func_73731_b(this.field_146289_q, s1, this.field_146294_l - this.field_146289_q.func_78256_a(s1) - 2, this.field_146295_m - 10, -1);
  
-@@ -529,6 +547,7 @@
+@@ -529,6 +548,7 @@
          {
              this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
          }
@@ -64,3 +72,12 @@
      }
  
      protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
+@@ -549,6 +569,8 @@
+         {
+             this.field_183503_M.func_73864_a(p_73864_1_, p_73864_2_, p_73864_3_);
+         }
++
++        net.minecraftforge.client.ForgeHooksClient.mainMenuMouseClick(p_73864_1_, p_73864_2_, p_73864_3_, this.field_146289_q, this.field_146294_l);
+     }
+ 
+     public void func_146281_b()
