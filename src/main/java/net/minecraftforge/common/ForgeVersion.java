@@ -35,7 +35,7 @@ public class ForgeVersion
     //This number is incremented every minecraft release, never reset
     public static final int minorVersion    = 16;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 0;
+    public static final int revisionVersion = 1;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
@@ -92,7 +92,7 @@ public class ForgeVersion
         AHEAD(),
         BETA(),
         BETA_OUTDATED(6, true);
-        
+
         final int sheetOffset;
         final boolean draw, animated;
 
@@ -100,39 +100,39 @@ public class ForgeVersion
         {
             this(0, false, false);
         }
-        
+
         Status(int sheetOffset)
         {
             this(sheetOffset, true, false);
         }
-        
+
         Status(int sheetOffset, boolean animated)
         {
             this(sheetOffset, true, animated);
         }
-        
+
         Status(int sheetOffset, boolean draw, boolean animated)
         {
             this.sheetOffset = sheetOffset;
             this.draw = draw;
             this.animated = animated;
         }
-        
+
         public int getSheetOffset()
         {
             return sheetOffset;
         }
-        
+
         public boolean shouldDraw()
         {
             return draw;
         }
-        
+
         public boolean isAnimated()
         {
             return animated;
         }
-        
+
     }
 
     public static class CheckResult
