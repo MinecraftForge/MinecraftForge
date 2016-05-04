@@ -45,17 +45,20 @@ public class ChunkIOExecutor
         ChunkIOProvider task = tasks.get(key);
         if (task != null)
         {
-            if (!pool.remove(task) && !task.runFinished()) // If it wasn't in the pool, and run hasn't finished, then wait for the async thread.
+            if (!pool.remove(task)) // If it wasn't in the pool, and run hasn't finished, then wait for the async thread.
             {
-                synchronized(task)
+                while (!task.runFinished())
                 {
-                    try
+                    synchronized(task)
                     {
-                        task.wait();
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace(); // Something happened? Log it?
+                        try
+                        {
+                            task.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace(); // Something happened? Log it?
+                        }
                     }
                 }
             }
