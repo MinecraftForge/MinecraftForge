@@ -1,64 +1,113 @@
 package net.minecraftforge.common.chunkio;
 
-
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.AsynchronousExecutor;
 import net.minecraftforge.event.world.ChunkDataEvent;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> {
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+class ChunkIOProvider implements Runnable
+{
+    private QueuedChunk chunkInfo;
+    private Chunk chunk;
+    private NBTTagCompound nbt;
+    private ConcurrentLinkedQueue<Runnable> callbacks = new ConcurrentLinkedQueue<Runnable>();
+    private boolean ran = false;
 
-    // async stuff
-    public net.minecraft.world.chunk.Chunk callStage1(QueuedChunk queuedChunk) throws RuntimeException {
-        net.minecraft.world.chunk.storage.AnvilChunkLoader loader = queuedChunk.loader;
-        Object[] data = null;
-        try {
-            data = loader.loadChunk__Async(queuedChunk.world, queuedChunk.x, queuedChunk.z);
-        } catch (IOException e) {
-            e.printStackTrace();
+    ChunkIOProvider(QueuedChunk chunk)
+    {
+        this.chunkInfo = chunk;
+    }
+
+    public void addCallback(Runnable callback)
+    {
+        this.callbacks.add(callback);
+    }
+    public void removeCallback(Runnable callback)
+    {
+        this.callbacks.remove(callback);
+    }
+
+    @Override
+    public void run() // async stuff
+    {
+        synchronized(this)
+        {
+            AnvilChunkLoader loader = chunkInfo.loader;
+            Object[] data = null;
+            try
+            {
+                data = loader.loadChunk__Async(chunkInfo.world, chunkInfo.x, chunkInfo.z);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (data != null)
+            {
+                this.nbt   = (NBTTagCompound)data[1];
+                this.chunk = (Chunk)data[0];
+            }
+
+            this.ran = true;
+            this.notifyAll();
         }
-
-        if (data != null) {
-            queuedChunk.compound = (net.minecraft.nbt.NBTTagCompound) data[1];
-            return (net.minecraft.world.chunk.Chunk) data[0];
-        }
-
-        return null;
     }
 
     // sync stuff
-    public void callStage2(QueuedChunk queuedChunk, net.minecraft.world.chunk.Chunk chunk) throws RuntimeException {
-        if(chunk == null) {
+    public void syncCallback()
+    {
+        ChunkProviderServer provider = this.chunkInfo.provider;
+        if (chunk == null)
+        {
             // If the chunk loading failed just do it synchronously (may generate)
-            queuedChunk.provider.originalLoadChunk(queuedChunk.x, queuedChunk.z);
+            provider.originalLoadChunk(this.chunkInfo.x, this.chunkInfo.z);
             return;
         }
 
-        queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
-        MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, queuedChunk.compound)); // Don't call ChunkDataEvent.Load async
-        chunk.setLastSaveTime(queuedChunk.provider.worldObj.getTotalWorldTime());
-        queuedChunk.provider.id2ChunkMap.add(ChunkCoordIntPair.chunkXZ2Int(queuedChunk.x, queuedChunk.z), chunk);
-        queuedChunk.provider.loadedChunks.add(chunk);
-        chunk.onChunkLoad();
+        // Load Entities
+        this.chunkInfo.loader.loadEntities(this.chunkInfo.world, this.nbt.getCompoundTag("Level"), this.chunk);
 
-        if (queuedChunk.provider.chunkGenerator != null) {
-            queuedChunk.provider.chunkGenerator.recreateStructures(chunk, queuedChunk.x, queuedChunk.z);
+        MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(this.chunk, this.nbt)); // Don't call ChunkDataEvent.Load async
+
+        this.chunk.setLastSaveTime(provider.worldObj.getTotalWorldTime());
+        provider.id2ChunkMap.add(ChunkCoordIntPair.chunkXZ2Int(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
+        provider.loadedChunks.add(this.chunk);
+        this.chunk.onChunkLoad();
+
+        if (provider.chunkGenerator != null)
+        {
+            provider.chunkGenerator.recreateStructures(this.chunk, this.chunkInfo.x, this.chunkInfo.z);
         }
 
-        chunk.populateChunk(queuedChunk.provider, queuedChunk.provider.chunkGenerator);
+        this.chunk.populateChunk(provider, provider.chunkGenerator);
+
+        for (Runnable r : this.callbacks)
+        {
+            r.run();
+        }
+
+        this.callbacks.clear();
     }
 
-    public void callStage3(QueuedChunk queuedChunk, net.minecraft.world.chunk.Chunk chunk, Runnable runnable) throws RuntimeException {
-        runnable.run();
+    public Chunk getChunk()
+    {
+        return this.chunk;
     }
 
-    public Thread newThread(Runnable runnable) {
-        Thread thread = new Thread(runnable, "Chunk I/O Executor Thread-" + threadNumber.getAndIncrement());
-        thread.setDaemon(true);
-        return thread;
+    public boolean runFinished()
+    {
+        return this.ran;
+    }
+
+    public boolean hasCallback()
+    {
+        return this.callbacks.size() > 0;
     }
 }

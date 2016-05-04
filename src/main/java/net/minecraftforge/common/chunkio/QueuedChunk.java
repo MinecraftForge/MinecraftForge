@@ -7,7 +7,6 @@ class QueuedChunk {
     final net.minecraft.world.chunk.storage.AnvilChunkLoader loader;
     final net.minecraft.world.World world;
     final net.minecraft.world.gen.ChunkProviderServer provider;
-    net.minecraft.nbt.NBTTagCompound compound;
 
     public QueuedChunk(int x, int z, net.minecraft.world.chunk.storage.AnvilChunkLoader loader, net.minecraft.world.World world, net.minecraft.world.gen.ChunkProviderServer provider) {
         this.x = x;
