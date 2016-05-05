@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
+@@ -316,7 +316,7 @@
+         {
+             ItemStack itemstack = abstractclientplayer.func_184607_cu();
+ 
+-            if (itemstack.func_77973_b() == Items.field_151031_f)
++            if (itemstack != null && itemstack.func_77973_b() == Items.field_151031_f) //Forge: Data watcher can desync and cause this to NPE...
+             {
+                 EnumHand enumhand1 = abstractclientplayer.func_184600_cs();
+                 flag = enumhand1 == EnumHand.MAIN_HAND;
 @@ -360,7 +360,7 @@
                  this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
              }

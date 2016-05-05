@@ -232,33 +232,28 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2369,8 +2435,16 @@
-         {
-             ItemStack itemstack = this.func_184586_b(this.func_184600_cs());
+@@ -2371,12 +2437,19 @@
  
--            if (itemstack == this.field_184627_bm)
-+            if (itemstack == this.field_184627_bm && itemstack != null)
+             if (itemstack == this.field_184627_bm)
              {
-+                field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
-+                if (field_184628_bn <= 0)
++                if (this.field_184627_bm != null)
 +                {
-+                    this.func_71036_o();
++                    field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
++                    if (field_184628_bn > 0)
++                        field_184627_bm.func_77973_b().onUsingTick(field_184627_bm, this, field_184628_bn);
 +                }
-+                else
-+                { // Forge Keep unindented to lower patch
-+                field_184627_bm.func_77973_b().onUsingTick(field_184627_bm, this, field_184628_bn); //Forge Added
++
                  if (this.func_184605_cv() <= 25 && this.func_184605_cv() % 4 == 0)
                  {
                      this.func_184584_a(this.field_184627_bm, 5);
-@@ -2380,6 +2454,7 @@
+                 }
+ 
+-                if (--this.field_184628_bn == 0 && !this.field_70170_p.field_72995_K)
++                if (--this.field_184628_bn <= 0 && !this.field_70170_p.field_72995_K)
                  {
                      this.func_71036_o();
                  }
-+                }
-             }
-             else
-             {
-@@ -2394,8 +2469,10 @@
+@@ -2394,8 +2467,10 @@
  
          if (itemstack != null && !this.func_184587_cr())
          {
@@ -270,7 +265,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2478,6 +2555,8 @@
+@@ -2478,6 +2553,8 @@
              this.func_184584_a(this.field_184627_bm, 16);
              ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
  
@@ -279,7 +274,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  itemstack = null;
-@@ -2507,7 +2586,8 @@
+@@ -2507,7 +2584,8 @@
      {
          if (this.field_184627_bm != null)
          {
@@ -289,7 +284,7 @@
          }
  
          this.func_184602_cy();
-@@ -2626,4 +2706,28 @@
+@@ -2626,4 +2704,28 @@
      {
          return true;
      }
