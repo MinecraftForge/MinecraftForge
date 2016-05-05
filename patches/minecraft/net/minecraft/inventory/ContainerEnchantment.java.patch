@@ -75,3 +75,12 @@
                          this.field_185001_h[i1] = -1;
                          this.field_185002_i[i1] = -1;
  
+@@ -258,7 +239,7 @@
+             {
+                 List<EnchantmentData> list = this.func_178148_a(itemstack, p_75140_2_, this.field_75167_g[p_75140_2_]);
+                 boolean flag = itemstack.func_77973_b() == Items.field_151122_aG;
+-
++                list = net.minecraftforge.common.ForgeHooks.onItemEnchanted(p_75140_1_, i, itemstack, itemstack1, list);
+                 if (list != null)
+                 {
+                     p_75140_1_.func_71013_b(i);
