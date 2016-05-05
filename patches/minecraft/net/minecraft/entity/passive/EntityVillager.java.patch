@@ -120,7 +120,7 @@
              this.field_175562_bw = 1;
          }
  
-@@ -552,7 +596,7 @@
+@@ -552,11 +596,11 @@
  
          int i = this.field_175563_bv - 1;
          int j = this.field_175562_bw - 1;
@@ -129,6 +129,11 @@
  
          if (j >= 0 && j < aentityvillager$itradelist1.length)
          {
+-            EntityVillager.ITradeList[] aentityvillager$itradelist2 = aentityvillager$itradelist1[j];
++            EntityVillager.ITradeList[] aentityvillager$itradelist2 = net.minecraftforge.common.ForgeHooks.onVillagerTradePopulation(this, this.field_175563_bv - 1, aentityvillager$itradelist1[j]);
+ 
+             for (EntityVillager.ITradeList entityvillager$itradelist : aentityvillager$itradelist2)
+             {
 @@ -647,9 +691,14 @@
                      }
              }
