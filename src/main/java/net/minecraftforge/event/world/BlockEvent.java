@@ -3,20 +3,23 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import com.google.common.collect.ImmutableList;
 
 public class BlockEvent extends Event
 {
@@ -231,6 +234,90 @@ public class BlockEvent extends Event
         public EnumSet<EnumFacing> getNotifiedSides()
         {
             return notifiedSides;
+        }
+    }
+    
+    /**
+     * {@link BlockEvent#pos} and {@link BlockEvent#state} are soil's position and state.
+     * @author elix_x
+     *
+     */
+    public static class SoilPlantEvent extends BlockEvent
+    {
+        private final IPlantable plant;
+
+        public SoilPlantEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant)
+        {
+            super(world, pos, soil);
+            this.plant = plant;
+        }
+
+        public IPlantable getPlant()
+        {
+            return plant;
+        }
+
+        /**
+         * Fired when plant checks whether it can sustain on soil.
+         * <br>
+         * This event is called from block updates, crops planting and other various things, so {@link SoilPlantEvent#plant} may not be {@link Block}.
+         * @author elix_x
+         *
+         */
+        public static class CanSoilSustainPlantEvent extends SoilPlantEvent
+        {
+            private final EnumFacing direction;
+            private boolean canSustain;
+
+            public CanSoilSustainPlantEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, EnumFacing direction, boolean canSustain)
+            {
+                super(world, pos, soil, plant);
+                this.direction = direction;
+                this.canSustain = canSustain;
+            }
+
+            public EnumFacing getDirection()
+            {
+                return direction;
+            }
+
+            public boolean canSustain()
+            {
+                return canSustain;
+            }
+
+            public void setCanSustain(boolean canSustain)
+            {
+                this.canSustain = canSustain;
+            }
+        }
+
+        /**
+         * Fired when crop calculates it's growth chance to grow.
+         * <br>
+         * For example, crop extending {@link BlockCrops} will grow if random int between 0 and 25/growthChance + 1 is 0 (<code>rand.nextInt((int)(25.0F / growthChance) + 1) == 0</code>).
+         * @author elix_x
+         *
+         */
+        public static class GetGrowthChanceEvent extends SoilPlantEvent
+        {
+            private float growthChance;
+
+            public GetGrowthChanceEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, float growthChance)
+            {
+                super(world, pos, soil, plant);
+                this.growthChance = growthChance;
+            }
+
+            public float getGrowthChance()
+            {
+                return growthChance;
+            }
+
+            public void setGrowthChance(float growthChance)
+            {
+                this.growthChance = growthChance;
+            }
         }
     }
 }
