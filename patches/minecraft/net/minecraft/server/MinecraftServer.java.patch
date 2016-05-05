@@ -189,7 +189,7 @@
      }
  
      public void func_71190_q()
-@@ -672,14 +666,17 @@
+@@ -672,24 +666,28 @@
          }
  
          this.field_71304_b.func_76318_c("levels");
@@ -210,7 +210,11 @@
                  this.field_71304_b.func_76320_a(worldserver.func_72912_H().func_76065_j());
  
                  if (this.field_71315_w % 20 == 0)
-@@ -690,6 +687,7 @@
+                 {
+                     this.field_71304_b.func_76320_a("timeSync");
+-                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.func_186058_p().func_186068_a());
++                    this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.getDimension());
+                     this.field_71304_b.func_76319_b();
                  }
  
                  this.field_71304_b.func_76320_a("tick");

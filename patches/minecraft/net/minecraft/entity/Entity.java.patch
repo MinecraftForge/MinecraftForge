@@ -9,6 +9,15 @@
  {
      private static final Logger field_184243_a = LogManager.getLogger();
      private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -185,7 +185,7 @@
+ 
+         if (p_i1582_1_ != null)
+         {
+-            this.field_71093_bK = p_i1582_1_.field_73011_w.func_186058_p().func_186068_a();
++            this.field_71093_bK = p_i1582_1_.field_73011_w.getDimension();
+         }
+ 
+         this.field_70180_af = new EntityDataManager(this);
 @@ -195,8 +195,16 @@
          this.field_70180_af.func_187214_a(field_184242_az, "");
          this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
