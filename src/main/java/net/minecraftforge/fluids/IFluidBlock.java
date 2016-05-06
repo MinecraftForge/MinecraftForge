@@ -31,8 +31,6 @@ public interface IFluidBlock
      * Check to see if a block can be drained. This method should be called by devices such as
      * pumps.
      *
-     * @param doDrain
-     *            If false, the drain will only be simulated.
      * @return
      */
     boolean canDrain(World world, BlockPos pos);

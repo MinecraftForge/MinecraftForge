@@ -1561,7 +1561,7 @@ public class Configuration
      *
      * @param name Name of the property.
      * @param category Category of the property.
-     * @param defaultValue Default value of the property.
+     * @param defaultValues Default values of the property.
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */

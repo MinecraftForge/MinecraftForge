@@ -2,11 +2,13 @@ package net.minecraftforge.event.entity.minecart;
 
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * MinecartUpdateEvent is fired when a minecart is updated.<br>
  * This event is fired whenever a minecart is updated in
- * EntityMinecart#onUpdate().<br>
+ * {@link EntityMinecart#onUpdate()}.<br>
  * <br>
  * {@link #pos} contains the coordinate of the track the entity is on {if applicable}.<br>
  * <br>

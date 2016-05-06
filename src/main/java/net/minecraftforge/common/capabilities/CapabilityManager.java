@@ -60,7 +60,7 @@ public enum CapabilityManager
      *
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
-     * @param factor A Factory that will produce new instances of the default implementation.
+     * @param factory A Factory that will produce new instances of the default implementation.
      */
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
     {

@@ -855,7 +855,6 @@ public class Property
     /**
      * Returns the value in this property as a double, if the value is not a valid double, it will return the provided default.
      *
-     * @param _default The default to provide if the current value is not a valid double
      * @return The value
      */
     public double getDouble()

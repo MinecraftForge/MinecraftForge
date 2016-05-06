@@ -1,5 +1,8 @@
 package net.minecraftforge.event.world;
 
+import net.minecraft.server.management.PlayerManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,7 +41,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
-     * EntityPlayerMP#onUpdate(). <br>
+     * {@link EntityPlayerMP#onUpdate()}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -54,7 +57,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.UnWatch is fired when an EntityPlayer stops watching a chunk.<br>
      * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
-     * PlayerInstance#removePlayer(EntityPlayerMP). <br>
+     * {@link PlayerManager.PlayerInstance#removePlayer(EntityPlayerMP)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>

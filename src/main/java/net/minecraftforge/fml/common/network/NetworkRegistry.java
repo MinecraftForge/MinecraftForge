@@ -110,7 +110,7 @@ public enum NetworkRegistry
      * <ul>
      * <li> {@link #newSimpleChannel(String)} provides {@link SimpleNetworkWrapper}, a simple implementation of a netty handler, suitable for those who don't
      * wish to dive too deeply into netty.
-     * <li> {@link #newEventChannel(String)} provides {@link FMLEventChannel} an event driven implementation, with lower level
+     * <li> {@link #newEventDrivenChannel(String)} (String)} provides {@link FMLEventChannel} an event driven implementation, with lower level
      * access to the network data stream, for those with advanced bitbanging needs that don't wish to poke netty too hard.
      * <li> Alternatively, simply use the netty features provided here and implement the full power of the netty stack.
      * </ul>
@@ -132,7 +132,7 @@ public enum NetworkRegistry
      * a utility codec, {@link FMLIndexedMessageToMessageCodec} that transforms from {@link FMLProxyPacket} to a mod
      * message using a message discriminator byte. This is optional, but highly recommended for use.
      *
-     * Note also that the handlers supplied need to be {@link ChannelHandler.Shareable} - they are injected into two
+     * Note also that the handlers supplied need to be {@link ChannelHandler.Sharable} - they are injected into two
      * channels.
      *
      * @param name

@@ -1,6 +1,10 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
+
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +13,7 @@ import net.minecraft.world.World;
 /**DecorateBiomeEvent is fired when a BiomeDecorator is created.
  * <br>
  * This event is fired whenever a BiomeDecorator is created in
- * DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase).<br>
+ * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase)}.<br>
  * <br>
  * {@link #world} contains the world that is being decorated. <br>
  * {@link #rand} contains an instance of Random to be used. <br>

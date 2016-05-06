@@ -1,14 +1,16 @@
 package net.minecraftforge.event.entity.living;
 
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingFallEvent is fired when an Entity is set to be falling.<br>
  * This event is fired whenever an Entity is set to fall in
- * EntityLivingBase#fall(float).<br>
+ * {@link EntityLivingBase#fall(float, float)}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingFall(EntityLivingBase, float)}.<br>
+ * This event is fired via the {@link ForgeHooks#onLivingFall(EntityLivingBase, float, float)}.<br>
  * <br>
  * {@link #distance} contains the distance the Entity is to fall. If this event is canceled, this value is set to 0.0F.
  * <br>

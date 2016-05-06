@@ -48,7 +48,7 @@ public interface IFluidContainerItem
      *            ItemStack which is the fluid container.
      * @param maxDrain
      *            Maximum amount of fluid to be removed from the container.
-     * @param doFill
+     * @param doDrain
      *            If false, the drain will only be simulated.
      * @return Amount of fluid that was (or would have been, if simulated) drained from the
      *         container.

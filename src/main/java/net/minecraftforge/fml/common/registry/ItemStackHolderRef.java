@@ -14,7 +14,7 @@ import com.google.common.base.Throwables;
 
 
 /**
- * Internal class used in tracking {@link ItemStackHolder} references
+ * Internal class used in tracking {@link GameRegistry.ItemStackHolder} references
  *
  * @author cpw
  *

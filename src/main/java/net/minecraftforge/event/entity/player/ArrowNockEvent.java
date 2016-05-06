@@ -1,15 +1,17 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
  * This event is fired whenever a player begins using a bow in
- * ItemBow#onItemRightClick(ItemStack, World, EntityPlayer).<br>
+ * {@link ItemBow#onItemRightClick(ItemStack, World, EntityPlayer, EnumHand)}.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
