@@ -241,6 +241,7 @@ public class VillagerRegistry
         {
             this.profession = parent;
             this.name = name;
+            this.trades = new ArrayList<List<ITradeList>>();
             parent.register(this);
         }
 
@@ -260,8 +261,7 @@ public class VillagerRegistry
         }
 
         private VillagerCareer init(EntityVillager.ITradeList[][] trades)
-        {
-            this.trades = new ArrayList<List<ITradeList>>();
+        { 
             for(int i = 0; i < trades.length; i++)
             {
                 List<ITradeList> inner = new LinkedList<ITradeList>();
