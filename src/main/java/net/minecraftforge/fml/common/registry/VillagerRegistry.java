@@ -218,7 +218,7 @@ public class VillagerRegistry
         {
             for (VillagerCareer car : this.careers)
             {
-                if (car.getName() == name)
+                if (car.getName().equals(name))
                     return car;
             }
             return null;
