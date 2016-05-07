@@ -46,7 +46,7 @@
          boolean flag = false;
          ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_185931_1_, p_185931_2_);
  
-+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_185995_n, p_185931_1_, p_185931_2_, flag);
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_185995_n, this.field_185990_i, p_185931_1_, p_185931_2_, flag);
 +
          if (this.field_185996_o)
          {
@@ -94,7 +94,7 @@
          }
 +        }//Forge: End ICE
  
-+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_185995_n, p_185931_1_, p_185931_2_, flag);
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_185995_n, this.field_185990_i, p_185931_1_, p_185931_2_, flag);
 +
          BlockFalling.field_149832_M = false;
      }

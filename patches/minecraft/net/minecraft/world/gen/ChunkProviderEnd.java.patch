@@ -58,7 +58,7 @@
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
-+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_73230_p, p_185931_1_, p_185931_2_, false);
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_73230_p, this.field_73220_k, p_185931_1_, p_185931_2_, false);
          BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
  
          if (this.field_73229_q)
@@ -66,7 +66,7 @@
              }
          }
  
-+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_73230_p, p_185931_1_, p_185931_2_, false);
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_73230_p, this.field_73220_k, p_185931_1_, p_185931_2_, false);
          BlockFalling.field_149832_M = false;
      }
  
