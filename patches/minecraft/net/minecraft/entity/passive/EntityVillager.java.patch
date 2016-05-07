@@ -134,15 +134,11 @@
  
              for (EntityVillager.ITradeList entityvillager$itradelist : aentityvillager$itradelist2)
              {
-@@ -647,9 +691,14 @@
+@@ -647,9 +691,10 @@
                      }
              }
  
-+            if (s1 == null)
-+                s1 = this.getProfessionForge().getCareer(this.field_175563_bv).getName();
-+            else
-+                s1 = "entity.Villager." + s1;
-+            //TODO: Hook into VillagerRegistry to get name
++            s1 = this.getProfessionForge().getCareer(this.field_175563_bv - 1).getUnlocalizedName();
              if (s1 != null)
              {
 -                TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("entity.Villager." + s1, new Object[0]);
@@ -150,7 +146,7 @@
                  textcomponenttranslation.func_150256_b().func_150209_a(this.func_174823_aP());
                  textcomponenttranslation.func_150256_b().func_179989_a(this.func_110124_au().toString());
  
-@@ -708,7 +757,7 @@
+@@ -708,7 +753,7 @@
      public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, IEntityLivingData p_180482_2_)
      {
          p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);

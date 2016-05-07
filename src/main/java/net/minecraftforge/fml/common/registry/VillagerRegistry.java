@@ -249,6 +249,15 @@ public class VillagerRegistry
         {
             return this.name;
         }
+        
+        public String getUnlocalizedName()
+        {
+            ResourceLocation professionName = profession.getRegistryName();
+            if(professionName.getResourceDomain().equals("minecraft"))
+                return String.format("entity.Villager.%s", this.getName());
+            else
+                return String.format("entity.Villager.%s.%s", professionName.getResourceDomain(), this.getName());
+        }
 
         public ITradeList[][] getTrades()
         {

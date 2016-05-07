@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerCareer;
 
-@Mod(modid = "VillagerTradesTest", name = "VillagerTradesTest", version = "0.0.0")
+@Mod(modid = "villagertradestest", name = "VillagerTradesTest", version = "0.0.0")
 public class VillagerTradesTest
 {
     
