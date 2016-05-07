@@ -3,6 +3,7 @@ package net.minecraftforge.event;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -525,9 +526,19 @@ public class ForgeEventFactory
         return event.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
     }
 
+    /**
+     * @deprecated Use {@link #onChunkPopulate(boolean, IChunkGenerator, World, Random, int, int, boolean)}<br>
+     * The Random param should not be world.rand, it should be the same chunk-position-seeded rand used by the Chunk Provider.
+     */
+    @Deprecated
     public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, int x, int z, boolean hasVillageGenerated)
     {
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, world.rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, world.rand, x, z, hasVillageGenerated));
+    }
+
+    public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, Random rand, int x, int z, boolean hasVillageGenerated)
+    {
+        MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
     }
 
 }
