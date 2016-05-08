@@ -577,6 +577,12 @@ public class FMLCommonHandler
         bus().post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
     }
 
+    public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted, int amount)
+    {
+        bus().post(new PlayerEvent.ItemSmeltedEvent(player, smelted, amount));
+    }
+
+    @Deprecated
     public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted)
     {
         bus().post(new PlayerEvent.ItemSmeltedEvent(player, smelted));

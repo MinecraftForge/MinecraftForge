@@ -1,11 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotFurnaceOutput.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnaceOutput.java
-@@ -81,6 +81,8 @@
+@@ -37,6 +37,7 @@
  
+     public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
+     {
++        if(field_75228_b>0)//Fix ContainerFurnace invalid call after -onSlotChange(ItemStack,ItemStack), without removing valid call after -decrStackSize(int).
+         this.func_75208_c(p_82870_2_);
+         super.func_82870_a(p_82870_1_, p_82870_2_);
+     }
+@@ -81,6 +82,7 @@
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerSmeltedEvent(field_75229_a, p_75208_1_, field_75228_b);
          this.field_75228_b = 0;
  
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerSmeltedEvent(field_75229_a, p_75208_1_);
-+
          if (p_75208_1_.func_77973_b() == Items.field_151042_j)
-         {
-             this.field_75229_a.func_71029_a(AchievementList.field_187987_k);

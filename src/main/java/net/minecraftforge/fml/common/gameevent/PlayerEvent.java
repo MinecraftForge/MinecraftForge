@@ -34,10 +34,20 @@ public class PlayerEvent extends Event {
     }
     public static class ItemSmeltedEvent extends PlayerEvent {
         public final ItemStack smelting;
+        public final int amount;
+        @Deprecated
         public ItemSmeltedEvent(EntityPlayer player, ItemStack crafting)
         {
             super(player);
             this.smelting = crafting;
+            this.amount = 0;
+        }
+
+        public ItemSmeltedEvent(EntityPlayer player, ItemStack crafting, int amount)
+        {
+            super(player);
+            this.smelting = crafting;
+            this.amount = amount;
         }
     }
 
