@@ -15,6 +15,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -77,6 +78,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEnchantItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -969,5 +971,12 @@ public class ForgeHooks
     public static void onEmptyClick(EntityPlayer player, EnumHand hand)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
+    }
+    
+    public static List<EnchantmentData> onItemEnchanted(EntityPlayer player, int levels, ItemStack itemstack, ItemStack fuel, List<EnchantmentData> enchantments)
+    {
+    	final PlayerEnchantItemEvent event = new PlayerEnchantItemEvent(player, itemstack, fuel, levels, enchantments);
+    	MinecraftForge.EVENT_BUS.post(event);
+    	return (event.isCanceled()) ? null : event.getEnchantments();
     }
 }
