@@ -256,7 +256,7 @@ public class VillagerRegistry
             if(professionName.getResourceDomain().equals("minecraft"))
                 return String.format("entity.Villager.%s", this.getName());
             else
-                return String.format("entity.Villager.%s.%s", professionName.getResourceDomain(), this.getName());
+                return String.format("entity.Villager.%s.%s.%s", professionName.getResourceDomain(), professionName.getResourcePath(), this.getName());
         }
 
         public ITradeList[][] getTrades()
