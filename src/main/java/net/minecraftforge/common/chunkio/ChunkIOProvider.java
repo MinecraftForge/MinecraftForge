@@ -67,7 +67,8 @@ class ChunkIOProvider implements Runnable
         if (chunk == null)
         {
             // If the chunk loading failed just do it synchronously (may generate)
-            provider.originalLoadChunk(this.chunkInfo.x, this.chunkInfo.z);
+            this.chunk = provider.originalLoadChunk(this.chunkInfo.x, this.chunkInfo.z);
+            this.runCallbacks();
             return;
         }
 
@@ -87,13 +88,7 @@ class ChunkIOProvider implements Runnable
         }
 
         this.chunk.populateChunk(provider, provider.chunkGenerator);
-
-        for (Runnable r : this.callbacks)
-        {
-            r.run();
-        }
-
-        this.callbacks.clear();
+        this.runCallbacks();
     }
 
     public Chunk getChunk()
@@ -109,5 +104,15 @@ class ChunkIOProvider implements Runnable
     public boolean hasCallback()
     {
         return this.callbacks.size() > 0;
+    }
+
+    public void runCallbacks()
+    {
+        for (Runnable r : this.callbacks)
+        {
+            r.run();
+        }
+
+        this.callbacks.clear();
     }
 }

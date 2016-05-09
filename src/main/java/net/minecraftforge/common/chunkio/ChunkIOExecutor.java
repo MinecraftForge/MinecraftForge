@@ -47,9 +47,9 @@ public class ChunkIOExecutor
         {
             if (!pool.remove(task)) // If it wasn't in the pool, and run hasn't finished, then wait for the async thread.
             {
-                while (!task.runFinished())
+                synchronized(task)
                 {
-                    synchronized(task)
+                    while (!task.runFinished())
                     {
                         try
                         {
