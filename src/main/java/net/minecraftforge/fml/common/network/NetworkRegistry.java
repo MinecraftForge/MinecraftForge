@@ -124,7 +124,7 @@ public enum NetworkRegistry
      *
      * The first handler in the pipeline is special and should not be removed or moved from the head - it transforms
      * packets from the outbound of this pipeline into custom packets, based on the current {@link AttributeKey} value
-     * {@link NetworkRegistry#FML_MESSAGETARGET} and {@link NetworkRegistry#FML_MESSAGETARGETARGS} set on the channel.
+     * {@link FMLOutboundHandler#FML_MESSAGETARGET} and {@link FMLOutboundHandler#FML_MESSAGETARGETARGS} set on the channel.
      * For the client to server channel (source side : CLIENT) this is fixed as "TOSERVER". For SERVER to CLIENT packets,
      * several possible values exist.
      *
