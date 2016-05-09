@@ -3,11 +3,20 @@ package net.minecraftforge.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -47,6 +56,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -61,6 +72,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
+import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -970,4 +985,132 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
+
+    private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
+    private static LootTableContext getLootTableContext()
+    {
+        LootTableContext ctx = lootContext.get().peek();
+
+        if (ctx == null)
+            throw new JsonParseException("Invalid call stack, could to grab json context!"); // Show I throw this? Do we care about custom deserializers outside the manager?
+
+        return ctx;
+    }
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom)
+    {
+        Deque<LootTableContext> que = lootContext.get();
+        if (que == null)
+        {
+            que = Queues.newArrayDeque();
+            lootContext.set(que);
+        }
+
+        LootTable ret = null;
+        try
+        {
+            que.push(new LootTableContext(name, custom));
+            ret = gson.fromJson(data, LootTable.class);
+            que.pop();
+        }
+        catch (JsonParseException e)
+        {
+            que.pop();
+            throw e;
+        }
+
+        if (!custom)
+            ret = ForgeEventFactory.loadLootTable(name, ret);
+
+        return ret;
+    }
+
+    private static class LootTableContext
+    {
+        public final ResourceLocation name;
+        private final boolean vanilla;
+        public final boolean custom;
+        public int poolCount = 0;
+        public int entryCount = 0;
+        private HashSet<String> entryNames = Sets.newHashSet();
+
+        private LootTableContext(ResourceLocation name, boolean custom)
+        {
+            this.name = name;
+            this.custom = custom;
+            this.vanilla = "minecraft".equals(this.name.getResourceDomain());
+        }
+
+        private void resetPoolCtx()
+        {
+            this.entryCount = 0;
+            this.entryNames.clear();
+        }
+
+        public String validateEntryName(String name)
+        {
+            if (!this.entryNames.contains(name))
+            {
+                this.entryNames.add(name);
+                return name;
+            }
+
+            if (!this.vanilla)
+                throw new JsonParseException("Loot Table \"" + this.name.toString() + "\" Duplicate entry name \"" + name + "\" for pool #" + (this.poolCount - 1) + " entry #" + (this.entryCount-1));
+
+            int x = 0;
+            while (this.entryNames.contains(name + "#" + x))
+                x++;
+
+            name = name + "#" + x;
+            this.entryNames.add(name);
+
+            return name;
+        }
+    }
+
+    public static String readPoolName(JsonObject json)
+    {
+        LootTableContext ctx = ForgeHooks.getLootTableContext();
+        ctx.resetPoolCtx();
+
+        if (json.has("name"))
+            return JsonUtils.getString(json, "name");
+
+        if (ctx.custom)
+            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
+
+        ctx.poolCount++;
+
+        if (!ctx.vanilla)
+            throw new JsonParseException("Loot Table \"" + ctx.name.toString() + "\" Missing `name` entry for pool #" + (ctx.poolCount - 1));
+
+        return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
+    }
+
+    public static String readLootEntryName(JsonObject json, String type)
+    {
+        LootTableContext ctx = ForgeHooks.getLootTableContext();
+        ctx.entryCount++;
+
+        if (json.has("entryName"))
+            return ctx.validateEntryName(JsonUtils.getString(json, "EntryName"));
+
+        if (ctx.custom)
+            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
+
+        String name = null;
+        if ("item".equals(type))
+            name = JsonUtils.getString(json, "name");
+        else if ("loot_table".equals(type))
+            name = JsonUtils.getString(json, "name");
+        else if ("empty".equals(type))
+            name = "empty";
+
+        return ctx.validateEntryName(name);
+    }
+
+
+    //TODO: Some registry to support custom LootEntry types?
+    public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
+    public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
 }

@@ -24,6 +24,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -39,6 +40,7 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
@@ -539,6 +541,14 @@ public class ForgeEventFactory
     public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, Random rand, int x, int z, boolean hasVillageGenerated)
     {
         MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
+    }
+
+    public static LootTable loadLootTable(ResourceLocation name, LootTable table)
+    {
+        LootTableLoadEvent event = new LootTableLoadEvent(name, table);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return LootTable.EMPTY_LOOT_TABLE;
+        return event.getTable();
     }
 
 }
