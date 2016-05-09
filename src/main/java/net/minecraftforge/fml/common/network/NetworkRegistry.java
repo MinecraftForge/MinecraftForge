@@ -258,7 +258,7 @@ public enum NetworkRegistry
      * @param x X coord
      * @param y Y coord
      * @param z Z coord
-     * @return The client side GUI object (An instance of {@link GUI})
+     * @return The client side GUI object (An instance of {@link net.minecraft.client.gui.Gui})
      */
     public Object getLocalGuiContainer(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
     {
