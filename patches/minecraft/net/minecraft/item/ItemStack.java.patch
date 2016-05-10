@@ -135,6 +135,15 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
+@@ -254,7 +260,7 @@
+         {
+             if (p_96631_1_ > 0)
+             {
+-                int i = EnchantmentHelper.func_77506_a(Enchantments.field_185307_s, this);
++                int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185307_s, this, null);
+                 int j = 0;
+ 
+                 for (int k = 0; i > 0 && k < p_96631_1_; ++k)
 @@ -273,8 +279,8 @@
                  }
              }

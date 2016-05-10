@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -292,7 +292,7 @@
+@@ -30,6 +30,12 @@
+     private static final EnchantmentHelper.HurtIterator field_151388_d = new EnchantmentHelper.HurtIterator();
+     private static final EnchantmentHelper.DamageIterator field_151389_e = new EnchantmentHelper.DamageIterator();
+ 
++    public static int getEnchantmentLevel(Enchantment enchID, ItemStack stack, EntityLivingBase entityLivingBase)
++    {
++        return net.minecraftforge.common.ForgeHooks.getEnchantmentLevel(entityLivingBase, enchID, stack, func_77506_a(enchID, stack));
++    }
++
++    @Deprecated
+     public static int func_77506_a(Enchantment p_77506_0_, ItemStack p_77506_1_)
+     {
+         if (p_77506_1_ == null)
+@@ -292,7 +298,7 @@
      public static int func_77514_a(Random p_77514_0_, int p_77514_1_, int p_77514_2_, ItemStack p_77514_3_)
      {
          Item item = p_77514_3_.func_77973_b();
@@ -9,7 +22,7 @@
  
          if (i <= 0)
          {
-@@ -339,7 +339,7 @@
+@@ -339,7 +345,7 @@
      {
          List<EnchantmentData> list = Lists.<EnchantmentData>newArrayList();
          Item item = p_77513_1_.func_77973_b();
@@ -18,7 +31,7 @@
  
          if (i <= 0)
          {
-@@ -380,7 +380,8 @@
+@@ -380,7 +386,8 @@
  
          while (iterator.hasNext())
          {
@@ -28,7 +41,7 @@
              {
                  iterator.remove();
              }
-@@ -395,7 +396,7 @@
+@@ -395,7 +402,7 @@
  
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {

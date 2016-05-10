@@ -1,7 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -90,6 +90,10 @@
-             boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
+@@ -87,9 +87,13 @@
+         if (p_77615_3_ instanceof EntityPlayer)
+         {
+             EntityPlayer entityplayer = (EntityPlayer)p_77615_3_;
+-            boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
++            boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185312_x, p_77615_1_, p_77615_3_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
  
 +            int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
@@ -25,6 +29,31 @@
  
                      if (!p_77615_2_.field_72995_K)
                      {
+@@ -115,21 +118,21 @@
+                             entityarrow.func_70243_d(true);
+                         }
+ 
+-                        int j = EnchantmentHelper.func_77506_a(Enchantments.field_185309_u, p_77615_1_);
++                        int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185309_u, p_77615_1_, p_77615_3_);
+ 
+                         if (j > 0)
+                         {
+                             entityarrow.func_70239_b(entityarrow.func_70242_d() + (double)j * 0.5D + 0.5D);
+                         }
+ 
+-                        int k = EnchantmentHelper.func_77506_a(Enchantments.field_185310_v, p_77615_1_);
++                        int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185310_v, p_77615_1_, p_77615_3_);
+ 
+                         if (k > 0)
+                         {
+                             entityarrow.func_70240_a(k);
+                         }
+ 
+-                        if (EnchantmentHelper.func_77506_a(Enchantments.field_185311_w, p_77615_1_) > 0)
++                        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.field_185311_w, p_77615_1_, p_77615_3_) > 0)
+                         {
+                             entityarrow.func_70015_d(100);
+                         }
 @@ -189,6 +192,9 @@
      {
          boolean flag = this.func_185060_a(p_77659_3_) != null;

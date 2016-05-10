@@ -29,7 +29,7 @@
 +            if (target.isShearable(itemstack, entity.field_70170_p, pos))
 +            {
 +                java.util.List<ItemStack> drops = target.onSheared(itemstack, entity.field_70170_p, pos,
-+                        net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.init.Enchantments.field_185308_t, itemstack));
++                        net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.field_185308_t, itemstack, player));
 +
 +                java.util.Random rand = new java.util.Random();
 +                for(ItemStack stack : drops)
@@ -60,7 +60,7 @@
 +            if (target.isShearable(itemstack, player.field_70170_p, pos))
 +            {
 +                java.util.List<ItemStack> drops = target.onSheared(itemstack, player.field_70170_p, pos,
-+                        net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.init.Enchantments.field_185308_t, itemstack));
++                        net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.field_185308_t, itemstack, player));
 +                java.util.Random rand = new java.util.Random();
 +
 +                for(ItemStack stack : drops)
