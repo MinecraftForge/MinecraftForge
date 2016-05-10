@@ -842,7 +842,7 @@
 +     * @param entity The entity that is running on the block.
 +     * @return True to prevent vanilla running particles form spawning.
 +     */
-+    public boolean addRunningEffects(IBlockState state, World worldObj, BlockPos pos, Entity entity)
++    public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity)
 +    {
 +        return false;
 +    }
