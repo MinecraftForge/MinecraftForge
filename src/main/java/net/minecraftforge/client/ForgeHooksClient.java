@@ -65,6 +65,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.BossInfoLerping;
 import net.minecraft.world.IBlockAccess;
@@ -716,4 +717,10 @@ public class ForgeHooksClient
         return event;
     }
 
+    public static PrintChatMessageEvent onPrintChatMessage(ITextComponent chatComponent, int chatLineId)
+    {
+        PrintChatMessageEvent event = new PrintChatMessageEvent(chatComponent, chatLineId);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
 }
