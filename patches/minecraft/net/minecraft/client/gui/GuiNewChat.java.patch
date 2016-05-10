@@ -5,7 +5,7 @@
      public void func_146234_a(ITextComponent p_146234_1_, int p_146234_2_)
      {
 +        net.minecraftforge.client.event.PrintChatMessageEvent event = net.minecraftforge.client.ForgeHooksClient.onPrintChatMessage(p_146234_1_, p_146234_2_);
-+        if(event.isCanceled()) return;
++        if(event.isCanceled() || event.getMessage() == null) return;
 +        p_146234_1_ = event.getMessage();
 +        p_146234_2_ = event.getChatLineId();
          this.func_146237_a(p_146234_1_, p_146234_2_, this.field_146247_f.field_71456_v.func_73834_c(), false);
