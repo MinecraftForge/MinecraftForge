@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * This event is {@link Cancelable}
  *
- * {@link #message} contains the message that is printed to the chat (may not be null)
+ * {@link #message} contains the message that is printed to the chat
  * {@link #chatLineId} contains the id for optional message deletion (default is 0)
  */
 @Cancelable
