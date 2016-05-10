@@ -282,15 +282,14 @@ public final class Clips
                     return Optional.absent();
                 }
                 IJoint joint = (IJoint)part.get();
+                // TODO: Cache clip application?
                 TRSRTransformation jointTransform = clip.apply(joint).apply(time).compose(joint.getInvBindPose());
-                Optional<TRSRTransformation> parentTransform = Optional.absent();
-                if(joint.getParent().isPresent())
+                Optional<? extends IJoint> parent = joint.getParent();
+                while(parent.isPresent())
                 {
-                    parentTransform = apply(Optional.of(joint.getParent().get()));
-                }
-                if(parentTransform.isPresent())
-                {
-                    jointTransform = parentTransform.get().compose(jointTransform);
+                    TRSRTransformation parentTransform = clip.apply(parent.get()).apply(time);
+                    jointTransform = parentTransform.compose(jointTransform);
+                    parent = parent.get().getParent();
                 }
                 return Optional.of(jointTransform);
             }
