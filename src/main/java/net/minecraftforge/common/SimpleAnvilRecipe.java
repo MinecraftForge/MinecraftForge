@@ -1,8 +1,9 @@
 package net.minecraftforge.common;
 
+import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -14,9 +15,9 @@ public class SimpleAnvilRecipe implements IAnvilRecipe
 {
     protected final List<ItemStack> left;
     protected final List<ItemStack> right;
-    protected final ItemStack       output;
-    protected final int             expCost;
-    protected final int             matCost;
+    protected final ItemStack output;
+    protected final int expCost;
+    protected final int matCost;
 
     public SimpleAnvilRecipe(ItemStack result, Object inputLeft, Object inputRight, int materialCost, int experienceCost)
     {
@@ -33,35 +34,53 @@ public class SimpleAnvilRecipe implements IAnvilRecipe
 
     private List<ItemStack> processInput(Object input)
     {
-        if (input instanceof String) {
+        if (input instanceof String)
+        {
             return OreDictionary.getOres((String)input);
-        } else {
+        }
+        else
+        {
             ItemStack stack = null;
-            if (input instanceof ItemStack) {
+            if (input instanceof ItemStack)
+            {
                 stack = ((ItemStack)input).copy();
-            } else if (input instanceof Item) {
-                stack = new ItemStack((Item)input);
-            } else if (input instanceof Block) {
+            }
+            else if (input instanceof Item)
+            {
+                stack = new ItemStack((Item)input, 1, OreDictionary.WILDCARD_VALUE);
+            }
+            else if (input instanceof Block)
+            {
                 stack = new ItemStack((Block)input, 1, OreDictionary.WILDCARD_VALUE);
             }
-            return stack != null ? ImmutableList.of(stack) : OreDictionary.EMPTY_LIST;
+            return stack != null ? Collections.singletonList(stack) : OreDictionary.EMPTY_LIST;
         }
     }
 
     @Override
     public boolean matches(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
     {
-        return checkMatch(this.left, inputLeft) && checkMatch(this.right, inputRight);
+        return checkMatch(this.left, inputLeft, false) && checkMatch(this.right, inputRight, true);
     }
 
-    private boolean checkMatch(List<ItemStack> target, ItemStack tableItem)
+    private boolean checkMatch(List<ItemStack> target, ItemStack tableItem, boolean checksize)
     {
-        if (target == OreDictionary.EMPTY_LIST) {
+        if (target == OreDictionary.EMPTY_LIST)
+        {
             return tableItem == null;
         }
-        for (ItemStack stack : target) {
-            if (stack != null && OreDictionary.itemMatches(stack, tableItem, false)) {
-                return true;
+        else if (checksize && tableItem.stackSize < this.matCost)
+        {
+            return false;
+        }
+        else
+        {
+            for (ItemStack stack : target)
+            {
+                if (stack != null && OreDictionary.itemMatches(stack, tableItem, false))
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -71,12 +90,23 @@ public class SimpleAnvilRecipe implements IAnvilRecipe
      * Returns the input for this recipe, any mod accessing this value should never
      * manipulate the values in this array as it will effect the recipe itself.
      *
-     * @return The recipe input vales. Each value can be an ItemStack, List<ItemStack> or null.
+     * @return The recipe input vales.
      */
     @Override
-    public List[] getInputs()
+    public Pair<List<ItemStack>, List<ItemStack>> getInput()
     {
-        return new List[] { this.left, this.right };
+        return Pair.of(this.left, this.right);
+    }
+
+    /**
+     * The material cost of this recipe
+     *
+     * @return Returns the amount the inputRight item's stacksize will decrease by.
+     */
+    @Override
+    public int getMaterialCost()
+    {
+        return this.matCost;
     }
 
     /**
@@ -92,7 +122,7 @@ public class SimpleAnvilRecipe implements IAnvilRecipe
      * Returns the experience cost of this recipe
      */
     @Override
-    public int getCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
+    public int getExpCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
     {
         return this.expCost;
     }
@@ -100,7 +130,13 @@ public class SimpleAnvilRecipe implements IAnvilRecipe
     @Override
     public void doRepair(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
     {
-        inputLeft.stackSize = 0;
-        inputRight.stackSize -= this.matCost;
+        if (inputLeft != null)
+        {
+            inputLeft.stackSize = 0;
+        }
+        if (inputRight != null)
+        {
+            inputRight.stackSize -= this.matCost;
+        }
     }
 }

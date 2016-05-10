@@ -1,8 +1,11 @@
 package net.minecraftforge.test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import com.google.common.collect.ImmutableList;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -24,9 +27,10 @@ public class AnvilRecipeTest
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        AnvilRecipeHandler.INSTANCE.addRepair(new SimpleAnvilRecipe(new ItemStack(Items.iron_chestplate), Items.leather_chestplate, Items.iron_ingot, 5, 0));
-        AnvilRecipeHandler.INSTANCE.addRepair(new MelonAnvilRecipe());
-        AnvilRecipeHandler.INSTANCE.addRepair(new MegmaCreamAnvilRecipe());
+        AnvilRecipeHandler.INSTANCE.add(new SimpleAnvilRecipe(new ItemStack(Items.experience_bottle), Items.glass_bottle, null, 0, 1));
+        AnvilRecipeHandler.INSTANCE.add(new SimpleAnvilRecipe(new ItemStack(Items.iron_chestplate), Items.leather_chestplate, Items.iron_ingot, 5, 0));
+        AnvilRecipeHandler.INSTANCE.add(new MelonAnvilRecipe());
+        AnvilRecipeHandler.INSTANCE.add(new MegmaCreamAnvilRecipe());
     }
 
     public static class MelonAnvilRecipe implements IAnvilRecipe
@@ -36,8 +40,8 @@ public class AnvilRecipeTest
 
         public MelonAnvilRecipe()
         {
-            this.left = ImmutableList.of(new ItemStack(Items.wooden_axe));
-            this.right = ImmutableList.of(new ItemStack(Blocks.melon_block));
+            this.left = Collections.singletonList(new ItemStack(Items.wooden_axe));
+            this.right = Collections.singletonList(new ItemStack(Blocks.melon_block));
         }
 
         @Override
@@ -47,9 +51,15 @@ public class AnvilRecipeTest
         }
 
         @Override
-        public List[] getInputs()
+        public Pair<List<ItemStack>, List<ItemStack>> getInput()
         {
-            return new List[] { this.left, this.right };
+            return Pair.of(this.left, this.right);
+        }
+
+        @Override
+        public int getMaterialCost()
+        {
+            return 1;
         }
 
         @Override
@@ -59,7 +69,7 @@ public class AnvilRecipeTest
         }
 
         @Override
-        public int getCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
+        public int getExpCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
         {
             return 0;
         }
@@ -88,7 +98,7 @@ public class AnvilRecipeTest
         }
 
         @Override
-        public int getCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
+        public int getExpCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
         {
             return inputRight == null ? 0 : this.expCost * ((inputRight.stackSize / 8) + 1);
         }

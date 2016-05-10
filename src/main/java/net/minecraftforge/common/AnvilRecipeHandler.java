@@ -13,13 +13,13 @@ import net.minecraft.world.World;
 
 public class AnvilRecipeHandler
 {
-    public static final AnvilRecipeHandler INSTANCE     = new AnvilRecipeHandler();
-    private             List<IAnvilRecipe> anvilRecipes = new ArrayList<IAnvilRecipe>();
+    public static final AnvilRecipeHandler INSTANCE = new AnvilRecipeHandler();
+    private List<IAnvilRecipe> anvilRecipes = new ArrayList<IAnvilRecipe>();
 
     /**
      * Add an Anvil Recipe
      */
-    public void addRepair(IAnvilRecipe recipe)
+    public void add(IAnvilRecipe recipe)
     {
         anvilRecipes.add(recipe);
     }
@@ -27,11 +27,9 @@ public class AnvilRecipeHandler
     /**
      * Remove an Anvil Recipe
      */
-    public void removeRepair(IAnvilRecipe recipe)
+    public boolean remove(IAnvilRecipe recipe)
     {
-        if (anvilRecipes.contains(recipe)) {
-            anvilRecipes.remove(recipe);
-        }
+        return anvilRecipes.remove(recipe);
     }
 
     /**
@@ -45,10 +43,13 @@ public class AnvilRecipeHandler
     public boolean onPickupFromSlot(IInventory inputSlots, String name, World world)
     {
         String newName = (!Strings.isNullOrEmpty(name) && !name.equals(inputSlots.getStackInSlot(0).getDisplayName())) ? name : "";
-        if (getRepairResult(inputSlots.getStackInSlot(0), inputSlots.getStackInSlot(1), newName, world) != null) {
+        if (getRepairResult(inputSlots.getStackInSlot(0), inputSlots.getStackInSlot(1), newName, world) != null)
+        {
             doRepair(inputSlots.getStackInSlot(0), inputSlots.getStackInSlot(1), newName, world);
-            for (int slot = 0; slot < 2; slot++) {
-                if (inputSlots.getStackInSlot(slot) != null && inputSlots.getStackInSlot(slot).stackSize < 1) {
+            for (int slot = 0; slot < 2; slot++)
+            {
+                if (inputSlots.getStackInSlot(slot) != null && inputSlots.getStackInSlot(slot).stackSize < 1)
+                {
                     inputSlots.setInventorySlotContents(slot, null);
                 }
             }
@@ -61,11 +62,13 @@ public class AnvilRecipeHandler
     {
         String newName = (!Strings.isNullOrEmpty(name) && !name.equals(inputLeft.getDisplayName())) ? name : "";
         ItemStack result = getRepairResult(inputLeft, inputRight, newName, world);
-        if (result != null) {
+        if (result != null)
+        {
             outputSlot.setInventorySlotContents(0, result);
             container.materialCost = 0;
             container.maximumCost = getRepairCost(inputLeft, inputRight, newName, world);
-            if (!Strings.isNullOrEmpty(newName)) {
+            if (!Strings.isNullOrEmpty(newName))
+            {
                 outputSlot.getStackInSlot(0).setStackDisplayName(name);
             }
             return true;
@@ -82,21 +85,24 @@ public class AnvilRecipeHandler
     public int getRepairCost(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
     {
         IAnvilRecipe recipe = getRecipe(inputLeft, inputRight, newName, world);
-        return recipe == null ? 0 : recipe.getCost(inputLeft, inputRight, newName, world);
+        return recipe == null ? 0 : recipe.getExpCost(inputLeft, inputRight, newName, world);
     }
 
     public void doRepair(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
     {
         IAnvilRecipe recipe = getRecipe(inputLeft, inputRight, newName, world);
-        if (recipe != null) {
+        if (recipe != null)
+        {
             recipe.doRepair(inputLeft, inputRight, newName, world);
         }
     }
 
     private IAnvilRecipe getRecipe(ItemStack inputLeft, ItemStack inputRight, String newName, World world)
     {
-        for (IAnvilRecipe recipe : anvilRecipes) {
-            if (recipe.matches(inputLeft, inputRight, newName, world)) {
+        for (IAnvilRecipe recipe : anvilRecipes)
+        {
+            if (recipe.matches(inputLeft, inputRight, newName, world))
+            {
                 return recipe;
             }
         }
