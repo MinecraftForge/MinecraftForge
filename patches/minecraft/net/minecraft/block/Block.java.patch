@@ -837,7 +837,7 @@
 +     * Allows a block to override the standard Entity.createRunningParticles particles.
 +     * 
 +     * @param state State at the specific world/pos
-+     * @param worldObj The current world
++     * @param world The current world
 +     * @param pos Position of the block that the entity is running on.
 +     * @param entity The entity that is running on the block.
 +     * @return True to prevent vanilla running particles form spawning.
