@@ -27,11 +27,6 @@
       "url": "http://files.minecraftforge.net/maven/"
     },
     {
-	  "comment": "Force the downgrade on dedicated server to match client. Netty bug: https://github.com/MinecraftForge/MinecraftForge/issues/1848",
-      "name": "io.netty:netty-all:4.0.23.Final",
-      "serverreq":true
-    },
-    {
       "name": "net.minecraft:launchwrapper:1.12",
       "serverreq":true
     },
