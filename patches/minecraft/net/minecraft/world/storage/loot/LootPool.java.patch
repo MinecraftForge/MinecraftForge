@@ -39,23 +39,23 @@
      }
  
 +    //======================== FORGE START =============================================
-+    private boolean isFinalized = false;
-+    public void finalize()
++    private boolean isFrozen = false;
++    public void freeze()
 +    {
-+        this.isFinalized = true;
++        this.isFrozen = true;
 +    }
-+    public boolean isFinalized(){ return this.isFinalized; }
-+    private void checkFinalized()
++    public boolean isFrozen(){ return this.isFrozen; }
++    private void checkFrozen()
 +    {
-+        if (this.isFinalized())
-+            throw new RuntimeException("Attempted to modify LootPool after being finalized!");
++        if (this.isFrozen())
++            throw new RuntimeException("Attempted to modify LootPool after being frozen!");
 +    }
 +
 +    public String getName(){ return this.name; }
 +    public RandomValueRange getRolls()      { return this.field_186455_c; }
 +    public RandomValueRange getBonusRolls() { return this.field_186456_d; }
-+    public void setRolls     (RandomValueRange v){ checkFinalized(); this.field_186455_c = v; }
-+    public void setBonusRolls(RandomValueRange v){ checkFinalized(); this.field_186456_d = v; }
++    public void setRolls     (RandomValueRange v){ checkFrozen(); this.field_186455_c = v; }
++    public void setBonusRolls(RandomValueRange v){ checkFrozen(); this.field_186456_d = v; }
 +
 +    public LootEntry getEntry(String name)
 +    {
@@ -66,7 +66,7 @@
 +    }
 +    public LootEntry removeEntry(String name)
 +    {
-+        checkFinalized();
++        checkFrozen();
 +        for (LootEntry entry : this.field_186453_a)
 +        {
 +            if (name.equals(entry.getEntryName()))
@@ -79,7 +79,7 @@
 +    }
 +    public void addEntry(LootEntry entry)
 +    {
-+        checkFinalized();
++        checkFrozen();
 +        for (LootEntry e : this.field_186453_a)
 +            if (e == entry || e.getEntryName().equals(entry.getEntryName()))
 +                throw new RuntimeException("Attempted to add a duplicate entry to pool: " + e.getEntryName());

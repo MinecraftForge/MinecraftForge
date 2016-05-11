@@ -19,17 +19,17 @@
      }
  
 +    //======================== FORGE START =============================================
-+    private boolean isFinalized = false;
-+    public void finalize()
++    private boolean isFrozen = false;
++    public void freeze()
 +    {
-+        this.isFinalized = true;
++        this.isFrozen = true;
 +        for (LootPool pool : this.field_186466_c)
-+            pool.finalize();
++            pool.freeze();
 +    }
-+    public boolean isFinalized(){ return this.isFinalized; }
-+    private void checkFinalized()
++    public boolean isFrozen(){ return this.isFrozen; }
++    private void checkFrozen()
 +    {
-+        if (this.isFinalized())
++        if (this.isFrozen())
 +            throw new RuntimeException("Attempted to modify LootTable after being finalized!");
 +    }
 +
@@ -45,7 +45,7 @@
 +
 +    public LootPool removePool(String name)
 +    {
-+        checkFinalized();
++        checkFrozen();
 +        for (LootPool pool : this.field_186466_c)
 +        {
 +            if (name.equals(pool.getName()))
@@ -60,7 +60,7 @@
 +
 +    public void addPool(LootPool pool)
 +    {
-+        checkFinalized();
++        checkFrozen();
 +        for (LootPool p : this.field_186466_c)
 +        {
 +            if (p == pool || p.getName().equals(pool.getName()))

@@ -1021,6 +1021,9 @@ public class ForgeHooks
         if (!custom)
             ret = ForgeEventFactory.loadLootTable(name, ret);
 
+        if (ret != null)
+            ret.freeze();
+
         return ret;
     }
 
@@ -1093,7 +1096,7 @@ public class ForgeHooks
         ctx.entryCount++;
 
         if (json.has("entryName"))
-            return ctx.validateEntryName(JsonUtils.getString(json, "EntryName"));
+            return ctx.validateEntryName(JsonUtils.getString(json, "entryName"));
 
         if (ctx.custom)
             return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
