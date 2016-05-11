@@ -13,7 +13,7 @@
 +    private final String name;
  
 -    public LootPool(LootEntry[] p_i46643_1_, LootCondition[] p_i46643_2_, RandomValueRange p_i46643_3_, RandomValueRange p_i46643_4_)
-+    private LootPool(LootEntry[] p_i46643_1_, LootCondition[] p_i46643_2_, RandomValueRange p_i46643_3_, RandomValueRange p_i46643_4_, String name)
++    public LootPool(LootEntry[] p_i46643_1_, LootCondition[] p_i46643_2_, RandomValueRange p_i46643_3_, RandomValueRange p_i46643_4_, String name)
      {
 -        this.field_186453_a = p_i46643_1_;
 -        this.field_186454_b = p_i46643_2_;
