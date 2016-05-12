@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -104,7 +103,7 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.silkTouch, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
+                    (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.silkTouch, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
@@ -236,20 +235,26 @@ public class BlockEvent extends Event
             return notifiedSides;
         }
     }
-    
+
     /**
+     * Fired when crop calculates it's growth chance to grow.
+     * <br>
      * {@link BlockEvent#pos} and {@link BlockEvent#state} are soil's position and state.
+     * <br>
+     * For example, crop extending {@link BlockCrops} will grow if random int between 0 and 25/growthChance + 1 is 0 (<code>rand.nextInt((int)(25.0F / growthChance) + 1) == 0</code>).
      * @author elix_x
      *
      */
-    public static class SoilPlantEvent extends BlockEvent
+    public static class GetGrowthChanceEvent extends BlockEvent
     {
         private final IPlantable plant;
+        private float growthChance;
 
-        public SoilPlantEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant)
+        public GetGrowthChanceEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, float growthChance)
         {
             super(world, pos, soil);
             this.plant = plant;
+            this.growthChance = growthChance;
         }
 
         public IPlantable getPlant()
@@ -257,67 +262,14 @@ public class BlockEvent extends Event
             return plant;
         }
 
-        /**
-         * Fired when plant checks whether it can sustain on soil.
-         * <br>
-         * This event is called from block updates, crops planting and other various things, so {@link SoilPlantEvent#plant} may not be {@link Block}.
-         * @author elix_x
-         *
-         */
-        public static class CanSoilSustainPlantEvent extends SoilPlantEvent
+        public float getGrowthChance()
         {
-            private final EnumFacing direction;
-            private boolean canSustain;
-
-            public CanSoilSustainPlantEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, EnumFacing direction, boolean canSustain)
-            {
-                super(world, pos, soil, plant);
-                this.direction = direction;
-                this.canSustain = canSustain;
-            }
-
-            public EnumFacing getDirection()
-            {
-                return direction;
-            }
-
-            public boolean canSustain()
-            {
-                return canSustain;
-            }
-
-            public void setCanSustain(boolean canSustain)
-            {
-                this.canSustain = canSustain;
-            }
+            return growthChance;
         }
 
-        /**
-         * Fired when crop calculates it's growth chance to grow.
-         * <br>
-         * For example, crop extending {@link BlockCrops} will grow if random int between 0 and 25/growthChance + 1 is 0 (<code>rand.nextInt((int)(25.0F / growthChance) + 1) == 0</code>).
-         * @author elix_x
-         *
-         */
-        public static class GetGrowthChanceEvent extends SoilPlantEvent
+        public void setGrowthChance(float growthChance)
         {
-            private float growthChance;
-
-            public GetGrowthChanceEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, float growthChance)
-            {
-                super(world, pos, soil, plant);
-                this.growthChance = growthChance;
-            }
-
-            public float getGrowthChance()
-            {
-                return growthChance;
-            }
-
-            public void setGrowthChance(float growthChance)
-            {
-                this.growthChance = growthChance;
-            }
+            this.growthChance = growthChance;
         }
     }
 }

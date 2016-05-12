@@ -30,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -78,11 +77,10 @@ import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.GetGrowthChanceEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
-import net.minecraftforge.event.world.BlockEvent.SoilPlantEvent.CanSoilSustainPlantEvent;
-import net.minecraftforge.event.world.BlockEvent.SoilPlantEvent.GetGrowthChanceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -128,20 +126,9 @@ public class ForgeEventFactory
         PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, state, original, pos);
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
     }
-    
-    public static boolean canSoilSustainPlant(IBlockAccess world, BlockPos pos, EnumFacing direction, IPlantable plantable, boolean canSustain)
-    {
-        if(world instanceof World){
-            CanSoilSustainPlantEvent event = new CanSoilSustainPlantEvent((World) world, pos, world.getBlockState(pos), plantable, direction, canSustain);
-            MinecraftForge.EVENT_BUS.post(event);
-            return event.canSustain();
-        } else{
-        	return canSustain;
-        }
-    }
 
     public static float getGrowthChance(Block plant, World worldIn, BlockPos pos, float growthChance){
-        GetGrowthChanceEvent event = new GetGrowthChanceEvent(worldIn, pos, worldIn.getBlockState(pos.down()), (IPlantable) plant, growthChance);
+        GetGrowthChanceEvent event = new GetGrowthChanceEvent(worldIn, pos.down(), worldIn.getBlockState(pos.down()), (IPlantable) plant, growthChance);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getGrowthChance();
     }

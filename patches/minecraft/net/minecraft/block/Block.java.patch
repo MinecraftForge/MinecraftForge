@@ -890,40 +890,40 @@
 +    {
 +        IBlockState plant = plantable.getPlant(world, pos.func_177972_a(direction));
 +        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177972_a(direction));
-+        boolean canSustain = false;
++        
 +        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF && this == net.minecraft.init.Blocks.field_150434_aF)
 +        {
-+            canSustain = true;
++        	return true;
 +        }
 +
 +        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150436_aH && this == net.minecraft.init.Blocks.field_150436_aH)
 +        {
-+            canSustain = true;
++        	return true;
 +        }
 +
 +        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_185514_i(state))
 +        {
-+            canSustain = true;
++        	return true;
 +        }
 +
 +        switch (plantType)
 +        {
-+            case Desert: canSustain |= this == net.minecraft.init.Blocks.field_150354_m || this == net.minecraft.init.Blocks.field_150405_ch || this == net.minecraft.init.Blocks.field_150406_ce || this == net.minecraft.init.Blocks.field_150346_d;
-+            case Nether: canSustain |= this == net.minecraft.init.Blocks.field_150425_aM;
-+            case Crop:   canSustain |= this == net.minecraft.init.Blocks.field_150458_ak;
-+            case Cave:   canSustain |= state.isSideSolid(world, pos, EnumFacing.UP);
-+            case Plains: canSustain |= this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150458_ak;
-+            case Water:  canSustain |= state.func_185904_a() == Material.field_151586_h && state.func_177229_b(BlockLiquid.field_176367_b) == 0;
++            case Desert: return this == net.minecraft.init.Blocks.field_150354_m || this == net.minecraft.init.Blocks.field_150405_ch || this == net.minecraft.init.Blocks.field_150406_ce || this == net.minecraft.init.Blocks.field_150346_d;
++            case Nether: return this == net.minecraft.init.Blocks.field_150425_aM;
++            case Crop:   return this == net.minecraft.init.Blocks.field_150458_ak;
++            case Cave:   return state.isSideSolid(world, pos, EnumFacing.UP);
++            case Plains: return this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150458_ak;
++            case Water:  return state.func_185904_a() == Material.field_151586_h && state.func_177229_b(BlockLiquid.field_176367_b) == 0;
 +            case Beach:
 +                boolean isBeach = this == net.minecraft.init.Blocks.field_150349_c || this == net.minecraft.init.Blocks.field_150346_d || this == net.minecraft.init.Blocks.field_150354_m;
 +                boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
 +                                    world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
 +                                    world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||
 +                                    world.func_180495_p(pos.func_177968_d()).func_185904_a() == Material.field_151586_h);
-+                canSustain |= isBeach && hasWater;
++                return isBeach && hasWater;
 +        }
 +
-+        return net.minecraftforge.event.ForgeEventFactory.canSoilSustainPlant(world, pos, direction, plantable, canSustain);
++        return false;
 +    }
 +
 +    /**
