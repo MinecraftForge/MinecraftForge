@@ -6,7 +6,7 @@
      }
 +
 +    /* ======================================== FORGE START =====================================*/
-+    public boolean canBeInfinite(ItemStack stack) 
++    public boolean canBeInfinite(ItemStack stack)
 +    {
 +        return true;
 +    }

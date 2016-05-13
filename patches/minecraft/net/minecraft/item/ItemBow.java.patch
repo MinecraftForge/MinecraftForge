@@ -25,24 +25,6 @@
  
                      if (!p_77615_2_.field_72995_K)
                      {
-@@ -136,7 +139,7 @@
- 
-                         p_77615_1_.func_77972_a(1, entityplayer);
- 
--                        if (flag1)
-+                        if (flag1) 
-                         {
-                             entityarrow.field_70251_a = EntityArrow.PickupStatus.CREATIVE_ONLY;
-                         }
-@@ -146,7 +149,7 @@
- 
-                     p_77615_2_.func_184148_a((EntityPlayer)null, entityplayer.field_70165_t, entityplayer.field_70163_u, entityplayer.field_70161_v, SoundEvents.field_187737_v, SoundCategory.NEUTRAL, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
- 
--                    if (!flag1)
-+                    if (!flag1) 
-                     {
-                         --itemstack.field_77994_a;
- 
 @@ -161,6 +164,13 @@
              }
          }
@@ -50,9 +32,9 @@
 +    
 +    private boolean determineIsArrowInfinite(boolean flag, ItemStack stack) 
 +    {
-+    	if (!(stack.func_77973_b() instanceof ItemArrow)) return false;    	
-+    	ItemArrow arrow = (ItemArrow)stack.func_77973_b();
-+    	return flag && arrow.canBeInfinite(stack);
++        if (!(stack.func_77973_b() instanceof ItemArrow)) return false;    	
++        ItemArrow arrow = (ItemArrow)stack.func_77973_b();
++        return flag && arrow.canBeInfinite(stack);
 +    }
  
      public static float func_185059_b(int p_185059_0_)
