@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemArrow.java
++++ ../src-work/minecraft/net/minecraft/item/ItemArrow.java
+@@ -19,4 +19,8 @@
+         entitytippedarrow.func_184555_a(p_185052_2_);
+         return entitytippedarrow;
+     }
++
++    public boolean canBeInfinite() {
++    	return true;
++    }
+ }

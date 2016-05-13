@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -90,6 +90,10 @@
+@@ -14,6 +14,8 @@
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.SoundCategory;
++import net.minecraft.util.text.TextComponentString;
++import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -90,6 +92,10 @@
              boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
  
@@ -11,7 +20,7 @@
              if (itemstack != null || flag)
              {
                  if (itemstack == null)
-@@ -97,12 +101,11 @@
+@@ -97,12 +103,11 @@
                      itemstack = new ItemStack(Items.field_151032_g);
                  }
  
@@ -21,11 +30,47 @@
                  if ((double)f >= 0.1D)
                  {
 -                    boolean flag1 = flag && itemstack.func_77973_b() == Items.field_151032_g;
-+                    boolean flag1 = flag && itemstack.func_77973_b() instanceof ItemArrow; //Forge: Fix consuming custom arrows.
++                	boolean isArrowInfinite = determineIsArrowInfinite(flag, itemstack);
  
                      if (!p_77615_2_.field_72995_K)
                      {
-@@ -189,6 +192,9 @@
+@@ -136,8 +141,7 @@
+ 
+                         p_77615_1_.func_77972_a(1, entityplayer);
+ 
+-                        if (flag1)
+-                        {
++                        if (isArrowInfinite) {
+                             entityarrow.field_70251_a = EntityArrow.PickupStatus.CREATIVE_ONLY;
+                         }
+ 
+@@ -146,8 +150,7 @@
+ 
+                     p_77615_2_.func_184148_a((EntityPlayer)null, entityplayer.field_70165_t, entityplayer.field_70163_u, entityplayer.field_70161_v, SoundEvents.field_187737_v, SoundCategory.NEUTRAL, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+ 
+-                    if (!flag1)
+-                    {
++                    if (!isArrowInfinite) {
+                         --itemstack.field_77994_a;
+ 
+                         if (itemstack.field_77994_a == 0)
+@@ -161,6 +164,15 @@
+             }
+         }
+     }
++    
++    private boolean determineIsArrowInfinite(boolean flag, ItemStack stack) {
++    	if (!(stack.func_77973_b() instanceof ItemArrow)) {
++    		return false;
++    	}
++    	
++    	ItemArrow arrow = (ItemArrow)stack.func_77973_b();
++    	return flag && arrow.canBeInfinite();
++    }
+ 
+     public static float func_185059_b(int p_185059_0_)
+     {
+@@ -189,6 +201,9 @@
      {
          boolean flag = this.func_185060_a(p_77659_3_) != null;
  
