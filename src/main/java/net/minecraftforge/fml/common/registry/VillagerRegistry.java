@@ -12,6 +12,8 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -212,6 +214,15 @@ public class VillagerRegistry
             }
             return this.careers.get(0);
         }
+        public VillagerCareer getCareer(String name)
+        {
+            for (VillagerCareer car : this.careers)
+            {
+                if (car.getName().equals(name))
+                    return car;
+            }
+            return null;
+        }
 
         public int getRandomCareer(Random rand)
         {
@@ -224,12 +235,13 @@ public class VillagerRegistry
         private VillagerProfession profession;
         private String name;
         private int id;
-        private ITradeList[][] trades;
+        private List<List<ITradeList>> trades;
 
         public VillagerCareer(VillagerProfession parent, String name)
         {
             this.profession = parent;
             this.name = name;
+            this.trades = new ArrayList<List<ITradeList>>();
             parent.register(this);
         }
 
@@ -237,16 +249,51 @@ public class VillagerRegistry
         {
             return this.name;
         }
+        
+        public String getUnlocalizedName()
+        {
+            ResourceLocation professionName = profession.getRegistryName();
+            if(professionName.getResourceDomain().equals("minecraft"))
+                return String.format("entity.Villager.%s", this.getName());
+            else
+                return String.format("entity.Villager.%s.%s.%s", professionName.getResourceDomain(), professionName.getResourcePath(), this.getName());
+        }
 
         public ITradeList[][] getTrades()
         {
-            return this.trades;
+            ITradeList[][] returnValue = new ITradeList[this.trades.size()][];
+            for(int i = 0; i < this.trades.size(); i++)
+            {
+               returnValue[i] = this.trades.get(i).toArray(new ITradeList[]{});
+            }
+            return returnValue;
         }
 
         private VillagerCareer init(EntityVillager.ITradeList[][] trades)
-        {
-            this.trades = trades;
+        { 
+            for(int i = 0; i < trades.length; i++)
+            {
+                List<ITradeList> inner = new LinkedList<ITradeList>();
+                for(ITradeList trade : trades[i]){
+                    inner.add(trade);
+                }
+                this.trades.add(i, inner);
+            }
             return this;
+        }
+        
+        public List<ITradeList> getTradesForCareerLevel(int careerLevel)
+        {
+            Validate.isTrue(careerLevel >= 0, "The requested career level is negative!");
+            if(careerLevel >= trades.size() || trades.get(careerLevel) == null){
+                trades.add(careerLevel, new LinkedList<ITradeList>());
+            }
+            return trades.get(careerLevel);
+        }
+        
+        public int getHighestCareerLevel()
+        {
+            return trades.size() - 1;
         }
 
         @Override
