@@ -228,7 +228,6 @@ public class VillagerRegistry
         private String name;
         private int id;
         private List<List<ITradeList>> trades = Lists.newArrayList();
-        private List<List<ITradeList>> imm = Lists.newArrayList();
 
         public VillagerCareer(VillagerProfession parent, String name)
         {
@@ -251,20 +250,16 @@ public class VillagerRegistry
             List<ITradeList> levelTrades = level <= this.trades.size() ? this.trades.get(level - 1) : null;
             if (levelTrades == null)
             {
-                List<ITradeList> tmp = null;
                 while (this.trades.size() < level)
                 {
-                    tmp = Lists.newArrayList();
-                    this.trades.add(tmp);
-                    this.imm.add(Collections.unmodifiableList(tmp));
+                    levelTrades = Lists.newArrayList();
+                    this.trades.add(levelTrades);
                 }
-                levelTrades = tmp;
             }
             if (levelTrades == null) //Not sure how this could happen, but screw it
             {
                 levelTrades = Lists.newArrayList();
                 this.trades.set(level - 1, levelTrades);
-                this.imm.set(level - 1, Collections.unmodifiableList(levelTrades));
             }
             for (ITradeList t : trades)
                 levelTrades.add(t);
@@ -274,7 +269,7 @@ public class VillagerRegistry
 
         public List<ITradeList> getTrades(int level)
         {
-            return level >= 0 && level < this.imm.size() ? this.imm.get(level) : null;
+            return level >= 0 && level < this.trades.size() ? Collections.unmodifiableList(this.trades.get(level)) : null;
         }
         private VillagerCareer init(EntityVillager.ITradeList[][] trades)
         {
