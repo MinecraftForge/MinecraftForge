@@ -12,11 +12,14 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.Validate;
@@ -224,7 +227,8 @@ public class VillagerRegistry
         private VillagerProfession profession;
         private String name;
         private int id;
-        private ITradeList[][] trades;
+        private List<List<ITradeList>> trades = Lists.newArrayList();
+        private List<List<ITradeList>> imm = Lists.newArrayList();
 
         public VillagerCareer(VillagerProfession parent, String name)
         {
@@ -238,14 +242,44 @@ public class VillagerRegistry
             return this.name;
         }
 
-        public ITradeList[][] getTrades()
+
+        public VillagerCareer addTrade(int level, ITradeList... trades)
         {
-            return this.trades;
+            if (level <= 0)
+                throw new IllegalArgumentException("Levels start at 1");
+
+            List<ITradeList> levelTrades = level <= this.trades.size() ? this.trades.get(level - 1) : null;
+            if (levelTrades == null)
+            {
+                List<ITradeList> tmp = null;
+                while (this.trades.size() < level)
+                {
+                    tmp = Lists.newArrayList();
+                    this.trades.add(tmp);
+                    this.imm.add(Collections.unmodifiableList(tmp));
+                }
+                levelTrades = tmp;
+            }
+            if (levelTrades == null) //Not sure how this could happen, but screw it
+            {
+                levelTrades = Lists.newArrayList();
+                this.trades.set(level - 1, levelTrades);
+                this.imm.set(level - 1, Collections.unmodifiableList(levelTrades));
+            }
+            for (ITradeList t : trades)
+                levelTrades.add(t);
+            return this;
         }
 
+
+        public List<ITradeList> getTrades(int level)
+        {
+            return level >= 0 && level < this.imm.size() ? this.imm.get(level) : null;
+        }
         private VillagerCareer init(EntityVillager.ITradeList[][] trades)
         {
-            this.trades = trades;
+            for (int x = 0; x < trades.length; x++)
+                this.trades.add(Lists.newArrayList(trades[x]));
             return this;
         }
 
