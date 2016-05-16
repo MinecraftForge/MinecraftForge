@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemArrow.java
++++ ../src-work/minecraft/net/minecraft/item/ItemArrow.java
+@@ -19,4 +19,11 @@
+         entitytippedarrow.func_184555_a(p_185052_2_);
+         return entitytippedarrow;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    public boolean canBeInfinite(ItemStack stack)
++    {
++        return true;
++    }
++    /* ======================================== FORGE END =====================================*/
+ }
