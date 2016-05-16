@@ -203,11 +203,15 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                 worldIn.destroyBlock(pos, true);
             }
 
-            if(player != null)
+            if(player != null && block instanceof IFluidBlock)
             {
-                SoundEvent soundevent = block.getMaterial(block.getDefaultState()) == Material.lava ? SoundEvents.item_bucket_empty_lava : SoundEvents.item_bucket_empty;
-                worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                worldIn.setBlockState(pos, block.getDefaultState(), 3);
+                Fluid fluid = ((IFluidBlock) block).getFluid();
+                if(fluid != null)
+                {
+                    worldIn.setBlockState(pos, block.getDefaultState(), 3);
+                    SoundEvent soundevent = fluid.getEmptySound(worldIn, pos);
+                    worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                }
             }
         }
         return true;
@@ -263,7 +267,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                         event.setFilledBucket(filledBucket);
 
                         // sound!
-                        SoundEvent soundevent = state.getMaterial() == Material.lava ? SoundEvents.item_bucket_fill_lava : SoundEvents.item_bucket_fill;
+                        SoundEvent soundevent = drained.getFluid().getFillSound(drained);
                         event.getEntityPlayer().playSound(soundevent, 1.0F, 1.0F);
                     }
                     else

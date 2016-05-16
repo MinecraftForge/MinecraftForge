@@ -147,13 +147,7 @@ public class FluidUtil
             // play sound
             if(player != null)
             {
-                SoundEvent soundevent = SoundEvents.item_bucket_fill;
-                Block fluidBlock = liquid.getFluid().getBlock();
-                if (fluidBlock != null && fluidBlock.getDefaultState().getMaterial() == Material.lava)
-                {
-                    soundevent = SoundEvents.item_bucket_fill_lava;
-                }
-
+                SoundEvent soundevent = liquid.getFluid().getFillSound(liquid);
                 player.playSound(soundevent, 1f, 1f);
             }
 
@@ -200,13 +194,7 @@ public class FluidUtil
                 // play sound
                 if(player != null)
                 {
-                    SoundEvent soundevent = SoundEvents.item_bucket_empty;
-                    Block fluidBlock = liquid.getFluid().getBlock();
-                    if (fluidBlock != null && fluidBlock.getDefaultState().getMaterial() == Material.lava)
-                    {
-                        soundevent = SoundEvents.item_bucket_empty_lava;
-                    }
-
+                    SoundEvent soundevent = liquid.getFluid().getEmptySound(liquid);
                     player.playSound(soundevent, 1f, 1f);
                 }
                 // success, fully filled it into the tank, return empty bucket
@@ -338,13 +326,7 @@ public class FluidUtil
             // play sound
             if(player != null)
             {
-                SoundEvent soundevent = SoundEvents.item_bucket_fill;
-                Block fluidBlock = liquid.getFluid().getBlock();
-                if (fluidBlock != null && fluidBlock.getDefaultState().getMaterial() == Material.lava)
-                {
-                    soundevent = SoundEvents.item_bucket_fill_lava;
-                }
-
+                SoundEvent soundevent = liquid.getFluid().getFillSound(liquid);
                 player.playSound(soundevent, 1f, 1f);
             }
 
@@ -438,13 +420,7 @@ public class FluidUtil
                         // play sound
                         if(player != null)
                         {
-                            SoundEvent soundevent = SoundEvents.item_bucket_empty;
-                            Block fluidBlock = drained.getFluid().getBlock();
-                            if (fluidBlock != null && fluidBlock.getDefaultState().getMaterial() == Material.lava)
-                            {
-                                soundevent = SoundEvents.item_bucket_empty_lava;
-                            }
-
+                            SoundEvent soundevent = drained.getFluid().getEmptySound(drained);
                             player.playSound(soundevent, 1f, 1f);
                         }
                         return true;
