@@ -1,25 +1,16 @@
 package net.minecraftforge.fluids;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.world.World;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
-
-import java.util.concurrent.Callable;
 
 public class FluidUtil
 {
@@ -31,7 +22,7 @@ public class FluidUtil
     /** Returns true if interaction was successful. */
     public static boolean interactWithTank(ItemStack stack, EntityPlayer player, IFluidHandler tank, EnumFacing side)
     {
-        if (stack == null || player.worldObj.isRemote)
+        if (stack == null)
         {
             return true;
         }
@@ -40,8 +31,8 @@ public class FluidUtil
 
         // regular bucket?
         int slot = player.inventory.currentItem;
-        if ((result = FluidUtil.tryFillBucket(stack, tank, side)) != null ||
-                (result = FluidUtil.tryEmptyBucket(stack, tank, side)) != null)
+        if ((result = FluidUtil.tryFillBucket(stack, tank, side, player)) != null ||
+                (result = FluidUtil.tryEmptyBucket(stack, tank, side, player)) != null)
         {
             // "use up" the input item if the player is not in creative
             if (!player.capabilities.isCreativeMode)
@@ -60,7 +51,9 @@ public class FluidUtil
         else
         {
             // copy of the original item for creative mode
+            ItemStack original = stack; // needed for how minecraft manages inventory with interaction
             ItemStack copy = stack.copy();
+            stack = stack.copy(); // needed so we don't affect itemstacks outside of this function
             boolean changedBucket = false;
             // convert to fluidcontainer-bucket if it's a regular empty bucket
             if (ItemStack.areItemsEqual(stack, FluidContainerRegistry.EMPTY_BUCKET) && FluidRegistry.isUniversalBucketEnabled())
@@ -74,6 +67,7 @@ public class FluidUtil
             if (FluidUtil.tryFillFluidContainerItem(stack, tank, side, player) ||
                     FluidUtil.tryEmptyFluidContainerItem(stack, tank, side, player))
             {
+                original.stackSize--; // this tells the player that the item he held was "used up" and the inventory syncing will then play the correct animation
                 if (player.capabilities.isCreativeMode)
                 {
                     // reset the stack that got modified
@@ -117,6 +111,12 @@ public class FluidUtil
         return false;
     }
 
+    @Deprecated
+    public static ItemStack tryFillBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side)
+    {
+        return tryFillBucket(bucket, tank, side, null);
+    }
+
     /**
      * Fill an empty bucket from the given tank. Uses the FluidContainerRegistry.
      *
@@ -125,7 +125,7 @@ public class FluidUtil
      * @param side   Side to access the tank from
      * @return The filled bucket or null if the liquid couldn't be taken from the tank.
      */
-    public static ItemStack tryFillBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side)
+    public static ItemStack tryFillBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
         FluidTankInfo[] info = tank.getTankInfo(side);
         // check for fluid in the tank
@@ -144,6 +144,13 @@ public class FluidUtil
         FluidStack liquid = tank.drain(side, FluidContainerRegistry.getContainerCapacity(inTank, bucket), false);
         if (liquid != null && liquid.amount > 0)
         {
+            // play sound
+            if(player != null)
+            {
+                SoundEvent soundevent = liquid.getFluid().getFillSound(liquid);
+                player.playSound(soundevent, 1f, 1f);
+            }
+
             // success, return filled bucket
             tank.drain(side, FluidContainerRegistry.getContainerCapacity(liquid, bucket), true);
             return FluidContainerRegistry.fillFluidContainer(liquid, bucket);
@@ -152,15 +159,22 @@ public class FluidUtil
         return null;
     }
 
+    @Deprecated
+    public static ItemStack tryEmptyBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side)
+    {
+        return tryEmptyBucket(bucket, tank, side, null);
+    }
+
     /**
      * Takes a filled bucket and tries to empty it into the given tank. Uses the FluidContainerRegistry.
      *
      * @param bucket The filled bucket
      * @param tank   The tank to fill with the bucket
      * @param side   Side to access the tank from
+     * @param player
      * @return The empty bucket if successful, null if the tank couldn't be filled.
      */
-    public static ItemStack tryEmptyBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side)
+    public static ItemStack tryEmptyBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
         // not a filled bucket
         if (!FluidContainerRegistry.isFilledContainer(bucket))
@@ -177,6 +191,12 @@ public class FluidUtil
             // not everything?
             if (amount == liquid.amount)
             {
+                // play sound
+                if(player != null)
+                {
+                    SoundEvent soundevent = liquid.getFluid().getEmptySound(liquid);
+                    player.playSound(soundevent, 1f, 1f);
+                }
                 // success, fully filled it into the tank, return empty bucket
                 tank.fill(side, liquid, true);
                 return FluidContainerRegistry.drainFluidContainer(bucket);
@@ -263,18 +283,21 @@ public class FluidUtil
                     return false;
                 }
 
-                // check if we can give the itemstack to the inventory
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, toFill, true);
-                if (remainder != null && player == null)
+                if(player == null || !player.worldObj.isRemote)
                 {
-                    // couldn't add to the inventory and don't have a player to drop the item at
-                    return false;
-                }
-                remainder = ItemHandlerHelper.insertItemStacked(inventory, toFill, false);
-                // give it to the player or drop it at his feet
-                if (remainder != null && player != null)
-                {
-                    ItemHandlerHelper.giveItemToPlayer(player, remainder);
+                    // check if we can give the itemstack to the inventory
+                    ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, toFill, true);
+                    if (remainder != null && player == null)
+                    {
+                        // couldn't add to the inventory and don't have a player to drop the item at
+                        return false;
+                    }
+                    remainder = ItemHandlerHelper.insertItemStacked(inventory, toFill, false);
+                    // give it to the player or drop it at his feet
+                    if (remainder != null && player != null)
+                    {
+                        ItemHandlerHelper.giveItemToPlayer(player, remainder);
+                    }
                 }
 
                 // the result has been given to the player, drain the tank since everything is ok
@@ -298,6 +321,13 @@ public class FluidUtil
                     return false;
                 }
                 tank.drain(side, filled, true);
+            }
+
+            // play sound
+            if(player != null)
+            {
+                SoundEvent soundevent = liquid.getFluid().getFillSound(liquid);
+                player.playSound(soundevent, 1f, 1f);
             }
 
             return true;
@@ -356,18 +386,21 @@ public class FluidUtil
                             toEmpty.stackSize = 1;
                             drained = fluidContainer.drain(toEmpty, filled, true); // modifies the container!
 
-                            // try adding the drained container to the inventory
-                            ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, toEmpty, true);
-                            if (remainder != null && player == null)
+                            if(player == null || !player.worldObj.isRemote)
                             {
-                                // couldn't add to the inventory and don't have a player to drop the item at
-                                return false;
-                            }
-                            remainder = ItemHandlerHelper.insertItemStacked(inventory, toEmpty, false);
-                            // give it to the player or drop it at his feet
-                            if (remainder != null && player != null)
-                            {
-                                ItemHandlerHelper.giveItemToPlayer(player, remainder);
+                                // try adding the drained container to the inventory
+                                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, toEmpty, true);
+                                if (remainder != null && player == null)
+                                {
+                                    // couldn't add to the inventory and don't have a player to drop the item at
+                                    return false;
+                                }
+                                remainder = ItemHandlerHelper.insertItemStacked(inventory, toEmpty, false);
+                                // give it to the player or drop it at his feet
+                                if (remainder != null && player != null)
+                                {
+                                    ItemHandlerHelper.giveItemToPlayer(player, remainder);
+                                }
                             }
 
                             // the result has been given to the player, fill the tank since everything is ok
@@ -383,6 +416,13 @@ public class FluidUtil
                             drained = fluidContainer.drain(container, filled, true); // modifies the container!
                             tank.fill(side, drained, true);
                         }
+
+                        // play sound
+                        if(player != null)
+                        {
+                            SoundEvent soundevent = drained.getFluid().getEmptySound(drained);
+                            player.playSound(soundevent, 1f, 1f);
+                        }
                         return true;
                     }
                 }
@@ -390,176 +430,5 @@ public class FluidUtil
         }
 
         return false;
-    }
-
-    private static boolean insertItemInto(ItemStack stack, IInventory inventory, World world, BlockPos pos, boolean isCreative)
-    {
-        if (stack == null)
-        {
-            return false;
-        }
-        // add it to the inventory
-
-        if (inventory != null && addItemStackToInventory(stack, inventory, isCreative))
-        {
-            if (world != null && pos != null)
-            {
-                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.entity_item_pickup, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-            }
-            return true;
-        }
-        else if (world != null && pos != null)
-        {
-            double d0 = pos.getY() + 0.5d;
-            EntityItem entityitem = new EntityItem(world, pos.getX(), d0, pos.getZ(), stack);
-            entityitem.setPickupDelay(40);
-
-            entityitem.motionX = 0;
-            //entityitem.motionY = 0;
-            entityitem.motionZ = 0;
-
-            if (!world.isRemote)
-            {
-                world.spawnEntityInWorld(entityitem);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    // generalized copy of InventoryPlayer.addItemStackToInventory without regarding itemstack sizes > 1
-    private static boolean addItemStackToInventory(final ItemStack itemstack, IInventory inventory, boolean isCreative)
-    {
-        if (itemstack != null && itemstack.stackSize == 1 && itemstack.getItem() != null)
-        {
-            try
-            {
-                int sizeInventory = inventory.getSizeInventory();
-                // player inventory requires hardcoding because we don't want to add to the armor slots
-                if (inventory instanceof InventoryPlayer)
-                {
-                    sizeInventory -= 4;
-                }
-                if (itemstack.isItemDamaged())
-                {
-                    int j = 0;
-                    for (; j < sizeInventory; ++j)
-                    {
-                        if (inventory.getStackInSlot(j) == null)
-                        {
-                            break;
-                        }
-                    }
-
-                    // found empty slot
-                    if (j < sizeInventory)
-                    {
-                        ItemStack copy = ItemStack.copyItemStack(itemstack);
-                        copy.animationsToGo = 5;
-                        inventory.setInventorySlotContents(j, copy);
-                        itemstack.stackSize = 0;
-                        return true;
-                    }
-                    else if (isCreative)
-                    {
-                        itemstack.stackSize = 0;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    int origSize = itemstack.stackSize;
-                    // go through the inventory and try to fill up already existing items
-                    for (int i = 0; i < sizeInventory; i++)
-                    {
-                        ItemStack slot = inventory.getStackInSlot(i);
-                        if (slot != null && slot.getItem() == itemstack.getItem() &&
-                                slot.isStackable() && slot.stackSize < slot.getMaxStackSize() &&
-                                slot.stackSize < inventory.getInventoryStackLimit() &&
-                                (!slot.getHasSubtypes() || slot.getMetadata() == itemstack.getMetadata()) &&
-                                ItemStack.areItemStackTagsEqual(slot, itemstack))
-                        {
-                            // stackable
-                            int dif = itemstack.stackSize;
-                            if (dif > slot.getMaxStackSize() - slot.stackSize)
-                            {
-                                dif = slot.getMaxStackSize() - slot.stackSize;
-                            }
-                            if (dif > inventory.getInventoryStackLimit())
-                            {
-                                dif = inventory.getInventoryStackLimit();
-                            }
-                            slot.stackSize += dif;
-                            slot.animationsToGo = 5;
-                            itemstack.stackSize -= dif;
-                            inventory.setInventorySlotContents(i, slot);
-
-                            if (itemstack.stackSize <= 0)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (itemstack.stackSize > 0)
-                    {
-                        // find empty slot
-                        for (int i = 0; i < sizeInventory; i++)
-                        {
-                            if (inventory.getStackInSlot(i) == null)
-                            {
-                                ItemStack slot = ItemStack.copyItemStack(itemstack);
-                                if (slot.stackSize > inventory.getInventoryStackLimit())
-                                {
-                                    slot.stackSize = inventory.getInventoryStackLimit();
-                                }
-                                slot.animationsToGo = 5;
-
-                                inventory.setInventorySlotContents(i, slot);
-                                itemstack.stackSize -= slot.stackSize;
-                            }
-
-                            if (itemstack.stackSize <= 0)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (itemstack.stackSize > 0 && isCreative)
-                    {
-                        itemstack.stackSize = 0;
-                        return true;
-                    }
-                    else
-                    {
-                        return itemstack.stackSize < origSize;
-                    }
-                }
-            }
-            catch (Throwable throwable)
-            {
-                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
-                CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
-                crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemstack.getItem()));
-                crashreportcategory.addCrashSection("Item data", itemstack.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", new Callable<String>()
-                {
-                    public String call() throws Exception
-                    {
-                        return itemstack.getDisplayName();
-                    }
-                });
-                throw new ReportedException(crashreport);
-            }
-        }
-        else
-        {
-            return false;
-        }
     }
 }
