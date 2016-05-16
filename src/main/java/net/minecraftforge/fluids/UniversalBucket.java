@@ -11,14 +11,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -112,39 +108,42 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
         // clicked on a block?
         RayTraceResult mop = this.getMovingObjectPositionFromPlayer(world, player, false);
-        if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK)
+
+        if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
         {
-            BlockPos clickPos = mop.getBlockPos();
-            // can we place liquid there?
-            if (world.isBlockModifiable(player, clickPos))
+            return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+        }
+
+        BlockPos clickPos = mop.getBlockPos();
+        // can we place liquid there?
+        if (world.isBlockModifiable(player, clickPos))
+        {
+            // the block adjacent to the side we clicked on
+            BlockPos targetPos = clickPos.offset(mop.sideHit);
+
+            // can the player place there?
+            if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack))
             {
-                // the block adjacent to the side we clicked on
-                BlockPos targetPos = clickPos.offset(mop.sideHit);
-
-                // can the player place there?
-                if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack))
+                // try placing liquid
+                if (this.tryPlaceFluid(player, player.getEntityWorld(), fluidStack.getFluid().getBlock(), targetPos)
+                        && !player.capabilities.isCreativeMode)
                 {
-                    // try placing liquid
-                    if (this.tryPlaceFluid(fluidStack.getFluid().getBlock(), world, targetPos)
-                            && !player.capabilities.isCreativeMode)
+                    // success!
+                    player.addStat(StatList.func_188057_b(this));
+
+                    itemstack.stackSize--;
+                    ItemStack emptyStack = getEmpty() != null ? getEmpty().copy() : new ItemStack(this);
+
+                    // check whether we replace the item or add the empty one to the inventory
+                    if (itemstack.stackSize <= 0)
                     {
-                        // success!
-                        player.addStat(StatList.func_188057_b(this));
-
-                        itemstack.stackSize--;
-                        ItemStack emptyStack = getEmpty() != null ? getEmpty().copy() : new ItemStack(this);
-
-                        // check whether we replace the item or add the empty one to the inventory
-                        if (itemstack.stackSize <= 0)
-                        {
-                            return ActionResult.newResult(EnumActionResult.SUCCESS, emptyStack);
-                        }
-                        else
-                        {
-                            // add empty bucket to player inventory
-                            ItemHandlerHelper.giveItemToPlayer(player, emptyStack);
-                            return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
-                        }
+                        return ActionResult.newResult(EnumActionResult.SUCCESS, emptyStack);
+                    }
+                    else
+                    {
+                        // add empty bucket to player inventory
+                        ItemHandlerHelper.giveItemToPlayer(player, emptyStack);
+                        return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
                     }
                 }
             }
@@ -154,12 +153,22 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
     }
 
-
+    // compatibility
+    @Deprecated
     public boolean tryPlaceFluid(Block block, World worldIn, BlockPos pos)
+    {
+        return tryPlaceFluid(null, worldIn, block, pos);
+    }
+
+    private boolean tryPlaceFluid(EntityPlayer player, World worldIn, Block block, BlockPos pos)
     {
         if (block == null)
         {
             return false;
+        }
+        if(worldIn == null && player != null)
+        {
+            worldIn = player.getEntityWorld();
         }
 
         Material material = worldIn.getBlockState(pos).getMaterial();
@@ -194,7 +203,12 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                 worldIn.destroyBlock(pos, true);
             }
 
-            worldIn.setBlockState(pos, block.getDefaultState(), 3);
+            if(player != null)
+            {
+                SoundEvent soundevent = block.getMaterial(block.getDefaultState()) == Material.lava ? SoundEvents.item_bucket_empty_lava : SoundEvents.item_bucket_empty;
+                worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                worldIn.setBlockState(pos, block.getDefaultState(), 3);
+            }
         }
         return true;
     }
@@ -247,6 +261,10 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                         // set it as the result
                         event.setResult(Event.Result.ALLOW);
                         event.setFilledBucket(filledBucket);
+
+                        // sound!
+                        SoundEvent soundevent = state.getMaterial() == Material.lava ? SoundEvents.item_bucket_fill_lava : SoundEvents.item_bucket_fill;
+                        event.getEntityPlayer().playSound(soundevent, 1.0F, 1.0F);
                     }
                     else
                     {
