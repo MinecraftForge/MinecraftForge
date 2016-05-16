@@ -47,6 +47,8 @@ public final class ItemTextureQuadConverter
     {
         int w = template.getIconWidth();
         int h = template.getIconHeight();
+        float wScale = 16f / (float)w;
+        float hScale = 16f / (float)h;
         int[] data = template.getFrameTextureData(0)[0];
         List<UnpackedBakedQuad> quads = Lists.newArrayList();
 
@@ -90,7 +92,12 @@ public final class ItemTextureQuadConverter
                     }
 
                     // create the quad
-                    quads.add(genQuad(format, transform, start, y, x, endY, z, sprite, facing, color));
+                    quads.add(genQuad(format, transform,
+                                      (float)start * wScale,
+                                      (float)y * hScale,
+                                      (float)x * wScale,
+                                      (float)endY * hScale,
+                                      z, sprite, facing, color));
 
                     // update Y if all the rows match. no need to rescan
                     if (endY - y > 1)
@@ -114,6 +121,8 @@ public final class ItemTextureQuadConverter
     {
         int w = template.getIconWidth();
         int h = template.getIconHeight();
+        float wScale = 16f / (float)w;
+        float hScale = 16f / (float)h;
         int[] data = template.getFrameTextureData(0)[0];
         List<UnpackedBakedQuad> quads = Lists.newArrayList();
 
@@ -157,7 +166,12 @@ public final class ItemTextureQuadConverter
                     }
 
                     // create the quad
-                    quads.add(genQuad(format, transform, x, start, endX, y, z, sprite, facing, color));
+                    quads.add(genQuad(format, transform,
+                                      (float)x * wScale,
+                                      (float)start * hScale,
+                                      (float)endX * wScale,
+                                      (float)y * hScale,
+                                      z, sprite, facing, color));
 
                     // update X if all the columns match. no need to rescan
                     if (endX - x > 1)
@@ -181,6 +195,7 @@ public final class ItemTextureQuadConverter
 
     /**
      * Generates a Front/Back quad for an itemmodel. Therefore only supports facing NORTH and SOUTH.
+     * Coordinates are [0,16] to match the usual coordinates used in TextureAtlasSprites
      */
     public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color)
     {
