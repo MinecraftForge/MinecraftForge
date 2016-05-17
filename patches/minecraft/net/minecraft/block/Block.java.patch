@@ -890,20 +890,20 @@
 +    {
 +        IBlockState plant = plantable.getPlant(world, pos.func_177972_a(direction));
 +        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177972_a(direction));
-+
++        
 +        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF && this == net.minecraft.init.Blocks.field_150434_aF)
 +        {
-+            return true;
++        	return true;
 +        }
 +
 +        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150436_aH && this == net.minecraft.init.Blocks.field_150436_aH)
 +        {
-+            return true;
++        	return true;
 +        }
 +
 +        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_185514_i(state))
 +        {
-+            return true;
++        	return true;
 +        }
 +
 +        switch (plantType)

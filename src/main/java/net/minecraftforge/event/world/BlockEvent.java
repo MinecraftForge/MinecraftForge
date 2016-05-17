@@ -3,20 +3,22 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import com.google.common.collect.ImmutableList;
 
 public class BlockEvent extends Event
 {
@@ -101,7 +103,7 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.silkTouch, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
+                    (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.silkTouch, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
@@ -231,6 +233,43 @@ public class BlockEvent extends Event
         public EnumSet<EnumFacing> getNotifiedSides()
         {
             return notifiedSides;
+        }
+    }
+
+    /**
+     * Fired when crop calculates it's growth chance to grow.
+     * <br>
+     * {@link BlockEvent#pos} and {@link BlockEvent#state} are soil's position and state.
+     * <br>
+     * For example, crop extending {@link BlockCrops} will grow if random int between 0 and 25/growthChance + 1 is 0 (<code>rand.nextInt((int)(25.0F / growthChance) + 1) == 0</code>).
+     * @author elix_x
+     *
+     */
+    public static class GetGrowthChanceEvent extends BlockEvent
+    {
+        private final IPlantable plant;
+        private float growthChance;
+
+        public GetGrowthChanceEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, float growthChance)
+        {
+            super(world, pos, soil);
+            this.plant = plant;
+            this.growthChance = growthChance;
+        }
+
+        public IPlantable getPlant()
+        {
+            return plant;
+        }
+
+        public float getGrowthChance()
+        {
+            return growthChance;
+        }
+
+        public void setGrowthChance(float growthChance)
+        {
+            this.growthChance = growthChance;
         }
     }
 }
