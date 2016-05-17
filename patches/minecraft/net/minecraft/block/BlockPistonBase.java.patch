@@ -18,7 +18,15 @@
              }
              else
              {
-@@ -371,7 +371,9 @@
+@@ -363,6 +363,7 @@
+         }
+         else
+         {
++            if (net.minecraftforge.event.ForgeEventFactory.onPistonMove(p_176319_1_, p_176319_2_, p_176319_3_, p_176319_4_)) return false;
+             int i = list.size() + list1.size();
+             Block[] ablock = new Block[i];
+             EnumFacing enumfacing = p_176319_4_ ? p_176319_3_ : p_176319_3_.func_176734_d();
+@@ -371,7 +372,9 @@
              {
                  BlockPos blockpos = (BlockPos)list1.get(j);
                  Block block = p_176319_1_.func_180495_p(blockpos).func_177230_c();
