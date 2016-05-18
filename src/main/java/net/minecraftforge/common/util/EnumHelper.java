@@ -13,7 +13,7 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item.ToolMaterial;
@@ -47,7 +47,7 @@ public class EnumHelper
         {Sensitivity.class},
         {RayTraceResult.Type.class},
         {EnumSkyBlock.class, int.class},
-        {EnumStatus.class},
+        {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class}
     };
@@ -92,9 +92,9 @@ public class EnumHelper
     {
         return addEnum(EnumSkyBlock.class, name, lightValue);
     }
-    public static EnumStatus addStatus(String name)
+    public static SleepResult addStatus(String name)
     {
-        return addEnum(EnumStatus.class, name);
+        return addEnum(SleepResult.class, name);
     }
     public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
     {

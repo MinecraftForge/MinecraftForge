@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
@@ -26,11 +26,11 @@ apply plugin: "net.minecraftforge.gradle.patcher"
 apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
-    version = "1.9"
+    version = "1.9.4"
     mappings = 'snapshot_nodoc_20160312'
     //mappings = "snapshot_nodoc_20151122"
     workspaceDir = "projects"
-    versionJson = "jsons/1.9-dev.json"
+    versionJson = "jsons/1.9.4-dev.json"
     buildUserdev = true
     buildInstaller = true
     installerVersion = "1.4"
@@ -52,6 +52,7 @@ minecraft {
             genPatchesFrom "clean"
             genMcpPatches = false
             applyMcpPatches = false
+            s2sKeepImports = true
             with common
         }
     }
@@ -66,7 +67,7 @@ extractForgeResources { exclude "**/log4j2.xml" }
 genGradleProjects { addTestCompileDep "junit:junit:4.12" }
 
 processJson {
-    releaseJson = "jsons/1.9-rel.json"
+    releaseJson = "jsons/1.9.4-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
         "@version@": project.version,
@@ -380,7 +381,7 @@ task fixParams << {
     logger.lifecycle('Fixing param names!')
     def params = new File(extractMcpMappings.destinationDir, 'params.csv')
     def text = params.text
-    text = text.replaceAll('p_82499_3_,stack,', 'p_82499_3_,stackIn,')
+    text = text.replaceAll('p_180276_1_,biome,', 'p_180276_1_,biomeIn,')
     params.write(text)
 }
 fixParams.dependsOn('extractMcpMappings')

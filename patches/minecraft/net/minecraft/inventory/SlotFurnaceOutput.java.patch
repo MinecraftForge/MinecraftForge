@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotFurnaceOutput.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnaceOutput.java
-@@ -81,6 +81,8 @@
+@@ -82,6 +82,8 @@
  
          this.field_75228_b = 0;
  

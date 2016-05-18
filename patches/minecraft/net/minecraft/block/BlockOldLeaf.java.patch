@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockOldLeaf.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockOldLeaf.java
-@@ -103,11 +103,16 @@
+@@ -104,11 +104,16 @@
          if (!p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
          {
              p_180657_2_.func_71029_a(StatList.func_188055_a(this));

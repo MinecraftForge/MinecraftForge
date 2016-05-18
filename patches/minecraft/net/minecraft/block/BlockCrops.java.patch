@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCrops.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCrops.java
-@@ -116,11 +116,11 @@
+@@ -117,11 +117,11 @@
                  float f1 = 0.0F;
                  IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
  
@@ -14,7 +14,7 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -161,7 +161,8 @@
+@@ -162,7 +162,8 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
@@ -24,7 +24,7 @@
      }
  
      protected Item func_149866_i()
-@@ -174,11 +175,33 @@
+@@ -175,11 +176,33 @@
          return Items.field_151015_O;
      }
  

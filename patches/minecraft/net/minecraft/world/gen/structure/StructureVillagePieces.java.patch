@@ -23,15 +23,15 @@
              public List<StructureVillagePieces.PieceWeight> field_74931_h;
              public List<StructureComponent> field_74932_i = Lists.<StructureComponent>newArrayList();
              public List<StructureComponent> field_74930_j = Lists.<StructureComponent>newArrayList();
-+            public BiomeGenBase biome;
++            public Biome biome;
  
              public Start()
              {
 @@ -1460,6 +1466,7 @@
                  this.field_74928_c = p_i2104_7_;
-                 BiomeGenBase biomegenbase = p_i2104_1_.func_180300_a(new BlockPos(p_i2104_4_, 0, p_i2104_5_), Biomes.field_180279_ad);
-                 this.field_74927_b = biomegenbase == Biomes.field_76769_d || biomegenbase == Biomes.field_76786_s;
-+                this.biome = biomegenbase;
+                 Biome biome = p_i2104_1_.func_180300_a(new BlockPos(p_i2104_4_, 0, p_i2104_5_), Biomes.field_180279_ad);
+                 this.field_74927_b = biome == Biomes.field_76769_d || biome == Biomes.field_76786_s;
++                this.biome = biome;
                  this.func_175846_a(this.field_74927_b);
              }
  

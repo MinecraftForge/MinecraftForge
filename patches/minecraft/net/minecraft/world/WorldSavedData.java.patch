@@ -9,7 +9,7 @@
  {
      public final String field_76190_i;
      private boolean field_76189_a;
-@@ -30,4 +30,16 @@
+@@ -30,4 +30,14 @@
      {
          return this.field_76189_a;
      }
@@ -21,8 +21,6 @@
 +
 +    public NBTTagCompound serializeNBT()
 +    {
-+        NBTTagCompound ret = new NBTTagCompound();
-+        this.func_76187_b(ret);
-+        return ret;
++        return this.func_189551_b(new NBTTagCompound());
 +    }
  }

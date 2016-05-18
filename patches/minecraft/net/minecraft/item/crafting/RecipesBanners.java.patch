@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/RecipesBanners.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipesBanners.java
-@@ -89,9 +89,10 @@
+@@ -91,9 +91,10 @@
                      {
                          ItemStack itemstack2 = p_77572_1_.func_70301_a(j);
  
@@ -13,7 +13,7 @@
                              break;
                          }
                      }
-@@ -135,11 +136,7 @@
+@@ -138,11 +139,7 @@
                  for (int i = 0; i < aitemstack.length; ++i)
                  {
                      ItemStack itemstack = p_179532_1_.func_70301_a(i);
@@ -26,7 +26,7 @@
                  }
  
                  return aitemstack;
-@@ -164,7 +161,7 @@
+@@ -168,7 +165,7 @@
  
                                  if (itemstack != null && itemstack.func_77973_b() != Items.field_179564_cE)
                                  {
@@ -35,7 +35,7 @@
                                      {
                                          if (flag2)
                                          {
-@@ -204,7 +201,7 @@
+@@ -208,7 +205,7 @@
  
                                  if (itemstack1 != null && itemstack1.func_77973_b() != Items.field_179564_cE)
                                  {
@@ -44,7 +44,7 @@
                                      {
                                          flag = false;
                                          break;
-@@ -245,6 +242,38 @@
+@@ -249,6 +246,38 @@
  
                  return null;
              }
@@ -83,7 +83,7 @@
          }
  
      public static class RecipeDuplicatePattern implements IRecipe
-@@ -356,9 +385,9 @@
+@@ -362,9 +391,9 @@
  
                      if (itemstack != null)
                      {

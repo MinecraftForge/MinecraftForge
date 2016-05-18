@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
-@@ -89,9 +89,10 @@
+@@ -90,9 +90,10 @@
                      }
  
                      p_180650_2_ = p_180650_2_.func_177972_a(EnumFacing.Plane.HORIZONTAL.func_179518_a(p_180650_4_));
@@ -13,7 +13,7 @@
                      {
                          p_180650_1_.func_175656_a(p_180650_2_, this.field_149877_a.func_176223_P());
                      }
-@@ -109,24 +110,29 @@
+@@ -110,24 +111,29 @@
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
          super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
@@ -46,4 +46,4 @@
 +        return ret;
      }
  
-     protected Item func_176481_j()
+     @Nullable

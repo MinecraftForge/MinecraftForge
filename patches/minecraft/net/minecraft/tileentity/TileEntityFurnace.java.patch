@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -110,9 +110,9 @@
+@@ -114,9 +114,9 @@
              }
          }
  
@@ -13,20 +13,20 @@
          this.field_145963_i = func_145952_a(this.field_145957_n[1]);
  
          if (p_145839_1_.func_150297_b("CustomName", 8))
-@@ -124,9 +124,9 @@
-     public void func_145841_b(NBTTagCompound p_145841_1_)
+@@ -128,9 +128,9 @@
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
      {
-         super.func_145841_b(p_145841_1_);
--        p_145841_1_.func_74777_a("BurnTime", (short)this.field_145956_a);
--        p_145841_1_.func_74777_a("CookTime", (short)this.field_174906_k);
--        p_145841_1_.func_74777_a("CookTimeTotal", (short)this.field_174905_l);
-+        p_145841_1_.func_74768_a("BurnTime", this.field_145956_a);
-+        p_145841_1_.func_74768_a("CookTime", this.field_174906_k);
-+        p_145841_1_.func_74768_a("CookTimeTotal", this.field_174905_l);
+         super.func_189515_b(p_189515_1_);
+-        p_189515_1_.func_74777_a("BurnTime", (short)this.field_145956_a);
+-        p_189515_1_.func_74777_a("CookTime", (short)this.field_174906_k);
+-        p_189515_1_.func_74777_a("CookTimeTotal", (short)this.field_174905_l);
++        p_189515_1_.func_74768_a("BurnTime", this.field_145956_a);
++        p_189515_1_.func_74768_a("CookTime", this.field_174906_k);
++        p_189515_1_.func_74768_a("CookTimeTotal", this.field_174905_l);
          NBTTagList nbttaglist = new NBTTagList();
  
          for (int i = 0; i < this.field_145957_n.length; ++i)
-@@ -192,8 +192,7 @@
+@@ -198,8 +198,7 @@
  
                              if (this.field_145957_n[1].field_77994_a == 0)
                              {
@@ -36,7 +36,7 @@
                              }
                          }
                      }
-@@ -248,7 +247,11 @@
+@@ -254,7 +253,11 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
@@ -49,7 +49,7 @@
          }
      }
  
-@@ -264,7 +267,7 @@
+@@ -270,7 +273,7 @@
              }
              else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())
              {
@@ -58,7 +58,7 @@
              }
  
              if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
-@@ -311,7 +314,15 @@
+@@ -317,7 +320,15 @@
                  }
              }
  
@@ -75,7 +75,7 @@
          }
      }
  
-@@ -432,4 +443,22 @@
+@@ -438,4 +449,22 @@
              this.field_145957_n[i] = null;
          }
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBanner.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBanner.java
-@@ -104,14 +104,7 @@
+@@ -107,14 +107,7 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -15,7 +15,7 @@
              super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
          }
      }
-@@ -138,6 +131,28 @@
+@@ -141,6 +134,28 @@
          }
      }
  

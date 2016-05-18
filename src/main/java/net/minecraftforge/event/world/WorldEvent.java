@@ -7,7 +7,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 

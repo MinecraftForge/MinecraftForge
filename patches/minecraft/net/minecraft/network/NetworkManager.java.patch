@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -89,6 +89,11 @@
+@@ -90,6 +90,11 @@
          this.field_179294_g = p_i46004_1_;
      }
  
@@ -12,7 +12,7 @@
      public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
      {
          super.channelActive(p_channelActive_1_);
-@@ -205,7 +210,7 @@
+@@ -206,7 +211,7 @@
          final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
          final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
  
@@ -21,7 +21,7 @@
          {
              field_150735_g.debug("Disabled auto read");
              this.field_150746_k.config().setAutoRead(false);
-@@ -213,7 +218,7 @@
+@@ -214,7 +219,7 @@
  
          if (this.field_150746_k.eventLoop().inEventLoop())
          {
@@ -30,7 +30,7 @@
              {
                  this.func_150723_a(enumconnectionstate);
              }
-@@ -233,7 +238,7 @@
+@@ -234,7 +239,7 @@
              {
                  public void run()
                  {
@@ -39,7 +39,7 @@
                      {
                          NetworkManager.this.func_150723_a(enumconnectionstate);
                      }
-@@ -452,6 +457,11 @@
+@@ -453,6 +458,11 @@
          }
      }
  

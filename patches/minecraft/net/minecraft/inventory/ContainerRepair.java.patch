@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -69,6 +69,8 @@
+@@ -70,6 +70,8 @@
                      p_82870_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
                  }
  
@@ -9,7 +9,7 @@
                  ContainerRepair.this.field_82853_g.func_70299_a(0, (ItemStack)null);
  
                  if (ContainerRepair.this.field_82856_l > 0)
-@@ -93,7 +95,7 @@
+@@ -94,7 +96,7 @@
                  ContainerRepair.this.field_82854_e = 0;
                  IBlockState iblockstate = p_i45807_2_.func_180495_p(p_i45807_3_);
  
@@ -18,7 +18,7 @@
                  {
                      int l = ((Integer)iblockstate.func_177229_b(BlockAnvil.field_176505_b)).intValue();
                      ++l;
-@@ -160,10 +162,12 @@
+@@ -161,10 +163,12 @@
              Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
              j = j + itemstack.func_82838_A() + (itemstack2 == null ? 0 : itemstack2.func_82838_A());
              this.field_82856_l = 0;
@@ -32,7 +32,7 @@
  
                  if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2))
                  {
-@@ -235,7 +239,7 @@
+@@ -236,7 +240,7 @@
  
                              for (Enchantment enchantment : map.keySet())
                              {
@@ -41,7 +41,7 @@
                                  {
                                      flag1 = false;
                                      ++i;
-@@ -279,6 +283,8 @@
+@@ -280,6 +284,8 @@
                  }
              }
  

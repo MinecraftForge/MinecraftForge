@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandEnchant.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandEnchant.java
-@@ -85,7 +85,7 @@
+@@ -86,7 +86,7 @@
                                  {
                                      Enchantment enchantment1 = Enchantment.func_185262_c(k);
  

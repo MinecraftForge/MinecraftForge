@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -43,11 +43,12 @@
+@@ -44,11 +44,12 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -16,7 +16,7 @@
      public static final AxisAlignedBB field_185505_j = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      public static final AxisAlignedBB field_185506_k = null;
      private CreativeTabs field_149772_a;
-@@ -83,7 +84,8 @@
+@@ -84,7 +85,8 @@
  
      public static Block func_149729_e(int p_149729_0_)
      {
@@ -26,7 +26,7 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
-@@ -268,7 +270,7 @@
+@@ -286,7 +288,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
      {
@@ -35,7 +35,7 @@
      }
  
      public Block func_149711_c(float p_149711_1_)
-@@ -305,9 +307,10 @@
+@@ -324,9 +326,10 @@
          return this.field_149789_z;
      }
  
@@ -46,8 +46,8 @@
 +        return hasTileEntity(func_176223_P());
      }
  
-     public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
-@@ -346,13 +349,13 @@
+     @Deprecated
+@@ -370,13 +373,13 @@
      @SideOnly(Side.CLIENT)
      public int func_185484_c(IBlockState p_185484_1_, IBlockAccess p_185484_2_, BlockPos p_185484_3_)
      {
@@ -63,7 +63,7 @@
          }
          else
          {
-@@ -415,7 +418,7 @@
+@@ -440,7 +443,7 @@
                  }
          }
  
@@ -71,8 +71,8 @@
 +        return !p_176225_2_.func_180495_p(p_176225_3_.func_177972_a(p_176225_4_)).doesSideBlockRendering(p_176225_2_, p_176225_3_.func_177972_a(p_176225_4_), p_176225_4_.func_176734_d());
      }
  
-     @SideOnly(Side.CLIENT)
-@@ -472,6 +475,10 @@
+     @Deprecated
+@@ -500,6 +503,10 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -83,8 +83,8 @@
      }
  
      public int func_149745_a(Random p_149745_1_)
-@@ -486,8 +493,7 @@
- 
+@@ -516,8 +523,7 @@
+     @Deprecated
      public float func_180647_a(IBlockState p_180647_1_, EntityPlayer p_180647_2_, World p_180647_3_, BlockPos p_180647_4_)
      {
 -        float f = p_180647_1_.func_185887_b(p_180647_3_, p_180647_4_);
@@ -93,7 +93,7 @@
      }
  
      public final void func_176226_b(World p_176226_1_, BlockPos p_176226_2_, IBlockState p_176226_3_, int p_176226_4_)
-@@ -497,20 +503,16 @@
+@@ -527,20 +533,16 @@
  
      public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
      {
@@ -119,7 +119,7 @@
                  }
              }
          }
-@@ -518,8 +520,13 @@
+@@ -548,8 +550,13 @@
  
      public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_)
      {
@@ -134,7 +134,7 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-@@ -588,7 +595,7 @@
+@@ -621,7 +628,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -142,8 +142,8 @@
 +        return p_176196_1_.func_180495_p(p_176196_2_).func_177230_c().func_176200_f(p_176196_1_, p_176196_2_);
      }
  
-     public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, ItemStack p_180639_6_, EnumFacing p_180639_7_, float p_180639_8_, float p_180639_9_, float p_180639_10_)
-@@ -638,25 +645,35 @@
+     public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, @Nullable ItemStack p_180639_6_, EnumFacing p_180639_7_, float p_180639_8_, float p_180639_9_, float p_180639_10_)
+@@ -674,25 +681,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.025F);
  
@@ -181,11 +181,11 @@
 +        return this.func_176223_P().func_185917_h() && !this.hasTileEntity(silk_check_state.get());
      }
  
-     protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -747,9 +764,11 @@
-         p_176216_2_.field_70181_x = 0.0D;
+     @Nullable
+@@ -788,9 +805,11 @@
      }
  
+     @Nullable
 +    @Deprecated // Forge: Use more sensitive version below: getPickBlock
      public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)
      {
@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -844,6 +863,1141 @@
+@@ -887,6 +906,1141 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -842,11 +842,11 @@
 +     * @param state The current state
 +     * @param world The current world
 +     * @param target The target the player is looking at {x/y/z/side/sub}
-+     * @param effectRenderer A reference to the current effect renderer.
++     * @param manager A reference to the current particle manager.
 +     * @return True to prevent vanilla digging particles form spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.EffectRenderer effectRenderer)
++    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
 +    {
 +        return false;
 +    }
@@ -859,11 +859,11 @@
 +     *
 +     * @param world The current world
 +     * @param pos Position to spawn the particle
-+     * @param effectRenderer A reference to the current effect renderer.
++     * @param manager A reference to the current particle manager.
 +     * @return True to prevent vanilla break particles from spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
-+    public boolean addDestroyEffects(World world, BlockPos pos, net.minecraft.client.particle.EffectRenderer effectRenderer)
++    public boolean addDestroyEffects(World world, BlockPos pos, net.minecraft.client.particle.ParticleManager manager)
 +    {
 +        return false;
 +    }

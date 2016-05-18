@@ -44,7 +44,7 @@ import net.minecraft.client.renderer.block.model.multipart.Multipart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.renderer.texture.IIconCreator;
+import net.minecraft.client.renderer.texture.ITextureMapPopulator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -131,7 +131,7 @@ public final class ModelLoader extends ModelBakery
         textures.remove(TextureMap.LOCATION_MISSING_TEXTURE);
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
 
-        textureMap.loadSprites(resourceManager, new IIconCreator()
+        textureMap.loadSprites(resourceManager, new ITextureMapPopulator()
         {
             public void registerSprites(TextureMap map)
             {

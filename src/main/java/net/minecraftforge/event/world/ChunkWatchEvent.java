@@ -1,12 +1,12 @@
 package net.minecraftforge.event.world;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.ChunkPos;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will 
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #chunk} contains the ChunkCoordIntPair of the Chunk this event is affecting.<br>
@@ -16,16 +16,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
  **/
 public class ChunkWatchEvent extends Event
 {
-    private final ChunkCoordIntPair chunk;
+    private final ChunkPos chunk;
     private final EntityPlayerMP player;
-    
-    public ChunkWatchEvent(ChunkCoordIntPair chunk, EntityPlayerMP player)
+
+    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
     {
         this.chunk = chunk;
         this.player = player;
     }
 
-    public ChunkCoordIntPair getChunk()
+    public ChunkPos getChunk()
     {
         return chunk;
     }
@@ -48,9 +48,9 @@ public class ChunkWatchEvent extends Event
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(ChunkCoordIntPair chunk, EntityPlayerMP player) { super(chunk, player); }        
+        public Watch(ChunkPos chunk, EntityPlayerMP player) { super(chunk, player); }
     }
-    
+
     /**
      * ChunkWatchEvent.UnWatch is fired when an EntityPlayer stops watching a chunk.<br>
      * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
@@ -64,6 +64,6 @@ public class ChunkWatchEvent extends Event
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(ChunkCoordIntPair chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }        
+        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }
     }
 }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
-@@ -97,15 +97,15 @@
+@@ -98,15 +98,15 @@
          BlockPos blockpos = p_176341_2_.func_177972_a(p_176341_3_);
          IBlockState iblockstate = p_176341_1_.func_180495_p(p_176341_2_.func_177972_a(p_176341_3_));
  
@@ -19,7 +19,7 @@
                  {
                      if (iblockstate.func_185898_k())
                      {
-@@ -406,35 +406,30 @@
+@@ -409,21 +409,16 @@
          IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
          boolean flag = iblockstate.func_185915_l();
          boolean flag1 = p_176339_1_.func_180495_p(p_176339_2_.func_177984_a()).func_185915_l();
@@ -34,32 +34,22 @@
      }
  
 -    protected static boolean func_176346_d(IBlockState p_176346_0_)
-+    protected static boolean canConnectTo(IBlockState blockState, EnumFacing side, IBlockAccess world, BlockPos pos)
++    protected static boolean canConnectTo(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_, IBlockAccess world, BlockPos pos )
      {
 -        return func_176343_a(p_176346_0_, (EnumFacing)null);
 -    }
-+        Block block = blockState.func_177230_c();
- 
--    protected static boolean func_176343_a(IBlockState p_176343_0_, EnumFacing p_176343_1_)
--    {
--        Block block = p_176343_0_.func_177230_c();
 -
+-    protected static boolean func_176343_a(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_)
+-    {
+         Block block = p_176343_0_.func_177230_c();
+ 
          if (block == Blocks.field_150488_af)
-         {
-             return true;
-         }
--        else if (Blocks.field_150413_aR.func_185547_C(p_176343_0_))
-+        else if (Blocks.field_150413_aR.func_185547_C(blockState))
-         {
--            EnumFacing enumfacing = (EnumFacing)p_176343_0_.func_177229_b(BlockRedstoneRepeater.field_185512_D);
--            return enumfacing == p_176343_1_ || enumfacing.func_176734_d() == p_176343_1_;
-+            EnumFacing enumfacing = (EnumFacing)blockState.func_177229_b(BlockRedstoneRepeater.field_185512_D);
-+            return enumfacing == side || enumfacing.func_176734_d() == side;
+@@ -437,7 +432,7 @@
          }
          else
          {
 -            return p_176343_0_.func_185897_m() && p_176343_1_ != null;
-+            return blockState.func_177230_c().canConnectRedstone(blockState, world, pos, side);
++            return p_176343_0_.func_177230_c().canConnectRedstone(p_176343_0_, world, pos, p_176343_1_);
          }
      }
  

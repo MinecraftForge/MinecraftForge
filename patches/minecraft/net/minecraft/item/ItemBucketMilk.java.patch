@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucketMilk.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucketMilk.java
-@@ -27,7 +27,7 @@
+@@ -29,7 +29,7 @@
  
          if (!p_77654_2_.field_72995_K)
          {

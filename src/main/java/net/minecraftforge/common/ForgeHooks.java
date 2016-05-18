@@ -176,11 +176,11 @@ public class ForgeHooks
 
         if (!canHarvestBlock(state.getBlock(), player, world, pos))
         {
-            return player.getBreakSpeed(state, pos) / hardness / 100F;
+            return player.getDigSpeed(state, pos) / hardness / 100F;
         }
         else
         {
-            return player.getBreakSpeed(state, pos) / hardness / 30F;
+            return player.getDigSpeed(state, pos) / hardness / 30F;
         }
     }
 
@@ -705,7 +705,7 @@ public class ForgeHooks
             TileEntity tileentity = world.getTileEntity(pos);
             if (tileentity != null)
             {
-                Packet<?> pkt = tileentity.getDescriptionPacket();
+                Packet<?> pkt = tileentity.func_189518_D_();
                 if (pkt != null)
                 {
                     entityPlayer.playerNetServerHandler.sendPacket(pkt);

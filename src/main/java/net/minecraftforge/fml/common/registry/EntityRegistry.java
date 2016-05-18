@@ -22,8 +22,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -326,9 +326,9 @@ public class EntityRegistry
      * @param typeOfCreature Type of spawn
      * @param biomes List of biomes
      */
-    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        for (BiomeGenBase biome : biomes)
+        for (Biome biome : biomes)
         {
             List<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature);
 
@@ -358,7 +358,7 @@ public class EntityRegistry
      * @param biomes List of biomes
      */
     @SuppressWarnings("unchecked")
-    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
     {
         Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
 
@@ -374,9 +374,9 @@ public class EntityRegistry
      * @param typeOfCreature type of spawn
      * @param biomes Biomes to remove from
      */
-    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        for (BiomeGenBase biome : biomes)
+        for (Biome biome : biomes)
         {
             Iterator<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature).iterator();
 
@@ -398,7 +398,7 @@ public class EntityRegistry
      * @param biomes Biomes to remove from
      */
     @SuppressWarnings("unchecked")
-    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, Biome... biomes)
     {
         Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
 

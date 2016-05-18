@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/text/Style.java
 +++ ../src-work/minecraft/net/minecraft/util/text/Style.java
-@@ -229,7 +229,6 @@
+@@ -238,7 +238,6 @@
          return this;
      }
  

@@ -20,13 +20,13 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.minecraft.command.ServerCommand;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.PendingCommand;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.storage.SaveFormatOld;
@@ -183,7 +183,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                 // rudimentary command processing, check for fml confirm/cancel and stop commands
                 synchronized (dedServer.pendingCommandList)
                 {
-                    for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext(); )
+                    for (Iterator<PendingCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, PendingCommand.class).iterator(); it.hasNext(); )
                     {
                         String cmd = it.next().command.trim().toLowerCase();
 

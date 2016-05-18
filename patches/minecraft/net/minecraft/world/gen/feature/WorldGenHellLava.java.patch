@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHellLava.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHellLava.java
-@@ -24,7 +24,7 @@
+@@ -25,7 +25,7 @@
          {
              return false;
          }

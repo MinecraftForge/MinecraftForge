@@ -1,27 +1,27 @@
---- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-+++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenBase.java
-@@ -51,7 +51,7 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/Biome.java
++++ ../src-work/minecraft/net/minecraft/world/biome/Biome.java
+@@ -52,7 +52,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
--public abstract class BiomeGenBase
-+public abstract class BiomeGenBase extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<BiomeGenBase>
+-public abstract class Biome
++public abstract class Biome extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<Biome>
  {
      private static final Logger field_150586_aC = LogManager.getLogger();
      protected static final IBlockState field_185365_a = Blocks.field_150348_b.func_176223_P();
-@@ -70,7 +70,7 @@
+@@ -71,7 +71,7 @@
      protected static final WorldGenTrees field_76757_N = new WorldGenTrees(false);
      protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
      protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
--    public static final RegistryNamespaced<ResourceLocation, BiomeGenBase> field_185377_q = new RegistryNamespaced();
-+    public static final RegistryNamespaced<ResourceLocation, BiomeGenBase> field_185377_q = net.minecraftforge.fml.common.registry.GameData.getBiomeRegistry();
+-    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = new RegistryNamespaced();
++    public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = net.minecraftforge.fml.common.registry.GameData.getBiomeRegistry();
      private final String field_76791_y;
      private final float field_76748_D;
      private final float field_76749_E;
-@@ -128,11 +128,12 @@
-         this.field_76761_J.add(new BiomeGenBase.SpawnListEntry(EntityWitch.class, 5, 1, 1));
-         this.field_76755_L.add(new BiomeGenBase.SpawnListEntry(EntitySquid.class, 10, 4, 4));
-         this.field_82914_M.add(new BiomeGenBase.SpawnListEntry(EntityBat.class, 10, 8, 8));
+@@ -132,11 +132,12 @@
+         this.field_76761_J.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
+         this.field_76755_L.add(new Biome.SpawnListEntry(EntitySquid.class, 10, 4, 4));
+         this.field_82914_M.add(new Biome.SpawnListEntry(EntityBat.class, 10, 8, 8));
 +        this.addDefaultFlowers();
      }
  
@@ -32,7 +32,7 @@
      }
  
      public boolean func_185363_b()
-@@ -228,7 +229,7 @@
+@@ -232,7 +233,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180627_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -41,7 +41,7 @@
      }
  
      public final void func_180628_b(World p_180628_1_, Random p_180628_2_, ChunkPrimer p_180628_3_, int p_180628_4_, int p_180628_5_, double p_180628_6_)
-@@ -321,7 +322,7 @@
+@@ -325,7 +326,7 @@
      {
          double d0 = (double)MathHelper.func_76131_a(this.func_180626_a(p_180625_1_), 0.0F, 1.0F);
          double d1 = (double)MathHelper.func_76131_a(this.func_76727_i(), 0.0F, 1.0F);
@@ -49,8 +49,8 @@
 +        return getModdedBiomeFoliageColor(ColorizerFoliage.func_77470_a(d0, d1));
      }
  
-     public Class <? extends BiomeGenBase > func_150562_l()
-@@ -386,6 +387,83 @@
+     public Class <? extends Biome > func_150562_l()
+@@ -391,6 +392,83 @@
          return this.field_76766_R;
      }
  
@@ -133,4 +133,4 @@
 +
      public static void func_185358_q()
      {
-         func_185354_a(0, "ocean", new BiomeGenOcean((new BiomeGenBase.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
+         func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));

@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
-@@ -73,6 +73,17 @@
-         return EnumRarity.RARE;
+@@ -63,6 +63,17 @@
+         p_77624_3_.add(this.func_150927_i());
      }
  
 +    /**
@@ -16,5 +16,5 @@
 +    }
 +
      @SideOnly(Side.CLIENT)
-     public static ItemRecord func_185074_a(SoundEvent p_185074_0_)
+     public String func_150927_i()
      {

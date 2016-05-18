@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -316,7 +316,7 @@
+@@ -317,7 +317,7 @@
          {
              ItemStack itemstack = abstractclientplayer.func_184607_cu();
  
@@ -9,7 +9,7 @@
              {
                  EnumHand enumhand1 = abstractclientplayer.func_184600_cs();
                  flag = enumhand1 == EnumHand.MAIN_HAND;
-@@ -360,7 +360,7 @@
+@@ -361,7 +361,7 @@
                  this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
              }
          }
@@ -18,7 +18,7 @@
          {
              if (flag && this.field_187468_e == null)
              {
-@@ -444,6 +444,7 @@
+@@ -445,6 +445,7 @@
          if (this.field_78455_a.field_71439_g.func_70094_T())
          {
              IBlockState iblockstate = this.field_78455_a.field_71441_e.func_180495_p(new BlockPos(this.field_78455_a.field_71439_g));
@@ -26,7 +26,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -457,11 +458,13 @@
+@@ -458,11 +459,13 @@
                  if (iblockstate1.func_177230_c().func_176214_u())
                  {
                      iblockstate = iblockstate1;
@@ -40,7 +40,7 @@
                  this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -470,11 +473,13 @@
+@@ -471,11 +474,13 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
@@ -54,7 +54,7 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -596,8 +601,8 @@
+@@ -597,8 +602,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);

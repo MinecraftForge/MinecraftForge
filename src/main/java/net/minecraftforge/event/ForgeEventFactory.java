@@ -14,7 +14,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,7 +35,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -162,7 +162,7 @@ public class ForgeEventFactory
        return event.getDroppedExperience();
     }
 
-    public static List<BiomeGenBase.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, BlockPos pos, List<BiomeGenBase.SpawnListEntry> oldList)
+    public static List<Biome.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, BlockPos pos, List<Biome.SpawnListEntry> oldList)
     {
         WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, pos, oldList);
         if (MinecraftForge.EVENT_BUS.post(event))
@@ -369,7 +369,7 @@ public class ForgeEventFactory
             return true;
     }
 
-    public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
+    public static SleepResult onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
     {
         PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(player, pos);
         MinecraftForge.EVENT_BUS.post(event);

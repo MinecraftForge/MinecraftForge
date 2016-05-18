@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockIce.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
-@@ -40,14 +40,19 @@
+@@ -41,14 +41,19 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.025F);
  
@@ -22,7 +22,7 @@
          }
          else
          {
-@@ -58,7 +63,9 @@
+@@ -59,7 +64,9 @@
              }
  
              int i = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);

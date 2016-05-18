@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -155,7 +155,7 @@
+@@ -162,7 +162,7 @@
              }
          }
  
@@ -9,7 +9,7 @@
      }
  
      private static void func_151181_c()
-@@ -177,7 +177,7 @@
+@@ -184,7 +184,7 @@
              }
          }
  
@@ -18,7 +18,7 @@
      }
  
      private static void func_75925_c()
-@@ -201,7 +201,7 @@
+@@ -208,7 +208,7 @@
              }
          }
  
@@ -27,7 +27,7 @@
      }
  
      private static void func_151179_e()
-@@ -220,7 +220,7 @@
+@@ -227,7 +227,7 @@
              }
          }
  
@@ -36,7 +36,7 @@
      }
  
      private static void func_188054_f()
-@@ -240,7 +240,7 @@
+@@ -247,7 +247,7 @@
              }
          }
  
@@ -45,7 +45,7 @@
      }
  
      private static String func_180204_a(Item p_180204_0_)
-@@ -249,28 +249,35 @@
+@@ -256,28 +256,35 @@
          return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
      }
  

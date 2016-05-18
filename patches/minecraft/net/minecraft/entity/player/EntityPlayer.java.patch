@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -93,6 +93,11 @@
+@@ -94,6 +94,11 @@
  @SuppressWarnings("incomplete-switch")
  public abstract class EntityPlayer extends EntityLivingBase
  {
@@ -12,7 +12,7 @@
      private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
      private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
      protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
-@@ -174,6 +179,7 @@
+@@ -175,6 +180,7 @@
  
      public void func_70071_h_()
      {
@@ -20,7 +20,7 @@
          this.field_70145_X = this.func_175149_v();
  
          if (this.func_175149_v())
-@@ -219,7 +225,7 @@
+@@ -220,7 +226,7 @@
  
          super.func_70071_h_();
  
@@ -29,7 +29,7 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -360,6 +366,7 @@
+@@ -361,6 +367,7 @@
                  this.func_70105_a(f, f1);
              }
          }
@@ -37,7 +37,7 @@
      }
  
      public int func_82145_z()
-@@ -442,11 +449,11 @@
+@@ -443,11 +450,11 @@
              this.field_71109_bG = 0.0F;
              this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
  
@@ -51,7 +51,7 @@
              }
          }
      }
-@@ -576,11 +583,15 @@
+@@ -577,11 +584,15 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -67,7 +67,7 @@
          if (this.func_70005_c_().equals("Notch"))
          {
              this.func_146097_a(new ItemStack(Items.field_151034_e, 1), true, false);
-@@ -591,6 +602,9 @@
+@@ -592,6 +603,9 @@
              this.field_71071_by.func_70436_m();
          }
  
@@ -77,8 +77,8 @@
          if (p_70645_1_ != null)
          {
              this.field_70159_w = (double)(-MathHelper.func_76134_b((this.field_70739_aP + this.field_70177_z) * 0.017453292F) * 0.1F);
-@@ -678,12 +692,25 @@
- 
+@@ -680,13 +694,26 @@
+     @Nullable
      public EntityItem func_71040_bB(boolean p_71040_1_)
      {
 -        return this.func_146097_a(this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && this.field_71071_by.func_70448_g() != null ? this.field_71071_by.func_70448_g().field_77994_a : 1), false, true);
@@ -98,38 +98,39 @@
 +        return null;
      }
  
-     public EntityItem func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_)
+     @Nullable
+     public EntityItem func_71019_a(@Nullable ItemStack p_71019_1_, boolean p_71019_2_)
      {
 -        return this.func_146097_a(p_71019_1_, false, false);
 +        return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
      }
  
-     public EntityItem func_146097_a(ItemStack p_146097_1_, boolean p_146097_2_, boolean p_146097_3_)
-@@ -746,15 +773,22 @@
- 
+     @Nullable
+@@ -751,14 +778,22 @@
+     @Nullable
      public ItemStack func_184816_a(EntityItem p_184816_1_)
      {
 +        if (captureDrops) capturedDrops.add(p_184816_1_);
 +        else // Forge: Don't indent to keep patch smaller.
          this.field_70170_p.func_72838_d(p_184816_1_);
-         ItemStack itemstack = p_184816_1_.func_92059_d();
-         return itemstack;
+         return p_184816_1_.func_92059_d();
      }
  
 +    @Deprecated //Use location sensitive version below
      public float func_184813_a(IBlockState p_184813_1_)
      {
 -        float f = this.field_71071_by.func_184438_a(p_184813_1_);
-+        return getBreakSpeed(p_184813_1_, new BlockPos(0, -1, 0));
++        return getDigSpeed(p_184813_1_, null);
 +    }
  
-+    public float getBreakSpeed(IBlockState state, BlockPos pos)
++    public float getDigSpeed(IBlockState state, BlockPos pos)
 +    {
 +        float f = this.field_71071_by.func_184438_a(state);
++
          if (f > 1.0F)
          {
              int i = EnchantmentHelper.func_185293_e(this);
-@@ -804,12 +838,13 @@
+@@ -808,12 +843,13 @@
              f /= 5.0F;
          }
  
@@ -145,7 +146,7 @@
      }
  
      public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -845,6 +880,16 @@
+@@ -849,6 +885,16 @@
              this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
          }
  
@@ -162,7 +163,7 @@
          this.field_71100_bB.func_75112_a(p_70037_1_);
          this.field_71075_bZ.func_75095_b(p_70037_1_);
  
-@@ -877,6 +922,23 @@
+@@ -881,6 +927,23 @@
              p_70014_1_.func_74757_a("SpawnForced", this.field_82248_d);
          }
  
@@ -186,7 +187,7 @@
          this.field_71100_bB.func_75117_b(p_70014_1_);
          this.field_71075_bZ.func_75091_a(p_70014_1_);
          p_70014_1_.func_74782_a("EnderItems", this.field_71078_a.func_70487_g());
-@@ -884,6 +946,7 @@
+@@ -888,6 +951,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -194,7 +195,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -966,6 +1029,7 @@
+@@ -970,6 +1034,7 @@
              if (this.field_184627_bm.field_77994_a <= 0)
              {
                  EnumHand enumhand = this.func_184600_cs();
@@ -202,7 +203,7 @@
  
                  if (enumhand == EnumHand.MAIN_HAND)
                  {
-@@ -1001,7 +1065,10 @@
+@@ -1005,7 +1070,10 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -214,7 +215,7 @@
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
              p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-@@ -1067,6 +1134,7 @@
+@@ -1071,6 +1139,7 @@
          }
          else
          {
@@ -222,7 +223,7 @@
              ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.func_77946_l() : null;
  
              if (!p_184822_1_.func_184230_a(this, p_184822_2_, p_184822_3_))
-@@ -1123,6 +1191,7 @@
+@@ -1127,6 +1196,7 @@
  
      public void func_71059_n(Entity p_71059_1_)
      {
@@ -230,16 +231,16 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1410,6 +1479,8 @@
+@@ -1414,6 +1484,8 @@
  
-     public EntityPlayer.EnumStatus func_180469_a(BlockPos p_180469_1_)
+     public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
-+        EntityPlayer.EnumStatus ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, p_180469_1_);
++        EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, p_180469_1_);
 +        if (ret != null) return ret;
          if (!this.field_70170_p.field_72995_K)
          {
              if (this.func_70608_bn() || !this.func_70089_S())
-@@ -1449,9 +1520,10 @@
+@@ -1453,9 +1525,10 @@
  
          this.func_70105_a(0.2F, 0.2F);
  
@@ -253,7 +254,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1514,13 +1586,14 @@
+@@ -1518,13 +1591,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -271,7 +272,7 @@
  
              if (blockpos == null)
              {
-@@ -1529,6 +1602,10 @@
+@@ -1533,6 +1607,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -282,14 +283,15 @@
  
          this.field_71083_bS = false;
  
-@@ -1547,14 +1624,15 @@
+@@ -1551,15 +1629,16 @@
  
      private boolean func_175143_p()
      {
 -        return this.field_70170_p.func_180495_p(this.field_71081_bT).func_177230_c() == Blocks.field_150324_C;
-+        return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, field_71081_bT);
++        return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, this.field_71081_bT);
      }
  
+     @Nullable
      public static BlockPos func_180467_a(World p_180467_0_, BlockPos p_180467_1_, boolean p_180467_2_)
      {
 -        Block block = p_180467_0_.func_180495_p(p_180467_1_).func_177230_c();
@@ -301,7 +303,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1569,16 +1647,17 @@
+@@ -1574,16 +1653,17 @@
          }
          else
          {
@@ -322,7 +324,7 @@
  
              switch (enumfacing)
              {
-@@ -1618,16 +1697,24 @@
+@@ -1623,16 +1703,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -349,7 +351,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1822,6 +1909,10 @@
+@@ -1827,6 +1915,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -360,7 +362,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2022,6 +2113,18 @@
+@@ -2027,6 +2119,18 @@
          this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
@@ -379,7 +381,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -2120,7 +2223,10 @@
+@@ -2126,7 +2230,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -391,7 +393,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2129,7 +2235,7 @@
+@@ -2135,7 +2242,7 @@
  
      public float func_70047_e()
      {
@@ -400,7 +402,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2340,6 +2446,161 @@
+@@ -2346,6 +2453,161 @@
          return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
      }
  

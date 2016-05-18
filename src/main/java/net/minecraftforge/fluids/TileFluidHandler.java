@@ -20,10 +20,11 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag)
+    public NBTTagCompound func_189515_b(NBTTagCompound tag)
     {
-        super.writeToNBT(tag);
+        tag = super.func_189515_b(tag);
         tank.writeToNBT(tag);
+        return tag;
     }
 
     /* IFluidHandler */

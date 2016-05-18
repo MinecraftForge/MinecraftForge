@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/util/math/Vec3d.java
 +++ ../src-work/minecraft/net/minecraft/util/math/Vec3d.java
-@@ -1,8 +1,5 @@
+@@ -1,9 +1,6 @@
  package net.minecraft.util.math;
  
+ import javax.annotation.Nullable;
 -import net.minecraftforge.fml.relauncher.Side;
 -import net.minecraftforge.fml.relauncher.SideOnly;
 -
  public class Vec3d
  {
      public static final Vec3d field_186680_a = new Vec3d(0.0D, 0.0D, 0.0D);
-@@ -53,7 +50,6 @@
+@@ -54,7 +51,6 @@
          return this.field_72450_a * p_72430_1_.field_72450_a + this.field_72448_b * p_72430_1_.field_72448_b + this.field_72449_c * p_72430_1_.field_72449_c;
      }
  

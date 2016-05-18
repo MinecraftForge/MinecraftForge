@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityHanging.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityHanging.java
-@@ -139,6 +139,9 @@
+@@ -141,6 +141,9 @@
                      BlockPos blockpos1 = blockpos.func_177967_a(enumfacing, k + i1).func_177981_b(l + j1);
                      IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos1);
  

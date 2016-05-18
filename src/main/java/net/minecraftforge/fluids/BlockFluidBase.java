@@ -298,7 +298,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock)
+    public void func_189540_a(IBlockState state, World world, BlockPos pos, Block neighborBlock)
     {
         world.scheduleUpdate(pos, this, tickRate);
     }

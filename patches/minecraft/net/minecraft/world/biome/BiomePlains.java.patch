@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
-+++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenPlains.java
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomePlains.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomePlains.java
 @@ -92,4 +92,19 @@
  
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);

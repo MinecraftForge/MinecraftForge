@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -90,6 +90,10 @@
+@@ -91,6 +91,10 @@
              boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
  
@@ -11,7 +11,7 @@
              if (itemstack != null || flag)
              {
                  if (itemstack == null)
-@@ -97,12 +101,11 @@
+@@ -98,12 +102,11 @@
                      itemstack = new ItemStack(Items.field_151032_g);
                  }
  
@@ -25,7 +25,7 @@
  
                      if (!p_77615_2_.field_72995_K)
                      {
-@@ -189,6 +192,9 @@
+@@ -190,6 +193,9 @@
      {
          boolean flag = this.func_185060_a(p_77659_3_) != null;
  

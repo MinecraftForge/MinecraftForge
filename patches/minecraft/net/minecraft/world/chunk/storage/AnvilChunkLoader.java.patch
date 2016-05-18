@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -46,8 +46,41 @@
+@@ -47,9 +47,43 @@
          this.field_186055_e = p_i46673_2_;
      }
  
 +    public boolean chunkExists(World world, int x, int z)
 +    {
-+        ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
++        ChunkPos chunkcoordintpair = new ChunkPos(x, z);
 +
 +        if (this.field_75826_b.contains(chunkcoordintpair))
 +        {
-+            for(ChunkCoordIntPair pendingChunkCoord : this.field_75828_a.keySet())
++            for(ChunkPos pendingChunkCoord : this.field_75828_a.keySet())
 +            {
 +                if (pendingChunkCoord.equals(chunkcoordintpair))
 +                {
@@ -22,6 +22,8 @@
 +        return RegionFileCache.func_76550_a(this.field_75825_d, x, z).chunkExists(x & 31, z & 31);
 +    }
 +
++
+     @Nullable
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
 +        Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
@@ -39,10 +41,10 @@
 +
 +    public Object[] loadChunk__Async(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
 +    {
-         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_75815_2_, p_75815_3_);
-         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkcoordintpair);
+         ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
+         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkpos);
  
-@@ -63,11 +96,17 @@
+@@ -65,11 +99,17 @@
              nbttagcompound = this.field_186055_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
          }
  
@@ -61,7 +63,7 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is missing level data, skipping");
-@@ -91,10 +130,29 @@
+@@ -93,10 +133,29 @@
                      field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.field_76635_g + ", " + chunk.field_76647_h + ")");
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
@@ -92,15 +94,15 @@
              }
          }
      }
-@@ -110,6 +168,7 @@
+@@ -112,6 +171,7 @@
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
-             nbttagcompound.func_74768_a("DataVersion", 169);
+             nbttagcompound.func_74768_a("DataVersion", 184);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -265,8 +324,17 @@
+@@ -267,8 +327,17 @@
  
                  if (entity.func_70039_c(nbttagcompound2))
                  {
@@ -118,14 +120,13 @@
                  }
              }
          }
-@@ -276,9 +344,18 @@
+@@ -278,8 +347,17 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
 +            try
 +            {
-             NBTTagCompound nbttagcompound3 = new NBTTagCompound();
-             tileentity.func_145841_b(nbttagcompound3);
+             NBTTagCompound nbttagcompound3 = tileentity.func_189515_b(new NBTTagCompound());
              nbttaglist2.func_74742_a(nbttagcompound3);
 +            }
 +            catch (Exception e)
@@ -137,7 +138,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -347,6 +424,12 @@
+@@ -348,6 +426,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -150,7 +151,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -399,8 +482,6 @@
+@@ -400,8 +484,6 @@
                  }
              }
          }
@@ -158,4 +159,4 @@
 -        return chunk;
      }
  
-     public static Entity func_186050_a(NBTTagCompound p_186050_0_, World p_186050_1_, Chunk p_186050_2_)
+     @Nullable

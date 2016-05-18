@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
 @@ -541,6 +541,7 @@
              StatList.func_151178_a();
-             BiomeGenBase.func_185358_q();
+             Biome.func_185358_q();
              func_151353_a();
 +            net.minecraftforge.fml.common.registry.GameData.vanillaSnapshot();
          }

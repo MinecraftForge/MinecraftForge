@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -270,13 +270,8 @@
+@@ -272,13 +272,8 @@
  
              if (itemstack == null)
              {
@@ -16,7 +16,7 @@
                  this.func_70299_a(j, itemstack);
              }
  
-@@ -344,6 +339,14 @@
+@@ -346,6 +341,14 @@
                  }
              }
          }
@@ -30,4 +30,4 @@
 +        }
      }
  
-     public boolean func_70441_a(final ItemStack p_70441_1_)
+     public boolean func_70441_a(@Nullable final ItemStack p_70441_1_)

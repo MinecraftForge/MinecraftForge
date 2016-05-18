@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSetBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSetBlock.java
-@@ -54,6 +54,8 @@
+@@ -55,6 +55,8 @@
                  i = func_175764_a(p_184881_3_[4], 0, 15);
              }
  
@@ -9,7 +9,7 @@
              World world = p_184881_2_.func_130014_f_();
  
              if (!world.func_175667_e(blockpos))
-@@ -65,7 +67,7 @@
+@@ -66,7 +68,7 @@
                  NBTTagCompound nbttagcompound = new NBTTagCompound();
                  boolean flag = false;
  

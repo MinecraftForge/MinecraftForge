@@ -1,10 +1,10 @@
 package net.minecraftforge.common.chunkio;
 
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
 
@@ -78,8 +78,7 @@ class ChunkIOProvider implements Runnable
         MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(this.chunk, this.nbt)); // Don't call ChunkDataEvent.Load async
 
         this.chunk.setLastSaveTime(provider.worldObj.getTotalWorldTime());
-        provider.id2ChunkMap.add(ChunkCoordIntPair.chunkXZ2Int(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
-        provider.loadedChunks.add(this.chunk);
+        provider.id2ChunkMap.put(ChunkPos.chunkXZ2Int(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
         this.chunk.onChunkLoad();
 
         if (provider.chunkGenerator != null)

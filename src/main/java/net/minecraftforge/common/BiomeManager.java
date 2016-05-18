@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.init.Biomes;
 import net.minecraft.util.WeightedRandom;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.util.EnumHelper;
@@ -18,10 +18,10 @@ public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
-    public static List<BiomeGenBase> oceanBiomes = new ArrayList<BiomeGenBase>();
+    public static List<Biome> oceanBiomes = new ArrayList<Biome>();
 
-    public static ArrayList<BiomeGenBase> strongHoldBiomes = new ArrayList<BiomeGenBase>();
-    public static ArrayList<BiomeGenBase> strongHoldBiomesBlackList = new ArrayList<BiomeGenBase>();
+    public static ArrayList<Biome> strongHoldBiomes = new ArrayList<Biome>();
+    public static ArrayList<Biome> strongHoldBiomesBlackList = new ArrayList<Biome>();
 
     static
     {
@@ -65,27 +65,27 @@ public class BiomeManager
         return currentBiomes;
     }
 
-    public static void addVillageBiome(BiomeGenBase biome, boolean canSpawn)
+    public static void addVillageBiome(Biome biome, boolean canSpawn)
     {
         if (!MapGenVillage.villageSpawnBiomes.contains(biome))
         {
-            ArrayList<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>(MapGenVillage.villageSpawnBiomes);
+            ArrayList<Biome> biomes = new ArrayList<Biome>(MapGenVillage.villageSpawnBiomes);
             biomes.add(biome);
             MapGenVillage.villageSpawnBiomes = biomes;
         }
     }
 
-    public static void removeVillageBiome(BiomeGenBase biome)
+    public static void removeVillageBiome(Biome biome)
     {
         if (MapGenVillage.villageSpawnBiomes.contains(biome))
         {
-            ArrayList<BiomeGenBase> biomes = new ArrayList<BiomeGenBase>(MapGenVillage.villageSpawnBiomes);
+            ArrayList<Biome> biomes = new ArrayList<Biome>(MapGenVillage.villageSpawnBiomes);
             biomes.remove(biome);
             MapGenVillage.villageSpawnBiomes = biomes;
         }
     }
 
-    public static void addStrongholdBiome(BiomeGenBase biome)
+    public static void addStrongholdBiome(Biome biome)
     {
         if (!strongHoldBiomes.contains(biome))
         {
@@ -93,7 +93,7 @@ public class BiomeManager
         }
     }
 
-    public static void removeStrongholdBiome(BiomeGenBase biome)
+    public static void removeStrongholdBiome(Biome biome)
     {
         if (!strongHoldBiomesBlackList.contains(biome))
         {
@@ -101,7 +101,7 @@ public class BiomeManager
         }
     }
 
-    public static void addSpawnBiome(BiomeGenBase biome)
+    public static void addSpawnBiome(Biome biome)
     {
         if (!BiomeProvider.allowedBiomes.contains(biome))
         {
@@ -109,7 +109,7 @@ public class BiomeManager
         }
     }
 
-    public static void removeSpawnBiome(BiomeGenBase biome)
+    public static void removeSpawnBiome(Biome biome)
     {
         if (BiomeProvider.allowedBiomes.contains(biome))
         {
@@ -179,9 +179,9 @@ public class BiomeManager
 
     public static class BiomeEntry extends WeightedRandom.Item
     {
-        public final BiomeGenBase biome;
+        public final Biome biome;
 
-        public BiomeEntry(BiomeGenBase biome, int weight)
+        public BiomeEntry(Biome biome, int weight)
         {
             super(weight);
 

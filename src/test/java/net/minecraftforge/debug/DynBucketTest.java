@@ -369,16 +369,17 @@ public class DynBucketTest
         }
 
         @Override
-        public void writeToNBT(NBTTagCompound tags)
+        public NBTTagCompound func_189515_b(NBTTagCompound tags)
         {
-            super.writeToNBT(tags);
+            tags = super.func_189515_b(tags);
             tank.writeToNBT(tags);
+            return tags;
         }
 
         @Override
-        public Packet<?> getDescriptionPacket() {
+        public SPacketUpdateTileEntity func_189518_D_() {
             NBTTagCompound tag = new NBTTagCompound();
-            writeToNBT(tag);
+            func_189515_b(tag);
             return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
         }
 

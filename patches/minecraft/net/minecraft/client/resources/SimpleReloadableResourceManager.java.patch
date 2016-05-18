@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/resources/SimpleReloadableResourceManager.java
 +++ ../src-work/minecraft/net/minecraft/client/resources/SimpleReloadableResourceManager.java
-@@ -92,6 +92,7 @@
+@@ -93,6 +93,7 @@
      public void func_110541_a(List<IResourcePack> p_110541_1_)
      {
          this.func_110543_a();
 +        net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Loading Resources", p_110541_1_.size()+1, true);
          field_147967_a.info("Reloading ResourceManager: " + field_130074_a.join(Iterables.transform(p_110541_1_, new Function<IResourcePack, String>()
          {
-             public String apply(IResourcePack p_apply_1_)
-@@ -102,23 +103,32 @@
+             public String apply(@Nullable IResourcePack p_apply_1_)
+@@ -103,23 +104,32 @@
  
          for (IResourcePack iresourcepack : p_110541_1_)
          {

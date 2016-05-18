@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
-@@ -106,11 +106,14 @@
+@@ -108,11 +108,14 @@
      {
          if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
          {
@@ -15,7 +15,7 @@
              BlockPos blockpos = p_180546_1_.func_174877_v();
              this.func_178469_a(p_180546_1_, (double)blockpos.func_177958_n() - field_147554_b, (double)blockpos.func_177956_o() - field_147555_c, (double)blockpos.func_177952_p() - field_147552_d, p_180546_2_, p_180546_3_);
          }
-@@ -129,6 +132,11 @@
+@@ -131,6 +134,11 @@
          {
              try
              {
@@ -27,7 +27,7 @@
                  tileentityspecialrenderer.func_180535_a(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_);
              }
              catch (Throwable throwable)
-@@ -155,4 +163,52 @@
+@@ -157,4 +165,52 @@
      {
          return this.field_147557_n;
      }

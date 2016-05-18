@@ -45,7 +45,7 @@ public class BlockSnapshot implements Serializable
         if (te != null)
         {
             nbt = new NBTTagCompound();
-            te.writeToNBT(getNbt());
+            te.func_189515_b(getNbt());
         }
         else nbt = null;
         if (DEBUG)
@@ -139,7 +139,7 @@ public class BlockSnapshot implements Serializable
     public TileEntity getTileEntity()
     {
         if (getNbt() != null)
-            return TileEntity.createTileEntity(getWorld().getMinecraftServer(), getNbt());
+            return TileEntity.func_189514_c(getNbt());
         else return null;
     }
 

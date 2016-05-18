@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemOverrideList.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemOverrideList.java
-@@ -27,6 +27,7 @@
-         }
+@@ -29,6 +29,7 @@
      }
  
+     @Nullable
 +    @Deprecated
-     public ResourceLocation func_188021_a(ItemStack p_188021_1_, World p_188021_2_, EntityLivingBase p_188021_3_)
+     public ResourceLocation func_188021_a(ItemStack p_188021_1_, @Nullable World p_188021_2_, @Nullable EntityLivingBase p_188021_3_)
      {
          if (!this.field_188023_b.isEmpty())
-@@ -42,4 +43,23 @@
+@@ -44,4 +45,23 @@
  
          return null;
      }
