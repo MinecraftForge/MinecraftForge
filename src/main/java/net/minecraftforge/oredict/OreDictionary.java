@@ -57,196 +57,196 @@ public class OreDictionary
         if (!hasInit)
         {
             // tree- and wood-related things
-            registerOre("logWood",     new ItemStack(Blocks.log, 1, WILDCARD_VALUE));
-            registerOre("logWood",     new ItemStack(Blocks.log2, 1, WILDCARD_VALUE));
-            registerOre("plankWood",   new ItemStack(Blocks.planks, 1, WILDCARD_VALUE));
-            registerOre("slabWood",    new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE));
-            registerOre("stairWood",   Blocks.oak_stairs);
-            registerOre("stairWood",   Blocks.spruce_stairs);
-            registerOre("stairWood",   Blocks.birch_stairs);
-            registerOre("stairWood",   Blocks.jungle_stairs);
-            registerOre("stairWood",   Blocks.acacia_stairs);
-            registerOre("stairWood",   Blocks.dark_oak_stairs);
-            registerOre("stickWood",   Items.stick);
-            registerOre("treeSapling", new ItemStack(Blocks.sapling, 1, WILDCARD_VALUE));
-            registerOre("treeLeaves",  new ItemStack(Blocks.leaves, 1, WILDCARD_VALUE));
-            registerOre("treeLeaves",  new ItemStack(Blocks.leaves2, 1, WILDCARD_VALUE));
-            registerOre("vine",        Blocks.vine);
+            registerOre("logWood",     new ItemStack(Blocks.LOG, 1, WILDCARD_VALUE));
+            registerOre("logWood",     new ItemStack(Blocks.LOG2, 1, WILDCARD_VALUE));
+            registerOre("plankWood",   new ItemStack(Blocks.PLANKS, 1, WILDCARD_VALUE));
+            registerOre("slabWood",    new ItemStack(Blocks.WOODEN_SLAB, 1, WILDCARD_VALUE));
+            registerOre("stairWood",   Blocks.OAK_STAIRS);
+            registerOre("stairWood",   Blocks.SPRUCE_STAIRS);
+            registerOre("stairWood",   Blocks.BIRCH_STAIRS);
+            registerOre("stairWood",   Blocks.JUNGLE_STAIRS);
+            registerOre("stairWood",   Blocks.ACACIA_STAIRS);
+            registerOre("stairWood",   Blocks.DARK_OAK_STAIRS);
+            registerOre("stickWood",   Items.STICK);
+            registerOre("treeSapling", new ItemStack(Blocks.SAPLING, 1, WILDCARD_VALUE));
+            registerOre("treeLeaves",  new ItemStack(Blocks.LEAVES, 1, WILDCARD_VALUE));
+            registerOre("treeLeaves",  new ItemStack(Blocks.LEAVES2, 1, WILDCARD_VALUE));
+            registerOre("vine",        Blocks.VINE);
 
             // Ores
-            registerOre("oreGold",     Blocks.gold_ore);
-            registerOre("oreIron",     Blocks.iron_ore);
-            registerOre("oreLapis",    Blocks.lapis_ore);
-            registerOre("oreDiamond",  Blocks.diamond_ore);
-            registerOre("oreRedstone", Blocks.redstone_ore);
-            registerOre("oreEmerald",  Blocks.emerald_ore);
-            registerOre("oreQuartz",   Blocks.quartz_ore);
-            registerOre("oreCoal",     Blocks.coal_ore);
+            registerOre("oreGold",     Blocks.GOLD_ORE);
+            registerOre("oreIron",     Blocks.IRON_ORE);
+            registerOre("oreLapis",    Blocks.LAPIS_ORE);
+            registerOre("oreDiamond",  Blocks.DIAMOND_ORE);
+            registerOre("oreRedstone", Blocks.REDSTONE_ORE);
+            registerOre("oreEmerald",  Blocks.EMERALD_ORE);
+            registerOre("oreQuartz",   Blocks.QUARTZ_ORE);
+            registerOre("oreCoal",     Blocks.COAL_ORE);
 
             // ingots/nuggets
-            registerOre("ingotIron",     Items.iron_ingot);
-            registerOre("ingotGold",     Items.gold_ingot);
-            registerOre("ingotBrick",    Items.brick);
-            registerOre("ingotBrickNether", Items.netherbrick);
-            registerOre("nuggetGold",  Items.gold_nugget);
+            registerOre("ingotIron",     Items.IRON_INGOT);
+            registerOre("ingotGold",     Items.GOLD_INGOT);
+            registerOre("ingotBrick",    Items.BRICK);
+            registerOre("ingotBrickNether", Items.NETHERBRICK);
+            registerOre("nuggetGold",  Items.GOLD_NUGGET);
 
             // gems and dusts
-            registerOre("gemDiamond",  Items.diamond);
-            registerOre("gemEmerald",  Items.emerald);
-            registerOre("gemQuartz",   Items.quartz);
-            registerOre("gemPrismarine", Items.prismarine_shard);
-            registerOre("dustPrismarine", Items.prismarine_crystals);
-            registerOre("dustRedstone",  Items.redstone);
-            registerOre("dustGlowstone", Items.glowstone_dust);
-            registerOre("gemLapis",    new ItemStack(Items.dye, 1, 4));
+            registerOre("gemDiamond",  Items.DIAMOND);
+            registerOre("gemEmerald",  Items.EMERALD);
+            registerOre("gemQuartz",   Items.QUARTZ);
+            registerOre("gemPrismarine", Items.PRISMARINE_SHARD);
+            registerOre("dustPrismarine", Items.PRISMARINE_CRYSTALS);
+            registerOre("dustRedstone",  Items.REDSTONE);
+            registerOre("dustGlowstone", Items.GLOWSTONE_DUST);
+            registerOre("gemLapis",    new ItemStack(Items.DYE, 1, 4));
 
             // storage blocks
-            registerOre("blockGold",     Blocks.gold_block);
-            registerOre("blockIron",     Blocks.iron_block);
-            registerOre("blockLapis",    Blocks.lapis_block);
-            registerOre("blockDiamond",  Blocks.diamond_block);
-            registerOre("blockRedstone", Blocks.redstone_block);
-            registerOre("blockEmerald",  Blocks.emerald_block);
-            registerOre("blockQuartz",   Blocks.quartz_block);
-            registerOre("blockCoal",     Blocks.coal_block);
+            registerOre("blockGold",     Blocks.GOLD_BLOCK);
+            registerOre("blockIron",     Blocks.IRON_BLOCK);
+            registerOre("blockLapis",    Blocks.LAPIS_BLOCK);
+            registerOre("blockDiamond",  Blocks.DIAMOND_BLOCK);
+            registerOre("blockRedstone", Blocks.REDSTONE_BLOCK);
+            registerOre("blockEmerald",  Blocks.EMERALD_BLOCK);
+            registerOre("blockQuartz",   Blocks.QUARTZ_BLOCK);
+            registerOre("blockCoal",     Blocks.COAL_BLOCK);
 
             // crops
-            registerOre("cropWheat",   Items.wheat);
-            registerOre("cropPotato",  Items.potato);
-            registerOre("cropCarrot",  Items.carrot);
-            registerOre("cropNetherWart", Items.nether_wart);
-            registerOre("sugarcane",   Items.reeds);
-            registerOre("blockCactus", Blocks.cactus);
+            registerOre("cropWheat",   Items.WHEAT);
+            registerOre("cropPotato",  Items.POTATO);
+            registerOre("cropCarrot",  Items.CARROT);
+            registerOre("cropNetherWart", Items.NETHER_WART);
+            registerOre("sugarcane",   Items.REEDS);
+            registerOre("blockCactus", Blocks.CACTUS);
 
             // misc materials
-            registerOre("dye",         new ItemStack(Items.dye, 1, WILDCARD_VALUE));
-            registerOre("paper",       new ItemStack(Items.paper));
+            registerOre("dye",         new ItemStack(Items.DYE, 1, WILDCARD_VALUE));
+            registerOre("paper",       new ItemStack(Items.PAPER));
 
             // mob drops
-            registerOre("slimeball",   Items.slime_ball);
-            registerOre("enderpearl",  Items.ender_pearl);
-            registerOre("bone",        Items.bone);
-            registerOre("gunpowder",   Items.gunpowder);
-            registerOre("string", Items.string);
-            registerOre("netherStar",  Items.nether_star);
-            registerOre("leather",     Items.leather);
-            registerOre("feather",     Items.feather);
-            registerOre("egg",         Items.egg);
+            registerOre("slimeball",   Items.SLIME_BALL);
+            registerOre("enderpearl",  Items.ENDER_PEARL);
+            registerOre("bone",        Items.BONE);
+            registerOre("gunpowder",   Items.GUNPOWDER);
+            registerOre("string",      Items.STRING);
+            registerOre("netherStar",  Items.NETHER_STAR);
+            registerOre("leather",     Items.LEATHER);
+            registerOre("feather",     Items.FEATHER);
+            registerOre("egg",         Items.EGG);
 
             // records
-            registerOre("record",      Items.record_13);
-            registerOre("record",      Items.record_cat);
-            registerOre("record",      Items.record_blocks);
-            registerOre("record",      Items.record_chirp);
-            registerOre("record",      Items.record_far);
-            registerOre("record",      Items.record_mall);
-            registerOre("record",      Items.record_mellohi);
-            registerOre("record",      Items.record_stal);
-            registerOre("record",      Items.record_strad);
-            registerOre("record",      Items.record_ward);
-            registerOre("record",      Items.record_11);
-            registerOre("record",      Items.record_wait);
+            registerOre("record",      Items.RECORD_13);
+            registerOre("record",      Items.RECORD_CAT);
+            registerOre("record",      Items.RECORD_BLOCKS);
+            registerOre("record",      Items.RECORD_CHIRP);
+            registerOre("record",      Items.RECORD_FAR);
+            registerOre("record",      Items.RECORD_MALL);
+            registerOre("record",      Items.RECORD_MELLOHI);
+            registerOre("record",      Items.RECORD_STAL);
+            registerOre("record",      Items.RECORD_STRAD);
+            registerOre("record",      Items.RECORD_WARD);
+            registerOre("record",      Items.RECORD_11);
+            registerOre("record",      Items.RECORD_WAIT);
 
             // blocks
-            registerOre("dirt",        Blocks.dirt);
-            registerOre("grass",       Blocks.grass);
-            registerOre("stone",       Blocks.stone);
-            registerOre("cobblestone", Blocks.cobblestone);
-            registerOre("gravel",      Blocks.gravel);
-            registerOre("sand",        new ItemStack(Blocks.sand, 1, WILDCARD_VALUE));
-            registerOre("sandstone",   new ItemStack(Blocks.sandstone, 1, WILDCARD_VALUE));
-            registerOre("sandstone",   new ItemStack(Blocks.red_sandstone, 1, WILDCARD_VALUE));
-            registerOre("netherrack",  Blocks.netherrack);
-            registerOre("obsidian",    Blocks.obsidian);
-            registerOre("glowstone",   Blocks.glowstone);
-            registerOre("endstone",    Blocks.end_stone);
-            registerOre("torch",       Blocks.torch);
-            registerOre("workbench",   Blocks.crafting_table);
-            registerOre("blockSlime",    Blocks.slime_block);
-            registerOre("blockPrismarine", new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.ROUGH.getMetadata()));
-            registerOre("blockPrismarineBrick", new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.BRICKS.getMetadata()));
-            registerOre("blockPrismarineDark", new ItemStack(Blocks.prismarine, 1, BlockPrismarine.EnumType.DARK.getMetadata()));
-            registerOre("stoneGranite",          new ItemStack(Blocks.stone, 1, 1));
-            registerOre("stoneGranitePolished",  new ItemStack(Blocks.stone, 1, 2));
-            registerOre("stoneDiorite",          new ItemStack(Blocks.stone, 1, 3));
-            registerOre("stoneDioritePolished",  new ItemStack(Blocks.stone, 1, 4));
-            registerOre("stoneAndesite",         new ItemStack(Blocks.stone, 1, 5));
-            registerOre("stoneAndesitePolished", new ItemStack(Blocks.stone, 1, 6));
-            registerOre("blockGlassColorless", Blocks.glass);
-            registerOre("blockGlass",    Blocks.glass);
-            registerOre("blockGlass",    new ItemStack(Blocks.stained_glass, 1, WILDCARD_VALUE));
+            registerOre("dirt",        Blocks.DIRT);
+            registerOre("grass",       Blocks.GRASS);
+            registerOre("stone",       Blocks.STONE);
+            registerOre("cobblestone", Blocks.COBBLESTONE);
+            registerOre("gravel",      Blocks.GRAVEL);
+            registerOre("sand",        new ItemStack(Blocks.SAND, 1, WILDCARD_VALUE));
+            registerOre("sandstone",   new ItemStack(Blocks.SANDSTONE, 1, WILDCARD_VALUE));
+            registerOre("sandstone",   new ItemStack(Blocks.RED_SANDSTONE, 1, WILDCARD_VALUE));
+            registerOre("netherrack",  Blocks.NETHERRACK);
+            registerOre("obsidian",    Blocks.OBSIDIAN);
+            registerOre("glowstone",   Blocks.GLOWSTONE);
+            registerOre("endstone",    Blocks.END_STONE);
+            registerOre("torch",       Blocks.TORCH);
+            registerOre("workbench",   Blocks.CRAFTING_TABLE);
+            registerOre("blockSlime",    Blocks.SLIME_BLOCK);
+            registerOre("blockPrismarine", new ItemStack(Blocks.PRISMARINE, 1, BlockPrismarine.EnumType.ROUGH.getMetadata()));
+            registerOre("blockPrismarineBrick", new ItemStack(Blocks.PRISMARINE, 1, BlockPrismarine.EnumType.BRICKS.getMetadata()));
+            registerOre("blockPrismarineDark", new ItemStack(Blocks.PRISMARINE, 1, BlockPrismarine.EnumType.DARK.getMetadata()));
+            registerOre("stoneGranite",          new ItemStack(Blocks.STONE, 1, 1));
+            registerOre("stoneGranitePolished",  new ItemStack(Blocks.STONE, 1, 2));
+            registerOre("stoneDiorite",          new ItemStack(Blocks.STONE, 1, 3));
+            registerOre("stoneDioritePolished",  new ItemStack(Blocks.STONE, 1, 4));
+            registerOre("stoneAndesite",         new ItemStack(Blocks.STONE, 1, 5));
+            registerOre("stoneAndesitePolished", new ItemStack(Blocks.STONE, 1, 6));
+            registerOre("blockGlassColorless", Blocks.GLASS);
+            registerOre("blockGlass",    Blocks.GLASS);
+            registerOre("blockGlass",    new ItemStack(Blocks.STAINED_GLASS, 1, WILDCARD_VALUE));
             //blockGlass{Color} is added below with dyes
-            registerOre("paneGlassColorless", Blocks.glass_pane);
-            registerOre("paneGlass",     Blocks.glass_pane);
-            registerOre("paneGlass",     new ItemStack(Blocks.stained_glass_pane, 1, WILDCARD_VALUE));
+            registerOre("paneGlassColorless", Blocks.GLASS_PANE);
+            registerOre("paneGlass",     Blocks.GLASS_PANE);
+            registerOre("paneGlass",     new ItemStack(Blocks.STAINED_GLASS_PANE, 1, WILDCARD_VALUE));
             //paneGlass{Color} is added below with dyes
 
             // chests
-            registerOre("chest",       Blocks.chest);
-            registerOre("chest",       Blocks.ender_chest);
-            registerOre("chest",       Blocks.trapped_chest);
-            registerOre("chestWood",   Blocks.chest);
-            registerOre("chestEnder",  Blocks.ender_chest);
-            registerOre("chestTrapped", Blocks.trapped_chest);
+            registerOre("chest",        Blocks.CHEST);
+            registerOre("chest",        Blocks.ENDER_CHEST);
+            registerOre("chest",        Blocks.TRAPPED_CHEST);
+            registerOre("chestWood",    Blocks.CHEST);
+            registerOre("chestEnder",   Blocks.ENDER_CHEST);
+            registerOre("chestTrapped", Blocks.TRAPPED_CHEST);
         }
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
 
         // wood-related things
-        replacements.put(new ItemStack(Items.stick), "stickWood");
-        replacements.put(new ItemStack(Blocks.planks), "plankWood");
-        replacements.put(new ItemStack(Blocks.planks, 1, WILDCARD_VALUE), "plankWood");
-        replacements.put(new ItemStack(Blocks.wooden_slab, 1, WILDCARD_VALUE), "slabWood");
+        replacements.put(new ItemStack(Items.STICK), "stickWood");
+        replacements.put(new ItemStack(Blocks.PLANKS), "plankWood");
+        replacements.put(new ItemStack(Blocks.PLANKS, 1, WILDCARD_VALUE), "plankWood");
+        replacements.put(new ItemStack(Blocks.WOODEN_SLAB, 1, WILDCARD_VALUE), "slabWood");
 
         // ingots/nuggets
-        replacements.put(new ItemStack(Items.gold_ingot), "ingotGold");
-        replacements.put(new ItemStack(Items.iron_ingot), "ingotIron");
+        replacements.put(new ItemStack(Items.GOLD_INGOT), "ingotGold");
+        replacements.put(new ItemStack(Items.IRON_INGOT), "ingotIron");
 
         // gems and dusts
-        replacements.put(new ItemStack(Items.diamond), "gemDiamond");
-        replacements.put(new ItemStack(Items.emerald), "gemEmerald");
-        replacements.put(new ItemStack(Items.prismarine_shard), "gemPrismarine");
-        replacements.put(new ItemStack(Items.prismarine_crystals), "dustPrismarine");
-        replacements.put(new ItemStack(Items.redstone), "dustRedstone");
-        replacements.put(new ItemStack(Items.glowstone_dust), "dustGlowstone");
+        replacements.put(new ItemStack(Items.DIAMOND), "gemDiamond");
+        replacements.put(new ItemStack(Items.EMERALD), "gemEmerald");
+        replacements.put(new ItemStack(Items.PRISMARINE_SHARD), "gemPrismarine");
+        replacements.put(new ItemStack(Items.PRISMARINE_CRYSTALS), "dustPrismarine");
+        replacements.put(new ItemStack(Items.REDSTONE), "dustRedstone");
+        replacements.put(new ItemStack(Items.GLOWSTONE_DUST), "dustGlowstone");
 
         // crops
-        replacements.put(new ItemStack(Items.reeds), "sugarcane");
-        replacements.put(new ItemStack(Blocks.cactus), "blockCactus");
+        replacements.put(new ItemStack(Items.REEDS), "sugarcane");
+        replacements.put(new ItemStack(Blocks.CACTUS), "blockCactus");
 
         // misc materials
-        replacements.put(new ItemStack(Items.paper), "paper");
+        replacements.put(new ItemStack(Items.PAPER), "paper");
 
         // mob drops
-        replacements.put(new ItemStack(Items.slime_ball), "slimeball");
-        replacements.put(new ItemStack(Items.string), "string");
-        replacements.put(new ItemStack(Items.leather), "leather");
-        replacements.put(new ItemStack(Items.ender_pearl), "enderpearl");
-        replacements.put(new ItemStack(Items.gunpowder), "gunpowder");
-        replacements.put(new ItemStack(Items.nether_star), "netherStar");
-        replacements.put(new ItemStack(Items.feather), "feather");
-        replacements.put(new ItemStack(Items.bone), "bone");
-        replacements.put(new ItemStack(Items.egg), "egg");
+        replacements.put(new ItemStack(Items.SLIME_BALL), "slimeball");
+        replacements.put(new ItemStack(Items.STRING), "string");
+        replacements.put(new ItemStack(Items.LEATHER), "leather");
+        replacements.put(new ItemStack(Items.ENDER_PEARL), "enderpearl");
+        replacements.put(new ItemStack(Items.GUNPOWDER), "gunpowder");
+        replacements.put(new ItemStack(Items.NETHER_STAR), "netherStar");
+        replacements.put(new ItemStack(Items.FEATHER), "feather");
+        replacements.put(new ItemStack(Items.BONE), "bone");
+        replacements.put(new ItemStack(Items.EGG), "egg");
 
         // blocks
-        replacements.put(new ItemStack(Blocks.stone), "stone");
-        replacements.put(new ItemStack(Blocks.cobblestone), "cobblestone");
-        replacements.put(new ItemStack(Blocks.cobblestone, 1, WILDCARD_VALUE), "cobblestone");
-        replacements.put(new ItemStack(Blocks.glowstone), "glowstone");
-        replacements.put(new ItemStack(Blocks.glass), "blockGlassColorless");
-        replacements.put(new ItemStack(Blocks.prismarine), "prismarine");
-        replacements.put(new ItemStack(Blocks.stone, 1, 1), "stoneGranite");
-        replacements.put(new ItemStack(Blocks.stone, 1, 2), "stoneGranitePolished");
-        replacements.put(new ItemStack(Blocks.stone, 1, 3), "stoneDiorite");
-        replacements.put(new ItemStack(Blocks.stone, 1, 4), "stoneDioritePolished");
-        replacements.put(new ItemStack(Blocks.stone, 1, 5), "stoneAndesite");
-        replacements.put(new ItemStack(Blocks.stone, 1, 6), "stoneAndesitePolished");
+        replacements.put(new ItemStack(Blocks.STONE), "stone");
+        replacements.put(new ItemStack(Blocks.COBBLESTONE), "cobblestone");
+        replacements.put(new ItemStack(Blocks.COBBLESTONE, 1, WILDCARD_VALUE), "cobblestone");
+        replacements.put(new ItemStack(Blocks.GLOWSTONE), "glowstone");
+        replacements.put(new ItemStack(Blocks.GLASS), "blockGlassColorless");
+        replacements.put(new ItemStack(Blocks.PRISMARINE), "prismarine");
+        replacements.put(new ItemStack(Blocks.STONE, 1, 1), "stoneGranite");
+        replacements.put(new ItemStack(Blocks.STONE, 1, 2), "stoneGranitePolished");
+        replacements.put(new ItemStack(Blocks.STONE, 1, 3), "stoneDiorite");
+        replacements.put(new ItemStack(Blocks.STONE, 1, 4), "stoneDioritePolished");
+        replacements.put(new ItemStack(Blocks.STONE, 1, 5), "stoneAndesite");
+        replacements.put(new ItemStack(Blocks.STONE, 1, 6), "stoneAndesitePolished");
 
         // chests
-        replacements.put(new ItemStack(Blocks.chest), "chestWood");
-        replacements.put(new ItemStack(Blocks.ender_chest), "chestEnder");
-        replacements.put(new ItemStack(Blocks.trapped_chest), "chestTrapped");
+        replacements.put(new ItemStack(Blocks.CHEST), "chestWood");
+        replacements.put(new ItemStack(Blocks.ENDER_CHEST), "chestEnder");
+        replacements.put(new ItemStack(Blocks.TRAPPED_CHEST), "chestTrapped");
 
         // Register dyes
         String[] dyes =
@@ -271,9 +271,9 @@ public class OreDictionary
 
         for(int i = 0; i < 16; i++)
         {
-            ItemStack dye = new ItemStack(Items.dye, 1, i);
-            ItemStack block = new ItemStack(Blocks.stained_glass, 1, 15 - i);
-            ItemStack pane = new ItemStack(Blocks.stained_glass_pane, 1, 15 - i);
+            ItemStack dye = new ItemStack(Items.DYE, 1, i);
+            ItemStack block = new ItemStack(Blocks.STAINED_GLASS, 1, 15 - i);
+            ItemStack pane = new ItemStack(Blocks.STAINED_GLASS_PANE, 1, 15 - i);
             if (!hasInit)
             {
                 registerOre("dye" + dyes[i], dye);
@@ -291,32 +291,32 @@ public class OreDictionary
         // Ignore recipes for the following items
         ItemStack[] exclusions = new ItemStack[]
         {
-            new ItemStack(Blocks.lapis_block),
-            new ItemStack(Items.cookie),
-            new ItemStack(Blocks.stonebrick),
-            new ItemStack(Blocks.stone_slab, 1, WILDCARD_VALUE),
-            new ItemStack(Blocks.stone_stairs),
-            new ItemStack(Blocks.cobblestone_wall),
-            new ItemStack(Blocks.oak_fence),
-            new ItemStack(Blocks.oak_fence_gate),
-            new ItemStack(Blocks.oak_stairs),
-            new ItemStack(Blocks.spruce_fence),
-            new ItemStack(Blocks.spruce_fence_gate),
-            new ItemStack(Blocks.spruce_stairs),
-            new ItemStack(Blocks.birch_fence),
-            new ItemStack(Blocks.birch_fence_gate),
-            new ItemStack(Blocks.birch_stairs),
-            new ItemStack(Blocks.jungle_fence),
-            new ItemStack(Blocks.jungle_fence_gate),
-            new ItemStack(Blocks.jungle_stairs),
-            new ItemStack(Blocks.acacia_fence),
-            new ItemStack(Blocks.acacia_fence_gate),
-            new ItemStack(Blocks.acacia_stairs),
-            new ItemStack(Blocks.dark_oak_fence),
-            new ItemStack(Blocks.dark_oak_fence_gate),
-            new ItemStack(Blocks.dark_oak_stairs),
-            new ItemStack(Blocks.wooden_slab),
-            new ItemStack(Blocks.glass_pane),
+            new ItemStack(Blocks.LAPIS_BLOCK),
+            new ItemStack(Items.COOKIE),
+            new ItemStack(Blocks.STONEBRICK),
+            new ItemStack(Blocks.STONE_SLAB, 1, WILDCARD_VALUE),
+            new ItemStack(Blocks.STONE_STAIRS),
+            new ItemStack(Blocks.COBBLESTONE_WALL),
+            new ItemStack(Blocks.OAK_FENCE),
+            new ItemStack(Blocks.OAK_FENCE_GATE),
+            new ItemStack(Blocks.OAK_STAIRS),
+            new ItemStack(Blocks.SPRUCE_FENCE),
+            new ItemStack(Blocks.SPRUCE_FENCE_GATE),
+            new ItemStack(Blocks.SPRUCE_STAIRS),
+            new ItemStack(Blocks.BIRCH_STAIRS),
+            new ItemStack(Blocks.BIRCH_FENCE_GATE),
+            new ItemStack(Blocks.BIRCH_STAIRS),
+            new ItemStack(Blocks.JUNGLE_FENCE),
+            new ItemStack(Blocks.JUNGLE_FENCE_GATE),
+            new ItemStack(Blocks.JUNGLE_STAIRS),
+            new ItemStack(Blocks.ACACIA_FENCE),
+            new ItemStack(Blocks.ACACIA_FENCE_GATE),
+            new ItemStack(Blocks.ACACIA_STAIRS),
+            new ItemStack(Blocks.DARK_OAK_FENCE),
+            new ItemStack(Blocks.DARK_OAK_FENCE_GATE),
+            new ItemStack(Blocks.DARK_OAK_STAIRS),
+            new ItemStack(Blocks.WOODEN_SLAB),
+            new ItemStack(Blocks.GLASS_PANE),
             null //So the above can have a comma and we don't have to keep editing extra lines.
         };
 

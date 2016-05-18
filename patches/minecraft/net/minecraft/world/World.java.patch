@@ -585,7 +585,7 @@
              {
                  j = 1;
              }
-@@ -2692,7 +2867,7 @@
+@@ -2691,7 +2866,7 @@
                                      int j4 = j2 + enumfacing.func_96559_d();
                                      int k4 = k2 + enumfacing.func_82599_e();
                                      blockpos$pooledmutableblockpos.func_185343_d(i4, j4, k4);

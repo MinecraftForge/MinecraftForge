@@ -19,7 +19,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     public boolean isInput(ItemStack stack)
     {
         Item item = stack.getItem();
-        return item == Items.potionitem || item == Items.splash_potion || item == Items.lingering_potion || item == Items.glass_bottle;
+        return item == Items.POTIONITEM || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE;
     }
 
     /**

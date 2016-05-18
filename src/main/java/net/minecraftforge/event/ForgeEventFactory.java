@@ -308,7 +308,7 @@ public class ForgeEventFactory
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, event.getFilledBucket());
 
             if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
-                player.dropPlayerItemWithRandomChoice(event.getFilledBucket(), false);
+                player.dropItem(event.getFilledBucket(), false);
 
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
         }
@@ -456,12 +456,12 @@ public class ForgeEventFactory
 
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
     {
-        return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.fire.getDefaultState(), new BlockPos(player));
+        return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), new BlockPos(player));
     }
 
     public static boolean renderWaterOverlay(EntityPlayer player, float renderPartialTicks)
     {
-        return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.water.getDefaultState(), new BlockPos(player));
+        return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.WATER.getDefaultState(), new BlockPos(player));
     }
 
     public static boolean renderBlockOverlay(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos pos)

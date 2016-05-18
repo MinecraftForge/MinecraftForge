@@ -51,7 +51,7 @@ public class ItemLayerModelDebug
 
         private TestItem()
         {
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }

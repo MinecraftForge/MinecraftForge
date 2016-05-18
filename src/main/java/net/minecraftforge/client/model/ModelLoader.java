@@ -182,7 +182,7 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.blockRegistry, new Predicate<Block>()
+        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, new Predicate<Block>()
         {
             public boolean apply(Block block)
             {
@@ -266,7 +266,7 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<Item> items = Lists.newArrayList(Iterables.filter(Item.itemRegistry, new Predicate<Item>()
+        List<Item> items = Lists.newArrayList(Iterables.filter(Item.REGISTRY, new Predicate<Item>()
         {
             public boolean apply(Item item)
             {
@@ -336,7 +336,7 @@ public final class ModelLoader extends ModelBakery
             }
 
             // empty bucket
-            for(String s : getVariantNames(Items.bucket))
+            for(String s : getVariantNames(Items.BUCKET))
             {
                 ModelResourceLocation memory = getInventoryVariant(s);
                 IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket"));
@@ -347,23 +347,23 @@ public final class ModelLoader extends ModelBakery
                 }
             }
 
-            setBucketModel(Items.water_bucket);
-            setBucketModel(Items.lava_bucket);
+            setBucketModel(Items.WATER_BUCKET);
+            setBucketModel(Items.LAVA_BUCKET);
             // milk bucket only replaced if some mod adds milk
             if(FluidRegistry.isFluidRegistered("milk"))
             {
                 // can the milk be put into a bucket?
                 Fluid milk = FluidRegistry.getFluid("milk");
                 FluidStack milkStack = new FluidStack(milk, FluidContainerRegistry.BUCKET_VOLUME);
-                if(FluidContainerRegistry.getContainerCapacity(milkStack, new ItemStack(Items.bucket)) == FluidContainerRegistry.BUCKET_VOLUME)
+                if(FluidContainerRegistry.getContainerCapacity(milkStack, new ItemStack(Items.BUCKET)) == FluidContainerRegistry.BUCKET_VOLUME)
                 {
-                    setBucketModel(Items.milk_bucket);
+                    setBucketModel(Items.MILK_BUCKET);
                 }
             }
             else
             {
                 // milk bucket if no milk fluid is present
-                for(String s : getVariantNames(Items.milk_bucket))
+                for(String s : getVariantNames(Items.MILK_BUCKET))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
                     IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket_milk"));

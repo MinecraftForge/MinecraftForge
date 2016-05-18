@@ -662,7 +662,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public NetworkManager getClientToServerNetworkManager()
     {
-        return this.client.getNetHandler()!=null ? this.client.getNetHandler().getNetworkManager() : null;
+        return this.client.getConnection()!=null ? this.client.getConnection().getNetworkManager() : null;
     }
 
     public void handleClientWorldClosing(WorldClient world)

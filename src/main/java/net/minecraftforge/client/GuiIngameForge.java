@@ -113,7 +113,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (renderHelmet) renderHelmet(res, partialTicks);
 
-        if (renderPortal && !mc.thePlayer.isPotionActive(MobEffects.confusion))
+        if (renderPortal && !mc.thePlayer.isPotionActive(MobEffects.NAUSEA))
         {
             renderPortal(res, partialTicks);
         }
@@ -193,7 +193,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderCrosshairs(float partialTicks)
     {
         if (pre(CROSSHAIRS)) return;
-        bind(Gui.icons);
+        bind(Gui.ICONS);
         GlStateManager.enableBlend();
         super.renderAttackIndicator(partialTicks, res);
         post(CROSSHAIRS);
@@ -217,7 +217,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderBossHealth()
     {
         if (pre(BOSSHEALTH)) return;
-        bind(Gui.icons);
+        bind(Gui.ICONS);
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         mc.mcProfiler.startSection("bossHealth");
         GlStateManager.enableBlend();
@@ -235,7 +235,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() != null)
         {
-            if (itemstack.getItem() == Item.getItemFromBlock(Blocks.pumpkin))
+            if (itemstack.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN))
             {
                 renderPumpkinOverlay(res);
             }
@@ -321,7 +321,7 @@ public class GuiIngameForge extends GuiIngame
         int left = width / 2 + 91;
         int top = height - right_height;
 
-        if (player.isInsideOfMaterial(Material.water))
+        if (player.isInsideOfMaterial(Material.WATER))
         {
             int air = player.getAir();
             int full = MathHelper.ceiling_double_int((double)(air - 2) * 10.0D / 300.0D);
@@ -341,7 +341,7 @@ public class GuiIngameForge extends GuiIngame
 
     public void renderHealth(int width, int height)
     {
-        bind(icons);
+        bind(ICONS);
         if (pre(HEALTH)) return;
         mc.mcProfiler.startSection("health");
         GlStateManager.enableBlend();
@@ -386,7 +386,7 @@ public class GuiIngameForge extends GuiIngame
         if (rowHeight != 10) left_height += 10 - rowHeight;
 
         int regen = -1;
-        if (player.isPotionActive(MobEffects.regeneration))
+        if (player.isPotionActive(MobEffects.REGENERATION))
         {
             regen = updateCounter % 25;
         }
@@ -394,8 +394,8 @@ public class GuiIngameForge extends GuiIngame
         final int TOP =  9 * (mc.theWorld.getWorldInfo().isHardcoreModeEnabled() ? 5 : 0);
         final int BACKGROUND = (highlight ? 25 : 16);
         int MARGIN = 16;
-        if (player.isPotionActive(MobEffects.poison))      MARGIN += 36;
-        else if (player.isPotionActive(MobEffects.wither)) MARGIN += 72;
+        if (player.isPotionActive(MobEffects.POISON))      MARGIN += 36;
+        else if (player.isPotionActive(MobEffects.WITHER)) MARGIN += 72;
         float absorbRemaining = absorb;
 
         for (int i = MathHelper.ceiling_float_int((healthMax + absorb) / 2.0F) - 1; i >= 0; --i)
@@ -469,7 +469,7 @@ public class GuiIngameForge extends GuiIngame
             int icon = 16;
             byte background = 0;
 
-            if (mc.thePlayer.isPotionActive(MobEffects.hunger))
+            if (mc.thePlayer.isPotionActive(MobEffects.HUNGER))
             {
                 icon += 36;
                 background = 13;
@@ -526,7 +526,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderExperience(int width, int height)
     {
-        bind(icons);
+        bind(ICONS);
         if (pre(EXPERIENCE)) return;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
@@ -577,7 +577,7 @@ public class GuiIngameForge extends GuiIngame
 
     protected void renderJumpBar(int width, int height)
     {
-        bind(icons);
+        bind(ICONS);
         if (pre(JUMPBAR)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
@@ -792,7 +792,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderPlayerList(int width, int height)
     {
         ScoreObjective scoreobjective = this.mc.theWorld.getScoreboard().getObjectiveInDisplaySlot(0);
-        NetHandlerPlayClient handler = mc.thePlayer.sendQueue;
+        NetHandlerPlayClient handler = mc.thePlayer.connection;
 
         if (mc.gameSettings.keyBindPlayerList.isKeyDown() && (!mc.isIntegratedServerRunning() || handler.getPlayerInfoMap().size() > 1 || scoreobjective != null))
         {
@@ -813,7 +813,7 @@ public class GuiIngameForge extends GuiIngame
         Entity tmp = player.getRidingEntity();
         if (!(tmp instanceof EntityLivingBase)) return;
 
-        bind(icons);
+        bind(ICONS);
 
         if (pre(HEALTHMOUNT)) return;
 

@@ -37,7 +37,7 @@ public class ForgeBlockStatesLoaderDebug {
 
     //public static final Block blockCustom = new CustomMappedBlock();
     public static final String nameCustomWall = "custom_wall";
-    public static final BlockWall blockCustomWall = new BlockWall(Blocks.cobblestone);
+    public static final BlockWall blockCustomWall = new BlockWall(Blocks.COBBLESTONE);
     public static final ItemMultiTexture itemCustomWall = (ItemMultiTexture)new ItemMultiTexture(blockCustomWall, blockCustomWall, new Function<ItemStack, String>()
     {
         @Override

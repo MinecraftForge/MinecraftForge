@@ -157,7 +157,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         this.dummiedLocations.clear();
         this.dummiedLocations.addAll(otherRegistry.dummiedLocations);
 
-        underlyingIntegerMap.func_186812_a();
+        underlyingIntegerMap.clear();
         registryObjects.clear();
 
         for (I thing : otherRegistry.typeSafeIterable())

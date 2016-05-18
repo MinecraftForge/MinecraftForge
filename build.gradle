@@ -27,8 +27,7 @@ apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
     version = "1.9.4"
-    mappings = 'snapshot_nodoc_20160312'
-    //mappings = "snapshot_nodoc_20151122"
+    mappings = 'snapshot_nodoc_20160518'
     workspaceDir = "projects"
     versionJson = "jsons/1.9.4-dev.json"
     buildUserdev = true
@@ -377,6 +376,7 @@ task setupForge { dependsOn 'setup' }
 task buildPackages { dependsOn 'build' }
 
 //Temporary hack to fix compile errors caused by mappings shading in Bootstrap
+/*
 task fixParams << {
     logger.lifecycle('Fixing param names!')
     def params = new File(extractMcpMappings.destinationDir, 'params.csv')
@@ -386,3 +386,4 @@ task fixParams << {
 }
 fixParams.dependsOn('extractMcpMappings')
 extractMcpMappings.finalizedBy('fixParams')
+*/

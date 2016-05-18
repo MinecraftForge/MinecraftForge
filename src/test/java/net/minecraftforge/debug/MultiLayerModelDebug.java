@@ -32,10 +32,10 @@ public class MultiLayerModelDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.register(new Block(Material.wood)
+            GameRegistry.register(new Block(Material.WOOD)
             {
                 {
-                    setCreativeTab(CreativeTabs.tabBlock);
+                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
                     setUnlocalizedName(MODID + "." + blockName);
                     setRegistryName(blockId);
                 }
@@ -52,7 +52,7 @@ public class MultiLayerModelDebug
                     return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
                 }
             });
-            GameRegistry.register(new ItemBlock(Block.blockRegistry.getObject(blockId)).setRegistryName(blockId));
+            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId)).setRegistryName(blockId));
         }
     }
 
@@ -64,7 +64,7 @@ public class MultiLayerModelDebug
         public void preInit(FMLPreInitializationEvent event)
         {
             super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
         }
     }
 

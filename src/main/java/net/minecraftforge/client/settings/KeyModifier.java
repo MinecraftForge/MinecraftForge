@@ -11,7 +11,7 @@ public enum KeyModifier {
         @Override
         public boolean matches(int keyCode)
         {
-            if (Minecraft.isRunningOnMac)
+            if (Minecraft.IS_RUNNING_ON_MAC)
             {
                 return keyCode == Keyboard.KEY_LMETA || keyCode == Keyboard.KEY_RMETA;
             }
@@ -31,7 +31,7 @@ public enum KeyModifier {
         public String getLocalizedComboName(int keyCode)
         {
             String keyName = GameSettings.getKeyDisplayString(keyCode);
-            String localizationFormatKey = Minecraft.isRunningOnMac ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
+            String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
     },

@@ -152,7 +152,7 @@ public class NoBedSleepingTest
 
         private ItemSleepingPill()
         {
-            setCreativeTab(CreativeTabs.tabMisc);
+            setCreativeTab(CreativeTabs.MISC);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }

@@ -50,8 +50,8 @@ class ObjectHolderRef {
                 }
                 else
                 {
-                    ResourceLocation tmp = isBlock ? GameData.getBlockRegistry().getNameForObject((Block)existing) :
-                        isItem ? GameData.getItemRegistry().getNameForObject((Item)existing) : null;
+                    ResourceLocation tmp = isBlock ? ForgeRegistries.BLOCKS.getKey((Block)existing) :
+                        isItem ? ForgeRegistries.ITEMS.getKey((Item)existing) : null;
                     this.injectedObject = tmp;
                 }
             } catch (Exception e)
@@ -104,15 +104,15 @@ class ObjectHolderRef {
         Object thing;
         if (isBlock)
         {
-            thing = GameData.getBlockRegistry().getObject(injectedObject);
-            if (thing == Blocks.air)
+            thing = ForgeRegistries.BLOCKS.getValue(injectedObject);
+            if (thing == Blocks.AIR)
             {
                 thing = null;
             }
         }
         else if (isItem)
         {
-            thing = GameData.getItemRegistry().getObject(injectedObject);
+            thing = ForgeRegistries.ITEMS.getValue(injectedObject);
         }
         else
         {

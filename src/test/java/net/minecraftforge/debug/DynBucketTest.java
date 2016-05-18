@@ -90,8 +90,8 @@ public class DynBucketTest
                 }
             });
             ModelBakery.registerItemVariants(dynBottle, bottle);
-            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
-            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(simpleTankName), 0, new ModelResourceLocation(simpleTankName, "normal"));
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(testItemName), 0, new ModelResourceLocation(new ResourceLocation("minecraft", "stick"), "inventory"));
         }
     }
 
@@ -125,7 +125,7 @@ public class DynBucketTest
         //registerFluidContainer2(FluidRegistry.getFluid(TestGas.name), i++);
 
         // Set TestFluidBlocks blockstate to use milk instead of testfluid for the texture to be loaded
-        FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluid("milk"), new ItemStack(Items.milk_bucket), FluidContainerRegistry.EMPTY_BUCKET);
+        FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluid("milk"), new ItemStack(Items.MILK_BUCKET), FluidContainerRegistry.EMPTY_BUCKET);
 
         proxy.setupModels();
         //MinecraftForge.EVENT_BUS.register(this);
@@ -139,7 +139,7 @@ public class DynBucketTest
 
         FluidStack fs = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
         ItemStack stack = new ItemStack(dynBucket, 1, meta);
-        FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.bucket));
+        FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.BUCKET));
     }
 
     @SuppressWarnings("unused")
@@ -150,7 +150,7 @@ public class DynBucketTest
 
         FluidStack fs = new FluidStack(fluid, 250);
         ItemStack stack = new ItemStack(dynBottle, 1, meta);
-        FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.glass_bottle));
+        FluidContainerRegistry.registerFluidContainer(fs, stack, new ItemStack(Items.GLASS_BOTTLE));
     }
 
     @SubscribeEvent
@@ -182,17 +182,17 @@ public class DynBucketTest
             ItemStackHandler handler2 = new ItemStackHandler(5);
             IItemHandler joined = new CombinedInvWrapper(handler, handler2);
 
-            handler.setStackInSlot(0, new ItemStack(Blocks.stone));
-            handler.setStackInSlot(1, new ItemStack(Blocks.grass));
-            handler.setStackInSlot(2, new ItemStack(Blocks.dirt));
-            handler.setStackInSlot(3, new ItemStack(Blocks.glass));
-            handler.setStackInSlot(4, new ItemStack(Blocks.sand));
+            handler.setStackInSlot(0, new ItemStack(Blocks.STONE));
+            handler.setStackInSlot(1, new ItemStack(Blocks.GRASS));
+            handler.setStackInSlot(2, new ItemStack(Blocks.DIRT));
+            handler.setStackInSlot(3, new ItemStack(Blocks.GLASS));
+            handler.setStackInSlot(4, new ItemStack(Blocks.SAND));
 
-            handler2.setStackInSlot(0, new ItemStack(Blocks.slime_block));
-            handler2.setStackInSlot(1, new ItemStack(Blocks.tnt));
-            handler2.setStackInSlot(2, new ItemStack(Blocks.planks));
-            handler2.setStackInSlot(3, new ItemStack(Blocks.log));
-            handler2.setStackInSlot(4, new ItemStack(Blocks.diamond_block));
+            handler2.setStackInSlot(0, new ItemStack(Blocks.SLIME_BLOCK));
+            handler2.setStackInSlot(1, new ItemStack(Blocks.TNT));
+            handler2.setStackInSlot(2, new ItemStack(Blocks.PLANKS));
+            handler2.setStackInSlot(3, new ItemStack(Blocks.LOG));
+            handler2.setStackInSlot(4, new ItemStack(Blocks.DIAMOND_BLOCK));
 
             for (int i = 0; i < handler.getSlots(); i++) {
                 System.out.println("Expected 1: " + handler.getStackInSlot(i));
@@ -217,7 +217,7 @@ public class DynBucketTest
             setUnlocalizedName("dynbucket");
             setMaxStackSize(1);
             setHasSubtypes(true);
-            setCreativeTab(CreativeTabs.tabMisc);
+            setCreativeTab(CreativeTabs.MISC);
         }
 
         @Override
@@ -236,12 +236,12 @@ public class DynBucketTest
     {
         public DynBottle()
         {
-            super(250, new ItemStack(Items.glass_bottle), true);
+            super(250, new ItemStack(Items.GLASS_BOTTLE), true);
             setUnlocalizedName("dynbottle");
             setRegistryName(new ResourceLocation(MODID, "dynbottle"));
             setMaxStackSize(16);
             setHasSubtypes(true);
-            setCreativeTab(CreativeTabs.tabMisc);
+            setCreativeTab(CreativeTabs.MISC);
         }
     }
 
@@ -251,8 +251,8 @@ public class DynBucketTest
 
         protected BlockSimpleTank()
         {
-            super(Material.rock);
-            setCreativeTab(CreativeTabs.tabMisc);
+            super(Material.ROCK);
+            setCreativeTab(CreativeTabs.MISC);
         }
 
         @Override
@@ -369,17 +369,17 @@ public class DynBucketTest
         }
 
         @Override
-        public NBTTagCompound func_189515_b(NBTTagCompound tags)
+        public NBTTagCompound writeToNBT(NBTTagCompound tags)
         {
-            tags = super.func_189515_b(tags);
+            tags = super.writeToNBT(tags);
             tank.writeToNBT(tags);
             return tags;
         }
 
         @Override
-        public SPacketUpdateTileEntity func_189518_D_() {
+        public SPacketUpdateTileEntity getUpdatePacket() {
             NBTTagCompound tag = new NBTTagCompound();
-            func_189515_b(tag);
+            tag = writeToNBT(tag);
             return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
         }
 

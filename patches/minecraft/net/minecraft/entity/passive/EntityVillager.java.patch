@@ -162,3 +162,10 @@
          this.func_175552_ct();
          return p_180482_2_;
      }
+@@ -1030,4 +1077,6 @@
+                 return ((Integer)this.func_76341_a()).intValue() >= ((Integer)this.func_76340_b()).intValue() ? ((Integer)this.func_76341_a()).intValue() : ((Integer)this.func_76341_a()).intValue() + p_179412_1_.nextInt(((Integer)this.func_76340_b()).intValue() - ((Integer)this.func_76341_a()).intValue() + 1);
+             }
+         }
++    //MODDERS DO NOT USE OR EDIT THIS IN ANY WAY IT WILL HAVE NO EFFECT, THIS IS JUST IN HERE TO ALLOW FORGE TO ACCESS IT
++    public static ITradeList[][][][] GET_TRADES_DONT_USE(){ return field_175561_bA; }
+ }

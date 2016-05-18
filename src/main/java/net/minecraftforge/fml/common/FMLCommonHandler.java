@@ -366,7 +366,7 @@ public class FMLCommonHandler
     {
         for (ICrashCallable call: crashCallables)
         {
-            category.func_189529_a(call.getLabel(), call);
+            category.setDetail(call.getLabel(), call);
         }
     }
 

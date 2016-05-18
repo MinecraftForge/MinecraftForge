@@ -42,8 +42,8 @@ net/minecraft/client/renderer/block/model/FaceBakery.rotateVertex(Lorg/lwjgl/uti
 net/minecraft/item/ItemBlock.setTileEntityNBT(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)Z=|p_179224_0_,p_179224_1_,p_179224_2_,player
 
 net/minecraft/server/management/PlayerList.initializeConnectionToPlayer(Lnet/minecraft/network/NetworkManager;Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/network/NetHandlerPlayServer;)V=|p_72355_1_,p_72355_2_,nethandlerplayserver
-net/minecraft/item/ItemMonsterPlacer.spawnCreature(Lnet/minecraft/world/World;Ljava/lang/String;DDD)Lnet/minecraft/entity/Entity;=|p_77840_0_,name,p_77840_2_,p_77840_4_,p_77840_6_
 
+net/minecraft/stats/StatList.replaceAllSimilarBlocks([Lnet/minecraft/stats/StatBase;Z)V=|p_75924_0_,useItemIds
 net/minecraft/stats/StatList.mergeStatBases([Lnet/minecraft/stats/StatBase;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Z)V=|p_151180_0_,p_151180_1_,p_151180_2_,useItemIds
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/item/Item;IILnet/minecraft/nbt/NBTTagCompound;)V=|p_i1881_1_,p_i1881_2_,p_i1881_3_,capNBT
 

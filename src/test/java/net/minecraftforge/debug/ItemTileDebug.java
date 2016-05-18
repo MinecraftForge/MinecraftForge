@@ -123,8 +123,8 @@ public class ItemTileDebug
 
         private TestBlock()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }

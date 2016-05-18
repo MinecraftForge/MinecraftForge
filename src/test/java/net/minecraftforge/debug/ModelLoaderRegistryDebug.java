@@ -124,9 +124,9 @@ public class ModelLoaderRegistryDebug
 
         private CustomModelBlock()
         {
-            super(Material.iron);
+            super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -225,8 +225,8 @@ public class ModelLoaderRegistryDebug
 
         private OBJTesseractBlock()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -371,8 +371,8 @@ public class ModelLoaderRegistryDebug
 
         private OBJVertexColoring1()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -403,9 +403,9 @@ public class ModelLoaderRegistryDebug
 
         private OBJDirectionEye()
         {
-            super(Material.iron);
+            super(Material.IRON);
             setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -487,8 +487,8 @@ public class ModelLoaderRegistryDebug
 
         private OBJVertexColoring2()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -590,9 +590,9 @@ public class ModelLoaderRegistryDebug
 
         private OBJDirectionBlock()
         {
-            super(Material.iron);
+            super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -678,9 +678,9 @@ public class ModelLoaderRegistryDebug
 
         private OBJCustomDataBlock()
         {
-            super(Material.iron);
+            super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, false).withProperty(SOUTH, false).withProperty(WEST, false).withProperty(EAST, false));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -735,8 +735,8 @@ public class ModelLoaderRegistryDebug
         public ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {OBJModel.OBJProperty.INSTANCE});
         private OBJDynamicEye()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }

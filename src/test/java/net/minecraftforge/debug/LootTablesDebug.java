@@ -34,7 +34,7 @@ public class LootTablesDebug {
         LootPool main = event.getTable().getPool("main"); //Note: This CAN NPE if another mod removes things
         main.removeEntry("minecraft:wooden_axe");
         main.removeEntry("minecraft:stone_axe");
-        main.addEntry(new LootEntryItem(Items.diamond_chestplate, 1, 0, new LootFunction[0], new LootCondition[0], MODID + ":diamond_chestplate"));
+        main.addEntry(new LootEntryItem(Items.DIAMOND_CHESTPLATE, 1, 0, new LootFunction[0], new LootCondition[0], MODID + ":diamond_chestplate"));
 
         // Get rid of all building mats. Which is pool #3, index starts at 0, but 0 is named "main"
         event.getTable().removePool("pool3");

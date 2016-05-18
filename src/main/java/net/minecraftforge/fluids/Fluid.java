@@ -266,13 +266,13 @@ public class Fluid
     {
         if(fillSound == null)
         {
-            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.lava)
+            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
             {
-                fillSound = SoundEvents.item_bucket_fill_lava;
+                fillSound = SoundEvents.ITEM_BUCKET_FILL_LAVA;
             }
             else
             {
-                fillSound = SoundEvents.item_bucket_fill;
+                fillSound = SoundEvents.ITEM_BUCKET_FILL;
             }
         }
 
@@ -283,13 +283,13 @@ public class Fluid
     {
         if(emptySound == null)
         {
-            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.lava)
+            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
             {
-                emptySound = SoundEvents.item_bucket_empty_lava;
+                emptySound = SoundEvents.ITEM_BUCKET_EMPTY_LAVA;
             }
             else
             {
-                emptySound = SoundEvents.item_bucket_empty;
+                emptySound = SoundEvents.ITEM_BUCKET_EMPTY;
             }
         }
 
