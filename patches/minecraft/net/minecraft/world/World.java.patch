@@ -475,7 +475,7 @@
      {
 -        boolean flag = this.field_147482_g.add(p_175700_1_);
 +        List<TileEntity> dest = field_147481_N ? field_147484_a : field_147482_g;
-+        p_175700_1_.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
++        if (p_175700_1_.func_145831_w() != this) p_175700_1_.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
 +        boolean flag = dest.add(p_175700_1_);
  
          if (flag && p_175700_1_ instanceof ITickable)
@@ -484,7 +484,7 @@
      {
          if (this.field_147481_N)
          {
-+            for (TileEntity tile : p_147448_1_) tile.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
++            for (TileEntity tile : p_147448_1_) if (tile.func_145831_w() != this)  tile.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
              this.field_147484_a.addAll(p_147448_1_);
          }
          else
@@ -569,7 +569,7 @@
              if (this.field_147481_N)
              {
                  p_175690_2_.func_174878_a(p_175690_1_);
-+                p_175690_2_.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
++                if (p_175690_2_.func_145831_w() != this) p_175690_2_.func_145834_a(this); // Forge - set the world early as vanilla doesn't set it until next tick
                  Iterator<TileEntity> iterator = this.field_147484_a.iterator();
  
                  while (iterator.hasNext())

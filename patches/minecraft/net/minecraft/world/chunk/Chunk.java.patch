@@ -142,8 +142,12 @@
  
          return tileentity;
      }
-@@ -801,7 +799,7 @@
-         p_177426_2_.func_145834_a(this.field_76637_e);
+@@ -798,10 +796,10 @@
+ 
+     public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_)
+     {
+-        p_177426_2_.func_145834_a(this.field_76637_e);
++        if (p_177426_2_.func_145831_w() != this.field_76637_e) p_177426_2_.func_145834_a(this.field_76637_e);
          p_177426_2_.func_174878_a(p_177426_1_);
  
 -        if (this.func_177435_g(p_177426_1_).func_177230_c() instanceof ITileEntityProvider)
