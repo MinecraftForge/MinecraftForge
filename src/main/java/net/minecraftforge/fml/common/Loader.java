@@ -487,6 +487,7 @@ public class Loader
      */
     public void loadMods()
     {
+        LoadingModsTimer.startCounter();
         progressBar = ProgressManager.push("Loading", 7);
         progressBar.step("Constructing Mods");
         initializeLoader();
@@ -774,6 +775,7 @@ public class Loader
         PersistentRegistryManager.freezeData();
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size() == 1 ? "" : "s");
         progressBar.step("Completing Minecraft initialization");
+        LoadingModsTimer.stopCounter();
     }
 
     public ICrashCallable getCallableCrashInformation()
