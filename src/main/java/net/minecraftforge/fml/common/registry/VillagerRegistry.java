@@ -215,6 +215,16 @@ public class VillagerRegistry
             }
             return this.careers.get(0);
         }
+        
+        public VillagerCareer getCareer(String name)
+        {
+            for (VillagerCareer car : this.careers)
+            {
+                if (car.name.equals(name))
+                    return car;
+            }
+            return null;
+        }
 
         public int getRandomCareer(Random rand)
         {
