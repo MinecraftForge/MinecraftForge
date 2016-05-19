@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-/** Simple mod to test fov modifier. */
 @Mod(modid="enchantmenteventtest", name="Enchantment Event Test", version="0.0.0")
 public class EnchantmentEventTestMod {
 
