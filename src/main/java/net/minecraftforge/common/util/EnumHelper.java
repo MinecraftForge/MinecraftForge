@@ -40,7 +40,7 @@ public class EnumHelper
         {EnumAction.class},
         {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class, float.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
-        {EnumCreatureAttribute.class},
+        {EnumCreatureAttribute.class},ad
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
         {Door.class},
         {EnumEnchantmentType.class},
@@ -56,9 +56,9 @@ public class EnumHelper
     {
         return addEnum(EnumAction.class, name);
     }
-    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip)
+    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip, float toughness)
     {
-        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip);
+        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip, toughness);
     }
     public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
     {
