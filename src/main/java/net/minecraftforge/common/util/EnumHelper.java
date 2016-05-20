@@ -38,7 +38,7 @@ public class EnumHelper
     private static Class<?>[][] commonTypes =
     {
         {EnumAction.class},
-        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class},
+        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class, float.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
         {EnumCreatureAttribute.class},
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
