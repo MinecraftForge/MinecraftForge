@@ -286,6 +286,19 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
+     * This event is fired on the client side when the player left clicks empty space with any ItemStack.
+     * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
+     * This event cannot be canceled.
+     */
+    public static class LeftClickEmpty extends PlayerInteractEvent
+    {
+        public LeftClickEmpty(EntityPlayer player, ItemStack stack)
+        {
+            super(player, EnumHand.MAIN_HAND, stack, new BlockPos(player), null);
+        }
+    }
+
+    /**
      * @return The hand involved in this interaction. Will never be null.
      */
     public EnumHand getHand()
