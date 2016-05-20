@@ -182,8 +182,11 @@ public class PlayerInteractEvent extends PlayerEvent
         public void setCanceled(boolean canceled)
         {
             super.setCanceled(canceled);
-            useBlock = DENY;
-            useItem = DENY;
+            if (canceled)
+            {
+                useBlock = DENY;
+                useItem = DENY;
+            }
         }
     }
 
@@ -274,8 +277,11 @@ public class PlayerInteractEvent extends PlayerEvent
         public void setCanceled(boolean canceled)
         {
             super.setCanceled(canceled);
-            useBlock = DENY;
-            useItem = DENY;
+            if (canceled)
+            {
+                useBlock = DENY;
+                useItem = DENY;
+            }
         }
     }
 
