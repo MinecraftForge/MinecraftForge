@@ -8,47 +8,7 @@
  
      protected WorldInfo()
      {
-@@ -477,6 +478,7 @@
- 
-     public void func_176142_i(int p_176142_1_)
-     {
-+        if(!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WeatherEvent.CleanWeatherTime(this, p_176142_1_)))
-         this.field_176157_p = p_176142_1_;
-     }
- 
-@@ -487,6 +489,7 @@
- 
-     public void func_76069_a(boolean p_76069_1_)
-     {
-+        if(!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WeatherEvent.ThunderingState(this, p_76069_1_)))
-         this.field_76102_o = p_76069_1_;
-     }
- 
-@@ -497,6 +500,7 @@
- 
-     public void func_76090_f(int p_76090_1_)
-     {
-+        if(!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WeatherEvent.ThunderTime(this, p_76090_1_)))
-         this.field_76114_p = p_76090_1_;
-     }
- 
-@@ -507,6 +511,7 @@
- 
-     public void func_76084_b(boolean p_76084_1_)
-     {
-+        if(!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WeatherEvent.RainingState(this, p_76084_1_)))
-         this.field_76104_m = p_76084_1_;
-     }
- 
-@@ -517,6 +522,7 @@
- 
-     public void func_76080_g(int p_76080_1_)
-     {
-+        if(!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WeatherEvent.RainTime(this, p_76080_1_)))
-         this.field_76101_n = p_76080_1_;
-     }
- 
-@@ -785,6 +791,26 @@
+@@ -785,6 +786,26 @@
          });
      }
  

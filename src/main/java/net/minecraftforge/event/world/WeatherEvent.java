@@ -1,5 +1,6 @@
 package net.minecraftforge.event.world;
 
+import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -7,31 +8,31 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
- * WeatherEvent is fired when an event involving the weather is about to occur.<br>
+ * WeatherEvent is fired when an event involving the weather cycle is about to occur.<br>
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #worldInfo} contains the {@link WorldInfo} this event is occurring in.<br>
+ * {@link #world} contains the {@link World} this event is occurring in.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/   
 public class WeatherEvent extends Event
 {
-    private final WorldInfo worldInfo;
+    private final World world;
     
-    public WorldInfo getWorldInfo()
+    public World getWorld()
     {
-        return worldInfo;
+        return world;
     }
     
-    public WeatherEvent(WorldInfo info)
+    public WeatherEvent(World world)
     {
-        this.worldInfo = info;
+        this.world = world;
     }
     
     /**
-     * WeatherEvent.CleanWeatherTime is fired when a change of the clean weather time in a WorldInfo is about to occur.<br>
-     * This event is fired when the method WorldInfo#setCleanWeatherTime(int) is called. <br>
+     * WeatherEvent.CleanWeatherTime is fired when a change of the clean weather time in the natural weather cycle is about to occur.<br>
+     * This event is fired when the method World#updateWeatherBody is called. It is fired on the server side. <br>
      * <br>
      * {@link #newCleanWeatherTime} contains the value the clean weather time is about to be set to.<br>
      * <br>
@@ -46,9 +47,9 @@ public class WeatherEvent extends Event
     {
         private final int newCleanWeatherTime;
         
-        public CleanWeatherTime(WorldInfo info,int newCleanWeatherTime)
+        public CleanWeatherTime(World world, int newCleanWeatherTime)
         {
-            super(info);
+            super(world);
             this.newCleanWeatherTime = newCleanWeatherTime;
         }
 
@@ -59,8 +60,8 @@ public class WeatherEvent extends Event
     }
     
     /**
-     * WeatherEvent.RainingState is fired when a change of the raining state in a WorldInfo is about to occur.<br>
-     * This event is fired when the method WorldInfo#setRaining(boolean) is called. <br>
+     * WeatherEvent.RainingState is fired when a change of the raining state in the natural weather cycle is about to occur.<br>
+     * This event is fired when the method World#updateWeatherBody is called. It is fired on the server side. <br>
      * <br>
      * {@link #newRainingState} contains the value the raining state is about to be set to.<br>
      * <br>
@@ -75,9 +76,9 @@ public class WeatherEvent extends Event
     {
         private final boolean newRainingState;
 
-        public RainingState(WorldInfo info,boolean newRainingState)
+        public RainingState(World world, boolean newRainingState)
         {
-            super(info);
+            super(world);
             this.newRainingState = newRainingState;
         }
 
@@ -88,8 +89,8 @@ public class WeatherEvent extends Event
     }
     
     /**
-     * WeatherEvent.RainTime is fired when a change of the rain time in a WorldInfo is about to occur.<br>
-     * This event is fired when the method WorldInfo#setRainTime(int) is called. <br>
+     * WeatherEvent.RainTime is fired when a change of the rain time in the natural weather cycle is about to occur.<br>
+     * This event is fired when the method World#updateWeatherBody is called. It is fired on the server side. <br>
      * <br>
      * {@link #newRainTime} contains the value the rain time is about to be set to.<br>
      * <br>
@@ -104,9 +105,9 @@ public class WeatherEvent extends Event
     {
         private final int newRainTime;
         
-        public RainTime(WorldInfo info,int newRainTime)
+        public RainTime(World world, int newRainTime)
         {
-            super(info);
+            super(world);
             this.newRainTime = newRainTime;
         }
 
@@ -117,8 +118,8 @@ public class WeatherEvent extends Event
     }
 
     /**
-     * WeatherEvent.ThunderingState is fired when a change of the thundering state in a WorldInfo is about to occur.<br>
-     * This event is fired when the method WorldInfo#setThundering(boolean) is called. <br>
+     * WeatherEvent.ThunderingState is fired when a change of the thundering state in the natural weather cycle is about to occur.<br>
+     * This event is fired when the method World#updateWeatherBody is called. It is fired on the server side. <br>
      * <br>
      * {@link #newThunderingState} contains the value the thundering state is about to be set to.<br>
      * <br>
@@ -133,9 +134,9 @@ public class WeatherEvent extends Event
     {
         private final boolean newThunderingState;
         
-        public ThunderingState(WorldInfo info,boolean newThunderingState)
+        public ThunderingState(World world, boolean newThunderingState)
         {
-            super(info);
+            super(world);
             this.newThunderingState = newThunderingState;
         }
 
@@ -146,8 +147,8 @@ public class WeatherEvent extends Event
     }
     
     /**
-     * WeatherEvent.ThunderTime is fired when a change of the thunder time in a WorldInfo is about to occur.<br>
-     * This event is fired when the method WorldInfo#setThunderTime(int) is called. <br>
+     * WeatherEvent.ThunderTime is fired when a change of the thunder time in the natural weather cycle is about to occur.<br>
+     * This event is fired when the method World#updateWeatherBody is called. It is fired on the server side. <br>
      * <br>
      * {@link #newThunderTime} contains the value the thunder time is about to be set to.<br>
      * <br>
@@ -162,9 +163,9 @@ public class WeatherEvent extends Event
     {
         private final int newThunderTime;
         
-        public ThunderTime(WorldInfo info,int newThunderTime)
+        public ThunderTime(World world, int newThunderTime)
         {
-            super(info);
+            super(world);
             this.newThunderTime = newThunderTime;
         }
 
