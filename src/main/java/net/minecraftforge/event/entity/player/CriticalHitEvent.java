@@ -22,15 +22,25 @@ import net.minecraft.entity.player.EntityPlayer;
 public class CriticalHitEvent extends AttackEntityEvent
 {
     public final EntityLivingBase livingTarget;
-    /**
-     * This is how much damage you will deal. By default you deal 150% of you normal damage.
-     * If you set it to 0, then the particles are still generated but you don't do damage.
-    */
-    public float damageModifier;
+    private float damageModifier;
     public CriticalHitEvent(EntityPlayer player, EntityLivingBase target)
     {
         super(player, target);
         this.livingTarget = target;
         this.damageModifier = 1.5F;
+    }
+    
+     /**
+     * This is how much damage you will deal. By default you deal 150% of you normal damage.
+     * If you set it to 0, then the particles are still generated but you don't do damage.
+    */
+    public void setDamageModifier(float mod)
+    {
+        this.damageModifier = mod;
+    }
+    
+    public float getDamageModifier()
+    {
+        return this.damageModifier;
     }
 }
