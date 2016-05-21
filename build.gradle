@@ -89,7 +89,7 @@ task changelog(type: JenkinsChangelog) {
     outputs.upToDateWhen { false } // never up to date
     serverRoot = "http://ci.jenkins.minecraftforge.net/"
     jobName = "minecraftforge"
-    targetBuild = System.env['BUILD_NUMBER'] ?: 0;
+    targetBuild = System.env['BUILD_NUMBER'] ?: project.ext.properties.buildNumber ?:0;
     authName = "console_script"
     authPassword = project.hasProperty('forgeJenkinsPass') ? project.getProperty('forgeJenkinsPass') : "";
     output = "build/distributions/${project.name}-${project.version}-changelog.txt"
@@ -218,14 +218,13 @@ artifacts {
 
 task ciWriteBuildNumber << {
     def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");
-    def bn = System.getenv("BUILD_NUMBER")?:0;
+    def bn = System.getenv("BUILD_NUMBER")?:project.ext.properties.buildNumber?:0;
     def outfile = "";
     def ln = System.getProperty('line.separator')
 
     file.eachLine{ String s ->
-        if (s.contains("buildVersion") && s.contains("= 0;")) {
+        if (s.matches("^    public static final int buildVersion    = [\\d]+;\$"))
             s = "    public static final int buildVersion    = ${bn};";
-        }
         outfile += (s+ln);
     }
     file.write(outfile);
@@ -345,10 +344,8 @@ String getVersionFromJava(File file)
         }
     }
 
-    if (System.getenv().containsKey("BUILD_NUMBER"))
-    {
-        build = System.getenv("BUILD_NUMBER");
-    }
+    build = System.getenv("BUILD_NUMBER") ?: project.ext.properties.buildNumber ?: 0
+
 
     String branch = null;
     if (!System.getenv().containsKey("GIT_BRANCH"))
@@ -370,6 +367,10 @@ String getVersionFromJava(File file)
     return out;
 }
 
+task resetBuildNumber << {
+    project.ext.properties.buildNumber = 0;
+    ciWriteBuildNumber.execute()
+}
 // re-add old tasks for jenkins compat
 // should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
 task setupForge { dependsOn 'setup' }
