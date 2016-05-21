@@ -271,16 +271,17 @@
          this.field_71453_ak = networkmanager;
      }
  
-@@ -2197,6 +2241,8 @@
+@@ -2197,6 +2241,9 @@
  
      public void func_71353_a(WorldClient p_71353_1_, String p_71353_2_)
      {
 +        if (field_71441_e != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
++        p_71353_2_ = net.minecraftforge.client.ForgeHooksClient.onClientWorldChanged(field_71441_e, p_71353_1_, p_71353_2_);
 +
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2210,6 +2256,18 @@
+@@ -2210,6 +2257,18 @@
              {
                  this.field_71437_Z.func_71263_m();
                  this.field_71437_Z.func_175592_a();
@@ -299,7 +300,7 @@
              }
  
              this.field_71437_Z = null;
-@@ -2232,6 +2290,7 @@
+@@ -2232,6 +2291,7 @@
              this.field_71456_v.func_181029_i();
              this.func_71351_a((ServerData)null);
              this.field_71455_al = false;
@@ -307,7 +308,7 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2336,126 +2395,10 @@
+@@ -2336,126 +2396,10 @@
          if (this.field_71476_x != null)
          {
              boolean flag = this.field_71439_g.field_71075_bZ.field_75098_d;
@@ -436,7 +437,7 @@
              if (flag)
              {
                  int j = this.field_71439_g.field_71069_bz.field_75151_b.size() - 9 + inventoryplayer.field_70461_c;
-@@ -2756,18 +2699,8 @@
+@@ -2756,18 +2700,8 @@
  
      public static int func_71369_N()
      {
@@ -457,7 +458,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -2924,9 +2857,9 @@
+@@ -2924,9 +2858,9 @@
                          {
                              this.func_147108_a(new GuiYesNo(new GuiYesNoCallback()
                              {
