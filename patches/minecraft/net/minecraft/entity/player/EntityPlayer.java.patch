@@ -300,7 +300,7 @@
                      if (flag && f > 0.0F)
                      {
 -                        f *= 1.5F;
-+                        f *= hitResult.damageModifier;
++                        f *= hitResult.getDamageModifier();
                      }
  
                      f = f + f1;
