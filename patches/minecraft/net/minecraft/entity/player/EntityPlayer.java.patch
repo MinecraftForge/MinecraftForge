@@ -231,7 +231,24 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-@@ -1414,6 +1484,8 @@
+@@ -1167,9 +1237,15 @@
+                     flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
+                     flag2 = flag2 && !this.func_70051_ag();
+ 
++                    net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = null;
++                    if(flag2)
++                    {
++                        hitResult = new net.minecraftforge.event.entity.player.CriticalHitEvent(this, (EntityLivingBase)p_71059_1_);
++                        flag2 = !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(hitResult);
++                    }
+                     if (flag2)
+                     {
+-                        f *= 1.5F;
++                        f *= hitResult.getDamageModifier();
+                     }
+ 
+                     f = f + f1;
+@@ -1414,6 +1490,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
@@ -240,7 +257,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              if (this.func_70608_bn() || !this.func_70089_S())
-@@ -1453,9 +1525,10 @@
+@@ -1453,9 +1531,10 @@
  
          this.func_70105_a(0.2F, 0.2F);
  
@@ -254,7 +271,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1518,13 +1591,14 @@
+@@ -1518,13 +1597,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -272,7 +289,7 @@
  
              if (blockpos == null)
              {
-@@ -1533,6 +1607,10 @@
+@@ -1533,6 +1613,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -283,7 +300,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1551,15 +1629,16 @@
+@@ -1551,15 +1635,16 @@
  
      private boolean func_175143_p()
      {
@@ -303,7 +320,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1574,16 +1653,17 @@
+@@ -1574,16 +1659,17 @@
          }
          else
          {
@@ -324,7 +341,7 @@
  
              switch (enumfacing)
              {
-@@ -1623,16 +1703,24 @@
+@@ -1623,16 +1709,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -351,7 +368,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1827,6 +1915,10 @@
+@@ -1827,6 +1921,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -362,7 +379,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2027,6 +2119,18 @@
+@@ -2027,6 +2125,18 @@
          this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
@@ -381,7 +398,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -2126,7 +2230,10 @@
+@@ -2126,7 +2236,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -393,7 +410,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2135,7 +2242,7 @@
+@@ -2135,7 +2248,7 @@
  
      public float func_70047_e()
      {
@@ -402,7 +419,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2346,6 +2453,161 @@
+@@ -2346,6 +2459,161 @@
          return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
      }
  
