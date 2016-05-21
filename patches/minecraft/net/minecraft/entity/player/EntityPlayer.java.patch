@@ -295,7 +295,7 @@
 +                    if(flag)
 +                    {
 +                        hitResult = new net.minecraftforge.event.entity.player.CriticalHitEvent(this, (EntityLivingBase)p_71059_1_);
-+                        flag = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(hitResult);
++                        flag = !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(hitResult);
 +                    }
                      if (flag && f > 0.0F)
                      {
