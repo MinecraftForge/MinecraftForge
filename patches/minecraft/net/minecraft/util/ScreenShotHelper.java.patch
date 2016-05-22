@@ -1,9 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/util/ScreenShotHelper.java
 +++ ../src-work/minecraft/net/minecraft/util/ScreenShotHelper.java
-@@ -52,10 +52,13 @@
+@@ -52,10 +52,14 @@
                  file2 = new File(file1, p_148259_1_);
              }
  
++            file2 = file2.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
 +            net.minecraftforge.client.event.ScreenshotEvent event = net.minecraftforge.client.ForgeHooksClient.onScreenshot(bufferedimage, file2);
 +            if (event.isCanceled()) return event.getCancelMessage(); else file2 = event.getScreenshotFile();
              ImageIO.write(bufferedimage, "png", (File)file2);
