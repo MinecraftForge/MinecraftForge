@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
@@ -35,22 +36,7 @@ public class EnumHelper
     private static boolean isSetup               = false;
 
     //Some enums are decompiled with extra arguments, so lets check for that
-    private static Class<?>[][] commonTypes =
-    {
-        {EnumAction.class},
-        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class},
-        {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
-        {EnumCreatureAttribute.class},
-        {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
-        {Door.class},
-        {EnumEnchantmentType.class},
-        {Sensitivity.class},
-        {RayTraceResult.Type.class},
-        {EnumSkyBlock.class, int.class},
-        {EnumStatus.class},
-        {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, TextFormatting.class, String.class}
-    };
+    private static Map<Class<? extends Enum<?>>, Class<?>[]> commonTypes = Maps.<Class<? extends Enum<?>>, Class<?>[]>newHashMap();
 
     public static EnumAction addAction(String name)
     {
@@ -112,6 +98,8 @@ public class EnumHelper
             return;
         }
 
+        setUpCommonTypes();
+
         try
         {
             Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
@@ -127,6 +115,23 @@ public class EnumHelper
         }
 
         isSetup = true;
+    }
+
+    private static void setUpCommonTypes()
+    {
+        commonTypes.put(EnumAction.class, new Class[]{});
+        commonTypes.put(ArmorMaterial.class, new Class[]{String.class, int.class, int[].class, int.class, SoundEvent.class});
+        commonTypes.put(EnumArt.class, new Class[]{String.class, int.class, int.class, int.class, int.class});
+        commonTypes.put(EnumCreatureAttribute.class, new Class[]{});
+        commonTypes.put(EnumCreatureType.class, new Class[]{Class.class, int.class, Material.class, boolean.class, boolean.class});
+        commonTypes.put(Door.class, new Class[]{});
+        commonTypes.put(EnumEnchantmentType.class, new Class[]{});
+        commonTypes.put(Sensitivity.class, new Class[]{});
+        commonTypes.put(RayTraceResult.Type.class, new Class[]{});
+        commonTypes.put(EnumSkyBlock.class, new Class[]{int.class});
+        commonTypes.put(EnumStatus.class, new Class[]{});
+        commonTypes.put(ToolMaterial.class, new Class[]{int.class, int.class, float.class, float.class, int.class});
+        commonTypes.put(EnumRarity.class, new Class[]{TextFormatting.class, String.class});
     }
 
     /*
@@ -187,21 +192,11 @@ public class EnumHelper
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
+    public static <T extends Enum<? >> T addEnum(Map<Class<? extends Enum<?>>, Class<?>[]> map, Class<T> enumType, String enumName, Object... paramValues)
     {
-        for (Class<?>[] lookup : map)
-        {
-            if (lookup[0] == enumType)
-            {
-                Class<?>[] paramTypes = new Class<?>[lookup.length - 1];
-                if (paramTypes.length > 0)
-                {
-                    System.arraycopy(lookup, 1, paramTypes, 0, paramTypes.length);
-                }
-                return addEnum(enumType, enumName, paramTypes, paramValues);
-            }
-        }
-        return null;
+        Class<?>[] paramTypes = map.get(enumType);
+        paramTypes = paramTypes == null ? new Class[]{} : paramTypes;
+        return map.containsKey(enumType) ? null : addEnum(enumType, enumName, paramTypes, paramValues);
     }
 
     //Tests an enum is compatible with these args, throws an error if not.
@@ -244,7 +239,7 @@ public class EnumHelper
             for (Field field : fields)
             {
                 if ((field.getModifiers() & flags) == flags &&
-                     field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
+                        field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
                 {
                     valuesField = field;
                     break;
