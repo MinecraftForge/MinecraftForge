@@ -72,6 +72,7 @@ public class CoreModManager {
     private static FMLTweaker tweaker;
     private static File mcDir;
     private static List<String> candidateModFiles = Lists.newArrayList();
+    private static List<String> candidateTweakers = Lists.newArrayList();
     private static List<String> accessTransformers = Lists.newArrayList();
     private static Set<String> rootNames = Sets.newHashSet();
     private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps","").split(","));
@@ -346,7 +347,15 @@ public class CoreModManager {
                     Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
                     sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
                     handleCascadingTweak(coreMod, jar, cascadedTweaker, classLoader, sortOrder);
-                    ignoredModFiles.add(coreMod.getName());
+                    if (!Strings.isNullOrEmpty(mfAttributes.getValue("TweakMetaFile")))
+                    {
+                        FMLRelaunchLog.finer("Found TweakMetaFile in %s, it will be examined later", coreMod.getName());
+                        candidateTweakers.add(coreMod.getName());
+                    }
+                    else
+                    {
+                        ignoredModFiles.add(coreMod.getName());
+                    }
                     continue;
                 }
                 List<String> modTypes = mfAttributes.containsKey(MODTYPE) ? Arrays.asList(mfAttributes.getValue(MODTYPE).split(",")) : ImmutableList.of("FML");
@@ -524,6 +533,11 @@ public class CoreModManager {
     public static List<String> getReparseableCoremods()
     {
         return candidateModFiles;
+    }
+
+    public static List<String> getReparseableTweakers()
+    {
+        return candidateTweakers;
     }
 
     private static FMLPluginWrapper loadCoreMod(LaunchClassLoader classLoader, String coreModClass, File location)

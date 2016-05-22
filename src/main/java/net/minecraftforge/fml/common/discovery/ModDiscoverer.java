@@ -50,6 +50,8 @@ public class ModDiscoverer
                 .addAll(CoreModManager.getIgnoredMods())
                 // skip reparse coremods here
                 .addAll(CoreModManager.getReparseableCoremods())
+                // skip reparse tweaks here
+                .addAll(CoreModManager.getReparseableTweakers())
                 .build();
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
@@ -105,6 +107,11 @@ public class ModDiscoverer
             {
                 FMLLog.fine("Found a candidate mod directory %s", modFile.getName());
                 addCandidate(new ModCandidate(modFile, modFile, ContainerType.DIR));
+            }
+            else if (CoreModManager.getReparseableTweakers().contains(modFile.getName()))
+            {
+                FMLLog.fine("Found a candidate tweak %s", modFile.getName());
+                addCandidate(new ModCandidate(modFile, modFile, ContainerType.TWEAK));
             }
             else
             {
