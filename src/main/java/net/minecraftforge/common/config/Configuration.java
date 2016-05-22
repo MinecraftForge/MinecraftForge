@@ -66,9 +66,7 @@ public class Configuration
     @Deprecated
     private File file;
 
-    @Deprecated
     private CharSource staticSource;
-    @Deprecated
     private CharSink staticSink;
 
     private Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
@@ -89,8 +87,8 @@ public class Configuration
 
     public Configuration(){}
 
-    @Deprecated
-    public Configuration(CharSource staticSource, CharSink staticSink){
+    public Configuration(CharSource staticSource, CharSink staticSink)
+    {
         this.staticSource = staticSource;
         this.staticSink = staticSink;
     }
