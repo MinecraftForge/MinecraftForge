@@ -49,7 +49,7 @@ public class GameData
     private static final int MIN_POTIONTYPE_ID = 0; // Int
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MIN_ENCHANTMENT_ID = 0; // Int
-    private static final int MAX_ENCHANTMENT_ID = Integer.MAX_VALUE >> 5; // Int - not serialized as an ID?
+    private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
