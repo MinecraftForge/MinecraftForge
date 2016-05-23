@@ -134,7 +134,7 @@
          {
              return false;
          }
-@@ -265,41 +300,22 @@
+@@ -265,58 +300,46 @@
              }
              else
              {
@@ -181,7 +181,13 @@
  
                      if (itemstack1 != null)
                      {
-@@ -311,12 +327,18 @@
+                         itemstack1.func_179548_a(this.field_73092_a, iblockstate, p_180237_1_, this.field_73090_b);
+ 
+-                        if (itemstack1.field_77994_a == 0)
++                        if (itemstack1.field_77994_a <= 0)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_73090_b, itemstack1, EnumHand.MAIN_HAND);
+                             this.field_73090_b.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
                          }
                      }
  
@@ -200,7 +206,7 @@
                  return flag1;
              }
          }
-@@ -334,6 +356,7 @@
+@@ -334,6 +357,7 @@
          }
          else
          {
@@ -208,7 +214,7 @@
              int i = p_187250_3_.field_77994_a;
              int j = p_187250_3_.func_77960_j();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -360,6 +383,7 @@
+@@ -360,6 +384,7 @@
                  if (itemstack.field_77994_a == 0)
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
@@ -216,7 +222,7 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
-@@ -404,13 +428,26 @@
+@@ -404,13 +429,26 @@
          }
          else
          {
@@ -246,7 +252,7 @@
                  }
              }
  
-@@ -430,14 +467,21 @@
+@@ -430,14 +468,21 @@
              {
                  int j = p_187251_3_.func_77960_j();
                  int i = p_187251_3_.field_77994_a;
@@ -268,7 +274,7 @@
              }
          }
      }
-@@ -446,4 +490,13 @@
+@@ -446,4 +491,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }
