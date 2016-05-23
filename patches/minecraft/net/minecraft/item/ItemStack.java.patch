@@ -164,7 +164,29 @@
  
          if (this.field_77990_d != null)
          {
-@@ -762,6 +768,7 @@
+@@ -352,7 +358,11 @@
+ 
+     public static boolean func_77970_a(@Nullable ItemStack p_77970_0_, @Nullable ItemStack p_77970_1_)
+     {
+-        return p_77970_0_ == null && p_77970_1_ == null ? true : (p_77970_0_ != null && p_77970_1_ != null ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) : false);
++        if (p_77970_0_ != null && p_77970_1_ != null) {
++            if (p_77970_0_.field_77990_d != null && p_77970_1_.field_77990_d != null ? p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d) : p_77970_0_.field_77990_d == p_77970_1_.field_77990_d) {
++                return p_77970_0_.capabilities != null && p_77970_1_.capabilities != null ? p_77970_0_.capabilities.serializeNBT().equals(p_77970_1_.capabilities.serializeNBT()) : p_77970_0_.capabilities == p_77970_1_.capabilities;
++            } else return false;
++        } else return p_77970_0_ == p_77970_1_;
+     }
+ 
+     public static boolean func_77989_b(@Nullable ItemStack p_77989_0_, @Nullable ItemStack p_77989_1_)
+@@ -362,7 +372,7 @@
+ 
+     private boolean func_77959_d(ItemStack p_77959_1_)
+     {
+-        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.field_151002_e != p_77959_1_.field_151002_e ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d))));
++        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.field_151002_e != p_77959_1_.field_151002_e ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : func_77970_a(this, p_77959_1_)));
+     }
+ 
+     public static boolean func_179545_c(@Nullable ItemStack p_179545_0_, @Nullable ItemStack p_179545_1_)
+@@ -762,6 +772,7 @@
              }
          }
  
@@ -172,7 +194,7 @@
          return list;
      }
  
-@@ -873,7 +880,7 @@
+@@ -873,7 +884,7 @@
          }
          else
          {
@@ -181,7 +203,7 @@
          }
  
          return multimap;
-@@ -906,6 +913,18 @@
+@@ -906,6 +917,18 @@
      @Deprecated
      public void func_150996_a(Item p_150996_1_)
      {
@@ -200,7 +222,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -991,4 +1010,26 @@
+@@ -991,4 +1014,26 @@
              return false;
          }
      }
