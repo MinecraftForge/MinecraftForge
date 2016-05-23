@@ -164,7 +164,41 @@
  
          if (this.field_77990_d != null)
          {
-@@ -762,6 +768,7 @@
+@@ -352,7 +358,19 @@
+ 
+     public static boolean func_77970_a(@Nullable ItemStack p_77970_0_, @Nullable ItemStack p_77970_1_)
+     {
+-        return p_77970_0_ == null && p_77970_1_ == null ? true : (p_77970_0_ != null && p_77970_1_ != null ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) : false);
++        if (p_77970_0_ == null && p_77970_1_ == null) return true;
++        if (p_77970_0_ == null && p_77970_1_ != null) return false;
++        if (p_77970_0_ != null && p_77970_1_ == null) return false;
++        if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) return false;
++        if (p_77970_0_.field_77990_d != null && p_77970_1_.field_77990_d == null) return false;
++        if (p_77970_0_.field_77990_d != null && !p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) return false;
++        if (p_77970_0_.capabilities != null || p_77970_1_.capabilities != null)
++        {
++            boolean ret = p_77970_0_.capabilities != null ? p_77970_0_.capabilities.areCompatible(p_77970_1_.capabilities) : p_77970_1_.capabilities.areCompatible(null);
++            if (!ret) return false;
++        }
++
++        return true;
+     }
+ 
+     public static boolean func_77989_b(@Nullable ItemStack p_77989_0_, @Nullable ItemStack p_77989_1_)
+@@ -362,7 +380,11 @@
+ 
+     private boolean func_77959_d(ItemStack p_77959_1_)
+     {
+-        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.field_151002_e != p_77959_1_.field_151002_e ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d))));
++        if (this.field_77994_a != p_77959_1_.field_77994_a) return false;
++        if (this.field_151002_e != p_77959_1_.field_151002_e) return false;
++        if (this.field_77991_e != p_77959_1_.field_77991_e) return false;
++        if (!ItemStack.func_77970_a(this, p_77959_1_)) return false;
++        return true;
+     }
+ 
+     public static boolean func_179545_c(@Nullable ItemStack p_179545_0_, @Nullable ItemStack p_179545_1_)
+@@ -762,6 +784,7 @@
              }
          }
  
@@ -172,7 +206,7 @@
          return list;
      }
  
-@@ -873,7 +880,7 @@
+@@ -873,7 +896,7 @@
          }
          else
          {
@@ -181,7 +215,7 @@
          }
  
          return multimap;
-@@ -906,6 +913,18 @@
+@@ -906,6 +929,18 @@
      @Deprecated
      public void func_150996_a(Item p_150996_1_)
      {
@@ -200,7 +234,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -991,4 +1010,26 @@
+@@ -991,4 +1026,26 @@
              return false;
          }
      }
