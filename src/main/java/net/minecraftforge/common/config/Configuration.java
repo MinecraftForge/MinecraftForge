@@ -13,8 +13,6 @@ import static net.minecraftforge.common.config.Property.Type.STRING;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +37,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharSink;
 import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.common.FMLLog;
@@ -87,29 +87,48 @@ public class Configuration
 
     public Configuration(){}
 
-    public Configuration(CharSource staticSource, CharSink staticSink)
+    public Configuration(String configVersion, boolean caseSensitiveCustomCategories)
     {
+        this.definedConfigVersion = configVersion;
+        this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+    }
+
+    public Configuration(String configVersion)
+    {
+        this(configVersion, false);
+    }
+
+    public Configuration(boolean caseSensitiveCustomCategories)
+    {
+        this((String) null, caseSensitiveCustomCategories);
+    }
+
+    public Configuration(CharSource staticSource, CharSink staticSink, String configVersion, boolean caseSensitiveCustomCategories)
+    {
+        this(configVersion, caseSensitiveCustomCategories);
         this.staticSource = staticSource;
         this.staticSink = staticSink;
     }
 
-    /**
-     * Create a configuration file for the file given in parameter.
-     */
-    @Deprecated
-    public Configuration(File file)
+    public Configuration(CharSource staticSource, CharSink staticSink, String configVersion)
     {
-        this(file, null);
+        this(staticSource, staticSink, configVersion, false);
+    }
+
+    public Configuration(CharSource staticSource, CharSink staticSink, boolean caseSensitiveCustomCategories)
+    {
+        this(staticSource, staticSink, null, caseSensitiveCustomCategories);
     }
 
     /**
-     * Create a configuration file for the file given in parameter with the provided config version number.
+     * Create a configuration file for the file given in parameter with the provided encoding, configuration version number and case sensitivity.
      */
     @Deprecated
-    public Configuration(File file, String configVersion)
+    public Configuration(File file, String defaultEncoding, String configVersion, boolean caseSensitiveCustomCategories)
     {
+        this(Files.asCharSource(file, Charset.forName(defaultEncoding)), Files.asCharSink(file, Charset.forName(defaultEncoding)), configVersion, caseSensitiveCustomCategories);
         this.file = file;
-        this.definedConfigVersion = configVersion;
+        this.defaultEncoding = defaultEncoding;
         String basePath = ((File)(FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null)
@@ -139,16 +158,24 @@ public class Configuration
     }
 
     @Deprecated
-    public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
+    public Configuration(File file, String configVersion)
     {
-        this(file, configVersion);
-        this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+        this(file, DEFAULT_ENCODING, configVersion, false);
     }
 
     @Deprecated
     public Configuration(File file, boolean caseSensitiveCustomCategories)
     {
-        this(file, null, caseSensitiveCustomCategories);
+        this(file, DEFAULT_ENCODING, null, caseSensitiveCustomCategories);
+    }
+
+    /**
+     * Create a configuration file for the file given in parameter.
+     */
+    @Deprecated
+    public Configuration(File file)
+    {
+        this(file, null);
     }
 
     @Override
@@ -165,6 +192,28 @@ public class Configuration
     public String getLoadedConfigVersion()
     {
         return this.loadedConfigVersion;
+    }
+
+    public File getConfigFile()
+    {
+        if(file != null)
+        {
+            return file;
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Configuration without static file source!");
+        }
+    }
+
+    public CharSource getStaticSource()
+    {
+        return staticSource;
+    }
+
+    public CharSink getStaticSink()
+    {
+        return staticSink;
     }
 
     /******************************************************************************************************************
@@ -1046,38 +1095,9 @@ public class Configuration
 
     public void load()
     {
-        if(file != null)
+        if(file != null && PARENT != null && PARENT != this)
         {
-            if (PARENT != null && PARENT != this)
-            {
-                return;
-            }
-
-            try
-            {
-                if (file.getParentFile() != null)
-                {
-                    file.getParentFile().mkdirs();
-                }
-
-                if (!file.exists())
-                {
-                    // Either a previous load attempt failed or the file is new; clear maps
-                    categories.clear();
-                    children.clear();
-                    if (!file.createNewFile())
-                        return;
-                }
-
-                if (file.canRead())
-                {
-                    load(new FileInputStream(file));
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            return;
         }
         else if(staticSource != null)
         {
@@ -1142,37 +1162,10 @@ public class Configuration
 
     public void save()
     {
-        if(file != null)
+        if(file != null && PARENT != null && PARENT != this)
         {
-            if (PARENT != null && PARENT != this)
-            {
-                PARENT.save();
-                return;
-            }
-
-            try
-            {
-                if (file.getParentFile() != null)
-                {
-                    file.getParentFile().mkdirs();
-                }
-
-                if (!file.exists() && !file.createNewFile())
-                {
-                    return;
-                }
-
-                if (file.canWrite())
-                {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    save(fos);
-                    fos.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            PARENT.save();
+            return;
         }
         else if(staticSink != null)
         {
@@ -1790,17 +1783,5 @@ public class Configuration
             e.printStackTrace();
         }
         return defaultValue;
-    }
-
-    public File getConfigFile()
-    {
-        if(file != null)
-        {
-            return file;
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Configuration without static file source!");
-        }
     }
 }
