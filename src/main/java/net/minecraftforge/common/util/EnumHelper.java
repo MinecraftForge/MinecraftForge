@@ -119,17 +119,17 @@ public class EnumHelper
 
     private static void setUpCommonTypes()
     {
-        commonTypes.put(EnumAction.class, new Class[]{});
+        commonTypes.put(EnumAction.class, new Class[0]);
         commonTypes.put(ArmorMaterial.class, new Class[]{String.class, int.class, int[].class, int.class, SoundEvent.class});
         commonTypes.put(EnumArt.class, new Class[]{String.class, int.class, int.class, int.class, int.class});
-        commonTypes.put(EnumCreatureAttribute.class, new Class[]{});
+        commonTypes.put(EnumCreatureAttribute.class, new Class[0]);
         commonTypes.put(EnumCreatureType.class, new Class[]{Class.class, int.class, Material.class, boolean.class, boolean.class});
-        commonTypes.put(Door.class, new Class[]{});
-        commonTypes.put(EnumEnchantmentType.class, new Class[]{});
-        commonTypes.put(Sensitivity.class, new Class[]{});
-        commonTypes.put(RayTraceResult.Type.class, new Class[]{});
+        commonTypes.put(Door.class, new Class[0]);
+        commonTypes.put(EnumEnchantmentType.class, new Class[0]);
+        commonTypes.put(Sensitivity.class, new Class[0]);
+        commonTypes.put(RayTraceResult.Type.class, new Class[0]);
         commonTypes.put(EnumSkyBlock.class, new Class[]{int.class});
-        commonTypes.put(EnumStatus.class, new Class[]{});
+        commonTypes.put(EnumStatus.class, new Class[0]);
         commonTypes.put(ToolMaterial.class, new Class[]{int.class, int.class, float.class, float.class, int.class});
         commonTypes.put(EnumRarity.class, new Class[]{TextFormatting.class, String.class});
     }
@@ -194,8 +194,7 @@ public class EnumHelper
 
     public static <T extends Enum<? >> T addEnum(Map<Class<? extends Enum<?>>, Class<?>[]> map, Class<T> enumType, String enumName, Object... paramValues)
     {
-        Class<?>[] paramTypes = map.get(enumType);
-        paramTypes = paramTypes == null ? new Class[]{} : paramTypes;
+        Class<?>[] paramTypes = map.get(enumType) == null ? new Class[0] : map.get(enumType);
         return map.containsKey(enumType) ? null : addEnum(enumType, enumName, paramTypes, paramValues);
     }
 
