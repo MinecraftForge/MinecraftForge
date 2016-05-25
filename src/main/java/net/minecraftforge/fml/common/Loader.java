@@ -114,6 +114,7 @@ import com.google.gson.JsonParser;
 public class Loader
 {
     public static final String MC_VERSION = net.minecraftforge.common.ForgeVersion.mcVersion;
+    private static final Splitter DEPENDENCYINSTRUCTIONSSPLITTER = Splitter.on("-").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**
@@ -698,7 +699,6 @@ public class Loader
                 parseFailure = true;
                 continue;
             }
-            String instruction = depparts.get(0);
             String target = depparts.get(1);
             boolean targetIsAll = target.startsWith("*");
 
@@ -709,40 +709,44 @@ public class Loader
                 continue;
             }
 
-            // If this is a required element, add it to the required list
-            if ("required-before".equals(instruction) || "required-after".equals(instruction))
-            {
-                // You can't require everything
-                if (!targetIsAll)
-                {
-                    requirements.add(VersionParser.parseVersionReference(target));
-                }
-                else
-                {
-                    parseFailure = true;
-                    continue;
-                }
-            }
-
             // You cannot have a versioned dependency on everything
             if (targetIsAll && target.indexOf('@') > -1)
             {
                 parseFailure = true;
                 continue;
             }
-            // before elements are things we are loaded before (so they are our dependants)
-            if ("required-before".equals(instruction) || "before".equals(instruction))
-            {
-                dependants.add(VersionParser.parseVersionReference(target));
-            }
-            // after elements are things that load before we do (so they are out dependencies)
-            else if ("required-after".equals(instruction) || "after".equals(instruction))
-            {
-                dependencies.add(VersionParser.parseVersionReference(target));
-            }
-            else
-            {
-                parseFailure = true;
+
+            for(String instruction : DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0))){
+                if(("client".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.CLIENT) || ("server".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.SERVER))
+                {
+                    break;
+                }
+
+                // If this is a required element, add it to the required list
+                if ("required".equals(instruction))
+                {
+                    // You can't require everything
+                    if (!targetIsAll)
+                    {
+                        requirements.add(VersionParser.parseVersionReference(target));
+                    }
+                    else
+                    {
+                        parseFailure = true;
+                        continue;
+                    }
+                }
+
+                // before elements are things we are loaded before (so they are our dependants)
+                if ("before".equals(instruction))
+                {
+                    dependants.add(VersionParser.parseVersionReference(target));
+                }
+                // after elements are things that load before we do (so they are out dependencies)
+                else if ("after".equals(instruction))
+                {
+                    dependencies.add(VersionParser.parseVersionReference(target));
+                }
             }
         }
 
