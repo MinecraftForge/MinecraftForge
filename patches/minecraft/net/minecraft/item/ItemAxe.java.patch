@@ -4,7 +4,7 @@
          this.field_185065_c = field_185067_n[p_i45327_1_.ordinal()];
      }
  
-+    protected ItemAxe(Item.ToolMaterial material, int damage, int speed)
++    protected ItemAxe(Item.ToolMaterial material, float damage, float speed)
 +    {
 +        super(material, field_150917_c);
 +        this.field_77865_bY = damage;
