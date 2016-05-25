@@ -63,7 +63,7 @@
      }
  
      public int func_70946_n()
-@@ -335,6 +348,39 @@
+@@ -335,6 +348,43 @@
          return Math.max(((Integer)this.field_70180_af.func_187225_a(field_184752_bw)).intValue() % 5, 0);
      }
  
@@ -92,18 +92,22 @@
 +    public void func_184206_a(DataParameter<?> key)
 +    {
 +        super.func_184206_a(key);
-+        if(key == PROFESSION_STR)
++        if (key.equals(PROFESSION_STR))
 +        {
 +            String p = this.field_70180_af.func_187225_a(PROFESSION_STR);
 +            net.minecraft.util.ResourceLocation res = new net.minecraft.util.ResourceLocation(p == null ? "minecraft:farmer" : p);
 +            this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.instance().getRegistry().getValue(res);
++        }
++        else if (key.equals(field_184752_bw))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.field_70180_af.func_187225_a(field_184752_bw));
 +        }
 +    }
 +
      public boolean func_70941_o()
      {
          return this.field_70952_f;
-@@ -534,15 +580,13 @@
+@@ -534,15 +584,13 @@
  
      private void func_175554_cu()
      {
@@ -120,7 +124,7 @@
              this.field_175562_bw = 1;
          }
  
-@@ -553,13 +597,11 @@
+@@ -553,13 +601,11 @@
  
          int i = this.field_175563_bv - 1;
          int j = this.field_175562_bw - 1;
@@ -137,7 +141,7 @@
              {
                  entityvillager$itradelist.func_179401_a(this.field_70963_i, this.field_70146_Z);
              }
-@@ -648,9 +690,14 @@
+@@ -648,9 +694,14 @@
                      }
              }
  
@@ -145,7 +149,7 @@
 +                s1 = this.getProfessionForge().getCareer(this.field_175563_bv).getName();
 +            else
 +                s1 = "entity.Villager." + s1;
-+            //TODO: Hook into VillagerRegistry to get name
++
              if (s1 != null)
              {
 -                TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("entity.Villager." + s1, new Object[0]);
@@ -153,7 +157,7 @@
                  textcomponenttranslation.func_150256_b().func_150209_a(this.func_174823_aP());
                  textcomponenttranslation.func_150256_b().func_179989_a(this.func_189512_bd());
  
-@@ -710,7 +757,7 @@
+@@ -710,7 +761,7 @@
      public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, @Nullable IEntityLivingData p_180482_2_)
      {
          p_180482_2_ = super.func_180482_a(p_180482_1_, p_180482_2_);
@@ -162,7 +166,7 @@
          this.func_175552_ct();
          return p_180482_2_;
      }
-@@ -1030,4 +1077,6 @@
+@@ -1030,4 +1081,6 @@
                  return ((Integer)this.func_76341_a()).intValue() >= ((Integer)this.func_76340_b()).intValue() ? ((Integer)this.func_76341_a()).intValue() : ((Integer)this.func_76341_a()).intValue() + p_179412_1_.nextInt(((Integer)this.func_76340_b()).intValue() - ((Integer)this.func_76341_a()).intValue() + 1);
              }
          }
