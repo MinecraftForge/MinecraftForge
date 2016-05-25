@@ -716,7 +716,8 @@ public class Loader
                 continue;
             }
 
-            for(String instruction : DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0))){
+            for(String instruction : DEPENDENCYINSTRUCTIONSSPLITTER.split(depparts.get(0)))
+            {
                 if(("client".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.CLIENT) || ("server".equals(instruction) && FMLCommonHandler.instance().getSide() != Side.SERVER))
                 {
                     break;
