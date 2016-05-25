@@ -223,8 +223,12 @@ public class PlayerInteractEvent extends PlayerEvent
      * This event controls which of {@link net.minecraft.block.Block#onBlockClicked} and/or the item harvesting methods will be called
      * Canceling the event will cause none of the above noted methods to be called.
      * There are various results to this event, see the getters below.
+     *
      * Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
      * This is due to how vanilla calls the left click handler methods.
+     *
+     * Also note that creative mode directly breaks the block without running any other logic.
+     * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
      */
     @Cancelable
     public static class LeftClickBlock extends PlayerInteractEvent
@@ -248,7 +252,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called
+         * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
          */
         public Result getUseBlock()
         {
@@ -256,7 +260,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If the block should be attempted to be mined with the current item
+         * @return If the block should be attempted to be mined with the current item. Changing this has no effect in creative mode
          */
         public Result getUseItem()
         {
