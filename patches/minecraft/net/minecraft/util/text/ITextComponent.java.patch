@@ -8,19 +8,23 @@
      String func_150254_d();
  
      List<ITextComponent> func_150253_a();
-@@ -134,6 +133,7 @@
-                             ((TextComponentScore)itextcomponent).func_179997_b(JsonUtils.func_151200_h(jsonobject1, "value"));
-                         }
-                     }
-+                    else if ((itextcomponent = net.minecraftforge.common.ForgeHooks.onTextComponentDeserialize(jsonobject)) != null) {}
-                     else
+@@ -138,9 +137,10 @@
                      {
                          if (!jsonobject.has("selector"))
-@@ -237,6 +237,7 @@
-                     jsonobject1.addProperty("value", textcomponentscore.func_150261_e());
-                     jsonobject.add("score", jsonobject1);
-                 }
-+                else if (net.minecraftforge.common.ForgeHooks.onTextComponentSerialize(p_serialize_1_, jsonobject)) {}
-                 else
+                         {
++                            if ((itextcomponent = net.minecraftforge.common.ForgeHooks.onTextComponentDeserialize(jsonobject)) == null) 
+                             throw new JsonParseException("Don\'t know how to turn " + p_deserialize_1_.toString() + " into a Component");
+                         }
+-
++                        else
+                         itextcomponent = new TextComponentSelector(JsonUtils.func_151200_h(jsonobject, "selector"));
+                     }
+ 
+@@ -241,6 +241,7 @@
                  {
                      if (!(p_serialize_1_ instanceof TextComponentSelector))
+                     {
++                        if (net.minecraftforge.common.ForgeHooks.onTextComponentSerialize(p_serialize_1_, jsonobject)) return jsonobject;
+                         throw new IllegalArgumentException("Don\'t know how to serialize " + p_serialize_1_ + " as a Component");
+                     }
+ 
