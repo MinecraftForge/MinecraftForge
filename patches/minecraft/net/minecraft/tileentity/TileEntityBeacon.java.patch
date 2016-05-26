@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
+@@ -130,7 +130,7 @@
+             {
+                 if (iblockstate.func_177230_c() != Blocks.field_150397_co)
+                 {
+-                    if (iblockstate.func_185891_c() >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
++                    if (iblockstate.getLightOpacity(field_145850_b, blockpos$mutableblockpos) >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
+                     {
+                         this.field_146015_k = false;
+                         this.field_174909_f.clear();
 @@ -181,7 +181,7 @@
                      {
                          Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
