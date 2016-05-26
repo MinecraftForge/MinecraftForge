@@ -68,7 +68,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -283,6 +293,186 @@
+@@ -283,6 +293,198 @@
          return false;
      }
  
@@ -84,6 +84,18 @@
 +     */
 +    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
 +    {
++    }
++    
++    /**
++     * Called when the chunk's TE update tag, gotten from {@link #getUpdateTag()}, is received on the client.
++     * <p>
++     * Used to handle this tag in a special way. By default this simply calls {@link #readFromNBT(NBTTagCompound)}.
++     * 
++     * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
++     */
++    public void handleUpdateTag(NBTTagCompound tag)
++    {
++        this.func_145839_a(tag);
 +    }
 +
 +    /**

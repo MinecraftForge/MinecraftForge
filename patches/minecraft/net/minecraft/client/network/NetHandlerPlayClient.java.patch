@@ -9,6 +9,15 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
+@@ -719,7 +719,7 @@
+ 
+             if (tileentity != null)
+             {
+-                tileentity.func_145839_a(nbttagcompound);
++                tileentity.handleUpdateTag(nbttagcompound);
+             }
+         }
+     }
 @@ -797,14 +797,16 @@
      public void func_147251_a(SPacketChat p_147251_1_)
      {
