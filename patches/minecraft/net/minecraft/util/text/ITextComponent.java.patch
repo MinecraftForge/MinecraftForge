@@ -8,3 +8,19 @@
      String func_150254_d();
  
      List<ITextComponent> func_150253_a();
+@@ -134,6 +133,7 @@
+                             ((TextComponentScore)itextcomponent).func_179997_b(JsonUtils.func_151200_h(jsonobject1, "value"));
+                         }
+                     }
++                    else if ((itextcomponent = net.minecraftforge.common.ForgeHooks.onTextComponentDeserialize(jsonobject)) != null) {}
+                     else
+                     {
+                         if (!jsonobject.has("selector"))
+@@ -237,6 +237,7 @@
+                     jsonobject1.addProperty("value", textcomponentscore.func_150261_e());
+                     jsonobject.add("score", jsonobject1);
+                 }
++                else if (net.minecraftforge.common.ForgeHooks.onTextComponentSerialize(p_serialize_1_, jsonobject)) {}
+                 else
+                 {
+                     if (!(p_serialize_1_ instanceof TextComponentSelector))
