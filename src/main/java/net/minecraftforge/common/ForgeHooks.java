@@ -1124,6 +1124,7 @@ public class ForgeHooks
     {
         if (tc instanceof IJsonSerializable)
         {
+            jsonobject.add("text", new JsonPrimitive("{Unsupported component type: "+tc.getClass().getName()+"}"));
             jsonobject.add("data", ((IJsonSerializable)tc).getSerializableElement());
             jsonobject.add("class", new JsonPrimitive(tc.getClass().getName()));
             return true;
@@ -1136,18 +1137,19 @@ public class ForgeHooks
     {
         if (!jsonobject.has("class"))
             return null;
-        
+
         ITextComponent tc;
         try
         {
             Class<?> clazz = Class.forName(jsonobject.get("class").getAsString());
             tc = (ITextComponent) clazz.newInstance();
             if(!(tc instanceof IJsonSerializable))
-                throw new ReportedException(new CrashReport("Error deserializing ITextComponent", new UnsupportedOperationException("Deserializing custom chat components requires IJsonSerializable")));
+                throw new UnsupportedOperationException("Deserializing custom chat components requires IJsonSerializable");
         }
-        catch (ReflectiveOperationException e)
+        catch (Exception e)
         {
-            throw new ReportedException(new CrashReport("Error deserializing ITextComponent", e));
+            jsonobject.add("text", new JsonPrimitive("{Error deserializing Component: " + e.getMessage() + "}"));
+            return null;
         }
 
         if (jsonobject.has("data"))

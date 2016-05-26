@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-@Mod(modid="CustomTextComponentDebug", name="CustomTextComponentDebug", version="0.0.0")
+@Mod(modid="CustomTextComponentDebug", name="CustomTextComponentDebug", version="0.0.0", acceptableRemoteVersions="*")
 public class CustomTextComponentDebug
 {
     // NOTE: Test with both this ON and OFF - ensure none of the test behaviours show when this is off!
@@ -44,7 +44,7 @@ public class CustomTextComponentDebug
     @SubscribeEvent
     public void playerLogin(EntityJoinWorldEvent ev)
     {
-        if(ENABLE && (ev.getEntity() instanceof EntityPlayer))
+        if(ENABLE && !ev.getWorld().isRemote && (ev.getEntity() instanceof EntityPlayer))
             ev.getEntity().addChatMessage(new TextComponentItemStack(new ItemStack(Items.COOKIE)));
     }
     
