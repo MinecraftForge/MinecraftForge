@@ -17,6 +17,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -24,6 +25,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,7 +58,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.IJsonSerializable;
 import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -74,7 +78,6 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -1122,4 +1125,42 @@ public class ForgeHooks
     //TODO: Some registry to support custom LootEntry types?
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
+
+    public static boolean onTextComponentSerialize(ITextComponent tc, JsonObject jsonobject)
+    {
+        if (tc instanceof IJsonSerializable)
+        {
+            jsonobject.add("text", new JsonPrimitive("{Unsupported component type: "+tc.getClass().getName()+"}"));
+            jsonobject.add("data", ((IJsonSerializable)tc).getSerializableElement());
+            jsonobject.add("class", new JsonPrimitive(tc.getClass().getName()));
+            return true;
+        }
+
+        return false;
+    }
+
+    public static ITextComponent onTextComponentDeserialize(JsonObject jsonobject) 
+    {
+        if (!jsonobject.has("class"))
+            return null;
+
+        ITextComponent tc;
+        try
+        {
+            Class<?> clazz = Class.forName(jsonobject.get("class").getAsString());
+            tc = (ITextComponent) clazz.newInstance();
+            if(!(tc instanceof IJsonSerializable))
+                throw new UnsupportedOperationException("Deserializing custom chat components requires IJsonSerializable");
+        }
+        catch (Exception e)
+        {
+            jsonobject.add("text", new JsonPrimitive("{Error deserializing Component: " + e.getMessage() + "}"));
+            return null;
+        }
+
+        if (jsonobject.has("data"))
+            ((IJsonSerializable)tc).fromJson(jsonobject.get("data"));
+
+        return tc;
+    }
 }
