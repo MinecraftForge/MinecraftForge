@@ -27,8 +27,8 @@ public class ModAnnotation
 {
     public class EnumHolder
     {
-        private String desc;
-        private String value;
+        private final String desc;
+        private final String value;
 
         public EnumHolder(String desc, String value)
         {
@@ -36,6 +36,15 @@ public class ModAnnotation
             this.value = value;
         }
 
+        public String getDesc()
+        {
+            return desc;
+        }
+
+        public String getValue()
+        {
+            return value;
+        }
     }
     AnnotationType type;
     Type asmType;
@@ -100,7 +109,7 @@ public class ModAnnotation
 
     public void addEnumProperty(String key, String enumName, String value)
     {
-        values.put(key, new EnumHolder(enumName, value));
+        addProperty(key, new EnumHolder(enumName, value));
     }
 
     public void endArray()
@@ -111,10 +120,7 @@ public class ModAnnotation
     public ModAnnotation addChildAnnotation(String name, String desc)
     {
         ModAnnotation child = new ModAnnotation(AnnotationType.SUBTYPE, Type.getType(desc), this);
-        if (arrayList != null)
-        {
-            arrayList.add(child.getValues());
-        }
+        addProperty(name, child.getValues());
         return child;
     }
 }
