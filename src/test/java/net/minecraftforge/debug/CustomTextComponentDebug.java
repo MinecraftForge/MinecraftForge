@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import net.minecraft.crash.CrashReport;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -40,10 +42,10 @@ public class CustomTextComponentDebug
     }
 
     @SubscribeEvent
-    public void playerLogin(PlayerLoggedInEvent ev)
+    public void playerLogin(EntityJoinWorldEvent ev)
     {
-        if(ENABLE)
-            ev.player.addChatMessage(new TextComponentItemStack(new ItemStack(Items.COOKIE)));
+        if(ENABLE && (ev.getEntity() instanceof EntityPlayer))
+            ev.getEntity().addChatMessage(new TextComponentItemStack(new ItemStack(Items.COOKIE)));
     }
     
     public static class TextComponentItemStack extends TextComponentBase implements IJsonSerializable
