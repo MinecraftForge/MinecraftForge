@@ -175,5 +175,6 @@ public class MinecraftForge
        UsernameCache.load();
        // Load before all the mods, so MC owns the MC fluids
        FluidRegistry.validateFluidRegistry();
+       ForgeHooks.initTools();
    }
 }
