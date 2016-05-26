@@ -12,7 +12,7 @@
                      JsonObject jsonobject = p_deserialize_1_.getAsJsonObject();
                      ITextComponent itextcomponent;
  
-+                    if ((itextcomponent = net.minecraftforge.common.ForgeHooks.onTextComponentDeserialize(jsonobject)) != null) {} else 
++                    if ((itextcomponent = net.minecraftforge.common.ForgeHooks.onTextComponentDeserialize(jsonobject)) != null) {/*NOOP*/} else 
                      if (jsonobject.has("text"))
                      {
                          itextcomponent = new TextComponentString(jsonobject.get("text").getAsString());
