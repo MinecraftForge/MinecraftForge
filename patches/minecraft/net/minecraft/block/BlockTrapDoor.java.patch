@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
+@@ -130,7 +130,7 @@
+         {
+             boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
+ 
+-            if (flag || p_189540_4_.func_176223_P().func_185897_m())
++            if (flag || p_189540_4_.func_176223_P().func_185897_m() || true)
+             {
+                 boolean flag1 = ((Boolean)p_189540_1_.func_177229_b(field_176283_b)).booleanValue();
+ 
 @@ -242,6 +242,18 @@
          return new BlockStateContainer(this, new IProperty[] {field_176284_a, field_176283_b, field_176285_M});
      }

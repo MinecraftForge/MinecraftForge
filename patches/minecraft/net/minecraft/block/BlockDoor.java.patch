@@ -9,6 +9,15 @@
          }
          else
          {
+@@ -198,7 +198,7 @@
+             {
+                 boolean flag = p_189540_2_.func_175640_z(p_189540_3_) || p_189540_2_.func_175640_z(blockpos1);
+ 
+-                if (p_189540_4_ != this && (flag || p_189540_4_.func_176223_P().func_185897_m()) && flag != ((Boolean)iblockstate1.func_177229_b(field_176522_N)).booleanValue())
++                if (p_189540_4_ != this && (flag || p_189540_4_.func_176223_P().func_185897_m() || true) && flag != ((Boolean)iblockstate1.func_177229_b(field_176522_N)).booleanValue())
+                 {
+                     p_189540_2_.func_180501_a(blockpos1, iblockstate1.func_177226_a(field_176522_N, Boolean.valueOf(flag)), 2);
+ 
 @@ -221,7 +221,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)

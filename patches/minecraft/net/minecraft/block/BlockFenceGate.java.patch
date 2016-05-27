@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFenceGate.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFenceGate.java
+@@ -130,7 +130,7 @@
+         {
+             boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
+ 
+-            if (flag || p_189540_4_.func_176223_P().func_185897_m())
++            if (flag || p_189540_4_.func_176223_P().func_185897_m() || true)
+             {
+                 if (flag && !((Boolean)p_189540_1_.func_177229_b(field_176466_a)).booleanValue() && !((Boolean)p_189540_1_.func_177229_b(field_176465_b)).booleanValue())
+                 {

@@ -96,6 +96,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.world.RedstoneEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -1116,4 +1117,37 @@ public class ForgeHooks
     //TODO: Some registry to support custom LootEntry types?
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
+    
+    public static boolean checkingIndirectPower = false;
+    
+    public static int getWeakPowerOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side, int power)
+    {
+        if(checkingIndirectPower && !state.canProvidePower())
+            return power;
+        RedstoneEvent.WeakOutput getPowerEvent = new RedstoneEvent.WeakOutput(state, world, pos, side.getOpposite(), power);
+        MinecraftForge.EVENT_BUS.post(getPowerEvent);
+        return getPowerEvent.getNewPower();
+    }
+    
+    public static int getStrongPowerOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side, int power)
+    {
+        RedstoneEvent.StrongOutput getPowerEvent = new RedstoneEvent.StrongOutput(state, world, pos, side == null ? null : side.getOpposite(), power);
+        MinecraftForge.EVENT_BUS.post(getPowerEvent);
+        return getPowerEvent.getNewPower();
+    }
+
+    public static boolean worldIsBlockPowered(World world, BlockPos pos)
+    {
+        IBlockState state = world.getBlockState(pos);
+        
+        for (EnumFacing dir : EnumFacing.values())
+        {
+            if(world.getRedstonePower(pos.offset(dir), dir) > 0)
+                return true;
+            if(getWeakPowerOutput(state, world, pos, dir, getStrongPowerOutput(state, world, pos, dir, (state.getBlock().shouldCheckWeakPower(state, world, pos, dir) ? world.getStrongPower(pos.offset(dir), dir) : state.getWeakPower(world, pos, dir)))) > 0)
+                return true;
+        }
+        
+        return false;
+    }
 }

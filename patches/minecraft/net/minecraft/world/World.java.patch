@@ -650,16 +650,45 @@
      }
  
      public int func_181545_F()
-@@ -3038,7 +3215,7 @@
+@@ -2970,7 +3147,7 @@
+ 
+     public int func_175627_a(BlockPos p_175627_1_, EnumFacing p_175627_2_)
+     {
+-        return this.func_180495_p(p_175627_1_).func_185893_b(this, p_175627_1_, p_175627_2_);
++        return net.minecraftforge.common.ForgeHooks.getStrongPowerOutput(this.func_180495_p(p_175627_1_), this, p_175627_1_, p_175627_2_, this.func_180495_p(p_175627_1_).func_185893_b(this, p_175627_1_, p_175627_2_));
+     }
+ 
+     public WorldType func_175624_G()
+@@ -3038,17 +3215,18 @@
      public int func_175651_c(BlockPos p_175651_1_, EnumFacing p_175651_2_)
      {
          IBlockState iblockstate = this.func_180495_p(p_175651_1_);
 -        return iblockstate.func_185915_l() ? this.func_175676_y(p_175651_1_) : iblockstate.func_185911_a(this, p_175651_1_, p_175651_2_);
-+        return iblockstate.func_177230_c().shouldCheckWeakPower(iblockstate, this, p_175651_1_, p_175651_2_) ? this.func_175676_y(p_175651_1_) : iblockstate.func_185911_a(this, p_175651_1_, p_175651_2_);
++        return net.minecraftforge.common.ForgeHooks.getWeakPowerOutput(iblockstate, this, p_175651_1_, p_175651_2_, net.minecraftforge.common.ForgeHooks.getStrongPowerOutput(iblockstate, this, p_175651_1_, p_175651_2_, (iblockstate.func_177230_c().shouldCheckWeakPower(iblockstate, this, p_175651_1_, p_175651_2_) ? this.func_175676_y(p_175651_1_) : iblockstate.func_185911_a(this, p_175651_1_, p_175651_2_))));
      }
  
      public boolean func_175640_z(BlockPos p_175640_1_)
-@@ -3235,7 +3412,7 @@
+     {
+-        return this.func_175651_c(p_175640_1_.func_177977_b(), EnumFacing.DOWN) > 0 ? true : (this.func_175651_c(p_175640_1_.func_177984_a(), EnumFacing.UP) > 0 ? true : (this.func_175651_c(p_175640_1_.func_177978_c(), EnumFacing.NORTH) > 0 ? true : (this.func_175651_c(p_175640_1_.func_177968_d(), EnumFacing.SOUTH) > 0 ? true : (this.func_175651_c(p_175640_1_.func_177976_e(), EnumFacing.WEST) > 0 ? true : this.func_175651_c(p_175640_1_.func_177974_f(), EnumFacing.EAST) > 0))));
++        return net.minecraftforge.common.ForgeHooks.worldIsBlockPowered(this, p_175640_1_);
+     }
+ 
+     public int func_175687_A(BlockPos p_175687_1_)
+     {
+         int i = 0;
++        net.minecraftforge.common.ForgeHooks.checkingIndirectPower = true;
+ 
+         for (EnumFacing enumfacing : EnumFacing.values())
+         {
+@@ -3065,6 +3243,7 @@
+             }
+         }
+ 
++        net.minecraftforge.common.ForgeHooks.checkingIndirectPower = false;
+         return i;
+     }
+ 
+@@ -3235,7 +3414,7 @@
  
      public long func_72905_C()
      {
@@ -668,7 +697,7 @@
      }
  
      public long func_82737_E()
-@@ -3245,17 +3422,17 @@
+@@ -3245,17 +3424,17 @@
  
      public long func_72820_D()
      {
@@ -689,7 +718,7 @@
  
          if (!this.func_175723_af().func_177746_a(blockpos))
          {
-@@ -3267,7 +3444,7 @@
+@@ -3267,7 +3446,7 @@
  
      public void func_175652_B(BlockPos p_175652_1_)
      {
@@ -698,7 +727,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3287,12 +3464,18 @@
+@@ -3287,12 +3466,18 @@
  
          if (!this.field_72996_f.contains(p_72897_1_))
          {
@@ -717,7 +746,7 @@
          return true;
      }
  
-@@ -3386,8 +3569,7 @@
+@@ -3386,8 +3571,7 @@
  
      public boolean func_180502_D(BlockPos p_180502_1_)
      {
@@ -727,7 +756,7 @@
      }
  
      @Nullable
-@@ -3448,12 +3630,12 @@
+@@ -3448,12 +3632,12 @@
  
      public int func_72800_K()
      {
@@ -742,7 +771,7 @@
      }
  
      public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3503,7 +3685,7 @@
+@@ -3503,7 +3687,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -751,7 +780,7 @@
      }
  
      public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_)
-@@ -3537,7 +3719,7 @@
+@@ -3537,7 +3721,7 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -760,7 +789,7 @@
          {
              BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
  
-@@ -3545,18 +3727,14 @@
+@@ -3545,18 +3729,14 @@
              {
                  IBlockState iblockstate = this.func_180495_p(blockpos);
  
@@ -783,7 +812,7 @@
                      }
                  }
              }
-@@ -3622,6 +3800,87 @@
+@@ -3622,6 +3802,87 @@
          return i >= -k && i <= k && j >= -k && j <= k;
      }
  
