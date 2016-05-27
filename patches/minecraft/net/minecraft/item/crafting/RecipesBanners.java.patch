@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/RecipesBanners.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipesBanners.java
-@@ -135,11 +135,7 @@
+@@ -91,9 +91,10 @@
+                     {
+                         ItemStack itemstack2 = p_77572_1_.func_70301_a(j);
+ 
+-                        if (itemstack2 != null && itemstack2.func_77973_b() == Items.field_151100_aR)
++                        int color = getColor(itemstack2);
++                        if (color != -1)
+                         {
+-                            k = itemstack2.func_77960_j();
++                            k = color;
+                             break;
+                         }
+                     }
+@@ -138,11 +139,7 @@
                  for (int i = 0; i < aitemstack.length; ++i)
                  {
                      ItemStack itemstack = p_179532_1_.func_70301_a(i);
@@ -13,7 +26,64 @@
                  }
  
                  return aitemstack;
-@@ -356,9 +352,9 @@
+@@ -168,7 +165,7 @@
+ 
+                                 if (itemstack != null && itemstack.func_77973_b() != Items.field_179564_cE)
+                                 {
+-                                    if (itemstack.func_77973_b() == Items.field_151100_aR)
++                                    if (isDye(itemstack))
+                                     {
+                                         if (flag2)
+                                         {
+@@ -208,7 +205,7 @@
+ 
+                                 if (itemstack1 != null && itemstack1.func_77973_b() != Items.field_179564_cE)
+                                 {
+-                                    if (itemstack1.func_77973_b() != Items.field_151100_aR)
++                                    if (!isDye(itemstack1))
+                                     {
+                                         flag = false;
+                                         break;
+@@ -249,6 +246,38 @@
+ 
+                 return null;
+             }
++
++            private static String[] colors = { "Black", "Red", "Green", "Brown", "Blue", "Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow", "LightBlue", "Magenta", "Orange", "White" };
++            @SuppressWarnings("unchecked") //Why java...
++            private static java.util.List<ItemStack>[] colored = new java.util.List[colors.length];
++            private static java.util.List<ItemStack> dyes;
++            private static boolean hasInit = false;
++            private static void init()
++            {
++                if (hasInit) return;
++                for (int x = 0; x < colors.length; x++)
++                    colored[x] = net.minecraftforge.oredict.OreDictionary.getOres("dye" + colors[x]);
++                dyes = net.minecraftforge.oredict.OreDictionary.getOres("dye");
++                hasInit = true;
++            }
++            private boolean isDye(ItemStack stack)
++            {
++                init();
++                for (ItemStack ore : dyes)
++                    if (net.minecraftforge.oredict.OreDictionary.itemMatches(ore, stack, false))
++                        return true;
++                return false;
++            }
++            private int getColor(ItemStack stack)
++            {
++                init();
++                if (stack == null) return -1;
++                for (int x = 0; x < colored.length; x++)
++                    for (ItemStack ore : colored[x])
++                        if (net.minecraftforge.oredict.OreDictionary.itemMatches(ore, stack, true))
++                            return x;
++                return -1;
++            }
+         }
+ 
+     public static class RecipeDuplicatePattern implements IRecipe
+@@ -362,9 +391,9 @@
  
                      if (itemstack != null)
                      {

@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -123,14 +123,15 @@
+@@ -136,14 +136,15 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
 +    @SuppressWarnings("unused")
-     public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, ItemInWorldManager p_i45285_4_)
+     public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);
          p_i45285_4_.field_73090_b = this;
@@ -16,9 +16,9 @@
 -        if (!p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
 +        if (false && !p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
          {
-             int i = Math.max(5, p_i45285_1_.func_82357_ak() - 6);
+             int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
              int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
-@@ -223,7 +224,7 @@
+@@ -252,7 +253,7 @@
  
          this.field_71070_bA.func_75142_b();
  
@@ -27,25 +27,17 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -294,6 +295,7 @@
-                 for (Chunk chunk1 : list)
-                 {
-                     this.func_71121_q().func_73039_n().func_85172_a(this, chunk1);
-+                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(chunk1.func_76632_l(), this));
-                 }
-             }
-         }
-@@ -424,6 +426,7 @@
+@@ -435,6 +436,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
 +        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
-         if (this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages"))
-         {
-             Team team = this.func_96124_cp();
-@@ -447,7 +450,20 @@
+         boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
+         this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
  
-         if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory"))
+@@ -461,7 +463,20 @@
+ 
+         if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
          {
 +            captureDrops = true;
 +            capturedDrops.clear();
@@ -58,29 +50,30 @@
 +            {
 +                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
 +                {
-+                    func_71012_a(item);
++                    this.field_70170_p.func_72838_d(item);
 +                }
 +            }
          }
  
-         for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreObjectiveCriteria.field_96642_c))
-@@ -461,6 +477,7 @@
-         if (entitylivingbase != null)
-         {
-             EntityList.EntityEggInfo entitylist$entityegginfo = (EntityList.EntityEggInfo)EntityList.field_75627_a.get(Integer.valueOf(EntityList.func_75619_a(entitylivingbase)));
-+            if (entitylist$entityegginfo == null) entitylist$entityegginfo = net.minecraftforge.fml.common.registry.EntityRegistry.getEggs().get(EntityList.func_75621_b(entitylivingbase));
- 
-             if (entitylist$entityegginfo != null)
-             {
-@@ -528,6 +545,7 @@
- 
-     public void func_71027_c(int p_71027_1_)
+         for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
+@@ -543,6 +558,7 @@
+     @Nullable
+     public Entity func_184204_a(int p_184204_1_)
      {
-+        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_71027_1_)) return;
-         if (this.field_71093_bK == 1 && p_71027_1_ == 1)
++        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return this;
+         this.field_184851_cj = true;
+ 
+         if (this.field_71093_bK == 1 && p_184204_1_ == 1)
+@@ -700,7 +716,7 @@
+         BlockPos blockpos = new BlockPos(i, j, k);
+         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+ 
+-        if (iblockstate.func_185904_a() == Material.field_151579_a)
++        if (iblockstate.func_177230_c().isAir(iblockstate, this.field_70170_p, blockpos))
          {
-             this.func_71029_a(AchievementList.field_76003_C);
-@@ -831,6 +849,7 @@
+             BlockPos blockpos1 = blockpos.func_177977_b();
+             IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
+@@ -924,6 +940,7 @@
      {
          if (p_71064_1_ != null)
          {

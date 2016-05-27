@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomePlains.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomePlains.java
+@@ -92,4 +92,19 @@
+ 
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+     }
++
++    @Override
++    public void addDefaultFlowers()
++    {
++        BlockFlower red = net.minecraft.init.Blocks.field_150328_O;
++        BlockFlower yel = net.minecraft.init.Blocks.field_150327_N;
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.ORANGE_TULIP), 3);
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.RED_TULIP), 3);
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.PINK_TULIP), 3);
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.WHITE_TULIP), 3);
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.POPPY), 20);
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.HOUSTONIA), 20);
++        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.OXEYE_DAISY), 20);
++        addFlower(yel.func_176223_P().func_177226_a(yel.func_176494_l(), BlockFlower.EnumFlowerType.DANDELION), 30);
++    }
+ }

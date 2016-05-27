@@ -18,11 +18,16 @@ import net.minecraft.entity.item.EntityMinecart;
  **/
 public class MinecartCollisionEvent extends MinecartEvent
 {
-    public final Entity collider;
+    private final Entity collider;
 
     public MinecartCollisionEvent(EntityMinecart minecart, Entity collider)
     {
         super(minecart);
         this.collider = collider;
+    }
+
+    public Entity getCollider()
+    {
+        return collider;
     }
 }

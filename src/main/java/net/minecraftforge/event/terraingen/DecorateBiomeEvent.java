@@ -3,7 +3,7 @@ package net.minecraftforge.event.terraingen;
 import java.util.Random;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**DecorateBiomeEvent is fired when a BiomeDecorator is created.
@@ -23,15 +23,30 @@ import net.minecraft.world.World;
  **/
 public class DecorateBiomeEvent extends Event
 {
-    public final World world;
-    public final Random rand;
-    public final BlockPos pos;
+    private final World world;
+    private final Random rand;
+    private final BlockPos pos;
 
     public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
+    }
+
+    public World getWorld()
+    {
+        return world;
+    }
+
+    public Random getRand()
+    {
+        return rand;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
     }
 
     /**
@@ -64,11 +79,16 @@ public class DecorateBiomeEvent extends Event
     @HasResult
     public static class Decorate extends DecorateBiomeEvent
     {
+        public EventType getType()
+        {
+            return type;
+        }
+
         /** Use CUSTOM to filter custom event types
          */
         public static enum EventType { BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, LILYPAD, FLOWERS, GRASS, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM }
 
-        public final EventType type;
+        private final EventType type;
 
         public Decorate(World world, Random rand, BlockPos pos, EventType type)
         {

@@ -1,30 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
-@@ -123,12 +123,11 @@
-                         if (j3 == 1)
-                         {
-                             p_180709_1_.func_180501_a(blockpos2, Blocks.field_150486_ae.func_176458_f(p_180709_1_, blockpos2, Blocks.field_150486_ae.func_176223_P()), 2);
--                            List<WeightedRandomChestContent> list = WeightedRandomChestContent.func_177629_a(field_175917_c, new WeightedRandomChestContent[] {Items.field_151134_bR.func_92114_b(p_180709_2_)});
-                             TileEntity tileentity1 = p_180709_1_.func_175625_s(blockpos2);
- 
-                             if (tileentity1 instanceof TileEntityChest)
-                             {
--                                WeightedRandomChestContent.func_177630_a(p_180709_2_, list, (TileEntityChest)tileentity1, 8);
-+                                WeightedRandomChestContent.func_177630_a(p_180709_2_, net.minecraftforge.common.ChestGenHooks.getItems(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, p_180709_2_), (TileEntityChest)tileentity1, 8);
-                             }
- 
-                             break;
-@@ -159,6 +158,12 @@
+@@ -154,6 +154,6 @@
  
      private String func_76543_b(Random p_76543_1_)
      {
 -        return field_175916_b[p_76543_1_.nextInt(field_175916_b.length)];
 +        return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_76543_1_);
      }
-+
-+    static
-+    {
-+        net.minecraftforge.common.ChestGenHooks.init(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, field_175917_c, 8, 8);
-+        net.minecraftforge.common.ChestGenHooks.addItem(net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new net.minecraft.item.ItemStack(Items.field_151134_bR, 1, 0), 1, 1, 1));
-+    }
  }

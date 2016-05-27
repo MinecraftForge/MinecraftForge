@@ -1,16 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -42,8 +42,41 @@
-         this.field_75825_d = p_i2003_1_;
+@@ -47,9 +47,43 @@
+         this.field_186055_e = p_i46673_2_;
      }
  
 +    public boolean chunkExists(World world, int x, int z)
 +    {
-+        ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(x, z);
++        ChunkPos chunkcoordintpair = new ChunkPos(x, z);
 +
 +        if (this.field_75826_b.contains(chunkcoordintpair))
 +        {
-+            for(ChunkCoordIntPair pendingChunkCoord : this.field_75828_a.keySet())
++            for(ChunkPos pendingChunkCoord : this.field_75828_a.keySet())
 +            {
 +                if (pendingChunkCoord.equals(chunkcoordintpair))
 +                {
@@ -22,6 +22,8 @@
 +        return RegionFileCache.func_76550_a(this.field_75825_d, x, z).chunkExists(x & 31, z & 31);
 +    }
 +
++
+     @Nullable
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
 +        Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
@@ -39,11 +41,11 @@
 +
 +    public Object[] loadChunk__Async(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
 +    {
-         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(p_75815_2_, p_75815_3_);
-         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkcoordintpair);
+         ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
+         NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkpos);
  
-@@ -59,11 +92,17 @@
-             nbttagcompound = CompressedStreamTools.func_74794_a(datainputstream);
+@@ -65,11 +99,17 @@
+             nbttagcompound = this.field_186055_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
          }
  
 -        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
@@ -61,11 +63,11 @@
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
              field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is missing level data, skipping");
-@@ -87,10 +126,29 @@
+@@ -93,10 +133,29 @@
                      field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.field_76635_g + ", " + chunk.field_76647_h + ")");
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
-+                    
++
 +                    // Have to move tile entities since we don't load them at this stage
 +                    NBTTagList _tileEntities = nbttagcompound.func_150295_c("TileEntities", 10);
 +
@@ -92,43 +94,40 @@
              }
          }
      }
-@@ -105,6 +163,7 @@
-             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+@@ -112,6 +171,7 @@
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
+             nbttagcompound.func_74768_a("DataVersion", 184);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -281,11 +340,20 @@
-             {
-                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+@@ -267,8 +327,17 @@
  
-+                try
-+                {
-                 if (entity.func_70039_c(nbttagcompound1))
+                 if (entity.func_70039_c(nbttagcompound2))
                  {
++                    try
++                    {
                      p_75820_1_.func_177409_g(true);
-                     nbttaglist1.func_74742_a(nbttagcompound1);
+                     nbttaglist1.func_74742_a(nbttagcompound2);
++                    }
++                    catch (Exception e)
++                    {
++                        net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
++                                "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
++                                entity.getClass().getName());
++                    }
                  }
-+                }
-+                catch (Exception e)
-+                {
-+                    net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, e,
-+                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
-+                            entity.getClass().getName());
-+                }
              }
          }
+@@ -278,8 +347,17 @@
  
-@@ -295,8 +363,17 @@
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
-             NBTTagCompound nbttagcompound2 = new NBTTagCompound();
 +            try
 +            {
-             tileentity.func_145841_b(nbttagcompound2);
-             nbttaglist2.func_74742_a(nbttagcompound2);
+             NBTTagCompound nbttagcompound3 = tileentity.func_189515_b(new NBTTagCompound());
+             nbttaglist2.func_74742_a(nbttagcompound3);
 +            }
 +            catch (Exception e)
 +            {
@@ -139,7 +138,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -376,6 +453,12 @@
+@@ -348,6 +426,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -152,11 +151,12 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -447,7 +530,5 @@
+@@ -400,8 +484,6 @@
                  }
              }
          }
 -
 -        return chunk;
      }
- }
+ 
+     @Nullable

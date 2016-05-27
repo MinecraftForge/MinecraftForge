@@ -1,46 +1,47 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -131,7 +131,9 @@
-                 return;
-             }
- 
--            iblockaccess = new RegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
-+            RegionRenderCache cache = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos1.func_177982_a(1, 1, 1), 1);
-+            net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(field_178588_d, field_178586_f, cache);
-+            iblockaccess = cache;
-             p_178581_4_.func_178543_a(compiledchunk);
-         }
-         finally
-@@ -158,7 +160,7 @@
-                     lvt_10_1_.func_178606_a(blockpos$mutableblockpos);
+@@ -162,7 +162,7 @@
+                     lvt_9_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
 -                if (block.func_149716_u())
 +                if (block.hasTileEntity(iblockstate))
                  {
-                     TileEntity tileentity = iblockaccess.func_175625_s(new BlockPos(blockpos$mutableblockpos));
-                     TileEntitySpecialRenderer<TileEntity> tileentityspecialrenderer = TileEntityRendererDispatcher.field_147556_a.<TileEntity>func_147547_b(tileentity);
-@@ -174,7 +176,9 @@
+                     TileEntity tileentity = this.field_189564_r.func_175625_s(new BlockPos(blockpos$mutableblockpos));
+ 
+@@ -182,7 +182,9 @@
                      }
                  }
  
--                EnumWorldBlockLayer enumworldblocklayer1 = block.func_180664_k();
-+                for(EnumWorldBlockLayer enumworldblocklayer1 : EnumWorldBlockLayer.values()) {
-+                    if(!block.canRenderInLayer(enumworldblocklayer1)) continue;
-+                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(enumworldblocklayer1);
-                 int j = enumworldblocklayer1.ordinal();
+-                BlockRenderLayer blockrenderlayer1 = block.func_180664_k();
++                for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
++                     if(!block.canRenderInLayer(iblockstate, blockrenderlayer1)) continue;
++                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
+                 int j = blockrenderlayer1.ordinal();
  
-                 if (block.func_149645_b() != -1)
-@@ -189,6 +193,7 @@
+                 if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
+@@ -197,6 +199,8 @@
  
-                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, iblockaccess, worldrenderer);
+                     aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, vertexbuffer);
                  }
 +                }
++                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
              }
  
-             for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values())
-@@ -385,6 +390,26 @@
-         return this.field_178593_n;
+             for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
+@@ -278,7 +282,9 @@
+     private void func_189563_q()
+     {
+         int i = 1;
+-        this.field_189564_r = new ChunkCache(this.field_178588_d, this.field_178586_f.func_177982_a(-1, -1, -1), this.field_178586_f.func_177982_a(16, 16, 16), 1);
++        ChunkCache cache = createRegionRenderCache(this.field_178588_d, this.field_178586_f.func_177982_a(-1, -1, -1), this.field_178586_f.func_177982_a(16, 16, 16), 1);
++        net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(this.field_178588_d, this.field_178586_f, cache);
++        this.field_189564_r = cache;
+     }
+ 
+     @Nullable
+@@ -427,6 +433,26 @@
+         return this.field_178593_n && this.field_188284_q;
      }
  
 +    /* ======================================== FORGE START =====================================*/
@@ -57,12 +58,12 @@
 +     *                 the cache a 20x20x20 cube, for a total of 8000 states in the cache.
 +     * @return new RegionRenderCache instance
 +     */
-+    protected RegionRenderCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
++    protected ChunkCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
 +    {
-+        return new RegionRenderCache(world, from, to, subtract);
++        return new ChunkCache(world, from, to, subtract);
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
      public BlockPos func_181701_a(EnumFacing p_181701_1_)
      {
-         return (BlockPos)this.field_181702_p.get(p_181701_1_);
+         return this.field_181702_p[p_181701_1_.ordinal()];

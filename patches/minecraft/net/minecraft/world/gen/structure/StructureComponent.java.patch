@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
-@@ -35,6 +35,10 @@
+@@ -39,6 +39,10 @@
  
-     public NBTTagCompound func_143010_b()
+     public final NBTTagCompound func_143010_b()
      {
 +        if (MapGenStructureIO.func_143036_a(this) == null) // Friendlier error then the Null String error below.
 +        {

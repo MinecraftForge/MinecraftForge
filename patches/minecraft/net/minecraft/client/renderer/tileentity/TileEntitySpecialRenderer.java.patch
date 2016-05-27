@@ -5,5 +5,5 @@
          return false;
      }
 +
-+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, net.minecraft.client.renderer.WorldRenderer worldRenderer) {}
++    public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, net.minecraft.client.renderer.VertexBuffer buffer) {}
  }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -345,6 +345,15 @@
+@@ -404,6 +404,15 @@
          this.field_71159_c.field_71456_v.func_146158_b().func_146227_a(p_146105_1_);
      }
  
@@ -8,7 +8,7 @@
 +    {
 +        for (int y = 0; y < height; y++)
 +        {
-+            if (func_175162_d(pos.func_177982_a(0, y, 0))) return false;
++            if (!func_175162_d(pos.func_177982_a(0, y, 0))) return false;
 +        }
 +        return true;
 +    }
@@ -16,14 +16,14 @@
      protected boolean func_145771_j(double p_145771_1_, double p_145771_3_, double p_145771_5_)
      {
          if (this.field_70145_X)
-@@ -357,30 +366,34 @@
+@@ -416,30 +425,34 @@
              double d0 = p_145771_1_ - (double)blockpos.func_177958_n();
              double d1 = p_145771_5_ - (double)blockpos.func_177952_p();
  
 -            if (!this.func_175162_d(blockpos))
-+            int entHeight = Math.max(Math.round(this.field_70131_O), 1);
++            int entHeight = Math.max((int)Math.ceil(this.field_70131_O), 1);
 +
-+            boolean inTranslucentBlock = this.isHeadspaceFree(blockpos, entHeight);
++            boolean inTranslucentBlock = !this.isHeadspaceFree(blockpos, entHeight);
 +
 +            if (inTranslucentBlock)
              {
@@ -31,41 +31,52 @@
                  double d2 = 9999.0D;
  
 -                if (this.func_175162_d(blockpos.func_177976_e()) && d0 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177976_e(), entHeight) && d0 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177976_e(), entHeight) && d0 < d2)
                  {
                      d2 = d0;
                      i = 0;
                  }
  
 -                if (this.func_175162_d(blockpos.func_177974_f()) && 1.0D - d0 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177974_f(), entHeight) && 1.0D - d0 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177974_f(), entHeight) && 1.0D - d0 < d2)
                  {
                      d2 = 1.0D - d0;
                      i = 1;
                  }
  
 -                if (this.func_175162_d(blockpos.func_177978_c()) && d1 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177978_c(), entHeight) && d1 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177978_c(), entHeight) && d1 < d2)
                  {
                      d2 = d1;
                      i = 4;
                  }
  
 -                if (this.func_175162_d(blockpos.func_177968_d()) && 1.0D - d1 < d2)
-+                if (!this.isHeadspaceFree(blockpos.func_177968_d(), entHeight) && 1.0D - d1 < d2)
++                if (this.isHeadspaceFree(blockpos.func_177968_d(), entHeight) && 1.0D - d1 < d2)
                  {
                      d2 = 1.0D - d1;
                      i = 5;
-@@ -448,6 +461,12 @@
+@@ -474,7 +487,7 @@
  
-     public void func_85030_a(String p_85030_1_, float p_85030_2_, float p_85030_3_)
+     private boolean func_175162_d(BlockPos p_175162_1_)
      {
-+        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_85030_1_, p_85030_2_, p_85030_3_);
-+        if (event.isCanceled() || event.name == null) return;
-+        p_85030_1_ = event.name;
-+        p_85030_2_ = event.newVolume;
-+        p_85030_3_ = event.newPitch;
-+
-         this.field_70170_p.func_72980_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_85030_1_, p_85030_2_, p_85030_3_, false);
+-        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_185915_l();
++        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l();
      }
  
+     public void func_70031_b(boolean p_70031_1_)
+@@ -519,7 +532,13 @@
+ 
+     public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_)
+     {
+-        this.field_70170_p.func_184134_a(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_, false);
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_);
++        if (event.isCanceled() || event.getSound() == null) return;
++        p_184185_1_ = event.getSound();
++        p_184185_2_ = event.getVolume();
++        p_184185_3_ = event.getPitch();
++
++        this.field_70170_p.func_184134_a(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_184185_1_, event.getCategory(), p_184185_2_, p_184185_3_, false);
+     }
+ 
+     public boolean func_70613_aW()

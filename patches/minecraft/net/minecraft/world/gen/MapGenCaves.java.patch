@@ -1,17 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/MapGenCaves.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/MapGenCaves.java
-@@ -138,7 +138,7 @@
+@@ -141,9 +141,7 @@
+                             {
+                                 if (l1 >= 0 && l1 < 256)
                                  {
-                                     IBlockState iblockstate = p_180702_5_.func_177856_a(j1, l1, k1);
- 
+-                                    IBlockState iblockstate = p_180702_5_.func_177856_a(j1, l1, k1);
+-
 -                                    if (iblockstate.func_177230_c() == Blocks.field_150358_i || iblockstate.func_177230_c() == Blocks.field_150355_j)
 +                                    if (isOceanBlock(p_180702_5_, j1, l1, k1, p_180702_3_, p_180702_4_))
                                      {
                                          flag3 = true;
                                      }
-@@ -176,33 +176,12 @@
+@@ -181,33 +179,12 @@
                                              IBlockState iblockstate1 = p_180702_5_.func_177856_a(j3, j2, i2);
-                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.func_177856_a(j3, j2 + 1, i2), Blocks.field_150350_a.func_176223_P());
+                                             IBlockState iblockstate2 = (IBlockState)Objects.firstNonNull(p_180702_5_.func_177856_a(j3, j2 + 1, i2), field_186127_b);
  
 -                                            if (iblockstate1.func_177230_c() == Blocks.field_150349_c || iblockstate1.func_177230_c() == Blocks.field_150391_bh)
 +                                            if (isTopBlock(p_180702_5_, j3, j2, i2, p_180702_3_, p_180702_4_))
@@ -23,15 +25,15 @@
 -                                            {
 -                                                if (j2 - 1 < 10)
 -                                                {
--                                                    p_180702_5_.func_177855_a(j3, j2, i2, Blocks.field_150353_l.func_176223_P());
+-                                                    p_180702_5_.func_177855_a(j3, j2, i2, field_186126_a);
 -                                                }
 -                                                else
 -                                                {
--                                                    p_180702_5_.func_177855_a(j3, j2, i2, Blocks.field_150350_a.func_176223_P());
+-                                                    p_180702_5_.func_177855_a(j3, j2, i2, field_186127_b);
 -
 -                                                    if (iblockstate2.func_177230_c() == Blocks.field_150354_m)
 -                                                    {
--                                                        p_180702_5_.func_177855_a(j3, j2 + 1, i2, iblockstate2.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? Blocks.field_180395_cM.func_176223_P() : Blocks.field_150322_A.func_176223_P());
+-                                                        p_180702_5_.func_177855_a(j3, j2 + 1, i2, iblockstate2.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? field_186129_d : field_186128_c);
 -                                                    }
 -
 -                                                    if (flag1 && p_180702_5_.func_177856_a(j3, j2 - 1, i2).func_177230_c() == Blocks.field_150346_d)
@@ -45,7 +47,7 @@
                                          }
                                      }
                                  }
-@@ -261,4 +240,71 @@
+@@ -266,4 +243,71 @@
              }
          }
      }
@@ -57,10 +59,10 @@
 +    }
 +
 +    //Exception biomes to make sure we generate like vanilla
-+    private boolean isExceptionBiome(net.minecraft.world.biome.BiomeGenBase biome)
++    private boolean isExceptionBiome(net.minecraft.world.biome.Biome biome)
 +    {
-+        if (biome == net.minecraft.world.biome.BiomeGenBase.field_76787_r) return true;
-+        if (biome == net.minecraft.world.biome.BiomeGenBase.field_76769_d) return true;
++        if (biome == net.minecraft.init.Biomes.field_76787_r) return true;
++        if (biome == net.minecraft.init.Biomes.field_76769_d) return true;
 +        return false;
 +    }
 +
@@ -68,7 +70,7 @@
 +    //Vanilla bugs to make sure that we generate the map the same way vanilla does.
 +    private boolean isTopBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ)
 +    {
-+        net.minecraft.world.biome.BiomeGenBase biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
++        net.minecraft.world.biome.Biome biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
 +        IBlockState state = data.func_177856_a(x, y, z);
 +        return (isExceptionBiome(biome) ? state.func_177230_c() == Blocks.field_150349_c : state.func_177230_c() == biome.field_76752_A);
 +    }
@@ -90,23 +92,23 @@
 +     */
 +    protected void digBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop, IBlockState state, IBlockState up)
 +    {
-+        net.minecraft.world.biome.BiomeGenBase biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
++        net.minecraft.world.biome.Biome biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
 +        IBlockState top = biome.field_76752_A;
 +        IBlockState filler = biome.field_76753_B;
 +
 +        if (this.func_175793_a(state, up) || state.func_177230_c() == top.func_177230_c() || state.func_177230_c() == filler.func_177230_c())
 +        {
-+            if (y < 10)
++            if (y - 1 < 10)
 +            {
-+                data.func_177855_a(x, y, z, Blocks.field_150353_l.func_176223_P());
++                data.func_177855_a(x, y, z, field_186126_a);
 +            }
 +            else
 +            {
-+                data.func_177855_a(x, y, z, Blocks.field_150350_a.func_176223_P());
++                data.func_177855_a(x, y, z, field_186127_b);
 +
 +                if (up.func_177230_c() == Blocks.field_150354_m)
 +                {
-+                    data.func_177855_a(x, y + 1, z, up.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? Blocks.field_180395_cM.func_176223_P() : Blocks.field_150322_A.func_176223_P());
++                    data.func_177855_a(x, y + 1, z, up.func_177229_b(BlockSand.field_176504_a) == BlockSand.EnumType.RED_SAND ? field_186129_d : field_186128_c);
 +                }
 +
 +                if (foundTop && data.func_177856_a(x, y - 1, z).func_177230_c() == filler.func_177230_c())

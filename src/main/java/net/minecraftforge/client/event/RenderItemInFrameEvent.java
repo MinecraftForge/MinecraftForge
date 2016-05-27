@@ -14,14 +14,29 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Cancelable
 public class RenderItemInFrameEvent extends Event
 {
-    public final ItemStack item;
-    public final EntityItemFrame entityItemFrame;
-    public final RenderItemFrame renderer;
+    private final ItemStack item;
+    private final EntityItemFrame entityItemFrame;
+    private final RenderItemFrame renderer;
     
     public RenderItemInFrameEvent(EntityItemFrame itemFrame, RenderItemFrame renderItemFrame)
     {
         item = itemFrame.getDisplayedItem();
         entityItemFrame = itemFrame;
         renderer = renderItemFrame;
+    }
+
+    public ItemStack getItem()
+    {
+        return item;
+    }
+
+    public EntityItemFrame getEntityItemFrame()
+    {
+        return entityItemFrame;
+    }
+
+    public RenderItemFrame getRenderer()
+    {
+        return renderer;
     }
 }

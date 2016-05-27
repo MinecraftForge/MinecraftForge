@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
-@@ -186,6 +186,7 @@
+@@ -176,6 +176,7 @@
      {
          super.func_145836_u();
          this.field_145984_a = false;
@@ -8,13 +8,14 @@
      }
  
      @SuppressWarnings("incomplete-switch")
-@@ -468,4 +469,24 @@
+@@ -462,4 +463,26 @@
              this.field_145985_p[i] = null;
          }
      }
 +
 +    public net.minecraftforge.items.VanillaDoubleChestItemHandler doubleChestHandler;
 +
++    @SuppressWarnings("unchecked")
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {
@@ -32,4 +33,5 @@
 +    {
 +        return super.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 +    }
++
  }

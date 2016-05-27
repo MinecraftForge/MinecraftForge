@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemRecord.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemRecord.java
-@@ -76,4 +76,15 @@
-     {
-         return (ItemRecord)field_150928_b.get(p_150926_0_);
+@@ -63,6 +63,17 @@
+         p_77624_3_.add(this.func_150927_i());
      }
-+
+ 
 +    /**
 +     * Retrieves the resource location of the sound to play for this record.
 +     *
@@ -15,4 +14,7 @@
 +    {
 +        return new net.minecraft.util.ResourceLocation(name);
 +    }
- }
++
+     @SideOnly(Side.CLIENT)
+     public String func_150927_i()
+     {

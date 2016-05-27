@@ -81,7 +81,7 @@ public class ForgeTimeTracker {
     
     private ImmutableMap<TileEntity, int[]> buildImmutableTileEntityTimingMap()
     {
-        Builder<TileEntity, int[]> builder = ImmutableMap.<TileEntity,int[]>builder();
+        Builder<TileEntity, int[]> builder = ImmutableMap.builder();
         for (Entry<TileEntity, int[]> entry : tileEntityTimings.entrySet())
         {
             builder.put(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 100));

@@ -2,10 +2,13 @@ package net.minecraftforge.debug;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -19,7 +22,8 @@ public class MultiLayerModelDebug
     public static final String MODID = "forgedebugmultilayermodel";
     public static final String VERSION = "0.0";
 
-    public static String blockName = "test_layer_block";
+    private static String blockName = "test_layer_block";
+    private static final ResourceLocation blockId = new ResourceLocation(MODID, blockName);
 
     @SidedProxy
     public static CommonProxy proxy;
@@ -28,25 +32,27 @@ public class MultiLayerModelDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.registerBlock(new Block(Material.wood)
+            GameRegistry.register(new Block(Material.WOOD)
             {
                 {
-                    setCreativeTab(CreativeTabs.tabBlock);
+                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
                     setUnlocalizedName(MODID + "." + blockName);
+                    setRegistryName(blockId);
                 }
 
                 @Override
-                public boolean isOpaqueCube() { return false; }
+                public boolean isOpaqueCube(IBlockState state) { return false; }
 
                 @Override
-                public boolean isFullCube() { return false; }
+                public boolean isFullCube(IBlockState state) { return false; }
 
                 @Override
-                public boolean canRenderInLayer(EnumWorldBlockLayer layer)
+                public boolean canRenderInLayer(BlockRenderLayer layer)
                 {
-                    return layer == EnumWorldBlockLayer.SOLID || layer == EnumWorldBlockLayer.TRANSLUCENT;
+                    return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
                 }
-            }, blockName);
+            });
+            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId)).setRegistryName(blockId));
         }
     }
 
@@ -58,7 +64,7 @@ public class MultiLayerModelDebug
         public void preInit(FMLPreInitializationEvent event)
         {
             super.preInit(event);
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(GameRegistry.findBlock(MODID, blockName)), 0, new ModelResourceLocation(MODID.toLowerCase() + ":" + blockName, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
         }
     }
 

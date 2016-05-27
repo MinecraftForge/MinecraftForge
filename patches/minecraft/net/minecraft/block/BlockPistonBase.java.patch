@@ -1,31 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -189,7 +189,7 @@
+@@ -236,7 +236,7 @@
                      }
                  }
  
--                if (!flag1 && block.func_149688_o() != Material.field_151579_a && func_180696_a(block, p_180648_1_, blockpos, enumfacing.func_176734_d(), false) && (block.func_149656_h() == 0 || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
-+                if (!flag1 && !block.isAir(p_180648_1_, blockpos) && func_180696_a(block, p_180648_1_, blockpos, enumfacing.func_176734_d(), false) && (block.func_149656_h() == 0 || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
+-                if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
++                if (!flag1 && !iblockstate.func_177230_c().isAir(iblockstate, p_189539_2_, p_189539_3_) && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
                  {
-                     this.func_176319_a(p_180648_1_, p_180648_2_, enumfacing, false);
+                     this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -333,7 +333,7 @@
+@@ -322,7 +322,7 @@
                      return false;
                  }
  
--                return !(p_180696_0_ instanceof ITileEntityProvider);
-+                return !(p_180696_0_.hasTileEntity(p_180696_1_.func_180495_p(p_180696_2_)));
+-                return !block.func_149716_u();
++                return !block.hasTileEntity(p_185646_0_);
              }
              else
              {
-@@ -371,7 +371,9 @@
+@@ -368,7 +368,9 @@
              {
-                 BlockPos blockpos = (BlockPos)list1.get(j);
-                 Block block = p_176319_1_.func_180495_p(blockpos).func_177230_c();
--                block.func_176226_b(p_176319_1_, blockpos, p_176319_1_.func_180495_p(blockpos), 0);
-+                //With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
-+                float chance = block instanceof BlockSnow ? -1.0f : 1.0f;
-+                block.func_180653_a(p_176319_1_, blockpos, p_176319_1_.func_180495_p(blockpos), chance, 0);
-                 p_176319_1_.func_175698_g(blockpos);
-                 --i;
-                 ablock[i] = block;
+                 BlockPos blockpos1 = (BlockPos)list2.get(j);
+                 IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos1);
+-                iblockstate.func_177230_c().func_176226_b(p_176319_1_, blockpos1, iblockstate, 0);
++                // Forge: With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
++                float chance = iblockstate.func_177230_c() instanceof BlockSnow ? -1.0f : 1.0f;
++                iblockstate.func_177230_c().func_180653_a(p_176319_1_, blockpos1, iblockstate, chance, 0);
+                 p_176319_1_.func_175698_g(blockpos1);
+                 --k;
+                 aiblockstate[k] = iblockstate;

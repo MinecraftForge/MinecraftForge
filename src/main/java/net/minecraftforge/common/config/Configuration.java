@@ -166,7 +166,7 @@ public class Configuration
      */
     public Property get(String category, String key, boolean defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
@@ -201,7 +201,7 @@ public class Configuration
      */
     public Property get(String category, String key, boolean[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null);
+        return get(category, key, defaultValues, null);
     }
 
     /**
@@ -268,7 +268,7 @@ public class Configuration
      */
     public Property get(String category, String key, int defaultValue)
     {
-        return get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return get(category, key, defaultValue, null, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**
@@ -321,7 +321,7 @@ public class Configuration
      */
     public Property get(String category, String key, int[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null);
+        return get(category, key, defaultValues, null);
     }
 
     /**
@@ -410,7 +410,7 @@ public class Configuration
      */
     public Property get(String category, String key, double defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
@@ -553,7 +553,7 @@ public class Configuration
      */
     public Property get(String category, String key, String defaultValue)
     {
-        return get(category, key, defaultValue, (String) null);
+        return get(category, key, defaultValue, null);
     }
 
     /**
@@ -615,7 +615,7 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null, false, -1, (Pattern) null);
+        return get(category, key, defaultValues, null, false, -1, null);
     }
 
     /**
@@ -629,7 +629,7 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, false, -1, (Pattern) null);
+        return get(category, key, defaultValues, comment, false, -1, null);
     }
 
     /**
@@ -706,7 +706,7 @@ public class Configuration
             }
 
             prop.setDefaultValue(defaultValue);
-            prop.comment = comment;
+            prop.setComment(comment);
             return prop;
         }
         else if (defaultValue != null)
@@ -715,7 +715,7 @@ public class Configuration
             prop.setValue(defaultValue); //Set and mark as dirty to signify it should save
             cat.put(key, prop);
             prop.setDefaultValue(defaultValue);
-            prop.comment = comment;
+            prop.setComment(comment);
             return prop;
         }
         else
@@ -754,7 +754,7 @@ public class Configuration
             }
 
             prop.setDefaultValues(defaultValues);
-            prop.comment = comment;
+            prop.setComment(comment);
 
             return prop;
         }
@@ -762,7 +762,7 @@ public class Configuration
         {
             Property prop = new Property(key, defaultValues, type);
             prop.setDefaultValues(defaultValues);
-            prop.comment = comment;
+            prop.setComment(comment);
             cat.put(key, prop);
             return prop;
         }
@@ -877,7 +877,7 @@ public class Configuration
                         }
                         else if (Character.isWhitespace(line.charAt(i)))
                         {
-                            // ignore space charaters
+                            // ignore space characters
                         }
                         else
                         {
@@ -927,7 +927,7 @@ public class Configuration
                                         break;
                                     if (currentCat == null)
                                     {
-                                        throw new RuntimeException(String.format("Config file corrupt, attepted to close to many categories '%s:%d'", fileName, lineNum));
+                                        throw new RuntimeException(String.format("Config file corrupt, attempted to close to many categories '%s:%d'", fileName, lineNum));
                                     }
                                     currentCat = currentCat.parent;
                                     break;
@@ -1330,7 +1330,7 @@ public class Configuration
                 size = 4;
             }
             else if (bom32 == 0xFFFE0000) //This will never happen as it'll be caught by UTF-16LE,
-            {                             //but if anyone ever runs across a 32LE file, i'd like to disect it.
+            {                             //but if anyone ever runs across a 32LE file, i'd like to dissect it.
                 enc = "UTF-32LE";
                 size = 4;
             }
@@ -1517,7 +1517,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidationPattern(pattern);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
     }
 
@@ -1552,7 +1552,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
     }
 
@@ -1567,7 +1567,7 @@ public class Configuration
      */
     public String[] getStringList(String name, String category, String[] defaultValues, String comment)
     {
-        return getStringList(name, category, defaultValues, comment, (String[]) null, name);
+        return getStringList(name, category, defaultValues, comment, null, name);
     }
 
     /**
@@ -1598,7 +1598,7 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidValues(validValues);
-        prop.comment = comment + " [default: " + prop.getDefault() + "]";
+        prop.setComment(comment + " [default: " + prop.getDefault() + "]");
         return prop.getStringList();
     }
 
@@ -1630,7 +1630,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + "]";
+        prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getBoolean(defaultValue);
     }
 
@@ -1666,7 +1666,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setComment(comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]");
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
@@ -1704,7 +1704,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, Float.toString(defaultValue), name);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setComment(comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]");
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
         try

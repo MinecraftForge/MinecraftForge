@@ -1,12 +1,16 @@
 package net.minecraftforge.client.model;
 
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 /*
  * Simple implementation of IModelState via a map and a default value.
  */
-public class SimpleModelState implements IModelState
+public final class SimpleModelState implements IModelState
 {
     private final ImmutableMap<? extends IModelPart, TRSRTransformation> map;
     private final Optional<TRSRTransformation> def;

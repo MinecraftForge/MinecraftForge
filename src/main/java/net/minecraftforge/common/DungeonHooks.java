@@ -68,7 +68,7 @@ public class DungeonHooks
      */
     public static String getRandomDungeonMob(Random rand)
     {
-        DungeonMob mob = (DungeonMob)WeightedRandom.getRandomItem(rand, dungeonMobs);
+        DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs);
         if (mob == null)
         {
             return "";

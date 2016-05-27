@@ -114,4 +114,11 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             }
         }
     }
+
+    public boolean areCompatible(CapabilityDispatcher other) //Called from ItemStack to compare equality.
+    {                                                        // Only compares serializeable caps.
+        if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
+        if (this.writers.length == 0) return other.writers.length == 0;
+        return this.serializeNBT().equals(other.serializeNBT());
+    }
 }

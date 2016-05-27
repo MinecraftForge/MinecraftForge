@@ -41,7 +41,7 @@ public class FMLDeobfTweaker implements ITweaker {
         catch (Exception e)
         {
             // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
-            System.out.println("A CRITICAL PROBLEM OCCURED INITIALIZING MINECRAFT - LIKELY YOU HAVE AN INCORRECT VERSION FOR THIS FML");
+            System.out.println("A CRITICAL PROBLEM OCCURRED INITIALIZING MINECRAFT - LIKELY YOU HAVE AN INCORRECT VERSION FOR THIS FML");
             throw new RuntimeException(e);
         }
     }

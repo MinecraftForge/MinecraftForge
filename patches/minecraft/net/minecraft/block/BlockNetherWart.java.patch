@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNetherWart.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNetherWart.java
-@@ -38,7 +38,7 @@
+@@ -43,7 +43,7 @@
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {
--        return this.func_149854_a(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()).func_177230_c());
+-        return this.func_185514_i(p_180671_1_.func_180495_p(p_180671_2_.func_177977_b()));
 +        return super.func_180671_f(p_180671_1_, p_180671_2_, p_180671_3_);
      }
  
      public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
-@@ -54,9 +54,11 @@
+@@ -59,9 +59,11 @@
          super.func_180650_b(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_);
      }
  
@@ -22,11 +22,10 @@
          {
              int i = 1;
  
-@@ -107,4 +109,24 @@
-     {
-         return new BlockState(this, new IProperty[] {field_176486_a});
+@@ -108,6 +110,26 @@
+         return ((Integer)p_176201_1_.func_177229_b(field_176486_a)).intValue();
      }
-+
+ 
 +    @Override
 +    public java.util.List<ItemStack> getDrops(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
 +    {
@@ -46,4 +45,7 @@
 +
 +        return ret;
 +    }
- }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176486_a});

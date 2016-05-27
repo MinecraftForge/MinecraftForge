@@ -2,9 +2,12 @@ package net.minecraftforge.fluids;
 
 import java.util.Locale;
 import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
@@ -24,8 +27,6 @@ import net.minecraft.item.EnumRarity;
  * The default values can be used as a reference point for mods adding fluids such as oil or heavy
  * water.
  *
- * @author King Lemming
- *
  */
 public class Fluid
 {
@@ -37,6 +38,9 @@ public class Fluid
 
     protected final ResourceLocation still;
     protected final ResourceLocation flowing;
+
+    private SoundEvent fillSound;
+    private SoundEvent emptySound;
 
     /**
      * The light level emitted by this fluid.
@@ -160,15 +164,21 @@ public class Fluid
         return this;
     }
 
+    public Fluid setFillSound(SoundEvent fillSound)
+    {
+        this.fillSound = fillSound;
+        return this;
+    }
+
+    public Fluid setEmptySound(SoundEvent emptySound)
+    {
+        this.emptySound = emptySound;
+        return this;
+    }
+
     public final String getName()
     {
         return this.fluidName;
-    }
-
-    @Deprecated // Modders should never actually use int ID, use String
-    public final int getID()
-    {
-        return FluidRegistry.getFluidID(this.fluidName);
     }
 
     public final Block getBlock()
@@ -187,7 +197,7 @@ public class Fluid
     public String getLocalizedName(FluidStack stack)
     {
         String s = this.getUnlocalizedName();
-        return s == null ? "" : StatCollector.translateToLocal(s);
+        return s == null ? "" : I18n.translateToLocal(s);
     }
 
     /**
@@ -252,6 +262,40 @@ public class Fluid
         return flowing;
     }
 
+    public SoundEvent getFillSound()
+    {
+        if(fillSound == null)
+        {
+            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
+            {
+                fillSound = SoundEvents.ITEM_BUCKET_FILL_LAVA;
+            }
+            else
+            {
+                fillSound = SoundEvents.ITEM_BUCKET_FILL;
+            }
+        }
+
+        return fillSound;
+    }
+
+    public SoundEvent getEmptySound()
+    {
+        if(emptySound == null)
+        {
+            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
+            {
+                emptySound = SoundEvents.ITEM_BUCKET_EMPTY_LAVA;
+            }
+            else
+            {
+                emptySound = SoundEvents.ITEM_BUCKET_EMPTY;
+            }
+        }
+
+        return emptySound;
+    }
+
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
@@ -262,6 +306,8 @@ public class Fluid
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStill(FluidStack stack) { return getStill(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowing(); }
+    public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
+    public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
     /* World-based Accessors */
     public int getLuminosity(World world, BlockPos pos){ return getLuminosity(); }
@@ -273,5 +319,7 @@ public class Fluid
     public int getColor(World world, BlockPos pos){ return getColor(); }
     public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
     public ResourceLocation getFlowing(World world, BlockPos pos) { return getFlowing(); }
+    public SoundEvent getFillSound(World world, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(World world, BlockPos pos) { return getEmptySound(); }
 
 }

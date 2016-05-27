@@ -17,7 +17,7 @@ public class BrewingRecipeRegistry {
     /**
      * Adds a recipe to the registry. Due to the nature of the brewing stand
      * inputs that stack (a.k.a max stack size > 1) are not allowed.
-     * 
+     *
      * @param input
      *            The ItemStack that goes in same slots as the water bottles
      *            would.
@@ -36,7 +36,7 @@ public class BrewingRecipeRegistry {
     /**
      * Adds a recipe to the registry. Due to the nature of the brewing stand
      * inputs that stack (a.k.a max stack size > 1) are not allowed.
-     * 
+     *
      * @param input
      *            The ItemStack that goes in same slots as the water bottles
      *            would.
@@ -84,7 +84,7 @@ public class BrewingRecipeRegistry {
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOuput(ItemStack input, ItemStack ingredient)
+    public static boolean hasOutput(ItemStack input, ItemStack ingredient)
     {
         return getOutput(input, ingredient) != null;
     }
@@ -100,7 +100,7 @@ public class BrewingRecipeRegistry {
 
         for (int i : inputIndexes)
         {
-            if (hasOuput(inputs[i], ingredient))
+            if (hasOutput(inputs[i], ingredient))
             {
                 return true;
             }

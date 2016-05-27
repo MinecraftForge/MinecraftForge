@@ -1,28 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandFill.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandFill.java
-@@ -48,6 +48,7 @@
+@@ -51,6 +51,7 @@
              {
-                 i = func_175764_a(p_71515_2_[7], 0, 15);
+                 i = func_175764_a(p_184881_3_[7], 0, 15);
              }
 +            IBlockState state = block.func_176203_a(i);
  
              BlockPos blockpos2 = new BlockPos(Math.min(blockpos.func_177958_n(), blockpos1.func_177958_n()), Math.min(blockpos.func_177956_o(), blockpos1.func_177956_o()), Math.min(blockpos.func_177952_p(), blockpos1.func_177952_p()));
              BlockPos blockpos3 = new BlockPos(Math.max(blockpos.func_177958_n(), blockpos1.func_177958_n()), Math.max(blockpos.func_177956_o(), blockpos1.func_177956_o()), Math.max(blockpos.func_177952_p(), blockpos1.func_177952_p()));
-@@ -75,7 +76,7 @@
+@@ -78,7 +79,7 @@
                  NBTTagCompound nbttagcompound = new NBTTagCompound();
                  boolean flag = false;
  
--                if (p_71515_2_.length >= 10 && block.func_149716_u())
-+                if (p_71515_2_.length >= 10 && block.hasTileEntity(state))
+-                if (p_184881_3_.length >= 10 && block.func_149716_u())
++                if (p_184881_3_.length >= 10 && block.hasTileEntity(state))
                  {
-                     String s = func_147178_a(p_71515_1_, p_71515_2_, 9).func_150260_c();
+                     String s = func_147178_a(p_184881_2_, p_184881_3_, 9).func_150260_c();
  
-@@ -116,7 +117,7 @@
+@@ -119,7 +120,7 @@
                                              continue;
                                          }
                                      }
--                                    else if (p_71515_2_[8].equals("replace") && !block.func_149716_u())
-+                                    else if (p_71515_2_[8].equals("replace") && !block.hasTileEntity(state))
+-                                    else if (p_184881_3_[8].equals("replace") && !block.func_149716_u())
++                                    else if (p_184881_3_[8].equals("replace") && !block.hasTileEntity(state))
                                      {
-                                         if (p_71515_2_.length > 9)
+                                         if (p_184881_3_.length > 9)
                                          {

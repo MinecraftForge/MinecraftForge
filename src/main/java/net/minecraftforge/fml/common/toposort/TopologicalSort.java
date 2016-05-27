@@ -181,7 +181,7 @@ public class TopologicalSort
             }
 
             FMLLog.severe("Mod Sorting failed.");
-            FMLLog.severe("Visting node %s", node);
+            FMLLog.severe("Visiting node %s", node);
             FMLLog.severe("Current sorted list : %s", sortedResult);
             FMLLog.severe("Visited set for this node : %s", visitedNodes);
             FMLLog.severe("Explored node set : %s", expandedNodes);

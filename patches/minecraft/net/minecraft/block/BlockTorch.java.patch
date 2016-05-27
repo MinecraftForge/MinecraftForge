@@ -1,15 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTorch.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTorch.java
-@@ -63,7 +63,7 @@
+@@ -81,14 +81,14 @@
+ 
+     private boolean func_176594_d(World p_176594_1_, BlockPos p_176594_2_)
+     {
+-        if (p_176594_1_.func_180495_p(p_176594_2_).func_185896_q())
++        IBlockState state = p_176594_1_.func_180495_p(p_176594_2_);
++        if (state.isSideSolid(p_176594_1_, p_176594_2_, EnumFacing.UP))
+         {
+             return true;
+         }
          else
          {
-             Block block = p_176594_1_.func_180495_p(p_176594_2_).func_177230_c();
+-            Block block = p_176594_1_.func_180495_p(p_176594_2_).func_177230_c();
 -            return block instanceof BlockFence || block == Blocks.field_150359_w || block == Blocks.field_150463_bK || block == Blocks.field_150399_cn;
-+            return block.canPlaceTorchOnTop(p_176594_1_, p_176594_2_);
++            return state.func_177230_c().canPlaceTorchOnTop(state, p_176594_1_, p_176594_2_);
          }
      }
  
-@@ -84,7 +84,7 @@
+@@ -109,7 +109,7 @@
      {
          BlockPos blockpos = p_176595_2_.func_177972_a(p_176595_3_.func_176734_d());
          boolean flag = p_176595_3_.func_176740_k().func_176722_c();
@@ -18,7 +27,7 @@
      }
  
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
-@@ -97,7 +97,7 @@
+@@ -122,7 +122,7 @@
          {
              for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
              {
@@ -27,7 +36,7 @@
                  {
                      return this.func_176223_P().func_177226_a(field_176596_a, enumfacing);
                  }
-@@ -130,7 +130,7 @@
+@@ -155,7 +155,7 @@
              EnumFacing enumfacing1 = enumfacing.func_176734_d();
              boolean flag = false;
  

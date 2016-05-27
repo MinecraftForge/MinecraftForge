@@ -1,10 +1,10 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 
 // Sorter to load nearby chunks first
-public class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntPair>
+public class ChunkCoordComparator implements java.util.Comparator<ChunkPos>
 {
     private int x;
     private int z;
@@ -15,7 +15,7 @@ public class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntP
         z = (int) entityplayer.posZ >> 4;
     }
 
-    public int compare(ChunkCoordIntPair a, ChunkCoordIntPair b)
+    public int compare(ChunkPos a, ChunkPos b)
     {
         if (a.equals(b))
         {

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -16,17 +16,22 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #world} contains the World this event is occuring in.<br>
+ * {@link #world} contains the World this event is occurring in.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 public class WorldEvent extends Event
 {
-    public final World world;
+    private final World world;
 
     public WorldEvent(World world)
     {
         this.world = world;
+    }
+
+    public World getWorld()
+    {
+        return world;
     }
 
     /**
@@ -87,14 +92,18 @@ public class WorldEvent extends Event
 
     /**
      * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
+     * If an entry is added to the list, it needs to be a globally unique instance.
+     * The event is called in WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos) as well as
+     * WorldServer#canCreatureTypeSpawnHere(EnumCreatureType creatureType, BiomeGenBase.SpawnListEntry spawnListEntry, BlockPos pos)
+     * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */
     @Cancelable
     public static class PotentialSpawns extends WorldEvent
     {
-        public final EnumCreatureType type;
-        public final BlockPos pos;
-        public final List<SpawnListEntry> list;
+        private final EnumCreatureType type;
+        private final BlockPos pos;
+        private final List<SpawnListEntry> list;
 
         public PotentialSpawns(World world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
         {
@@ -103,12 +112,27 @@ public class WorldEvent extends Event
             this.type = type;
             if (oldList != null)
             {
-                this.list = oldList;
+                this.list = new ArrayList<SpawnListEntry>(oldList);
             }
             else
             {
                 this.list = new ArrayList<SpawnListEntry>();
             }
+        }
+
+        public EnumCreatureType getType()
+        {
+            return type;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public List<SpawnListEntry> getList()
+        {
+            return list;
         }
     }
 
@@ -119,11 +143,16 @@ public class WorldEvent extends Event
     @Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
-        public final WorldSettings settings;
+        private final WorldSettings settings;
         public CreateSpawnPosition(World world, WorldSettings settings)
         {
             super(world);
             this.settings = settings;
+        }
+
+        public WorldSettings getSettings()
+        {
+            return settings;
         }
     }
 }

@@ -1,29 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
-@@ -78,7 +78,7 @@
-     {
-         Block block = this.field_177261_a.func_180495_p(p_177251_1_).func_177230_c();
+@@ -80,7 +80,7 @@
+         IBlockState iblockstate = this.field_177261_a.func_180495_p(p_177251_1_);
+         Block block = iblockstate.func_177230_c();
  
--        if (block.func_149688_o() == Material.field_151579_a)
-+        if (block.isAir(field_177261_a, p_177251_1_))
+-        if (iblockstate.func_185904_a() == Material.field_151579_a)
++        if (iblockstate.func_177230_c().isAir(iblockstate, this.field_177261_a, p_177251_1_))
          {
              return true;
          }
-@@ -109,7 +109,7 @@
-                     BlockPos blockpos = p_177251_1_.func_177967_a(this.field_177257_d.func_176734_d(), i);
-                     block = this.field_177261_a.func_180495_p(blockpos).func_177230_c();
+@@ -112,7 +112,7 @@
+                     iblockstate = this.field_177261_a.func_180495_p(blockpos);
+                     block = iblockstate.func_177230_c();
  
--                    if (block.func_149688_o() == Material.field_151579_a || !BlockPistonBase.func_180696_a(block, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
-+                    if (block.isAir(field_177261_a, blockpos)|| !BlockPistonBase.func_180696_a(block, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
+-                    if (iblockstate.func_185904_a() == Material.field_151579_a || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
++                    if (iblockstate.func_177230_c().isAir(iblockstate, this.field_177261_a, blockpos) || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false) || blockpos.equals(this.field_177259_b))
                      {
                          break;
                      }
-@@ -156,7 +156,7 @@
+@@ -159,7 +159,7 @@
  
-                     block = this.field_177261_a.func_180495_p(blockpos1).func_177230_c();
+                     iblockstate = this.field_177261_a.func_180495_p(blockpos1);
  
--                    if (block.func_149688_o() == Material.field_151579_a)
-+                    if (block.isAir(field_177261_a, blockpos1))
+-                    if (iblockstate.func_185904_a() == Material.field_151579_a)
++                    if (iblockstate.func_177230_c().isAir(iblockstate, this.field_177261_a, blockpos1))
                      {
                          return true;
                      }

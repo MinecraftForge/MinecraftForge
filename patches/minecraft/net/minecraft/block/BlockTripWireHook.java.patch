@@ -1,28 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTripWireHook.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
-@@ -58,14 +58,14 @@
+@@ -79,14 +79,14 @@
  
      public boolean func_176198_a(World p_176198_1_, BlockPos p_176198_2_, EnumFacing p_176198_3_)
      {
--        return p_176198_3_.func_176740_k().func_176722_c() && p_176198_1_.func_180495_p(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d())).func_177230_c().func_149721_r();
-+        return p_176198_3_.func_176740_k().func_176722_c() && p_176198_1_.isSideSolid(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d()), p_176198_3_, true);
+-        return p_176198_3_.func_176740_k().func_176722_c() && p_176198_1_.func_180495_p(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d())).func_185915_l();
++        return p_176198_3_.func_176740_k().func_176722_c() && p_176198_1_.func_180495_p(p_176198_2_.func_177972_a(p_176198_3_.func_176734_d())).isSideSolid(p_176198_1_, p_176198_2_.func_177972_a(p_176198_3_.func_176734_d()), p_176198_3_);
      }
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
          for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
          {
--            if (p_176196_1_.func_180495_p(p_176196_2_.func_177972_a(enumfacing)).func_177230_c().func_149721_r())
-+            if (p_176196_1_.isSideSolid(p_176196_2_.func_177972_a(enumfacing), enumfacing.func_176734_d(), true))
+-            if (p_176196_1_.func_180495_p(p_176196_2_.func_177972_a(enumfacing)).func_185915_l())
++            if (p_176196_1_.func_180495_p(p_176196_2_.func_177972_a(enumfacing)).isSideSolid(p_176196_1_, p_176196_2_.func_177972_a(enumfacing), enumfacing.func_176734_d()))
              {
                  return true;
              }
-@@ -99,7 +99,7 @@
+@@ -120,7 +120,7 @@
              {
-                 EnumFacing enumfacing = (EnumFacing)p_176204_3_.func_177229_b(field_176264_a);
+                 EnumFacing enumfacing = (EnumFacing)p_189540_1_.func_177229_b(field_176264_a);
  
--                if (!p_176204_1_.func_180495_p(p_176204_2_.func_177972_a(enumfacing.func_176734_d())).func_177230_c().func_149721_r())
-+                if (!p_176204_1_.isSideSolid(p_176204_2_.func_177972_a(enumfacing.func_176734_d()), enumfacing, true))
+-                if (!p_189540_2_.func_180495_p(p_189540_3_.func_177972_a(enumfacing.func_176734_d())).func_185915_l())
++                if (!p_189540_2_.func_180495_p(p_189540_3_.func_177972_a(enumfacing.func_176734_d())).isSideSolid(p_189540_2_, p_189540_3_.func_177972_a(enumfacing.func_176734_d()), enumfacing))
                  {
-                     this.func_176226_b(p_176204_1_, p_176204_2_, p_176204_3_, 0);
-                     p_176204_1_.func_175698_g(p_176204_2_);
+                     this.func_176226_b(p_189540_2_, p_189540_3_, p_189540_1_, 0);
+                     p_189540_2_.func_175698_g(p_189540_3_);

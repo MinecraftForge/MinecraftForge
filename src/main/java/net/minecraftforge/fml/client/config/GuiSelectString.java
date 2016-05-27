@@ -14,6 +14,7 @@ package net.minecraftforge.fml.client.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
+
 import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
 import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
@@ -62,17 +64,14 @@ public class GuiSelectString extends GuiScreen
         String comment;
 
         comment = I18n.format(configElement.getLanguageKey() + ".tooltip",
-                "\n" + EnumChatFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
+                "\n" + TextFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
 
         if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
-            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
-                    EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + comment).split("\n"));
         else if (configElement.getComment() != null && !configElement.getComment().trim().isEmpty())
-            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
-                    EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + configElement.getComment(), 300);
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.YELLOW + configElement.getComment()).split("\n"));
         else
-            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
-                    EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
+            Collections.addAll(toolTip, (TextFormatting.GREEN + propName + "\n" + TextFormatting.RED + "No tooltip defined.").split("\n"));
 
         if (parentScreen instanceof GuiConfig)
         {
@@ -177,6 +176,6 @@ public class GuiSelectString extends GuiScreen
 
     public void drawToolTip(List<String> stringList, int x, int y)
     {
-        this.drawHoveringText(stringList, x, y);
+        GuiUtils.drawHoveringText(stringList, x, y, width, height, 300, fontRendererObj);
     }
 }

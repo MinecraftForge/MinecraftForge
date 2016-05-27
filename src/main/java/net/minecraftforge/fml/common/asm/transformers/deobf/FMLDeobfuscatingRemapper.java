@@ -80,7 +80,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             List<String> srgList = srgSource.readLines();
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
-            Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
+            Builder<String, String> builder = ImmutableBiMap.builder();
             Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
             for (String line : srgList)
             {
@@ -134,7 +134,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
-            Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
+            Builder<String, String> builder = ImmutableBiMap.builder();
             Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
             for (String line : srgList)
             {
@@ -216,7 +216,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 ClassNode classNode = new ClassNode();
                 cr.accept(classNode, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 Map<String,String> resMap = Maps.newHashMap();
-                for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
+                for (FieldNode fieldNode : classNode.fields) {
                     resMap.put(fieldNode.name, fieldNode.desc);
                 }
                 fieldDescriptions.put(owner, resMap);
@@ -224,7 +224,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             }
             catch (IOException e)
             {
-                FMLRelaunchLog.log(Level.ERROR,e, "A critical exception occured reading a class file %s", owner);
+                FMLRelaunchLog.log(Level.ERROR,e, "A critical exception occurred reading a class file %s", owner);
             }
             return null;
         }
@@ -403,8 +403,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 findAndMergeSuperMaps(parentThing);
             }
         }
-        Map<String, String> methodMap = Maps.<String,String>newHashMap();
-        Map<String, String> fieldMap = Maps.<String,String>newHashMap();
+        Map<String, String> methodMap = Maps.newHashMap();
+        Map<String, String> fieldMap = Maps.newHashMap();
         for (String parentThing : allParents)
         {
             if (methodNameMaps.containsKey(parentThing))

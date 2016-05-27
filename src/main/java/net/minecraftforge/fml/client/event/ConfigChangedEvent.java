@@ -29,23 +29,11 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 @HasResult
 public class ConfigChangedEvent extends Event
 {
-    /**
-     * The Mod ID of the mod whose configuration just changed.
-     */
-    public final String  modID;
-    /**
-     * Whether or not a world is currently running.
-     */
-    public final boolean isWorldRunning;
-    /**
-     * Will be set to true if any elements were changed that require a restart of Minecraft.
-     */
-    public final boolean requiresMcRestart;
-    /**
-     * A String identifier for this ConfigChangedEvent.
-     */
-    public final String configID;
-    
+    private final String  modID;
+    private final boolean isWorldRunning;
+    private final boolean requiresMcRestart;
+    private final String configID;
+
     public ConfigChangedEvent(String modID, String configID, boolean isWorldRunning, boolean requiresMcRestart)
     {
         this.modID = modID;
@@ -53,7 +41,39 @@ public class ConfigChangedEvent extends Event
         this.isWorldRunning = isWorldRunning;
         this.requiresMcRestart = requiresMcRestart;
     }
-    
+
+    /**
+     * The Mod ID of the mod whose configuration just changed.
+     */
+    public String getModID()
+    {
+        return modID;
+    }
+
+    /**
+     * Whether or not a world is currently running.
+     */
+    public boolean isWorldRunning()
+    {
+        return isWorldRunning;
+    }
+
+    /**
+     * Will be set to true if any elements were changed that require a restart of Minecraft.
+     */
+    public boolean isRequiresMcRestart()
+    {
+        return requiresMcRestart;
+    }
+
+    /**
+     * A String identifier for this ConfigChangedEvent.
+     */
+    public String getConfigID()
+    {
+        return configID;
+    }
+
     /**
      * This event is intended to be consumed by the mod whose config has been changed. It fires when the Done button
      * has been clicked on a GuiConfig screen and the following conditions are met:<br/>

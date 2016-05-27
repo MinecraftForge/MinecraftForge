@@ -19,7 +19,7 @@ public class PlayerSetSpawnTest {
     @SubscribeEvent
     public void onPlayerSetSpawn(PlayerSetSpawnEvent event) 
     {
-        System.out.println(event.forced + " " + event.newSpawn.toString());
+        System.out.println(event.isForced() + " " + event.getNewSpawn().toString());
         event.setCanceled(true);
     }
 }

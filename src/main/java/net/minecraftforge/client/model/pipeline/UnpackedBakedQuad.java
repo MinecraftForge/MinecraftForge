@@ -1,9 +1,10 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IColoredBakedQuad;
 
 // advantages: non-fixed-length vertex format, no overhead of packing and unpacking attributes to transform the model
 // disadvantages: (possibly) larger memory footprint, overhead on packing the attributes at the final rendering stage
@@ -13,9 +14,9 @@ public class UnpackedBakedQuad extends BakedQuad
     protected final VertexFormat format;
     protected boolean packed = false;
 
-    public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, VertexFormat format)
+    public UnpackedBakedQuad(float[][][] unpackedData, int tint, EnumFacing orientation, TextureAtlasSprite texture, boolean applyDiffuseLighting, VertexFormat format)
     {
-        super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation);
+        super(new int[format.getNextOffset() /* / 4 * 4 */], tint, orientation, texture, applyDiffuseLighting, format);
         this.unpackedData = unpackedData;
         this.format = format;
     }
@@ -47,10 +48,6 @@ public class UnpackedBakedQuad extends BakedQuad
             consumer.setQuadTint(getTintIndex());
         }
         consumer.setQuadOrientation(getFace());
-        if(this instanceof IColoredBakedQuad)
-        {
-            consumer.setQuadColored();
-        }
         for(int v = 0; v < 4; v++)
         {
             for(int e = 0; e < consumer.getVertexFormat().getElementCount(); e++)
@@ -67,25 +64,19 @@ public class UnpackedBakedQuad extends BakedQuad
         }
     }
 
-    public static class Colored extends UnpackedBakedQuad implements IColoredBakedQuad
-    {
-        public Colored(float[][][] unpackedData, int tint, EnumFacing orientation, VertexFormat format)
-        {
-            super(unpackedData, tint, orientation, format);
-        }
-    }
-
     public static class Builder implements IVertexConsumer
     {
         private final VertexFormat format;
         private final float[][][] unpackedData;
         private int tint = -1;
         private EnumFacing orientation;
-        private boolean isColored = false;
+        private TextureAtlasSprite texture;
+        private boolean applyDiffuseLighting = true;
 
         private int vertices = 0;
         private int elements = 0;
         private boolean full = false;
+        private boolean contractUVs = false;
 
         public Builder(VertexFormat format)
         {
@@ -98,6 +89,10 @@ public class UnpackedBakedQuad extends BakedQuad
             return format;
         }
 
+        public void setContractUVs(boolean value)
+        {
+            this.contractUVs = value;
+        }
         public void setQuadTint(int tint)
         {
             this.tint = tint;
@@ -108,9 +103,14 @@ public class UnpackedBakedQuad extends BakedQuad
             this.orientation = orientation;
         }
 
-        public void setQuadColored()
+        public void setTexture(TextureAtlasSprite texture)
         {
-            this.isColored = true;
+            this.texture = texture;
+        }
+
+        public void setApplyDiffuseLighting(boolean diffuse)
+        {
+            this.applyDiffuseLighting = diffuse;
         }
 
         public void put(int element, float... data)
@@ -138,17 +138,69 @@ public class UnpackedBakedQuad extends BakedQuad
             }
         }
 
+        private final float eps = 1f / 0x100;
+
         public UnpackedBakedQuad build()
         {
             if(!full)
             {
                 throw new IllegalStateException("not enough data");
             }
-            if(isColored)
+            if(contractUVs)
             {
-                return new Colored(unpackedData, tint, orientation, format);
+                float tX = texture.getOriginX() / texture.getMinU();
+                float tY = texture.getOriginY() / texture.getMinV();
+                float tS = tX > tY ? tX : tY;
+                float ep = 1f / (tS * 0x100);
+                int uve = 0;
+                while(uve < format.getElementCount())
+                {
+                    VertexFormatElement e = format.getElement(uve);
+                    if(e.getUsage() == VertexFormatElement.EnumUsage.UV && e.getIndex() == 0)
+                    {
+                        break;
+                    }
+                    uve++;
+                }
+                if(uve == format.getElementCount())
+                {
+                    throw new IllegalStateException("Can't contract UVs: format doesn't contain UVs");
+                }
+                float[] uvc = new float[4];
+                for(int v = 0; v < 4; v++)
+                {
+                    for(int i = 0; i < 4; i++)
+                    {
+                        uvc[i] += unpackedData[v][uve][i] / 4;
+                    }
+                }
+                for(int v = 0; v < 4; v++)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float uo = unpackedData[v][uve][i];
+                        float un = uo * (1 - eps) + uvc[i] * eps;
+                        float ud = uo - un;
+                        float aud = ud;
+                        if(aud < 0) aud = -aud;
+                        if(aud < ep) // not moving a fraction of a pixel
+                        {
+                            float udc = uo - uvc[i];
+                            if(udc < 0) udc = -udc;
+                            if(udc < 2 * ep) // center is closer than 2 fractions of a pixel, don't move too close
+                            {
+                                un = (uo + uvc[i]) / 2;
+                            }
+                            else // move at least by a fraction
+                            {
+                                un = uo + (ud < 0 ? ep : -ep);
+                            }
+                        }
+                        unpackedData[v][uve][i] = un;
+                    }
+                }
             }
-            return new UnpackedBakedQuad(unpackedData, tint, orientation, format);
+            return new UnpackedBakedQuad(unpackedData, tint, orientation, texture, applyDiffuseLighting, format);
         }
     }
 }

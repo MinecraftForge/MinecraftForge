@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSkull.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSkull.java
-@@ -121,10 +121,6 @@
-         return tileentity instanceof TileEntitySkull ? ((TileEntitySkull)tileentity).func_145904_a() : super.func_176222_j(p_176222_1_, p_176222_2_);
+@@ -117,10 +117,6 @@
+         return new ItemStack(Items.field_151144_bL, 1, i);
      }
  
 -    public void func_180653_a(World p_180653_1_, BlockPos p_180653_2_, IBlockState p_180653_3_, float p_180653_4_, int p_180653_5_)
@@ -11,7 +11,7 @@
      public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, IBlockState p_176208_3_, EntityPlayer p_176208_4_)
      {
          if (p_176208_4_.field_71075_bZ.field_75098_d)
-@@ -132,13 +128,18 @@
+@@ -128,13 +124,18 @@
              p_176208_3_ = p_176208_3_.func_177226_a(field_176417_b, Boolean.valueOf(true));
              p_176208_1_.func_180501_a(p_176208_2_, p_176208_3_, 4);
          }
@@ -31,16 +31,16 @@
          {
              if (!((Boolean)p_180663_3_.func_177229_b(field_176417_b)).booleanValue())
              {
-@@ -147,7 +148,7 @@
+@@ -143,7 +144,7 @@
                  if (tileentity instanceof TileEntitySkull)
                  {
                      TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
--                    ItemStack itemstack = new ItemStack(Items.field_151144_bL, 1, this.func_176222_j(p_180663_1_, p_180663_2_));
+-                    ItemStack itemstack = this.func_185473_a(p_180663_1_, p_180663_2_, p_180663_3_);
 +                    ItemStack itemstack = new ItemStack(Items.field_151144_bL, 1, tileentityskull.func_145904_a());
  
                      if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
                      {
-@@ -157,12 +158,11 @@
+@@ -153,12 +154,11 @@
                          itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
                      }
  
@@ -54,4 +54,4 @@
 +        return ret;
      }
  
-     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
+     @Nullable

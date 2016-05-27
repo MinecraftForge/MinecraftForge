@@ -14,10 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public class ItemTossEvent extends ItemEvent
 {
 
-    /**
-     * The player tossing the item.
-     */
-    public final EntityPlayer player;
+    private final EntityPlayer player;
 
     /**
      * Creates a new event for EntityItems tossed by a player.
@@ -29,5 +26,13 @@ public class ItemTossEvent extends ItemEvent
     {
         super(entityItem);
         this.player = player;
+    }
+
+    /**
+     * The player tossing the item.
+     */
+    public EntityPlayer getPlayer()
+    {
+        return player;
     }
 }

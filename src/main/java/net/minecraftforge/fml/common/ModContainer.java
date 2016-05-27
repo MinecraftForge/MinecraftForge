@@ -152,4 +152,8 @@ public interface ModContainer
     boolean shouldLoadInEnvironment();
 
     URL getUpdateUrl();
+
+    void setClassVersion(int classVersion);
+
+    int getClassVersion();
 }

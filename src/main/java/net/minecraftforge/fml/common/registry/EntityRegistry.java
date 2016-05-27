@@ -13,25 +13,24 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
+
+import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
@@ -114,12 +113,9 @@ public class EntityRegistry
 
     private static final EntityRegistry INSTANCE = new EntityRegistry();
 
-    private BitSet availableIndicies;
     private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private Map<String,ModContainer> entityNames = Maps.newHashMap();
     private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
-    private Map<String, EntityList.EntityEggInfo> entityEggs = Maps.newHashMap();
-    private Map<String, EntityList.EntityEggInfo> entityEggsUn = Collections.unmodifiableMap(entityEggs);
 
     public static EntityRegistry instance()
     {
@@ -128,12 +124,6 @@ public class EntityRegistry
 
     private EntityRegistry()
     {
-        availableIndicies = new BitSet(256);
-        availableIndicies.set(1,255);
-        for (Object id : EntityList.idToClassMapping.keySet())
-        {
-            availableIndicies.clear((Integer)id);
-        }
     }
 
     /**
@@ -180,11 +170,11 @@ public class EntityRegistry
         {
             entityClassRegistrations.put(entityClass, er);
             entityNames.put(entityName, mc);
-            if (!EntityList.classToStringMapping.containsKey(entityClass))
+            if (!EntityList.CLASS_TO_NAME.containsKey(entityClass))
             {
                 String entityModName = String.format("%s.%s", mc.getModId(), entityName);
-                EntityList.classToStringMapping.put(entityClass, entityModName);
-                EntityList.stringToClassMapping.put(entityModName, entityClass);
+                EntityList.CLASS_TO_NAME.put(entityClass, entityModName);
+                EntityList.NAME_TO_CLASS.put(entityModName, entityClass);
                 FMLLog.finer("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entityModName);
             }
             else
@@ -214,116 +204,19 @@ public class EntityRegistry
      * @throws IllegalArgumentException if entityClass is not registered in classToStringMapping.
      *
      */
+
     public static void registerEgg(Class<? extends Entity> entityClass, int primary, int secondary)
     {
-        if (!EntityList.classToStringMapping.containsKey(entityClass))
-            throw new IllegalArgumentException("Entity not registered in classToString map: " + entityClass);
-
-        String name = (String)EntityList.classToStringMapping.get(entityClass);
-        EntityRegistry.instance().entityEggs.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
-        FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
-    }
-
-    /**
-     * Returns a Unmodifiable view of the registered entity eggs list.
-     *
-     * @return An Unmodifiable view of the registered entity eggs list.
-     */
-    public static Map<String, EntityList.EntityEggInfo> getEggs()
-    {
-        return instance().entityEggsUn;
-    }
-
-    /**
-     * Registers in the minecraft Entity ID list. This is generally not a good idea and shouldn't be used.
-     * Simply use {@link #registerModEntity(Class, String, int, Object, int, int, boolean, int, int)} instead.
-     *
-     * @param entityClass Class of the entity being registered
-     * @param entityName Name for the entity being registered
-     * @param id A globally unique ID for the entity
-     */
-    @Deprecated
-    public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
-    {
-        if (EntityList.classToStringMapping.containsKey(entityClass))
+        if (EntityList.CLASS_TO_NAME.containsKey(entityClass))
         {
-            ModContainer activeModContainer = Loader.instance().activeModContainer();
-            String modId = "unknown";
-            if (activeModContainer != null)
-            {
-                modId = activeModContainer.getModId();
-            }
-            else
-            {
-                FMLLog.severe("There is a rogue mod failing to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
-            }
-            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", modId, entityClass);
-            return;
+            String name = EntityList.CLASS_TO_NAME.get(entityClass);
+            EntityList.ENTITY_EGGS.put(name, new EntityList.EntityEggInfo(name, primary, secondary));
+            FMLLog.fine("Registering entity egg '%s' for %s", name, entityClass);
         }
-        id = instance().validateAndClaimId(id);
-        EntityList.addMapping(entityClass, entityName, id);
-    }
-
-    /**
-     * Registers in the minecraft Entity ID list. This is generally not a good idea, and shouldn't be used.
-     * Simply use {@link #registerModEntity(Class, String, int, Object, int, int, boolean)} instead.
-     * @param entityClass The class of the entity being registered
-     * @param entityName The name of the entity being registered
-     * @param id The globally unique ID of the entity
-     * @param backgroundEggColour An RGB colour value for the spawn egg background colour
-     * @param foregroundEggColour An RGB colour value for the spawn egg foreground colour
-     */
-    @Deprecated
-    public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
-    {
-        if (EntityList.classToStringMapping.containsKey(entityClass))
+        else
         {
-            ModContainer activeModContainer = Loader.instance().activeModContainer();
-            String modId = "unknown";
-            if (activeModContainer != null)
-            {
-                modId = activeModContainer.getModId();
-            }
-            else
-            {
-                FMLLog.severe("There is a rogue mod failing to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
-            }
-            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", modId, entityClass);
-            return;
+            FMLLog.fine("Failed registering entity egg %s (No entity found)", entityClass.getName());
         }
-        instance().validateAndClaimId(id);
-        EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
-    }
-
-    private int validateAndClaimId(int id)
-    {
-        // workaround for broken ML
-        int realId = id;
-        if (id < Byte.MIN_VALUE)
-        {
-            FMLLog.warning("Compensating for modloader out of range compensation by mod : entityId %d for mod %s is now %d", id, Loader.instance().activeModContainer().getModId(), realId);
-            realId += 3000;
-        }
-
-        if (realId < 0)
-        {
-            realId += Byte.MAX_VALUE;
-        }
-        try
-        {
-            UnsignedBytes.checkedCast(realId);
-        }
-        catch (IllegalArgumentException e)
-        {
-            FMLLog.log(Level.ERROR, "The entity ID %d for mod %s is not an unsigned byte and may not work", id, Loader.instance().activeModContainer().getModId());
-        }
-
-        if (!availableIndicies.get(realId))
-        {
-            FMLLog.severe("The mod %s has attempted to register an entity ID %d which is already reserved. This could cause severe problems", Loader.instance().activeModContainer().getModId(), id);
-        }
-        availableIndicies.clear(realId);
-        return realId;
     }
 
     /**
@@ -335,9 +228,9 @@ public class EntityRegistry
      * @param typeOfCreature Type of spawn
      * @param biomes List of biomes
      */
-    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        for (BiomeGenBase biome : biomes)
+        for (Biome biome : biomes)
         {
             List<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature);
 
@@ -367,9 +260,9 @@ public class EntityRegistry
      * @param biomes List of biomes
      */
     @SuppressWarnings("unchecked")
-    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
+        Class <? extends Entity > entityClazz = EntityList.NAME_TO_CLASS.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
@@ -383,9 +276,9 @@ public class EntityRegistry
      * @param typeOfCreature type of spawn
      * @param biomes Biomes to remove from
      */
-    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        for (BiomeGenBase biome : biomes)
+        for (Biome biome : biomes)
         {
             Iterator<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature).iterator();
 
@@ -407,31 +300,14 @@ public class EntityRegistry
      * @param biomes Biomes to remove from
      */
     @SuppressWarnings("unchecked")
-    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, Biome... biomes)
     {
-        Class <? extends Entity > entityClazz = EntityList.stringToClassMapping.get(entityName);
+        Class <? extends Entity > entityClazz = EntityList.NAME_TO_CLASS.get(entityName);
 
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
             removeSpawn((Class <? extends EntityLiving>) entityClazz, typeOfCreature, biomes);
         }
-    }
-
-    /**
-     * Utility function to try and obtain a globally unique entity ID. Not useful as it requires syncing between
-     * client and server. Use {@link #registerModEntity(Class, String, int, Object, int, int, boolean)} instead,
-     * for a much better experience.
-     * @return A theoretically globally unique ID
-     */
-    @Deprecated
-    public static int findGlobalUniqueEntityId()
-    {
-        int res = instance().availableIndicies.nextSetBit(0);
-        if (res < 0)
-        {
-            throw new RuntimeException("No more entity indicies left");
-        }
-        return res;
     }
 
     public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking)

@@ -21,10 +21,20 @@ import net.minecraft.entity.EntityLivingBase;
 @Cancelable
 public class LivingHealEvent extends LivingEvent
 {
-    public float amount;
+    private float amount;
     public LivingHealEvent(EntityLivingBase entity, float amount)
     {
         super(entity);
+        this.setAmount(amount);
+    }
+
+    public float getAmount()
+    {
+        return amount;
+    }
+
+    public void setAmount(float amount)
+    {
         this.amount = amount;
     }
 }

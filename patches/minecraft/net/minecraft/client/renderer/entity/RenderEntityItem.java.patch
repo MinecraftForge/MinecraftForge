@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderEntityItem.java
-@@ -41,7 +41,7 @@
+@@ -44,7 +44,7 @@
              boolean flag = p_177077_9_.func_177556_c();
              int i = this.func_177078_a(itemstack);
              float f = 0.25F;
@@ -9,27 +9,53 @@
              float f2 = p_177077_9_.func_177552_f().func_181688_b(ItemCameraTransforms.TransformType.GROUND).field_178363_d.y;
              GlStateManager.func_179109_b((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
  
-@@ -123,16 +123,17 @@
+@@ -114,16 +114,13 @@
+         GlStateManager.func_179094_E();
+         IBakedModel ibakedmodel = this.field_177080_a.func_184393_a(itemstack, p_76986_1_.field_70170_p, (EntityLivingBase)null);
+         int j = this.func_177077_a(p_76986_1_, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_9_, ibakedmodel);
+-        float f = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.x;
+-        float f1 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.y;
+-        float f2 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.z;
+         boolean flag1 = ibakedmodel.func_177556_c();
+ 
+         if (!flag1)
+         {
+-            float f3 = -0.0F * (float)(j - 1) * 0.5F * f;
+-            float f4 = -0.0F * (float)(j - 1) * 0.5F * f1;
+-            float f5 = -0.09375F * (float)(j - 1) * 0.5F * f2;
++            float f3 = -0.0F * (float)(j - 1) * 0.5F;
++            float f4 = -0.0F * (float)(j - 1) * 0.5F;
++            float f5 = -0.09375F * (float)(j - 1) * 0.5F;
+             GlStateManager.func_179109_b(f3, f4, f5);
+         }
+ 
+@@ -144,10 +141,10 @@
+                     float f7 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                     float f9 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                     float f6 = (this.field_177079_e.nextFloat() * 2.0F - 1.0F) * 0.15F;
+-                    GlStateManager.func_179109_b(f7, f9, f6);
++                    GlStateManager.func_179109_b(shouldSpreadItems() ? f7 : 0, shouldSpreadItems() ? f9 : 0, f6);
                  }
  
-                 GlStateManager.func_179152_a(0.5F, 0.5F, 0.5F);
 -                ibakedmodel.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GROUND);
-+                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false);
                  this.field_177080_a.func_180454_a(itemstack, ibakedmodel);
                  GlStateManager.func_179121_F();
              }
-             else
-             {
-                 GlStateManager.func_179094_E();
+@@ -162,10 +159,10 @@
+                     GlStateManager.func_179109_b(f8, f10, 0.0F);
+                 }
+ 
 -                ibakedmodel.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GROUND);
-+                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false);
                  this.field_177080_a.func_180454_a(itemstack, ibakedmodel);
                  GlStateManager.func_179121_F();
-+                // FIXME?
-                 float f3 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.x;
-                 float f4 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.y;
-                 float f5 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.z;
-@@ -157,4 +158,25 @@
+-                GlStateManager.func_179109_b(0.0F * f, 0.0F * f1, 0.09375F * f2);
++                GlStateManager.func_179109_b(0.0F, 0.0F, 0.09375F);
+             }
+         }
+ 
+@@ -192,4 +189,25 @@
      {
          return TextureMap.field_110575_b;
      }

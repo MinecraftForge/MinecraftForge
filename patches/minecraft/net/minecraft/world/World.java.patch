@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -57,6 +57,13 @@
+@@ -61,6 +61,13 @@
  
  public abstract class World implements IBlockAccess
  {
@@ -14,7 +14,7 @@
      private int field_181546_a = 63;
      protected boolean field_72999_e;
      public final List<Entity> field_72996_f = Lists.<Entity>newArrayList();
-@@ -98,6 +105,10 @@
+@@ -102,6 +109,10 @@
      private final WorldBorder field_175728_M;
      int[] field_72994_J;
  
@@ -24,8 +24,8 @@
 +
      protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, WorldProvider p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_)
      {
-         this.field_72990_M = this.field_73012_v.nextInt(12000);
-@@ -110,6 +121,7 @@
+         this.field_73021_x = Lists.newArrayList(new IWorldEventListener[] {this.field_184152_t});
+@@ -116,6 +127,7 @@
          this.field_73011_w = p_i45749_3_;
          this.field_72995_K = p_i45749_5_;
          this.field_175728_M = p_i45749_3_.func_177501_r();
@@ -33,56 +33,28 @@
      }
  
      public World func_175643_b()
-@@ -119,13 +131,18 @@
+@@ -125,6 +137,11 @@
  
-     public BiomeGenBase func_180494_b(final BlockPos p_180494_1_)
+     public Biome func_180494_b(final BlockPos p_180494_1_)
      {
--        if (this.func_175667_e(p_180494_1_))
-+        return this.field_73011_w.getBiomeGenForCoords(p_180494_1_);
++        return this.field_73011_w.getBiomeForCoords(p_180494_1_);
 +    }
 +
-+    public BiomeGenBase getBiomeGenForCoordsBody(final BlockPos pos)
++    public Biome getBiomeForCoordsBody(final BlockPos p_180494_1_)
 +    {
-+        if (this.func_175667_e(pos))
+         if (this.func_175667_e(p_180494_1_))
          {
--            Chunk chunk = this.func_175726_f(p_180494_1_);
-+            Chunk chunk = this.func_175726_f(pos);
- 
-             try
-             {
--                return chunk.func_177411_a(p_180494_1_, this.field_73011_w.func_177499_m());
-+                return chunk.func_177411_a(pos, this.field_73011_w.func_177499_m());
-             }
-             catch (Throwable throwable)
-             {
-@@ -135,7 +152,7 @@
-                 {
-                     public String call() throws Exception
-                     {
--                        return CrashReportCategory.func_180522_a(p_180494_1_);
-+                        return CrashReportCategory.func_180522_a(pos);
-                     }
-                 });
-                 throw new ReportedException(crashreport);
-@@ -143,7 +160,7 @@
-         }
-         else
-         {
--            return this.field_73011_w.func_177499_m().func_180300_a(p_180494_1_, BiomeGenBase.field_76772_c);
-+            return this.field_73011_w.func_177499_m().func_180300_a(pos, BiomeGenBase.field_76772_c);
-         }
-     }
- 
-@@ -184,7 +201,7 @@
+             Chunk chunk = this.func_175726_f(p_180494_1_);
+@@ -201,7 +218,7 @@
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
--        return this.func_180495_p(p_175623_1_).func_177230_c().func_149688_o() == Material.field_151579_a;
-+        return this.func_180495_p(p_175623_1_).func_177230_c().isAir(this, p_175623_1_);
+-        return this.func_180495_p(p_175623_1_).func_185904_a() == Material.field_151579_a;
++        return this.func_180495_p(p_175623_1_).func_177230_c().isAir(this.func_180495_p(p_175623_1_), this, p_175623_1_);
      }
  
      public boolean func_175667_e(BlockPos p_175667_1_)
-@@ -284,39 +301,61 @@
+@@ -298,23 +315,49 @@
          {
              Chunk chunk = this.func_175726_f(p_180501_1_);
              Block block = p_180501_2_.func_177230_c();
@@ -93,7 +65,9 @@
 +                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, p_180501_1_, p_180501_3_);
 +                this.capturedBlockSnapshots.add(blockSnapshot);
 +            }
-+            int oldLight = func_180495_p(p_180501_1_).func_177230_c().getLightValue(this, p_180501_1_);
++            IBlockState oldState = func_180495_p(p_180501_1_);
++            int oldLight = oldState.getLightValue(this, p_180501_1_);
++            int oldOpacity = oldState.getLightOpacity(this, p_180501_1_);
 +
              IBlockState iblockstate = chunk.func_177436_a(p_180501_1_, p_180501_2_);
  
@@ -104,10 +78,8 @@
              }
              else
              {
-                 Block block1 = iblockstate.func_177230_c();
- 
--                if (block.func_149717_k() != block1.func_149717_k() || block.func_149750_m() != block1.func_149750_m())
-+                if (block.func_149717_k() != block1.func_149717_k() || block.getLightValue(this, p_180501_1_) != oldLight)
+-                if (p_180501_2_.func_185891_c() != iblockstate.func_185891_c() || p_180501_2_.func_185906_d() != iblockstate.func_185906_d())
++                if (p_180501_2_.getLightOpacity(this, p_180501_1_) != oldOpacity || p_180501_2_.getLightValue(this, p_180501_1_) != oldLight)
                  {
                      this.field_72984_F.func_76320_a("checkLight");
                      this.func_175664_x(p_180501_1_);
@@ -117,35 +89,29 @@
 -                if ((p_180501_3_ & 2) != 0 && (!this.field_72995_K || (p_180501_3_ & 4) == 0) && chunk.func_150802_k())
 +                if (blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
                  {
--                    this.func_175689_h(p_180501_1_);
-+                    this.markAndNotifyBlock(p_180501_1_, chunk, iblockstate, p_180501_2_, p_180501_3_); // Modularize client and physic updates
-                 }
- 
--                if (!this.field_72995_K && (p_180501_3_ & 1) != 0)
++                    this.markAndNotifyBlock(p_180501_1_, chunk, iblockstate, p_180501_2_, p_180501_3_);
++                }
 +                return true;
 +            }
 +        }
 +    }
 +
-+    // Split off from original setBlockState(BlockPos, IBlockState Block p_147465_4_, int) method in order to directly send client and physic updates
-+    public void markAndNotifyBlock(BlockPos pos, Chunk chunk, IBlockState old, IBlockState new_, int flags)
++    // Split off from original setBlockState(BlockPos, IBlockState, int) method in order to directly send client and physic updates
++    public void markAndNotifyBlock(BlockPos p_180501_1_, Chunk chunk, IBlockState iblockstate, IBlockState p_180501_2_, int p_180501_3_)
 +    {
-+        if ((flags & 2) != 0 && (!this.field_72995_K || (flags & 4) == 0) && (chunk == null || chunk.func_150802_k()))
-+        {
-+            this.func_175689_h(pos);
-+        }
 +        {
 +            {
-+                if (!this.field_72995_K && (flags & 1) != 0)
-                 {
--                    this.func_175722_b(p_180501_1_, iblockstate.func_177230_c());
-+                    this.func_175722_b(pos, new_.func_177230_c());
++                if ((p_180501_3_ & 2) != 0 && (!this.field_72995_K || (p_180501_3_ & 4) == 0) && (chunk == null || chunk.func_150802_k()))
++                {
+                     this.func_184138_a(p_180501_1_, iblockstate, p_180501_2_, p_180501_3_);
+                 }
  
--                    if (block.func_149740_M())
-+                    if (new_.func_177230_c().func_149740_M())
+@@ -324,11 +367,9 @@
+ 
+                     if (p_180501_2_.func_185912_n())
                      {
 -                        this.func_175666_e(p_180501_1_, block);
-+                        this.func_175666_e(pos, new_.func_177230_c());
++                        this.func_175666_e(p_180501_1_, p_180501_2_.func_177230_c());
                      }
                  }
 -
@@ -153,7 +119,16 @@
              }
          }
      }
-@@ -404,6 +443,9 @@
+@@ -343,7 +384,7 @@
+         IBlockState iblockstate = this.func_180495_p(p_175655_1_);
+         Block block = iblockstate.func_177230_c();
+ 
+-        if (iblockstate.func_185904_a() == Material.field_151579_a)
++        if (block.isAir(iblockstate, this, p_175655_1_))
+         {
+             return false;
+         }
+@@ -416,6 +457,9 @@
  
      public void func_175685_c(BlockPos p_175685_1_, Block p_175685_2_)
      {
@@ -163,7 +138,7 @@
          this.func_180496_d(p_175685_1_.func_177976_e(), p_175685_2_);
          this.func_180496_d(p_175685_1_.func_177974_f(), p_175685_2_);
          this.func_180496_d(p_175685_1_.func_177977_b(), p_175685_2_);
-@@ -414,6 +456,11 @@
+@@ -426,6 +470,11 @@
  
      public void func_175695_a(BlockPos p_175695_1_, Block p_175695_2_, EnumFacing p_175695_3_)
      {
@@ -175,7 +150,16 @@
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_180496_d(p_175695_1_.func_177976_e(), p_175695_2_);
-@@ -777,7 +824,7 @@
+@@ -521,7 +570,7 @@
+                 {
+                     IBlockState iblockstate = this.func_180495_p(blockpos);
+ 
+-                    if (iblockstate.func_185891_c() > 0 && !iblockstate.func_185904_a().func_76224_d())
++                    if (iblockstate.func_177230_c().getLightOpacity(iblockstate, this, blockpos) > 0 && !iblockstate.func_185904_a().func_76224_d())
+                     {
+                         return false;
+                     }
+@@ -790,7 +839,7 @@
  
      public boolean func_72935_r()
      {
@@ -183,34 +167,22 @@
 +        return this.field_73011_w.isDaytime();
      }
  
-     public MovingObjectPosition func_72933_a(Vec3 p_72933_1_, Vec3 p_72933_2_)
-@@ -972,6 +1019,12 @@
+     @Nullable
+@@ -993,6 +1042,13 @@
  
-     public void func_72956_a(Entity p_72956_1_, String p_72956_2_, float p_72956_3_, float p_72956_4_)
+     public void func_184148_a(@Nullable EntityPlayer p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_)
      {
-+        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_72956_1_, p_72956_2_, p_72956_3_, p_72956_4_);
-+        if (event.isCanceled() || event.name == null) return;
-+        p_72956_2_ = event.name;
-+        p_72956_3_ = event.newVolume;
-+        p_72956_4_ = event.newPitch;
++        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_184148_1_, p_184148_8_, p_184148_9_, p_184148_10_, p_184148_11_);
++        if (event.isCanceled() || event.getSound() == null) return;
++        p_184148_8_ = event.getSound();
++        p_184148_9_ = event.getCategory();
++        p_184148_10_ = event.getVolume();
++        p_184148_11_ = event.getPitch();
 +
          for (int i = 0; i < this.field_73021_x.size(); ++i)
          {
-             ((IWorldAccess)this.field_73021_x.get(i)).func_72704_a(p_72956_2_, p_72956_1_.field_70165_t, p_72956_1_.field_70163_u, p_72956_1_.field_70161_v, p_72956_3_, p_72956_4_);
-@@ -980,6 +1033,12 @@
- 
-     public void func_85173_a(EntityPlayer p_85173_1_, String p_85173_2_, float p_85173_3_, float p_85173_4_)
-     {
-+        net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_85173_1_, p_85173_2_, p_85173_3_, p_85173_4_);
-+        if (event.isCanceled() || event.name == null) return;
-+        p_85173_2_ = event.name;
-+        p_85173_3_ = event.newVolume;
-+        p_85173_4_ = event.newPitch;
-+
-         for (int i = 0; i < this.field_73021_x.size(); ++i)
-         {
-             ((IWorldAccess)this.field_73021_x.get(i)).func_85102_a(p_85173_1_, p_85173_2_, p_85173_1_.field_70165_t, p_85173_1_.field_70163_u, p_85173_1_.field_70161_v, p_85173_3_, p_85173_4_);
-@@ -1033,6 +1092,9 @@
+             ((IWorldEventListener)this.field_73021_x.get(i)).func_184375_a(p_184148_1_, p_184148_8_, p_184148_9_, p_184148_2_, p_184148_4_, p_184148_6_, p_184148_10_, p_184148_11_);
+@@ -1038,6 +1094,9 @@
  
      public boolean func_72838_d(Entity p_72838_1_)
      {
@@ -220,7 +192,7 @@
          int i = MathHelper.func_76128_c(p_72838_1_.field_70165_t / 16.0D);
          int j = MathHelper.func_76128_c(p_72838_1_.field_70161_v / 16.0D);
          boolean flag = p_72838_1_.field_98038_p;
-@@ -1055,6 +1117,8 @@
+@@ -1060,6 +1119,8 @@
                  this.func_72854_c();
              }
  
@@ -229,7 +201,15 @@
              this.func_72964_e(i, j).func_76612_a(p_72838_1_);
              this.field_72996_f.add(p_72838_1_);
              this.func_72923_a(p_72838_1_);
-@@ -1267,17 +1331,29 @@
+@@ -1291,7 +1352,6 @@
+         return list;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void func_72848_b(IWorldEventListener p_72848_1_)
+     {
+         this.field_73021_x.remove(p_72848_1_);
+@@ -1354,19 +1414,38 @@
  
      public int func_72967_a(float p_72967_1_)
      {
@@ -248,7 +228,7 @@
 +    public float getSunBrightnessFactor(float p_72967_1_)
 +    {
          float f = this.func_72826_c(p_72967_1_);
-         float f1 = 1.0F - (MathHelper.func_76134_b(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F);
+         float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F);
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
          f1 = 1.0F - f1;
          f1 = (float)((double)f1 * (1.0D - (double)(this.func_72867_j(p_72967_1_) * 5.0F) / 16.0D));
@@ -258,11 +238,6 @@
 +        return f1;
      }
  
--    @SideOnly(Side.CLIENT)
-     public void func_72848_b(IWorldAccess p_72848_1_)
-     {
-         this.field_73021_x.remove(p_72848_1_);
-@@ -1286,6 +1362,12 @@
      @SideOnly(Side.CLIENT)
      public float func_72971_b(float p_72971_1_)
      {
@@ -273,33 +248,33 @@
 +    public float getSunBrightnessBody(float p_72971_1_)
 +    {
          float f = this.func_72826_c(p_72971_1_);
-         float f1 = 1.0F - (MathHelper.func_76134_b(f * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+         float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.2F);
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-@@ -1298,6 +1380,12 @@
+@@ -1379,6 +1458,12 @@
      @SideOnly(Side.CLIENT)
-     public Vec3 func_72833_a(Entity p_72833_1_, float p_72833_2_)
+     public Vec3d func_72833_a(Entity p_72833_1_, float p_72833_2_)
      {
 +        return this.field_73011_w.getSkyColor(p_72833_1_, p_72833_2_);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 getSkyColorBody(Entity p_72833_1_, float p_72833_2_)
++    public Vec3d getSkyColorBody(Entity p_72833_1_, float p_72833_2_)
 +    {
          float f = this.func_72826_c(p_72833_2_);
-         float f1 = MathHelper.func_76134_b(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         float f1 = MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-@@ -1305,9 +1393,7 @@
+@@ -1386,9 +1471,7 @@
          int j = MathHelper.func_76128_c(p_72833_1_.field_70163_u);
          int k = MathHelper.func_76128_c(p_72833_1_.field_70161_v);
          BlockPos blockpos = new BlockPos(i, j, k);
--        BiomeGenBase biomegenbase = this.func_180494_b(blockpos);
--        float f2 = biomegenbase.func_180626_a(blockpos);
--        int l = biomegenbase.func_76731_a(f2);
+-        Biome biome = this.func_180494_b(blockpos);
+-        float f2 = biome.func_180626_a(blockpos);
+-        int l = biome.func_76731_a(f2);
 +        int l = net.minecraftforge.client.ForgeHooksClient.getSkyBlendColour(this, blockpos);
          float f3 = (float)(l >> 16 & 255) / 255.0F;
          float f4 = (float)(l >> 8 & 255) / 255.0F;
          float f5 = (float)(l & 255) / 255.0F;
-@@ -1367,6 +1453,11 @@
+@@ -1448,6 +1531,11 @@
  
      public float func_130001_d()
      {
@@ -311,32 +286,32 @@
          return WorldProvider.field_111203_a[this.field_73011_w.func_76559_b(this.field_72986_A.func_76073_f())];
      }
  
-@@ -1379,6 +1470,12 @@
+@@ -1460,6 +1548,12 @@
      @SideOnly(Side.CLIENT)
-     public Vec3 func_72824_f(float p_72824_1_)
+     public Vec3d func_72824_f(float p_72824_1_)
      {
-+        return this.field_73011_w.drawClouds(p_72824_1_);
++        return this.field_73011_w.getCloudColor(p_72824_1_);
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public Vec3 drawCloudsBody(float p_72824_1_)
++    public Vec3d getCloudColorBody(float p_72824_1_)
 +    {
          float f = this.func_72826_c(p_72824_1_);
-         float f1 = MathHelper.func_76134_b(f * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         float f1 = MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-@@ -1434,9 +1531,9 @@
+@@ -1515,9 +1609,9 @@
          for (blockpos = new BlockPos(p_175672_1_.func_177958_n(), chunk.func_76625_h() + 16, p_175672_1_.func_177952_p()); blockpos.func_177956_o() >= 0; blockpos = blockpos1)
          {
              blockpos1 = blockpos.func_177977_b();
--            Material material = chunk.func_177428_a(blockpos1).func_149688_o();
-+            Block block = chunk.func_177428_a(blockpos1);
+-            Material material = chunk.func_177435_g(blockpos1).func_185904_a();
++            IBlockState state = chunk.func_177435_g(blockpos1);
  
 -            if (material.func_76230_c() && material != Material.field_151584_j)
-+            if (block.func_149688_o().func_76230_c() && !block.isLeaves(this, blockpos1) && !block.isFoliage(this, blockpos1))
++            if (state.func_185904_a().func_76230_c() && !state.func_177230_c().isLeaves(state, this, blockpos1) && !state.func_177230_c().isFoliage(this, blockpos1))
              {
                  break;
              }
-@@ -1448,6 +1545,12 @@
+@@ -1529,6 +1623,12 @@
      @SideOnly(Side.CLIENT)
      public float func_72880_h(float p_72880_1_)
      {
@@ -347,47 +322,38 @@
 +    public float getStarBrightnessBody(float p_72880_1_)
 +    {
          float f = this.func_72826_c(p_72880_1_);
-         float f1 = 1.0F - (MathHelper.func_76134_b(f * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
+         float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
          f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
-@@ -1494,7 +1597,15 @@
+@@ -1580,6 +1680,12 @@
                      entity.func_85029_a(crashreportcategory);
                  }
  
--                throw new ReportedException(crashreport);
 +                if (net.minecraftforge.common.ForgeModContainer.removeErroringEntities)
 +                {
 +                    net.minecraftforge.fml.common.FMLLog.severe(crashreport.func_71502_e());
 +                    func_72900_e(entity);
 +                }
 +                else
-+                {
-+                    throw new ReportedException(crashreport);
-+                }
+                 throw new ReportedException(crashreport);
              }
  
-             if (entity.field_70128_L)
-@@ -1554,7 +1665,15 @@
+@@ -1641,6 +1747,12 @@
                      CrashReport crashreport1 = CrashReport.func_85055_a(throwable1, "Ticking entity");
-                     CrashReportCategory crashreportcategory2 = crashreport1.func_85058_a("Entity being ticked");
-                     entity2.func_85029_a(crashreportcategory2);
--                    throw new ReportedException(crashreport1);
+                     CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Entity being ticked");
+                     entity2.func_85029_a(crashreportcategory1);
 +                    if (net.minecraftforge.common.ForgeModContainer.removeErroringEntities)
 +                    {
 +                        net.minecraftforge.fml.common.FMLLog.severe(crashreport1.func_71502_e());
 +                        func_72900_e(entity2);
 +                    }
 +                    else
-+                    {
-+                        throw new ReportedException(crashreport1);
-+                    }
+                     throw new ReportedException(crashreport1);
                  }
              }
- 
-@@ -1601,7 +1720,16 @@
+@@ -1690,6 +1802,13 @@
                          CrashReport crashreport2 = CrashReport.func_85055_a(throwable, "Ticking block entity");
-                         CrashReportCategory crashreportcategory1 = crashreport2.func_85058_a("Block entity being ticked");
-                         tileentity.func_145828_a(crashreportcategory1);
--                        throw new ReportedException(crashreport2);
+                         CrashReportCategory crashreportcategory2 = crashreport2.func_85058_a("Block entity being ticked");
+                         tileentity.func_145828_a(crashreportcategory2);
 +                        if (net.minecraftforge.common.ForgeModContainer.removeErroringTileEntities)
 +                        {
 +                            net.minecraftforge.fml.common.FMLLog.severe(crashreport2.func_71502_e());
@@ -395,13 +361,10 @@
 +                            this.func_175713_t(tileentity.func_174877_v());
 +                        }
 +                        else
-+                        {
-+                            throw new ReportedException(crashreport2);
-+                        }
+                         throw new ReportedException(crashreport2);
                      }
                  }
-             }
-@@ -1618,15 +1746,20 @@
+@@ -1707,15 +1826,20 @@
              }
          }
  
@@ -424,7 +387,7 @@
          this.field_72984_F.func_76318_c("pendingBlockEntities");
  
          if (!this.field_147484_a.isEmpty())
-@@ -1660,7 +1793,8 @@
+@@ -1754,7 +1878,8 @@
  
      public boolean func_175700_a(TileEntity p_175700_1_)
      {
@@ -434,12 +397,12 @@
  
          if (flag && p_175700_1_ instanceof ITickable)
          {
-@@ -1699,9 +1833,13 @@
+@@ -1788,9 +1913,13 @@
      {
          int i = MathHelper.func_76128_c(p_72866_1_.field_70165_t);
          int j = MathHelper.func_76128_c(p_72866_1_.field_70161_v);
 -        int k = 32;
-+        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
++        boolean isForced = getPersistentChunks().containsKey(new net.minecraft.util.math.ChunkPos(i >> 4, j >> 4));
 +        int k = isForced ? 0 : 32;
 +        boolean canUpdate = !p_72866_2_ || this.func_175663_a(i - k, 0, j - k, i + k, 0, j + k, true);
  
@@ -450,17 +413,8 @@
          {
              p_72866_1_.field_70142_S = p_72866_1_.field_70165_t;
              p_72866_1_.field_70137_T = p_72866_1_.field_70163_u;
-@@ -1829,7 +1967,7 @@
-                 {
-                     Block block = this.func_180495_p(blockpos$mutableblockpos.func_181079_c(k1, l1, i2)).func_177230_c();
- 
--                    if (block.func_149688_o() != Material.field_151579_a)
-+                    if (!block.isAir(this, new BlockPos(k1, l1, i2)))
-                     {
-                         return true;
-                     }
-@@ -1894,6 +2032,10 @@
-                         {
+@@ -1989,6 +2118,10 @@
+                             blockpos$pooledmutableblockpos.func_185344_t();
                              return true;
                          }
 +                        else if (block.isBurning(this, new BlockPos(k1, l1, i2)))
@@ -470,35 +424,62 @@
                      }
                  }
              }
-@@ -2034,6 +2176,7 @@
-     public Explosion func_72885_a(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
+@@ -2028,6 +2161,16 @@
+                         IBlockState iblockstate = this.func_180495_p(blockpos$pooledmutableblockpos);
+                         Block block = iblockstate.func_177230_c();
+ 
++                        Boolean result = block.isEntityInsideMaterial(this, blockpos$pooledmutableblockpos, iblockstate, p_72918_3_, (double)l, p_72918_2_, false);
++                        if (result != null && result == true)
++                        {
++                            // Forge: When requested call blocks modifyAcceleration method, and more importantly cause this method to return true, which results in an entity being "inWater"
++                            flag = true;
++                            vec3d = block.func_176197_a(this, blockpos$pooledmutableblockpos, p_72918_3_, vec3d);
++                            continue;
++                        }
++                        else if (result != null && result == false) continue;
++
+                         if (iblockstate.func_185904_a() == p_72918_2_)
+                         {
+                             double d0 = (double)((float)(l1 + 1) - BlockLiquid.func_149801_b(((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue()));
+@@ -2104,6 +2247,9 @@
+                 {
+                     IBlockState iblockstate = this.func_180495_p(blockpos$pooledmutableblockpos.func_185343_d(k1, l1, i2));
+ 
++                    Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(this, blockpos$pooledmutableblockpos, p_72830_1_, p_72830_2_);
++                    if (result != null) return result;
++
+                     if (iblockstate.func_185904_a() == p_72830_2_)
+                     {
+                         int j2 = ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue();
+@@ -2136,6 +2282,7 @@
+     public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
 +        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
          explosion.func_77278_a();
          explosion.func_77279_a(true);
          return explosion;
-@@ -2180,19 +2323,27 @@
-             else
-             {
-                 this.func_175700_a(p_175690_2_);
--                this.func_175726_f(p_175690_1_).func_177426_a(p_175690_1_, p_175690_2_);
-+                Chunk chunk = this.func_175726_f(p_175690_1_); //Forge add NPE protection
-+                if (chunk != null) chunk.func_177426_a(p_175690_1_, p_175690_2_);
+@@ -2258,6 +2405,7 @@
+ 
+     public void func_175690_a(BlockPos p_175690_1_, @Nullable TileEntity p_175690_2_)
+     {
++        p_175690_1_ = p_175690_1_.func_185334_h(); // Forge - prevent mutable BlockPos leaks
+         if (!this.func_189509_E(p_175690_1_))
+         {
+             if (p_175690_2_ != null && !p_175690_2_.func_145837_r())
+@@ -2283,8 +2431,10 @@
+                 else
+                 {
+                     this.func_175700_a(p_175690_2_);
+-                    this.func_175726_f(p_175690_1_).func_177426_a(p_175690_1_, p_175690_2_);
++                    Chunk chunk = this.func_175726_f(p_175690_1_); //Forge add NPE protection
++                    if (chunk != null) chunk.func_177426_a(p_175690_1_, p_175690_2_);
+                 }
++                this.func_175666_e(p_175690_1_, func_180495_p(p_175690_1_).func_177230_c()); //Notify neighbors of changes
              }
-+            this.func_175666_e(p_175690_1_, func_180495_p(p_175690_1_).func_177230_c()); //Notify neighbors of changes
          }
      }
- 
-     public void func_175713_t(BlockPos p_175713_1_)
-     {
-+        //Chunk chunk = this.getChunkFromBlockCoords(pos);
-+        //if (chunk != null) chunk.removeTileEntity(pos);
-+        //Forge ToDO: Are these patches needed anymore?
-+
-         TileEntity tileentity = this.func_175625_s(p_175713_1_);
- 
-         if (tileentity != null && this.field_147481_N)
+@@ -2297,6 +2447,8 @@
          {
              tileentity.func_145843_s();
              this.field_147484_a.remove(tileentity);
@@ -507,7 +488,7 @@
          }
          else
          {
-@@ -2205,6 +2356,7 @@
+@@ -2309,6 +2461,7 @@
  
              this.func_175726_f(p_175713_1_).func_177425_e(p_175713_1_);
          }
@@ -515,25 +496,16 @@
      }
  
      public void func_147457_a(TileEntity p_147457_1_)
-@@ -2223,7 +2375,7 @@
-     {
-         IBlockState iblockstate = p_175683_0_.func_180495_p(p_175683_1_);
-         Block block = iblockstate.func_177230_c();
--        return block.func_149688_o().func_76218_k() && block.func_149686_d() ? true : (block instanceof BlockStairs ? iblockstate.func_177229_b(BlockStairs.field_176308_b) == BlockStairs.EnumHalf.TOP : (block instanceof BlockSlab ? iblockstate.func_177229_b(BlockSlab.field_176554_a) == BlockSlab.EnumBlockHalf.TOP : (block instanceof BlockHopper ? true : (block instanceof BlockSnow ? ((Integer)iblockstate.func_177229_b(BlockSnow.field_176315_a)).intValue() == 7 : false))));
-+        return block.isSideSolid(p_175683_0_, p_175683_1_, EnumFacing.UP);
-     }
- 
-     public boolean func_175677_d(BlockPos p_175677_1_, boolean p_175677_2_)
-@@ -2243,7 +2395,7 @@
+@@ -2335,7 +2488,7 @@
+             if (chunk != null && !chunk.func_76621_g())
+             {
+                 IBlockState iblockstate = this.func_180495_p(p_175677_1_);
+-                return iblockstate.func_185904_a().func_76218_k() && iblockstate.func_185917_h();
++                return iblockstate.func_177230_c().isNormalCube(iblockstate, this, p_175677_1_);
+             }
              else
              {
-                 Block block = this.func_180495_p(p_175677_1_).func_177230_c();
--                return block.func_149688_o().func_76218_k() && block.func_149686_d();
-+                return block.isNormalCube(this, p_175677_1_);
-             }
-         }
-     }
-@@ -2262,6 +2414,7 @@
+@@ -2358,6 +2511,7 @@
      {
          this.field_72985_G = p_72891_1_;
          this.field_72992_H = p_72891_2_;
@@ -541,7 +513,7 @@
      }
  
      public void func_72835_b()
-@@ -2271,6 +2424,11 @@
+@@ -2367,6 +2521,11 @@
  
      protected void func_72947_a()
      {
@@ -553,7 +525,7 @@
          if (this.field_72986_A.func_76059_o())
          {
              this.field_73004_o = 1.0F;
-@@ -2284,6 +2442,11 @@
+@@ -2380,6 +2539,11 @@
  
      protected void func_72979_l()
      {
@@ -565,26 +537,7 @@
          if (!this.field_73011_w.func_177495_o())
          {
              if (!this.field_72995_K)
-@@ -2378,6 +2541,7 @@
-     {
-         this.field_72993_I.clear();
-         this.field_72984_F.func_76320_a("buildList");
-+        this.field_72993_I.addAll(getPersistentChunks().keySet());
- 
-         for (int i = 0; i < this.field_73010_i.size(); ++i)
-         {
-@@ -2434,8 +2598,9 @@
-             Block block = p_147467_3_.func_177428_a(blockpos);
-             j = j + p_147467_1_;
-             k = k + p_147467_2_;
-+            BlockPos worldpos = blockpos.func_177982_a(p_147467_1_, 0, p_147467_2_);
- 
--            if (block.func_149688_o() == Material.field_151579_a && this.func_175699_k(blockpos) <= this.field_73012_v.nextInt(8) && this.func_175642_b(EnumSkyBlock.SKY, blockpos) <= 0)
-+            if (block.isAir(this, worldpos) && this.func_175699_k(worldpos) <= this.field_73012_v.nextInt(8) && this.func_175642_b(EnumSkyBlock.SKY, worldpos) <= 0) //Forge: isAir, and fix arguments to world positions instead of chunk position
-             {
-                 EntityPlayer entityplayer = this.func_72977_a((double)j + 0.5D, (double)l + 0.5D, (double)k + 0.5D, 8.0D);
- 
-@@ -2475,6 +2640,11 @@
+@@ -2499,6 +2663,11 @@
  
      public boolean func_175670_e(BlockPos p_175670_1_, boolean p_175670_2_)
      {
@@ -593,10 +546,10 @@
 +
 +    public boolean canBlockFreezeBody(BlockPos p_175670_1_, boolean p_175670_2_)
 +    {
-         BiomeGenBase biomegenbase = this.func_180494_b(p_175670_1_);
-         float f = biomegenbase.func_180626_a(p_175670_1_);
+         Biome biome = this.func_180494_b(p_175670_1_);
+         float f = biome.func_180626_a(p_175670_1_);
  
-@@ -2516,6 +2686,11 @@
+@@ -2540,6 +2709,11 @@
  
      public boolean func_175708_f(BlockPos p_175708_1_, boolean p_175708_2_)
      {
@@ -605,35 +558,44 @@
 +
 +    public boolean canSnowAtBody(BlockPos p_175708_1_, boolean p_175708_2_)
 +    {
-         BiomeGenBase biomegenbase = this.func_180494_b(p_175708_1_);
-         float f = biomegenbase.func_180626_a(p_175708_1_);
+         Biome biome = this.func_180494_b(p_175708_1_);
+         float f = biome.func_180626_a(p_175708_1_);
  
-@@ -2533,7 +2708,7 @@
+@@ -2557,7 +2731,7 @@
              {
-                 Block block = this.func_180495_p(p_175708_1_).func_177230_c();
+                 IBlockState iblockstate = this.func_180495_p(p_175708_1_);
  
--                if (block.func_149688_o() == Material.field_151579_a && Blocks.field_150431_aC.func_176196_c(this, p_175708_1_))
-+                if (block.isAir(this, p_175708_1_) && Blocks.field_150431_aC.func_176196_c(this, p_175708_1_))
+-                if (iblockstate.func_185904_a() == Material.field_151579_a && Blocks.field_150431_aC.func_176196_c(this, p_175708_1_))
++                if (iblockstate.func_177230_c().isAir(iblockstate, this, p_175708_1_) && Blocks.field_150431_aC.func_176196_c(this, p_175708_1_))
                  {
                      return true;
                  }
-@@ -2565,10 +2740,11 @@
+@@ -2589,10 +2763,11 @@
          else
          {
-             Block block = this.func_180495_p(p_175638_1_).func_177230_c();
--            int i = p_175638_2_ == EnumSkyBlock.SKY ? 0 : block.func_149750_m();
--            int j = block.func_149717_k();
-+            int blockLight = block.getLightValue(this, p_175638_1_);
+             IBlockState iblockstate = this.func_180495_p(p_175638_1_);
+-            int i = p_175638_2_ == EnumSkyBlock.SKY ? 0 : iblockstate.func_185906_d();
+-            int j = iblockstate.func_185891_c();
++            int blockLight = iblockstate.func_177230_c().getLightValue(iblockstate, this, p_175638_1_);
 +            int i = p_175638_2_ == EnumSkyBlock.SKY ? 0 : blockLight;
-+            int j = block.getLightOpacity(this, p_175638_1_);
++            int j = iblockstate.func_177230_c().getLightOpacity(iblockstate, this, p_175638_1_);
  
--            if (j >= 15 && block.func_149750_m() > 0)
+-            if (j >= 15 && iblockstate.func_185906_d() > 0)
 +            if (j >= 15 && blockLight > 0)
              {
                  j = 1;
              }
-@@ -2768,10 +2944,10 @@
-     public List<Entity> func_175674_a(Entity p_175674_1_, AxisAlignedBB p_175674_2_, Predicate <? super Entity > p_175674_3_)
+@@ -2691,7 +2866,7 @@
+                                     int j4 = j2 + enumfacing.func_96559_d();
+                                     int k4 = k2 + enumfacing.func_82599_e();
+                                     blockpos$pooledmutableblockpos.func_185343_d(i4, j4, k4);
+-                                    int l4 = Math.max(1, this.func_180495_p(blockpos$pooledmutableblockpos).func_185891_c());
++                                    int l4 = Math.max(1, this.func_180495_p(blockpos$pooledmutableblockpos).func_177230_c().getLightOpacity(this.func_180495_p(blockpos$pooledmutableblockpos), this, blockpos$pooledmutableblockpos));
+                                     i3 = this.func_175642_b(p_180500_1_, blockpos$pooledmutableblockpos);
+ 
+                                     if (i3 == l2 - l4 && j < this.field_72994_J.length)
+@@ -2799,10 +2974,10 @@
+     public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate <? super Entity > p_175674_3_)
      {
          List<Entity> list = Lists.<Entity>newArrayList();
 -        int i = MathHelper.func_76128_c((p_175674_2_.field_72340_a - 2.0D) / 16.0D);
@@ -647,22 +609,22 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -2824,10 +3000,10 @@
+@@ -2855,10 +3030,10 @@
  
-     public <T extends Entity> List<T> func_175647_a(Class <? extends T > p_175647_1_, AxisAlignedBB p_175647_2_, Predicate <? super T > p_175647_3_)
+     public <T extends Entity> List<T> func_175647_a(Class <? extends T > p_175647_1_, AxisAlignedBB p_175647_2_, @Nullable Predicate <? super T > p_175647_3_)
      {
 -        int i = MathHelper.func_76128_c((p_175647_2_.field_72340_a - 2.0D) / 16.0D);
--        int j = MathHelper.func_76128_c((p_175647_2_.field_72336_d + 2.0D) / 16.0D);
+-        int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + 2.0D) / 16.0D);
 -        int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - 2.0D) / 16.0D);
--        int l = MathHelper.func_76128_c((p_175647_2_.field_72334_f + 2.0D) / 16.0D);
+-        int l = MathHelper.func_76143_f((p_175647_2_.field_72334_f + 2.0D) / 16.0D);
 +        int i = MathHelper.func_76128_c((p_175647_2_.field_72340_a - MAX_ENTITY_RADIUS) / 16.0D);
-+        int j = MathHelper.func_76128_c((p_175647_2_.field_72336_d + MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + MAX_ENTITY_RADIUS) / 16.0D);
 +        int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - MAX_ENTITY_RADIUS) / 16.0D);
-+        int l = MathHelper.func_76128_c((p_175647_2_.field_72334_f + MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.func_76143_f((p_175647_2_.field_72334_f + MAX_ENTITY_RADIUS) / 16.0D);
          List<T> list = Lists.<T>newArrayList();
  
-         for (int i1 = i; i1 <= j; ++i1)
-@@ -2905,11 +3081,13 @@
+         for (int i1 = i; i1 < j; ++i1)
+@@ -2938,11 +3113,13 @@
  
      public void func_175650_b(Collection<Entity> p_175650_1_)
      {
@@ -679,27 +641,25 @@
          }
      }
  
-@@ -2922,7 +3100,9 @@
+@@ -2955,7 +3132,7 @@
      {
-         Block block = this.func_180495_p(p_175716_2_).func_177230_c();
-         AxisAlignedBB axisalignedbb = p_175716_3_ ? null : p_175716_1_.func_180640_a(this, p_175716_2_, p_175716_1_.func_176223_P());
--        return axisalignedbb != null && !this.func_72917_a(axisalignedbb, p_175716_5_) ? false : (block.func_149688_o() == Material.field_151594_q && p_175716_1_ == Blocks.field_150467_bQ ? true : block.func_149688_o().func_76222_j() && p_175716_1_.func_176193_a(this, p_175716_2_, p_175716_4_, p_175716_6_));
-+        if (axisalignedbb != null && !this.func_72917_a(axisalignedbb, p_175716_5_)) return false;
-+        if (block.func_149688_o() == Material.field_151594_q && p_175716_1_ == Blocks.field_150467_bQ) return true;
-+        return block.func_176200_f(this, p_175716_2_) && p_175716_1_.func_176193_a(this, p_175716_2_, p_175716_4_, p_175716_6_);
+         IBlockState iblockstate = this.func_180495_p(p_175716_2_);
+         AxisAlignedBB axisalignedbb = p_175716_3_ ? null : p_175716_1_.func_176223_P().func_185890_d(this, p_175716_2_);
+-        return axisalignedbb != Block.field_185506_k && !this.func_72917_a(axisalignedbb.func_186670_a(p_175716_2_), p_175716_5_) ? false : (iblockstate.func_185904_a() == Material.field_151594_q && p_175716_1_ == Blocks.field_150467_bQ ? true : iblockstate.func_185904_a().func_76222_j() && p_175716_1_.func_176193_a(this, p_175716_2_, p_175716_4_, p_175716_6_));
++        return axisalignedbb != Block.field_185506_k && !this.func_72917_a(axisalignedbb.func_186670_a(p_175716_2_), p_175716_5_) ? false : (iblockstate.func_185904_a() == Material.field_151594_q && p_175716_1_ == Blocks.field_150467_bQ ? true : iblockstate.func_177230_c().func_176200_f(this, p_175716_2_) && p_175716_1_.func_176193_a(this, p_175716_2_, p_175716_4_, p_175716_6_));
      }
  
      public int func_181545_F()
-@@ -3007,7 +3187,7 @@
+@@ -3038,7 +3215,7 @@
+     public int func_175651_c(BlockPos p_175651_1_, EnumFacing p_175651_2_)
      {
          IBlockState iblockstate = this.func_180495_p(p_175651_1_);
-         Block block = iblockstate.func_177230_c();
--        return block.func_149721_r() ? this.func_175676_y(p_175651_1_) : block.func_180656_a(this, p_175651_1_, iblockstate, p_175651_2_);
-+        return block.shouldCheckWeakPower(this, p_175651_1_, p_175651_2_) ? this.func_175676_y(p_175651_1_) : block.func_180656_a(this, p_175651_1_, iblockstate, p_175651_2_);
+-        return iblockstate.func_185915_l() ? this.func_175676_y(p_175651_1_) : iblockstate.func_185911_a(this, p_175651_1_, p_175651_2_);
++        return iblockstate.func_177230_c().shouldCheckWeakPower(iblockstate, this, p_175651_1_, p_175651_2_) ? this.func_175676_y(p_175651_1_) : iblockstate.func_185911_a(this, p_175651_1_, p_175651_2_);
      }
  
      public boolean func_175640_z(BlockPos p_175640_1_)
-@@ -3134,7 +3314,7 @@
+@@ -3235,7 +3412,7 @@
  
      public long func_72905_C()
      {
@@ -708,7 +668,7 @@
      }
  
      public long func_82737_E()
-@@ -3144,17 +3324,17 @@
+@@ -3245,17 +3422,17 @@
  
      public long func_72820_D()
      {
@@ -729,7 +689,7 @@
  
          if (!this.func_175723_af().func_177746_a(blockpos))
          {
-@@ -3166,7 +3346,7 @@
+@@ -3267,7 +3444,7 @@
  
      public void func_175652_B(BlockPos p_175652_1_)
      {
@@ -738,7 +698,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3186,12 +3366,18 @@
+@@ -3287,12 +3464,18 @@
  
          if (!this.field_72996_f.contains(p_72897_1_))
          {
@@ -757,17 +717,17 @@
          return true;
      }
  
-@@ -3285,8 +3471,7 @@
+@@ -3386,8 +3569,7 @@
  
      public boolean func_180502_D(BlockPos p_180502_1_)
      {
--        BiomeGenBase biomegenbase = this.func_180494_b(p_180502_1_);
--        return biomegenbase.func_76736_e();
+-        Biome biome = this.func_180494_b(p_180502_1_);
+-        return biome.func_76736_e();
 +        return this.field_73011_w.isBlockHighHumidity(p_180502_1_);
      }
  
-     public MapStorage func_175693_T()
-@@ -3345,12 +3530,12 @@
+     @Nullable
+@@ -3448,12 +3630,12 @@
  
      public int func_72800_K()
      {
@@ -782,7 +742,7 @@
      }
  
      public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3405,7 +3590,7 @@
+@@ -3503,7 +3685,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -791,36 +751,42 @@
      }
  
      public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_)
-@@ -3447,18 +3632,14 @@
+@@ -3537,7 +3719,7 @@
+ 
+     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
+     {
+-        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
++        for (EnumFacing enumfacing : EnumFacing.field_82609_l)
+         {
+             BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
+ 
+@@ -3545,18 +3727,14 @@
              {
                  IBlockState iblockstate = this.func_180495_p(blockpos);
  
--                if (Blocks.field_150441_bU.func_149907_e(iblockstate.func_177230_c()))
+-                if (Blocks.field_150441_bU.func_185547_C(iblockstate))
 +                iblockstate.func_177230_c().onNeighborChange(this, blockpos, p_175666_1_);
-+                if (iblockstate.func_177230_c().isNormalCube(this, blockpos))
++                if (iblockstate.func_177230_c().isNormalCube(iblockstate, this, blockpos))
                  {
--                    iblockstate.func_177230_c().func_176204_a(this, blockpos, iblockstate, p_175666_2_);
+-                    iblockstate.func_189546_a(this, blockpos, p_175666_2_);
 -                }
--                else if (iblockstate.func_177230_c().func_149721_r())
+-                else if (iblockstate.func_185915_l())
 -                {
--                    blockpos = blockpos.func_177972_a(enumfacing);
--                    iblockstate = this.func_180495_p(blockpos);
+                     blockpos = blockpos.func_177972_a(enumfacing);
+                     iblockstate = this.func_180495_p(blockpos);
 -
--                    if (Blocks.field_150441_bU.func_149907_e(iblockstate.func_177230_c()))
-+                    BlockPos posOther = blockpos.func_177972_a(enumfacing);
-+                    Block other = func_180495_p(posOther).func_177230_c();
-+                    if (other.getWeakChanges(this, posOther))
+-                    if (Blocks.field_150441_bU.func_185547_C(iblockstate))
++                    if (iblockstate.func_177230_c().getWeakChanges(this, blockpos))
                      {
--                        iblockstate.func_177230_c().func_176204_a(this, blockpos, iblockstate, p_175666_2_);
-+                        other.onNeighborChange(this, posOther, p_175666_1_);
+-                        iblockstate.func_189546_a(this, blockpos, p_175666_2_);
++                        iblockstate.func_177230_c().onNeighborChange(this, blockpos, p_175666_1_);
                      }
                  }
              }
-@@ -3528,4 +3709,81 @@
-         int k = 128;
+@@ -3622,6 +3800,87 @@
          return i >= -k && i <= k && j >= -k && j <= k;
      }
-+
+ 
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Determine if the given block is considered solid on the
@@ -851,7 +817,7 @@
 +
 +        Chunk chunk = func_175726_f(pos);
 +        if (chunk == null || chunk.func_76621_g()) return _default;
-+        return func_180495_p(pos).func_177230_c().isSideSolid(this, pos, side);
++        return func_180495_p(pos).isSideSolid(this, pos, side);
 +    }
 +
 +    /**
@@ -859,11 +825,15 @@
 +     *
 +     * @return
 +     */
-+    public com.google.common.collect.ImmutableSetMultimap<ChunkCoordIntPair, net.minecraftforge.common.ForgeChunkManager.Ticket> getPersistentChunks()
++    public com.google.common.collect.ImmutableSetMultimap<net.minecraft.util.math.ChunkPos, net.minecraftforge.common.ForgeChunkManager.Ticket> getPersistentChunks()
 +    {
 +        return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksFor(this);
 +    }
 +
++    public Iterator<Chunk> getPersistentChunkIterable(Iterator<Chunk> chunkIterator)
++    {
++        return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksIterableFor(this, chunkIterator);
++    }
 +    /**
 +     * Readded as it was removed, very useful helper function
 +     *
@@ -897,4 +867,7 @@
 +    {
 +        return perWorldStorage;
 +    }
- }
++
+     public void func_184135_a(Packet<?> p_184135_1_)
+     {
+         throw new UnsupportedOperationException("Can\'t send packets to server unless you\'re on the client.");

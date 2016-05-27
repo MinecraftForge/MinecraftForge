@@ -1,87 +1,156 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -111,6 +111,12 @@
+@@ -122,6 +122,12 @@
              }
          }
  
-+        ItemStack stack = field_78776_a.field_71439_g.func_71045_bC();
-+        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_178888_1_, field_78776_a.field_71439_g))
++        ItemStack stack = field_78776_a.field_71439_g.func_184614_ca();
++        if (stack != null && stack.func_77973_b() != null && stack.func_77973_b().onBlockStartBreak(stack, p_187103_1_, field_78776_a.field_71439_g))
 +        {
 +            return false;
 +        }
 +
-         if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_70694_bm() != null && this.field_78776_a.field_71439_g.func_70694_bm().func_77973_b() instanceof ItemSword)
+         if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_184614_ca() != null && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
          {
              return false;
-@@ -128,13 +134,7 @@
+@@ -143,14 +149,7 @@
              else
              {
-                 world.func_175718_b(2001, p_178888_1_, Block.func_176210_f(iblockstate));
--                boolean flag = world.func_175698_g(p_178888_1_);
+                 world.func_175718_b(2001, p_187103_1_, Block.func_176210_f(iblockstate));
+-                block.func_176208_a(world, p_187103_1_, iblockstate, this.field_78776_a.field_71439_g);
+-                boolean flag = world.func_180501_a(p_187103_1_, Blocks.field_150350_a.func_176223_P(), 11);
  
 -                if (flag)
 -                {
--                    block1.func_176206_d(world, p_178888_1_, iblockstate);
+-                    block.func_176206_d(world, p_187103_1_, iblockstate);
 -                }
 -
                  this.field_178895_c = new BlockPos(this.field_178895_c.func_177958_n(), -1, this.field_178895_c.func_177952_p());
  
                  if (!this.field_78779_k.func_77145_d())
-@@ -152,6 +152,12 @@
+@@ -161,13 +160,20 @@
+                     {
+                         itemstack1.func_179548_a(world, iblockstate, p_187103_1_, this.field_78776_a.field_71439_g);
+ 
+-                        if (itemstack1.field_77994_a == 0)
++                        if (itemstack1.field_77994_a <= 0)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_78776_a.field_71439_g, itemstack1, EnumHand.MAIN_HAND);
+                             this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
+                         }
                      }
                  }
  
-+                boolean flag = block1.removedByPlayer(world, p_178888_1_, field_78776_a.field_71439_g, false);
++                boolean flag = block.removedByPlayer(iblockstate, world, p_187103_1_, field_78776_a.field_71439_g, false);
 +
 +                if (flag)
 +                {
-+                    block1.func_176206_d(world, p_178888_1_, iblockstate);
++                    block.func_176206_d(world, p_187103_1_, iblockstate);
 +                }
                  return flag;
              }
          }
-@@ -356,11 +362,19 @@
-         {
-             if (this.field_78779_k != WorldSettings.GameType.SPECTATOR)
-             {
-+
-+                if (p_178890_3_ != null &&
-+                    p_178890_3_.func_77973_b() != null &&
-+                    p_178890_3_.func_77973_b().onItemUseFirst(p_178890_3_, p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2))
-+                {
-+                    return true;
-+                }
-+
-                 IBlockState iblockstate = p_178890_2_.func_180495_p(p_178890_4_);
- 
--                if ((!p_178890_1_.func_70093_af() || p_178890_1_.func_70694_bm() == null) && iblockstate.func_177230_c().func_180639_a(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2))
-+                if ((!p_178890_1_.func_70093_af() || p_178890_1_.func_70694_bm() == null || p_178890_1_.func_70694_bm().func_77973_b().doesSneakBypassUse(p_178890_2_, p_178890_4_, p_178890_1_)))
-                 {
--                    flag = true;
-+                    flag = iblockstate.func_177230_c().func_180639_a(p_178890_2_, p_178890_4_, iblockstate, p_178890_1_, p_178890_5_, f, f1, f2);
+@@ -218,14 +224,17 @@
                  }
  
-                 if (!flag && p_178890_3_ != null && p_178890_3_.func_77973_b() instanceof ItemBlock)
-@@ -393,7 +407,9 @@
+                 this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
++                net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(this.field_78776_a.field_71439_g, func_78757_d() + 1));
++
+                 IBlockState iblockstate = this.field_78776_a.field_71441_e.func_180495_p(p_180511_1_);
+                 boolean flag = iblockstate.func_185904_a() != Material.field_151579_a;
+ 
+                 if (flag && this.field_78770_f == 0.0F)
+                 {
++                    if (event.getUseBlock() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
+                     iblockstate.func_177230_c().func_180649_a(this.field_78776_a.field_71441_e, p_180511_1_, this.field_78776_a.field_71439_g);
+                 }
+-
++                if (event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return true;
+                 if (flag && iblockstate.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F)
+                 {
+                     this.func_187103_a(p_180511_1_);
+@@ -372,13 +381,32 @@
+         }
+         else
+         {
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
++                    .onRightClickBlock(p_187099_1_, p_187099_7_, p_187099_3_, p_187099_4_, p_187099_5_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187099_1_, func_78757_d() + 1));
++            if (event.isCanceled())
++            {
++                // Give the server a chance to fire event as well. That way server event is not dependant on client event.
++                this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_4_, p_187099_5_, p_187099_7_, f, f1, f2));
++                return EnumActionResult.PASS;
++            }
++            EnumActionResult result = EnumActionResult.PASS;
++
+             if (this.field_78779_k != WorldSettings.GameType.SPECTATOR)
+             {
++                net.minecraft.item.Item item = p_187099_3_ == null ? null : p_187099_3_.func_77973_b();
++                EnumActionResult ret = item == null ? EnumActionResult.PASS : item.onItemUseFirst(p_187099_3_, p_187099_1_, p_187099_2_, p_187099_4_, p_187099_5_, f, f1, f2, p_187099_7_);
++                if (ret != EnumActionResult.PASS) return ret;
++
+                 IBlockState iblockstate = p_187099_2_.func_180495_p(p_187099_4_);
++                boolean bypass = true;
++                for (ItemStack s : new ItemStack[]{p_187099_1_.func_184614_ca(), p_187099_1_.func_184592_cb()}) //TODO: Expand to more hands? player.inv.getHands()?
++                    bypass = bypass && (s == null || s.func_77973_b().doesSneakBypassUse(s, p_187099_2_, p_187099_4_, p_187099_1_));
+ 
+-                if ((!p_187099_1_.func_70093_af() || p_187099_1_.func_184614_ca() == null && p_187099_1_.func_184592_cb() == null) && iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_4_, iblockstate, p_187099_1_, p_187099_7_, p_187099_3_, p_187099_5_, f, f1, f2))
++                if (!p_187099_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
+                 {
+-                    flag = true;
++                    if(event.getUseBlock() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++                    flag = iblockstate.func_177230_c().func_180639_a(p_187099_2_, p_187099_4_, iblockstate, p_187099_1_, p_187099_7_, p_187099_3_, p_187099_5_, f, f1, f2);
++                    if(flag) result = EnumActionResult.SUCCESS;
+                 }
+ 
+                 if (!flag && p_187099_3_ != null && p_187099_3_.func_77973_b() instanceof ItemBlock)
+@@ -394,7 +422,7 @@
+ 
+             this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_4_, p_187099_5_, p_187099_7_, f, f1, f2));
+ 
+-            if (!flag && this.field_78779_k != WorldSettings.GameType.SPECTATOR)
++            if (!flag && this.field_78779_k != WorldSettings.GameType.SPECTATOR || event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
+             {
+                 if (p_187099_3_ == null)
+                 {
+@@ -412,14 +440,19 @@
+                 {
+                     int i = p_187099_3_.func_77960_j();
+                     int j = p_187099_3_.field_77994_a;
++                    if (event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) {
+                     EnumActionResult enumactionresult = p_187099_3_.func_179546_a(p_187099_1_, p_187099_2_, p_187099_4_, p_187099_7_, p_187099_5_, f, f1, f2);
+                     p_187099_3_.func_77964_b(i);
+                     p_187099_3_.field_77994_a = j;
+                     return enumactionresult;
++                    } else return result;
                  }
                  else
                  {
--                    return p_178890_3_.func_179546_a(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2);
-+                    if (!p_178890_3_.func_179546_a(p_178890_1_, p_178890_2_, p_178890_4_, p_178890_5_, f, f1, f2)) return false;
-+                    if (p_178890_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_178890_1_, p_178890_3_);
-+                    return true;
+-                    return p_187099_3_.func_179546_a(p_187099_1_, p_187099_2_, p_187099_4_, p_187099_7_, p_187099_5_, f, f1, f2);
++                    if (event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++                    result = p_187099_3_.func_179546_a(p_187099_1_, p_187099_2_, p_187099_4_, p_187099_7_, p_187099_5_, f, f1, f2);
++                    if (p_187099_3_.field_77994_a <= 0) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187099_1_, p_187099_3_, p_187099_7_);
++                    return result;
                  }
              }
              else
-@@ -420,9 +436,10 @@
+@@ -446,6 +479,7 @@
+             }
+             else
              {
-                 p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = itemstack;
- 
--                if (itemstack.field_77994_a == 0)
-+                if (itemstack.field_77994_a <= 0)
++                if (net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187101_1_, p_187101_4_, p_187101_3_)) return net.minecraft.util.EnumActionResult.PASS;
+                 int i = p_187101_3_.field_77994_a;
+                 ActionResult<ItemStack> actionresult = p_187101_3_.func_77957_a(p_187101_2_, p_187101_1_, p_187101_4_);
+                 ItemStack itemstack = (ItemStack)actionresult.func_188398_b();
+@@ -454,9 +488,10 @@
                  {
-                     p_78769_1_.field_71071_by.field_70462_a[p_78769_1_.field_71071_by.field_70461_c] = null;
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_78769_1_, itemstack);
+                     p_187101_1_.func_184611_a(p_187101_4_, itemstack);
+ 
+-                    if (itemstack.field_77994_a == 0)
++                    if (itemstack.field_77994_a <= 0)
+                     {
+                         p_187101_1_.func_184611_a(p_187101_4_, (ItemStack)null);
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_4_);
+                     }
                  }
  
-                 return true;

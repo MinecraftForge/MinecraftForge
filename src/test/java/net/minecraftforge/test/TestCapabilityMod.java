@@ -1,8 +1,11 @@
 package net.minecraftforge.test;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,19 +42,23 @@ public class TestCapabilityMod
     }
 
     @SubscribeEvent
-    public void onInteract(PlayerInteractEvent event)
+    public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
-        if (event.action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) return;
-        if (event.entityPlayer.getHeldItem() == null) return;
-        if (event.entityPlayer.getHeldItem().getItem() != Items.stick) return;
+        if (event.getItemStack() == null) return;
+        if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
-        TileEntity te = event.world.getTileEntity(event.pos);
-        if (te != null && te.hasCapability(TEST_CAP, event.face))
+        TileEntity te = event.getWorld().getTileEntity(event.getPos());
+        if (te != null && te.hasCapability(TEST_CAP, event.getFace()))
         {
             event.setCanceled(true);
-            IExampleCapability inv = te.getCapability(TEST_CAP, event.face);
+            IExampleCapability inv = te.getCapability(TEST_CAP, event.getFace());
             System.out.println("Hi I'm a " + inv.getOwnerType());
+        }
+        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT)
+        {
+            event.getEntityPlayer().addChatMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
+            event.setCanceled(true);
         }
     }
 
@@ -89,11 +96,10 @@ public class TestCapabilityMod
             {
                 return TEST_CAP != null && capability == TEST_CAP;
             }
-            @SuppressWarnings("unchecked") //There isnt anything sane we can do about this.
             @Override
             public <T> T getCapability(Capability<T> capability, EnumFacing facing)
             {
-                if (TEST_CAP != null && capability == TEST_CAP) return (T)this;
+                if (TEST_CAP != null && capability == TEST_CAP) return TEST_CAP.cast(this);
                 return null;
             }
             @Override

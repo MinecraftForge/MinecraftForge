@@ -1,22 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 @@ -49,6 +49,10 @@
-     private StatFileWriter field_146556_E;
+     private StatisticsManager field_146556_E;
      private boolean field_146558_F = true;
  
 +    private int currentPage = -1;
 +    private GuiButton button;
 +    private java.util.LinkedList<Achievement> minecraftAchievements = new java.util.LinkedList<Achievement>();
 +
-     public GuiAchievements(GuiScreen p_i45026_1_, StatFileWriter p_i45026_2_)
+     public GuiAchievements(GuiScreen p_i45026_1_, StatisticsManager p_i45026_2_)
      {
          this.field_146562_a = p_i45026_1_;
 @@ -57,6 +61,14 @@
          int j = 141;
-         this.field_146569_s = this.field_146567_u = this.field_146565_w = (double)(AchievementList.field_76004_f.field_75993_a * 24 - i / 2 - 12);
-         this.field_146568_t = this.field_146566_v = this.field_146573_x = (double)(AchievementList.field_76004_f.field_75991_b * 24 - j / 2);
+         this.field_146569_s = this.field_146567_u = this.field_146565_w = (double)(AchievementList.field_187982_f.field_75993_a * 24 - i / 2 - 12);
+         this.field_146568_t = this.field_146566_v = this.field_146573_x = (double)(AchievementList.field_187982_f.field_75991_b * 24 - j / 2);
 +        minecraftAchievements.clear();
-+        for (Achievement achievement : AchievementList.field_76007_e)
++        for (Achievement achievement : AchievementList.field_187981_e)
 +        {
 +            if (!net.minecraftforge.common.AchievementPage.isAchievementInPages(achievement))
 +            {
@@ -27,14 +27,14 @@
  
      public void func_73866_w_()
 @@ -64,6 +76,7 @@
-         this.field_146297_k.func_147114_u().func_147297_a(new C16PacketClientStatus(C16PacketClientStatus.EnumState.REQUEST_STATS));
+         this.field_146297_k.func_147114_u().func_147297_a(new CPacketClientStatus(CPacketClientStatus.State.REQUEST_STATS));
          this.field_146292_n.clear();
          this.field_146292_n.add(new GuiOptionButton(1, this.field_146294_l / 2 + 24, this.field_146295_m / 2 + 74, 80, 20, I18n.func_135052_a("gui.done", new Object[0])));
 +        this.field_146292_n.add(button = new GuiButton(2, (field_146294_l - field_146555_f) / 2 + 24, field_146295_m / 2 + 74, 125, 20, net.minecraftforge.common.AchievementPage.getTitle(currentPage)));
      }
  
      protected void func_146284_a(GuiButton p_146284_1_) throws IOException
-@@ -74,6 +87,16 @@
+@@ -74,12 +87,22 @@
              {
                  this.field_146297_k.func_147108_a(this.field_146562_a);
              }
@@ -51,6 +51,13 @@
          }
      }
  
+     protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
+     {
+-        if (p_73869_2_ == this.field_146297_k.field_71474_y.field_151445_Q.func_151463_i())
++        if (this.field_146297_k.field_71474_y.field_151445_Q.isActiveAndMatches(p_73869_2_))
+         {
+             this.field_146297_k.func_147108_a((GuiScreen)null);
+             this.field_146297_k.func_71381_h();
 @@ -257,7 +280,9 @@
          GlStateManager.func_179143_c(518);
          GlStateManager.func_179094_E();
@@ -66,12 +73,11 @@
          GlStateManager.func_179143_c(515);
          this.field_146297_k.func_110434_K().func_110577_a(field_146561_C);
  
--        for (int j5 = 0; j5 < AchievementList.field_76007_e.size(); ++j5)
+-        for (int j5 = 0; j5 < AchievementList.field_187981_e.size(); ++j5)
 +        java.util.List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : net.minecraftforge.common.AchievementPage.getAchievementPage(currentPage).getAchievements());
 +        for (int j5 = 0; j5 < achievementList.size(); ++j5)
          {
--            Achievement achievement1 = (Achievement)AchievementList.field_76007_e.get(j5);
-+            Achievement achievement1 = achievementList.get(j5);
+             Achievement achievement1 = (Achievement)AchievementList.field_187981_e.get(j5);
  
 -            if (achievement1.field_75992_c != null)
 +            if (achievement1.field_75992_c != null && achievementList.contains(achievement1.field_75992_c))
@@ -82,10 +88,10 @@
          GlStateManager.func_179091_B();
          GlStateManager.func_179142_g();
  
--        for (int i6 = 0; i6 < AchievementList.field_76007_e.size(); ++i6)
+-        for (int i6 = 0; i6 < AchievementList.field_187981_e.size(); ++i6)
 +        for (int i6 = 0; i6 < achievementList.size(); ++i6)
          {
--            Achievement achievement2 = (Achievement)AchievementList.field_76007_e.get(i6);
+-            Achievement achievement2 = (Achievement)AchievementList.field_187981_e.get(i6);
 +            Achievement achievement2 = achievementList.get(i6);
              int l6 = achievement2.field_75993_a * 24 - i;
              int j7 = achievement2.field_75991_b * 24 - j;
@@ -114,4 +120,4 @@
 +                GlStateManager.func_179140_f(); //Forge: Make sure Lighting is disabled. Fixes MC-33065
                  GlStateManager.func_179089_o();
                  this.field_146296_j.func_180450_b(achievement2.field_75990_d, l6 + 3, j7 + 3);
-                 GlStateManager.func_179112_b(770, 771);
+                 GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

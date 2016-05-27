@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
-@@ -197,9 +197,11 @@
+@@ -202,9 +202,11 @@
  
      public static void func_180600_a(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
      {
@@ -12,4 +12,4 @@
 +        }
          if (p_180600_1_ >= 0)
          {
-             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, p_180600_1_);
+             GlStateManager.func_187421_b(3553, 33085, p_180600_1_);

@@ -14,7 +14,7 @@ public class ExampleMod
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-		// some example code
-        System.out.println("DIRT BLOCK >> "+Blocks.dirt.getUnlocalizedName());
+        // some example code
+        System.out.println("DIRT BLOCK >> "+Blocks.DIRT.getUnlocalizedName());
     }
 }

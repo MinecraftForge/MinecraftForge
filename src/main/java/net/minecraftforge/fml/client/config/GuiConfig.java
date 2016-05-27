@@ -17,13 +17,14 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -247,7 +248,7 @@ public class GuiConfig extends GuiScreen
                         {
                             flag = false;
                             mc.displayGuiScreen(new GuiMessageDialog(parentScreen, "fml.configgui.gameRestartTitle",
-                                    new ChatComponentText(I18n.format("fml.configgui.gameRestartRequired")), "fml.configgui.confirmRestartMessage"));
+                                    new TextComponentString(I18n.format("fml.configgui.gameRestartRequired")), "fml.configgui.confirmRestartMessage"));
                         }
 
                         if (this.parentScreen instanceof GuiConfig)
@@ -325,9 +326,9 @@ public class GuiConfig extends GuiScreen
         if (title2 != null)
         {
             int strWidth = mc.fontRendererObj.getStringWidth(title2);
-            int elipsisWidth = mc.fontRendererObj.getStringWidth("...");
-            if (strWidth > width - 6 && strWidth > elipsisWidth)
-                title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - elipsisWidth).trim() + "...";
+            int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+            if (strWidth > width - 6 && strWidth > ellipsisWidth)
+                title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - ellipsisWidth).trim() + "...";
             this.drawCenteredString(this.fontRendererObj, title2, this.width / 2, 18, 16777215);
         }
 
@@ -336,15 +337,15 @@ public class GuiConfig extends GuiScreen
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.entryList.drawScreenPost(mouseX, mouseY, partialTicks);
         if (this.undoHoverChecker.checkHover(mouseX, mouseY))
-            this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.undoAll"), 300), mouseX, mouseY);
+            this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.undoAll").split("\n")), mouseX, mouseY);
         if (this.resetHoverChecker.checkHover(mouseX, mouseY))
-            this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.resetAll"), 300), mouseX, mouseY);
+            this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.resetAll").split("\n")), mouseX, mouseY);
         if (this.checkBoxHoverChecker.checkHover(mouseX, mouseY))
-            this.drawToolTip(this.mc.fontRendererObj.listFormattedStringToWidth(I18n.format("fml.configgui.tooltip.applyGlobally"), 300), mouseX, mouseY);
+            this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.applyGlobally").split("\n")), mouseX, mouseY);
     }
 
     public void drawToolTip(List<String> stringList, int x, int y)
     {
-        this.drawHoveringText(stringList, x, y);
+        GuiUtils.drawHoveringText(stringList, x, y, width, height, 300, fontRendererObj);
     }
 }

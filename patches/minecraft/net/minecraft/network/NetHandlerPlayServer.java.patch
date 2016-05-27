@@ -1,51 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -254,6 +254,8 @@
-                             this.field_147369_b.field_70154_o.func_70043_V();
-                         }
- 
-+                        if (!this.field_147380_r) return; //Fixes teleportation kick while riding entities
-+
-                         this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
- 
-                         if (this.field_147369_b.field_70154_o != null)
-@@ -350,6 +352,8 @@
-                         this.field_147369_b.func_70664_aZ();
-                     }
- 
-+                    if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
-+
-                     this.field_147369_b.func_70091_d(d11, d12, d13);
-                     this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
-                     d11 = d8 - this.field_147369_b.field_70165_t;
-@@ -370,6 +374,8 @@
-                         field_147370_c.warn(this.field_147369_b.func_70005_c_() + " moved wrongly!");
-                     }
- 
-+                    if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
-+
-                     this.field_147369_b.func_70080_a(d8, d9, d10, f1, f2);
-                     this.field_147369_b.func_71000_j(this.field_147369_b.field_70165_t - d0, this.field_147369_b.field_70163_u - d1, this.field_147369_b.field_70161_v - d2);
- 
-@@ -377,7 +383,7 @@
-                     {
-                         boolean flag2 = worldserver.func_72945_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_72331_e((double)f3, (double)f3, (double)f3)).isEmpty();
- 
--                        if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn())
-+                        if (flag && (flag1 || !flag2) && !this.field_147369_b.func_70608_bn() && !this.field_147369_b.field_70145_X)
-                         {
-                             this.func_147364_a(this.field_147373_o, this.field_147382_p, this.field_147381_q, f1, f2);
-                             return;
-@@ -405,6 +411,8 @@
-                         this.field_147365_f = 0;
-                     }
- 
-+                    if (!this.field_147380_r) return; //Fixes "Moved Too Fast" kick when being teleported while moving
-+
-                     this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
-                     this.field_147367_d.func_71203_ab().func_72358_d(this.field_147369_b);
-                     this.field_147369_b.func_71122_b(this.field_147369_b.field_70163_u - d7, p_147347_1_.func_149465_i());
-@@ -497,7 +505,10 @@
+@@ -612,7 +612,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -57,77 +12,58 @@
                  {
                      return;
                  }
-@@ -549,6 +560,7 @@
-         WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
-         ItemStack itemstack = this.field_147369_b.field_71071_by.func_70448_g();
-         boolean flag = false;
-+        boolean placeResult = true;
-         BlockPos blockpos = p_147346_1_.func_179724_a();
-         EnumFacing enumfacing = EnumFacing.func_82600_a(p_147346_1_.func_149568_f());
-         this.field_147369_b.func_143004_u();
-@@ -560,13 +572,20 @@
-                 return;
-             }
+@@ -670,7 +673,9 @@
  
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent event = net.minecraftforge.event.ForgeEventFactory.onPlayerInteract(field_147369_b, net.minecraftforge.event.entity.player.PlayerInteractEvent.Action.RIGHT_CLICK_AIR, worldserver, new BlockPos(0, 0, 0), null);
-+            if (event.useItem != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
-+            {
-             this.field_147369_b.field_71134_c.func_73085_a(this.field_147369_b, worldserver, itemstack);
-+            }
-         }
-         else if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
+         if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
--            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
+-            if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
 +            double dist = field_147369_b.field_71134_c.getBlockReachDistance() + 3;
 +            dist *= dist;
-+            if (this.field_147380_r && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
++            if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
--                this.field_147369_b.field_71134_c.func_180236_a(this.field_147369_b, worldserver, itemstack, blockpos, enumfacing, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
-+                // record block place result so we can update client itemstack size if place event was cancelled.
-+                placeResult = this.field_147369_b.field_71134_c.func_180236_a(this.field_147369_b, worldserver, itemstack, blockpos, enumfacing, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j());
+                 this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
- 
-             flag = true;
-@@ -598,12 +617,18 @@
-             this.field_147369_b.field_71137_h = true;
-             this.field_147369_b.field_71071_by.field_70462_a[this.field_147369_b.field_71071_by.field_70461_c] = ItemStack.func_77944_b(this.field_147369_b.field_71071_by.field_70462_a[this.field_147369_b.field_71071_by.field_70461_c]);
-             Slot slot = this.field_147369_b.field_71070_bA.func_75147_a(this.field_147369_b.field_71071_by, this.field_147369_b.field_71071_by.field_70461_c);
-+            int windowId = this.field_147369_b.field_71070_bA.field_75152_c;
-+            if  (slot == null) // Forge: Fix 'slotless' inventories not selecting a valid slot to update
-+            {
-+                slot = this.field_147369_b.field_71069_bz.func_75147_a(this.field_147369_b.field_71071_by, this.field_147369_b.field_71071_by.field_70461_c);
-+                windowId = this.field_147369_b.field_71069_bz.field_75152_c;
-+            }
-             this.field_147369_b.field_71070_bA.func_75142_b();
-             this.field_147369_b.field_71137_h = false;
- 
--            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()))
-+            if (!ItemStack.func_77989_b(this.field_147369_b.field_71071_by.func_70448_g(), p_147346_1_.func_149574_g()) || !placeResult) // force client itemstack update if place event was cancelled
-             {
--                this.func_147359_a(new S2FPacketSetSlot(this.field_147369_b.field_71070_bA.field_75152_c, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
-+                this.func_147359_a(new S2FPacketSetSlot(windowId, slot.field_75222_d, this.field_147369_b.field_71071_by.func_70448_g()));
-             }
+@@ -689,6 +694,7 @@
+         if (itemstack != null && itemstack.field_77994_a == 0)
+         {
+             this.field_147369_b.func_184611_a(enumhand, (ItemStack)null);
++            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_147369_b, itemstack, enumhand);
+             itemstack = null;
          }
      }
-@@ -770,8 +795,10 @@
+@@ -709,6 +715,7 @@
+             if (itemstack != null && itemstack.field_77994_a == 0)
+             {
+                 this.field_147369_b.func_184611_a(enumhand, (ItemStack)null);
++                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_147369_b, itemstack, enumhand);
+                 itemstack = null;
+             }
+         }
+@@ -888,7 +895,9 @@
              }
              else
              {
--                IChatComponent ichatcomponent = new ChatComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
--                this.field_147367_d.func_71203_ab().func_148544_a(ichatcomponent, false);
-+                ChatComponentTranslation chatcomponenttranslation1 = new ChatComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
-+                IChatComponent chat = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, chatcomponenttranslation1);
-+                if (chat == null) return;
-+                this.field_147367_d.func_71203_ab().func_148544_a(chat, false);
+-                ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", new Object[] {this.field_147369_b.func_145748_c_(), s});
++                ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
++                itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
++                if (itextcomponent == null) return;
+                 this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-             this.field_147374_l += 20;
-@@ -916,7 +943,7 @@
+@@ -1018,6 +1027,7 @@
+                 {
+                     EnumHand enumhand1 = p_147340_1_.func_186994_b();
+                     ItemStack itemstack1 = this.field_147369_b.func_184586_b(enumhand1);
++                    if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), itemstack1, enumhand1)) return;
+                     entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), itemstack1, enumhand1);
+                 }
+                 else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
+@@ -1057,7 +1067,7 @@
                          return;
                      }
  
--                    this.field_147369_b = this.field_147367_d.func_71203_ab().func_72368_a(this.field_147369_b, 0, false);
-+                    this.field_147369_b = this.field_147367_d.func_71203_ab().func_72368_a(this.field_147369_b, field_147369_b.field_71093_bK, false);
-                 }
+-                    this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, 0, false);
++                    this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, field_147369_b.field_71093_bK, false);
  
-                 break;
+                     if (this.field_147367_d.func_71199_h())
+                     {

@@ -240,7 +240,7 @@ public class ByteBufUtils {
         // Add the tab for alignment
         returnString.append('\t');
 
-        // Add final chararacters at right, after padding
+        // Add final characters at right, after padding
 
         // If it was at the end of a line, print out the full line
         if (i > 0 && (i % 16) == 0)

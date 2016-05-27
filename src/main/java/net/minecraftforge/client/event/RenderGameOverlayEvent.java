@@ -2,6 +2,7 @@ package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 
+import net.minecraft.world.BossInfoLerping;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -10,13 +11,29 @@ import net.minecraft.client.gui.ScaledResolution;
 @Cancelable
 public class RenderGameOverlayEvent extends Event
 {
+    public float getPartialTicks()
+    {
+        return partialTicks;
+    }
+
+    public ScaledResolution getResolution()
+    {
+        return resolution;
+    }
+
+    public ElementType getType()
+    {
+        return type;
+    }
+
     public static enum ElementType
     {
         ALL,
         HELMET,
         PORTAL,
         CROSSHAIRS,
-        BOSSHEALTH,
+        BOSSHEALTH, // All boss bars
+        BOSSINFO,    // Individual boss bar
         ARMOR,
         HEALTH,
         FOOD,
@@ -28,12 +45,14 @@ public class RenderGameOverlayEvent extends Event
         JUMPBAR,
         CHAT,
         PLAYER_LIST,
-        DEBUG
+        DEBUG,
+        POTION_ICONS,
+        SUBTITLES
     }
 
-    public final float partialTicks;
-    public final ScaledResolution resolution;
-    public final ElementType type;
+    private final float partialTicks;
+    private final ScaledResolution resolution;
+    private final ElementType type;
 
     public RenderGameOverlayEvent(float partialTicks, ScaledResolution resolution)
     {
@@ -44,8 +63,8 @@ public class RenderGameOverlayEvent extends Event
 
     private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type)
     {
-        this.partialTicks = parent.partialTicks;
-        this.resolution = parent.resolution;
+        this.partialTicks = parent.getPartialTicks();
+        this.resolution = parent.getResolution();
         this.type = type;
     }
 
@@ -66,27 +85,114 @@ public class RenderGameOverlayEvent extends Event
         @Override public boolean isCancelable(){ return false; }
     }
 
+    public static class BossInfo extends Pre
+    {
+        private final BossInfoLerping bossInfo;
+        private final int x;
+        private final int y;
+        private int increment;
+        public BossInfo(RenderGameOverlayEvent parent, ElementType type, BossInfoLerping bossInfo, int x, int y, int increment)
+        {
+            super(parent, type);
+            this.bossInfo = bossInfo;
+            this.x = x;
+            this.y = y;
+            this.increment = increment;
+        }
+
+        /**
+         * @return The {@link BossInfoLerping} currently being rendered
+         */
+        public BossInfoLerping getBossInfo()
+        {
+            return bossInfo;
+        }
+
+        /**
+         * @return The current x position we are rendering at
+         */
+        public int getX()
+        {
+            return x;
+        }
+
+        /**
+         * @return The current y position we are rendering at
+         */
+        public int getY()
+        {
+            return y;
+        }
+
+        /**
+         * @return How much to move down before rendering the next bar
+         */
+        public int getIncrement()
+        {
+            return increment;
+        }
+
+        /**
+         * Sets the amount to move down before rendering the next bar
+         * @param increment The increment to set
+         */
+        public void setIncrement(int increment)
+        {
+            this.increment = increment;
+        }
+    }
+
     public static class Text extends Pre
     {
-        public final ArrayList<String> left;
-        public final ArrayList<String> right;
+        private final ArrayList<String> left;
+        private final ArrayList<String> right;
         public Text(RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right)
         {
             super(parent, ElementType.TEXT);
             this.left = left;
             this.right = right;
         }
+
+        public ArrayList<String> getLeft()
+        {
+            return left;
+        }
+
+        public ArrayList<String> getRight()
+        {
+            return right;
+        }
     }
 
     public static class Chat extends Pre
     {
-        public int posX;
-        public int posY;
+        private int posX;
+        private int posY;
 
         public Chat(RenderGameOverlayEvent parent, int posX, int posY)
         {
             super(parent, ElementType.CHAT);
+            this.setPosX(posX);
+            this.setPosY(posY);
+        }
+
+        public int getPosX()
+        {
+            return posX;
+        }
+
+        public void setPosX(int posX)
+        {
             this.posX = posX;
+        }
+
+        public int getPosY()
+        {
+            return posY;
+        }
+
+        public void setPosY(int posY)
+        {
             this.posY = posY;
         }
     }

@@ -20,7 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -128,7 +128,7 @@ public class GuiEditArrayEntries extends GuiListExtended
     public void addNewEntry(int index)
     {
         if (configElement.isList() && configElement.getType() == ConfigGuiType.BOOLEAN)
-            listEntries.add(index, new BooleanEntry(this.owningGui, this, this.configElement, Boolean.valueOf(true)));
+            listEntries.add(index, new BooleanEntry(this.owningGui, this, this.configElement, true));
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.INTEGER)
             listEntries.add(index, new IntegerEntry(this.owningGui, this, this.configElement, 0));
         else if (configElement.isList() && configElement.getType() == ConfigGuiType.DOUBLE)
@@ -519,7 +519,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         @Override
         public Object getValue()
         {
-            return Boolean.valueOf(value);
+            return value;
         }
     }
 
@@ -560,7 +560,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         {
             if (this.getValue() != null && this.isValidated)
                 owningEntryList.mc.fontRendererObj.drawString(
-                        isValidValue ? EnumChatFormatting.GREEN + VALID : EnumChatFormatting.RED + INVALID,
+                        isValidValue ? TextFormatting.GREEN + VALID : TextFormatting.RED + INVALID,
                         listWidth / 4 - owningEntryList.mc.fontRendererObj.getStringWidth(VALID) - 2,
                         y + slotHeight / 2 - owningEntryList.mc.fontRendererObj.FONT_HEIGHT / 2,
                         16777215);

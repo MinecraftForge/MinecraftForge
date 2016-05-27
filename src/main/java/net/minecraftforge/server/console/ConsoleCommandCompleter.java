@@ -48,7 +48,7 @@ public final class ConsoleCommandCompleter implements Completer
             public List<String> call() throws Exception
             {
                 return ConsoleCommandCompleter.this.server.getTabCompletions(ConsoleCommandCompleter.this.server, input,
-                        ConsoleCommandCompleter.this.server.getPosition());
+                        ConsoleCommandCompleter.this.server.getPosition(), false/*  we're not a command block */);
             }
         });
         try

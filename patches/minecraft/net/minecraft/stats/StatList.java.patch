@@ -1,24 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -119,7 +119,7 @@
+@@ -162,7 +162,7 @@
              }
          }
  
--        func_75924_a(field_75928_D);
-+        replaceAllSimilarBlocks(field_75928_D, true);
+-        func_75924_a(field_188066_af);
++        replaceAllSimilarBlocks(field_188066_af, true);
      }
  
      private static void func_151181_c()
-@@ -141,7 +141,7 @@
+@@ -184,7 +184,7 @@
              }
          }
  
--        func_75924_a(field_75934_C);
-+        replaceAllSimilarBlocks(field_75934_C, false);
+-        func_75924_a(field_188065_ae);
++        replaceAllSimilarBlocks(field_188065_ae, false);
      }
  
      private static void func_75925_c()
-@@ -165,7 +165,7 @@
+@@ -208,7 +208,7 @@
              }
          }
  
@@ -27,7 +27,16 @@
      }
  
      private static void func_151179_e()
-@@ -184,7 +184,7 @@
+@@ -227,7 +227,7 @@
+             }
+         }
+ 
+-        func_75924_a(field_75930_F);
++        replaceAllSimilarBlocks(field_75930_F, true);
+     }
+ 
+     private static void func_188054_f()
+@@ -247,7 +247,7 @@
              }
          }
  
@@ -36,7 +45,7 @@
      }
  
      private static String func_180204_a(Item p_180204_0_)
-@@ -193,28 +193,35 @@
+@@ -256,28 +256,35 @@
          return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
      }
  

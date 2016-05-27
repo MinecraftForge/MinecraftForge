@@ -1,34 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -37,7 +37,7 @@
-             if (list.size() > 0)
-             {
-                 EntityLivingBase entitylivingbase = (EntityLivingBase)list.get(0);
--                int l = entitylivingbase instanceof EntityPlayer ? 1 : 0;
-+                int l = 0;// Forge: We fix the indexes. Mojang Stop hard coding this!
-                 int i1 = EntityLiving.func_82159_b(p_82487_2_);
-                 ItemStack itemstack = p_82487_2_.func_77946_l();
-                 itemstack.field_77994_a = 1;
-@@ -190,7 +190,7 @@
- 
-         if (itemstack == null)
-         {
--            p_77659_3_.func_70062_b(i, p_77659_1_.func_77946_l());
-+            p_77659_3_.func_70062_b(i + 1, p_77659_1_.func_77946_l()); //Forge: Vanilla bug fix associated with fixed setCurrentItemOrArmor indexs for players.
-             p_77659_1_.field_77994_a = 0;
-         }
- 
-@@ -210,6 +210,9 @@
-         private final int[] field_78049_g;
+@@ -239,6 +239,8 @@
          private final int field_78055_h;
- 
+         private final SoundEvent field_185020_j;
+         private final float field_189417_k;
 +        //Added by forge for custom Armor materials.
 +        public Item customCraftingMaterial = null;
-+
-         private ArmorMaterial(String p_i45789_3_, int p_i45789_4_, int[] p_i45789_5_, int p_i45789_6_)
+ 
+         private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-             this.field_179243_f = p_i45789_3_;
-@@ -235,7 +238,15 @@
+@@ -272,7 +274,15 @@
  
          public Item func_151685_b()
          {

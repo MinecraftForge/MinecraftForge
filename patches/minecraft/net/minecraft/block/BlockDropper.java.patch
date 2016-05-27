@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDropper.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDropper.java
-@@ -43,7 +43,7 @@
+@@ -44,7 +44,7 @@
              {
                  ItemStack itemstack = tileentitydispenser.func_70301_a(i);
  

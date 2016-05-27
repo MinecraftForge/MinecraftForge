@@ -1,38 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSlab.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSlab.java
-@@ -91,6 +91,17 @@
+@@ -50,6 +50,16 @@
          return this.func_176552_j();
      }
  
 +    @Override
-+    public boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing face)
-+	{
-+        if ( func_149662_c() )
++    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
++    {
++        if ( state.func_185914_p() )
 +            return true;
-+        
-+        // face is on the block being rendered, not this block.
-+        EnumBlockHalf side = world.func_180495_p(pos).func_177229_b(field_176554_a);
-+        return (side == EnumBlockHalf.TOP && face == EnumFacing.DOWN) || (side == EnumBlockHalf.BOTTOM && face == EnumFacing.UP);
++
++        EnumBlockHalf side = state.func_177229_b(field_176554_a);
++        return (side == EnumBlockHalf.TOP && face == EnumFacing.UP) || (side == EnumBlockHalf.BOTTOM && face == EnumFacing.DOWN);
 +    }
 +
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          IBlockState iblockstate = super.func_180642_a(p_180642_1_, p_180642_2_, p_180642_3_, p_180642_4_, p_180642_5_, p_180642_6_, p_180642_7_, p_180642_8_).func_177226_a(field_176554_a, BlockSlab.EnumBlockHalf.BOTTOM);
-@@ -118,15 +129,8 @@
+@@ -77,13 +87,14 @@
          {
              return false;
          }
 -        else
--        {
--            BlockPos blockpos = p_176225_2_.func_177972_a(p_176225_3_.func_176734_d());
--            IBlockState iblockstate = p_176225_1_.func_180495_p(p_176225_2_);
--            IBlockState iblockstate1 = p_176225_1_.func_180495_p(blockpos);
--            boolean flag = func_150003_a(iblockstate.func_177230_c()) && iblockstate.func_177229_b(field_176554_a) == BlockSlab.EnumBlockHalf.TOP;
--            boolean flag1 = func_150003_a(iblockstate1.func_177230_c()) && iblockstate1.func_177229_b(field_176554_a) == BlockSlab.EnumBlockHalf.TOP;
--            return flag1 ? (p_176225_3_ == EnumFacing.DOWN ? true : (p_176225_3_ == EnumFacing.UP && super.func_176225_a(p_176225_1_, p_176225_2_, p_176225_3_) ? true : !func_150003_a(iblockstate.func_177230_c()) || !flag)) : (p_176225_3_ == EnumFacing.UP ? true : (p_176225_3_ == EnumFacing.DOWN && super.func_176225_a(p_176225_1_, p_176225_2_, p_176225_3_) ? true : !func_150003_a(iblockstate.func_177230_c()) || flag));
--        }
-+        // additional logic breaks doesSideBlockRendering and is no longer useful.
-+        return super.func_176225_a(p_176225_1_, p_176225_2_, p_176225_3_);
++        else if (false) // Forge: Additional logic breaks doesSideBlockRendering and is no longer useful.
+         {
+             IBlockState iblockstate = p_176225_2_.func_180495_p(p_176225_3_.func_177972_a(p_176225_4_));
+             boolean flag = func_185675_i(iblockstate) && iblockstate.func_177229_b(field_176554_a) == BlockSlab.EnumBlockHalf.TOP;
+             boolean flag1 = func_185675_i(p_176225_1_) && p_176225_1_.func_177229_b(field_176554_a) == BlockSlab.EnumBlockHalf.TOP;
+             return flag1 ? (p_176225_4_ == EnumFacing.DOWN ? true : (p_176225_4_ == EnumFacing.UP && super.func_176225_a(p_176225_1_, p_176225_2_, p_176225_3_, p_176225_4_) ? true : !func_185675_i(iblockstate) || !flag)) : (p_176225_4_ == EnumFacing.UP ? true : (p_176225_4_ == EnumFacing.DOWN && super.func_176225_a(p_176225_1_, p_176225_2_, p_176225_3_, p_176225_4_) ? true : !func_185675_i(iblockstate) || flag));
+         }
++        return super.func_176225_a(p_176225_1_, p_176225_2_, p_176225_3_, p_176225_4_);
      }
  
      @SideOnly(Side.CLIENT)

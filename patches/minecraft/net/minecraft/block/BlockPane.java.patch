@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPane.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPane.java
-@@ -38,7 +38,10 @@
+@@ -106,7 +106,10 @@
  
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
@@ -11,31 +11,16 @@
 +                .func_177226_a(field_176242_M, canPaneConnectTo(p_176221_2_, p_176221_3_, EnumFacing.EAST));
      }
  
-     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -64,10 +67,10 @@
- 
-     public void func_180638_a(World p_180638_1_, BlockPos p_180638_2_, IBlockState p_180638_3_, AxisAlignedBB p_180638_4_, List<AxisAlignedBB> p_180638_5_, Entity p_180638_6_)
+     @Nullable
+@@ -184,4 +187,11 @@
      {
--        boolean flag = this.func_150098_a(p_180638_1_.func_180495_p(p_180638_2_.func_177978_c()).func_177230_c());
--        boolean flag1 = this.func_150098_a(p_180638_1_.func_180495_p(p_180638_2_.func_177968_d()).func_177230_c());
--        boolean flag2 = this.func_150098_a(p_180638_1_.func_180495_p(p_180638_2_.func_177976_e()).func_177230_c());
--        boolean flag3 = this.func_150098_a(p_180638_1_.func_180495_p(p_180638_2_.func_177974_f()).func_177230_c());
-+        boolean flag = this.canPaneConnectTo(p_180638_1_, p_180638_2_, EnumFacing.NORTH);
-+        boolean flag1 = this.canPaneConnectTo(p_180638_1_, p_180638_2_, EnumFacing.SOUTH);
-+        boolean flag2 = this.canPaneConnectTo(p_180638_1_, p_180638_2_, EnumFacing.WEST);
-+        boolean flag3 = this.canPaneConnectTo(p_180638_1_, p_180638_2_, EnumFacing.EAST);
- 
-         if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1))
-         {
-@@ -186,4 +189,11 @@
-     {
-         return new BlockState(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
+         return new BlockStateContainer(this, new IProperty[] {field_176241_b, field_176242_M, field_176244_O, field_176243_N});
      }
 +
 +    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
 +    {
 +        BlockPos off = pos.func_177972_a(dir);
-+        Block block = world.func_180495_p(off).func_177230_c();
-+        return func_150098_a(block) || block.isSideSolid(world, off, dir.func_176734_d());
++        IBlockState state = world.func_180495_p(off);
++        return func_150098_a(state.func_177230_c()) || state.isSideSolid(world, off, dir.func_176734_d());
 +    }
  }

@@ -59,7 +59,7 @@ public class DebugDiffWriter implements DiffWriter {
             if (ba[ix] == '\n')
                 System.err.print("\\n");
             else
-                System.err.print(String.valueOf((char)((char) ba[ix])));
+                System.err.print(String.valueOf((char) ba[ix]));
             //System.err.print("0x" + Integer.toHexString(buf[ix]) + " "); // hex output
         }
         System.err.println("");

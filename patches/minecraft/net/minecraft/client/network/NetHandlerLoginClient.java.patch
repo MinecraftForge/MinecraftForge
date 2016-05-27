@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
-@@ -104,7 +104,10 @@
+@@ -106,7 +106,10 @@
      {
          this.field_175091_e = p_147390_1_.func_179730_a();
          this.field_147393_d.func_150723_a(EnumConnectionState.PLAY);
@@ -11,4 +11,4 @@
 +        net.minecraftforge.fml.client.FMLClientHandler.instance().setPlayClient(nhpc);
      }
  
-     public void func_147231_a(IChatComponent p_147231_1_)
+     public void func_147231_a(ITextComponent p_147231_1_)

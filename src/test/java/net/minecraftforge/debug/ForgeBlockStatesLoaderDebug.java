@@ -7,11 +7,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -35,9 +35,9 @@ public class ForgeBlockStatesLoaderDebug {
     public static final String MODID = "ForgeBlockStatesLoader";
     public static final String ASSETS = "forgeblockstatesloader:";
 
-    public static final Block blockCustom = new CustomMappedBlock();
+    //public static final Block blockCustom = new CustomMappedBlock();
     public static final String nameCustomWall = "custom_wall";
-    public static final BlockWall blockCustomWall = new BlockWall(Blocks.cobblestone);
+    public static final BlockWall blockCustomWall = new BlockWall(Blocks.COBBLESTONE);
     public static final ItemMultiTexture itemCustomWall = (ItemMultiTexture)new ItemMultiTexture(blockCustomWall, blockCustomWall, new Function<ItemStack, String>()
     {
         @Override
@@ -50,12 +50,12 @@ public class ForgeBlockStatesLoaderDebug {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
-        GameRegistry.registerBlock(blockCustom);
+        //blockCustom.setUnlocalizedName(MODID + ".customBlock").setRegistryName("customBlock");
+        //GameRegistry.registerBlock(blockCustom);
 
         blockCustomWall.setUnlocalizedName(MODID + ".customWall").setRegistryName(nameCustomWall);
-        GameRegistry.registerBlock(blockCustomWall, (Class<? extends ItemBlock>)null);
-        GameRegistry.registerItem(itemCustomWall);
+        GameRegistry.register(blockCustomWall);
+        GameRegistry.register(itemCustomWall);
         GameData.getBlockItemMap().put(blockCustomWall, itemCustomWall);
 
         if (event.getSide() == Side.CLIENT)
@@ -65,7 +65,7 @@ public class ForgeBlockStatesLoaderDebug {
     @SideOnly(Side.CLIENT)
     public void preInitClient(FMLPreInitializationEvent event)
     {
-        ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
+        //ModelLoader.setCustomStateMapper(blockCustom, new StateMap.Builder().withName(CustomMappedBlock.VARIANT).build());
 
         ModelLoader.setCustomStateMapper(blockCustomWall, new IStateMapper()
         {
@@ -91,7 +91,8 @@ public class ForgeBlockStatesLoaderDebug {
     }
 
     // this block is never actually used, it's only needed for the error message on load to see the variant it maps to
-    public static class CustomMappedBlock extends Block
+    // disabling until we can make it a proper test
+    /*public static class CustomMappedBlock extends Block
     {
         public static final PropertyEnum<CustomVariant> VARIANT = PropertyEnum.create("type", CustomVariant.class);
 
@@ -102,8 +103,8 @@ public class ForgeBlockStatesLoaderDebug {
         }
 
         @Override
-        protected BlockState createBlockState() {
-            return new BlockState(this,  VARIANT);
+        protected BlockStateContainer createBlockState() {
+            return new BlockStateContainer(this,  VARIANT);
         }
 
         @Override
@@ -122,10 +123,10 @@ public class ForgeBlockStatesLoaderDebug {
         }
 
         public static enum CustomVariant implements IStringSerializable {
-            TypeA,
-            TypeB;
+            type_a,
+            type_b;
 
             public String getName() { return this.toString(); };
         }
-    }
+    }*/
 }

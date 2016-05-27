@@ -7,9 +7,6 @@ import net.minecraft.util.EnumFacing;
 
 /**
  * Reference Tile Entity implementation of {@link IFluidHandler}. Use/extend this or write your own.
- *
- * @author King Lemming
- *
  */
 @Deprecated
 public class TileFluidHandler extends TileEntity implements IFluidHandler
@@ -24,10 +21,11 @@ public class TileFluidHandler extends TileEntity implements IFluidHandler
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag)
+    public NBTTagCompound writeToNBT(NBTTagCompound tag)
     {
-        super.writeToNBT(tag);
+        tag = super.writeToNBT(tag);
         tank.writeToNBT(tag);
+        return tag;
     }
 
     /* IFluidHandler */

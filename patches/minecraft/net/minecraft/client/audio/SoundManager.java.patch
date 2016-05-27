@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/audio/SoundManager.java
 +++ ../src-work/minecraft/net/minecraft/client/audio/SoundManager.java
-@@ -69,6 +69,7 @@
+@@ -76,6 +76,7 @@
          {
              SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
@@ -8,34 +8,34 @@
          }
          catch (SoundSystemException soundsystemexception)
          {
-@@ -80,6 +81,7 @@
-     {
+@@ -100,6 +101,7 @@
+ 
          this.func_148613_b();
          this.func_148608_i();
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
      }
  
      private synchronized void func_148608_i()
-@@ -316,6 +318,9 @@
-             }
-             else
-             {
-+                p_148611_1_ = net.minecraftforge.client.ForgeHooksClient.playSound(this, p_148611_1_);
-+                if (p_148611_1_ == null) return;
+@@ -338,6 +340,9 @@
+     {
+         if (this.field_148617_f)
+         {
++            p_148611_1_ = net.minecraftforge.client.ForgeHooksClient.playSound(this, p_148611_1_);
++            if (p_148611_1_ == null) return;
 +
-                 SoundEventAccessorComposite soundeventaccessorcomposite = this.field_148622_c.func_147680_a(p_148611_1_.func_147650_b());
+             SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
+             ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
  
-                 if (soundeventaccessorcomposite == null)
-@@ -357,10 +362,12 @@
-                             if (soundpoolentry.func_148648_d())
+@@ -400,10 +405,12 @@
+                             if (sound.func_188723_h())
                              {
-                                 this.field_148620_e.newStreamingSource(false, s, func_148612_a(resourcelocation), resourcelocation.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f1);
+                                 this.field_148620_e.newStreamingSource(false, s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
 +                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, p_148611_1_, s));
                              }
                              else
                              {
-                                 this.field_148620_e.newSource(false, s, func_148612_a(resourcelocation), resourcelocation.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f1);
+                                 this.field_148620_e.newSource(false, s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
 +                                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, p_148611_1_, s));
                              }
  
-                             field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", new Object[] {soundpoolentry.func_148652_a(), soundeventaccessorcomposite.func_148729_c(), s});
+                             field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", new Object[] {sound.func_188719_a(), resourcelocation1, s});

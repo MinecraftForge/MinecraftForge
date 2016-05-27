@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/SlotCrafting.java
 +++ ../src-work/minecraft/net/minecraft/inventory/SlotCrafting.java
-@@ -112,8 +112,11 @@
+@@ -108,8 +108,11 @@
  
      public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
      {

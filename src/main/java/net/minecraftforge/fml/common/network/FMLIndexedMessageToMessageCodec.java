@@ -44,13 +44,12 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     }
 
     public abstract void encodeInto(ChannelHandlerContext ctx, A msg, ByteBuf target) throws Exception;
+
     @Override
     protected final void encode(ChannelHandlerContext ctx, A msg, List<Object> out) throws Exception
     {
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        @SuppressWarnings("unchecked") // Stupid unnecessary cast I can't seem to kill
-        Class<? extends A> clazz = (Class<? extends A>) msg.getClass();
-        byte discriminator = types.get(clazz);
+        byte discriminator = types.get(msg.getClass());
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
         FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
@@ -69,7 +68,11 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     protected final void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) throws Exception
     {
         testMessageValidity(msg);
-        ByteBuf payload = msg.payload().copy();
+        ByteBuf payload = msg.payload().duplicate();
+        if (payload.readableBytes() < 1)
+        {
+            FMLLog.log(Level.ERROR, "The FMLIndexedCodec has received an empty buffer on channel %s, likely a result of a LAN server issue. Pipeline parts : %s", ctx.channel().attr(NetworkRegistry.FML_CHANNEL), ctx.pipeline().toString());
+        }
         byte discriminator = payload.readByte();
         Class<? extends A> clazz = discriminators.get(discriminator);
         if(clazz == null)

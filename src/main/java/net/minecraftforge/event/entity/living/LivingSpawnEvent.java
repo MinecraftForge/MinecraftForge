@@ -19,10 +19,10 @@ import net.minecraft.world.World;
  **/
 public class LivingSpawnEvent extends LivingEvent
 {
-    public final World world;
-    public final float x;
-    public final float y;
-    public final float z;
+    private final World world;
+    private final float x;
+    private final float y;
+    private final float z;
     
     public LivingSpawnEvent(EntityLiving entity, World world, float x, float y, float z)
     {
@@ -33,6 +33,10 @@ public class LivingSpawnEvent extends LivingEvent
         this.z = z;
     }
 
+    public World getWorld() { return world; }
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getZ() { return z; }
     /**
      * Fires before mob spawn events.
      * 

@@ -40,7 +40,7 @@ public class SideTransformer implements IClassTransformer
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
 
-        if (remove((List<AnnotationNode>)classNode.visibleAnnotations, SIDE))
+        if (remove(classNode.visibleAnnotations, SIDE))
         {
             if (DEBUG)
             {
@@ -53,7 +53,7 @@ public class SideTransformer implements IClassTransformer
         while(fields.hasNext())
         {
             FieldNode field = fields.next();
-            if (remove((List<AnnotationNode>)field.visibleAnnotations, SIDE))
+            if (remove(field.visibleAnnotations, SIDE))
             {
                 if (DEBUG)
                 {
@@ -66,7 +66,7 @@ public class SideTransformer implements IClassTransformer
         while(methods.hasNext())
         {
             MethodNode method = methods.next();
-            if (remove((List<AnnotationNode>)method.visibleAnnotations, SIDE))
+            if (remove(method.visibleAnnotations, SIDE))
             {
                 if (DEBUG)
                 {

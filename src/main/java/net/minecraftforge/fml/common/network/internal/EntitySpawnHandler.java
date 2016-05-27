@@ -9,6 +9,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityTracker;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -17,7 +18,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityAdjustMessage;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityMessage;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -53,25 +53,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         {
             spawnEntity((FMLMessage.EntitySpawnMessage)msg);
         }
-        else if (msg.getClass().equals(FMLMessage.EntityAdjustMessage.class))
-        {
-            adjustEntity((FMLMessage.EntityAdjustMessage)msg);
-        }
-    }
-
-    private void adjustEntity(EntityAdjustMessage msg)
-    {
-        Entity ent = FMLClientHandler.instance().getWorldClient().getEntityByID(msg.entityId);
-        if (ent != null)
-        {
-            ent.serverPosX = msg.serverX;
-            ent.serverPosY = msg.serverY;
-            ent.serverPosZ = msg.serverZ;
-        }
-        else
-        {
-            FMLLog.fine("Attempted to adjust the position of entity %d which is not present on the client", msg.entityId);
-        }
     }
 
     private void spawnEntity(FMLMessage.EntitySpawnMessage spawnMsg)
@@ -81,7 +62,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         if (er == null)
         {
             throw new RuntimeException( "Could not spawn mod entity ModID: " + spawnMsg.modId + " EntityID: " + spawnMsg.modEntityTypeId +
-                    " at ( " + spawnMsg.scaledX + "," + spawnMsg.scaledY + ", " + spawnMsg.scaledZ + ") Please contact mod author or server admin.");
+                    " at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ + ") Please contact mod author or server admin.");
         }
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
         Class<? extends Entity> cls = er.getEntityClass();
@@ -93,11 +74,12 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 entity = er.doCustomSpawning(spawnMsg);
             } else
             {
-                entity = (Entity) (cls.getConstructor(World.class).newInstance(wc));
+                entity = cls.getConstructor(World.class).newInstance(wc);
 
                 int offset = spawnMsg.entityId - entity.getEntityId();
                 entity.setEntityId(spawnMsg.entityId);
-                entity.setLocationAndAngles(spawnMsg.scaledX, spawnMsg.scaledY, spawnMsg.scaledZ, spawnMsg.scaledYaw, spawnMsg.scaledPitch);
+                entity.setUniqueId(spawnMsg.entityUUID);
+                entity.setLocationAndAngles(spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ, spawnMsg.scaledYaw, spawnMsg.scaledPitch);
                 if (entity instanceof EntityLiving)
                 {
                     ((EntityLiving) entity).rotationYawHead = spawnMsg.scaledHeadYaw;
@@ -113,9 +95,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 }
             }
 
-            entity.serverPosX = spawnMsg.rawX;
-            entity.serverPosY = spawnMsg.rawY;
-            entity.serverPosZ = spawnMsg.rawZ;
+            EntityTracker.updateServerPosition(entity, spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ);
 
             EntityPlayerSP clientPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entity instanceof IThrowableEntity)
@@ -126,7 +106,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
 
             if (spawnMsg.dataWatcherList != null)
             {
-                entity.getDataWatcher().updateWatchedObjectsFromList(spawnMsg.dataWatcherList);
+                entity.getDataManager().setEntryValues(spawnMsg.dataWatcherList);
             }
 
             if (spawnMsg.throwerId > 0)
@@ -141,7 +121,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
             wc.addEntityToWorld(spawnMsg.entityId, entity);
         } catch (Exception e)
         {
-            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity at ( " + spawnMsg.scaledX + "," + spawnMsg.scaledY + ", " + spawnMsg.scaledZ +")");
+            FMLLog.log(Level.ERROR, e, "A severe problem occurred during the spawning of an entity at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ +")");
             throw Throwables.propagate(e);
         }
     }

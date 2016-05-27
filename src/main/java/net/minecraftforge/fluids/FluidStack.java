@@ -13,8 +13,6 @@ import net.minecraftforge.fml.common.registry.RegistryDelegate;
  * {@link #isFluidStackIdentical(FluidStack)} to determine if FluidID, Amount and NBT Tag are all
  * equal.
  *
- * @author King Lemming, SirSengir (LiquidStack)
- *
  */
 public class FluidStack
 {
@@ -34,7 +32,7 @@ public class FluidStack
             FMLLog.bigWarning("Failed attempt to create a FluidStack for an unregistered Fluid %s (type %s)", fluid.getName(), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
-    	this.fluidDelegate = FluidRegistry.makeDelegate(fluid);
+        this.fluidDelegate = FluidRegistry.makeDelegate(fluid);
         this.amount = amount;
     }
 
@@ -187,12 +185,12 @@ public class FluidStack
     @Override
     public final int hashCode()
     {
-    	int code = 1;
-    	code = 31*code + getFluid().hashCode();
-    	code = 31*code + amount;
-    	if (tag != null)
-    		code = 31*code + tag.hashCode();
-    	return code;
+        int code = 1;
+        code = 31*code + getFluid().hashCode();
+        code = 31*code + amount;
+        if (tag != null)
+            code = 31*code + tag.hashCode();
+        return code;
     }
 
     /**

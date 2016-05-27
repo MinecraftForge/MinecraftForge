@@ -1,26 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDeadBush.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDeadBush.java
-@@ -14,7 +14,7 @@
- import net.minecraft.util.BlockPos;
+@@ -17,7 +17,7 @@
+ import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 -public class BlockDeadBush extends BlockBush
 +public class BlockDeadBush extends BlockBush implements net.minecraftforge.common.IShearable
  {
-     protected BlockDeadBush()
-     {
-@@ -45,14 +45,15 @@
+     protected static final AxisAlignedBB field_185516_a = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
  
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_)
+@@ -59,7 +59,7 @@
+ 
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, @Nullable ItemStack p_180657_6_)
      {
--        if (!p_180657_1_.field_72995_K && p_180657_2_.func_71045_bC() != null && p_180657_2_.func_71045_bC().func_77973_b() == Items.field_151097_aZ)
+-        if (!p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
++        if (false && !p_180657_1_.field_72995_K && p_180657_6_ != null && p_180657_6_.func_77973_b() == Items.field_151097_aZ) // Forge: Noop
          {
--            p_180657_2_.func_71029_a(StatList.field_75934_C[Block.func_149682_b(this)]);
--            func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150330_I, 1, 0));
--        }
--        else
--        {
-             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_);
+             p_180657_2_.func_71029_a(StatList.func_188055_a(this));
+             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150330_I, 1, 0));
+@@ -69,4 +69,11 @@
+             super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
          }
      }
 +
@@ -28,6 +27,6 @@
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
 +    {
-+        return new java.util.ArrayList<ItemStack>(java.util.Arrays.asList(new ItemStack(Blocks.field_150330_I)));
++        return java.util.Arrays.asList(new ItemStack(Blocks.field_150330_I));
 +    }
  }

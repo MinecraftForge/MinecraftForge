@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeSwamp.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSwamp.java
+@@ -86,4 +86,10 @@
+     {
+         return 6975545;
+     }
++
++    @Override
++    public void addDefaultFlowers()
++    {
++        addFlower(Blocks.field_150328_O.func_176223_P().func_177226_a(Blocks.field_150328_O.func_176494_l(), BlockFlower.EnumFlowerType.BLUE_ORCHID), 10);
++    }
+ }

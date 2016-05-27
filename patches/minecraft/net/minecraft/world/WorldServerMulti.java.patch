@@ -30,9 +30,9 @@
      }
  
      public World func_175643_b()
-@@ -58,12 +61,12 @@
-         this.field_72988_C = this.field_175743_a.func_175693_T();
+@@ -59,12 +62,12 @@
          this.field_96442_D = this.field_175743_a.func_96441_U();
+         this.field_184151_B = this.field_175743_a.func_184146_ak();
          String s = VillageCollection.func_176062_a(this.field_73011_w);
 -        VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_75742_a(VillageCollection.class, s);
 +        VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_75742_a(VillageCollection.class, s);
@@ -45,11 +45,10 @@
          }
          else
          {
-@@ -73,4 +76,12 @@
- 
+@@ -75,6 +78,14 @@
          return this;
      }
-+
+ 
 +
 +    @Override
 +    public void func_73041_k()
@@ -57,4 +56,7 @@
 +        super.func_73041_k();
 +        this.field_175743_a.func_175723_af().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
 +    }
- }
++
+     public void func_184166_c()
+     {
+         this.field_73011_w.func_186057_q();

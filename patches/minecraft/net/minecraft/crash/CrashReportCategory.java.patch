@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReportCategory.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReportCategory.java
-@@ -117,8 +117,11 @@
+@@ -121,8 +121,11 @@
          }
          else
          {

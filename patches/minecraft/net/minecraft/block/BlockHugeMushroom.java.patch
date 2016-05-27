@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockHugeMushroom.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockHugeMushroom.java
-@@ -79,6 +79,20 @@
-         return new BlockState(this, new IProperty[] {field_176380_a});
+@@ -223,6 +223,20 @@
+         return new BlockStateContainer(this, new IProperty[] {field_176380_a});
      }
  
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
 +        IBlockState state = world.func_180495_p(pos);
-+        for (IProperty prop : (java.util.Set<IProperty>)state.func_177228_b().keySet())
++        for (IProperty prop : (java.util.Set<IProperty<?>>)state.func_177228_b().keySet())
 +        {
 +            if (prop.func_177701_a().equals("variant"))
 +            {

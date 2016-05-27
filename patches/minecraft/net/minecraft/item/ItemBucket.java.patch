@@ -1,12 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -36,6 +36,9 @@
-         }
-         else
+@@ -37,6 +37,8 @@
+     {
+         boolean flag = this.field_77876_a == Blocks.field_150350_a;
+         RayTraceResult raytraceresult = this.func_77621_a(p_77659_2_, p_77659_3_, flag);
++        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_77659_3_, p_77659_2_, p_77659_1_, raytraceresult);
++        if (ret != null) return ret;
+ 
+         if (raytraceresult == null)
          {
-+            ItemStack ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_77659_3_, p_77659_2_, p_77659_1_, movingobjectposition);
-+            if (ret != null) return ret;
-+
-             if (movingobjectposition.field_72313_a == MovingObjectPosition.MovingObjectType.BLOCK)
-             {
-                 BlockPos blockpos = movingobjectposition.func_178782_a();

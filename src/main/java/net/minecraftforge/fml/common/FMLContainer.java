@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,7 +49,7 @@ import com.google.common.eventbus.Subscribe;
  * @author cpw
  *
  */
-public class FMLContainer extends DummyModContainer implements WorldAccessContainer
+public final class FMLContainer extends DummyModContainer implements WorldAccessContainer
 {
     public FMLContainer()
     {
@@ -85,8 +85,9 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
     @Subscribe
     public void modPreinitialization(FMLPreInitializationEvent evt)
     {
-        // Initialize the villager registry
-        VillagerRegistry.instance();
+        // Initialize all Forge/Vanilla registries {invoke the static init)
+        if (ForgeRegistries.ITEMS == null)
+            throw new RuntimeException("Something horrible went wrong in init, ForgeRegistres didn't create...");
     }
 
     @NetworkCheckHandler
@@ -305,13 +306,15 @@ public class FMLContainer extends DummyModContainer implements WorldAccessContai
                 {
                     entry.blocked.add(i);
                 }
-                // save doesn't have dummied list
-                if (!regs.getCompoundTag(key).hasKey("dummied")) return;
-                list = regs.getCompoundTag(key).getTagList("dummied",10);
-                for (int x = 0; x < list.tagCount(); x++)
+
+                if (regs.getCompoundTag(key).hasKey("dummied")) // Added in 1.8.9 dev, some worlds may not have it.
                 {
-                    NBTTagCompound e = list.getCompoundTagAt(x);
-                    entry.dummied.add(new ResourceLocation(e.getString("K")));
+                    list = regs.getCompoundTag(key).getTagList("dummied",10);
+                    for (int x = 0; x < list.tagCount(); x++)
+                    {
+                        NBTTagCompound e = list.getCompoundTagAt(x);
+                        entry.dummied.add(new ResourceLocation(e.getString("K")));
+                    }
                 }
             }
             failedElements = PersistentRegistryManager.injectSnapshot(snapshot, true, true);

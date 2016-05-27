@@ -1,28 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -44,6 +44,16 @@
+@@ -47,6 +47,16 @@
          }
-         else if (icommand.func_71519_b(p_71556_1_))
+         else if (icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
          {
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(icommand, p_71556_1_, astring);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +            {
-+                if (event.exception != null)
++                if (event.getException() != null)
 +                {
-+                    com.google.common.base.Throwables.propagateIfPossible(event.exception);
++                    com.google.common.base.Throwables.propagateIfPossible(event.getException());
 +                }
 +                return 1;
 +            }
 +
              if (i > -1)
              {
-                 List<Entity> list = PlayerSelector.<Entity>func_179656_b(p_71556_1_, astring[i], Entity.class);
-@@ -107,7 +117,7 @@
-             ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.exception", new Object[0]);
-             chatcomponenttranslation.func_150256_b().func_150238_a(EnumChatFormatting.RED);
-             p_175786_1_.func_145747_a(chatcomponenttranslation);
+                 List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[i], Entity.class);
+@@ -110,7 +120,7 @@
+             TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("commands.generic.exception", new Object[0]);
+             textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.RED);
+             p_175786_1_.func_145747_a(textcomponenttranslation);
 -            field_147175_a.warn("Couldn\'t process command: \'" + p_175786_4_ + "\'");
-+            field_147175_a.warn("Couldn\'t process command: \'" + p_175786_4_ + "\'", var9); // Forge: Log stacktrace of unknown exceptions
++            field_147175_a.warn("Couldn\'t process command: \'" + p_175786_4_ + "\'", var9);
          }
  
          return false;

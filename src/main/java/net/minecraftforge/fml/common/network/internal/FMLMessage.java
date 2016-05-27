@@ -5,23 +5,23 @@ import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.common.registry.IThrowableEntity;
+import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
-
-import net.minecraft.entity.DataWatcher;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.MathHelper;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
-import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class FMLMessage {
     public static class CompleteHandshake extends FMLMessage {
@@ -109,47 +109,13 @@ public abstract class FMLMessage {
         }
     }
 
-    public static class EntityAdjustMessage extends EntityMessage {
-        int serverX;
-        int serverY;
-        int serverZ;
-
-        public EntityAdjustMessage() {}
-        public EntityAdjustMessage(Entity entity, int serverX, int serverY, int serverZ)
-        {
-            super(entity);
-            this.serverX = serverX;
-            this.serverY = serverY;
-            this.serverZ = serverZ;
-        }
-
-        @Override
-        void toBytes(ByteBuf buf)
-        {
-            super.toBytes(buf);
-            buf.writeInt(serverX);
-            buf.writeInt(serverY);
-            buf.writeInt(serverZ);
-        }
-
-        @Override
-        void fromBytes(ByteBuf buf)
-        {
-            super.fromBytes(buf);
-            serverX = buf.readInt();
-            serverY = buf.readInt();
-            serverZ = buf.readInt();
-        }
-    }
     public static class EntitySpawnMessage extends EntityMessage {
         String modId;
         int modEntityTypeId;
-        int rawX;
-        int rawY;
-        int rawZ;
-        double scaledX;
-        double scaledY;
-        double scaledZ;
+        UUID entityUUID;
+        double rawX;
+        double rawY;
+        double rawZ;
         float scaledYaw;
         float scaledPitch;
         float scaledHeadYaw;
@@ -157,7 +123,7 @@ public abstract class FMLMessage {
         double speedScaledX;
         double speedScaledY;
         double speedScaledZ;
-        List<DataWatcher.WatchableObject> dataWatcherList;
+        List<EntityDataManager.DataEntry<?>> dataWatcherList;
         ByteBuf dataStream;
 
         public EntitySpawnMessage() {}
@@ -173,10 +139,12 @@ public abstract class FMLMessage {
             super.toBytes(buf);
             ByteBufUtils.writeUTF8String(buf, modId);
             buf.writeInt(modEntityTypeId);
+            buf.writeLong(entity.getUniqueID().getMostSignificantBits());
+            buf.writeLong(entity.getUniqueID().getLeastSignificantBits());
             // posX, posY, posZ
-            buf.writeInt(MathHelper.floor_double(entity.posX * 32D));
-            buf.writeInt(MathHelper.floor_double(entity.posY * 32D));
-            buf.writeInt(MathHelper.floor_double(entity.posZ * 32D));
+            buf.writeDouble(entity.posX);
+            buf.writeDouble(entity.posY);
+            buf.writeDouble(entity.posZ);
             // yaw, pitch
             buf.writeByte((byte)(entity.rotationYaw * 256.0F / 360.0F));
             buf.writeByte((byte) (entity.rotationPitch * 256.0F / 360.0F));
@@ -193,7 +161,7 @@ public abstract class FMLMessage {
             PacketBuffer pb = new PacketBuffer(tmpBuf);
             try
             {
-                entity.getDataWatcher().writeTo(pb);
+                entity.getDataManager().writeEntries(pb);
             } catch (IOException e)
             {
                 FMLLog.log(Level.FATAL,e,"Encountered fatal exception trying to send entity spawn data watchers");
@@ -236,18 +204,16 @@ public abstract class FMLMessage {
             super.fromBytes(dat);
             modId = ByteBufUtils.readUTF8String(dat);
             modEntityTypeId = dat.readInt();
-            rawX = dat.readInt();
-            rawY = dat.readInt();
-            rawZ = dat.readInt();
-            scaledX = rawX / 32D;
-            scaledY = rawY / 32D;
-            scaledZ = rawZ / 32D;
+            entityUUID = new UUID(dat.readLong(), dat.readLong());
+            rawX = dat.readDouble();
+            rawY = dat.readDouble();
+            rawZ = dat.readDouble();
             scaledYaw = dat.readByte() * 360F / 256F;
             scaledPitch = dat.readByte() * 360F / 256F;
             scaledHeadYaw = dat.readByte() * 360F / 256F;
             try
             {
-                dataWatcherList = DataWatcher.readWatchedListFromPacketBuffer(new PacketBuffer(dat));
+                dataWatcherList = EntityDataManager.readEntries(new PacketBuffer(dat));
             } catch (IOException e)
             {
                 FMLLog.log(Level.FATAL, e, "There was a critical error decoding the datawatcher stream for a mod entity.");

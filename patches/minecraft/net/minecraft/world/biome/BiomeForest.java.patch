@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeForest.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeForest.java
+@@ -147,6 +147,22 @@
+         }
+     }
+ 
++    @Override
++    public void addDefaultFlowers()
++    {
++        if (field_150632_aF != BiomeForest.Type.FLOWER)
++        {
++            super.addDefaultFlowers();
++            return;
++        }
++        for (BlockFlower.EnumFlowerType type : BlockFlower.EnumFlowerType.values())
++        {
++            if (type.func_176964_a() == BlockFlower.EnumFlowerColor.YELLOW) continue;
++            if (type == BlockFlower.EnumFlowerType.BLUE_ORCHID) type = BlockFlower.EnumFlowerType.POPPY;
++            addFlower(net.minecraft.init.Blocks.field_150328_O.func_176223_P().func_177226_a(net.minecraft.init.Blocks.field_150328_O.func_176494_l(), type), 10);
++        }
++    }
++
+     public Class <? extends Biome > func_150562_l()
+     {
+         return BiomeForest.class;

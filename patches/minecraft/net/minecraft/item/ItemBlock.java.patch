@@ -1,11 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -54,16 +54,8 @@
+@@ -51,16 +51,8 @@
              int i = this.func_77647_b(p_180614_1_.func_77960_j());
-             IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_2_);
+             IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_);
  
--            if (p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 3))
-+            if (placeBlockAt(p_180614_1_, p_180614_2_, p_180614_3_, p_180614_4_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, iblockstate1))
+-            if (p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 11))
++            if (placeBlockAt(p_180614_1_, p_180614_2_, p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, iblockstate1))
              {
 -                iblockstate1 = p_180614_3_.func_180495_p(p_180614_4_);
 -
@@ -15,10 +15,10 @@
 -                    this.field_150939_a.func_180633_a(p_180614_3_, p_180614_4_, iblockstate1, p_180614_2_, p_180614_1_);
 -                }
 -
-                 p_180614_3_.func_72908_a((double)((float)p_180614_4_.func_177958_n() + 0.5F), (double)((float)p_180614_4_.func_177956_o() + 0.5F), (double)((float)p_180614_4_.func_177952_p() + 0.5F), this.field_150939_a.field_149762_H.func_150496_b(), (this.field_150939_a.field_149762_H.func_150497_c() + 1.0F) / 2.0F, this.field_150939_a.field_149762_H.func_150494_d() * 0.8F);
+                 SoundType soundtype = this.field_150939_a.func_185467_w();
+                 p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                  --p_180614_1_.field_77994_a;
-             }
-@@ -124,7 +116,7 @@
+@@ -121,7 +113,7 @@
      {
          Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
@@ -27,7 +27,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -162,4 +154,26 @@
+@@ -159,4 +151,32 @@
      {
          return this.field_150939_a;
      }
@@ -52,5 +52,11 @@
 +        }
 +
 +        return true;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
++    {
++        field_150939_a.addInformation(stack, playerIn, tooltip, advanced);
 +    }
  }

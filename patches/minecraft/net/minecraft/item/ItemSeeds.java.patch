@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSeeds.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSeeds.java
-@@ -7,7 +7,7 @@
- import net.minecraft.util.EnumFacing;
+@@ -9,7 +9,7 @@
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
 -public class ItemSeeds extends Item
@@ -9,17 +9,18 @@
  {
      private Block field_150925_a;
      private Block field_77838_b;
-@@ -29,7 +29,7 @@
-         {
-             return false;
-         }
--        else if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c() == this.field_77838_b && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
-+        else if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().canSustainPlant(p_180614_3_, p_180614_4_, EnumFacing.UP, this) && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
+@@ -23,7 +23,8 @@
+ 
+     public EnumActionResult func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumHand p_180614_5_, EnumFacing p_180614_6_, float p_180614_7_, float p_180614_8_, float p_180614_9_)
+     {
+-        if (p_180614_6_ == EnumFacing.UP && p_180614_2_.func_175151_a(p_180614_4_.func_177972_a(p_180614_6_), p_180614_6_, p_180614_1_) && p_180614_3_.func_180495_p(p_180614_4_).func_177230_c() == this.field_77838_b && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
++        net.minecraft.block.state.IBlockState state = p_180614_3_.func_180495_p(p_180614_4_);
++        if (p_180614_6_ == EnumFacing.UP && p_180614_2_.func_175151_a(p_180614_4_.func_177972_a(p_180614_6_), p_180614_6_, p_180614_1_) && state.func_177230_c().canSustainPlant(state, p_180614_3_, p_180614_4_, EnumFacing.UP, this) && p_180614_3_.func_175623_d(p_180614_4_.func_177984_a()))
          {
              p_180614_3_.func_175656_a(p_180614_4_.func_177984_a(), this.field_150925_a.func_176223_P());
              --p_180614_1_.field_77994_a;
-@@ -40,4 +40,16 @@
-             return false;
+@@ -34,4 +35,16 @@
+             return EnumActionResult.FAIL;
          }
      }
 +

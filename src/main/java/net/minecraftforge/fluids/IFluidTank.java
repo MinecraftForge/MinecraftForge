@@ -2,11 +2,8 @@ package net.minecraftforge.fluids;
 
 /**
  * A tank is the unit of interaction with Fluid inventories.
- * 
+ *
  * A reference implementation can be found at {@link FluidTank}.
- * 
- * @author King Lemming, cpw (ILiquidTank)
- * 
  */
 public interface IFluidTank
 {
@@ -28,15 +25,15 @@ public interface IFluidTank
     /**
      * Returns a wrapper object {@link FluidTankInfo } containing the capacity of the tank and the
      * FluidStack it holds.
-     * 
+     *
      * Should prevent manipulation of the IFluidTank. See {@link FluidTank}.
-     * 
+     *
      * @return State information for the IFluidTank.
      */
     FluidTankInfo getInfo();
 
     /**
-     * 
+     *
      * @param resource
      *            FluidStack attempting to fill the tank.
      * @param doFill
@@ -46,7 +43,7 @@ public interface IFluidTank
     int fill(FluidStack resource, boolean doFill);
 
     /**
-     * 
+     *
      * @param maxDrain
      *            Maximum amount of fluid to be removed from the container.
      * @param doDrain

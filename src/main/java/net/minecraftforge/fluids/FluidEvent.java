@@ -1,22 +1,37 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class FluidEvent extends Event
 {
-    public final FluidStack fluid;
-    public final World world;
-    public final BlockPos pos;
+    private final FluidStack fluid;
+    private final World world;
+    private final BlockPos pos;
 
     public FluidEvent(FluidStack fluid, World world, BlockPos pos)
     {
         this.fluid = fluid;
         this.world = world;
         this.pos = pos;
+    }
+
+    public FluidStack getFluid()
+    {
+        return fluid;
+    }
+
+    public World getWorld()
+    {
+        return world;
+    }
+
+    public BlockPos getPos()
+    {
+        return pos;
     }
 
     /**
@@ -38,14 +53,24 @@ public class FluidEvent extends Event
      */
     public static class FluidFillingEvent extends FluidEvent
     {
-        public final IFluidTank tank;
-        public final int amount;
+        private final IFluidTank tank;
+        private final int amount;
 
         public FluidFillingEvent(FluidStack fluid, World world, BlockPos pos, IFluidTank tank, int amount)
         {
             super(fluid, world, pos);
             this.tank = tank;
             this.amount = amount;
+        }
+
+        public IFluidTank getTank()
+        {
+            return tank;
+        }
+
+        public int getAmount()
+        {
+            return amount;
         }
     }
 
@@ -56,14 +81,24 @@ public class FluidEvent extends Event
      */
     public static class FluidDrainingEvent extends FluidEvent
     {
-        public final IFluidTank tank;
-        public final int amount;
+        private final IFluidTank tank;
+        private final int amount;
 
         public FluidDrainingEvent(FluidStack fluid, World world, BlockPos pos, IFluidTank tank, int amount)
         {
             super(fluid, world, pos);
             this.amount = amount;
             this.tank = tank;
+        }
+
+        public IFluidTank getTank()
+        {
+            return tank;
+        }
+
+        public int getAmount()
+        {
+            return amount;
         }
     }
 

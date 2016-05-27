@@ -1,5 +1,9 @@
 package net.minecraftforge.client.model;
 
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+
 import com.google.common.base.Optional;
 
 public class ModelStateComposition implements IModelState

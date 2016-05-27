@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -260,6 +260,7 @@
+@@ -243,6 +243,7 @@
  
      private boolean func_145883_k()
      {
@@ -8,7 +8,7 @@
          IInventory iinventory = this.func_145895_l();
  
          if (iinventory == null)
-@@ -366,6 +367,7 @@
+@@ -349,6 +350,7 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
@@ -16,7 +16,7 @@
          IInventory iinventory = func_145884_b(p_145891_0_);
  
          if (iinventory != null)
-@@ -515,17 +517,31 @@
+@@ -498,17 +500,31 @@
  
              if (itemstack == null)
              {
@@ -49,7 +49,7 @@
              }
  
              if (flag)
-@@ -668,4 +684,10 @@
+@@ -654,4 +670,10 @@
              this.field_145900_a[i] = null;
          }
      }

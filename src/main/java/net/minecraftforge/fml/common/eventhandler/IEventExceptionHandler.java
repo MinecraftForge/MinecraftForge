@@ -4,7 +4,7 @@ public interface IEventExceptionHandler
 {
     /**
      * Fired when a EventListener throws an exception for the specified event on the event bus.
-     * After this function returns, the original Throwable will be propogated upwards.
+     * After this function returns, the original Throwable will be propagated upwards.
      *
      * @param bus The bus the event is being fired on
      * @param event The event that is being fired

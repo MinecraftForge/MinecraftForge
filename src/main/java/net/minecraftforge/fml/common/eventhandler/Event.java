@@ -71,7 +71,7 @@ public class Event
     {
         if (!isCancelable())
         {
-            throw new IllegalArgumentException("Attempted to cancel a uncancelable event");
+            throw new IllegalArgumentException("Attempted to cancel a non cancellable event");
         }
         isCanceled = cancel;
     }
@@ -109,7 +109,7 @@ public class Event
     }
     /**
      * Called by the base constructor, this is used by ASM generated
-     * event classes to setup various functionality such as the listenerlist.
+     * event classes to setup various functionality such as the listener list.
      */
     protected void setup()
     {

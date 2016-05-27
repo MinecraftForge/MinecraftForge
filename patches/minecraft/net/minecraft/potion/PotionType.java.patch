@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/potion/PotionType.java
++++ ../src-work/minecraft/net/minecraft/potion/PotionType.java
+@@ -9,10 +9,11 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public class PotionType
++public class PotionType extends net.minecraftforge.fml.common.registry.IForgeRegistryEntry.Impl<PotionType>
+ {
++    @Deprecated // unused
+     private static final ResourceLocation field_185177_b = new ResourceLocation("water");
+-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey(field_185177_b);
++    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = net.minecraftforge.fml.common.registry.GameData.getPotionTypesRegistry();
+     private static int field_185178_c;
+     private final String field_185179_d;
+     private final ImmutableList<PotionEffect> field_185180_e;

@@ -1,31 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
-@@ -34,6 +34,11 @@
- 
-     public boolean func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumFacing p_180614_5_, float p_180614_6_, float p_180614_7_, float p_180614_8_)
-     {
-+        if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_176200_f(p_180614_3_, p_180614_4_) && p_180614_5_ != EnumFacing.DOWN)
-+        {
-+            p_180614_5_ = EnumFacing.UP;
-+            p_180614_4_ = p_180614_4_.func_177977_b();
-+        }
-         if (p_180614_5_ == EnumFacing.DOWN)
+@@ -42,13 +42,18 @@
+         }
+         else
          {
-             return false;
-@@ -46,7 +51,7 @@
++            if (p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_176200_f(p_180614_3_, p_180614_4_))
++            {
++                p_180614_6_ = EnumFacing.UP;
++                p_180614_4_ = p_180614_4_.func_177977_b();
++            }
+             IBlockState iblockstate = p_180614_3_.func_180495_p(p_180614_4_);
+             Block block = iblockstate.func_177230_c();
+             boolean flag = block.func_176200_f(p_180614_3_, p_180614_4_);
  
              if (!flag)
              {
--                if (!p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_149688_o().func_76220_a())
-+                if (!p_180614_3_.func_180495_p(p_180614_4_).func_177230_c().func_149688_o().func_76220_a() && !p_180614_3_.isSideSolid(p_180614_4_, p_180614_5_, true))
+-                if (!p_180614_3_.func_180495_p(p_180614_4_).func_185904_a().func_76220_a())
++                if (!p_180614_3_.func_180495_p(p_180614_4_).func_185904_a().func_76220_a() && !p_180614_3_.isSideSolid(p_180614_4_, p_180614_6_, true))
                  {
-                     return false;
+                     return EnumActionResult.FAIL;
                  }
-@@ -66,6 +71,7 @@
-             {
-                 if (!p_180614_3_.field_72995_K)
-                 {
-+                    if (!Blocks.field_150465_bP.func_176198_a(p_180614_3_, p_180614_4_, p_180614_5_)) return false;
-                     p_180614_3_.func_180501_a(p_180614_4_, Blocks.field_150465_bP.func_176223_P().func_177226_a(BlockSkull.field_176418_a, p_180614_5_), 3);
-                     int i = 0;
- 

@@ -1,22 +1,37 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -27,6 +27,9 @@
-         if (flag || p_77615_3_.field_71071_by.func_146028_b(Items.field_151032_g))
-         {
-             int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
-+            net.minecraftforge.event.entity.player.ArrowLooseEvent event = new net.minecraftforge.event.entity.player.ArrowLooseEvent(p_77615_3_, p_77615_1_, i);
-+            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
-+            i = event.charge;
-             float f = (float)i / 20.0F;
-             f = (f * f + f * 2.0F) / 3.0F;
+@@ -91,6 +91,10 @@
+             boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
+             ItemStack itemstack = this.func_185060_a(entityplayer);
  
-@@ -104,6 +107,9 @@
- 
-     public ItemStack func_77659_a(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer p_77659_3_)
-     {
-+        net.minecraftforge.event.entity.player.ArrowNockEvent event = new net.minecraftforge.event.entity.player.ArrowNockEvent(p_77659_3_, p_77659_1_);
-+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.result;
++            int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
++            i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, (EntityPlayer)p_77615_3_, i, itemstack != null || flag);
++            if (i < 0) return;
 +
-         if (p_77659_3_.field_71075_bZ.field_75098_d || p_77659_3_.field_71071_by.func_146028_b(Items.field_151032_g))
+             if (itemstack != null || flag)
+             {
+                 if (itemstack == null)
+@@ -98,12 +102,11 @@
+                     itemstack = new ItemStack(Items.field_151032_g);
+                 }
+ 
+-                int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
+                 float f = func_185059_b(i);
+ 
+                 if ((double)f >= 0.1D)
+                 {
+-                    boolean flag1 = flag && itemstack.func_77973_b() == Items.field_151032_g;
++                    boolean flag1 = entityplayer.field_71075_bZ.field_75098_d || (itemstack.func_77973_b() instanceof ItemArrow ? ((ItemArrow)itemstack.func_77973_b()).isInfinite(itemstack, p_77615_1_, entityplayer) : false);
+ 
+                     if (!p_77615_2_.field_72995_K)
+                     {
+@@ -190,6 +193,9 @@
+     {
+         boolean flag = this.func_185060_a(p_77659_3_) != null;
+ 
++        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(p_77659_1_, p_77659_2_, p_77659_3_, p_77659_4_, flag);
++        if (ret != null) return ret;
++
+         if (!p_77659_3_.field_71075_bZ.field_75098_d && !flag)
          {
-             p_77659_3_.func_71008_a(p_77659_1_, this.func_77626_a(p_77659_1_));
+             return !flag ? new ActionResult(EnumActionResult.FAIL, p_77659_1_) : new ActionResult(EnumActionResult.PASS, p_77659_1_);
