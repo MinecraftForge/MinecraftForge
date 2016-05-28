@@ -3,9 +3,11 @@ package net.minecraftforge.fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.capability.templates.FluidTankItemStack;
 
 /**
  * Reference implementation of {@link IFluidContainerItem}. Use/extend this or implement your own.
+ * @deprecated See {@link net.minecraftforge.fluids.capability.ItemFluidContainer}
  */
 @Deprecated
 public class ItemFluidContainer extends Item implements IFluidContainerItem

@@ -1,5 +1,7 @@
 package net.minecraftforge.fluids;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -8,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capability.IFluidHandler
 {
+    @Nullable
     protected FluidStack fluid;
     protected int capacity;
     protected TileEntity tile;
@@ -17,9 +20,9 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
         this(null, capacity);
     }
 
-    public FluidTank(FluidStack stack, int capacity)
+    public FluidTank(@Nullable FluidStack fluidStack, int capacity)
     {
-        this.fluid = stack;
+        this.fluid = fluidStack;
         this.capacity = capacity;
     }
 
@@ -57,12 +60,13 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
 
     /* IFluidTank */
     @Override
+    @Nullable
     public FluidStack getFluid()
     {
         return fluid;
     }
 
-    public void setFluid(FluidStack fluid)
+    public void setFluid(@Nullable FluidStack fluid)
     {
         this.fluid = fluid;
     }

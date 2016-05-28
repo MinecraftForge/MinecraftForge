@@ -9,8 +9,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import java.util.*;
 
 /**
- * FluidHandlerMulti is a template class for concatenating multiple handlers into one,
- * where each handler is associated with a fluid.
+ * FluidHandlerFluidMap is a template class for concatenating multiple handlers into one,
+ * where each handler is associated with a different fluid.
  */
 public class FluidHandlerFluidMap implements IFluidHandler
 {

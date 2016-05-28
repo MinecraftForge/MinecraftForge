@@ -1,6 +1,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
 
 /**
  * Implement this interface on TileEntities which should handle fluids, generally storing them in
@@ -8,8 +9,9 @@ import net.minecraft.util.EnumFacing;
  *
  * A reference implementation is provided {@link TileFluidHandler}.
  *
+ * @deprecated Use the Capability version {@link net.minecraftforge.fluids.capability.IFluidHandler}.
+ * @see FluidHandlerWrapper
  */
-// Deprecated: To be removed in 1.9. Use the Capability version.
 @Deprecated
 public interface IFluidHandler
 {

@@ -1,5 +1,7 @@
 package net.minecraftforge.fluids.capability;
 
+import javax.annotation.Nullable;
+
 import net.minecraftforge.fluids.*;
 
 /**
@@ -7,14 +9,12 @@ import net.minecraftforge.fluids.*;
  * one or more internal {@link IFluidTank} objects.
  * <p/>
  * A reference implementation is provided {@link TileFluidHandler}.
- *
- * @author King Lemming
  */
 public interface IFluidHandler
 {
     /**
-     * Returns an array of objects which represent the internal tanks. These objects cannot be used
-     * to manipulate the internal tanks. See {@link FluidTankInfo}.
+     * Returns an array of objects which represent the internal tanks.
+     * These objects cannot be used to manipulate the internal tanks.
      *
      * @return Info for the relevant internal tanks.
      */
@@ -37,6 +37,7 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
+    @Nullable
     FluidStack drain(FluidStack resource, boolean doDrain);
 
     /**
@@ -49,5 +50,6 @@ public interface IFluidHandler
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
      * simulated) drained.
      */
+    @Nullable
     FluidStack drain(int maxDrain, boolean doDrain);
 }

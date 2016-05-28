@@ -1,4 +1,4 @@
-package net.minecraftforge.fluids.capability.templates;
+package net.minecraftforge.fluids.capability.wrappers;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -6,14 +6,14 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
- * FluidHandlerCompatibilityWrapper is a very simple template to automatically convert the old IFluidHandler to the new version.
+ * FluidHandlerWrapper automatically converts the old {@link net.minecraftforge.fluids.IFluidHandler} to the new version.
  */
-public class FluidHandlerCompatibilityWrapper implements IFluidHandler
+public class FluidHandlerWrapper implements IFluidHandler
 {
     protected final net.minecraftforge.fluids.IFluidHandler handler;
     protected final EnumFacing side;
 
-    public FluidHandlerCompatibilityWrapper(net.minecraftforge.fluids.IFluidHandler handler, EnumFacing side)
+    public FluidHandlerWrapper(net.minecraftforge.fluids.IFluidHandler handler, EnumFacing side)
     {
         this.handler = handler;
         this.side = side;

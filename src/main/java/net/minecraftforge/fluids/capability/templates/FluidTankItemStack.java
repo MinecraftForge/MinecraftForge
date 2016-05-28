@@ -70,13 +70,7 @@ public class FluidTankItemStack implements IFluidTank, IFluidHandler, ICapabilit
 
         if (!doFill)
         {
-            if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("Fluid"))
-            {
-                return Math.min(capacity, resource.amount);
-            }
-
-            FluidStack stack = FluidStack.loadFluidStackFromNBT(this.stack.getTagCompound().getCompoundTag("Fluid"));
-
+            FluidStack stack = getFluid();
             if (stack == null)
             {
                 return Math.min(capacity, resource.amount);
@@ -146,13 +140,8 @@ public class FluidTankItemStack implements IFluidTank, IFluidHandler, ICapabilit
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("Fluid"))
-        {
-            return null;
-        }
-
-        FluidStack stack = FluidStack.loadFluidStackFromNBT(this.stack.getTagCompound().getCompoundTag("Fluid"));
-        if (stack == null || canDrain(stack.getFluid()))
+        FluidStack stack = getFluid();
+        if (stack == null || !canDrain(stack.getFluid()))
         {
             return null;
         }

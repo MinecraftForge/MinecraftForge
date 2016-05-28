@@ -11,6 +11,8 @@ public class EmptyFluidHandler implements IFluidHandler, IFluidTank
     private static final FluidTankInfo EMPTY_TANK_INFO = new FluidTankInfo(null, 0);
     private static final FluidTankInfo[] EMPTY_TANK_INFO_ARRAY = new FluidTankInfo[] { EMPTY_TANK_INFO };
 
+    protected EmptyFluidHandler() {}
+
     @Override
     public FluidTankInfo[] getTankInfo()
     {
