@@ -41,19 +41,31 @@ public class FluidHandlerConcatenate implements IFluidHandler
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        int k = 0;
+        if (resource == null || resource.amount <= 0)
+            return 0;
+
+        resource = resource.copy();
+
+        int totalFillAmount = 0;
         for (IFluidHandler handler : subHandlers)
         {
-            k += handler.fill(resource, doFill);
+            int fillAmount = handler.fill(resource, doFill);
+            totalFillAmount += fillAmount;
+            resource.amount -= fillAmount;
+            if (resource.amount <= 0)
+                break;
         }
-        return k;
+        return totalFillAmount;
     }
 
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (resource == null)
+        if (resource == null || resource.amount <= 0)
             return null;
+
+        resource = resource.copy();
+
         FluidStack totalDrained = null;
         for (IFluidHandler handler : subHandlers)
         {
