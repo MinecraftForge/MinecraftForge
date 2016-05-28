@@ -33,7 +33,7 @@ public class FluidUtil
     {
     }
 
-	/**
+    /**
      * Used to handle the common case of a fluid item right-clicking on a fluid handler.
      * First it tries to fill the container item from the fluid handler,
      * if that action fails then it tries to drain the container item into the fluid handler.
@@ -94,7 +94,7 @@ public class FluidUtil
     /**
      * Takes a filled container and tries to empty it into the given tank.
      *
-     * @param container The filled container.
+     * @param container The filled container. Will not be modified.
      * @param fluidDestination The fluid handler to be filled by the container.
      * @param maxAmount The largest amount of fluid that should be transferred.
      * @param player Player for making the bucket drained sound. Pass null for no noise.
@@ -193,7 +193,7 @@ public class FluidUtil
 
     /**
      * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
-     * If the input itemstack has a stacksize > 1 it will fail.
+     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
      * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
      *
@@ -283,7 +283,7 @@ public class FluidUtil
     /**
      * Helper method to get an IFluidHandler for an itemStack.
      *
-     * The itemStack passed in here WILL be altered, the IFluidHandler acts on it directly.
+     * The itemStack passed in here WILL be modified, the IFluidHandler acts on it directly.
      *
      * Note that the itemStack MUST have a stackSize of 1 if you want to fill or drain it.
      * You can't fill or drain a whole stack at once, if you do then liquid is multiplied or destroyed.
@@ -370,7 +370,7 @@ public class FluidUtil
         return interactWithFluidHandler(stack, fluidHandler, player);
     }
 
-	/**
+    /**
      * @deprecated use {@link #tryFillContainer(ItemStack, IFluidHandler, int, EntityPlayer, boolean)}
      */
     @Deprecated
@@ -439,7 +439,7 @@ public class FluidUtil
         return tryFillFluidContainerItem(container, tank, side, new PlayerMainInvWrapper(player.inventory), -1, player);
     }
 
-	/**
+    /**
      * @deprecated use {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer)}
      */
     @Deprecated
