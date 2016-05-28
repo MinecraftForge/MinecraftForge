@@ -9,6 +9,9 @@ forge.update.newversion=New Forge version available: %s
 forge.update.beta.1=%sWARNING: %sForge Beta
 forge.update.beta.2=Major issues may arise, verify before reporting.
 
+config.boolean.true=true
+config.boolean.false=false
+
 forge.configgui.forgeConfigTitle=Minecraft Forge Configuration
 forge.configgui.ctgy.forgeGeneralConfig.tooltip=This is where you can edit the settings contained in forge.cfg.
 forge.configgui.ctgy.forgeGeneralConfig=General Settings
