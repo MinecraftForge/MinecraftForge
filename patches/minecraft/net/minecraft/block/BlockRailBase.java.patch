@@ -14,7 +14,7 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
 -        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q();
-+        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_, p_176196_2_, EnumFacing.UP);
++        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP);
      }
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
