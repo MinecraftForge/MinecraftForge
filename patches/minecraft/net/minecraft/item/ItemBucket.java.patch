@@ -9,20 +9,3 @@
  
          if (raytraceresult == null)
          {
-@@ -65,14 +67,14 @@
-                     IBlockState iblockstate = p_77659_2_.func_180495_p(blockpos);
-                     Material material = iblockstate.func_185904_a();
- 
--                    if (material == Material.field_151586_h && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
-+                    if (iblockstate.func_177230_c() == Blocks.field_150355_j && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
-                     {
-                         p_77659_2_.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 11);
-                         p_77659_3_.func_71029_a(StatList.func_188057_b(this));
-                         p_77659_3_.func_184185_a(SoundEvents.field_187630_M, 1.0F, 1.0F);
-                         return new ActionResult(EnumActionResult.SUCCESS, this.func_150910_a(p_77659_1_, p_77659_3_, Items.field_151131_as));
-                     }
--                    else if (material == Material.field_151587_i && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
-+                    else if (iblockstate.func_177230_c() == Blocks.field_150353_l && ((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() == 0)
-                     {
-                         p_77659_3_.func_184185_a(SoundEvents.field_187633_N, 1.0F, 1.0F);
-                         p_77659_2_.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 11);
