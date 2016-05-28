@@ -242,12 +242,12 @@
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +    }
 +
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }
