@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraftforge.fluids.*;
 
 /**
- * Implement this interface on TileEntities which should handle fluids, generally storing them in
+ * Implement this interface as a capability which should handle fluids, generally storing them in
  * one or more internal {@link IFluidTank} objects.
  * <p/>
  * A reference implementation is provided {@link TileFluidHandler}.

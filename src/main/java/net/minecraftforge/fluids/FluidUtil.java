@@ -60,11 +60,11 @@ public class FluidUtil
     /**
      * Fill a container from the given fluidSource.
      *
-     * @param container The container to be filled. Will not be modified.
+     * @param container   The container to be filled. Will not be modified.
      * @param fluidSource The fluid handler to be drained.
-     * @param maxAmount The largest amount of fluid that should be transferred.
-     * @param player The player to make the filling noise. Pass null for no noise.
-     * @param doFill true if the container should actually be filled, false if it should be simulated.
+     * @param maxAmount   The largest amount of fluid that should be transferred.
+     * @param player      The player to make the filling noise. Pass null for no noise.
+     * @param doFill      true if the container should actually be filled, false if it should be simulated.
      * @return The filled container or null if the liquid couldn't be taken from the tank.
      */
     public static ItemStack tryFillContainer(ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
@@ -98,11 +98,11 @@ public class FluidUtil
     /**
      * Takes a filled container and tries to empty it into the given tank.
      *
-     * @param container The filled container. Will not be modified.
+     * @param container        The filled container. Will not be modified.
      * @param fluidDestination The fluid handler to be filled by the container.
-     * @param maxAmount The largest amount of fluid that should be transferred.
-     * @param player Player for making the bucket drained sound. Pass null for no noise.
-     * @param doDrain true if the container should actually be drained, false if it should be simulated.
+     * @param maxAmount        The largest amount of fluid that should be transferred.
+     * @param player           Player for making the bucket drained sound. Pass null for no noise.
+     * @param doDrain          true if the container should actually be drained, false if it should be simulated.
      * @return The empty container if successful, null if the fluid handler couldn't be filled.
      *         NOTE The empty container will have a stackSize of 0 when a filled container is consumable,
      *              i.e. it has a "null" empty container but has successfully been emptied.
@@ -300,12 +300,13 @@ public class FluidUtil
      * Fill a destination fluid handler from a source fluid handler.
      *
      * @param fluidDestination The fluid handler to be filled.
-     * @param fluidSource The fluid handler to be drained.
-     * @param maxAmount The largest amount of fluid that should be transferred.
+     * @param fluidSource      The fluid handler to be drained.
+     * @param maxAmount        The largest amount of fluid that should be transferred.
+     * @param doTransfer       True if the transfer should actually be done, false if it should be simulated.
      * @return the fluidStack that was transferred from the source to the destination. null on failure.
      */
     @Nullable
-    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, boolean doFill)
+    public static FluidStack tryFluidTransfer(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount, boolean doTransfer)
     {
         FluidStack drainable = fluidSource.drain(maxAmount, false);
         if (drainable != null && drainable.amount > 0)
@@ -313,10 +314,10 @@ public class FluidUtil
             int fillableAmount = fluidDestination.fill(drainable, false);
             if (fillableAmount > 0)
             {
-                FluidStack drained = fluidSource.drain(fillableAmount, doFill);
+                FluidStack drained = fluidSource.drain(fillableAmount, doTransfer);
                 if (drained != null)
                 {
-                    drained.amount = fluidDestination.fill(drained, doFill);
+                    drained.amount = fluidDestination.fill(drained, doTransfer);
                     return drained;
                 }
             }
@@ -460,6 +461,7 @@ public class FluidUtil
     }
 
 	/**
+     * Attempts to pick up a fluid in the world and put it in an empty container item.
      *
      * @param emptyContainer The empty container to fill. Will not be modified.
      * @param playerIn       The player filling the container. Optional.
@@ -544,8 +546,6 @@ public class FluidUtil
         IFluidHandler destination = new FluidHandlerWrapper(tank, side);
         return tryEmptyContainer(bucket, destination, FluidContainerRegistry.BUCKET_VOLUME, player, true);
     }
-
-
 
     /**
      * Takes an IFluidContainerItem and tries to fill it from the given tank.
