@@ -154,7 +154,7 @@ public class ASMModParser
 
         for (String intf : interfaces)
         {
-            table.addASMData(candidate, intf, this.asmType.getClassName(), null, null);
+            table.addASMData(candidate, intf, this.asmType.getInternalName(), null, null);
         }
     }
 
