@@ -20,6 +20,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -348,6 +349,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             GameRegistry.registerItem(universalBucket, "bucketFilled");
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
+    }
+
+    @Subscribe
+    public void mappingChange(FMLModIdMappingEvent evt)
+    {
+        StatList.reinit();
     }
 
     @Subscribe
