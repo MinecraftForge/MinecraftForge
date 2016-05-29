@@ -223,6 +223,7 @@ public class ForgeHooks
         }
 
         Blocks.OBSIDIAN.setHarvestLevel("pickaxe", 3);
+        Blocks.ENCHANTING_TABLE.setHarvestLevel("pickaxe", 0);
         Block[] oreBlocks = new Block[] {
                 Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
                 Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE
