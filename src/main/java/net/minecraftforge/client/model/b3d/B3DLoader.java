@@ -47,6 +47,7 @@ import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
@@ -209,7 +210,14 @@ public enum B3DLoader implements ICustomModelLoader
         public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             // TODO make more use of Optional
-            if(!part.isPresent()) return parent.apply(part);
+            if(!part.isPresent())
+            {
+                if(parent != null)
+                {
+                    return parent.apply(part);
+                }
+                return Optional.absent();
+            }
             if(!(part.get() instanceof NodeJoint))
             {
                 return Optional.absent();
@@ -364,6 +372,10 @@ public enum B3DLoader implements ICustomModelLoader
         }
     }
 
+    /**
+     * @deprecated use AnimationProperty.
+     */
+    @Deprecated
     public static enum B3DFrameProperty implements IUnlistedProperty<B3DState>
     {
         INSTANCE;
@@ -679,26 +691,30 @@ public enum B3DLoader implements ICustomModelLoader
             if(quads == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                generateQuads(builder, node, this.state);
+                generateQuads(builder, node, this.state, ImmutableList.<String>of());
                 quads = builder.build();
             }
             // TODO: caching?
             if(this.state != modelState)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                generateQuads(builder, node, modelState);
+                generateQuads(builder, node, modelState, ImmutableList.<String>of());
                 return builder.build();
             }
             return quads;
         }
 
-        private void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state)
+        private void generateQuads(ImmutableList.Builder<BakedQuad> builder, Node<?> node, final IModelState state, ImmutableList<String> path)
         {
+            ImmutableList.Builder<String> pathBuilder = ImmutableList.builder();
+            pathBuilder.addAll(path);
+            pathBuilder.add(node.getName());
+            ImmutableList<String> newPath = pathBuilder.build();
             for(Node<?> child : node.getNodes().values())
             {
-                generateQuads(builder, child, state);
+                generateQuads(builder, child, state, newPath);
             }
-            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()))
+            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()) && !state.apply(Optional.of(Models.getHiddenModelPart(newPath))).isPresent())
             {
                 Mesh mesh = (Mesh)node.getKind();
                 Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
