@@ -1,19 +1,16 @@
 package net.minecraftforge.common.chunkio;
 
+import net.minecraft.world.World;
 
 class QueuedChunk {
     final int x;
     final int z;
-    final net.minecraft.world.chunk.storage.AnvilChunkLoader loader;
-    final net.minecraft.world.World world;
-    final net.minecraft.world.gen.ChunkProviderServer provider;
+    final World world;
 
-    public QueuedChunk(int x, int z, net.minecraft.world.chunk.storage.AnvilChunkLoader loader, net.minecraft.world.World world, net.minecraft.world.gen.ChunkProviderServer provider) {
+    public QueuedChunk(int x, int z, World world) {
         this.x = x;
         this.z = z;
-        this.loader = loader;
         this.world = world;
-        this.provider = provider;
     }
 
     @Override
@@ -40,7 +37,6 @@ class QueuedChunk {
         result.append(this.getClass().getName() + " {" + NEW_LINE);
         result.append(" x: " + x + NEW_LINE);
         result.append(" z: " + z + NEW_LINE);
-        result.append(" loader: " + loader + NEW_LINE );
         result.append(" world: " + world.getWorldInfo().getWorldName() + NEW_LINE);
         result.append(" dimension: " + world.provider.getDimension() + NEW_LINE);
         result.append(" provider: " + world.provider.getClass().getName() + NEW_LINE);
