@@ -1,10 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -60,29 +60,27 @@
+@@ -58,31 +58,29 @@
+             if (itemarmor.func_185083_B_() == p_188361_9_)
+             {
                  T t = this.func_188360_a(p_188361_9_);
++                t = getArmorModelHook(p_188361_1_, itemstack, p_188361_9_, t);
                  t.func_178686_a(this.field_177190_a.func_177087_b());
                  t.func_78086_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_4_);
-+                t = getArmorModelHook(p_188361_1_, itemstack, p_188361_9_, t);
                  this.func_188359_a(t, p_188361_9_);
                  boolean flag = this.func_188363_b(p_188361_9_);
 -                this.field_177190_a.func_110776_a(this.func_177181_a(itemarmor, flag));
