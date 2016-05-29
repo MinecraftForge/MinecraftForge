@@ -30,6 +30,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
 		container.setItem(newContainerData.getItem());
 		container.setTagCompound(newContainerData.getTagCompound());
 		container.setItemDamage(newContainerData.getItemDamage());
+		container.stackSize = newContainerData.stackSize;
 	}
 
 	@Override
@@ -105,6 +106,10 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
 				{
 					if (doDrain)
 					{
+						if (FluidContainerRegistry.hasNullEmptyContainer(container))
+						{
+							emptyContainer.stackSize = 0;
+						}
 						updateContainer(emptyContainer);
 					}
 					return contained;

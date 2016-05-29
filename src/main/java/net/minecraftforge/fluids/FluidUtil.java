@@ -104,6 +104,8 @@ public class FluidUtil
      * @param player Player for making the bucket drained sound. Pass null for no noise.
      * @param doDrain true if the container should actually be drained, false if it should be simulated.
      * @return The empty container if successful, null if the fluid handler couldn't be filled.
+     *         NOTE The empty container will have a stackSize of 0 when a filled container is consumable,
+     *              i.e. it has a "null" empty container but has successfully been emptied.
      */
     @Nullable
     public static ItemStack tryEmptyContainer(ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
@@ -242,9 +244,16 @@ public class FluidUtil
             ItemStack emptiedReal = tryEmptyContainer(container, fluidSource, maxAmount, player, true);
             if (emptiedReal != null)
             {
-                container.setItem(emptiedReal.getItem());
-                container.setTagCompound(emptiedReal.getTagCompound());
-                container.setItemDamage(emptiedReal.getItemDamage());
+                if (emptiedReal.stackSize <= 0)
+                {
+                    container.stackSize--;
+                }
+                else
+                {
+                    container.setItem(emptiedReal.getItem());
+                    container.setTagCompound(emptiedReal.getTagCompound());
+                    container.setItemDamage(emptiedReal.getItemDamage());
+                }
                 return true;
             }
         }
@@ -256,21 +265,30 @@ public class FluidUtil
             ItemStack emptiedSimulated = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, false);
             if (emptiedSimulated != null)
             {
-                // check if we can give the itemStack to the inventory
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated, true);
-                if (remainder == null || player != null)
+                if (emptiedSimulated.stackSize <= 0)
                 {
-                    ItemStack emptiedReal = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
-                    remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal, false);
-
-                    // give it to the player or drop it at their feet
-                    if (remainder != null && player != null)
-                    {
-                        ItemHandlerHelper.giveItemToPlayer(player, remainder);
-                    }
-
+                    tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
                     container.stackSize--;
                     return true;
+                }
+                else
+                {
+                    // check if we can give the itemStack to the inventory
+                    ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated, true);
+                    if (remainder == null || player != null)
+                    {
+                        ItemStack emptiedReal = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
+                        remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal, false);
+
+                        // give it to the player or drop it at their feet
+                        if (remainder != null && player != null)
+                        {
+                            ItemHandlerHelper.giveItemToPlayer(player, remainder);
+                        }
+
+                        container.stackSize--;
+                        return true;
+                    }
                 }
             }
         }

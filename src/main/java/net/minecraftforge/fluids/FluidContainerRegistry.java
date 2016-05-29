@@ -348,6 +348,21 @@ public abstract class FluidContainerRegistry
         return container != null && getFluidForFilledItem(container) != null;
     }
 
+    public static boolean hasNullEmptyContainer(ItemStack container)
+    {
+        if (container == null)
+        {
+            return false;
+        }
+
+        FluidContainerData data = containerFluidMap.get(new ContainerKey(container));
+        if (data != null)
+        {
+            return data.emptyContainer == NULL_EMPTYCONTAINER;
+        }
+        return false;
+    }
+
     public static FluidContainerData[] getRegisteredFluidContainerData()
     {
         return containerFluidMap.values().toArray(new FluidContainerData[containerFluidMap.size()]);
