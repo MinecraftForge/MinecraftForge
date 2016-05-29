@@ -265,7 +265,12 @@
              String s = this.field_71437_Z.func_71195_b_();
  
              if (s != null)
-@@ -2298,8 +2330,14 @@
+@@ -2294,12 +2326,18 @@
+             }
+         }
+ 
+-        this.func_147108_a(new GuiScreenWorking());
++        if (net.minecraftforge.fml.common.StartupQuery.check()) this.func_147108_a(new GuiScreenWorking());
          SocketAddress socketaddress = this.field_71437_Z.func_147137_ag().func_151270_a();
          NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
          networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null));
