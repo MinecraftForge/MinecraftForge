@@ -1,5 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.biome.BiomeDecorator;
@@ -29,7 +31,7 @@ public class BiomeEvent extends Event
     /**
      * CreateDecorator is fired when a BiomeDecorator is created.<br>
      * This event is fired whenever a BiomeDecorator is created in
-     * DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase).<br>
+     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase)}.<br>
      * <br>
      * {@link #originalBiomeDecorator} contains the original BiomeDecorator that would be used in vanilla.
      * {@link #newBiomeDecorator} contains the new BiomeDecoration to be used by Minecraft.

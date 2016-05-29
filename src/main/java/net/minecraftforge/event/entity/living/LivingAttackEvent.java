@@ -1,5 +1,8 @@
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.EntityLivingBase;
@@ -7,8 +10,8 @@ import net.minecraft.entity.EntityLivingBase;
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
  * This event is fired whenever an Entity is attacked in
- * EntityLivingBase#attackEntityFrom(DamageSource, float) and 
- * EntityPlayer#attackEntityFrom(DamageSource, float). <br>
+ * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)} and
+ * {@link EntityPlayer#attackEntityFrom(DamageSource, float)}. <br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingAttack(EntityLivingBase, DamageSource, float)}.<br>
  * <br>

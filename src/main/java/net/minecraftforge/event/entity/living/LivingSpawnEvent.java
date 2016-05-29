@@ -1,7 +1,11 @@
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.world.WorldEntitySpawner;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
@@ -58,9 +62,9 @@ public class LivingSpawnEvent extends LivingEvent
     /**
      * SpecialSpawn is fired when an Entity is to be spawned from a mob spawner.<br>
      * This event is fired whenever an Entity is spawned in a mob spawner in<br>
-     * SpawnerAnimals#findChunksForSpawning(WorldServer, boolean, boolean, boolean).<br>
+     * {@link WorldEntitySpawner#findChunksForSpawning(WorldServer, boolean, boolean, boolean)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>

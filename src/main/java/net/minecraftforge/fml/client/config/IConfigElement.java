@@ -31,14 +31,26 @@ public interface IConfigElement
     public boolean isProperty();
     
     /**
-     * This method returns a class that implements {@code IConfigEntry} or null. This class MUST
-     * provide a constructor with the following parameter types: {@code GuiConfig}, {@code GuiConfigEntries}, {@code IConfigElement}
+     * This method returns a class that implements {@link IConfigEntry} or null. This class MUST
+     * provide a constructor with the following parameter types: {@link GuiConfig}, {@link GuiConfigEntries}, {@link IConfigElement}
+     *
+     * @see GuiConfigEntries.ListEntryBase
+     * @see GuiConfigEntries.StringEntry
+     * @see GuiConfigEntries.BooleanEntry
+     * @see GuiConfigEntries.DoubleEntry
+     * @see GuiConfigEntries.IntegerEntry
      */
     public Class<? extends IConfigEntry> getConfigEntryClass();
     
     /**
-     * This method returns a class that implements {@code IArrayEntry}. This class MUST provide a constructor with the 
-     * following parameter types: {@code GuiEditArray}, {@code GuiEditArrayEntries}, {@code IConfigElement}, {@code Object}
+     * This method returns a class that implements {@link IArrayEntry}. This class MUST provide a constructor with the
+     * following parameter types: {@link GuiEditArray}, {@link GuiEditArrayEntries}, {@link IConfigElement}, {@link Object}
+     *
+     * @see GuiEditArrayEntries.BaseEntry
+     * @see GuiEditArrayEntries.StringEntry
+     * @see GuiEditArrayEntries.BooleanEntry
+     * @see GuiEditArrayEntries.DoubleEntry
+     * @see GuiEditArrayEntries.IntegerEntry
      */
     public Class<? extends IArrayEntry> getArrayEntryClass();
     

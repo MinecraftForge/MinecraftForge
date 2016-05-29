@@ -1,5 +1,10 @@
 package net.minecraftforge.event.entity.minecart;
 
+import net.minecraft.entity.item.EntityMinecartContainer;
+import net.minecraft.entity.item.EntityMinecartEmpty;
+import net.minecraft.entity.item.EntityMinecartFurnace;
+import net.minecraft.entity.item.EntityMinecartHopper;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,10 +14,11 @@ import net.minecraft.util.EnumHand;
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>
  * This event is fired whenever a player interacts with a minecart in
- * EntityMinecartContainer#interactFirst(EntityPlayer),
- * EntityMinecartEmpty#interactFirst(EntityPlayer)
- * EntityMinecartFurnace#interactFirst(EntityPlayer)
- * EntityMinecartHopper#interactFirst(EntityPlayer).<br>
+ * {@link EntityMinecartContainer#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartEmpty#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartFurnace#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * {@link EntityMinecartHopper#processInitialInteract(EntityPlayer, ItemStack, EnumHand)},
+ * etc.<br>
  * <br>
  * {@link #player} contains the EntityPlayer that is involved with this minecart interaction.<br>
  * <br>

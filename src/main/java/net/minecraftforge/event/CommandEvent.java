@@ -1,5 +1,8 @@
 package net.minecraftforge.event;
 
+import net.minecraft.command.CommandHandler;
+import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.command.ICommand;
@@ -7,8 +10,8 @@ import net.minecraft.command.ICommandSender;
 
 /**
  * CommandEvent is fired whenever a command is scheduled to be executed. 
- * This event is fired during the invocation of CommandHandler#executeCommand(ICommandSender, String)
- * and ClientCommandHandler#executeCommand(ICommandSender, String). <br>
+ * This event is fired during the invocation of {@link CommandHandler#executeCommand(ICommandSender, String)}
+ * and {@link ClientCommandHandler#executeCommand(ICommandSender, String)}. <br>
  * <br>
  * {@link #command} contains the instance of ICommand which is representative of the currently executing command.<br>
  * {@link #sender} contains the instance of ICommandSender for the given command sender.<br>

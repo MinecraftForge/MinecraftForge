@@ -36,7 +36,10 @@ import java.util.regex.Pattern;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
+import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
@@ -1215,9 +1218,15 @@ public class Configuration
 
     /**
      * Sets the custom IConfigEntry class that should be used in place of the standard entry class (which is just a button that
-     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent
-     * GuiConfig screen will be provided), {@code GuiPropertyList} (the parent GuiPropertyList will be provided), {@code IConfigElement}
+     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@link GuiConfig} (the parent
+     * GuiConfig screen will be provided), {@link GuiConfigEntries} (the parent GuiConfigEntries will be provided), {@link IConfigElement}
      * (the IConfigElement for this Property will be provided).
+     *
+     * @see GuiConfigEntries.ListEntryBase
+     * @see GuiConfigEntries.StringEntry
+     * @see GuiConfigEntries.BooleanEntry
+     * @see GuiConfigEntries.DoubleEntry
+     * @see GuiConfigEntries.IntegerEntry
      */
     public Configuration setCategoryConfigEntryClass(String category, Class<? extends IConfigEntry> clazz)
     {
@@ -1561,7 +1570,7 @@ public class Configuration
      *
      * @param name Name of the property.
      * @param category Category of the property.
-     * @param defaultValue Default value of the property.
+     * @param defaultValues Default values of the property.
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */

@@ -55,7 +55,7 @@ public class Capability<T>
          * @param capability The Capability being stored.
          * @param instance An instance of that capabilities interface.
          * @param side The side of the object the instance is associated with.
-         * @param A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+         * @param nbt A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
          */
         void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt);
     }
