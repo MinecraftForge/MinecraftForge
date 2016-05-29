@@ -35,7 +35,7 @@ public class FluidBlockWrapper implements IFluidHandler
 			percentFilled *= -1;
 		}
 		int amountFilled = Math.round(FluidContainerRegistry.BUCKET_VOLUME * percentFilled);
-		FluidStack fluid = new FluidStack(fluidBlock.getFluid(), amountFilled);
+		FluidStack fluid = amountFilled > 0 ? new FluidStack(fluidBlock.getFluid(), amountFilled) : null;
 		return new FluidTankInfo[]{ new FluidTankInfo(fluid, FluidContainerRegistry.BUCKET_VOLUME)};
 	}
 

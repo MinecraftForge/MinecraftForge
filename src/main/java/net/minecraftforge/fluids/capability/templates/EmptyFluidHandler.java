@@ -1,5 +1,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
+import javax.annotation.Nullable;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -20,6 +22,7 @@ public class EmptyFluidHandler implements IFluidHandler, IFluidTank
     }
 
     @Override
+    @Nullable
     public FluidStack getFluid()
     {
         return null;

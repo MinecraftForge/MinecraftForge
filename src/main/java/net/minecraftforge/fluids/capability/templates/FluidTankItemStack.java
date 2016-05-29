@@ -1,5 +1,7 @@
 package net.minecraftforge.fluids.capability.templates;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -26,6 +28,7 @@ public class FluidTankItemStack implements IFluidTank, IFluidHandler, ICapabilit
     }
 
     @Override
+    @Nullable
     public FluidStack getFluid()
     {
         if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("Fluid"))

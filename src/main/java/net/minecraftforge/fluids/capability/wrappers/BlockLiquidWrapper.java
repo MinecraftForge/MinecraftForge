@@ -37,16 +37,13 @@ public class BlockLiquidWrapper implements IFluidHandler
 	@Override
 	public FluidTankInfo[] getTankInfo()
 	{
+		FluidStack containedStack = null;
 		IBlockState blockState = world.getBlockState(blockPos);
 		if (blockState.getBlock() == blockLiquid)
 		{
-			FluidStack containedStack = getStack(blockState);
-			if (containedStack != null)
-			{
-				return new FluidTankInfo[]{new FluidTankInfo(containedStack, FluidContainerRegistry.BUCKET_VOLUME)};
-			}
+			containedStack = getStack(blockState);
 		}
-		return new FluidTankInfo[0];
+		return new FluidTankInfo[]{new FluidTankInfo(containedStack, FluidContainerRegistry.BUCKET_VOLUME)};
 	}
 
 	@Override
