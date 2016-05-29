@@ -521,7 +521,6 @@ public class Loader
                 }
             }
         }
-        preloadCrashClasses();
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
 
@@ -1117,34 +1116,5 @@ public class Loader
     public final LoaderState getLoaderState()
     {
         return modController != null ? modController.getState() : LoaderState.NOINIT;
-    }
-
-
-    private void preloadCrashClasses()
-    {
-        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
-        new CrashReport("ThisIsFake", new Exception("Not real"));
-
-        FMLLog.log(Level.DEBUG, "Preloading CrashReport Classes");
-        //Find all ICrashReportDetail's handlers and preload them.
-        List<String> classes = Lists.newArrayList();
-        for (ASMData asm : discoverer.getASMTable().getAll(ICrashReportDetail.class.getName().replace('.', '/')))
-        {
-            classes.add(asm.getClassName());
-        }
-        for (ASMData asm : discoverer.getASMTable().getAll(ICrashCallable.class.getName().replace('.', '/')))
-        {
-            classes.add(asm.getClassName());
-        }
-        Collections.sort(classes); //Sort it because I like pretty output ;)
-        for (String name : classes)
-        {
-            FMLLog.log(Level.DEBUG, "\t" + name);
-            try
-            {
-                Class<?> cls = Class.forName(name, false, getClass().getClassLoader());
-            }
-            catch (Exception e){}
-        }
     }
 }
