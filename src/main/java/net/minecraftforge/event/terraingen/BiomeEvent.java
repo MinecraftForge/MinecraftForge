@@ -10,7 +10,8 @@ import net.minecraft.world.biome.Biome;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+ * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}
+ * unless stated otherwise in their Javadocs.
  **/
 public class BiomeEvent extends Event
 {
@@ -73,7 +74,7 @@ public class BiomeEvent extends Event
      * If a method utilizes this {@link Event} as its parameter, the method will
      * receive every child event of this class.<br>
      * <br>
-     * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+     * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     public static class BiomeColor extends BiomeEvent
     {
