@@ -2,9 +2,8 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockStaticLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -22,13 +21,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * Wrapper to handle vanilla Water or Lava as an IFluidHandler.
  * Methods are modeled after {@link net.minecraft.item.ItemBucket#onItemRightClick(ItemStack, World, EntityPlayer, EnumHand)}
  */
-public class BlockStaticLiquidWrapper implements IFluidHandler
+public class BlockLiquidWrapper implements IFluidHandler
 {
-	protected final BlockStaticLiquid blockLiquid;
+	protected final BlockLiquid blockLiquid;
 	protected final World world;
 	protected final BlockPos blockPos;
 
-	public BlockStaticLiquidWrapper(BlockStaticLiquid blockLiquid, World world, BlockPos blockPos)
+	public BlockLiquidWrapper(BlockLiquid blockLiquid, World world, BlockPos blockPos)
 	{
 		this.blockLiquid = blockLiquid;
 		this.world = world;
@@ -66,7 +65,7 @@ public class BlockStaticLiquidWrapper implements IFluidHandler
 		}
 
 		IBlockState blockState = world.getBlockState(blockPos);
-		if (blockState.getBlock() == blockLiquid)
+		if (blockState.getBlock() == blockLiquid && blockState.getValue(BlockLiquid.LEVEL) == 0)
 		{
 			FluidStack containedStack = getStack(blockState);
 			if (containedStack != null && resource.containsFluid(containedStack))
@@ -111,12 +110,12 @@ public class BlockStaticLiquidWrapper implements IFluidHandler
 	@Nullable
 	private FluidStack getStack(IBlockState blockState)
 	{
-		Block block = blockState.getBlock();
-		if (block == Blocks.WATER && blockState.getValue(BlockLiquid.LEVEL) == 0)
+		Material material = blockState.getMaterial();
+		if (material == Material.WATER && blockState.getValue(BlockLiquid.LEVEL) == 0)
 		{
 			return new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME);
 		}
-		else if (block == Blocks.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
+		else if (material == Material.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
 		{
 			return new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME);
 		}

@@ -3,20 +3,24 @@ package net.minecraftforge.fluids;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStaticLiquid;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.wrappers.BlockStaticLiquidWrapper;
+import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidContainerRegistryWrapper;
@@ -351,11 +355,91 @@ public class FluidUtil
         {
             return new FluidBlockWrapper((IFluidBlock) block, world, blockPos);
         }
-        else if (block instanceof BlockStaticLiquid)
+        else if (block instanceof BlockLiquid)
         {
-            return new BlockStaticLiquidWrapper((BlockStaticLiquid) block, world, blockPos);
+            return new BlockLiquidWrapper((BlockLiquid) block, world, blockPos);
         }
 
+        return null;
+    }
+
+    /**
+     * Tries to place a fluid in the world in block form.
+     * Makes a fluid emptying sound when successful.
+     * Checks if water-like fluids should vaporize like in the nether.
+     *
+     * Modeled after {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     *
+     * @param player  Player who places the fluid. May be null for blocks like dispensers.
+     * @param worldIn World to place the fluid in
+     * @param fluid   The fluid to place.
+     * @param pos     The position in the world to place the fluid block
+     * @return true if successful
+     */
+    public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World worldIn, Fluid fluid, BlockPos pos)
+    {
+        if (worldIn == null || fluid == null || pos == null)
+        {
+            return false;
+        }
+
+        // check that we can place the fluid at the destination
+        IBlockState destBlockState = worldIn.getBlockState(pos);
+        Material destMaterial = destBlockState.getMaterial();
+        boolean isDestNonSolid = !destMaterial.isSolid();
+        boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(worldIn, pos);
+        if (!worldIn.isAirBlock(pos) && !isDestNonSolid && !isDestReplaceable)
+        {
+            return false; // Non-air, solid, unreplacable block. We can't put fluid here.
+        }
+
+        IBlockState fluidBlockState = fluid.getBlock().getDefaultState();
+
+        if (worldIn.provider.doesWaterVaporize() && fluidBlockState.getMaterial() == Material.WATER)
+        {
+            worldIn.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
+
+            for (int l = 0; l < 8; ++l)
+            {
+                worldIn.spawnParticle(EnumParticleTypes.SMOKE_LARGE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+            }
+        }
+        else
+        {
+            if (!worldIn.isRemote && (isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
+            {
+                worldIn.destroyBlock(pos, true);
+            }
+
+            SoundEvent soundevent = fluid.getEmptySound(worldIn, pos);
+            worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+            worldIn.setBlockState(pos, fluidBlockState, 11);
+        }
+        return true;
+    }
+
+	/**
+     *
+     * @param emptyContainer The empty container to fill. Will not be modified.
+     * @param playerIn       The player filling the container. Optional.
+     * @param worldIn        The world the fluid is in.
+     * @param pos            The position of the fluid in the world.
+     * @param side           The side of the fluid that is being drained.
+     * @return a filled container if it was successful. returns null on failure.
+	 */
+    @Nullable
+    public static ItemStack tryPickUpFluid(ItemStack emptyContainer, @Nullable EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side)
+    {
+        if (emptyContainer == null || worldIn == null || pos == null) {
+            return null;
+        }
+
+        IFluidHandler targetFluidHandler = FluidUtil.getFluidHandler(worldIn, pos, side);
+        if (targetFluidHandler != null)
+        {
+            return FluidUtil.tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, true);
+        }
         return null;
     }
 

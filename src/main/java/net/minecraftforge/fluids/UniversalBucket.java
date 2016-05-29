@@ -4,9 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -127,7 +125,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
             if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack))
             {
                 // try placing liquid
-                if (this.tryPlaceFluid(player, player.getEntityWorld(), fluidStack.getFluid().getBlock(), targetPos)
+                if (FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack.getFluid(), targetPos)
                         && !player.capabilities.isCreativeMode)
                 {
                     // success!
@@ -159,64 +157,19 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     @Deprecated
     public boolean tryPlaceFluid(Block block, World worldIn, BlockPos pos)
     {
-        return tryPlaceFluid(null, worldIn, block, pos);
-    }
-
-    private boolean tryPlaceFluid(EntityPlayer player, World worldIn, Block block, BlockPos pos)
-    {
-        if (block == null)
+        if (block instanceof IFluidBlock)
         {
-            return false;
+            return FluidUtil.tryPlaceFluid(null, worldIn, ((IFluidBlock) block).getFluid(), pos);
         }
-        if(worldIn == null && player != null)
+        else if (block.getDefaultState().getMaterial() == Material.WATER)
         {
-            worldIn = player.getEntityWorld();
+            FluidUtil.tryPlaceFluid(null, worldIn, FluidRegistry.WATER, pos);
         }
-
-        Material material = worldIn.getBlockState(pos).getMaterial();
-        boolean isSolid = material.isSolid();
-
-        // can only place in air or non-solid blocks
-        if (!worldIn.isAirBlock(pos) && isSolid)
+        else if (block.getDefaultState().getMaterial() == Material.LAVA)
         {
-            return false;
+            FluidUtil.tryPlaceFluid(null, worldIn, FluidRegistry.LAVA, pos);
         }
-
-        // water goes poof?
-        if (worldIn.provider.doesWaterVaporize() && (block == Blocks.FLOWING_WATER || block == Blocks.WATER))
-        {
-            int i = pos.getX();
-            int j = pos.getY();
-            int k = pos.getZ();
-            worldIn.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F,
-                    2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
-
-            for (int l = 0; l < 8; ++l)
-            {
-                worldIn.spawnParticle(EnumParticleTypes.SMOKE_LARGE,
-                        (double) i + Math.random(),
-                        (double) j + Math.random(), (double) k + Math.random(), 0.0D, 0.0D, 0.0D);
-            }
-        }
-        else
-        {
-            if (!worldIn.isRemote && !isSolid && !material.isLiquid())
-            {
-                worldIn.destroyBlock(pos, true);
-            }
-
-            if(player != null && block instanceof IFluidBlock)
-            {
-                Fluid fluid = ((IFluidBlock) block).getFluid();
-                if(fluid != null)
-                {
-                    worldIn.setBlockState(pos, block.getDefaultState(), 3);
-                    SoundEvent soundevent = fluid.getEmptySound(worldIn, pos);
-                    worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                }
-            }
-        }
-        return true;
+        return false;
     }
 
     @SubscribeEvent(priority = EventPriority.LOW) // low priority so other mods can handle their stuff first
@@ -247,21 +200,20 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         World world = event.getWorld();
         BlockPos pos = target.getBlockPos();
 
-        net.minecraftforge.fluids.capability.IFluidHandler targetFluidHandler = FluidUtil.getFluidHandler(world, pos, target.sideHit);
-        if (targetFluidHandler != null)
+        ItemStack singleBucket = emptyBucket.copy();
+        singleBucket.stackSize = 1;
+
+        ItemStack filledBucket = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
+        if (filledBucket != null)
         {
-            ItemStack filledBucket = FluidUtil.tryFillContainer(emptyBucket, targetFluidHandler, getCapacity(emptyBucket), event.getEntityPlayer(), true);
-            if (filledBucket != null)
-            {
-                event.setResult(Event.Result.ALLOW);
-                event.setFilledBucket(filledBucket);
-            }
-            else
-            {
-                // cancel event, otherwise the vanilla minecraft ItemBucket would
-                // convert it into a water/lava bucket depending on the blocks material
-                event.setCanceled(true);
-            }
+            event.setResult(Event.Result.ALLOW);
+            event.setFilledBucket(filledBucket);
+        }
+        else
+        {
+            // cancel event, otherwise the vanilla minecraft ItemBucket would
+            // convert it into a water/lava bucket depending on the blocks material
+            event.setCanceled(true);
         }
     }
 
