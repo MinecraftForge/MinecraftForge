@@ -107,7 +107,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (resource == null || !canFill(resource))
+        if (resource == null || !canFillFluidType(resource))
         {
             return 0;
         }
@@ -178,7 +178,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (fluid == null || !canDrain(fluid))
+        if (fluid == null || !canDrainFluidType(fluid))
         {
             return null;
         }
@@ -213,7 +213,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
      * Used as a filter for fluid types.
      * Does not consider the current state of the tank, only whether it could ever fill with this type of fluid.
      */
-    public boolean canFill(FluidStack fluid)
+    public boolean canFillFluidType(FluidStack fluid)
     {
         return true;
     }
@@ -223,7 +223,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
      * Used as a filter for fluid types.
      * Does not consider the current state of the tank, only whether it could ever drain out this type of fluid.
      */
-    public boolean canDrain(FluidStack fluid)
+    public boolean canDrainFluidType(FluidStack fluid)
     {
         return true;
     }
