@@ -9,3 +9,13 @@
      }
  
      public byte func_74732_a()
+@@ -42,7 +42,8 @@
+ 
+     public String toString()
+     {
+-        return "\"" + this.field_74751_a.replace("\"", "\\\"") + "\"";
++        // Forge: BugFix: Vanilla does a normal " -> \" conversion but doesn't escape \
++        return "\"" + org.apache.commons.lang3.StringUtils.replaceEach(this.field_74751_a, new String[]{"\\","\""}, new String[]{"\\\\","\\\""}) + "\"";
+     }
+ 
+     public NBTBase func_74737_b()
