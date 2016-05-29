@@ -136,6 +136,7 @@ public class FluidUtil
 
     /**
      * Takes an Fluid Container Item and tries to fill it from the given tank.
+     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
      * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
      * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
@@ -154,7 +155,17 @@ public class FluidUtil
             return false;
         }
 
-        if (container.stackSize == 1) // don't need to stow anything, just fill and edit the container stack
+        if (player != null && player.capabilities.isCreativeMode)
+        {
+            ItemStack singleContainer = container.copy();
+            singleContainer.stackSize = 1;
+            ItemStack filledReal = tryFillContainer(singleContainer, fluidSource, maxAmount, player, true);
+            if (filledReal != null)
+            {
+                return true;
+            }
+        }
+        else if (container.stackSize == 1) // don't need to stow anything, just fill and edit the container stack
         {
             ItemStack filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
             if (filledReal != null)
@@ -197,6 +208,7 @@ public class FluidUtil
 
     /**
      * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
+     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
      * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
      * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
      *      If player is null in this case, the action will be aborted.
@@ -215,7 +227,17 @@ public class FluidUtil
             return false;
         }
 
-        if (container.stackSize == 1) // don't need to stow anything, just fill and edit the container stack
+        if (player != null && player.capabilities.isCreativeMode)
+        {
+            ItemStack singleContainer = container.copy();
+            singleContainer.stackSize = 1;
+            ItemStack emptiedReal = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
+            if (emptiedReal != null)
+            {
+                return true;
+            }
+        }
+        else if (container.stackSize == 1) // don't need to stow anything, just fill and edit the container stack
         {
             ItemStack emptiedReal = tryEmptyContainer(container, fluidSource, maxAmount, player, true);
             if (emptiedReal != null)
