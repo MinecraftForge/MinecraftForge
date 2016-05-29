@@ -57,7 +57,7 @@
 +    //split from above for custom search tabs
 +    private void updateFilteredItems(GuiContainerCreative.ContainerCreative guicontainercreative$containercreative)
 +    {
-+    	if (CreativeTabs.field_78032_a[field_147058_w] == CreativeTabs.field_78027_g) // FORGE: Only add enchanted books to the regular search
++        if (CreativeTabs.field_78032_a[field_147058_w] == CreativeTabs.field_78027_g) // FORGE: Only add enchanted books to the regular search
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {
              if (enchantment != null && enchantment.field_77351_y != null)
@@ -137,7 +137,7 @@
              }
          }
  
-+        if (!rendered && func_147052_b(CreativeTabs.field_78027_g, p_73863_1_, p_73863_2_))
++        if (!rendered && !func_147052_b(CreativeTabs.field_78027_g, p_73863_1_, p_73863_2_))
 +        {
 +            func_147052_b(CreativeTabs.field_78036_m, p_73863_1_, p_73863_2_);
 +        }
