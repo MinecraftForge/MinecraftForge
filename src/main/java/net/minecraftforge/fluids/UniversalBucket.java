@@ -16,7 +16,7 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -347,6 +347,6 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
     {
-        return new FluidContainerItemWrapper(this, stack);
+        return new FluidBucketWrapper(stack);
     }
 }

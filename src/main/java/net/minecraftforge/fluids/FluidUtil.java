@@ -349,12 +349,6 @@ public class FluidUtil
             return null;
         }
 
-        // convert vanilla empty bucket to forge universal bucket
-        if (FluidRegistry.isUniversalBucketEnabled() && ItemStack.areItemsEqual(itemStack, FluidContainerRegistry.EMPTY_BUCKET))
-        {
-            itemStack.setItem(ForgeModContainer.getInstance().universalBucket);
-        }
-
         // check for capability
         if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null))
         {
