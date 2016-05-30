@@ -428,9 +428,9 @@ public class FluidUtil
      * @param pos     The position in the world to place the fluid block
      * @return true if successful
      */
-    public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World worldIn, Fluid fluid, BlockPos pos)
+    public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World worldIn, FluidStack fluid, BlockPos pos)
     {
-        if (worldIn == null || fluid == null || pos == null)
+        if (worldIn == null || fluid == null || fluid.getFluid() == null || pos == null)
         {
             return false;
         }
@@ -445,7 +445,7 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        IBlockState fluidBlockState = fluid.getBlock().getDefaultState();
+        IBlockState fluidBlockState = fluid.getFluid().getBlock().getDefaultState();
 
         if (worldIn.provider.doesWaterVaporize() && fluidBlockState.getMaterial() == Material.WATER)
         {
@@ -463,7 +463,7 @@ public class FluidUtil
                 worldIn.destroyBlock(pos, true);
             }
 
-            SoundEvent soundevent = fluid.getEmptySound(worldIn, pos);
+            SoundEvent soundevent = fluid.getFluid().getEmptySound(worldIn, pos);
             worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
             worldIn.setBlockState(pos, fluidBlockState, 11);

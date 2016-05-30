@@ -125,7 +125,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
             if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack))
             {
                 // try placing liquid
-                if (FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack.getFluid(), targetPos)
+                if (FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack, targetPos)
                         && !player.capabilities.isCreativeMode)
                 {
                     // success!
@@ -159,15 +159,16 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     {
         if (block instanceof IFluidBlock)
         {
-            return FluidUtil.tryPlaceFluid(null, worldIn, ((IFluidBlock) block).getFluid(), pos);
+            IFluidBlock fluidBlock = (IFluidBlock) block;
+            return FluidUtil.tryPlaceFluid(null, worldIn, new FluidStack(fluidBlock.getFluid(), Fluid.BUCKET_VOLUME), pos);
         }
         else if (block.getDefaultState().getMaterial() == Material.WATER)
         {
-            FluidUtil.tryPlaceFluid(null, worldIn, FluidRegistry.WATER, pos);
+            FluidUtil.tryPlaceFluid(null, worldIn, new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), pos);
         }
         else if (block.getDefaultState().getMaterial() == Material.LAVA)
         {
-            FluidUtil.tryPlaceFluid(null, worldIn, FluidRegistry.LAVA, pos);
+            FluidUtil.tryPlaceFluid(null, worldIn, new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME), pos);
         }
         return false;
     }
