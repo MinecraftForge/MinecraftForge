@@ -11,10 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
@@ -43,7 +43,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 		{
 			containedStack = getStack(blockState);
 		}
-		return new FluidTankInfo[]{new FluidTankInfo(containedStack, FluidUtil.BUCKET_VOLUME)};
+		return new FluidTankInfo[]{new FluidTankInfo(containedStack, Fluid.BUCKET_VOLUME)};
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 	@Override
 	public FluidStack drain(FluidStack resource, boolean doDrain)
 	{
-		if (resource == null || resource.amount < FluidUtil.BUCKET_VOLUME)
+		if (resource == null || resource.amount < Fluid.BUCKET_VOLUME)
 		{
 			return null;
 		}
@@ -82,7 +82,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain)
 	{
-		if (maxDrain < FluidUtil.BUCKET_VOLUME)
+		if (maxDrain < Fluid.BUCKET_VOLUME)
 		{
 			return null;
 		}
@@ -110,11 +110,11 @@ public class BlockLiquidWrapper implements IFluidHandler
 		Material material = blockState.getMaterial();
 		if (material == Material.WATER && blockState.getValue(BlockLiquid.LEVEL) == 0)
 		{
-			return new FluidStack(FluidRegistry.WATER, FluidUtil.BUCKET_VOLUME);
+			return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
 		}
 		else if (material == Material.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
 		{
-			return new FluidStack(FluidRegistry.LAVA, FluidUtil.BUCKET_VOLUME);
+			return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
 		}
 		else
 		{

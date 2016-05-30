@@ -7,7 +7,6 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,7 +17,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
@@ -33,10 +31,6 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public class FluidUtil
 {
-    public static final int BUCKET_VOLUME = 1000;
-    public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
-    public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.GLASS_BOTTLE);
-
     private FluidUtil()
     {
     }
@@ -535,7 +529,7 @@ public class FluidUtil
     public static ItemStack tryFillBucket(ItemStack bucket, net.minecraftforge.fluids.IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
         IFluidHandler newFluidHandler = new FluidHandlerWrapper(tank, side);
-        return tryFillContainer(bucket, newFluidHandler, BUCKET_VOLUME, player, true);
+        return tryFillContainer(bucket, newFluidHandler, Fluid.BUCKET_VOLUME, player, true);
     }
 
     /**
@@ -561,7 +555,7 @@ public class FluidUtil
     public static ItemStack tryEmptyBucket(ItemStack bucket, net.minecraftforge.fluids.IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
         IFluidHandler destination = new FluidHandlerWrapper(tank, side);
-        return tryEmptyContainer(bucket, destination, BUCKET_VOLUME, player, true);
+        return tryEmptyContainer(bucket, destination, Fluid.BUCKET_VOLUME, player, true);
     }
 
     /**

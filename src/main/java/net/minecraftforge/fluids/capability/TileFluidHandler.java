@@ -4,12 +4,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
 
 public class TileFluidHandler extends TileEntity
 {
-    protected FluidTank tank = new FluidTank(FluidUtil.BUCKET_VOLUME);
+    protected FluidTank tank = new FluidTank(Fluid.BUCKET_VOLUME);
 
     @Override
     public void readFromNBT(NBTTagCompound tag)

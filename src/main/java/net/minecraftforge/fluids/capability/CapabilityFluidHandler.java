@@ -6,9 +6,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.concurrent.Callable;
@@ -57,7 +57,7 @@ public class CapabilityFluidHandler
             @Override
             public IFluidHandler call() throws Exception
             {
-                return new FluidTank(FluidUtil.BUCKET_VOLUME);
+                return new FluidTank(Fluid.BUCKET_VOLUME);
             }
         });
     }

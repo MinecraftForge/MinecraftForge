@@ -68,7 +68,6 @@ import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -356,9 +355,9 @@ public final class ModelLoader extends ModelBakery
             {
                 // can the milk be put into a bucket?
                 Fluid milk = FluidRegistry.getFluid("milk");
-                FluidStack milkStack = new FluidStack(milk, FluidUtil.BUCKET_VOLUME);
+                FluidStack milkStack = new FluidStack(milk, Fluid.BUCKET_VOLUME);
                 IFluidHandler bucketHandler = FluidUtil.getFluidHandler(new ItemStack(Items.BUCKET));
-                if (bucketHandler != null && bucketHandler.fill(milkStack, false) == FluidUtil.BUCKET_VOLUME)
+                if (bucketHandler != null && bucketHandler.fill(milkStack, false) == Fluid.BUCKET_VOLUME)
                 {
                     setBucketModel(Items.MILK_BUCKET);
                 }

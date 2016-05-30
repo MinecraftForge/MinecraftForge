@@ -38,7 +38,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
     public UniversalBucket()
     {
-        this(FluidUtil.BUCKET_VOLUME, FluidUtil.EMPTY_BUCKET, false);
+        this(Fluid.BUCKET_VOLUME, new ItemStack(Items.BUCKET), false);
     }
 
     /**

@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -46,15 +45,15 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
 		Item item = container.getItem();
 		if (item == Items.WATER_BUCKET)
 		{
-			return new FluidStack(FluidRegistry.WATER, FluidUtil.BUCKET_VOLUME);
+			return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
 		}
 		else if (item == Items.LAVA_BUCKET)
 		{
-			return new FluidStack(FluidRegistry.LAVA, FluidUtil.BUCKET_VOLUME);
+			return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
 		}
 		else if (item == Items.MILK_BUCKET)
 		{
-			return FluidRegistry.getFluidStack("milk", FluidUtil.BUCKET_VOLUME);
+			return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
 		}
 		else if (item == ForgeModContainer.getInstance().universalBucket)
 		{
@@ -103,13 +102,13 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
 	@Override
 	public FluidTankInfo[] getTankInfo()
 	{
-		return new FluidTankInfo[] { new FluidTankInfo(getFluid(), FluidUtil.BUCKET_VOLUME) };
+		return new FluidTankInfo[] { new FluidTankInfo(getFluid(), Fluid.BUCKET_VOLUME) };
 	}
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill)
 	{
-		if (container.stackSize != 1 || resource == null || resource.amount < FluidUtil.BUCKET_VOLUME || getFluid() != null || !canFillFluidType(resource))
+		if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || getFluid() != null || !canFillFluidType(resource))
 		{
 			return 0;
 		}
@@ -119,14 +118,14 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
 			setFluid(resource.getFluid());
 		}
 
-		return FluidUtil.BUCKET_VOLUME;
+		return Fluid.BUCKET_VOLUME;
 	}
 
 	@Nullable
 	@Override
 	public FluidStack drain(FluidStack resource, boolean doDrain)
 	{
-		if (container.stackSize != 1 || resource == null || resource.amount < FluidUtil.BUCKET_VOLUME)
+		if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME)
 		{
 			return null;
 		}
@@ -148,7 +147,7 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
 	@Override
 	public FluidStack drain(int maxDrain, boolean doDrain)
 	{
-		if (container.stackSize != 1 || maxDrain < FluidUtil.BUCKET_VOLUME)
+		if (container.stackSize != 1 || maxDrain < Fluid.BUCKET_VOLUME)
 		{
 			return null;
 		}
