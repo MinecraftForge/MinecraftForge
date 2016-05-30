@@ -5,13 +5,13 @@
      public ChunkProviderGenerate(World p_i45636_1_, long p_i45636_2_, boolean p_i45636_4_, String p_i45636_5_)
      {
 +        {
-+            field_73226_t = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73226_t, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.CAVE);
-+            field_73225_u = (MapGenStronghold)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73225_u, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD);
-+            field_73224_v = (MapGenVillage)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73224_v, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE);
-+            field_73223_w = (MapGenMineshaft)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73223_w, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.MINESHAFT);
-+            field_73233_x = (MapGenScatteredFeature)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73233_x, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.SCATTERED_FEATURE);
-+            field_73232_y = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73232_y, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.RAVINE);
-+            field_177474_A = (StructureOceanMonument)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_177474_A, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.OCEAN_MONUMENT);
++            field_73226_t = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73226_t, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.CAVE, p_i45636_1_);
++            field_73225_u = (MapGenStronghold)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73225_u, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.STRONGHOLD, p_i45636_1_);
++            field_73224_v = (MapGenVillage)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73224_v, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.VILLAGE, p_i45636_1_);
++            field_73223_w = (MapGenMineshaft)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73223_w, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.MINESHAFT, p_i45636_1_);
++            field_73233_x = (MapGenScatteredFeature)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73233_x, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.SCATTERED_FEATURE, p_i45636_1_);
++            field_73232_y = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_73232_y, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.RAVINE, p_i45636_1_);
++            field_177474_A = (StructureOceanMonument)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(field_177474_A, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.OCEAN_MONUMENT, p_i45636_1_);
 +        }
          this.field_73230_p = p_i45636_1_;
          this.field_73229_q = p_i45636_4_;

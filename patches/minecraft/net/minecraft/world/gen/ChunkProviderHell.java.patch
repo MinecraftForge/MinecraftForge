@@ -15,8 +15,8 @@
  
      public ChunkProviderHell(World p_i45637_1_, boolean p_i45637_2_, long p_i45637_3_)
      {
-+        this.field_73172_c = (MapGenNetherBridge) net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(new MapGenNetherBridge(), net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE);
-+        this.field_73182_t = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(new MapGenCavesHell(), net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE);
++        this.field_73172_c = (MapGenNetherBridge) net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(new MapGenNetherBridge(), net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE, p_i45637_1_);
++        this.field_73182_t = net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(new MapGenCavesHell(), net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE, p_i45637_1_);
          this.field_73175_o = p_i45637_1_;
          this.field_177466_i = p_i45637_2_;
          this.field_73181_i = new Random(p_i45637_3_);
