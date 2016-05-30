@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
 @Deprecated
 public class TileFluidHandler extends TileEntity implements IFluidHandler
 {
-    protected FluidTank tank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);
+    protected FluidTank tank = new FluidTank(FluidUtil.BUCKET_VOLUME);
 
     @Override
     public void readFromNBT(NBTTagCompound tag)

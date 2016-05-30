@@ -7,6 +7,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -32,6 +33,9 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public class FluidUtil
 {
+    public static final int BUCKET_VOLUME = 1000;
+    public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
+    public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.GLASS_BOTTLE);
 
     private FluidUtil()
     {
@@ -518,7 +522,7 @@ public class FluidUtil
     public static ItemStack tryFillBucket(ItemStack bucket, net.minecraftforge.fluids.IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
         IFluidHandler newFluidHandler = new FluidHandlerWrapper(tank, side);
-        return tryFillContainer(bucket, newFluidHandler, FluidContainerRegistry.BUCKET_VOLUME, player, true);
+        return tryFillContainer(bucket, newFluidHandler, BUCKET_VOLUME, player, true);
     }
 
     /**
@@ -544,7 +548,7 @@ public class FluidUtil
     public static ItemStack tryEmptyBucket(ItemStack bucket, net.minecraftforge.fluids.IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
         IFluidHandler destination = new FluidHandlerWrapper(tank, side);
-        return tryEmptyContainer(bucket, destination, FluidContainerRegistry.BUCKET_VOLUME, player, true);
+        return tryEmptyContainer(bucket, destination, BUCKET_VOLUME, player, true);
     }
 
     /**

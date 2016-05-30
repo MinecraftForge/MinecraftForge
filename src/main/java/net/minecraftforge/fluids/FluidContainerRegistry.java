@@ -70,9 +70,12 @@ public abstract class FluidContainerRegistry
     private static Map<ContainerKey, FluidContainerData> filledContainerMap = Maps.newHashMap();
     private static Set<ContainerKey> emptyContainers = Sets.newHashSet();
 
-    public static final int BUCKET_VOLUME = 1000;
-    public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
-    public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.GLASS_BOTTLE);
+    @Deprecated
+    public static final int BUCKET_VOLUME = FluidUtil.BUCKET_VOLUME;
+    @Deprecated
+    public static final ItemStack EMPTY_BUCKET = FluidUtil.EMPTY_BUCKET;
+    @Deprecated
+    public static final ItemStack EMPTY_BOTTLE = FluidUtil.EMPTY_BOTTLE;
     private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.BUCKET);
 
     static
