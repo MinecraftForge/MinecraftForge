@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -58,17 +58,18 @@
+@@ -58,17 +58,19 @@
  
      public WorldClient(NetHandlerPlayClient p_i45063_1_, WorldSettings p_i45063_2_, int p_i45063_3_, EnumDifficulty p_i45063_4_, Profiler p_i45063_5_)
      {
@@ -17,6 +17,7 @@
          this.field_72988_C = new SaveDataMemoryStorage();
          this.func_72966_v();
          this.func_72947_a();
++        this.func_175643_b();
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
      }
  
