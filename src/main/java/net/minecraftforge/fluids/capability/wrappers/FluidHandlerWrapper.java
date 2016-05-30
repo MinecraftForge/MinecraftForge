@@ -7,7 +7,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
  * FluidHandlerWrapper automatically converts the old {@link net.minecraftforge.fluids.IFluidHandler} to the new version.
+ * @deprecated will be removed along with {@link net.minecraftforge.fluids.IFluidHandler}
  */
+@Deprecated
 public class FluidHandlerWrapper implements IFluidHandler
 {
     protected final net.minecraftforge.fluids.IFluidHandler handler;

@@ -377,6 +377,25 @@ public class FluidUtil
         }
     }
 
+	/**
+     * Helper method to get the fluid contained in an itemStack
+     */
+    @Nullable
+    public static FluidStack getFluidContained(ItemStack container)
+    {
+        if (container != null)
+        {
+            container = container.copy();
+            container.stackSize = 1;
+            IFluidHandler fluidHandler = FluidUtil.getFluidHandler(container);
+            if (fluidHandler != null)
+            {
+                return fluidHandler.drain(Integer.MAX_VALUE, false);
+            }
+        }
+        return null;
+    }
+
     /**
      * Helper method to get an IFluidHandler for at a block position.
      *

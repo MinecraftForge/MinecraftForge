@@ -1,7 +1,6 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.capability.templates.FluidTankItemStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
 
 /**
@@ -12,8 +11,7 @@ import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
  *
  * NOTE: Use of NBT data on the containing ItemStack is encouraged.
  *
- * @deprecated See {@link FluidTankItemStack} for a CapabilityProvider implementing the Capability {@link net.minecraftforge.fluids.capability.IFluidHandler}
- * @see net.minecraftforge.fluids.capability.ItemFluidContainer
+ * @deprecated See {@link net.minecraftforge.fluids.capability.ItemFluidContainer} for a CapabilityProvider implementing the Capability {@link net.minecraftforge.fluids.capability.IFluidHandler}
  * @see FluidContainerItemWrapper
  */
 @Deprecated

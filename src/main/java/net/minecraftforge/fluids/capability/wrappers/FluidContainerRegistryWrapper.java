@@ -15,7 +15,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 /**
  * Wraps a liquid container that uses the {@link FluidContainerRegistry}
  * Note that successful operations WILL modify the container itemStack.
+ * @deprecated will be removed along with {@link FluidContainerRegistry}
  */
+@Deprecated
 public class FluidContainerRegistryWrapper implements IFluidHandler, ICapabilityProvider
 {
 	protected final ItemStack container;

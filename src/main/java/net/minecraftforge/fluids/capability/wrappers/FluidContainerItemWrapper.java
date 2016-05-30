@@ -13,7 +13,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 /**
  * FluidContainerItemWrapper converts an old {@link IFluidContainerItem} to IFluidHandler.
  * Note that successful operations WILL modify the container itemStack.
+ * @deprecated will be removed along with {@link IFluidContainerItem}
  */
+@Deprecated
 public class FluidContainerItemWrapper implements IFluidHandler, ICapabilityProvider
 {
     protected final IFluidContainerItem handler;

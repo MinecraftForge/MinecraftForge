@@ -17,10 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
  * Register simple items that contain fluids here. Useful for buckets, bottles, and things that have
  * ID/metadata mappings.
  *
- * For more complex items, use {@link IFluidContainerItem} instead.
- *
- * Deprecated: We will eventually be moving this ALL away from a registry and instead EVERYTHING will use IFluidContainerItem.
- * We need to decide a way of swapping Items/Stacks.
+ * @deprecated This will be removed soon. Create an item like {@link net.minecraftforge.fluids.capability.ItemFluidContainer}
  */
 @Deprecated
 public abstract class FluidContainerRegistry
