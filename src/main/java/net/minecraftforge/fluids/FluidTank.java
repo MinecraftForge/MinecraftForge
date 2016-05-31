@@ -4,11 +4,12 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
  * Reference implementation of {@link IFluidTank}. Use/extend this or implement your own.
  */
-public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capability.IFluidHandler
+public class FluidTank implements IFluidTank, IFluidHandler
 {
     @Nullable
     protected FluidStack fluid;
@@ -107,7 +108,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (resource == null || !canFillFluidType(resource))
+        if (resource == null || resource.amount <= 0 || !canFillFluidType(resource))
         {
             return 0;
         }
@@ -178,7 +179,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (fluid == null || !canDrainFluidType(fluid))
+        if (fluid == null || maxDrain <= 0 || !canDrainFluidType(fluid))
         {
             return null;
         }
@@ -211,7 +212,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
     /**
      * Returns true if the tank can be filled with this type of fluid.
      * Used as a filter for fluid types.
-     * Does not consider the current state of the tank, only whether it could ever fill with this type of fluid.
+     * Does not consider the current contents or capacity of the tank, only whether it could ever fill with this type of fluid.
      */
     public boolean canFillFluidType(FluidStack fluid)
     {
@@ -221,7 +222,7 @@ public class FluidTank implements IFluidTank, net.minecraftforge.fluids.capabili
     /**
      * Returns true if the tank can drain out this type of fluid.
      * Used as a filter for fluid types.
-     * Does not consider the current state of the tank, only whether it could ever drain out this type of fluid.
+     * Does not consider the current contents or capacity of the tank, only whether it could ever drain out this type of fluid.
      */
     public boolean canDrainFluidType(FluidStack fluid)
     {

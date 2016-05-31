@@ -68,6 +68,7 @@ public class FluidUtil
     public static ItemStack tryFillContainer(ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
     {
         container = container.copy(); // do not modify the input
+        container.stackSize = 1;
         IFluidHandler containerFluidHandler = getFluidHandler(container);
         if (containerFluidHandler != null)
         {
@@ -109,6 +110,7 @@ public class FluidUtil
     public static ItemStack tryEmptyContainer(ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
     {
         container = container.copy(); // do not modify the input
+        container.stackSize = 1;
         IFluidHandler containerFluidHandler = getFluidHandler(container);
         if (containerFluidHandler != null)
         {
@@ -157,9 +159,7 @@ public class FluidUtil
 
         if (player != null && player.capabilities.isCreativeMode)
         {
-            ItemStack singleContainer = container.copy();
-            singleContainer.stackSize = 1;
-            ItemStack filledReal = tryFillContainer(singleContainer, fluidSource, maxAmount, player, true);
+            ItemStack filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
             if (filledReal != null)
             {
                 return true;
@@ -178,17 +178,14 @@ public class FluidUtil
         }
         else
         {
-            ItemStack singleContainer = container.copy();
-            singleContainer.stackSize = 1;
-
-            ItemStack filledSimulated = tryFillContainer(singleContainer, fluidSource, maxAmount, player, false);
+            ItemStack filledSimulated = tryFillContainer(container, fluidSource, maxAmount, player, false);
             if (filledSimulated != null)
             {
                 // check if we can give the itemStack to the inventory
                 ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, filledSimulated, true);
                 if (remainder == null || player != null)
                 {
-                    ItemStack filledReal = tryFillContainer(singleContainer, fluidSource, maxAmount, player, true);
+                    ItemStack filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
                     remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal, false);
 
                     // give it to the player or drop it at their feet
@@ -229,9 +226,7 @@ public class FluidUtil
 
         if (player != null && player.capabilities.isCreativeMode)
         {
-            ItemStack singleContainer = container.copy();
-            singleContainer.stackSize = 1;
-            ItemStack emptiedReal = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
+            ItemStack emptiedReal = tryEmptyContainer(container, fluidSource, maxAmount, player, true);
             if (emptiedReal != null)
             {
                 return true;
@@ -257,15 +252,12 @@ public class FluidUtil
         }
         else
         {
-            ItemStack singleContainer = container.copy();
-            singleContainer.stackSize = 1;
-
-            ItemStack emptiedSimulated = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, false);
+            ItemStack emptiedSimulated = tryEmptyContainer(container, fluidSource, maxAmount, player, false);
             if (emptiedSimulated != null)
             {
                 if (emptiedSimulated.stackSize <= 0)
                 {
-                    tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
+                    tryEmptyContainer(container, fluidSource, maxAmount, player, true);
                     container.stackSize--;
                     return true;
                 }
@@ -275,7 +267,7 @@ public class FluidUtil
                     ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated, true);
                     if (remainder == null || player != null)
                     {
-                        ItemStack emptiedReal = tryEmptyContainer(singleContainer, fluidSource, maxAmount, player, true);
+                        ItemStack emptiedReal = tryEmptyContainer(container, fluidSource, maxAmount, player, true);
                         remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal, false);
 
                         // give it to the player or drop it at their feet
@@ -519,7 +511,7 @@ public class FluidUtil
     /**
      * Fill an empty bucket from the given tank. Uses the FluidContainerRegistry.
      *
-     * @param bucket The empty bucket
+     * @param bucket The empty bucket. Will not be modified.
      * @param tank   The tank to fill the bucket from
      * @param side   Side to access the tank from
      * @return The filled bucket or null if the liquid couldn't be taken from the tank.
