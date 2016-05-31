@@ -2,7 +2,8 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 /**
@@ -22,9 +23,9 @@ public class FluidHandlerWrapper implements IFluidHandler
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo()
+    public IFluidTankProperties[] getTankProperties()
     {
-        return handler.getTankInfo(side);
+        return FluidTankProperties.convert(handler.getTankInfo(side));
     }
 
     @Override

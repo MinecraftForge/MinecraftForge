@@ -8,7 +8,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.ItemFluidContainer;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -60,9 +61,9 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo()
+    public IFluidTankProperties[] getTankProperties()
     {
-        return new FluidTankInfo[] { new FluidTankInfo(getFluid(), capacity) };
+        return new IFluidTankProperties[] { new FluidTankProperties(getFluid(), capacity) };
     }
 
     @Override

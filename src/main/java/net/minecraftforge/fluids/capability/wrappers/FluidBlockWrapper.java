@@ -6,9 +6,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.TankInteractionType;
 
 /**
  * Wrapper to handle {@link IFluidBlock} as an IFluidHandler
@@ -27,7 +29,7 @@ public class FluidBlockWrapper implements IFluidHandler
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo()
+	public IFluidTankProperties[] getTankProperties()
 	{
 		float percentFilled = fluidBlock.getFilledPercentage(world, blockPos);
 		if (percentFilled < 0)
@@ -36,7 +38,7 @@ public class FluidBlockWrapper implements IFluidHandler
 		}
 		int amountFilled = Math.round(Fluid.BUCKET_VOLUME * percentFilled);
 		FluidStack fluid = amountFilled > 0 ? new FluidStack(fluidBlock.getFluid(), amountFilled) : null;
-		return new FluidTankInfo[]{ new FluidTankInfo(fluid, Fluid.BUCKET_VOLUME)};
+		return new FluidTankProperties[]{ new FluidTankProperties(fluid, Fluid.BUCKET_VOLUME, TankInteractionType.DRAIN_ONLY)};
 	}
 
 	@Override

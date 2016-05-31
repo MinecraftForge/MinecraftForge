@@ -2,7 +2,7 @@ package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Collection;
@@ -28,14 +28,14 @@ public class FluidHandlerConcatenate implements IFluidHandler
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo()
+    public IFluidTankProperties[] getTankProperties()
     {
-        List<FluidTankInfo> tanks = Lists.newArrayList();
+        List<IFluidTankProperties> tanks = Lists.newArrayList();
         for (IFluidHandler handler : subHandlers)
         {
-            Collections.addAll(tanks, handler.getTankInfo());
+            Collections.addAll(tanks, handler.getTankProperties());
         }
-        return tanks.toArray(new FluidTankInfo[tanks.size()]);
+        return tanks.toArray(new IFluidTankProperties[tanks.size()]);
     }
 
     @Override

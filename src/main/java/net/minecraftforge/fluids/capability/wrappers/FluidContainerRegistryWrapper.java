@@ -8,7 +8,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -36,11 +37,11 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo()
+	public IFluidTankProperties[] getTankProperties()
 	{
 		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(container);
 		int capacity = FluidContainerRegistry.getContainerCapacity(fluid, container);
-		return new FluidTankInfo[] { new FluidTankInfo(fluid, capacity) };
+		return new FluidTankProperties[] { new FluidTankProperties(fluid, capacity) };
 	}
 
 	@Override

@@ -12,7 +12,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -100,9 +101,9 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo()
+	public IFluidTankProperties[] getTankProperties()
 	{
-		return new FluidTankInfo[] { new FluidTankInfo(getFluid(), Fluid.BUCKET_VOLUME) };
+		return new FluidTankProperties[] { new FluidTankProperties(getFluid(), Fluid.BUCKET_VOLUME) };
 	}
 
 	@Override

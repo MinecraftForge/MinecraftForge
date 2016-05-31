@@ -14,8 +14,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.TankInteractionType;
 
 /**
  * Wrapper to handle vanilla Water or Lava as an IFluidHandler.
@@ -35,7 +37,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo()
+	public IFluidTankProperties[] getTankProperties()
 	{
 		FluidStack containedStack = null;
 		IBlockState blockState = world.getBlockState(blockPos);
@@ -43,7 +45,7 @@ public class BlockLiquidWrapper implements IFluidHandler
 		{
 			containedStack = getStack(blockState);
 		}
-		return new FluidTankInfo[]{new FluidTankInfo(containedStack, Fluid.BUCKET_VOLUME)};
+		return new FluidTankProperties[]{new FluidTankProperties(containedStack, Fluid.BUCKET_VOLUME, TankInteractionType.DRAIN_ONLY)};
 	}
 
 	@Override

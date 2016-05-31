@@ -16,9 +16,9 @@ public interface IFluidHandler
      * Returns an array of objects which represent the internal tanks.
      * These objects cannot be used to manipulate the internal tanks.
      *
-     * @return Info for the relevant internal tanks.
+     * @return Properties for the relevant internal tanks.
      */
-    FluidTankInfo[] getTankInfo();
+    IFluidTankProperties[] getTankProperties();
 
     /**
      * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.

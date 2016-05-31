@@ -4,7 +4,9 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
  * Reference implementation of {@link IFluidTank}. Use/extend this or implement your own.
@@ -100,9 +102,9 @@ public class FluidTank implements IFluidTank, IFluidHandler
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo()
+    public IFluidTankProperties[] getTankProperties()
     {
-        return new FluidTankInfo[] { getInfo() };
+        return new IFluidTankProperties[] { new FluidTankPropertiesWrapper(this) };
     }
 
     @Override

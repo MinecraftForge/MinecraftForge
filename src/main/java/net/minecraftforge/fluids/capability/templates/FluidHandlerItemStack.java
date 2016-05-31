@@ -9,7 +9,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
  * FluidHandlerItemStack is a template capability provider for ItemStacks.
@@ -61,9 +63,9 @@ public class FluidHandlerItemStack implements IFluidHandler, ICapabilityProvider
     }
 
     @Override
-    public FluidTankInfo[] getTankInfo()
+    public IFluidTankProperties[] getTankProperties()
     {
-        return new FluidTankInfo[] { new FluidTankInfo(getFluid(), capacity) };
+        return new FluidTankProperties[] { new FluidTankProperties(getFluid(), capacity) };
     }
 
     @Override

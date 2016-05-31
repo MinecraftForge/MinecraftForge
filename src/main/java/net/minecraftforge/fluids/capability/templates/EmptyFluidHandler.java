@@ -4,21 +4,25 @@ import javax.annotation.Nullable;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.TankInteractionType;
 
 public class EmptyFluidHandler implements IFluidHandler, IFluidTank
 {
     public static final EmptyFluidHandler INSTANCE = new EmptyFluidHandler();
-    private static final FluidTankInfo EMPTY_TANK_INFO = new FluidTankInfo(null, 0);
-    private static final FluidTankInfo[] EMPTY_TANK_INFO_ARRAY = new FluidTankInfo[] { EMPTY_TANK_INFO };
+    public static final FluidTankInfo EMPTY_TANK_INFO = new FluidTankInfo(null, 0);
+    public static final IFluidTankProperties EMPTY_TANK_PROPERTIES = new FluidTankProperties(null, 0, TankInteractionType.CLOSED);
+    public static final IFluidTankProperties[] EMPTY_TANK_PROPERTIES_ARRAY = new IFluidTankProperties[] { EMPTY_TANK_PROPERTIES };
 
     protected EmptyFluidHandler() {}
 
     @Override
-    public FluidTankInfo[] getTankInfo()
+    public IFluidTankProperties[] getTankProperties()
     {
-        return EMPTY_TANK_INFO_ARRAY;
+        return EMPTY_TANK_PROPERTIES_ARRAY;
     }
 
     @Override
