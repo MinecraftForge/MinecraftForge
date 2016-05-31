@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/TabCompleter.java
 +++ ../src-work/minecraft/net/minecraft/util/TabCompleter.java
-@@ -53,13 +53,14 @@
+@@ -54,13 +54,14 @@
              this.field_186844_a.func_146175_b(i - this.field_186844_a.func_146198_h());
          }
  
@@ -16,7 +16,7 @@
              Minecraft.func_71410_x().field_71439_g.field_71174_a.func_147297_a(new CPacketTabComplete(p_186838_1_, this.func_186839_b(), this.field_186845_b));
              this.field_186847_d = true;
          }
-@@ -74,6 +75,12 @@
+@@ -76,6 +77,12 @@
              this.field_186846_c = false;
              this.field_186849_f.clear();
  
@@ -29,7 +29,7 @@
              for (String s : p_186840_1_)
              {
                  if (!s.isEmpty())
-@@ -84,6 +91,7 @@
+@@ -86,6 +93,7 @@
  
              String s1 = this.field_186844_a.func_146179_b().substring(this.field_186844_a.func_146197_a(-1, this.field_186844_a.func_146198_h(), false));
              String s2 = org.apache.commons.lang3.StringUtils.getCommonPrefix(p_186840_1_);

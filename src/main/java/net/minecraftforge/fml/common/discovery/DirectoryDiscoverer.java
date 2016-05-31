@@ -86,7 +86,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
             if (file.isDirectory())
             {
                 FMLLog.finer("Recursing into package %s", path + file.getName());
-                exploreFileSystem(path + file.getName() + ".", file, harvestedMods, candidate, mc);
+                exploreFileSystem(path + file.getName() + "/", file, harvestedMods, candidate, mc);
                 continue;
             }
             Matcher match = classFile.matcher(file.getName());

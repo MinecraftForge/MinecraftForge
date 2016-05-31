@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/IntIdentityHashBiMap.java
 +++ ../src-work/minecraft/net/minecraft/util/IntIdentityHashBiMap.java
-@@ -166,7 +166,6 @@
+@@ -168,7 +168,6 @@
          return Iterators.filter(Iterators.forArray(this.field_186820_d), Predicates.notNull());
      }
  

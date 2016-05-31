@@ -12,8 +12,8 @@
                          return;
                      }
  
--                    RealmsConnect.this.connection.func_179290_a(new C00Handshake(107, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN));
-+                    RealmsConnect.this.connection.func_179290_a(new C00Handshake(107, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN, true));
+-                    RealmsConnect.this.connection.func_179290_a(new C00Handshake(110, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN));
++                    RealmsConnect.this.connection.func_179290_a(new C00Handshake(110, p_connect_1_, p_connect_2_, EnumConnectionState.LOGIN, true));
  
                      if (RealmsConnect.this.aborted)
                      {

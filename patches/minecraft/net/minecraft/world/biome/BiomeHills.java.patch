@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenHills.java
-+++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenHills.java
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeHills.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeHills.java
 @@ -37,28 +37,20 @@
      public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
      {

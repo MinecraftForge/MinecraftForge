@@ -1,14 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 @@ -49,6 +49,10 @@
-     private StatFileWriter field_146556_E;
+     private StatisticsManager field_146556_E;
      private boolean field_146558_F = true;
  
 +    private int currentPage = -1;
 +    private GuiButton button;
 +    private java.util.LinkedList<Achievement> minecraftAchievements = new java.util.LinkedList<Achievement>();
 +
-     public GuiAchievements(GuiScreen p_i45026_1_, StatFileWriter p_i45026_2_)
+     public GuiAchievements(GuiScreen p_i45026_1_, StatisticsManager p_i45026_2_)
      {
          this.field_146562_a = p_i45026_1_;
 @@ -57,6 +61,14 @@

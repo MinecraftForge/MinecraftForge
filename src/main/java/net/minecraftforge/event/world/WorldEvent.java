@@ -17,11 +17,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeInternalHandler;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 

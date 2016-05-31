@@ -41,47 +41,47 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     static
     {
-        defaultDisplacements.put(Blocks.oak_door,                       false);
-        defaultDisplacements.put(Blocks.spruce_door,                    false);
-        defaultDisplacements.put(Blocks.birch_door,                     false);
-        defaultDisplacements.put(Blocks.jungle_door,                    false);
-        defaultDisplacements.put(Blocks.acacia_door,                    false);
-        defaultDisplacements.put(Blocks.dark_oak_door,                  false);
-        defaultDisplacements.put(Blocks.trapdoor,                       false);
-        defaultDisplacements.put(Blocks.iron_trapdoor,                  false);
-        defaultDisplacements.put(Blocks.oak_fence,                      false);
-        defaultDisplacements.put(Blocks.spruce_fence,                   false);
-        defaultDisplacements.put(Blocks.birch_fence,                    false);
-        defaultDisplacements.put(Blocks.jungle_fence,                   false);
-        defaultDisplacements.put(Blocks.dark_oak_fence,                 false);
-        defaultDisplacements.put(Blocks.acacia_fence,                   false);
-        defaultDisplacements.put(Blocks.nether_brick_fence,             false);
-        defaultDisplacements.put(Blocks.oak_fence_gate,                 false);
-        defaultDisplacements.put(Blocks.spruce_fence_gate,              false);
-        defaultDisplacements.put(Blocks.birch_fence_gate,               false);
-        defaultDisplacements.put(Blocks.jungle_fence_gate,              false);
-        defaultDisplacements.put(Blocks.dark_oak_fence_gate,            false);
-        defaultDisplacements.put(Blocks.acacia_fence_gate,              false);
-        defaultDisplacements.put(Blocks.wooden_pressure_plate,          false);
-        defaultDisplacements.put(Blocks.stone_pressure_plate,           false);
-        defaultDisplacements.put(Blocks.light_weighted_pressure_plate,  false);
-        defaultDisplacements.put(Blocks.heavy_weighted_pressure_plate,  false);
-        defaultDisplacements.put(Blocks.ladder,                         false);
-        defaultDisplacements.put(Blocks.iron_bars,                      false);
-        defaultDisplacements.put(Blocks.glass_pane,                     false);
-        defaultDisplacements.put(Blocks.stained_glass_pane,             false);
-        defaultDisplacements.put(Blocks.portal,                         false);
-        defaultDisplacements.put(Blocks.end_portal,                     false);
-        defaultDisplacements.put(Blocks.cobblestone_wall,               false);
-        defaultDisplacements.put(Blocks.barrier,                        false);
-        defaultDisplacements.put(Blocks.standing_banner,                false);
-        defaultDisplacements.put(Blocks.wall_banner,                    false);
-        defaultDisplacements.put(Blocks.cake,                           false);
+        defaultDisplacements.put(Blocks.OAK_DOOR,                       false);
+        defaultDisplacements.put(Blocks.SPRUCE_DOOR,                    false);
+        defaultDisplacements.put(Blocks.BIRCH_DOOR,                     false);
+        defaultDisplacements.put(Blocks.JUNGLE_DOOR,                    false);
+        defaultDisplacements.put(Blocks.ACACIA_DOOR,                    false);
+        defaultDisplacements.put(Blocks.DARK_OAK_DOOR,                  false);
+        defaultDisplacements.put(Blocks.TRAPDOOR,                       false);
+        defaultDisplacements.put(Blocks.IRON_TRAPDOOR,                  false);
+        defaultDisplacements.put(Blocks.OAK_FENCE,                      false);
+        defaultDisplacements.put(Blocks.SPRUCE_FENCE,                   false);
+        defaultDisplacements.put(Blocks.BIRCH_FENCE,                    false);
+        defaultDisplacements.put(Blocks.JUNGLE_FENCE,                   false);
+        defaultDisplacements.put(Blocks.DARK_OAK_FENCE,                 false);
+        defaultDisplacements.put(Blocks.ACACIA_FENCE,                   false);
+        defaultDisplacements.put(Blocks.NETHER_BRICK_FENCE,             false);
+        defaultDisplacements.put(Blocks.OAK_FENCE_GATE,                 false);
+        defaultDisplacements.put(Blocks.SPRUCE_FENCE_GATE,              false);
+        defaultDisplacements.put(Blocks.BIRCH_FENCE_GATE,               false);
+        defaultDisplacements.put(Blocks.JUNGLE_FENCE_GATE,              false);
+        defaultDisplacements.put(Blocks.DARK_OAK_FENCE_GATE,            false);
+        defaultDisplacements.put(Blocks.ACACIA_FENCE_GATE,              false);
+        defaultDisplacements.put(Blocks.WOODEN_PRESSURE_PLATE,          false);
+        defaultDisplacements.put(Blocks.STONE_PRESSURE_PLATE,           false);
+        defaultDisplacements.put(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE,  false);
+        defaultDisplacements.put(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE,  false);
+        defaultDisplacements.put(Blocks.LADDER,                         false);
+        defaultDisplacements.put(Blocks.IRON_BARS,                      false);
+        defaultDisplacements.put(Blocks.GLASS_PANE,                     false);
+        defaultDisplacements.put(Blocks.STAINED_GLASS_PANE,             false);
+        defaultDisplacements.put(Blocks.PORTAL,                         false);
+        defaultDisplacements.put(Blocks.END_PORTAL,                     false);
+        defaultDisplacements.put(Blocks.COBBLESTONE_WALL,               false);
+        defaultDisplacements.put(Blocks.BARRIER,                        false);
+        defaultDisplacements.put(Blocks.STANDING_BANNER,                false);
+        defaultDisplacements.put(Blocks.WALL_BANNER,                    false);
+        defaultDisplacements.put(Blocks.CAKE,                           false);
 
-        defaultDisplacements.put(Blocks.iron_door,     false);
-        defaultDisplacements.put(Blocks.standing_sign, false);
-        defaultDisplacements.put(Blocks.wall_sign,     false);
-        defaultDisplacements.put(Blocks.reeds,         false);
+        defaultDisplacements.put(Blocks.IRON_DOOR,     false);
+        defaultDisplacements.put(Blocks.STANDING_SIGN, false);
+        defaultDisplacements.put(Blocks.WALL_SIGN,     false);
+        defaultDisplacements.put(Blocks.REEDS,         false);
     }
     protected Map<Block, Boolean> displacements = Maps.newHashMap();
 
@@ -212,7 +212,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
 
         Material material = state.getMaterial();
-        if (material.blocksMovement() || material == Material.portal)
+        if (material.blocksMovement() || material == Material.PORTAL)
         {
             return false;
         }
@@ -261,7 +261,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         }
 
         Material material = state.getMaterial();
-        if (material.blocksMovement() || material == Material.portal)
+        if (material.blocksMovement() || material == Material.PORTAL)
         {
             return false;
         }
@@ -298,7 +298,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock)
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
     {
         world.scheduleUpdate(pos, this, tickRate);
     }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFlowerPot.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFlowerPot.java
-@@ -148,13 +148,6 @@
+@@ -149,13 +149,6 @@
  
      public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
      {
@@ -14,7 +14,7 @@
          super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
      }
  
-@@ -374,6 +367,31 @@
+@@ -377,6 +370,31 @@
          return BlockRenderLayer.CUTOUT;
      }
  

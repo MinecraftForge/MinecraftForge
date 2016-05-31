@@ -68,7 +68,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.SaveFormatComparator;
+import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -662,7 +662,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public NetworkManager getClientToServerNetworkManager()
     {
-        return this.client.getNetHandler()!=null ? this.client.getNetHandler().getNetworkManager() : null;
+        return this.client.getConnection()!=null ? this.client.getConnection().getNetworkManager() : null;
     }
 
     public void handleClientWorldClosing(WorldClient world)
@@ -683,7 +683,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return new File(client.mcDataDir, "saves");
     }
-    public void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, SaveFormatComparator comparator)
+    public void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, WorldSummary comparator)
     {
         File dir = new File(getSavesDir(), comparator.getFileName());
         NBTTagCompound leveldat;

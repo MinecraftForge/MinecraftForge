@@ -3,7 +3,7 @@ package net.minecraftforge.test;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -152,7 +152,7 @@ public class NoBedSleepingTest
 
         private ItemSleepingPill()
         {
-            setCreativeTab(CreativeTabs.tabMisc);
+            setCreativeTab(CreativeTabs.MISC);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -162,8 +162,8 @@ public class NoBedSleepingTest
         {
             if (!world.isRemote)
             {
-                final EnumStatus result = player.trySleep(player.getPosition());
-                if (result == EnumStatus.OK)
+                final SleepResult result = player.trySleep(player.getPosition());
+                if (result == SleepResult.OK)
                 {
                     final IExtraSleeping sleep = player.getCapability(SLEEP_CAP, null);
                     if (sleep != null)

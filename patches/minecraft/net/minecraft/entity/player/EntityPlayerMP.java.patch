@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -134,14 +134,15 @@
+@@ -136,14 +136,15 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
@@ -18,7 +18,7 @@
          {
              int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
              int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
-@@ -250,7 +251,7 @@
+@@ -252,7 +253,7 @@
  
          this.field_71070_bA.func_75142_b();
  
@@ -27,7 +27,7 @@
          {
              this.func_71053_j();
              this.field_71070_bA = this.field_71069_bz;
-@@ -433,6 +434,7 @@
+@@ -435,6 +436,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -35,7 +35,7 @@
          boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
          this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
  
-@@ -459,7 +461,20 @@
+@@ -461,7 +463,20 @@
  
          if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v())
          {
@@ -56,15 +56,15 @@
          }
  
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
-@@ -540,6 +555,7 @@
- 
+@@ -543,6 +558,7 @@
+     @Nullable
      public Entity func_184204_a(int p_184204_1_)
      {
 +        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return this;
          this.field_184851_cj = true;
  
          if (this.field_71093_bK == 1 && p_184204_1_ == 1)
-@@ -697,7 +713,7 @@
+@@ -700,7 +716,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -73,7 +73,7 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -921,6 +937,7 @@
+@@ -924,6 +940,7 @@
      {
          if (p_71064_1_ != null)
          {

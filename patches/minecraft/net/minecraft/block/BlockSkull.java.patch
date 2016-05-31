@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSkull.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSkull.java
-@@ -116,10 +116,6 @@
+@@ -117,10 +117,6 @@
          return new ItemStack(Items.field_151144_bL, 1, i);
      }
  
@@ -11,7 +11,7 @@
      public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, IBlockState p_176208_3_, EntityPlayer p_176208_4_)
      {
          if (p_176208_4_.field_71075_bZ.field_75098_d)
-@@ -127,22 +123,27 @@
+@@ -128,13 +124,18 @@
              p_176208_3_ = p_176208_3_.func_177226_a(field_176417_b, Boolean.valueOf(true));
              p_176208_1_.func_180501_a(p_176208_2_, p_176208_3_, 4);
          }
@@ -25,16 +25,13 @@
 -        if (!p_180663_1_.field_72995_K)
 +        super.func_180663_b(p_180663_1_, p_180663_2_, p_180663_3_);
 +    }
-+    public java.util.List<ItemStack> getDrops(IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune)
++    public java.util.List<ItemStack> getDrops(IBlockAccess p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_, int fortune)
 +    {
 +        java.util.List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
          {
--            if (!((Boolean)p_180663_3_.func_177229_b(field_176417_b)).booleanValue())
-+            if (!((Boolean)state.func_177229_b(field_176417_b)).booleanValue())
+             if (!((Boolean)p_180663_3_.func_177229_b(field_176417_b)).booleanValue())
              {
--                TileEntity tileentity = p_180663_1_.func_175625_s(p_180663_2_);
-+                TileEntity tileentity = worldIn.func_175625_s(pos);
- 
+@@ -143,7 +144,7 @@
                  if (tileentity instanceof TileEntitySkull)
                  {
                      TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
@@ -43,7 +40,7 @@
  
                      if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
                      {
-@@ -152,12 +153,11 @@
+@@ -153,12 +154,11 @@
                          itemstack.func_77978_p().func_74782_a("SkullOwner", nbttagcompound);
                      }
  
@@ -57,4 +54,4 @@
 +        return ret;
      }
  
-     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
+     @Nullable

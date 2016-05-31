@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPumpkin.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPumpkin.java
-@@ -117,7 +117,7 @@
+@@ -118,7 +118,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {

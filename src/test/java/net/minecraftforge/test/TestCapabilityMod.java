@@ -45,7 +45,7 @@ public class TestCapabilityMod
     public void onInteract(PlayerInteractEvent.LeftClickBlock event)
     {
         if (event.getItemStack() == null) return;
-        if (event.getItemStack().getItem() != Items.stick) return;
+        if (event.getItemStack().getItem() != Items.STICK) return;
 
         // This is just a example of how to interact with the TE, note the strong type binding that getCapability has
         TileEntity te = event.getWorld().getTileEntity(event.getPos());
@@ -55,7 +55,7 @@ public class TestCapabilityMod
             IExampleCapability inv = te.getCapability(TEST_CAP, event.getFace());
             System.out.println("Hi I'm a " + inv.getOwnerType());
         }
-        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.dirt)
+        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.DIRT)
         {
             event.getEntityPlayer().addChatMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.ITALIC + "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST"));
             event.setCanceled(true);

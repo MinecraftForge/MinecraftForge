@@ -69,7 +69,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.BossInfoLerping;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -249,7 +249,7 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BlockPos pos = center.add(x, 0, z);
-                BiomeGenBase biome = world.getBiomeGenForCoords(pos);
+                Biome biome = world.getBiomeGenForCoords(pos);
                 int colour = biome.getSkyColorByTemp(biome.getFloatTemperature(pos));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;

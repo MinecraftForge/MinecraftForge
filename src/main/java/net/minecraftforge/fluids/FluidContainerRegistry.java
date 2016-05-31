@@ -71,15 +71,15 @@ public abstract class FluidContainerRegistry
     private static Set<ContainerKey> emptyContainers = Sets.newHashSet();
 
     public static final int BUCKET_VOLUME = 1000;
-    public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.bucket);
-    public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.glass_bottle);
-    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.bucket);
+    public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
+    public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.GLASS_BOTTLE);
+    private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.BUCKET);
 
     static
     {
-        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Items.water_bucket), EMPTY_BUCKET);
-        registerFluidContainer(FluidRegistry.LAVA,  new ItemStack(Items.lava_bucket),  EMPTY_BUCKET);
-        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Items.potionitem),   EMPTY_BOTTLE);
+        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Items.WATER_BUCKET), EMPTY_BUCKET);
+        registerFluidContainer(FluidRegistry.LAVA,  new ItemStack(Items.LAVA_BUCKET),  EMPTY_BUCKET);
+        registerFluidContainer(FluidRegistry.WATER, new ItemStack(Items.POTIONITEM),   EMPTY_BOTTLE);
     }
 
     private FluidContainerRegistry(){}

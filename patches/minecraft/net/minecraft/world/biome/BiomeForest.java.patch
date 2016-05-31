@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/world/biome/BiomeGenForest.java
-+++ ../src-work/minecraft/net/minecraft/world/biome/BiomeGenForest.java
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeForest.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeForest.java
 @@ -147,6 +147,22 @@
          }
      }
@@ -7,7 +7,7 @@
 +    @Override
 +    public void addDefaultFlowers()
 +    {
-+        if (field_150632_aF != BiomeGenForest.Type.FLOWER)
++        if (field_150632_aF != BiomeForest.Type.FLOWER)
 +        {
 +            super.addDefaultFlowers();
 +            return;
@@ -20,6 +20,6 @@
 +        }
 +    }
 +
-     public Class <? extends BiomeGenBase > func_150562_l()
+     public Class <? extends Biome > func_150562_l()
      {
-         return BiomeGenForest.class;
+         return BiomeForest.class;

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldEntitySpawner.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldEntitySpawner.java
-@@ -77,15 +77,17 @@
+@@ -78,15 +78,17 @@
              {
                  if ((!enumcreaturetype.func_75599_d() || p_77192_3_) && (enumcreaturetype.func_75599_d() || p_77192_2_) && (!enumcreaturetype.func_82705_e() || p_77192_4_))
                  {
@@ -10,17 +10,17 @@
  
                      if (k4 <= l4)
                      {
-+                        java.util.ArrayList<ChunkCoordIntPair> shuffled = com.google.common.collect.Lists.newArrayList(this.field_77193_b);
++                        java.util.ArrayList<ChunkPos> shuffled = com.google.common.collect.Lists.newArrayList(this.field_77193_b);
 +                        java.util.Collections.shuffle(shuffled);
                          BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
                          label415:
  
--                        for (ChunkCoordIntPair chunkcoordintpair1 : this.field_77193_b)
-+                        for (ChunkCoordIntPair chunkcoordintpair1 : shuffled)
+-                        for (ChunkPos chunkpos1 : this.field_77193_b)
++                        for (ChunkPos chunkpos1 : shuffled)
                          {
-                             BlockPos blockpos = func_180621_a(p_77192_1_, chunkcoordintpair1.field_77276_a, chunkcoordintpair1.field_77275_b);
+                             BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
-@@ -144,8 +146,10 @@
+@@ -145,8 +147,10 @@
  
                                                  entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
  
@@ -32,7 +32,7 @@
                                                      ientitylivingdata = entityliving.func_180482_a(p_77192_1_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);
  
                                                      if (entityliving.func_70058_J())
-@@ -158,7 +162,7 @@
+@@ -159,7 +163,7 @@
                                                          entityliving.func_70106_y();
                                                      }
  
@@ -41,7 +41,7 @@
                                                      {
                                                          continue label415;
                                                      }
-@@ -211,8 +215,9 @@
+@@ -212,8 +216,9 @@
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();

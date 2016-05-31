@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -235,7 +235,7 @@
+@@ -236,7 +236,7 @@
                      }
                  }
  
--                if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_180648_1_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
-+                if (!flag1 && !iblockstate.func_177230_c().isAir(iblockstate, p_180648_1_, blockpos) && func_185646_a(iblockstate, p_180648_1_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
+-                if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
++                if (!flag1 && !iblockstate.func_177230_c().isAir(iblockstate, p_189539_2_, p_189539_3_) && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
                  {
-                     this.func_176319_a(p_180648_1_, p_180648_2_, enumfacing, false);
+                     this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -320,7 +320,7 @@
+@@ -322,7 +322,7 @@
                      return false;
                  }
  
@@ -18,7 +18,7 @@
              }
              else
              {
-@@ -366,7 +366,9 @@
+@@ -368,7 +368,9 @@
              {
                  BlockPos blockpos1 = (BlockPos)list2.get(j);
                  IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos1);

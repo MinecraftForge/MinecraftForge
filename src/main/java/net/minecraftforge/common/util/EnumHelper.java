@@ -13,7 +13,7 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item.ToolMaterial;
@@ -38,7 +38,7 @@ public class EnumHelper
     private static Class<?>[][] commonTypes =
     {
         {EnumAction.class},
-        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class},
+        {ArmorMaterial.class, String.class, int.class, int[].class, int.class, SoundEvent.class, float.class},
         {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
         {EnumCreatureAttribute.class},
         {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
@@ -47,7 +47,7 @@ public class EnumHelper
         {Sensitivity.class},
         {RayTraceResult.Type.class},
         {EnumSkyBlock.class, int.class},
-        {EnumStatus.class},
+        {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class}
     };
@@ -56,9 +56,9 @@ public class EnumHelper
     {
         return addEnum(EnumAction.class, name);
     }
-    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip)
+    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip, float toughness)
     {
-        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip);
+        return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability, soundOnEquip, toughness);
     }
     public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
     {
@@ -92,9 +92,9 @@ public class EnumHelper
     {
         return addEnum(EnumSkyBlock.class, name, lightValue);
     }
-    public static EnumStatus addStatus(String name)
+    public static SleepResult addStatus(String name)
     {
-        return addEnum(EnumStatus.class, name);
+        return addEnum(SleepResult.class, name);
     }
     public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
     {
@@ -181,13 +181,13 @@ public class EnumHelper
         blankField(enumClass, "enumConstants");
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
+    private static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
     {
         setup();
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
+    protected static <T extends Enum<? >> T addEnum(Class<?>[][] map, Class<T> enumType, String enumName, Object... paramValues)
     {
         for (Class<?>[] lookup : map)
         {

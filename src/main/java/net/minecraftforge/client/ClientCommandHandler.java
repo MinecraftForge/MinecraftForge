@@ -99,7 +99,7 @@ public class ClientCommandHandler extends CommandHandler
     private TextComponentTranslation format(TextFormatting color, String str, Object... args)
     {
         TextComponentTranslation ret = new TextComponentTranslation(str, args);
-        ret.getChatStyle().setColor(color);
+        ret.getStyle().setColor(color);
         return ret;
     }
 

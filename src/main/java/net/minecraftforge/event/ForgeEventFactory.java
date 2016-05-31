@@ -14,7 +14,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,7 +35,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
@@ -135,6 +135,8 @@ public class ForgeEventFactory
 
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
     {
+        if (entity == null)
+            return Result.DEFAULT;
         LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
@@ -162,7 +164,7 @@ public class ForgeEventFactory
        return event.getDroppedExperience();
     }
 
-    public static List<BiomeGenBase.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, BlockPos pos, List<BiomeGenBase.SpawnListEntry> oldList)
+    public static List<Biome.SpawnListEntry> getPotentialSpawns(WorldServer world, EnumCreatureType type, BlockPos pos, List<Biome.SpawnListEntry> oldList)
     {
         WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, pos, oldList);
         if (MinecraftForge.EVENT_BUS.post(event))
@@ -308,7 +310,7 @@ public class ForgeEventFactory
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, event.getFilledBucket());
 
             if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
-                player.dropPlayerItemWithRandomChoice(event.getFilledBucket(), false);
+                player.dropItem(event.getFilledBucket(), false);
 
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
         }
@@ -369,7 +371,7 @@ public class ForgeEventFactory
             return true;
     }
 
-    public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
+    public static SleepResult onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
     {
         PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(player, pos);
         MinecraftForge.EVENT_BUS.post(event);
@@ -456,12 +458,12 @@ public class ForgeEventFactory
 
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
     {
-        return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.fire.getDefaultState(), new BlockPos(player));
+        return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), new BlockPos(player));
     }
 
     public static boolean renderWaterOverlay(EntityPlayer player, float renderPartialTicks)
     {
-        return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.water.getDefaultState(), new BlockPos(player));
+        return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.WATER.getDefaultState(), new BlockPos(player));
     }
 
     public static boolean renderBlockOverlay(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos pos)

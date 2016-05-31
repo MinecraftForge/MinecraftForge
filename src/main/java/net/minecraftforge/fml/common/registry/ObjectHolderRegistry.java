@@ -70,7 +70,7 @@ public enum ObjectHolderRegistry {
         {
             try
             {
-                clazz = Class.forName(className, true, getClass().getClassLoader());
+                clazz = Class.forName(className, extractFromValue, getClass().getClassLoader());
                 classCache.put(className, clazz);
             }
             catch (Exception ex)

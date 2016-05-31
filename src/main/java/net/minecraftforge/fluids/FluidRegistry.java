@@ -55,14 +55,14 @@ public abstract class FluidRegistry
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.water.name");
         }
-    }.setBlock(Blocks.water).setUnlocalizedName(Blocks.water.getUnlocalizedName());
+    }.setBlock(Blocks.WATER).setUnlocalizedName(Blocks.WATER.getUnlocalizedName());
 
     public static final Fluid LAVA = new Fluid("lava", new ResourceLocation("blocks/lava_still"), new ResourceLocation("blocks/lava_flow")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.lava.name");
         }
-    }.setBlock(Blocks.lava).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.lava.getUnlocalizedName());
+    }.setBlock(Blocks.LAVA).setLuminosity(15).setDensity(3000).setViscosity(6000).setTemperature(1300).setUnlocalizedName(Blocks.LAVA.getUnlocalizedName());
 
     static
     {

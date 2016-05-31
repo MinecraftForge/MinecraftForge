@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -107,7 +107,7 @@
+@@ -108,7 +108,7 @@
      {
          if (this.field_149764_J == Material.field_151573_f)
          {
@@ -9,7 +9,7 @@
          }
          else
          {
-@@ -219,7 +219,7 @@
+@@ -221,7 +221,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {

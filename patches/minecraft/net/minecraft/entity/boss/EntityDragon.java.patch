@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -474,13 +474,13 @@
+@@ -475,13 +475,13 @@
                      IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
                      Block block = iblockstate.func_177230_c();
  

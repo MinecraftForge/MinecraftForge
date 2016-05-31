@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
-@@ -38,6 +38,10 @@
+@@ -39,6 +39,10 @@
  
      public final NBTTagCompound func_143010_b()
      {

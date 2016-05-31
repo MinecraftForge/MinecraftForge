@@ -23,7 +23,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldManager;
+import net.minecraft.world.ServerWorldEventHandler;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
@@ -209,7 +209,7 @@ public class DimensionManager
         //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
         WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, savehandler, dim, overworld, mcServer.theProfiler).init()));
-        world.addEventListener(new WorldManager(mcServer, world));
+        world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
         {

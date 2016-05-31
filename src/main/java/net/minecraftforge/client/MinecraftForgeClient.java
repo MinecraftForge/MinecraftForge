@@ -8,9 +8,9 @@ package net.minecraftforge.client;
 import java.util.BitSet;
 import java.util.concurrent.TimeUnit;
 
-import net.minecraft.client.renderer.RegionRenderCache;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -68,24 +68,24 @@ public class MinecraftForgeClient
         }
     }
 
-    private static final LoadingCache<Pair<World, BlockPos>, RegionRenderCache> regionCache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Pair<World, BlockPos>, ChunkCache> regionCache = CacheBuilder.newBuilder()
         .maximumSize(500)
         .concurrencyLevel(5)
         .expireAfterAccess(1, TimeUnit.SECONDS)
-        .build(new CacheLoader<Pair<World, BlockPos>, RegionRenderCache>()
+        .build(new CacheLoader<Pair<World, BlockPos>, ChunkCache>()
         {
-            public RegionRenderCache load(Pair<World, BlockPos> key) throws Exception
+            public ChunkCache load(Pair<World, BlockPos> key) throws Exception
             {
-                return new RegionRenderCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
+                return new ChunkCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
             }
         });
 
-    public static void onRebuildChunk(World world, BlockPos position, RegionRenderCache cache)
+    public static void onRebuildChunk(World world, BlockPos position, ChunkCache cache)
     {
         regionCache.put(Pair.of(world, position), cache);
     }
 
-    public static RegionRenderCache getRegionRenderCache(World world, BlockPos pos)
+    public static ChunkCache getRegionRenderCache(World world, BlockPos pos)
     {
         int x = pos.getX() & ~0xF;
         int y = pos.getY() & ~0xF;

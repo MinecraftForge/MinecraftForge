@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDragonEgg.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDragonEgg.java
-@@ -48,7 +48,7 @@
+@@ -49,7 +49,7 @@
  
      private void func_180683_d(World p_180683_1_, BlockPos p_180683_2_)
      {
@@ -9,7 +9,7 @@
          {
              int i = 32;
  
-@@ -61,7 +61,7 @@
+@@ -62,7 +62,7 @@
                  p_180683_1_.func_175698_g(p_180683_2_);
                  BlockPos blockpos;
  

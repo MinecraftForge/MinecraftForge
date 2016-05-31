@@ -189,13 +189,13 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
                     completeServerSideConnection(ConnectionType.MODDED);
                 }
                 // FORGE: sometimes the netqueue will tick while login is occurring, causing an NPE. We shouldn't tick until the connection is complete
-                if (this.playerEntity.playerNetServerHandler != this) return;
+                if (this.playerEntity.connection != this) return;
                 super.update();
             }
         };
         this.netHandler = serverHandler;
         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
-        player.playerNetServerHandler = null;
+        player.connection = null;
         // manually for the manager into the PLAY state, so we can send packets later
         this.manager.setConnectionState(EnumConnectionState.PLAY);
 

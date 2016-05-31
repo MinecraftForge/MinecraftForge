@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecart.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecart.java
-@@ -54,6 +54,20 @@
+@@ -55,6 +55,20 @@
      @SideOnly(Side.CLIENT)
      private double field_70506_as;
  
@@ -21,14 +21,15 @@
      public EntityMinecart(World p_i1712_1_)
      {
          super(p_i1712_1_);
-@@ -99,17 +113,19 @@
- 
+@@ -101,18 +115,20 @@
+     @Nullable
      public AxisAlignedBB func_70114_g(Entity p_70114_1_)
      {
 +        if (getCollisionHandler() != null) return getCollisionHandler().getCollisionBox(this, p_70114_1_);
          return p_70114_1_.func_70104_M() ? p_70114_1_.func_174813_aQ() : null;
      }
  
+     @Nullable
      public AxisAlignedBB func_70046_E()
      {
 +        if (getCollisionHandler() != null) return getCollisionHandler().getBoundingBox(this);
@@ -42,7 +43,7 @@
      }
  
      public EntityMinecart(World p_i1713_1_, double p_i1713_2_, double p_i1713_4_, double p_i1713_6_)
-@@ -315,7 +331,7 @@
+@@ -318,7 +334,7 @@
              BlockPos blockpos = new BlockPos(k, l, i1);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -51,7 +52,7 @@
              {
                  this.func_180460_a(blockpos, iblockstate);
  
-@@ -354,7 +370,10 @@
+@@ -357,7 +373,10 @@
  
              this.func_70101_b(this.field_70177_z, this.field_70125_A);
  
@@ -63,7 +64,7 @@
              {
                  if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof EntityMinecart)
                  {
-@@ -363,6 +382,7 @@
+@@ -366,6 +385,7 @@
              }
  
              this.func_70072_I();
@@ -71,7 +72,7 @@
          }
      }
  
-@@ -377,10 +397,21 @@
+@@ -380,10 +400,21 @@
  
      protected void func_180459_n()
      {
@@ -94,7 +95,7 @@
          if (this.field_70122_E)
          {
              this.field_70159_w *= 0.5D;
-@@ -388,13 +419,13 @@
+@@ -391,13 +422,13 @@
              this.field_70179_y *= 0.5D;
          }
  
@@ -112,7 +113,7 @@
          }
      }
  
-@@ -414,25 +445,25 @@
+@@ -417,25 +448,25 @@
              flag1 = !flag;
          }
  
@@ -144,7 +145,7 @@
                  ++this.field_70163_u;
          }
  
-@@ -478,7 +509,7 @@
+@@ -481,7 +512,7 @@
              }
          }
  
@@ -153,7 +154,7 @@
          {
              double d17 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
-@@ -524,20 +555,8 @@
+@@ -527,20 +558,8 @@
          this.field_70165_t = d19 + d1 * d18;
          this.field_70161_v = d20 + d2 * d18;
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -175,7 +176,7 @@
          if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2])
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
-@@ -574,8 +593,14 @@
+@@ -577,8 +596,14 @@
              this.field_70179_y = d5 * (double)(i - p_180460_1_.func_177952_p());
          }
  
@@ -191,7 +192,7 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
-@@ -795,13 +820,19 @@
+@@ -798,13 +823,19 @@
  
      public void func_70108_f(Entity p_70108_1_)
      {
@@ -212,7 +213,7 @@
                      {
                          p_70108_1_.func_184220_m(this);
                      }
-@@ -847,7 +878,7 @@
+@@ -850,7 +881,7 @@
                              double d7 = p_70108_1_.field_70159_w + this.field_70159_w;
                              double d8 = p_70108_1_.field_70179_y + this.field_70179_y;
  
@@ -221,7 +222,7 @@
                              {
                                  this.field_70159_w *= 0.20000000298023224D;
                                  this.field_70179_y *= 0.20000000298023224D;
-@@ -855,7 +886,7 @@
+@@ -858,7 +889,7 @@
                                  p_70108_1_.field_70159_w *= 0.949999988079071D;
                                  p_70108_1_.field_70179_y *= 0.949999988079071D;
                              }
@@ -230,7 +231,7 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -982,6 +1013,221 @@
+@@ -985,6 +1016,221 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
  

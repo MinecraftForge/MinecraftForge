@@ -60,7 +60,7 @@ public class PotionRegistryDebug {
     public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) {
       Potion potion = effect.getPotion();
 
-      mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+      mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
       TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_0");
 
       x += 6;
@@ -89,7 +89,7 @@ public class PotionRegistryDebug {
     public void renderHUDEffect(int x, int y, PotionEffect effect, Minecraft mc, float alpha) {
       Potion potion = effect.getPotion();
 
-      mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+      mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
       TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/tnt_side");
 
       x += 3;

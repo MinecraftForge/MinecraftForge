@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/statemap/StateMap.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/statemap/StateMap.java
-@@ -38,7 +38,7 @@
+@@ -39,7 +39,7 @@
          }
          else
          {

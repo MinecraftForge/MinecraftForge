@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -12,9 +12,9 @@
+@@ -13,9 +13,9 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraft.util.text.translation.I18n;
  
@@ -12,7 +12,7 @@
      private final EntityEquipmentSlot[] field_185263_a;
      private final Enchantment.Rarity field_77333_a;
      public EnumEnchantmentType field_77351_y;
-@@ -118,7 +118,7 @@
+@@ -122,7 +122,7 @@
  
      public boolean func_92089_a(ItemStack p_92089_1_)
      {
@@ -21,7 +21,7 @@
      }
  
      public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
-@@ -134,6 +134,26 @@
+@@ -138,6 +138,26 @@
          return false;
      }
  

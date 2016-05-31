@@ -13,6 +13,7 @@
 package net.minecraftforge.fml.client.config;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 
 /**
@@ -39,7 +40,7 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
         {
             this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
             int k = this.getHoverState(this.hovered);
-            GuiUtils.drawContinuousTexturedBox(buttonTextures, this.xPosition, this.yPosition, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
+            GuiUtils.drawContinuousTexturedBox(GuiButton.BUTTON_TEXTURES, this.xPosition, this.yPosition, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
             this.mouseDragged(mc, mouseX, mouseY);
             int color = 14737632;
 

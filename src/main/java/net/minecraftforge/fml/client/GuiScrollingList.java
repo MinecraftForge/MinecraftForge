@@ -287,7 +287,7 @@ public abstract class GuiScrollingList
         {
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
-            this.client.renderEngine.bindTexture(Gui.optionsBackground);
+            this.client.renderEngine.bindTexture(Gui.OPTIONS_BACKGROUND);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             float scale = 32.0F;
             worldr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);

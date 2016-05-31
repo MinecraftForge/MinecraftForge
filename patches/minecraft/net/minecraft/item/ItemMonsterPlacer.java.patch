@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -88,7 +88,7 @@
+@@ -89,7 +89,7 @@
              p_180614_4_ = p_180614_4_.func_177972_a(p_180614_6_);
              double d0 = 0.0D;
  
@@ -9,22 +9,3 @@
              {
                  d0 = 0.5D;
              }
-@@ -195,15 +195,15 @@
-         }
-     }
- 
--    public static Entity func_77840_a(World p_77840_0_, String p_77840_1_, double p_77840_2_, double p_77840_4_, double p_77840_6_)
-+    public static Entity func_77840_a(World p_77840_0_, String name, double p_77840_2_, double p_77840_4_, double p_77840_6_)
-     {
--        if (p_77840_1_ != null && EntityList.field_75627_a.containsKey(p_77840_1_))
-+        if (name != null && EntityList.field_75627_a.containsKey(name))
-         {
-             Entity entity = null;
- 
-             for (int i = 0; i < 1; ++i)
-             {
--                entity = EntityList.func_188429_b(p_77840_1_, p_77840_0_);
-+                entity = EntityList.func_188429_b(name, p_77840_0_);
- 
-                 if (entity instanceof EntityLivingBase)
-                 {

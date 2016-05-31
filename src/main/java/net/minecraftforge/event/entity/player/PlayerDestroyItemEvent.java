@@ -4,7 +4,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.client.CPacketPlayerBlockPlacement;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.EnumFacing;
@@ -27,8 +27,8 @@ import net.minecraft.util.EnumHand;
  * {@link EntityPlayer#damageShield(float)},
  * {@link ForgeHooks#getContainerItem(ItemStack)},
  * {@link PlayerInteractionManager#processRightClick(EntityPlayer, World, ItemStack, EnumHand)},
- * {@link NetHandlerPlayServer#processPlayerBlockPlacement(CPacketPlayerBlockPlacement)}
- * and {@link NetHandlerPlayServer#processRightClickBlock(CPacketPlayerTryUseItem)}.<br>
+ * {@link NetHandlerPlayServer#processPlayerBlockPlacement(CPacketPlayerTryUseItem)}
+ * and {@link NetHandlerPlayServer#processRightClickBlock(CPacketPlayerTryUseItemOnBlock)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
  * (@link #hand) contains the hand that the current item was held in.<br>

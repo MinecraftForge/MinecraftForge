@@ -19,7 +19,7 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
     {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer VertexBuffer = tessellator.getBuffer();
-        this.bindTexture(TextureMap.locationBlocksTexture);
+        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableBlend();

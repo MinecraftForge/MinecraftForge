@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/world/BossInfoServer.java
 +++ ../src-work/minecraft/net/minecraft/world/BossInfoServer.java
 @@ -9,8 +9,6 @@
- import net.minecraft.network.play.server.SPacketUpdateEntityNBT;
+ import net.minecraft.network.play.server.SPacketUpdateBossInfo;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.text.ITextComponent;
 -import net.minecraftforge.fml.relauncher.Side;

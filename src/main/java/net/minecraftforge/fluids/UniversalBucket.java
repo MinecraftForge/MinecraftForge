@@ -54,7 +54,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
         this.setMaxStackSize(1);
 
-        this.setCreativeTab(CreativeTabs.tabMisc);
+        this.setCreativeTab(CreativeTabs.MISC);
     }
 
     @SideOnly(Side.CLIENT)
@@ -107,7 +107,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         // clicked on a block?
-        RayTraceResult mop = this.getMovingObjectPositionFromPlayer(world, player, false);
+        RayTraceResult mop = this.rayTrace(world, player, false);
 
         if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
         {
@@ -129,7 +129,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                         && !player.capabilities.isCreativeMode)
                 {
                     // success!
-                    player.addStat(StatList.func_188057_b(this));
+                    player.addStat(StatList.getObjectUseStats(this));
 
                     itemstack.stackSize--;
                     ItemStack emptyStack = getEmpty() != null ? getEmpty().copy() : new ItemStack(this);
@@ -181,12 +181,12 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         // water goes poof?
-        if (worldIn.provider.doesWaterVaporize() && (block == Blocks.flowing_water || block == Blocks.water))
+        if (worldIn.provider.doesWaterVaporize() && (block == Blocks.FLOWING_WATER || block == Blocks.WATER))
         {
             int i = pos.getX();
             int j = pos.getY();
             int k = pos.getZ();
-            worldIn.playSound(null, pos, SoundEvents.block_fire_extinguish, SoundCategory.BLOCKS, 0.5F,
+            worldIn.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F,
                     2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
 
             for (int l = 0; l < 8; ++l)

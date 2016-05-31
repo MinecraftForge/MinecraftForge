@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
-@@ -86,9 +86,9 @@
+@@ -87,9 +87,9 @@
              {
                  this.field_92102_a = new ItemStack(Items.field_151152_bP);
  
@@ -11,7 +11,7 @@
                      NBTTagCompound nbttagcompound3 = new NBTTagCompound();
                      NBTTagList nbttaglist = new NBTTagList();
  
-@@ -105,9 +105,9 @@
+@@ -106,9 +106,9 @@
                      nbttagcompound3.func_74782_a("Explosions", nbttaglist);
                      nbttagcompound3.func_74774_a("Flight", (byte)j);
                      nbttagcompound1.func_74782_a("Fireworks", nbttagcompound3);
@@ -22,7 +22,7 @@
                  return true;
              }
              else if (j == 1 && i == 0 && l == 0 && k > 0 && j1 <= 1)
-@@ -249,11 +249,7 @@
+@@ -252,11 +252,7 @@
          for (int i = 0; i < aitemstack.length; ++i)
          {
              ItemStack itemstack = p_179532_1_.func_70301_a(i);

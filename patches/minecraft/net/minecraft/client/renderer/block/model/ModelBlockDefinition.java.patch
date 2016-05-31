@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBlockDefinition.java
-@@ -31,7 +31,7 @@
+@@ -34,7 +34,7 @@
  
      public static ModelBlockDefinition func_178331_a(Reader p_178331_0_)
      {

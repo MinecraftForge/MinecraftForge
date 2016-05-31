@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -117,7 +117,7 @@
+@@ -118,7 +118,7 @@
  
          if (file1.exists())
          {
@@ -9,7 +9,7 @@
  
              if (worldinfo != null)
              {
-@@ -125,8 +125,9 @@
+@@ -126,8 +126,9 @@
              }
          }
  
@@ -19,8 +19,8 @@
 +        return file1.exists() ? SaveFormatOld.loadAndFix(file1, this.field_186341_a, this) : null;
      }
  
-     public void func_75755_a(WorldInfo p_75755_1_, NBTTagCompound p_75755_2_)
-@@ -135,6 +136,8 @@
+     public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_)
+@@ -136,6 +137,8 @@
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);
  

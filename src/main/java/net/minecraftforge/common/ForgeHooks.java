@@ -176,11 +176,11 @@ public class ForgeHooks
 
         if (!canHarvestBlock(state.getBlock(), player, world, pos))
         {
-            return player.getBreakSpeed(state, pos) / hardness / 100F;
+            return player.getDigSpeed(state, pos) / hardness / 100F;
         }
         else
         {
-            return player.getBreakSpeed(state, pos) / hardness / 30F;
+            return player.getDigSpeed(state, pos) / hardness / 30F;
         }
     }
 
@@ -222,20 +222,21 @@ public class ForgeHooks
             block.setHarvestLevel("axe", 0);
         }
 
-        Blocks.obsidian.setHarvestLevel("pickaxe", 3);
+        Blocks.OBSIDIAN.setHarvestLevel("pickaxe", 3);
+        Blocks.ENCHANTING_TABLE.setHarvestLevel("pickaxe", 0);
         Block[] oreBlocks = new Block[] {
-                Blocks.emerald_ore, Blocks.emerald_block, Blocks.diamond_ore, Blocks.diamond_block,
-                Blocks.gold_ore, Blocks.gold_block, Blocks.redstone_ore, Blocks.lit_redstone_ore
+                Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
+                Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE
         };
         for (Block block : oreBlocks)
         {
             block.setHarvestLevel("pickaxe", 2);
         }
-        Blocks.iron_ore.setHarvestLevel("pickaxe", 1);
-        Blocks.iron_block.setHarvestLevel("pickaxe", 1);
-        Blocks.lapis_ore.setHarvestLevel("pickaxe", 1);
-        Blocks.lapis_block.setHarvestLevel("pickaxe", 1);
-        Blocks.quartz_ore.setHarvestLevel("pickaxe", 0);
+        Blocks.IRON_ORE.setHarvestLevel("pickaxe", 1);
+        Blocks.IRON_BLOCK.setHarvestLevel("pickaxe", 1);
+        Blocks.LAPIS_ORE.setHarvestLevel("pickaxe", 1);
+        Blocks.LAPIS_BLOCK.setHarvestLevel("pickaxe", 1);
+        Blocks.QUARTZ_ORE.setHarvestLevel("pickaxe", 0);
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
@@ -258,11 +259,11 @@ public class ForgeHooks
 
     static
     {
-        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10)
+        seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10)
         {
             public ItemStack getStack(Random rand, int fortune)
             {
-                return new ItemStack(Items.wheat_seeds, 1 + rand.nextInt(fortune * 2 + 1));
+                return new ItemStack(Items.WHEAT_SEEDS, 1 + rand.nextInt(fortune * 2 + 1));
             }
         });
         initTools();
@@ -422,7 +423,7 @@ public class ForgeHooks
 
             if (target.typeOfHit == RayTraceResult.Type.BLOCK)
             {
-                s1 = Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
+                s1 = Block.REGISTRY.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
             }
             else if (target.typeOfHit == RayTraceResult.Type.ENTITY)
             {
@@ -440,7 +441,7 @@ public class ForgeHooks
 
         if (isCreative)
         {
-            player.inventory.func_184434_a(result);
+            player.inventory.setPickedItemStack(result);
             Minecraft.getMinecraft().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
@@ -636,9 +637,9 @@ public class ForgeHooks
 
             // Set the click event and append the link.
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
-            link.getChatStyle().setChatClickEvent(click);
-            link.getChatStyle().setUnderlined(true);
-            link.getChatStyle().setColor(TextFormatting.BLUE);
+            link.getStyle().setClickEvent(click);
+            link.getStyle().setUnderlined(true);
+            link.getStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
                 ichat = link;
             else
@@ -685,8 +686,8 @@ public class ForgeHooks
         if (world.getTileEntity(pos) == null)
         {
             SPacketBlockChange packet = new SPacketBlockChange(world, pos);
-            packet.blockState = Blocks.air.getDefaultState();
-            entityPlayer.playerNetServerHandler.sendPacket(packet);
+            packet.blockState = Blocks.AIR.getDefaultState();
+            entityPlayer.connection.sendPacket(packet);
         }
 
         // Post the block break event
@@ -699,16 +700,16 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.playerNetServerHandler.sendPacket(new SPacketBlockChange(world, pos));
+            entityPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
 
             // Update any tile entity data for this block
             TileEntity tileentity = world.getTileEntity(pos);
             if (tileentity != null)
             {
-                Packet<?> pkt = tileentity.getDescriptionPacket();
+                Packet<?> pkt = tileentity.getUpdatePacket();
                 if (pkt != null)
                 {
-                    entityPlayer.playerNetServerHandler.sendPacket(pkt);
+                    entityPlayer.connection.sendPacket(pkt);
                 }
             }
         }
@@ -798,7 +799,7 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.func_188060_a(itemstack.getItem()));
+                player.addStat(StatList.getCraftStats(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();

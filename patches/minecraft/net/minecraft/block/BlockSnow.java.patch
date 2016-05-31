@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -73,7 +73,7 @@
+@@ -75,7 +75,7 @@
      {
          IBlockState iblockstate = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
          Block block = iblockstate.func_177230_c();
@@ -8,8 +8,8 @@
 +        return block != Blocks.field_150432_aD && block != Blocks.field_150403_cj ? (iblockstate.func_177230_c().isLeaves(iblockstate, p_176196_1_, p_176196_2_.func_177977_b()) ? true : (block == this && ((Integer)iblockstate.func_177229_b(field_176315_a)).intValue() >= 7 ? true : iblockstate.func_185914_p() && iblockstate.func_185904_a().func_76230_c())) : false;
      }
  
-     public void func_176204_a(World p_176204_1_, BlockPos p_176204_2_, IBlockState p_176204_3_, Block p_176204_4_)
-@@ -85,7 +85,6 @@
+     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_)
+@@ -87,7 +87,6 @@
      {
          if (!this.func_176196_c(p_176314_1_, p_176314_2_))
          {
@@ -17,9 +17,9 @@
              p_176314_1_.func_175698_g(p_176314_2_);
              return false;
          }
-@@ -97,9 +96,8 @@
+@@ -99,9 +98,8 @@
  
-     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, TileEntity p_180657_5_, ItemStack p_180657_6_)
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, @Nullable ItemStack p_180657_6_)
      {
 -        func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Items.field_151126_ay, ((Integer)p_180657_4_.func_177229_b(field_176315_a)).intValue() + 1, 0));
 +        super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
@@ -27,8 +27,8 @@
 -        p_180657_2_.func_71029_a(StatList.func_188055_a(this));
      }
  
-     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)
-@@ -109,14 +107,13 @@
+     @Nullable
+@@ -112,14 +110,13 @@
  
      public int func_149745_a(Random p_149745_1_)
      {
@@ -44,7 +44,7 @@
              p_180650_1_.func_175698_g(p_180650_2_);
          }
      }
-@@ -150,6 +147,8 @@
+@@ -153,6 +150,8 @@
          return ((Integer)p_176201_1_.func_177229_b(field_176315_a)).intValue() - 1;
      }
  

@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
-@@ -196,7 +196,7 @@
+@@ -198,7 +198,7 @@
  
-             public boolean func_75214_a(ItemStack p_75214_1_)
+             public boolean func_75214_a(@Nullable ItemStack p_75214_1_)
              {
 -                return p_75214_1_ != null && PotionHelper.func_185205_a(p_75214_1_);
 +                return p_75214_1_ != null && net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_75214_1_);
              }
  
              public int func_75219_a()
-@@ -243,8 +243,7 @@
+@@ -245,8 +245,7 @@
                  }
                  else
                  {

@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
-    private EnumStatus result = null;
+    private SleepResult result = null;
     private final BlockPos pos;
 
     public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos)
@@ -31,12 +31,12 @@ public class PlayerSleepInBedEvent extends PlayerEvent
         this.pos = pos;
     }
 
-    public EnumStatus getResultStatus()
+    public SleepResult getResultStatus()
     {
         return result;
     }
 
-    public void setResult(EnumStatus result)
+    public void setResult(SleepResult result)
     {
         this.result = result;
     }
