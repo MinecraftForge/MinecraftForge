@@ -10,18 +10,11 @@ import net.minecraftforge.fluids.FluidTank;
  */
 public class FluidTankPropertiesWrapper implements IFluidTankProperties
 {
-	private final FluidTank tank;
-	private final TankInteractionType interactionType;
+	protected final FluidTank tank;
 
 	public FluidTankPropertiesWrapper(FluidTank tank)
 	{
-		this(tank, TankInteractionType.OPEN);
-	}
-
-	public FluidTankPropertiesWrapper(FluidTank tank, TankInteractionType interactionType)
-	{
 		this.tank = tank;
-		this.interactionType = interactionType;
 	}
 
 	@Nullable
@@ -38,9 +31,16 @@ public class FluidTankPropertiesWrapper implements IFluidTankProperties
 		return tank.getCapacity();
 	}
 
-	public TankInteractionType getInteractionType()
+	@Override
+	public boolean canFill()
 	{
-		return interactionType;
+		return tank.canFill();
+	}
+
+	@Override
+	public boolean canDrain()
+	{
+		return tank.canDrain();
 	}
 
 	@Override

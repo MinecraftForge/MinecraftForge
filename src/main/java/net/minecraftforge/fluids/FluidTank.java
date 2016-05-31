@@ -17,6 +17,9 @@ public class FluidTank implements IFluidTank, IFluidHandler
     protected FluidStack fluid;
     protected int capacity;
     protected TileEntity tile;
+    protected boolean canFill = true;
+    protected boolean canDrain = true;
+    protected IFluidTankProperties[] tankProperties;
 
     public FluidTank(int capacity)
     {
@@ -95,6 +98,11 @@ public class FluidTank implements IFluidTank, IFluidHandler
         this.capacity = capacity;
     }
 
+    public void setTileEntity(TileEntity tile)
+    {
+        this.tile = tile;
+    }
+
     @Override
     public FluidTankInfo getInfo()
     {
@@ -104,7 +112,11 @@ public class FluidTank implements IFluidTank, IFluidHandler
     @Override
     public IFluidTankProperties[] getTankProperties()
     {
-        return new IFluidTankProperties[] { new FluidTankPropertiesWrapper(this) };
+        if (this.tankProperties == null)
+        {
+            this.tankProperties = new IFluidTankProperties[] { new FluidTankPropertiesWrapper(this) };
+        }
+        return this.tankProperties;
     }
 
     @Override
@@ -212,23 +224,69 @@ public class FluidTank implements IFluidTank, IFluidHandler
     }
 
     /**
+     * Whether this tank can be filled with {@link IFluidHandler}
+     *
+     * @see IFluidTankProperties#canFill()
+     */
+    public boolean canFill()
+    {
+        return canFill;
+    }
+
+    /**
+     * Whether this tank can be drained with {@link IFluidHandler}
+     *
+     * @see IFluidTankProperties#canDrain()
+     */
+    public boolean canDrain()
+    {
+        return canDrain;
+    }
+
+    /**
+     * Set whether this tank can be filled with {@link IFluidHandler}
+     *
+     * @see IFluidTankProperties#canFill()
+     */
+    public void setCanFill(boolean canFill)
+    {
+        this.canFill = canFill;
+    }
+
+    /**
+     * Set whether this tank can be drained with {@link IFluidHandler}
+     *
+     * @see IFluidTankProperties#canDrain()
+     */
+    public void setCanDrain(boolean canDrain)
+    {
+        this.canDrain = canDrain;
+    }
+
+    /**
      * Returns true if the tank can be filled with this type of fluid.
      * Used as a filter for fluid types.
-     * Does not consider the current contents or capacity of the tank, only whether it could ever fill with this type of fluid.
+     * Does not consider the current contents or capacity of the tank,
+     * only whether it could ever fill with this type of fluid.
+     *
+     * @see IFluidTankProperties#canFillFluidType(FluidStack)
      */
     public boolean canFillFluidType(FluidStack fluid)
     {
-        return true;
+        return canFill();
     }
 
     /**
      * Returns true if the tank can drain out this type of fluid.
      * Used as a filter for fluid types.
-     * Does not consider the current contents or capacity of the tank, only whether it could ever drain out this type of fluid.
+     * Does not consider the current contents or capacity of the tank,
+     * only whether it could ever drain out this type of fluid.
+     *
+     * @see IFluidTankProperties#canDrainFluidType(FluidStack)
      */
     public boolean canDrainFluidType(FluidStack fluid)
     {
-        return true;
+        return canDrain();
     }
 
     protected void onContentsChanged()

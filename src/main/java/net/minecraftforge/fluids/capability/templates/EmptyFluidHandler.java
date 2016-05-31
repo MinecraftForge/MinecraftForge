@@ -8,13 +8,12 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.TankInteractionType;
 
 public class EmptyFluidHandler implements IFluidHandler, IFluidTank
 {
     public static final EmptyFluidHandler INSTANCE = new EmptyFluidHandler();
     public static final FluidTankInfo EMPTY_TANK_INFO = new FluidTankInfo(null, 0);
-    public static final IFluidTankProperties EMPTY_TANK_PROPERTIES = new FluidTankProperties(null, 0, TankInteractionType.CLOSED);
+    public static final IFluidTankProperties EMPTY_TANK_PROPERTIES = new FluidTankProperties(null, 0, false, false);
     public static final IFluidTankProperties[] EMPTY_TANK_PROPERTIES_ARRAY = new IFluidTankProperties[] { EMPTY_TANK_PROPERTIES };
 
     protected EmptyFluidHandler() {}

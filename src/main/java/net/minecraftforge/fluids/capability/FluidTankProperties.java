@@ -13,9 +13,10 @@ public class FluidTankProperties implements IFluidTankProperties
 	public static FluidTankProperties[] convert(FluidTankInfo[] fluidTankInfos)
 	{
 		FluidTankProperties[] properties = new FluidTankProperties[fluidTankInfos.length];
-		for (int i = 0; i < fluidTankInfos.length; i++) {
+		for (int i = 0; i < fluidTankInfos.length; i++)
+		{
 			FluidTankInfo info = fluidTankInfos[i];
-			properties[i] = new FluidTankProperties(info.fluid, info.capacity, TankInteractionType.OPEN);
+			properties[i] = new FluidTankProperties(info.fluid, info.capacity);
 		}
 		return properties;
 	}
@@ -23,42 +24,56 @@ public class FluidTankProperties implements IFluidTankProperties
 	@Nullable
 	private final FluidStack contents;
 	private final int capacity;
-	private final TankInteractionType interactionType;
+	private final boolean canFill;
+	private final boolean canDrain;
 
 	public FluidTankProperties(@Nullable FluidStack contents, int capacity)
 	{
-		this(contents, capacity, TankInteractionType.OPEN);
+		this(contents, capacity, true, true);
 	}
 
-	public FluidTankProperties(@Nullable FluidStack contents, int capacity, TankInteractionType interactionType)
+	public FluidTankProperties(@Nullable FluidStack contents, int capacity, boolean canFill, boolean canDrain)
 	{
 		this.contents = contents;
 		this.capacity = capacity;
-		this.interactionType = interactionType;
+		this.canFill = canFill;
+		this.canDrain = canDrain;
 	}
 
 	@Nullable
 	@Override
-	public FluidStack getContents() {
+	public FluidStack getContents()
+	{
 		return contents == null ? null : contents.copy();
 	}
 
 	@Override
-	public int getCapacity() {
+	public int getCapacity()
+	{
 		return capacity;
 	}
 
-	public TankInteractionType getInteractionType() {
-		return interactionType;
+	@Override
+	public boolean canFill()
+	{
+		return canFill;
 	}
 
 	@Override
-	public boolean canFillFluidType(FluidStack fluidStack) {
-		return true;
+	public boolean canDrain()
+	{
+		return canDrain;
 	}
 
 	@Override
-	public boolean canDrainFluidType(FluidStack fluidStack) {
-		return true;
+	public boolean canFillFluidType(FluidStack fluidStack)
+	{
+		return canFill;
+	}
+
+	@Override
+	public boolean canDrainFluidType(FluidStack fluidStack)
+	{
+		return canDrain;
 	}
 }

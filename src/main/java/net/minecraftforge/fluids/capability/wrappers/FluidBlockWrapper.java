@@ -10,7 +10,6 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.TankInteractionType;
 
 /**
  * Wrapper to handle {@link IFluidBlock} as an IFluidHandler
@@ -38,7 +37,7 @@ public class FluidBlockWrapper implements IFluidHandler
 		}
 		int amountFilled = Math.round(Fluid.BUCKET_VOLUME * percentFilled);
 		FluidStack fluid = amountFilled > 0 ? new FluidStack(fluidBlock.getFluid(), amountFilled) : null;
-		return new FluidTankProperties[]{ new FluidTankProperties(fluid, Fluid.BUCKET_VOLUME, TankInteractionType.DRAIN_ONLY)};
+		return new FluidTankProperties[]{ new FluidTankProperties(fluid, Fluid.BUCKET_VOLUME, false, true)};
 	}
 
 	@Override
