@@ -643,8 +643,8 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {
-        return null;
+        return NULL_AABB;
     }
 }
