@@ -88,6 +88,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static long java8Reminder = 0;
+    public static boolean cleanAtlas = false;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -278,6 +279,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         java8Reminder = prop.getLong(java8Reminder);
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_CLIENT, "cleanAtlas", cleanAtlas,
+                "Wipes the texture atlas before writing textures. Overwrites with 50% transparency 0xFF00FF");
+        cleanAtlas = prop.getBoolean(cleanAtlas);
+        propOrder.add(prop.getName());
+        
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
 
         if (config.hasChanged())

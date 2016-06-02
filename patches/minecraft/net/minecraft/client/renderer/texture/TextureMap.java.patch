@@ -40,7 +40,7 @@
      }
  
      private void func_110569_e()
-@@ -89,12 +102,26 @@
+@@ -89,27 +102,43 @@
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
  
@@ -67,7 +67,10 @@
              try
              {
                  PngSizeInfo pngsizeinfo = PngSizeInfo.func_188532_a(p_110571_1_.func_110536_a(resourcelocation));
-@@ -104,12 +131,14 @@
+                 iresource = p_110571_1_.func_110536_a(resourcelocation);
+                 boolean flag = iresource.func_110526_a("animation") != null;
+-                textureatlassprite.func_188538_a(pngsizeinfo, flag);
++                textureatlassprite.loadSprite(pngsizeinfo, flag, iresource);
              }
              catch (RuntimeException runtimeexception)
              {

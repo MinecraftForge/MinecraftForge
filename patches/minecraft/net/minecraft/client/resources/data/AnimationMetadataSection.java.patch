@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/client/resources/data/AnimationMetadataSection.java
++++ ../src-work/minecraft/net/minecraft/client/resources/data/AnimationMetadataSection.java
+@@ -18,8 +18,8 @@
+     public AnimationMetadataSection(List<AnimationFrame> p_i46088_1_, int p_i46088_2_, int p_i46088_3_, int p_i46088_4_, boolean p_i46088_5_)
+     {
+         this.field_110478_a = p_i46088_1_;
+-        this.field_110476_b = p_i46088_2_;
+-        this.field_110477_c = p_i46088_3_;
++        this.field_110476_b = p_i46088_2_ == -1 ? 1 : p_i46088_2_;
++        this.field_110477_c = p_i46088_3_ == -1 ? 1 : p_i46088_3_;
+         this.field_110475_d = p_i46088_4_;
+         this.field_177220_e = p_i46088_5_;
+     }

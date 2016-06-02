@@ -1,0 +1,111 @@
+{
+	"forge_marker": 1,
+    "variants": {
+		"type": {
+			"square_static": {
+				"model": "cube_all",
+				"textures": {
+					"all": "forgedebugrecttextures:blocks/square_static"
+				}
+			},
+			"square_anim": {
+				"model": "cube_all",
+				"textures": {
+					"all": "forgedebugrecttextures:blocks/square_anim"
+				}
+			},
+			
+
+			"tall_static": {
+				"model": "forgedebugrecttextures:rect_column",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/tall_top",
+					"top": "forgedebugrecttextures:blocks/tall_top",
+					"side": "forgedebugrecttextures:blocks/tall_static"
+				}
+			},
+			"tall_anim": {
+				"model": "forgedebugrecttextures:rect_column",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/tall_top",
+					"top": "forgedebugrecttextures:blocks/tall_top",
+					"side": "forgedebugrecttextures:blocks/tall_anim"
+				}
+			},
+			
+			"rect_static": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/square_static",
+					"top": "forgedebugrecttextures:blocks/square_static",
+					"side": "forgedebugrecttextures:blocks/rect_static"
+				}
+			},
+			"rect_static_too_short": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/missing_static",
+					"top": "forgedebugrecttextures:blocks/missing_static",
+					"side": "forgedebugrecttextures:blocks/rect_static_too_short"
+				}
+			},
+			"rect_static_extra_height": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/square_static",
+					"top": "forgedebugrecttextures:blocks/square_static",
+					"side": "forgedebugrecttextures:blocks/rect_static_extra_height"
+				}
+			},
+			"rect_static_odd": {
+				"model": "forgedebugrecttextures:rect_odd",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/square_static",
+					"top": "forgedebugrecttextures:blocks/square_static",
+					"side": "forgedebugrecttextures:blocks/rect_static_odd"
+				}
+			},
+			
+			"rect_anim": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/square_anim",
+					"top": "forgedebugrecttextures:blocks/square_anim",
+					"side": "forgedebugrecttextures:blocks/rect_anim"
+				}
+			},
+			"rect_anim_too_short": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/missing_static",
+					"top": "forgedebugrecttextures:blocks/missing_static",
+					"side": "forgedebugrecttextures:blocks/rect_anim_too_short"
+				}
+			},
+			"rect_anim_extra_height": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/square_anim",
+					"top": "forgedebugrecttextures:blocks/square_anim",
+					"side": "forgedebugrecttextures:blocks/rect_anim_extra_height"
+				}
+			},
+			"rect_anim_odd": {
+				"model": "forgedebugrecttextures:rect_odd",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/square_anim",
+					"top": "forgedebugrecttextures:blocks/square_anim",
+					"side": "forgedebugrecttextures:blocks/rect_anim_odd"
+				}
+			},
+			"rect_anim_too_many_frames": {
+				"model": "forgedebugrecttextures:rect_slab",
+				"textures": {
+					"bottom": "forgedebugrecttextures:blocks/missing_static",
+					"top": "forgedebugrecttextures:blocks/missing_static",
+					"side": "forgedebugrecttextures:blocks/rect_anim_too_many_frames"
+				}
+			}
+		}
+    }
+}

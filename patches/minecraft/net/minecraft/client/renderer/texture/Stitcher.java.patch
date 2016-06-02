@@ -25,6 +25,24 @@
      }
  
      public List<TextureAtlasSprite> func_94309_g()
+@@ -200,7 +206,7 @@
+                 this.field_94204_c = p_i45094_1_.func_94211_a();
+                 this.field_94201_d = p_i45094_1_.func_94216_b();
+                 this.field_147968_d = p_i45094_2_;
+-                this.field_94202_e = Stitcher.func_147969_b(this.field_94201_d, p_i45094_2_) > Stitcher.func_147969_b(this.field_94204_c, p_i45094_2_);
++                this.field_94202_e = false;
+             }
+ 
+             public TextureAtlasSprite func_98150_a()
+@@ -220,7 +226,7 @@
+ 
+             public void func_94194_d()
+             {
+-                this.field_94202_e = !this.field_94202_e;
++                // rotation during stitching doesn't work as MC won't rotate textures when putting them on the sheet
+             }
+ 
+             public boolean func_94195_e()
 @@ -238,7 +244,7 @@
  
              public String toString()
