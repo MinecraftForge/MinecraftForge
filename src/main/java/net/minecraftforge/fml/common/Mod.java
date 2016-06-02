@@ -161,7 +161,7 @@ public @interface Mod
 
     /**
      * If your mod doesn't have a runtime persistent effect on the state of the game, and can be disabled without side effects
-     * (minimap mods, graphical tweak mods) then you can set true here and receive the FMLDeactivationEvent to perform deactivation
+     * (minimap mods, graphical tweak mods) then you can set {@code true} here and receive the FMLDeactivationEvent to perform deactivation
      * tasks.
      * This does not affect administrative disabling through the system property fml.modStates or the config file fmlModState.properties.
      * The mod will only be deactivated outside of a running game world - FML will never allow mod deactivation whilst a game server

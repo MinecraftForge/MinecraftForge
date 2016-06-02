@@ -38,7 +38,7 @@
 +
 +    /**
 +     * Is this enchantment allowed to be enchanted on books via Enchantment Table
-+     * @return false to disable the vanilla feature
++     * @return {@code false} to disable the vanilla feature
 +     */
 +    public boolean isAllowedOnBooks()
 +    {

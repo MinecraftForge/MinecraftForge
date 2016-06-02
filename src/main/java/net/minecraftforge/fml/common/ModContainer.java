@@ -106,7 +106,7 @@ public interface ModContainer
     /**
      * Register the {@link EventBus} for the mod and the {@link LoadController} for error handling<br>
      * Returns if this bus was successfully registered - disabled mods and other<br>
-     * mods that don't need real events should return false and avoid further<br>
+     * mods that don't need real events should return {@code false} and avoid further<br>
      * processing.<br>
      *
      * @param bus The {@link EventBus} for the mod.

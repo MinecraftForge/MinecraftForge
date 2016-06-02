@@ -84,7 +84,7 @@
 +    }
 +
 +    /**
-+     * Weighted random holder class used to hold possible flowers
++     * Weighted random holder class used to hold possible flowers<br>
 +     * that can spawn in this biome when bonemeal is used on grass.
 +     */
 +    public static class FlowerEntry extends WeightedRandom.Item
@@ -108,8 +108,8 @@
 +
 +    /** Register a new plant to be planted when bonemeal is used on grass.
 +     * @param state The block to place.
-+     * @param weight The weight of the plant, where red flowers are
-+     *               10 and yellow flowers are 20.
++     * @param weight The weight of the plant, where red flowers are<br>
++     *                              10 and yellow flowers are 20.
 +     */
 +    public void addFlower(IBlockState state, int weight)
 +    {

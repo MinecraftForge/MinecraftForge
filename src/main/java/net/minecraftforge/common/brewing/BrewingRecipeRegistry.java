@@ -26,7 +26,7 @@ public class BrewingRecipeRegistry {
      * @param output
      *            The ItemStack that will replace the input once the brewing is
      *            done.
-     * @return true if the recipe was added.
+     * @return {@code true} if the recipe was added.
      */
     public static boolean addRecipe(ItemStack input, ItemStack ingredient, ItemStack output)
     {
@@ -45,7 +45,7 @@ public class BrewingRecipeRegistry {
      * @param output
      *            The ItemStack that will replace the input once the brewing is
      *            done.
-     * @return true if the recipe was added.
+     * @return {@code true} if the recipe was added.
      */
     public static boolean addRecipe(ItemStack input, String ingredient, ItemStack output)
     {
@@ -82,7 +82,7 @@ public class BrewingRecipeRegistry {
     }
 
     /**
-     * Returns true if the passed input and ingredient have an output
+     * Returns {@code true} if the passed input and ingredient have an output
      */
     public static boolean hasOutput(ItemStack input, ItemStack ingredient)
     {
@@ -126,7 +126,7 @@ public class BrewingRecipeRegistry {
     }
 
     /**
-     * Returns true if the passed ItemStack is a valid ingredient for any of the
+     * Returns {@code true} if the passed ItemStack is a valid ingredient for any of the
      * recipes in the registry.
      */
     public static boolean isValidIngredient(ItemStack stack)
@@ -144,7 +144,7 @@ public class BrewingRecipeRegistry {
     }
 
     /**
-     * Returns true if the passed ItemStack is a valid input for any of the
+     * Returns {@code true} if the passed ItemStack is a valid input for any of the
      * recipes in the registry.
      */
     public static boolean isValidInput(ItemStack stack)

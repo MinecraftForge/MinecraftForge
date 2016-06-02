@@ -163,11 +163,11 @@
 +    //                                           Forge Start
 +    //===================================================================================================
 +    /**
-+     * Grabs the registered entry for the specified name, returning null if there was not a entry.
++     * Grabs the registered entry for the specified name, returning {@code null} if there was not a entry.
 +     * Opposed to registerIcon, this will not instantiate the entry, useful to test if a mapping exists.
 +     *
 +     * @param name The name of the entry to find
-+     * @return The registered entry, null if nothing was registered.
++     * @return The registered entry, {@code null} if nothing was registered.
 +     */
 +    public TextureAtlasSprite getTextureExtry(String name)
 +    {
@@ -176,11 +176,11 @@
 +
 +    /**
 +     * Adds a texture registry entry to this map for the specified name if one does not already exist.
-+     * Returns false if the map already contains a entry for the specified name.
++     * Returns {@code false} if the map already contains a entry for the specified name.
 +     *
 +     * @param name Entry name
 +     * @param entry Entry instance
-+     * @return True if the entry was added to the map, false otherwise.
++     * @return {@code true} if the entry was added to the map, {@code false} otherwise.
 +     */
 +    public boolean setTextureEntry(String name, TextureAtlasSprite entry)
 +    {

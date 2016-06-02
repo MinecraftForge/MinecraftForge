@@ -40,7 +40,7 @@
 +
 +    /**
 +     * Sets which icon index to use as the background image of the slot when it's empty.
-+     * @param name The icon to use, null for none
++     * @param name The icon to use, {@code null} for none
 +     */
 +    public void setBackgroundName(String name)
 +    {

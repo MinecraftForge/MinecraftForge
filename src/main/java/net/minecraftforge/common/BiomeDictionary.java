@@ -42,7 +42,7 @@ public class BiomeDictionary
 
         OCEAN,
         RIVER,
-        /**A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.**/
+        /*A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.**/
         WATER(OCEAN, RIVER),
 
         /*Generic types which a biome can be*/
@@ -70,19 +70,24 @@ public class BiomeDictionary
         }
 
         /**
-         * Retrieves a Type value by name,
-         * if one does not exist already it creates one.
-         * This can be used as intermediate measure for modders to
-         * add their own category of Biome.
-         *
+         * Retrieves a Type value by name,<br>
+         * if one does not exist already it creates one.<br>
+         * This can be used as intermediate measure for modders to<br>
+         * add their own category of Biome.<br>
+         * <br>
          * There are NO naming conventions besides:
-         *   MUST be all upper case (enforced by name.toUpper())
-         *   NO Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL
-         *                             make this RTE with no worry about backwards compatibility}
-         *
-         * Note: For performance sake, the return value of this function SHOULD be cached.
+         * <ul>
+         * <li>
+         *  MUST be all upper case (Enforced by name.toUpper())
+         *  <li>
+         *  NO Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL<br>
+         *  make this RTE with no worry about backwards compatibility}
+         * </ul>
+         * <br>
+         * <b>
+         * Note: For performance sake, the return value of this function SHOULD be cached.<br>
          * Two calls with the same name SHOULD return the same value.
-         *
+         * </b>
          *
          * @param name The name of this Type
          * @return An instance of Type for this name.
@@ -141,7 +146,7 @@ public class BiomeDictionary
      *
      * @param biome the biome to be registered
      * @param types the types to register the biome as
-     * @return returns true if the biome was registered successfully
+     * @return returns {@code true} if the biome was registered successfully
      */
     public static boolean registerBiomeType(Biome biome, Type ... types)
     {
@@ -211,7 +216,7 @@ public class BiomeDictionary
      *
      * @param biomeA A biome.
      * @param biomeB Another biome to compre for equality.
-     * @return returns true if a common type is found, false otherwise
+     * @return returns {@code true} if a common type is found, {@code false} otherwise
      */
     public static boolean areBiomesEquivalent(Biome biomeA, Biome biomeB)
     {
@@ -234,7 +239,7 @@ public class BiomeDictionary
      *
      * @param biome the biome to be considered
      * @param type the type to check for
-     * @return returns true if the biome is registered as being of type type, false otherwise
+     * @return returns {@code true} if the biome is registered as being of type type, {@code false} otherwise
      */
     public static boolean isBiomeOfType(Biome biome, Type type)
     {
@@ -245,7 +250,7 @@ public class BiomeDictionary
     /**
      * Checks to see if the given biome has been registered as being of any type
      * @param biome the biome to consider
-     * @return returns true if the biome has been registered, false otherwise
+     * @return returns {@code true} if the biome has been registered, {@code false} otherwise
      */
     public static boolean isBiomeRegistered(Biome biome)
     {
@@ -257,11 +262,13 @@ public class BiomeDictionary
         FMLLog.warning("Redundant call to BiomeDictionary.registerAllBiomes ignored");
     }
     /**
-     * Loops through the biome list and automatically adds tags to any biome that does not have any
-     * This is called by Forge at postinit time. It will additionally dispatch any deferred decorator
-     * creation events.
-     *
+     * Loops through the biome list and automatically adds tags to any biome that does not have any<br>
+     * This is called by Forge at postinit time. It will additionally dispatch any deferred decorator<br>
+     * creation events.<br>
+     * <br>
+     * <b>
      * DO NOT call this during world generation
+     * </b>
      */
     public static void registerAllBiomesAndGenerateEvents()
     {
@@ -280,9 +287,9 @@ public class BiomeDictionary
     }
 
     /**
-     * Automatically looks for and registers a given biome with appropriate tags
-     * This method is called automatically if a biome has not been registered with any tags,
-     * And another method requests information about it
+     * Automatically looks for and registers a given biome with appropriate tags<br>
+     * This method is called automatically if a biome has not been registered with any tags,<br>
+     * And another method requests information about it.
      *
      * @param biome the biome to be considered
      */

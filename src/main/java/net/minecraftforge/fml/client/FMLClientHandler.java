@@ -894,7 +894,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public boolean shouldAllowPlayerLogins()
     {
-        return true; //Always true as the server has to be started before clicking 'Open to lan'
+        return true; //Always {@code true} as the server has to be started before clicking 'Open to lan'
     }
 
     @Override

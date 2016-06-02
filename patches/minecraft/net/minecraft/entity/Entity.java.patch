@@ -130,7 +130,7 @@
 +
 +    /**
 +     * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
-+     * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
++     * @return {@code false} to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
 +     */
 +    public boolean shouldRiderSit()
 +    {
@@ -141,7 +141,7 @@
 +     * Called when a user uses the creative pick block button on this entity.
 +     *
 +     * @param target The full target the player is looking at
-+     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
++     * @return A ItemStack to add to the player's inventory, {@code null} if nothing should be added.
 +     */
 +    public ItemStack getPickedResult(RayTraceResult target)
 +    {
@@ -213,7 +213,7 @@
 +    }
 +
 +    /**
-+     * Returns true if the entity is of the @link{EnumCreatureType} provided
++     * Returns {@code true} if the entity is of the @link{EnumCreatureType} provided
 +     * @param type The EnumCreatureType type this entity is evaluating
 +     * @param forSpawnCount If this is being invoked to check spawn count caps.
 +     * @return If the creature is of the type provided
@@ -225,7 +225,7 @@
 +    }
 +
 +    /**
-+     * If a rider of this entity can interact with this entity. Should return true on the
++     * If a rider of this entity can interact with this entity. Should return {@code true} on the
 +     * ridden entity if so.
 +     *
 +     * @return if the entity can be interacted with from a rider

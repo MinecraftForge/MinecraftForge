@@ -13,9 +13,9 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
  * <br>
- * This event is not {@link Cancelable}.
+ * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
  * <br>
- * This event does not have a result. {@link HasResult}
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/

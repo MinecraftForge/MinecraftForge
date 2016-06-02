@@ -35,7 +35,7 @@
 +     *   As of now the only thing that is checked is if FBOs are supported entirely, in the future
 +     *   we may expand to check for errors.
 +     *
-+     * @return True if the FBO was re-initialized with stencil bits.
++     * @return {@code true} if the FBO was re-initialized with stencil bits.
 +     */
 +    public boolean enableStencil()
 +    {

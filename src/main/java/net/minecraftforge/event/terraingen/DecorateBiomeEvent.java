@@ -18,9 +18,9 @@ import net.minecraft.world.World;
  * {@link #rand} contains an instance of Random to be used. <br>
  * {@link #pos} contains the coordinates of the Chunk being decorated. <br>
  * <br>
- * This event is not {@link Cancelable}.
+ * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
  * <br>
- * This event does not have a result. {@link HasResult}
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.
  **/

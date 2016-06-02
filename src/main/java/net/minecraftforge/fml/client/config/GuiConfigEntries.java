@@ -260,7 +260,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Saves all properties on this screen / child screens. This method returns true if any elements were changed that require
+     * Saves all properties on this screen / child screens. This method returns {@code true} if any elements were changed that require
      * a restart for proper handling.
      */
     public boolean saveConfigElements()
@@ -274,7 +274,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Returns true if all IConfigEntry objects on this screen are set to default. If includeChildren is true sub-category
+     * Returns {@code true} if all IConfigEntry objects on this screen are set to default. If includeChildren is {@code true} sub-category
      * objects are checked as well.
      */
     public boolean areAllEntriesDefault(boolean includeChildren)
@@ -287,7 +287,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Sets all IConfigEntry objects on this screen to default. If includeChildren is true sub-category objects are set as
+     * Sets all IConfigEntry objects on this screen to default. If includeChildren is {@code true} sub-category objects are set as
      * well.
      */
     public void setAllToDefault(boolean includeChildren)
@@ -298,7 +298,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Returns true if any IConfigEntry objects on this screen are changed. If includeChildren is true sub-category objects
+     * Returns {@code true} if any IConfigEntry objects on this screen are changed. If includeChildren is {@code true} sub-category objects
      * are checked as well.
      */
     public boolean hasChangedEntry(boolean includeChildren)
@@ -311,7 +311,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Returns true if any IConfigEntry objects on this screen are enabled. If includeChildren is true sub-category objects
+     * Returns {@code true} if any IConfigEntry objects on this screen are enabled. If includeChildren is {@code true} sub-category objects
      * are checked as well.
      */
     public boolean areAnyEntriesEnabled(boolean includeChildren)
@@ -324,7 +324,7 @@ public class GuiConfigEntries extends GuiListExtended
     }
 
     /**
-     * Reverts changes to all IConfigEntry objects on this screen. If includeChildren is true sub-category objects are
+     * Reverts changes to all IConfigEntry objects on this screen. If includeChildren is {@code true} sub-category objects are
      * reverted as well.
      */
     public void undoAllChanges(boolean includeChildren)
@@ -347,7 +347,7 @@ public class GuiConfigEntries extends GuiListExtended
     /**
      * BooleanPropEntry
      *
-     * Provides a GuiButton that toggles between true and false.
+     * Provides a GuiButton that toggles between {@code true} and false.
      */
     public static class BooleanEntry extends ButtonEntry
     {
@@ -914,7 +914,7 @@ public class GuiConfigEntries extends GuiListExtended
         }
 
         /**
-         * Returns true if the mouse has been pressed on this control.
+         * Returns {@code true} if the mouse has been pressed on this control.
          */
         @Override
         public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
@@ -1688,7 +1688,7 @@ public class GuiConfigEntries extends GuiListExtended
         /**
          * Is this list entry enabled?
          *
-         * @return true if this entry's controls should be enabled, false otherwise.
+         * @return {@code true} if this entry's controls should be enabled, {@code false} otherwise.
          */
         public boolean enabled();
 
@@ -1709,10 +1709,10 @@ public class GuiConfigEntries extends GuiListExtended
         public void mouseClicked(int x, int y, int mouseEvent);
 
         /**
-         * Is this entry's value equal to the default value? Generally true should be returned if this entry is not a property or category
+         * Is this entry's value equal to the default value? Generally {@code true} should be returned if this entry is not a property or category
          * entry.
          *
-         * @return true if this entry's value is equal to this entry's default value.
+         * @return {@code true} if this entry's value is equal to this entry's default value.
          */
         public boolean isDefault();
 
@@ -1729,13 +1729,13 @@ public class GuiConfigEntries extends GuiListExtended
         /**
          * Has the value of this entry changed?
          *
-         * @return true if changes have been made to this entry's value, false otherwise.
+         * @return {@code true} if changes have been made to this entry's value, {@code false} otherwise.
          */
         public boolean isChanged();
 
         /**
          * Handles saving any changes that have been made to this entry back to the underlying object. It is a good practice to check
-         * isChanged() before performing the save action. This method should return true if the element has changed AND REQUIRES A RESTART.
+         * isChanged() before performing the save action. This method should return {@code true} if the element has changed AND REQUIRES A RESTART.
          */
         public boolean saveConfigElement();
 

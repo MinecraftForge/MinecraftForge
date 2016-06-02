@@ -95,7 +95,7 @@ public class GuiSelectStringEntries extends GuiListExtended
     }
 
     /**
-     * Returns true if the element passed in is currently selected
+     * Returns {@code true} if the element passed in is currently selected
      */
     @Override
     protected boolean isSelected(int index)

@@ -18,12 +18,12 @@ import net.minecraft.util.text.ITextComponent;
  * {@link #player} the instance of EntityPlayerMP for the player sending the chat message.<br>
  * {@link #component} contains the instance of ChatComponentTranslation for the sent message.<br>
  * <br>
- * This event is {@link Cancelable}. <br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}. <br>
  * If this event is canceled, the chat message is never distributed to all clients.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
 public class ServerChatEvent extends Event

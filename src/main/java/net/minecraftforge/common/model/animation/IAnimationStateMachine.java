@@ -28,7 +28,7 @@ public interface IAnimationStateMachine
     String currentState();
 
     /**
-     * Set to true if the machine should handle special events that come from the clips (they start with '!').
+     * Set to {@code true} if the machine should handle special events that come from the clips (they start with '!').
      * Right now only implemented event is "!transition:<state_name>".
      * Default value is true.
      */

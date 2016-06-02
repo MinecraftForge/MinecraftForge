@@ -77,7 +77,7 @@
 +     * @param entity Entity wearing the armor
 +     * @param stack ItemStack for the armor
 +     * @param slot Slot ID that the item is in
-+     * @param type Subtype, can be null or "overlay"
++     * @param type Subtype, can be {@code null} or "overlay"
 +     * @return ResourceLocation pointing at the armor's texture
 +     */
 +    public ResourceLocation getArmorResource(net.minecraft.entity.Entity entity, ItemStack stack, EntityEquipmentSlot slot, String type)

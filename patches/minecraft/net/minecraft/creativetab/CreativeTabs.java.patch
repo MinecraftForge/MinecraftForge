@@ -86,7 +86,7 @@
 +    /**
 +     * Determines if the search bar should be shown for this tab.
 +     *
-+     * @return True to show the bar
++     * @return {@code true} to show the bar
 +     */
 +    public boolean hasSearchBar()
 +    {

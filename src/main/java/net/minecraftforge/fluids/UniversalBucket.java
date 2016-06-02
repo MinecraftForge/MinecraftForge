@@ -44,7 +44,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     /**
      * @param capacity        Capacity of the container
      * @param empty           Item used for filling with the bucket event and returned when emptied
-     * @param nbtSensitive    Whether the empty item is NBT sensitive (usually true if empty and full are the same items)
+     * @param nbtSensitive    Whether the empty item is NBT sensitive (usually {@code true} if empty and full are the same items)
      */
     public UniversalBucket(int capacity, ItemStack empty, boolean nbtSensitive)
     {

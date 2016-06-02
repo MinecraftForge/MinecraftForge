@@ -373,7 +373,7 @@ public enum B3DLoader implements ICustomModelLoader
     }
 
     /**
-     * @deprecated use AnimationProperty.
+     * @deprecated Use AnimationProperty.
      */
     @Deprecated
     public static enum B3DFrameProperty implements IUnlistedProperty<B3DState>

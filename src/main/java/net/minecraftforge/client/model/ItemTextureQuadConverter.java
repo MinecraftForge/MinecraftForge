@@ -188,7 +188,7 @@ public final class ItemTextureQuadConverter
         return quads;
     }
 
-    // true if alpha != 0
+    // {@code true} if alpha != 0
     private static boolean isVisible(int color)
     {
         return (color >> 24 & 255) > 0;

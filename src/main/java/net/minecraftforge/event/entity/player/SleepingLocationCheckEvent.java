@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * This event is fired when game checks, if sleeping player should be still considered "in bed".<br>
  * Failing this check will cause player to wake up.<br>
  *
- * This event has a result. {@link HasResult}<br>
+ * This event has a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  *
  * setResult(ALLOW) informs game that player is still "in bed"<br>
  * setResult(DEFAULT) causes game to check {@link Block#isBed(IBlockState, IBlockAccess, BlockPos, Entity)} instead

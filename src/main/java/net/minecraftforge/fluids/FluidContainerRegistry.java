@@ -93,7 +93,7 @@ public abstract class FluidContainerRegistry
      *            ItemStack representing the container when it is full.
      * @param emptyContainer
      *            ItemStack representing the container when it is empty.
-     * @return True if container was successfully registered; false if it already is.
+     * @return {@code true} if container was successfully registered; {@code false} if it already is.
      */
     public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer, ItemStack emptyContainer)
     {
@@ -110,7 +110,7 @@ public abstract class FluidContainerRegistry
      *            ItemStack representing the container when it is full.
      * @param emptyContainer
      *            ItemStack representing the container when it is empty.
-     * @return True if container was successfully registered; false if it already is.
+     * @return {@code true} if container was successfully registered; {@code false} if it already is.
      */
     public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer, ItemStack emptyContainer)
     {
@@ -128,7 +128,7 @@ public abstract class FluidContainerRegistry
      *            FluidStack containing the type and amount of the fluid stored in the item.
      * @param filledContainer
      *            ItemStack representing the container when it is full.
-     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
+     * @return {@code true} if container was successfully registered; {@code false} if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(FluidStack stack, ItemStack filledContainer)
     {
@@ -143,7 +143,7 @@ public abstract class FluidContainerRegistry
      *            Fluid type that is stored in the item.
      * @param filledContainer
      *            ItemStack representing the container when it is full.
-     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
+     * @return {@code true} if container was successfully registered; {@code false} if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(Fluid fluid, ItemStack filledContainer)
     {
@@ -159,7 +159,7 @@ public abstract class FluidContainerRegistry
      *
      * @param data
      *            See {@link FluidContainerData}.
-     * @return True if container was successfully registered; false if it already is, or an invalid parameter was passed.
+     * @return {@code true} if container was successfully registered; {@code false} if it already is, or an invalid parameter was passed.
      */
     public static boolean registerFluidContainer(FluidContainerData data)
     {

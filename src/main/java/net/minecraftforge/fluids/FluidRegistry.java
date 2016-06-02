@@ -131,7 +131,7 @@ public abstract class FluidRegistry
      *
      * @param fluid
      *            The fluid to register.
-     * @return True if the fluid was registered as the current default fluid, false if it was only registered as an alternative
+     * @return {@code true} if the fluid was registered as the current default fluid, {@code false} if it was only registered as an alternative
      */
     public static boolean registerFluid(Fluid fluid)
     {
@@ -273,7 +273,7 @@ public abstract class FluidRegistry
      * Registers a fluid with the universal bucket.
      * This only has an effect if the universal bucket is enabled.
      * @param fluid    The fluid that the bucket shall be able to hold
-     * @return True if the fluid was added successfully, false if it already was registered or couldn't be registered with the bucket.
+     * @return {@code true} if the fluid was added successfully, {@code false} if it already was registered or couldn't be registered with the bucket.
      */
     public static boolean addBucketForFluid(Fluid fluid)
     {

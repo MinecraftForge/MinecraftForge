@@ -6,15 +6,15 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * AttackEntityEvent is fired when a player attacks an Entity.<br>
- * This event is fired whenever a player attacks an Entity in
+ * This event is fired whenever a player attacks an Entity in<br>
  * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)}.<br>
  * <br>
  * {@link #target} contains the Entity that was damaged by the player. <br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * If this event is canceled, the player does not attack the Entity.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/

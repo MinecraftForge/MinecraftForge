@@ -13,12 +13,12 @@ import net.minecraft.entity.effect.EntityLightningBolt;
  * <br>
  * {@link #lightning} contains the instance of EntityLightningBolt attempting to strike an entity.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * If this event is canceled, the Entity is not struck by the lightening.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
 public class EntityStruckByLightningEvent extends EntityEvent

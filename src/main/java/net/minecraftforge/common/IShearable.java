@@ -18,7 +18,7 @@ public interface IShearable
 {
     /**
      * Checks if the object is currently shearable
-     * Example: Sheep return false when they have no wool
+     * Example: Sheep return {@code false} when they have no wool
      *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world

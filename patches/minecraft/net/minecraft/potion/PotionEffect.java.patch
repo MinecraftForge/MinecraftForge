@@ -49,7 +49,7 @@
 +    /***
 +     * Checks the given ItemStack to see if it is in the list of curative items for the potion effect
 +     * @param stack The ItemStack being checked against the list of curative items for the potion effect
-+     * @return true if the given ItemStack is in the list of curative items for the potion effect, false otherwise
++     * @return {@code true} if the given ItemStack is in the list of curative items for the potion effect, {@code false} otherwise
 +     */
 +    public boolean isCurativeItem(net.minecraft.item.ItemStack stack)
 +    {

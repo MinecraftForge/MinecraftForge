@@ -28,7 +28,7 @@
 +     * default vanilla loading code is bypassed completely.
 +     * @param manager The {@link net.minecraft.client.resources.IResourceManager} to load resource.
 +     * @param location The {@link net.minecraft.util.ResourceLocation} that the {@link net.minecraft.client.resources.IResourceManager} is loading.
-+     * @return True to use your own custom load code and bypass vanilla loading.
++     * @return {@code true} to use your own custom load code and bypass vanilla loading.
 +     */
 +    public boolean hasCustomLoader(net.minecraft.client.resources.IResourceManager manager, net.minecraft.util.ResourceLocation location)
 +    {
@@ -37,10 +37,10 @@
 +
 +    /**
 +     * Load the specified resource as this sprite's data.
-+     * Returning false from this function will prevent this icon from being stitched onto the master texture.
++     * Returning {@code false} from this function will prevent this icon from being stitched onto the master texture.
 +     * @param manager Main resource manager
 +     * @param location File resource location
-+     * @return False to prevent this Icon from being stitched
++     * @return {@code false} to prevent this Icon from being stitched
 +     */
 +    public boolean load(net.minecraft.client.resources.IResourceManager manager, net.minecraft.util.ResourceLocation location)
 +    {

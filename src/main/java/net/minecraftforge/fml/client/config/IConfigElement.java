@@ -124,8 +124,8 @@ public interface IConfigElement
     public void setToDefault();
     
     /**
-     * [Property, Category] Whether or not this element is safe to modify while a world is running. For Categories return false if ANY properties
-     * in the category are modifiable while a world is running, true if all are not.
+     * [Property, Category] Whether or not this element is safe to modify while a world is running. For Categories return {@code false} if ANY properties
+     * in the category are modifiable while a world is running, {@code true} if all are not.
      */
     public boolean requiresWorldRestart();
     

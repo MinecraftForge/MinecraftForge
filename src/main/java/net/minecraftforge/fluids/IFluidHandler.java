@@ -55,16 +55,16 @@ public interface IFluidHandler
     FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain);
 
     /**
-     * Returns true if the given fluid can be inserted into the given direction.
+     * Returns {@code true} if the given fluid can be inserted into the given direction.
      *
-     * More formally, this should return true if fluid is able to enter from the given direction.
+     * More formally, this should return {@code true} if fluid is able to enter from the given direction.
      */
     boolean canFill(EnumFacing from, Fluid fluid);
 
     /**
-     * Returns true if the given fluid can be extracted from the given direction.
+     * Returns {@code true} if the given fluid can be extracted from the given direction.
      *
-     * More formally, this should return true if fluid is able to leave from the given direction.
+     * More formally, this should return {@code true} if fluid is able to leave from the given direction.
      */
     boolean canDrain(EnumFacing from, Fluid fluid);
 

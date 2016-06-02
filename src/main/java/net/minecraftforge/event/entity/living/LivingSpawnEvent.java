@@ -19,7 +19,7 @@ import net.minecraft.world.World;
  * {@link #y} contains the y-coordinate this entity is being spawned at.<br>
  * {@link #z} contains the z-coordinate this entity is being spawned at.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 public class LivingSpawnEvent extends LivingEvent
 {
@@ -65,12 +65,12 @@ public class LivingSpawnEvent extends LivingEvent
      * <br>
      * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
      * <br>
-     * This event is {@link Cancelable}.<br>
+     * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
     public static class SpecialSpawn extends LivingSpawnEvent

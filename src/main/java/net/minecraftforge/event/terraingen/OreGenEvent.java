@@ -54,9 +54,9 @@ public class OreGenEvent extends Event
      * This event is fired just before ore generation in
      * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>
      **/
@@ -73,9 +73,9 @@ public class OreGenEvent extends Event
      * This event is fired just after ore generation in
      * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>
      **/
@@ -95,9 +95,9 @@ public class OreGenEvent extends Event
      * {@link #type} contains the enum value for the Ore attempting to be generated.<br>
      * {@link #generator} contains the WorldGenerator generating this ore. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event has a result. {@link HasResult} <br>
+     * This event has a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * This result determines whether the ore is allowed to be generated.<br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>

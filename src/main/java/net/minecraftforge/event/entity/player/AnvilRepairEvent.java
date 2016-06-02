@@ -3,6 +3,13 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+/**
+ * Fired when the player removes a "repaired" item from the Anvil's Output slot.<br>
+ * <br>
+ * {@link #breakChance} specifies as a percentage the chance that the anvil will be "damaged" when used.<br>
+ * <br>
+ * ItemStacks are the inputs/output from the anvil. They cannot be edited.
+ */
 public class AnvilRepairEvent extends PlayerEvent
 {
 
@@ -20,13 +27,6 @@ public class AnvilRepairEvent extends PlayerEvent
         this.setBreakChance(0.12f);
     }
 
-    /**
-     * Fired when the player removes a "repaired" item from the Anvil's Output slot.
-     *
-     * breakChance specifies as a percentage the chance that the anvil will be "damaged" when used.
-     *
-     * ItemStacks are the inputs/output from the anvil. They cannot be edited.
-     */
     public ItemStack getLeft() { return left; }
     public ItemStack getRight() { return right; }
     public ItemStack getOutput() { return output; }

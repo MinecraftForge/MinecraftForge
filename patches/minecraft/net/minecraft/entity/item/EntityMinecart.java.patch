@@ -330,9 +330,9 @@
 +    }
 +
 +    /**
-+     * Returns true if this cart can currently use rails.
++     * Returns {@code true} if this cart can currently use rails.
 +     * This function is mainly used to gracefully detach a minecart from a rail.
-+     * @return True if the minecart can use rails.
++     * @return {@code true} if the minecart can use rails.
 +     */
 +    public boolean canUseRail()
 +    {
@@ -350,8 +350,8 @@
 +    }
 +
 +    /**
-+     * Return false if this cart should not call onMinecartPass() and should ignore Powered Rails.
-+     * @return True if this cart should call onMinecartPass().
++     * Return {@code false} if this cart should not call onMinecartPass() and should ignore Powered Rails.
++     * @return {@code true} if this cart should call onMinecartPass().
 +     */
 +    public boolean shouldDoRailFunctions()
 +    {
@@ -359,8 +359,8 @@
 +    }
 +
 +    /**
-+     * Returns true if this cart is self propelled.
-+     * @return True if powered.
++     * Returns {@code true} if this cart is self propelled.
++     * @return {@code true} if powered.
 +     */
 +    public boolean isPoweredCart()
 +    {
@@ -368,8 +368,8 @@
 +    }
 +
 +    /**
-+     * Returns true if this cart can be ridden by an Entity.
-+     * @return True if this cart can be ridden.
++     * Returns {@code true} if this cart can be ridden by an Entity.
++     * @return {@code true} if this cart can be ridden.
 +     */
 +    public boolean canBeRidden()
 +    {

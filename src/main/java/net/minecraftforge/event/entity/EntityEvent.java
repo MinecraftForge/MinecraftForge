@@ -14,7 +14,7 @@ import net.minecraft.entity.Entity;
  * <br>
  * {@link #entity} contains the entity that caused this event to occur.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 public class EntityEvent extends Event
 {
@@ -34,11 +34,11 @@ public class EntityEvent extends Event
      * EntityConstructing is fired when an Entity is being created. <br>
      * This event is fired within the constructor of the Entity.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class EntityConstructing extends EntityEvent
     {
@@ -57,9 +57,9 @@ public class EntityEvent extends Event
      * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
      * and the entity with then be updated.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class CanUpdate extends EntityEvent
     {
@@ -85,11 +85,11 @@ public class EntityEvent extends Event
      * This event is fired whenever vanilla Minecraft determines that an entity <br>
      * is entering a chunk in {@link Chunk#addEntity(net.minecraft.entity.Entity)} <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class EnteringChunk extends EntityEvent
     {

@@ -37,7 +37,7 @@
 +     * and all permission checks have been made.
 +     *
 +     * @param stack The item stack that was used to place the block. This can be changed inside the method.
-+     * @param player The player who is placing the block. Can be null if the block is not being placed by a player.
++     * @param player The player who is placing the block. Can be {@code null} if the block is not being placed by a player.
 +     * @param side The side the player (or machine) right-clicked on.
 +     */
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState)

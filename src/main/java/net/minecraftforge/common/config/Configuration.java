@@ -1232,7 +1232,7 @@ public class Configuration
     /**
      * Sets the flag for whether or not this category can be edited while a world is running. Care should be taken to ensure
      * that only properties that are truly dynamic can be changed from the in-game options menu. Only set this flag to
-     * true if all child properties/categories are unable to be modified while a world is running.
+     * {@code true} if all child properties/categories are unable to be modified while a world is running.
      */
     public Configuration setCategoryRequiresWorldRestart(String category, boolean requiresWorldRestart)
     {
@@ -1242,7 +1242,7 @@ public class Configuration
 
     /**
      * Sets whether or not this ConfigCategory requires Minecraft to be restarted when changed.
-     * Defaults to false. Only set this flag to true if ALL child properties/categories require
+     * Defaults to false. Only set this flag to {@code true} if ALL child properties/categories require
      * Minecraft to be restarted when changed. Setting this flag will also prevent modification
      * of the child properties/categories while a world is running.
      */
@@ -1398,7 +1398,7 @@ public class Configuration
      * @param category the category in which the property resides
      * @param oldPropName the existing property name
      * @param newPropName the new property name
-     * @return true if the category and property exist, false otherwise
+     * @return {@code true} if the category and property exist, {@code false} otherwise
      */
     public boolean renameProperty(String category, String oldPropName, String newPropName)
     {
@@ -1420,7 +1420,7 @@ public class Configuration
      * @param oldCategory the category the property currently resides in
      * @param propName the name of the property to move
      * @param newCategory the category the property should be moved to
-     * @return true if the old category and property exist, false otherwise
+     * @return {@code true} if the old category and property exist, {@code false} otherwise
      */
     public boolean moveProperty(String oldCategory, String propName, String newCategory)
     {

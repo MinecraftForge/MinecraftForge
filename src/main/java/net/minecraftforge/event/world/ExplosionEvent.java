@@ -15,10 +15,10 @@ import net.minecraft.world.World;
  * ExplosionEvent.Start is fired before the explosion actually occurs.<br>
  * ExplosionEvent.Detonate is fired once the explosion has a list of affected blocks and entities.<br>
  * <br>
- * ExplosionEvent.Start is {@link Cancelable}.<br>
+ * ExplosionEvent.Start is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * ExplosionEvent.Detonate can modify the affected blocks and entities.<br>
- * Children do not use {@link HasResult}.<br>
- * Children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * Children do not use {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}.<br>
+ * Children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  */
 public class ExplosionEvent extends Event
 {
@@ -43,9 +43,9 @@ public class ExplosionEvent extends Event
 
     /** ExplosionEvent.Start is fired before the explosion actually occurs.  Canceling this event will stop the explosion.<br>
      * <br>
-     * This event is {@link Cancelable}.<br>
-     * This event does not use {@link HasResult}.<br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
+     * This event does not use {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      */
     @Cancelable
     public static class Start extends ExplosionEvent
@@ -58,9 +58,9 @@ public class ExplosionEvent extends Event
 
     /** ExplosionEvent.Detonate is fired once the explosion has a list of affected blocks and entities.  These lists can be modified to change the outcome.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
-     * This event does not use {@link HasResult}.<br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
+     * This event does not use {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      */
     public static class Detonate extends ExplosionEvent
     {

@@ -25,13 +25,13 @@ public class PlayerWakeUpEvent extends PlayerEvent
 
     /**
      * Used for the 'wake up animation'.
-     * This is false if the player is considered 'sleepy' and the overlay should slowly fade away.
+     * This is {@code false} if the player is considered 'sleepy' and the overlay should slowly fade away.
      */
     public boolean wakeImmediately() { return wakeImmediately; }
 
     /**
      * Indicates if the server should be notified of sleeping changes.
-     * This will only be false if the server is considered 'up to date' already, because, for example, it initiated the call.
+     * This will only be {@code false} if the server is considered 'up to date' already, because, for example, it initiated the call.
      */
     public boolean updateWorld() { return updateWorld; }
 

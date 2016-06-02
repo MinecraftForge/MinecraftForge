@@ -176,7 +176,7 @@ public class Property
     /**
      * Returns whether or not this Property is defaulted.
      *
-     * @return true if the current value(s) is(are) deeply equal to the default value(s)
+     * @return {@code true} if the current value(s) is(are) deeply equal to the default value(s)
      */
     public boolean isDefault()
     {
@@ -259,7 +259,7 @@ public class Property
     }
 
     /**
-     * Gets the raw String default value of this Property. Check for isList() == false first.
+     * Gets the raw String default value of this Property. Check for isList() == {@code false} first.
      *
      * @return the default value String
      */
@@ -269,7 +269,7 @@ public class Property
     }
 
     /**
-     * Gets the raw String[] default values of this Property. Check for isList() == true first.
+     * Gets the raw String[] default values of this Property. Check for isList() == {@code true} first.
      *
      * @return the default values String[]
      */
@@ -280,8 +280,8 @@ public class Property
 
     /**
      * Sets the flag for whether or not this Property can be edited while a world is running. Care should be taken to ensure
-     * that only properties that are truly dynamic can be changed from the in-game options menu. When set to false the Property will be
-     * editable from both the main menu Mods list config screen and the in-game Mod Options config screen. When set to true the Property
+     * that only properties that are truly dynamic can be changed from the in-game options menu. When set to {@code false} the Property will be
+     * editable from both the main menu Mods list config screen and the in-game Mod Options config screen. When set to {@code true} the Property
      * will only be editable from the main menu Mods list config screen.
      */
     public Property setRequiresWorldRestart(boolean requiresWorldRestart)
@@ -292,7 +292,7 @@ public class Property
 
     /**
      * Returns whether or not this Property is able to be edited while a world is running using the in-game Mod Options screen
-     * as well as the Mods list screen, or only from the Mods list screen. Setting this flag to true will disable editing of
+     * as well as the Mods list screen, or only from the Mods list screen. Setting this flag to {@code true} will disable editing of
      * this property while a world is running.
      */
     public boolean requiresWorldRestart()
@@ -312,7 +312,7 @@ public class Property
 
     /**
      * Gets whether or not this Property should be allowed to show on config GUIs.
-     * Defaults to true unless set to false.
+     * Defaults to {@code true} unless set to false.
      */
     public boolean showInGui()
     {
@@ -321,7 +321,7 @@ public class Property
 
     /**
      * Sets whether or not this Property requires Minecraft to be restarted when changed.
-     * Defaults to false. Setting this flag to true will also disable editing of
+     * Defaults to false. Setting this flag to {@code true} will also disable editing of
      * this property while a world is running.
      */
     public Property setRequiresMcRestart(boolean requiresMcRestart)
@@ -332,7 +332,7 @@ public class Property
 
     /**
      * Gets whether or not this Property requires Minecraft to be restarted when changed.
-     * Defaults to false unless set to true.
+     * Defaults to {@code false} unless set to true.
      */
     public boolean requiresMcRestart()
     {
@@ -720,7 +720,7 @@ public class Property
 
     /**
      * Checks if the current value stored in this property can be converted to an integer.
-     * @return True if the type of the Property is an Integer
+     * @return {@code true} if the type of the Property is an Integer
      */
     public boolean isIntValue()
     {
@@ -768,7 +768,7 @@ public class Property
 
     /**
      * Checks if the current value stored in this property can be converted to a long.
-     * @return True if the type of the Property is an Long
+     * @return {@code true} if the type of the Property is an Long
      */
     public boolean isLongValue()
     {
@@ -823,7 +823,7 @@ public class Property
     /**
      * Checks if the current value held by this property is a valid boolean value.
      *
-     * @return True if it is a boolean value
+     * @return {@code true} if it is a boolean value
      */
     public boolean isBooleanValue()
     {
@@ -832,7 +832,7 @@ public class Property
 
     /**
      * Checks if the current value held by this property is a valid double value.
-     * @return True if the value can be converted to an double
+     * @return {@code true} if the value can be converted to an double
      */
     public boolean isDoubleValue()
     {
@@ -920,7 +920,7 @@ public class Property
 
     /**
      * Checks if all of the current values stored in this property can be converted to an integer.
-     * @return True if the type of the Property is an Integer List
+     * @return {@code true} if the type of the Property is an Integer List
      */
     public boolean isIntList()
     {
@@ -969,7 +969,7 @@ public class Property
 
     /**
      * Checks if all of current values stored in this property can be converted to a boolean.
-     * @return True if it is a boolean value
+     * @return {@code true} if it is a boolean value
      */
     public boolean isBooleanList()
     {
@@ -1015,7 +1015,7 @@ public class Property
 
     /**
      * Checks if all of the current values stored in this property can be converted to a double.
-     * @return True if the type of the Property is a double List
+     * @return {@code true} if the type of the Property is a double List
      */
     public boolean isDoubleList()
     {
@@ -1060,7 +1060,7 @@ public class Property
      * This is useful for mods who auto-assign their blocks to determine if the ID returned is
      * a configured one, or a automatically generated one.
      *
-     * @return True if this property was loaded from the config file with a value
+     * @return {@code true} if this property was loaded from the config file with a value
      */
     public boolean wasRead()
     {
@@ -1080,7 +1080,7 @@ public class Property
     /**
      * Returns whether or not this Property is a list/array.
      *
-     * @return true if this Property is a list/array, false otherwise
+     * @return {@code true} if this Property is a list/array, {@code false} otherwise
      */
     public boolean isList()
     {
@@ -1090,7 +1090,7 @@ public class Property
     /**
      * Gets the changed status of this Property.
      *
-     * @return true if this Property has changed, false otherwise
+     * @return {@code true} if this Property has changed, {@code false} otherwise
      */
     public boolean hasChanged(){ return changed; }
     void resetChangedState(){ changed = false; }

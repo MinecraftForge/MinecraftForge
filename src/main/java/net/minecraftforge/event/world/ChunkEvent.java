@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * {@link #chunk} contains the Chunk this event is affecting.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 public class ChunkEvent extends WorldEvent
 {
@@ -36,11 +36,11 @@ public class ChunkEvent extends WorldEvent
      * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
      * Chunk.onChunkLoad(). <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Load extends ChunkEvent
     {
@@ -55,11 +55,11 @@ public class ChunkEvent extends WorldEvent
      * This event is fired during chunk unloading in <br>
      * Chunk.onChunkUnload(). <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Unload extends ChunkEvent
     {

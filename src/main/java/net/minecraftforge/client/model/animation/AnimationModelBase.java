@@ -29,7 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 /**
- * ModelBase that works with the Forge model system and animations.
+ * ModelBase that works with the Forge model system and animations.<br>
  * Some quirks are still left, deprecated for the moment.
  */
 @Deprecated

@@ -202,7 +202,7 @@
 +     * @param x X Position
 +     * @param y Y Position
 +     * @param z Z Position
-+     * @return True to 'spin' the cursor
++     * @return {@code true} to 'spin' the cursor
 +     */
 +    public boolean shouldMapSpin(String entity, double x, double y, double z)
 +    {

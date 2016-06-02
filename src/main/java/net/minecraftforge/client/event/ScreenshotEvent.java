@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * This event is fired before and after a screenshot is taken
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
- * This event is {@link Cancelable}
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
  *
  * {@link #screenshotFile} contains the file the screenshot will be/was saved to
  * {@link #image} contains the {@link BufferedImage} that will be saved

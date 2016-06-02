@@ -8,12 +8,12 @@ import net.minecraft.client.settings.KeyBinding;
  */
 public interface IKeyConflictContext {
     /**
-     * @return true if conditions are met to activate {@link KeyBinding}s with this context
+     * @return {@code true} if conditions are met to activate {@link KeyBinding}s with this context
      */
     boolean isActive();
 
     /**
-     * @return true if the other context can have {@link KeyBinding} conflicts with this one.
+     * @return {@code true} if the other context can have {@link KeyBinding} conflicts with this one.
      * This will be called on both contexts to check for conflicts.
      */
     boolean conflicts(IKeyConflictContext other);

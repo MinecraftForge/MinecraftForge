@@ -803,7 +803,7 @@
 +     *
 +     * @param pos Block Position
 +     * @param side The Side in question
-+     * @return True if the side is solid
++     * @return {@code true} if the side is solid
 +    */
 +    public boolean isSideSolid(BlockPos pos, EnumFacing side)
 +    {
@@ -817,7 +817,7 @@
 +     * @param pos Block Position
 +     * @param side The Side in question
 +     * @param _default The default to return if the block doesn't exist.
-+     * @return True if the side is solid
++     * @return {@code true} if the side is solid
 +     */
 +    @Override
 +    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default)

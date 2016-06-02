@@ -7,9 +7,14 @@ import net.minecraft.item.ItemStack;
 /**
  * 
  * AnvilUpdateEvent is fired when a player places items in both the left and right slots of a anvil.
+ * <ul>
+ * <li>
  * If the event is canceled, vanilla behavior will not run, and the output will be set to null.
+ * <li>
  * If the event is not canceled, but the output is not null, it will set the output and not run vanilla behavior.
+ * <li>
  * if the output is null, and the event is not canceled, vanilla behavior will execute.
+ * </ul>
  */
 @Cancelable
 public class AnvilUpdateEvent extends Event

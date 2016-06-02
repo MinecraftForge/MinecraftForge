@@ -54,11 +54,11 @@
  
 +    /* ======================================== FORGE START =====================================*/
 +    /**
-+     * Return true if the rail can make corners.
++     * Return {@code true} if the rail can make corners.
 +     * Used by placement logic.
 +     * @param world The world.
 +     * @param pos Block's position in world
-+     * @return True if the rail can make corners.
++     * @return {@code true} if the rail can make corners.
 +     */
 +    public boolean isFlexibleRail(IBlockAccess world, BlockPos pos)
 +    {
@@ -66,11 +66,11 @@
 +    }
 +
 +    /**
-+     * Returns true if the rail can make up and down slopes.
++     * Returns {@code true} if the rail can make up and down slopes.
 +     * Used by placement logic.
 +     * @param world The world.
 +     * @param pos Block's position in world
-+     * @return True if the rail can make slopes.
++     * @return {@code true} if the rail can make slopes.
 +     */
 +    public boolean canMakeSlopes(IBlockAccess world, BlockPos pos)
 +    {
@@ -81,12 +81,12 @@
 +     * Return the rail's direction.
 +     * Can be used to make the cart think the rail is a different shape,
 +     * for example when making diamond junctions or switches.
-+     * The cart parameter will often be null unless it it called from EntityMinecart.
++     * The cart parameter will often be {@code null} unless it it called from EntityMinecart.
 +     *
 +     * @param world The world.
 +     * @param pos Block's position in world
 +     * @param state The BlockState
-+     * @param cart The cart asking for the metadata, null if it is not called by EntityMinecart.
++     * @param cart The cart asking for the metadata, {@code null} if it is not called by EntityMinecart.
 +     * @return The direction.
 +     */
 +    public EnumRailDirection getRailDirection(IBlockAccess world, BlockPos pos, IBlockState state, @javax.annotation.Nullable net.minecraft.entity.item.EntityMinecart cart)
@@ -121,12 +121,12 @@
 +     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
 +     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
 +     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
-+     * The method should return true if the rotation was successful though.
++     * The method should return {@code true} if the rotation was successful though.
 +     *
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @param axis The axis to rotate around
-+     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     * @return {@code true} if the rotation was successful, {@code false} if the rotation failed, or is not possible
 +     */
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {

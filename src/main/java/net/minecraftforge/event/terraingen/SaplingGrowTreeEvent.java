@@ -18,9 +18,9 @@ import net.minecraftforge.event.world.WorldEvent;
  * {@link #pos} contains the coordinates of the growing sapling. <br>
  * {@link #rand} contains an instance of Random for use. <br>
  * <br>
- * This event is not {@link Cancelable}.<br>
+ * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * <br>
- * This event has a result. {@link HasResult} <br>
+ * This event has a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
  * This result determines if the sapling is allowed to grow. <br>
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>

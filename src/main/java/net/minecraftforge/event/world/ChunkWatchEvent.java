@@ -15,7 +15,7 @@ import net.minecraft.util.math.ChunkPos;
  * {@link #chunk} contains the ChunkCoordIntPair of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 public class ChunkWatchEvent extends Event
 {
@@ -43,11 +43,11 @@ public class ChunkWatchEvent extends Event
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
      * {@link EntityPlayerMP#onUpdate()}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Watch extends ChunkWatchEvent
     {
@@ -59,11 +59,11 @@ public class ChunkWatchEvent extends Event
      * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
      * {@link PlayerChunkMapEntry#removePlayer(EntityPlayerMP)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class UnWatch extends ChunkWatchEvent
     {

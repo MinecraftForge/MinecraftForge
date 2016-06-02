@@ -102,7 +102,7 @@ public class GuiSlider extends GuiButtonExt
     }
 
     /**
-     * Returns true if the mouse has been pressed on this control. Equivalent of MouseListener.mousePressed(MouseEvent
+     * Returns {@code true} if the mouse has been pressed on this control. Equivalent of MouseListener.mousePressed(MouseEvent
      * e).
      */
     @Override

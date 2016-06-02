@@ -13,12 +13,12 @@ import net.minecraft.entity.EntityLivingBase;
  * <br>
  * {@link #amount} contains the amount of healing done to the Entity that was healed. <br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * If this event is canceled, the Entity is not healed.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
 public class LivingHealEvent extends LivingEvent

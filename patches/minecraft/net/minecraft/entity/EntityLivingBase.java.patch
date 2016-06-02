@@ -218,7 +218,7 @@
 +    }
 +
 +    /**
-+     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
++     * Returns {@code true} if the entity's rider (EntityPlayer) should face forward when mounted.
 +     * currently only used in vanilla code by pigs.
 +     *
 +     * @param player The player who is riding the entity.

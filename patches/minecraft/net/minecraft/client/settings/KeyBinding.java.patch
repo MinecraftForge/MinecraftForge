@@ -147,7 +147,7 @@
 +    }
 +
 +	/**
-+     * Returns true when the other keyBinding conflicts with this one
++     * Returns {@code true} when the other keyBinding conflicts with this one
 +     */
 +    public boolean conflicts(KeyBinding other)
 +    {
@@ -168,7 +168,7 @@
 +    }
 +
 +    /**
-+     * Returns true when one of the bindings' key codes conflicts with the other's modifier.
++     * Returns {@code true} when one of the bindings' key codes conflicts with the other's modifier.
 +     */
 +    public boolean hasKeyCodeModifierConflict(KeyBinding other)
 +    {

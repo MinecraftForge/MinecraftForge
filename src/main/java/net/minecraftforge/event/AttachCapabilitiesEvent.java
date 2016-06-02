@@ -10,10 +10,10 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
- * is created. Allowing for the attachment of arbitrary capability providers.
- *
- * Please note that as this is fired for ALL object creations efficient code is recommended.
+ * Fired whenever an object with Capabilities support {currently {@link net.minecraft.tileentity.TileEntity}/{@link net.minecraft.item.Item}/{@link net.minecraft.entity.Entity})<br>
+ * is created. Allowing for the attachment of arbitrary capability providers.<br>
+ *<br>
+ * Please note that as this is fired for <b>ALL</b> object creations efficient code is recommended.<br>
  * And if possible use one of the sub-classes to filter your intended objects.
  */
 public class AttachCapabilitiesEvent extends Event
@@ -35,8 +35,8 @@ public class AttachCapabilitiesEvent extends Event
     }
 
     /**
-     * Adds a capability to be attached to this object.
-     * Keys MUST be unique, it is suggested that you set the domain to your mod ID.
+     * Adds a capability to be attached to this object.<br>
+     * Keys MUST be unique, it is suggested that you set the domain to your mod ID.<br>
      * If the capability is an instance of INBTSerializable, this key will be used when serializing this capability.
      *
      * @param key The name of owner of this capability provider.

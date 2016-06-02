@@ -480,7 +480,7 @@
 +     * A dimension aware version of setSpawnChunk.
 +     * This functions identically, but allows you to specify which dimension to affect, rather than affecting the player's current dimension.
 +     * @param pos The spawn point to set as the player-specific spawn point for the dimension
-+     * @param forced Whether or not the respawn code should check for a bed at this location (true means it won't check for a bed)
++     * @param forced Whether or not the respawn code should check for a bed at this location ({@code true} means it won't check for a bed)
 +     * @param dimension Which dimension to apply the player-specific respawn point to
 +     */
 +    public void setSpawnChunk(BlockPos pos, boolean forced, int dimension)

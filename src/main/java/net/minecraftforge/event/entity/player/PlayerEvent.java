@@ -41,9 +41,9 @@ public class PlayerEvent extends LivingEvent
      * {@link #state} contains the {@link IBlockState} that is being checked for harvesting. <br>
      * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
@@ -76,10 +76,10 @@ public class PlayerEvent extends LivingEvent
      * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
      * {@link #pos} contains the coordinates at which this event is occurring. Y value -1 means location is unknown.<br>
      * <br>
-     * This event is {@link Cancelable}.<br>
+     * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * If it is canceled, the player is unable to break the block.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
@@ -117,9 +117,9 @@ public class PlayerEvent extends LivingEvent
      * {@link #username} contains the username of the player.
      * {@link #displayname} contains the display name of the player.
      * <br>
-     * This event is not {@link Cancelable}.
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
      * <br>
-     * This event does not have a result. {@link HasResult}
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
@@ -175,8 +175,8 @@ public class PlayerEvent extends LivingEvent
         }
 
         /**
-         * True if this event was fired because the player died.
-         * False if it was fired because the entity switched dimensions.
+         * {@code true} if this event was fired because the player died.
+         * {@code false} if it was fired because the entity switched dimensions.
          */
         public boolean isWasDeath()
         {

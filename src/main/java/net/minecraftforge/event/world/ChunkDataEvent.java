@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * {@link #data} contains the NBTTagCompound containing the chunk data for this event.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 public class ChunkDataEvent extends ChunkEvent
 {
@@ -37,11 +37,11 @@ public class ChunkDataEvent extends ChunkEvent
      * This event is fired during chunk loading in
      * {@link net.minecraftforge.common.chunkio.ChunkIOProvider#syncCallback()}.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Load extends ChunkDataEvent
     {
@@ -56,11 +56,11 @@ public class ChunkDataEvent extends ChunkEvent
      * This event is fired during chunk saving in 
      * {@link AnvilChunkLoader#saveChunk(World, Chunk)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Save extends ChunkDataEvent
     {

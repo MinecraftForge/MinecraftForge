@@ -303,7 +303,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
      * Aliased names will be resolved as well.
      *
      * @param name Object name to check.
-     * @return true if a matching entry was found.
+     * @return {@code true} if a matching entry was found.
      */
     @Override
     public boolean containsKey(ResourceLocation name)

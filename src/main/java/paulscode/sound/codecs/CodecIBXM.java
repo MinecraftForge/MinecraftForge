@@ -108,12 +108,12 @@ public class CodecIBXM implements ICodec
     private static final boolean XXX = false;
 
 /**
- * True if there is no more data to read in.
+ * {@code true} if there is no more data to read in.
  */
     private boolean endOfStream = false;
 
 /**
- * True if the stream has finished initializing.
+ * {@code true} if the stream has finished initializing.
  */
     private boolean initialized = false;
 
@@ -123,7 +123,7 @@ public class CodecIBXM implements ICodec
     private AudioFormat myAudioFormat = null;
 
 /**
- * True if the using library requires data read by this codec to be
+ * {@code true} if the using library requires data read by this codec to be
  * reverse-ordered before returning it from methods read() and readAll().
  */
     private boolean reverseBytes = false;
@@ -168,7 +168,7 @@ public class CodecIBXM implements ICodec
  * libraries require to be reversed.  Derivatives of the Library and Source
  * classes for audio libraries which require this type of data to be reversed
  * will call the reverseByteOrder() method.
- * @param b True if the calling audio library requires byte-reversal.
+ * @param b {@code true} if the calling audio library requires byte-reversal.
  */
     @Override
     public void reverseByteOrder( boolean b )
@@ -180,7 +180,7 @@ public class CodecIBXM implements ICodec
  * Prepares an audio stream to read from.  If another stream is already opened,
  * it will be closed and a new audio stream opened in its place.
  * @param url URL to an audio file to stream from.
- * @return False if an error occurred or if end of stream was reached.
+ * @return {@code false} if an error occurred or if end of stream was reached.
  */
     @Override
     public boolean initialize( URL url )
@@ -264,8 +264,8 @@ public class CodecIBXM implements ICodec
     }
 
 /**
- * Returns false if the stream is busy initializing.
- * @return True if steam is initialized.
+ * Returns {@code false} if the stream is busy initializing.
+ * @return {@code true} if steam is initialized.
  */
     @Override
     public boolean initialized()
@@ -395,8 +395,8 @@ public class CodecIBXM implements ICodec
     }
 
 /**
- * Returns false if there is still more data available to be read in.
- * @return True if end of stream was reached.
+ * Returns {@code false} if there is still more data available to be read in.
+ * @return {@code true} if end of stream was reached.
  */
     @Override
     public boolean endOfStream()
@@ -472,7 +472,7 @@ public class CodecIBXM implements ICodec
  * Internal method for synchronizing access to the boolean 'initialized'.
  * @param action GET or SET.
  * @param value New value if action == SET, or XXX if action == GET.
- * @return True if steam is initialized.
+ * @return {@code true} if steam is initialized.
  */
     private synchronized boolean initialized( boolean action, boolean value )
     {
@@ -485,7 +485,7 @@ public class CodecIBXM implements ICodec
  * Internal method for synchronizing access to the boolean 'endOfStream'.
  * @param action GET or SET.
  * @param value New value if action == SET, or XXX if action == GET.
- * @return True if end of stream was reached.
+ * @return {@code true} if end of stream was reached.
  */
     private synchronized boolean endOfStream( boolean action, boolean value )
     {

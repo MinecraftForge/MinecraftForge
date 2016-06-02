@@ -43,9 +43,9 @@ public class WorldEvent extends Event
      * {@link net.minecraftforge.common.DimensionManager#initDimension(int)},
      * and {@link net.minecraftforge.common.ForgeInternalHandler#onDimensionLoad(Load)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
@@ -62,9 +62,9 @@ public class WorldEvent extends Event
      * {@link net.minecraftforge.common.DimensionManager#unloadWorlds(java.util.Hashtable)},
      * {@link net.minecraftforge.common.ForgeInternalHandler#onDimensionUnload(Unload)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
@@ -79,9 +79,9 @@ public class WorldEvent extends Event
      * {@link net.minecraft.world.WorldServer#saveAllChunks(boolean, net.minecraft.util.IProgressUpdate)},
      * {@link net.minecraftforge.common.ForgeInternalHandler#onDimensionSave(Save)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/

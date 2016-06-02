@@ -4,7 +4,7 @@
  
      public NBTTagCompound func_143021_a(int p_143021_1_, int p_143021_2_)
      {
-+        if (MapGenStructureIO.func_143033_a(this) == null) // This is just a more friendly error instead of the 'Null String' below
++        if (MapGenStructureIO.func_143033_a(this) == null) // This is just a more friendly error instead of the '{@code null} String' below
 +        {
 +            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +        }

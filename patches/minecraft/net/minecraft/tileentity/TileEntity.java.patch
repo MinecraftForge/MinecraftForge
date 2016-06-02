@@ -114,7 +114,7 @@
 +     * @param pos Tile's world position
 +     * @param oldState The old ID of the block
 +     * @param newState The new ID of the block (May be the same)
-+     * @return true forcing the invalidation of the existing TE, false not to invalidate the existing TE
++     * @return {@code true} forcing the invalidation of the existing TE, {@code false} not to invalidate the existing TE
 +     */
 +    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
 +    {
@@ -131,11 +131,11 @@
 +     */
 +    public static final net.minecraft.util.math.AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.math.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 +    /**
-+     * Return an {@link net.minecraft.util.math.AxisAlignedBB} that controls the visible scope of a {@link net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer} associated with this {@link TileEntity}
-+     * Defaults to the collision bounding box {@link IBlockState#getSelectedBoundingBox(World, BlockPos)} associated with the block
++     * Return an {@link net.minecraft.util.math.AxisAlignedBB} that controls the visible scope of a {@link net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer} associated with this {@link TileEntity}<br>
++     * Defaults to the collision bounding box {@link IBlockState#getCollisionBoundingBox(World, BlockPos)} associated with the block<br>
 +     * at this location.
 +     *
-+     * @return an appropriately size {@link net.minecraft.util.math.AxisAlignedBB} for the {@link TileEntity}
++     * @return An appropriately size {@link net.minecraft.util.math.AxisAlignedBB} for the {@link TileEntity}.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox()
@@ -176,7 +176,7 @@
 +    /**
 +     * Checks if this tile entity knows how to render its 'breaking' overlay effect.
 +     * If this returns true, The TileEntitySpecialRenderer will be called again with break progress set.
-+     * @return True to re-render tile with breaking effect.
++     * @return {@code true} to re-render tile with breaking effect.
 +     */
 +    public boolean canRenderBreaking()
 +    {
@@ -207,7 +207,7 @@
 +    /**
 +     * Determines if the player can overwrite the NBT data of this tile entity while they place it using a ItemStack.
 +     * Added as a fix for MC-75630 - Exploit with signs and command blocks
-+     * @return True to prevent NBT copy, false to allow.
++     * @return {@code true} to prevent NBT copy, {@code false} to allow.
 +     */
 +    public boolean restrictNBTCopy()
 +    {

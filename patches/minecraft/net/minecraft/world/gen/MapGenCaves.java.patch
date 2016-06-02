@@ -87,7 +87,7 @@
 +     * @param z local Z position
 +     * @param chunkX Chunk X position
 +     * @param chunkZ Chunk Y position
-+     * @param foundTop True if we've encountered the biome's top block. Ideally if we've broken the surface.
++     * @param foundTop {@code true} if we've encountered the biome's top block. Ideally if we've broken the surface.
 +     * @param state The current state of the current block
 +     * @param up The current state of the block on top of the current block
 +     */

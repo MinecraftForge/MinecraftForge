@@ -59,7 +59,7 @@ public class ConfigChangedEvent extends Event
     }
 
     /**
-     * Will be set to true if any elements were changed that require a restart of Minecraft.
+     * Will be set to {@code true} if any elements were changed that require a restart of Minecraft.
      */
     public boolean isRequiresMcRestart()
     {

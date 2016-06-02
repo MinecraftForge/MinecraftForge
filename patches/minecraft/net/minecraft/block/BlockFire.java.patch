@@ -199,7 +199,7 @@
 +     * @param world The current world
 +     * @param pos Block position
 +     * @param face The side the fire is coming from
-+     * @return True if the face can catch fire.
++     * @return {@code true} if the face can catch fire.
 +     */
 +    public boolean canCatchFire(IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {

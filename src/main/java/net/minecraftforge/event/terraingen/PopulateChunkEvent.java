@@ -52,9 +52,9 @@ public class PopulateChunkEvent extends ChunkGeneratorEvent
      * {@link ChunkProviderOverworld#populate(int, int)},
      * and {@link ChunkProviderHell#populate(int, int)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
@@ -73,9 +73,9 @@ public class PopulateChunkEvent extends ChunkGeneratorEvent
      * {@link ChunkProviderOverworld#populate(int, int)},
      * and {@link ChunkProviderHell#populate(int, int)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
@@ -96,9 +96,9 @@ public class PopulateChunkEvent extends ChunkGeneratorEvent
      * <br>
      * {@link #type} contains the enum value for the terrain feature being generated. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event has a result. {@link HasResult} <br>
+     * This event has a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * This result determines if the chunk is populated with the terrain feature. <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>

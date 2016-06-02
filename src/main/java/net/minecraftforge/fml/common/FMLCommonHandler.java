@@ -131,7 +131,7 @@ public class FMLCommonHandler
     /**
      * The FML event bus. Subscribe here for FML related events
      *
-     * @deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
+     * @deprecated Use {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} they're the same thing now
      * @return the event bus
      */
     @Deprecated
@@ -605,7 +605,7 @@ public class FMLCommonHandler
      *
      * @param packet Handshake Packet
      * @param manager Network connection
-     * @return True to allow connection, otherwise False.
+     * @return {@code true} to allow connection, otherwise False.
      */
     public boolean handleServerHandshake(C00Handshake packet, NetworkManager manager)
     {

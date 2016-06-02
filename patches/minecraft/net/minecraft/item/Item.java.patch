@@ -71,7 +71,7 @@
 +
 +    /**
 +     * Called when a player drops the item into the world,
-+     * returning false from this will prevent the item from
++     * returning {@code false} from this will prevent the item from
 +     * being removed from the players inventory and spawning
 +     * in the world
 +     *
@@ -114,7 +114,7 @@
 +    protected boolean canRepair = true;
 +    /**
 +     * Called by CraftingManager to determine if an item is reparable.
-+     * @return True if reparable
++     * @return {@code true} if reparable
 +     */
 +    public boolean isRepairable()
 +    {
@@ -132,14 +132,14 @@
 +    }
 +
 +    /**
-+     * Called before a block is broken.  Return true to prevent default block harvesting.
++     * Called before a block is broken.  Return {@code true} to prevent default block harvesting.
 +     *
 +     * Note: In SMP, this is called on both client and server sides!
 +     *
 +     * @param itemstack The current ItemStack
 +     * @param pos Block's position in world
 +     * @param player The Player that is wielding the item
-+     * @return True to prevent harvesting, false to continue as normal
++     * @return {@code true} to prevent harvesting, {@code false} to continue as normal
 +     */
 +    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player)
 +    {
@@ -158,13 +158,13 @@
 +
 +    /**
 +     * Called when the player Left Clicks (attacks) an entity.
-+     * Processed before damage is done, if return value is true further processing is canceled
++     * Processed before damage is done, if return value is {@code true} further processing is canceled
 +     * and the entity is not attacked.
 +     *
 +     * @param stack The Item being used
 +     * @param player The player that is attacking
 +     * @param entity The entity being attacked
-+     * @return True to cancel the rest of the interaction.
++     * @return {@code true} to cancel the rest of the interaction.
 +     */
 +    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
 +    {
@@ -190,7 +190,7 @@
 +    /**
 +     * ItemStack sensitive version of hasContainerItem
 +     * @param stack The current item stack
-+     * @return True if this item has a 'container'
++     * @return {@code true} if this item has a 'container'
 +     */
 +    public boolean hasContainerItem(ItemStack stack)
 +    {
@@ -212,11 +212,11 @@
 +
 +    /**
 +     * Determines if this Item has a special entity for when they are in the world.
-+     * Is called when a EntityItem is spawned in the world, if true and Item#createCustomEntity
++     * Is called when a EntityItem is spawned in the world, if {@code true} and Item#createCustomEntity
 +     * returns non null, the EntityItem will be destroyed and the new Entity will be added to the world.
 +     *
 +     * @param stack The current item stack
-+     * @return True of the item has a custom entity, If true, Item#createCustomEntity will be called
++     * @return {@code true} of the item has a custom entity, If true, Item#createCustomEntity will be called
 +     */
 +    public boolean hasCustomEntity(ItemStack stack)
 +    {
@@ -225,7 +225,7 @@
 +
 +    /**
 +     * This function should return a new entity to replace the dropped item.
-+     * Returning null here will not kill the EntityItem and will leave it to function normally.
++     * Returning {@code null} here will not kill the EntityItem and will leave it to function normally.
 +     * Called when the item it placed in a world.
 +     *
 +     * @param world The world object
@@ -243,7 +243,7 @@
 +     * control over the update of the item without having to write a subclass.
 +     *
 +     * @param entityItem The entity Item
-+     * @return Return true to skip any further update code.
++     * @return Return {@code true} to skip any further update code.
 +     */
 +    public boolean onEntityItemUpdate(net.minecraft.entity.item.EntityItem entityItem)
 +    {
@@ -301,7 +301,7 @@
 +     * @param stack The ItemStack
 +     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
 +     * @param entity The entity trying to equip the armor
-+     * @return True if the given ItemStack can be inserted in the slot
++     * @return {@code true} if the given ItemStack can be inserted in the slot
 +     */
 +    public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
 +    {
@@ -325,13 +325,13 @@
 +     * should be use for the currently equipped item.
 +     * This will only be called on instances of ItemArmor.
 +     *
-+     * Returning null from this function will use the default value.
++     * Returning {@code null} from this function will use the default value.
 +     *
 +     * @param stack ItemStack for the equipped armor
 +     * @param entity The entity wearing the armor
 +     * @param slot The slot the armor is in
-+     * @param type The subtype, can be null or "overlay"
-+     * @return Path of texture to bind, or null to use default
++     * @param type The subtype, can be {@code null} or "overlay"
++     * @return Path of texture to bind, or {@code null} to use default
 +     */
 +    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
 +    {
@@ -340,10 +340,10 @@
 +
 +    /**
 +     * Returns the font renderer used to render tooltips and overlays for this item.
-+     * Returning null will use the standard font renderer.
++     * Returning {@code null} will use the standard font renderer.
 +     *
 +     * @param stack The current item stack
-+     * @return A instance of FontRenderer or null to use default
++     * @return A instance of FontRenderer or {@code null} to use default
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
@@ -371,7 +371,7 @@
 +     *
 +     * @param entityLiving The entity swinging the item.
 +     * @param stack The Item stack
-+     * @return True to cancel any further processing by EntityLiving
++     * @return {@code true} to cancel any further processing by EntityLiving
 +     */
 +    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
 +    {
@@ -417,7 +417,7 @@
 +     * But modders can use this for any data they wish.
 +     *
 +     * @param stack The current Item Stack
-+     * @return True if it should render the 'durability' bar.
++     * @return {@code true} if it should render the 'durability' bar.
 +     */
 +    public boolean showDurabilityBar(ItemStack stack)
 +    {
@@ -476,7 +476,7 @@
 +     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
 +     * @param state The block trying to harvest
 +     * @param stack The itemstack used to harvest the block
-+     * @return true if can harvest the block
++     * @return {@code true} if can harvest the block
 +     */
 +    public boolean canHarvestBlock(IBlockState state, ItemStack stack)
 +    {
@@ -548,7 +548,7 @@
 +    /**
 +     * Whether this Item can be used as a payment to activate the vanilla beacon.
 +     * @param stack the ItemStack
-+     * @return true if this Item can be used
++     * @return {@code true} if this Item can be used
 +     */
 +    public boolean isBeaconPayment(ItemStack stack)
 +    {
@@ -562,7 +562,7 @@
 +     * @param slotChanged If the current equipped slot was changed,
 +     *                    Vanilla does not play the animation if you switch between two
 +     *                    slots that hold the exact same item.
-+     * @return True to play the item change animation
++     * @return {@code true} to play the item change animation
 +     */
 +    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
 +    {
@@ -572,7 +572,7 @@
 +    /**
 +     * Called from ItemStack.setItem, will hold extra data for the life of this ItemStack.
 +     * Can be retrieved from stack.getCapabilities()
-+     * The NBT can be null if this is not called from readNBT or if the item the stack is
++     * The NBT can be {@code null} if this is not called from readNBT or if the item the stack is
 +     * changing FROM is different then this item, or the previous item had no capabilities.
 +     *
 +     * This is called BEFORE the stacks item is set so you can use stack.getItem() to see the OLD item.

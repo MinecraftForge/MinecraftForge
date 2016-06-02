@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
- * This event is fired whenever a player begins using a bow in
+ * This event is fired whenever a player begins using a bow in<br>
  * {@link ItemBow#onItemRightClick(ItemStack, World, EntityPlayer, EnumHand)}.<br>
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.

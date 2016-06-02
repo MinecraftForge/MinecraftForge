@@ -156,7 +156,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         /**
          * DENY: Block will never be used.
-         * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraft.item.Item#doesSneakBypassUse}).
+         * DEFAULT: Default behaviour (sneak will not use block, unless all items return {@code true} in {@link net.minecraft.item.Item#doesSneakBypassUse}).
          * ALLOW: Block will always be used, regardless of sneaking and doesSneakBypassUse.
          */
         public void setUseBlock(Result triggerBlock)

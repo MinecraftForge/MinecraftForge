@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1143 @@
+@@ -887,6 +906,1185 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -229,19 +229,19 @@
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param entity The entity trying to use the ladder, CAN be null.
-+     * @return True if the block should act like a ladder
++     * @return {@code true} if the block should act like a ladder
 +     */
 +    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) { return false; }
 +
 +    /**
-+     * Return true if the block is a normal, solid cube.  This
-+     * determines indirect power state, entity ejection from blocks, and a few
++     * Return {@code true} if the block is a normal, solid cube.<br>
++     * This determines indirect power state, entity ejection from blocks, and a few<br>
 +     * others.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True if the block is a full cube
++     * @return {@code true} if the block is a full cube
 +     */
 +    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -249,16 +249,16 @@
 +    }
 +
 +    /**
-+     * Check if the face of a block should block rendering.
-+     *
-+     * Faces which are fully opaque should return true, faces with transparency
-+     * or faces which do not span the full size of the block should return false.
++     * Check if the face of a block should block rendering.<br>
++     * <br>
++     * Faces which are fully opaque should return {@code true}, faces with transparency<br>
++     * or faces which do not span the full size of the block should return {@code false}.
 +     *
 +     * @param state The current block state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param face The side to check
-+     * @return True if the block is opaque on the specified side.
++     * @return {@code true} if the block is opaque on the specified side.
 +     */
 +    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
@@ -272,7 +272,7 @@
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param side The side to check
-+     * @return True if the block is solid on the specified side.
++     * @return {@code true} if the block is solid on the specified side.
 +     */
 +    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
 +    {
@@ -328,12 +328,12 @@
 +    }
 +
 +    /**
-+     * Determines if this block should set fire and deal fire damage
++     * Determines if this block should set fire and deal fire damage<br>
 +     * to entities coming into contact with it.
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True if the block should deal damage
++     * @return {@code true} if the block should deal damage
 +     */
 +    public boolean isBurning(IBlockAccess world, BlockPos pos)
 +    {
@@ -341,15 +341,15 @@
 +    }
 +
 +    /**
-+     * Determines this block should be treated as an air block
-+     * by the rest of the code. This method is primarily
-+     * useful for creating pure logic-blocks that will be invisible
++     * Determines this block should be treated as an air block<br>
++     * by the rest of the code. This method is primarily<br>
++     * useful for creating pure logic-blocks that will be invisible<br>
 +     * to the player and otherwise interact as air would.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True if the block considered air
++     * @return {@code true} if the block considered air
 +     */
 +    public boolean isAir(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -360,9 +360,9 @@
 +     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 +     *
 +     * @param world The current world
-+     * @param pos Block position of this block
++     * @param pos Block position in world
 +     * @param player The player damaging the block, may be null
-+     * @return True to spawn the drops
++     * @return {@code true} to spawn the drops
 +     */
 +    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player)
 +    {
@@ -370,23 +370,25 @@
 +    }
 +
 +    /**
-+     * Called when a player removes a block.  This is responsible for
-+     * actually destroying the block, and the block is intact at time of call.
-+     * This is called regardless of whether the player can harvest the block or
-+     * not.
-+     *
-+     * Return true if the block is actually destroyed.
-+     *
-+     * Note: When used in multiplayer, this is called on both client and
++     * Called when a player removes a block.  This is responsible for<br>
++     * actually destroying the block, and the block is intact at time of call.<br>
++     * This is called regardless of whether the player can harvest the block or<br>
++     * not.<br>
++     * <br>
++     * Return {@code true} if the block is actually destroyed.<br>
++     * <br>
++     * <b>
++     * Note: When used in multiplayer, this is called on both client and<br>
 +     * server sides!
++     * </b>
 +     *
 +     * @param state The current state.
 +     * @param world The current world
 +     * @param player The player damaging the block, may be null
 +     * @param pos Block position in world
-+     * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
++     * @param willHarvest {@code true} if Block.harvestBlock will be called after this, if the return in true.
 +     *        Can be useful to delay the destruction of tile entities till after harvestBlock
-+     * @return True if the block is actually destroyed.
++     * @return {@code true} if the block is actually destroyed.
 +     */
 +    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
 +    {
@@ -395,7 +397,7 @@
 +    }
 +
 +    /**
-+     * Chance that fire will spread and consume this block.
++     * Chance that fire will spread and consume this block.<br>
 +     * 300 being a 100% chance, 0, being a 0% chance.
 +     *
 +     * @param world The current world
@@ -411,11 +413,10 @@
 +    /**
 +     * Called when fire is updating, checks if a block face can catch fire.
 +     *
-+     *
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param face The face that the fire is coming from
-+     * @return True if the face can be on fire, false otherwise.
++     * @return {@code true} if the face can be on fire, {@code false} otherwise.
 +     */
 +    public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
@@ -423,7 +424,7 @@
 +    }
 +
 +    /**
-+     * Called when fire is updating on a neighbor block.
++     * Called when fire is updating on a neighbor block.<br>
 +     * The higher the number returned, the faster fire will spread around this block.
 +     *
 +     * @param world The current world
@@ -437,14 +438,14 @@
 +    }
 +
 +    /**
-+     * Currently only called by fire when it is on top of this block.
-+     * Returning true will prevent the fire from naturally dying during updating.
++     * Currently only called by fire when it is on top of this block.<br>
++     * Returning {@code true} will prevent the fire from naturally dying during updating.<br>
 +     * Also prevents firing from dying from rain.
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param side The face that the fire is coming from
-+     * @return True if this block sustains fire, meaning it will never go out.
++     * @return {@code true} if this block sustains fire, meaning it will never go out.
 +     */
 +    public boolean isFireSource(World world, BlockPos pos, EnumFacing side)
 +    {
@@ -461,14 +462,14 @@
 +
 +    private boolean isTileProvider = this instanceof ITileEntityProvider;
 +    /**
-+     * Called throughout the code as a replacement for block instanceof BlockContainer
-+     * Moving this to the Block base class allows for mods that wish to extend vanilla
-+     * blocks, and also want to have a tile entity on that block, may.
-+     *
-+     * Return true from this function to specify this block has a tile entity.
++     * Called throughout the code as a replacement for block instanceof {@link ITileEntityProvider}<br>
++     * Moving this to the Block base class allows for mods that wish to extend vanilla<br>
++     * blocks, and also want to have a tile entity on that block, may.<br>
++     * <br>
++     * Return {@code true} from this function to specify this block has a tile entity.
 +     *
 +     * @param state State of the current block
-+     * @return True if block has a tile entity, false otherwise
++     * @return {@code true} if block has a tile entity, {@code false} otherwise
 +     */
 +    public boolean hasTileEntity(IBlockState state)
 +    {
@@ -476,9 +477,9 @@
 +    }
 +
 +    /**
-+     * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
-+     * Return the same thing you would from that function.
-+     * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
++     * Called throughout the code as a replacement for {@link ITileEntityProvider#createNewTileEntity(World, int)}<br>
++     * Return the same thing you would from that function.<br>
++     * This will fall back to {@link ITileEntityProvider#createNewTileEntity(World, int)} if this block is a {@link ITileEntityProvider}.
 +     *
 +     * @param world The current world
 +     * @param state The current state of this block
@@ -494,7 +495,7 @@
 +    }
 +
 +    /**
-+     * State and fortune sensitive version, this replaces the old (int meta, Random rand)
++     * State and fortune sensitive version, this replaces the old (int meta, Random rand)<br>
 +     * version in 1.1.
 +     *
 +     * @param state Current state
@@ -535,13 +536,13 @@
 +    }
 +
 +    /**
-+     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
++     * Return {@code true} from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
 +     *
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @param state current block state
 +     * @param player The player doing the harvesting
-+     * @return True if the block can be directly harvested using silk touch
++     * @return {@code true} if the block can be directly harvested using silk touch
 +     */
 +    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player)
 +    {
@@ -552,14 +553,14 @@
 +    }
 +
 +    /**
-+     * Determines if a specified mob type can spawn on this block, returning false will
++     * Determines if a specified mob type can spawn on this block, returning {@code false} will<br>
 +     * prevent any mob from spawning on the block.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param type The Mob Category Type
-+     * @return True to allow a mob of the specified category to spawn, false to prevent it.
++     * @return {@code true} to allow a mob of the specified category to spawn, {@code false} to prevent it.
 +     */
 +    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, net.minecraft.entity.EntityLiving.SpawnPlacementType type)
 +    {
@@ -567,15 +568,15 @@
 +    }
 +
 +    /**
-+     * Determines if this block is classified as a Bed, Allowing
-+     * players to sleep in it, though the block has to specifically
++     * Determines if this block is classified as a Bed, Allowing<br>
++     * players to sleep in it, though the block has to specifically<br>
 +     * perform the sleeping functionality in it's activated event.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param player The player or camera entity, null in some cases.
-+     * @return True to treat this as a bed
++     * @param player The player or camera entity, {@code null} in some cases.
++     * @return {@code true} to treat this as a bed
 +     */
 +    public boolean isBed(IBlockState state, IBlockAccess world, BlockPos pos, Entity player)
 +    {
@@ -583,16 +584,17 @@
 +    }
 +
 +    /**
-+     * Returns the position that the player is moved to upon
++     * Returns the position that the player is moved to upon<br>
 +     * waking up, or respawning at the bed.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param player The player or camera entity, null in some cases.
++     * @param player The player or camera entity, {@code null} in some cases.
 +     * @return The spawn position
 +     */
-+    public BlockPos getBedSpawnPosition(IBlockState state, IBlockAccess world, BlockPos pos, EntityPlayer player)
++    @Nullable
++    public BlockPos getBedSpawnPosition(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EntityPlayer player)
 +    {
 +        if (world instanceof World)
 +            return BlockBed.func_176468_a((World)world, pos, 0);
@@ -604,10 +606,10 @@
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param player The player or camera entity, null in some cases.
-+     * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
++     * @param player The player or camera entity, {@code null} in some cases.
++     * @param occupied {@code true} if we are occupying the bed, or {@code false} if they are stopping use of the bed
 +     */
-+    public void setBedOccupied(IBlockAccess world, BlockPos pos, EntityPlayer player, boolean occupied)
++    public void setBedOccupied(IBlockAccess world, BlockPos pos, @Nullable EntityPlayer player, boolean occupied)
 +    {
 +        if (world instanceof World)
 +        {
@@ -619,8 +621,8 @@
 +    }
 +
 +    /**
-+     * Returns the direction of the block. Same values that
-+     * are returned by BlockDirectional
++     * Returns the direction of the block. Same values that<br>
++     * are returned by {@link BlockDirectional}.
 +     *
 +     * @param state The current state
 +     * @param world The current world
@@ -637,7 +639,7 @@
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True if the current block is the foot side of a bed.
++     * @return {@code true} if the current block is the foot side of a bed.
 +     */
 +    public boolean isBedFoot(IBlockAccess world, BlockPos pos)
 +    {
@@ -658,7 +660,7 @@
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return true if the presence this block can prevent leaves from decaying.
++     * @return {@code true} if the presence this block can prevent leaves from decaying.
 +     */
 +    public boolean canSustainLeaves(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -671,7 +673,7 @@
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return true if this block is considered leaves.
++     * @return {@code true} if this block is considered leaves.
 +     */
 +    public boolean isLeaves(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -684,7 +686,7 @@
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return true if this block can be replaced by growing leaves.
++     * @return {@code true} if this block can be replaced by growing leaves.
 +     */
 +    public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -692,10 +694,11 @@
 +    }
 +
 +    /**
++     * Return {@code true} if the block is wood/logs.
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return  true if the block is wood (logs)
++     * @return {@code true} if the block is wood/logs
 +     */
 +    public boolean isWood(IBlockAccess world, BlockPos pos)
 +    {
@@ -708,9 +711,9 @@
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param target The generic target block the gen is looking for, Standards define stone
-+     *      for overworld generation, and neatherack for the nether.
-+     * @return True to allow this block to be replaced by a ore
++     * @param target The generic target block the gen is looking for, Standards define stone<br>
++     *                            for overworld generation, and neatherack for the nether.
++     * @return {@code true} to allow this block to be replaced by a ore
 +     */
 +    public boolean isReplaceableOreGen(IBlockState state, IBlockAccess world, BlockPos pos, com.google.common.base.Predicate<IBlockState> target)
 +    {
@@ -718,7 +721,7 @@
 +    }
 +
 +    /**
-+     * Location sensitive version of getExplosionRestance
++     * Location sensitive version of {@link #getExplosionResistance(Entity)}.
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
@@ -732,8 +735,8 @@
 +    }
 +
 +    /**
-+     * Called when the block is destroyed by an explosion.
-+     * Useful for allowing the block to take into account tile entities,
++     * Called when the block is destroyed by an explosion.<br>
++     * Useful for allowing the block to take into account tile entities,<br>
 +     * state, etc. when exploded, before it is removed.
 +     *
 +     * @param world The current world
@@ -747,28 +750,28 @@
 +    }
 +
 +    /**
-+     * Determine if this block can make a redstone connection on the side provided,
++     * Determine if this block can make a redstone connection on the side provided,<br>
 +     * Useful to control which sides are inputs and outputs for redstone wires.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param side The side that is trying to make the connection, CAN BE NULL
-+     * @return True to make the connection
++     * @return {@code true} to make the connection
 +     */
-+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
++    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side)
 +    {
 +        return state.func_185897_m() && side != null;
 +    }
 +
 +    /**
-+     * Determines if a torch can be placed on the top surface of this block.
++     * Determines if a torch can be placed on the top surface of this block.<br>
 +     * Useful for creating your own block that torches can be on, such as fences.
 +     *
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True to allow the torch to be placed
++     * @return {@code true} to allow the torch to be placed
 +     */
 +    public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -787,7 +790,7 @@
 +     * Determines if this block should render in this pass.
 +     *
 +     * @param pass The pass in question
-+     * @return True to render
++     * @return {@code true} to render
 +     * /
 +    public boolean canRenderInPass(int pass)
 +    {
@@ -799,7 +802,7 @@
 +     * Called when a user uses the creative pick block button on this block
 +     *
 +     * @param target The full target the player is looking at
-+     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
++     * @return A ItemStack to add to the player's inventory, {@code null} if nothing should be added.
 +     */
 +    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 +    {
@@ -807,10 +810,10 @@
 +    }
 +
 +    /**
-+     * Used by getTopSolidOrLiquidBlock while placing biome decorations, villages, etc
++     * Used by {@link World#getTopSolidOrLiquidBlock(BlockPos)} while placing biome decorations, villages, etc<br>
 +     * Also used to determine if the player can spawn on this block.
 +     *
-+     * @return False to disallow spawning
++     * @return {@code false} to disallow spawning
 +     */
 +    public boolean isFoliage(IBlockAccess world, BlockPos pos)
 +    {
@@ -818,9 +821,9 @@
 +    }
 +
 +    /**
-+     * Allows a block to override the standard EntityLivingBase.updateFallState
-+     * particles, this is a server side method that spawns particles with
-+     * WorldServer.spawnParticle
++     * Allows a block to override the standard {@link EntityLivingBase#updateFallState(double, boolean, IBlockState, BlockPos)}<br>
++     * particles, this is a server side method that spawns particles with<br>
++     * {@link net.minecraft.world.WorldServer#spawnParticle}.
 +     *
 +     * @param state The current state of this block.
 +     * @param worldObj The current Server world
@@ -828,7 +831,7 @@
 +     * @param iblockstate State at the specific world/pos
 +     * @param entity the entity that hit landed on the block.
 +     * @param numberOfParticles that vanilla would have spawned.
-+     * @return True to prevent vanilla landing particles form spawning.
++     * @return {@code true} to prevent vanilla landing particles form spawning.
 +     */
 +    public boolean addLandingEffects(IBlockState state, net.minecraft.world.WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles )
 +    {
@@ -836,16 +839,16 @@
 +    }
 +
 +    /**
-+     * Spawn a digging particle effect in the world, this is a wrapper
-+     * around EffectRenderer.addBlockHitEffects to allow the block more
-+     * control over the particles. Useful when you have entirely different
++     * Spawn a digging particle effect in the world, this is a wrapper<br>
++     * around {@link net.minecraft.client.particle.ParticleManager#addBlockHitEffects} to allow the block more<br>
++     * control over the particles. Useful when you have entirely different<br>
 +     * texture sheets for different sides/locations in the world.
 +     *
 +     * @param state The current state
 +     * @param worldObj The current world
 +     * @param target The target the player is looking at {x/y/z/side/sub}
 +     * @param manager A reference to the current particle manager.
-+     * @return True to prevent vanilla digging particles form spawning.
++     * @return {@code true} to prevent vanilla digging particles form spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, net.minecraft.client.particle.ParticleManager manager)
@@ -854,15 +857,19 @@
 +    }
 +
 +    /**
-+     * Spawn particles for when the block is destroyed. Due to the nature
-+     * of how this is invoked, the x/y/z locations are not always guaranteed
-+     * to host your block. So be sure to do proper sanity checks before assuming
++     * Spawn particles for when the block is destroyed.<br>
++     * <br>
++     * <b>
++     * Note:
++     * Due to the nature of how this is invoked, the x/y/z locations are not always guaranteed<br>
++     * to host your block. So be sure to do proper sanity checks before assuming<br>
 +     * that the location is this block.
++     * </b>
 +     *
 +     * @param world The current world
 +     * @param pos Position to spawn the particle
 +     * @param manager A reference to the current particle manager.
-+     * @return True to prevent vanilla break particles from spawning.
++     * @return {@code true} to prevent vanilla break particles from spawning.
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public boolean addDestroyEffects(World world, BlockPos pos, net.minecraft.client.particle.ParticleManager manager)
@@ -871,22 +878,32 @@
 +    }
 +
 +    /**
-+     * Determines if this block can support the passed in plant, allowing it to be planted and grow.
++     * Determines if this block can support the passed in plant, allowing it to be planted and grow.<br>
++     * <br>
 +     * Some examples:
-+     *   Reeds check if its a reed, or if its sand/dirt/grass and adjacent to water
-+     *   Cacti checks if its a cacti, or if its sand
-+     *   Nether types check for soul sand
-+     *   Crops check for tilled soil
-+     *   Caves check if it's a solid surface
-+     *   Plains check if its grass or dirt
-+     *   Water check if its still water
++     * <ul>
++     * <li>
++     * Reeds check if its a reed, or if its sand/dirt/grass and adjacent to water
++     * <li>
++     * Cacti checks if its a cacti, or if its sand
++     * <li>
++     * Nether types check for soul sand
++     * <li>
++     * Crops check for tilled soil
++     * <li>
++     * Caves check if it's a solid surface
++     * <li>
++     * Plains check if its grass or dirt
++     * <li>
++     * Water check if its still water
++     * </ul>
 +     *
 +     * @param state The Current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @param direction The direction relative to the given position the plant wants to be, typically its UP
 +     * @param plantable The plant that wants to check
-+     * @return True to allow the plant to be planted/stay.
++     * @return {@code true} to allow the plant to be planted/stay.
 +     */
 +    public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, net.minecraftforge.common.IPlantable plantable)
 +    {
@@ -929,13 +946,15 @@
 +    }
 +
 +    /**
-+     * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
-+     * Modder may implement this for custom plants.
-+     * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,
-+     * so the source location is specified.
-+     * Currently this just changes the block to dirt if it was grass.
-+     *
++     * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.<br>
++     * Modder may implement this for custom plants.<br>
++     * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,<br>
++     * so the source location is specified.<br>
++     * Currently this just changes the block to dirt if it was grass.<br>
++     * <br>
++     * <b>
 +     * Note: This happens DURING the generation, the generation may not be complete when this is called.
++     * </b>
 +     *
 +     * @param state The current state
 +     * @param world Current world
@@ -951,13 +970,13 @@
 +    }
 +
 +    /**
-+     * Checks if this soil is fertile, typically this means that growth rates
-+     * of plants on this soil will be slightly sped up.
++     * Checks if this soil is fertile, typically this means that growth rates<br>
++     * of plants on this soil will be slightly sped up.<br>
 +     * Only vanilla case is tilledField when it is within range of water.
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True if the soil should be considered fertile.
++     * @return {@code true} if the soil should be considered fertile.
 +     */
 +    public boolean isFertile(World world, BlockPos pos)
 +    {
@@ -970,11 +989,11 @@
 +    }
 +
 +    /**
-+     * Location aware and overrideable version of the lightOpacity array,
-+     * return the number to subtract from the light value when it passes through this block.
-+     *
-+     * This is not guaranteed to have the tile entity in place before this is called, so it is
-+     * Recommended that you have your tile entity call relight after being placed if you
++     * Location aware and overrideable version of the lightOpacity array,<br>
++     * return the number to subtract from the light value when it passes through this block.<br>
++     * <br>
++     * This is not guaranteed to have the tile entity in place before this is called, so it is<br>
++     * Recommended that you have your tile entity call relight after being placed if you<br>
 +     * rely on it for light info.
 +     *
 +     * @param state The Block state
@@ -993,7 +1012,7 @@
 +     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return True to allow the ender dragon to destroy this block
++     * @return {@code true} to allow the ender dragon to destroy this block
 +     */
 +    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity)
 +    {
@@ -1033,15 +1052,15 @@
 +    }
 +
 +    /**
-+     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
-+     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
-+     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
-+     * The method should return true if the rotation was successful though.
++     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).<br>
++     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the<br>
++     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.<br>
++     * The method should return {@code true} if the rotation was successful though.
 +     *
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @param axis The axis to rotate around
-+     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     * @return {@code true} if the rotation was successful, {@code false} if the rotation failed, or is not possible
 +     */
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
@@ -1058,11 +1077,14 @@
 +    }
 +
 +    /**
-+     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
++     * Get the rotations that can apply to the block at the specified coordinates. {@code null} means no rotations are possible.<br>
++     * <br>
++     * <b>
 +     * Note, this is up to the block to decide. It may not be accurate or representative.
++     * </b>
 +     * @param world The world
 +     * @param pos Block position in world
-+     * @return An array of valid axes to rotate around, or null for none or unknown
++     * @return An array of valid axes to rotate around, or {@code null} for none or unknown
 +     */
 +    public EnumFacing[] getValidRotations(World world, BlockPos pos)
 +    {
@@ -1153,13 +1175,13 @@
 +    }
 +
 +    /**
-+     * If this block should be notified of weak changes.
-+     * Weak changes are changes 1 block away through a solid block.
++     * If this block should be notified of weak changes.<br>
++     * Weak changes are changes 1 block away through a solid block.<br>
 +     * Similar to comparators.
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @return true To be notified of changes
++     * @return {@code true} To be notified of changes
 +     */
 +    public boolean getWeakChanges(IBlockAccess world, BlockPos pos)
 +    {
@@ -1172,12 +1194,20 @@
 +     * Sets or removes the tool and level required to harvest this block.
 +     *
 +     * @param toolClass Class
-+     * @param level Harvest level:
-+     *     Wood:    0
-+     *     Stone:   1
-+     *     Iron:    2
-+     *     Diamond: 3
-+     *     Gold:    0
++     * @param level
++     * Harvest level:
++     * <ul>
++     * <li>
++     * Wood: 0
++     * <li>
++     * Stone: 1
++     * <li>
++     * Iron: 2
++     * <li>
++     * Diamond: 3
++     * <li>
++     * Gold: 0
++     * </ul>
 +     */
 +    public void setHarvestLevel(String toolClass, int level)
 +    {
@@ -1192,12 +1222,20 @@
 +     * Sets or removes the tool and level required to harvest this block.
 +     *
 +     * @param toolClass Class
-+     * @param level Harvest level:
-+     *     Wood:    0
-+     *     Stone:   1
-+     *     Iron:    2
-+     *     Diamond: 3
-+     *     Gold:    0
++     * @param level
++     * Harvest level:
++     * <ul>
++     * <li>
++     * Wood: 0
++     * <li>
++     * Stone: 1
++     * <li>
++     * Iron: 2
++     * <li>
++     * Diamond: 3
++     * <li>
++     * Gold: 0
++     * </ul>
 +     * @param state The specific state.
 +     */
 +    public void setHarvestLevel(String toolClass, int level, IBlockState state)
@@ -1208,7 +1246,7 @@
 +    }
 +
 +    /**
-+     * Queries the class of tool required to harvest this block, if null is returned
++     * Queries the class of tool required to harvest this block, if {@code null} is returned<br>
 +     * we assume that anything can harvest this block.
 +     */
 +    public String getHarvestTool(IBlockState state)
@@ -1217,8 +1255,8 @@
 +    }
 +
 +    /**
-+     * Queries the harvest level of this item stack for the specified tool class,
-+     * Returns -1 if this tool is not of the specified type
++     * Queries the harvest level of this item stack for the specified tool class,<br>
++     * Returns {@code -1} if this tool is not of the specified type
 +     *
 +     * @param state The current state of this block
 +     * @return Harvest level, or -1 if not the specified tool type.
@@ -1229,7 +1267,7 @@
 +    }
 +
 +    /**
-+     * Checks if the specified tool type is efficient on this block,
++     * Checks if the specified tool type is efficient on this block,<br>
 +     * meaning that it digs at full speed.
 +     */
 +    public boolean isToolEffective(String type, IBlockState state)
@@ -1240,7 +1278,7 @@
 +    }
 +
 +    /**
-+     * Can return IExtendedBlockState
++     * Get the {@link net.minecraftforge.common.property.IExtendedBlockState} of this block.
 +     */
 +    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
@@ -1248,7 +1286,7 @@
 +    }
 +
 +    /**
-+      * Called when the entity is inside this block, may be used to determined if the entity can breathing,
++      * Called when the entity is inside this block, may be used to determined if the entity can breathing,<br>
 +      * display material overlays, or if the entity can swim inside a block.
 +      *
 +      * @param world that is being tested.
@@ -1258,7 +1296,7 @@
 +      * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
 +      * @param materialIn to test for.
 +      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
-+      * @return null for default behavior, true if the entity is within the material, false if it was not.
++      * @return {@code null} for default behavior, {@code true} if the entity is within the material, {@code false} if it was not.
 +      */
 +     public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
 +     {
@@ -1266,14 +1304,14 @@
 +     }
 +
 +     /**
-+      * Called when boats or fishing hooks are inside the block to check if they are inside
++      * Called when boats or fishing hooks are inside the block to check if they are inside<br>
 +      * the material requested.
 +      *
 +      * @param world world that is being tested.
 +      * @param pos block thats being tested.
 +      * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
 +      * @param materialIn to check for.
-+      * @return null for default behavior, true if the box is within the material, false if it was not.
++      * @return {@code null} for default behavior, {@code true} if the box is within the material, {@code false} if it was not.
 +      */
 +     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
 +     {
@@ -1281,7 +1319,7 @@
 +     }
 +
 +     /**
-+     * Queries if this block should render in a given layer.
++     * Queries if this block should render in a given layer.<br>
 +     * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
 +     *
 +     * @deprecated New method with state sensitivity: {@link #canRenderInLayer(IBlockState, BlockRenderLayer)}
@@ -1293,14 +1331,18 @@
 +    }
 +
 +     /**
-+     * Queries if this block should render in a given layer.
++     * Queries if this block should render in a given layer.<br>
 +     * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
 +     */
 +    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 +    {
 +        return canRenderInLayer(layer);
 +    }
-+    // For Internal use only to capture droped items inside getDrops
++
++    /**
++     * For internal use only.<br>
++     * To capture droped items inside {@link #getDrops(IBlockAccess, BlockPos, IBlockState, int)}.
++     */
 +    protected static ThreadLocal<Boolean> captureDrops = new ThreadLocal<Boolean>()
 +    {
 +        @Override protected Boolean initialValue() { return false; }
@@ -1325,7 +1367,7 @@
 +    }
 +
 +    /**
-+     * Add information to the blocks tooltip, called from the default implementation of {@link ItemBlock#addInformation(ItemStack, EntityPlayer, List, boolean)}
++     * Add information to the blocks tooltip, called from the default implementation of {@link ItemBlock#addInformation(ItemStack, EntityPlayer, List, boolean)}.
 +     * @param stack The stack the tooltip is being retrieved for
 +     * @param player The player retrieving the tooltip
 +     * @param tooltip The lines to be displayed on the tooltip

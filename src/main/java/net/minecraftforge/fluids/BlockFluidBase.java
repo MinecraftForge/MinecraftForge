@@ -193,7 +193,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     /**
-     * Returns true if the block at (pos) is displaceable. Does not displace the block.
+     * Returns {@code true} if the block at (pos) is displaceable. Does not displace the block.
      */
     public boolean canDisplace(IBlockAccess world, BlockPos pos)
     {
@@ -234,7 +234,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     /**
-     * Attempt to displace the block at (pos), return true if it was displaced.
+     * Attempt to displace the block at (pos), return {@code true} if it was displaced.
      */
     public boolean displaceIfPossible(World world, BlockPos pos)
     {

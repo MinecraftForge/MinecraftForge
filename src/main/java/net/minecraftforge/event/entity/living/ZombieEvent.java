@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * If a method utilizes this {@link Event} as its parameter, the method will 
  * receive every child event of this class.
  * 
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 public class ZombieEvent extends EntityEvent {
 
@@ -45,13 +45,13 @@ public class ZombieEvent extends EntityEvent {
      * {@link #attacker} contains the living Entity that attacked and caused this event to fire.
      * {@link #summonChance} contains the likelihood that a Zombie would successfully be summoned.
      * 
-     * This event is not {@link Cancelable}.
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
      * 
-     * This event has a result. {@link HasResult}
+     * This event has a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}
      * {@link Result#ALLOW} Zombie is summoned.
      * {@link Result#DENY} Zombie is not summoned.
      * 
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     @HasResult
     public static class SummonAidEvent extends ZombieEvent {

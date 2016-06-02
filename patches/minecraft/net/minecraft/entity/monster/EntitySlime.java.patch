@@ -25,7 +25,7 @@
 +    /* ======================================== FORGE START =====================================*/
 +    /**
 +     * Called when the slime spawns particles on landing, see onUpdate.
-+     * Return true to prevent the spawning of the default particles.
++     * Return {@code true} to prevent the spawning of the default particles.
 +     */
 +    protected boolean spawnCustomParticles() { return false; }
 +    /* ======================================== FORGE END   =====================================*/

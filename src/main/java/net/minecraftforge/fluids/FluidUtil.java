@@ -16,7 +16,7 @@ public class FluidUtil
     {
     }
 
-    /** Returns true if interaction was successful. */
+    /** Returns {@code true} if interaction was successful. */
     public static boolean interactWithTank(ItemStack stack, EntityPlayer player, IFluidHandler tank, EnumFacing side)
     {
         if (stack == null)
@@ -210,7 +210,7 @@ public class FluidUtil
      * @param tank      The tank to fill from
      * @param side      Side to access the tank from
      * @param player    The player that tries to fill the bucket. Needed if the input itemstack has a stacksize > 1 to determine where the filled container goes.
-     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
+     * @return {@code true} if the IFluidContainerItem was filled successfully, {@code false} otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
      */
     public static boolean tryFillFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, EntityPlayer player)
     {
@@ -236,7 +236,7 @@ public class FluidUtil
      * @param inventory  An inventory where any additionally created item (filled container if multiple empty are present) are put
      * @param max        Maximum amount to take from the tank. Uses IFluidContainerItem capacity if <= 0
      * @param player     The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @return True if the IFluidContainerItem was filled successfully, false otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
+     * @return {@code true} if the IFluidContainerItem was filled successfully, {@code false} otherwise. The passed container will have been modified to accommodate for anything done in this method. New Itemstacks might have been added to the players inventory.
      */
     public static boolean tryFillFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, IItemHandler inventory, int max, EntityPlayer player)
     {
@@ -345,7 +345,7 @@ public class FluidUtil
      * @param inventory  An inventory where any additionally created item (filled container if multiple empty are present) are put
      * @param max        Maximum amount to take from the tank. Uses IFluidContainerItem capacity if <= 0
      * @param player     The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the emptied stack.
-     * @return True if the container successfully emptied at least 1 mb into the tank, false otherwise. The passed container itemstack will be modified to accommodate for the liquid transaction.
+     * @return {@code true} if the container successfully emptied at least 1 mb into the tank, {@code false} otherwise. The passed container itemstack will be modified to accommodate for the liquid transaction.
      */
     public static boolean tryEmptyFluidContainerItem(ItemStack container, IFluidHandler tank, EnumFacing side, IItemHandler inventory, int max, EntityPlayer player)
     {

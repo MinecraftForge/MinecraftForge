@@ -116,7 +116,7 @@ public class FluidStack
      *
      * @param other
      *            The FluidStack for comparison
-     * @return true if the Fluids (IDs and NBT Tags) are the same
+     * @return {@code true} if the Fluids (IDs and NBT Tags) are the same
      */
     public boolean isFluidEqual(FluidStack other)
     {
@@ -140,7 +140,7 @@ public class FluidStack
      * Determines if the Fluids are equal and this stack is larger.
      *
      * @param other The {@link FluidStack} to check.
-     * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
+     * @return {@code true} if this FluidStack contains the other FluidStack (same fluid and >= amount)
      */
     public boolean containsFluid(FluidStack other)
     {
@@ -152,7 +152,7 @@ public class FluidStack
      *
      * @param other
      *            - the FluidStack for comparison
-     * @return true if the two FluidStacks are exactly the same
+     * @return {@code true} if the two FluidStacks are exactly the same
      */
     public boolean isFluidStackIdentical(FluidStack other)
     {
@@ -165,7 +165,7 @@ public class FluidStack
      *
      * @param other
      *            The ItemStack for comparison
-     * @return true if the Fluids (IDs and NBT Tags) are the same
+     * @return {@code true} if the Fluids (IDs and NBT Tags) are the same
      */
     public boolean isFluidEqual(ItemStack other)
     {

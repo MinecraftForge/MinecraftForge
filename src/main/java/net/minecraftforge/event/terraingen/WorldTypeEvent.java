@@ -38,9 +38,9 @@ public class WorldTypeEvent extends Event
      * {@link #newSize} the new size of the biome. Initially set to the {@link #originalSize}. <br>
      * If {@link #newSize} is set to a new value, that value will be used for the Biome size. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>
      **/
@@ -82,9 +82,9 @@ public class WorldTypeEvent extends Event
      * {@link #newBiomeGens} the array of GenLayers that will now be used for this Biome generation. <br>
      * If {@link #newBiomeGens} is set to a new value, that value will be used for the Biome generator. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult} <br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>
      **/

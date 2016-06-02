@@ -923,7 +923,7 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(event);
         if (event.isCanceled())
         {
-            // Revert variable back to true as it would have been set to false
+            // Revert variable back to {@code true} as it would have been set to false
             if (entity instanceof EntityMinecartContainer)
             {
                ((EntityMinecartContainer) entity).dropContentsWhenDead = true;
