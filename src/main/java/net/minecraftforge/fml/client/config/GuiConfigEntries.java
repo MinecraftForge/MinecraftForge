@@ -366,7 +366,7 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void updateValueButtonText()
         {
-            this.btnValue.displayString = I18n.format("config.boolean." + currentValue);
+            this.btnValue.displayString = I18n.format("gui." + (currentValue ? "yes" : "no"));
             btnValue.packedFGColour = currentValue ? GuiUtils.getColorCode('2', true) : GuiUtils.getColorCode('4', true);
         }
 
