@@ -17,43 +17,34 @@
      }
  
      public void func_94217_a(TextureAtlasSprite p_94217_1_)
-@@ -232,15 +230,31 @@
+@@ -232,6 +230,11 @@
  
      public void func_188538_a(PngSizeInfo p_188538_1_, boolean p_188538_2_) throws IOException
      {
 +        loadSprite(p_188538_1_, p_188538_2_, null);
 +    }
 +    
-+    public void loadSprite(PngSizeInfo sizeInfo, boolean p_188538_2_, IResource resource) throws IOException
++    public void loadSprite(PngSizeInfo p_188538_1_, boolean p_188538_2_, IResource resource) throws IOException
 +    {
          this.func_130102_n();
--        this.field_130223_c = p_188538_1_.field_188533_a;
--        this.field_130224_d = p_188538_1_.field_188534_b;
-+        this.field_130223_c = sizeInfo.field_188533_a;
-+        this.field_130224_d = sizeInfo.field_188534_b;
- 
+         this.field_130223_c = p_188538_1_.field_188533_a;
+         this.field_130224_d = p_188538_1_.field_188534_b;
+@@ -239,6 +242,14 @@
          if (p_188538_2_)
          {
--            this.field_130224_d = this.field_130223_c;
+             this.field_130224_d = this.field_130223_c;
 +            if(resource != null) {
 +                AnimationMetadataSection anim = resource.func_110526_a("animation");
 +                this.field_130224_d = net.minecraft.util.math.MathHelper.func_76128_c(this.field_130223_c * ( (double)anim.func_110471_a()/(double)anim.func_110474_b() ));
 +                
-+                if(this.field_130224_d > sizeInfo.field_188534_b) {
++                if(this.field_130224_d > p_188538_1_.field_188534_b) {
 +                    throw new RuntimeException("calculated animation frame height is taller than image");
 +                }
 +            }
-+            else
-+            {
-+                this.field_130224_d = this.field_130223_c;
-+            }
          }
--        else if (p_188538_1_.field_188534_b != p_188538_1_.field_188533_a)
-+        else if (sizeInfo.field_188534_b != sizeInfo.field_188533_a)
+         else if (p_188538_1_.field_188534_b != p_188538_1_.field_188533_a)
          {
-             throw new RuntimeException("broken aspect ratio and not an animation");
-         }
-@@ -260,7 +274,7 @@
+@@ -260,7 +271,7 @@
          }
          else
          {
@@ -62,7 +53,7 @@
  
              if (animationmetadatasection.func_110473_c() > 0)
              {
-@@ -276,7 +290,7 @@
+@@ -276,7 +287,7 @@
                      }
  
                      this.func_130099_d(j);
@@ -71,7 +62,7 @@
                  }
  
                  this.field_110982_k = animationmetadatasection;
-@@ -287,11 +301,11 @@
+@@ -287,11 +298,11 @@
  
                  for (int k = 0; k < i; ++k)
                  {
@@ -85,7 +76,7 @@
              }
          }
      }
-@@ -398,4 +412,30 @@
+@@ -398,4 +409,30 @@
      {
          return "TextureAtlasSprite{name=\'" + this.field_110984_i + '\'' + ", frameCount=" + this.field_110976_a.size() + ", rotated=" + this.field_130222_e + ", x=" + this.field_110975_c + ", y=" + this.field_110974_d + ", height=" + this.field_130224_d + ", width=" + this.field_130223_c + ", u0=" + this.field_110979_l + ", u1=" + this.field_110980_m + ", v0=" + this.field_110977_n + ", v1=" + this.field_110978_o + '}';
      }

@@ -1,18 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
-@@ -12,8 +12,11 @@
- import net.minecraft.client.resources.IResource;
- import net.minecraft.client.resources.IResourceManager;
+@@ -14,6 +14,7 @@
  import net.minecraft.util.ResourceLocation;
-+import net.minecraftforge.common.ForgeModContainer;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
-+import scala.actors.threadpool.Arrays;
 +
  import org.apache.commons.io.IOUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-@@ -202,9 +205,11 @@
+@@ -202,9 +203,11 @@
  
      public static void func_180600_a(int p_180600_0_, int p_180600_1_, int p_180600_2_, int p_180600_3_)
      {
@@ -25,13 +21,13 @@
          if (p_180600_1_ >= 0)
          {
              GlStateManager.func_187421_b(3553, 33085, p_180600_1_);
-@@ -215,7 +220,15 @@
+@@ -215,7 +218,15 @@
  
          for (int i = 0; i <= p_180600_1_; ++i)
          {
 -            GlStateManager.func_187419_a(3553, i, 6408, p_180600_2_ >> i, p_180600_3_ >> i, 0, 32993, 33639, (IntBuffer)null);
 +            IntBuffer buf = null;
-+            if(ForgeModContainer.cleanAtlas) {
++            if(net.minecraftforge.common.ForgeModContainer.cleanAtlas) {
 +                buf = GLAllocation.func_74527_f(p_180600_2_ * p_180600_3_);
 +                while(buf.hasRemaining()) {
 +                    buf.put(0x7fFF00FF);
