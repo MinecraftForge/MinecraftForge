@@ -60,6 +60,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -144,9 +145,15 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
     }
 
+    @Deprecated
     public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks, int renderPass)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass));
+        return renderFirstPersonHand(context, partialTicks, renderPass, EnumHand.MAIN_HAND);
+    }
+
+    public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks, int renderPass, EnumHand hand)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass, hand));
     }
 
     public static void onTextureStitchedPre(TextureMap map)
