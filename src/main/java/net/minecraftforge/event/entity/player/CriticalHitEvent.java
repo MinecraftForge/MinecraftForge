@@ -19,13 +19,13 @@ import net.minecraft.entity.player.EntityPlayer;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class CriticalHitEvent extends AttackEntityEvent
+public class CriticalHitEvent extends PlayerEvent
 {
-    public final EntityLivingBase livingTarget;
+    private final EntityLivingBase livingTarget;
     private float damageModifier;
     public CriticalHitEvent(EntityPlayer player, EntityLivingBase target)
     {
-        super(player, target);
+        super(player);
         this.livingTarget = target;
         this.damageModifier = 1.5F;
     }
@@ -42,5 +42,10 @@ public class CriticalHitEvent extends AttackEntityEvent
     public float getDamageModifier()
     {
         return this.damageModifier;
+    }
+	
+	public EntityLivingBase getTarget()
+    {
+        return livingTarget;
     }
 }
