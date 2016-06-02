@@ -135,9 +135,9 @@ public enum NetworkRegistry
      * Note also that the handlers supplied need to be {@link ChannelHandler.Sharable} - they are injected into two
      * channels.
      *
-     * @param name
-     * @param handlers
-     * @return
+     * @param name The name for the new channel.
+     * @param handlers The handlers for the new channel.
+     * @return The new channel.
      */
     public EnumMap<Side,FMLEmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
     {

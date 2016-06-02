@@ -1,8 +1,6 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,17 +11,17 @@ import net.minecraft.entity.EntityLivingBase;
  * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)} and
  * {@link EntityPlayer#attackEntityFrom(DamageSource, float)}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingAttack(EntityLivingBase, DamageSource, float)}.<br>
+ * This event is fired via the {@link net.minecraftforge.common.ForgeHooks#onLivingAttack(EntityLivingBase, DamageSource, float)}.<br>
  * <br>
  * {@link #source} contains the DamageSource of the attack. <br>
  * {@link #amount} contains the amount of damage dealt to the entity. <br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * If this event is canceled, the Entity does not take attack damage.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  *<br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
 public class LivingAttackEvent extends LivingEvent

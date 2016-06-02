@@ -81,7 +81,7 @@ public class FMLEventChannel {
     /**
      * Register an event listener with this channel and bus. See {@link SubscribeEvent}
      *
-     * @param object
+     * @param object The object to be registered.
      */
     public void register(Object object)
     {
@@ -90,7 +90,7 @@ public class FMLEventChannel {
 
     /**
      * Unregister an event listener from the bus.
-     * @param object
+     * @param object The object to be unregistered.
      */
     public void unregister(Object object)
     {
@@ -120,7 +120,7 @@ public class FMLEventChannel {
     /**
      * Send a packet to all on the server
      *
-     * @param pkt
+     * @param pkt The {@link FMLProxyPacket} to be sent.
      */
     public void sendToAll(FMLProxyPacket pkt)
     {
@@ -131,8 +131,8 @@ public class FMLEventChannel {
     /**
      * Send to a specific player
      *
-     * @param pkt
-     * @param player
+     * @param pkt The {@link FMLProxyPacket} to be sent.
+     * @param player The {@link EntityPlayerMP} to send to.
      */
     public void sendTo(FMLProxyPacket pkt, EntityPlayerMP player)
     {
@@ -143,8 +143,8 @@ public class FMLEventChannel {
 
     /**
      * Send to all around a point
-     * @param pkt
-     * @param point
+     * @param pkt The {@link FMLProxyPacket} to be sent.
+     * @param point The specific {@link NetworkRegistry.TargetPoint}.
      */
     public void sendToAllAround(FMLProxyPacket pkt, NetworkRegistry.TargetPoint point)
     {
@@ -155,8 +155,8 @@ public class FMLEventChannel {
 
     /**
      * Send to all in a dimension
-     * @param pkt
-     * @param dimensionId
+     * @param pkt The {@link FMLProxyPacket} to be sent.
+     * @param dimensionId The dimension to send to's id.
      */
     public void sendToDimension(FMLProxyPacket pkt, int dimensionId)
     {
@@ -167,7 +167,7 @@ public class FMLEventChannel {
 
     /**
      * Send to the server
-     * @param pkt
+     * @param pkt The {@link FMLProxyPacket} to be send.
      */
     public void sendToServer(FMLProxyPacket pkt)
     {

@@ -12,31 +12,18 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityVillager.EmeraldForItems;
 import net.minecraft.entity.passive.EntityVillager.ITradeList;
-import net.minecraft.entity.passive.EntityVillager.ItemAndEmeraldToItem;
-import net.minecraft.entity.passive.EntityVillager.ListEnchantedBookForEmeralds;
-import net.minecraft.entity.passive.EntityVillager.ListEnchantedItemForEmeralds;
-import net.minecraft.entity.passive.EntityVillager.ListItemForEmeralds;
-import net.minecraft.entity.passive.EntityVillager.PriceInfo;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.structure.StructureComponent;
@@ -71,10 +58,10 @@ public class VillagerRegistry
         /**
          * Called when {@link net.minecraft.world.gen.structure.MapGenVillage} is creating a new village
          *
-         * @param random
-         * @param i
+         * @param random The {@link Random}.
+         * @param size The size of the village.
          */
-        StructureVillagePieces.PieceWeight getVillagePieceWeight(Random random, int i);
+        StructureVillagePieces.PieceWeight getVillagePieceWeight(Random random, int size);
 
         /**
          * The class of the root structure component to add to the village
@@ -85,18 +72,18 @@ public class VillagerRegistry
         /**
          * Build an instance of the village component {@link net.minecraft.world.gen.structure.StructureVillagePieces}
          *
-         * @param villagePiece
-         * @param startPiece
-         * @param pieces
-         * @param random
-         * @param p1
-         * @param p2
-         * @param p3
-         * @param facing
-         * @param p5
+         * @param villagePiece The village piece.
+         * @param startPiece The village start piece.
+         * @param pieces The village pieces.
+         * @param random The {@link Random}.
+         * @param x The x.
+         * @param y The y.
+         * @param z The z.
+         * @param facing The {@link EnumFacing} of the village.
+         * @param componentType The village pieces' component type.
          */
-        Village buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random, int p1,
-                               int p2, int p3, EnumFacing facing, int p5);
+        Village buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random, int x,
+                               int y, int z, EnumFacing facing, int componentType);
     }
 
     public static VillagerRegistry instance()
@@ -107,26 +94,26 @@ public class VillagerRegistry
     /**
      * Register a new village creation handler
      *
-     * @param handler
+     * @param handler The {@link IVillageCreationHandler}.
      */
     public void registerVillageCreationHandler(IVillageCreationHandler handler)
     {
         villageCreationHandlers.put(handler.getComponentClass(), handler);
     }
 
-    public static void addExtraVillageComponents(List<PieceWeight> list, Random random, int i)
+    public static void addExtraVillageComponents(List<PieceWeight> list, Random random, int size)
     {
         List<StructureVillagePieces.PieceWeight> parts = list;
         for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
         {
-            parts.add(handler.getVillagePieceWeight(random, i));
+            parts.add(handler.getVillagePieceWeight(random, size));
         }
     }
 
     public static Village getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random,
-                                              int p1, int p2, int p3, EnumFacing facing, int p5)
+                                              int x, int y, int z, EnumFacing facing, int componentType)
     {
-        return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, facing, p5);
+        return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, x, y, z, facing, componentType);
     }
 
     public void register(VillagerProfession prof)

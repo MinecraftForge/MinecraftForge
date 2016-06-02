@@ -126,10 +126,10 @@ public class TopologicalSort
     }
 
     /**
-     * Sort the input graph into a topologically sorted list
-     *
-     * Uses the reverse depth first search as outlined in ...
-     * @param graph
+     * Sort the input graph into a topologically sorted list<br>
+     * <br>
+     * Uses the reverse depth first search as outlined in ...<br>
+     * @param graph The input graph to be sorted.
      * @return The sorted mods list.
      */
     public static <T> List<T> topologicalSort(DirectedGraph<T> graph)

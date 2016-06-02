@@ -85,8 +85,6 @@ public abstract class FluidRegistry
     /**
      * Called by forge to load default fluid IDs from the world or from server -> client for syncing
      * DO NOT call this and expect useful behaviour.
-     * @param localFluidIDs
-     * @param defaultNames
      */
     private static void loadFluidDefaults(BiMap<Fluid, Integer> localFluidIDs, Set<String> defaultNames)
     {

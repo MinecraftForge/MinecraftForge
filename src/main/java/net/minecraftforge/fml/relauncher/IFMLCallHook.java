@@ -28,7 +28,7 @@ public interface IFMLCallHook extends Callable<Void>
     /**
      * Injected with data from the FML environment:
      * "classLoader" : The FML Class Loader
-     * @param data
+     * @param data The provided data.
      */
     void injectData(Map<String,Object> data);
 }

@@ -1,20 +1,17 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.entity.passive.EntityHorse;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
 /**
  * LivingEvent is fired whenever an event involving Living entities occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will 
+ * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 public class LivingEvent extends EntityEvent
 {
@@ -35,14 +32,14 @@ public class LivingEvent extends EntityEvent
      * This event is fired whenever an Entity is updated in 
      * {@link EntityLivingBase#onUpdate()}. <br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#onLivingUpdate(EntityLivingBase)}.<br>
+     * This event is fired via the {@link net.minecraftforge.common.ForgeHooks#onLivingUpdate(EntityLivingBase)}.<br>
      * <br>
-     * This event is {@link Cancelable}.<br>
+     * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * If this event is canceled, the Entity does not update.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
     public static class LivingUpdateEvent extends LivingEvent
@@ -56,13 +53,13 @@ public class LivingEvent extends EntityEvent
      * {@link EntityLivingBase#jump()}, {@link EntityMagmaCube#jump()},
      * and {@link EntityHorse#jump()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#onLivingJump(EntityLivingBase)}.<br>
+     * This event is fired via the {@link net.minecraftforge.common.ForgeHooks#onLivingJump(EntityLivingBase)}.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
      * <br>
-     * This event does not have a result. {@link HasResult}<br>
+     * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     public static class LivingJumpEvent extends LivingEvent
     {

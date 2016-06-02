@@ -1,6 +1,5 @@
 package net.minecraftforge.event.terraingen;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.block.state.IBlockState;
@@ -9,10 +8,10 @@ import net.minecraft.world.biome.Biome;
 
 /**
  * BiomeEvent is fired whenever an event involving biomes occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}
  * unless stated otherwise in their Javadocs.
  **/
 public class BiomeEvent extends Event
@@ -32,7 +31,7 @@ public class BiomeEvent extends Event
     /**
      * CreateDecorator is fired when a BiomeDecorator is created.<br>
      * This event is fired whenever a BiomeDecorator is created in
-     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(BiomeGenBase)}.<br>
+     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(Biome)}.<br>
      * <br>
      * {@link #originalBiomeDecorator} contains the original BiomeDecorator that would be used in vanilla.
      * {@link #newBiomeDecorator} contains the new BiomeDecoration to be used by Minecraft.
@@ -41,7 +40,7 @@ public class BiomeEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult}
      * <br>
-     * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.
      **/
     public static class CreateDecorator extends BiomeEvent
     {
@@ -73,10 +72,10 @@ public class BiomeEvent extends Event
 
     /**
      * BiomeColor is fired whenever an event involving biome colors occurs. <br>
-     * If a method utilizes this {@link Event} as its parameter, the method will
+     * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
      * receive every child event of this class.<br>
      * <br>
-     * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
+     * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     public static class BiomeColor extends BiomeEvent
     {

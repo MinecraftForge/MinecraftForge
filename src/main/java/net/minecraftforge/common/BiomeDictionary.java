@@ -209,8 +209,8 @@ public class BiomeDictionary
     /**
      * Checks to see if two biomes are registered as having the same type
      *
-     * @param biomeA
-     * @param biomeB
+     * @param biomeA A biome.
+     * @param biomeB Another biome to compre for equality.
      * @return returns true if a common type is found, false otherwise
      */
     public static boolean areBiomesEquivalent(Biome biomeA, Biome biomeB)

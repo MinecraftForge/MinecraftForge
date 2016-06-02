@@ -1,9 +1,6 @@
 package net.minecraftforge.fluids;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
@@ -166,12 +163,12 @@ public class FluidUtil
     }
 
     /**
-     * Takes a filled bucket and tries to empty it into the given tank. Uses the FluidContainerRegistry.
+     * Takes a filled bucket and tries to empty it into the given tank. Uses the {@link FluidContainerRegistry}.
      *
      * @param bucket The filled bucket
      * @param tank   The tank to fill with the bucket
      * @param side   Side to access the tank from
-     * @param player
+     * @param player The {@link EntityPlayer} that takes a filled bucket and tries to empty it into the given tank
      * @return The empty bucket if successful, null if the tank couldn't be filled.
      */
     public static ItemStack tryEmptyBucket(ItemStack bucket, IFluidHandler tank, EnumFacing side, EntityPlayer player)

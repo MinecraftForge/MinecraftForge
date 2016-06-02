@@ -832,7 +832,7 @@
 +    /**
 +     * Get the persistent chunks for this world
 +     *
-+     * @return
++     * @return The persistent chunks for this world
 +     */
 +    public com.google.common.collect.ImmutableSetMultimap<net.minecraft.util.math.ChunkPos, net.minecraftforge.common.ForgeChunkManager.Ticket> getPersistentChunks()
 +    {

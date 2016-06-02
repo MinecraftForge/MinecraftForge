@@ -118,7 +118,7 @@ public class FluidEvent extends Event
     /**
      * A handy shortcut for firing the various fluid events.
      *
-     * @param event
+     * @param event The {@link FluidEvent} to be fired.
      */
     public static final void fireEvent(FluidEvent event)
     {

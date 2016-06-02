@@ -23,7 +23,7 @@ public interface IFluidBlock
      *
      * @param doDrain
      *            If false, the drain will only be simulated.
-     * @return
+     * @return The {@link FluidStack} that represents the drained liquid.
      */
     FluidStack drain(World world, BlockPos pos, boolean doDrain);
 
@@ -31,7 +31,7 @@ public interface IFluidBlock
      * Check to see if a block can be drained. This method should be called by devices such as
      * pumps.
      *
-     * @return
+     * @return {@code true} if a block can be drained, otherwise {@code false}.
      */
     boolean canDrain(World world, BlockPos pos);
 
@@ -42,7 +42,7 @@ public interface IFluidBlock
      * If the return value is negative. It will be treated as filling the block
      * from the top down instead of bottom up.
      *
-     * @return
+     * @return Returns the amount of a single block is filled.
      */
     float getFilledPercentage(World world, BlockPos pos);
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.item.EntityItem;
@@ -22,12 +21,12 @@ import net.minecraft.entity.EntityLivingBase;
  * {@link #lootingLevel} contains the amount of loot that will be dropped.<br>
  * {@link #recentlyHit} determines whether the Entity doing the drop has recently been damaged.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * If this event is canceled, the Entity does not drop anything.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
 public class LivingDropsEvent extends LivingEvent

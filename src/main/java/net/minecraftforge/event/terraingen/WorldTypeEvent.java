@@ -1,7 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
 import net.minecraft.world.biome.BiomeProvider;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.world.gen.layer.GenLayer;
@@ -9,12 +8,12 @@ import net.minecraft.world.WorldType;
 
 /**
  * WorldTypeEvent is fired when an event involving the world occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #worldType} contains the WorldType of the world this event is occurring in.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
 public class WorldTypeEvent extends Event
 {
@@ -43,7 +42,7 @@ public class WorldTypeEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>
      **/
     public static class BiomeSize extends WorldTypeEvent
     {
@@ -87,7 +86,7 @@ public class WorldTypeEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>
      **/
     public static class InitBiomeGens extends WorldTypeEvent
     {

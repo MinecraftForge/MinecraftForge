@@ -436,6 +436,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
+     * Get {@link FMLClientHandler} instance.
+     *
      * @return the instance
      */
     public static FMLClientHandler instance()
@@ -444,8 +446,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
-     * @param player
-     * @param gui
+     * A helper method for displaying {@link GuiScreen}.
+     *
+     * @param player The {@link EntityPlayer}. Should be {@link Minecraft#thePlayer}.
+     * @param gui The {@link GuiScreen} to be displayed.
      */
     public void displayGuiScreen(EntityPlayer player, GuiScreen gui)
     {
@@ -455,7 +459,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
-     * @param mods
+     * The method for adding special mod entries.
+     *
+     * @param mods The {@link ArrayList} for adding special mod entries to it.
      */
     public void addSpecialModEntries(ArrayList<ModContainer> mods)
     {

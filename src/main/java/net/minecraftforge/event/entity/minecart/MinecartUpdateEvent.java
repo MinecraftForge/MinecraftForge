@@ -2,8 +2,6 @@ package net.minecraftforge.event.entity.minecart;
 
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * MinecartUpdateEvent is fired when a minecart is updated.<br>
@@ -12,11 +10,11 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * {@link #pos} contains the coordinate of the track the entity is on {if applicable}.<br>
  * <br>
- * This event is not {@link Cancelable}.<br>
+ * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 public class MinecartUpdateEvent extends MinecartEvent
 {

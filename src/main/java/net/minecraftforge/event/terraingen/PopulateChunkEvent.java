@@ -7,13 +7,11 @@ import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.gen.ChunkProviderEnd;
 import net.minecraft.world.gen.ChunkProviderHell;
 import net.minecraft.world.gen.ChunkProviderOverworld;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * PopulateChunkEvent is fired when an event involving chunk terrain feature population occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #world} contains the world this event is occurring in.<br>
@@ -22,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * {@link #chunkZ} contains the z-coordinate of the chunk currently being populated with ores.<br>
  * {@link #hasVillageGenerated} contains the boolean value stating if the chunk already has a village spawned in it.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}, except {@link Populate}, which fires on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}, except {@link Populate}, which fires on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
 public class PopulateChunkEvent extends ChunkGeneratorEvent
 {
@@ -58,7 +56,7 @@ public class PopulateChunkEvent extends ChunkGeneratorEvent
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Pre extends PopulateChunkEvent
     {
@@ -79,7 +77,7 @@ public class PopulateChunkEvent extends ChunkGeneratorEvent
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Post extends PopulateChunkEvent
     {
@@ -103,7 +101,7 @@ public class PopulateChunkEvent extends ChunkGeneratorEvent
      * This event has a result. {@link HasResult} <br>
      * This result determines if the chunk is populated with the terrain feature. <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
     @HasResult
     public static class Populate extends PopulateChunkEvent

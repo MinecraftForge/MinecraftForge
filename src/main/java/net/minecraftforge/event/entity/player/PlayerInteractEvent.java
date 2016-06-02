@@ -1,18 +1,14 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -23,7 +19,7 @@ import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
- * All subclasses are fired on {@link MinecraftForge#EVENT_BUS}.
+ * All subclasses are fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  * See the individual documentation on each subevent for more details.
  **/
 public class PlayerInteractEvent extends PlayerEvent

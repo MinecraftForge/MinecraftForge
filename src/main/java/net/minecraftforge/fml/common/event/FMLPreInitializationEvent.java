@@ -112,7 +112,7 @@ public class FMLPreInitializationEvent extends FMLStateEvent
     /**
      * Get the {@link ASMDataTable} for this instance of Minecraft. This is a special structure containing
      * parsing information from FML. It can be searched for annotations parsed out by FML.
-     * @return
+     * @return The {@link ASMDataTable} for this instance of Minecraft.
      */
     public ASMDataTable getAsmData()
     {

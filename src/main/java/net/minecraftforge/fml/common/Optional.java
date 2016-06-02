@@ -28,7 +28,7 @@ public final class Optional {
     public @interface InterfaceList {
         /**
          * Mark a list of interfaces for optional removal.
-         * @return
+         * @return A list of interfaces
          */
         public Interface[] value();
     }

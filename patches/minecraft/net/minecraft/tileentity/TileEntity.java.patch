@@ -116,9 +116,9 @@
 +     * @param newState The new ID of the block (May be the same)
 +     * @return true forcing the invalidation of the existing TE, false not to invalidate the existing TE
 +     */
-+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
++    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
 +    {
-+        return isVanilla ? (oldState.func_177230_c() != newSate.func_177230_c()) : oldState != newSate;
++        return isVanilla ? (oldState.func_177230_c() != newState.func_177230_c()) : oldState != newState;
 +    }
 +
 +    public boolean shouldRenderInPass(int pass)
@@ -127,15 +127,15 @@
 +    }
 +
 +    /**
-+     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
++     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer}.
 +     */
 +    public static final net.minecraft.util.math.AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.math.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 +    /**
-+     * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
-+     * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
++     * Return an {@link net.minecraft.util.math.AxisAlignedBB} that controls the visible scope of a {@link net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer} associated with this {@link TileEntity}
++     * Defaults to the collision bounding box {@link IBlockState#getSelectedBoundingBox(World, BlockPos)} associated with the block
 +     * at this location.
 +     *
-+     * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
++     * @return an appropriately size {@link net.minecraft.util.math.AxisAlignedBB} for the {@link TileEntity}
 +     */
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox()

@@ -3,7 +3,6 @@ package net.minecraftforge.event.terraingen;
 import java.util.Random;
 
 import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
@@ -13,14 +12,14 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 /**
  * OreGenEvent is fired when an event involving ore generation occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #world} contains the world this event is occurring in.<br>
  * {@link #rand} contains an instance of random that can be used in this event.<br>
  * {@link #pos} contains the coordinates of the chunk position currently being populated with ores.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>
  **/
 public class OreGenEvent extends Event
 {
@@ -59,7 +58,7 @@ public class OreGenEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>
      **/
     public static class Pre extends OreGenEvent
     {
@@ -78,7 +77,7 @@ public class OreGenEvent extends Event
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>
      **/
     public static class Post extends OreGenEvent
     {
@@ -101,7 +100,7 @@ public class OreGenEvent extends Event
      * This event has a result. {@link HasResult} <br>
      * This result determines whether the ore is allowed to be generated.<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.<br>
      **/
     @HasResult
     public static class GenerateMinable extends OreGenEvent

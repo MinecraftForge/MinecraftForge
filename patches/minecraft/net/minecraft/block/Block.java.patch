@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1141 @@
+@@ -887,6 +906,1143 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -346,7 +346,7 @@
 +     * useful for creating pure logic-blocks that will be invisible
 +     * to the player and otherwise interact as air would.
 +     *
-+     * @param sata The current state
++     * @param state The current state
 +     * @param world The current world
 +     * @param pos Block position in world
 +     * @return True if the block considered air
@@ -359,8 +359,9 @@
 +    /**
 +     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 +     *
++     * @param world The current world
++     * @param pos Block position of this block
 +     * @param player The player damaging the block, may be null
-+     * @param meta The block's current metadata
 +     * @return True to spawn the drops
 +     */
 +    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player)
@@ -442,7 +443,6 @@
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param metadata The blocks current metadata
 +     * @param side The face that the fire is coming from
 +     * @return True if this block sustains fire, meaning it will never go out.
 +     */
@@ -480,7 +480,8 @@
 +     * Return the same thing you would from that function.
 +     * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
 +     *
-+     * @param metadata The Metadata of the current block
++     * @param world The current world
++     * @param state The current state of this block
 +     * @return A instance of a class extending TileEntity
 +     */
 +    public TileEntity createTileEntity(World world, IBlockState state)
@@ -737,7 +738,7 @@
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param Explosion The explosion instance affecting the block
++     * @param explosion The explosion instance affecting the block
 +     */
 +    public void onBlockExploded(World world, BlockPos pos, Explosion explosion)
 +    {
@@ -821,7 +822,8 @@
 +     * particles, this is a server side method that spawns particles with
 +     * WorldServer.spawnParticle
 +     *
-+     * @param world The current Server world
++     * @param state The current state of this block.
++     * @param worldObj The current Server world
 +     * @param blockPosition of the block that the entity landed on.
 +     * @param iblockstate State at the specific world/pos
 +     * @param entity the entity that hit landed on the block.
@@ -840,7 +842,7 @@
 +     * texture sheets for different sides/locations in the world.
 +     *
 +     * @param state The current state
-+     * @param world The current world
++     * @param worldObj The current world
 +     * @param target The target the player is looking at {x/y/z/side/sub}
 +     * @param manager A reference to the current particle manager.
 +     * @return True to prevent vanilla digging particles form spawning.
@@ -1020,7 +1022,7 @@
 +    /**
 +     * Determines if this block can be used as the base of a beacon.
 +     *
-+     * @param world The current world
++     * @param worldObj The current world
 +     * @param pos Block position in world
 +     * @param beacon Beacon position in world
 +     * @return True, to support the beacon, and make it active with this block.
@@ -1121,7 +1123,8 @@
 +     * @param state The current state
 +     * @param world The world
 +     * @param pos Block position
-+     * @param fortune
++     * @param fortune The level of the fortune enchantment of the mining tool.<br>
++     *                               {@code 0} stands for a mining tool without fortune enchantment.
 +     * @return Amount of XP from breaking this block.
 +     */
 +    public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune)
@@ -1156,7 +1159,6 @@
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
-+     * @param side The side to check
 +     * @return true To be notified of changes
 +     */
 +    public boolean getWeakChanges(IBlockAccess world, BlockPos pos)
@@ -1218,7 +1220,7 @@
 +     * Queries the harvest level of this item stack for the specified tool class,
 +     * Returns -1 if this tool is not of the specified type
 +     *
-+     * @param stack This item stack instance
++     * @param state The current state of this block
 +     * @return Harvest level, or -1 if not the specified tool type.
 +     */
 +    public int getHarvestLevel(IBlockState state)
@@ -1280,7 +1282,7 @@
 +
 +     /**
 +     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
++     * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
 +     *
 +     * @deprecated New method with state sensitivity: {@link #canRenderInLayer(IBlockState, BlockRenderLayer)}
 +     */
@@ -1292,7 +1294,7 @@
 +
 +     /**
 +     * Queries if this block should render in a given layer.
-+     * ISmartBlockModel can use {@link MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
++     * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
 +     */
 +    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
 +    {

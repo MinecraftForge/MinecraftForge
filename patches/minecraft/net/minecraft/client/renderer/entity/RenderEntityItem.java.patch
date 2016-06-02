@@ -55,7 +55,7 @@
              }
          }
  
-@@ -192,4 +189,25 @@
+@@ -192,4 +189,23 @@
      {
          return TextureMap.field_110575_b;
      }
@@ -64,7 +64,6 @@
 +
 +    /**
 +     * Items should spread out when rendered in 3d?
-+     * @return
 +     */
 +    public boolean shouldSpreadItems()
 +    {
@@ -73,7 +72,6 @@
 +
 +    /**
 +     * Items should have a bob effect
-+     * @return
 +     */
 +    public boolean shouldBob()
 +    {

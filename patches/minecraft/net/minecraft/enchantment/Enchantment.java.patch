@@ -28,8 +28,8 @@
 +    /**
 +     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
 +     * applies for <i>all possible</i> enchantments.
-+     * @param stack
-+     * @return
++     * @param stack The {@link ItemStack} to check.
++     * @return {@code true} if the supplied {@link ItemStack} can apply at enchanting table, otherwise {@code false}
 +     */
 +    public boolean canApplyAtEnchantingTable(ItemStack stack)
 +    {

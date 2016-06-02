@@ -445,9 +445,9 @@ public class Property
     }
 
     /**
-     * Sets a regex Pattern object used to validate user input for formatted String or String[] properties.
+     * Sets a regex {@link Pattern} object used to validate user input for formatted String or String[] properties.
      *
-     * @param validationPattern
+     * @param validationPattern A regex {@link Pattern} object used to validate user input for formatted String or String[] propertie
      */
     public Property setValidationPattern(Pattern validationPattern)
     {

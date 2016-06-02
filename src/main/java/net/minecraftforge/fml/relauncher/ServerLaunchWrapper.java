@@ -4,9 +4,6 @@ import java.lang.reflect.Method;
 
 public class ServerLaunchWrapper {
 
-    /**
-     * @param args
-     */
     public static void main(String[] args)
     {
         new ServerLaunchWrapper().run(args);

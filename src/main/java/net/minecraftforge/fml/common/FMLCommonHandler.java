@@ -131,7 +131,7 @@ public class FMLCommonHandler
     /**
      * The FML event bus. Subscribe here for FML related events
      *
-     * @Deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
+     * @deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
      * @return the event bus
      */
     @Deprecated
@@ -148,6 +148,8 @@ public class FMLCommonHandler
     }
 
     /**
+     * Get the {@link FMLCommonHandler} instance.
+     *
      * @return the instance
      */
     public static FMLCommonHandler instance()
@@ -155,8 +157,8 @@ public class FMLCommonHandler
         return INSTANCE;
     }
     /**
-     * Find the container that associates with the supplied mod object
-     * @param mod
+     * Find the container that associates with the supplied mod object or its id.
+     * @param mod The mod instance or its id.
      */
     public ModContainer findContainerFor(Object mod)
     {

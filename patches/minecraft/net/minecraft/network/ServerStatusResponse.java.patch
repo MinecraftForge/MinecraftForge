@@ -58,7 +58,7 @@
 +     *
 +     * As this method is called from the network threads thread safety is important!
 +     *
-+     * @return
++     * @return This object as a Json string
 +     */
 +    public String getJson()
 +    {

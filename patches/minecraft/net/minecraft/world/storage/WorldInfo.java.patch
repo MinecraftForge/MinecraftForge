@@ -16,7 +16,7 @@
 +     * Allow access to additional mod specific world based properties
 +     * Used by FML to store mod list associated with a world, and maybe an id map
 +     * Used by Forge to store the dimensions available to a world
-+     * @param additionalProperties
++     * @param additionalProperties The additional properties to be added.
 +     */
 +    public void setAdditionalProperties(java.util.Map<String,net.minecraft.nbt.NBTBase> additionalProperties)
 +    {

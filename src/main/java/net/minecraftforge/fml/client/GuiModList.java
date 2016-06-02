@@ -121,9 +121,6 @@ public class GuiModList extends GuiScreen
     private boolean sorted = false;
     private SortType sortType = SortType.NORMAL;
 
-    /**
-     * @param mainMenu
-     */
     public GuiModList(GuiScreen mainMenu)
     {
         this.mainMenu = mainMenu;

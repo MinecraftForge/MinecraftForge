@@ -2,9 +2,7 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
@@ -22,12 +20,12 @@ import net.minecraft.util.SoundEvent;
  * {@link #newPitch} contains the pitch at which the sound is actually played.<br>
  * Changing the {@link #name} field will cause the sound of this name to be played instead of the originally intended sound.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * If this event is canceled, the sound is not played.<br>
  * <br>
- * This event does not have a result. {@link HasResult} <br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult} <br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
 public class PlaySoundAtEntityEvent extends EntityEvent

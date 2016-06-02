@@ -12,7 +12,6 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
 
@@ -38,7 +36,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.primitives.UnsignedBytes;
 
 public class EntityRegistry
 {
@@ -220,7 +217,7 @@ public class EntityRegistry
     }
 
     /**
-     * Add a spawn entry for the supplied entity in the supplied {@link BiomeGenBase} list
+     * Add a spawn entry for the supplied entity in the supplied {@link Biome} list
      * @param entityClass Entity class added
      * @param weightedProb Probability
      * @param min Min spawn count
@@ -254,7 +251,7 @@ public class EntityRegistry
     }
 
     /**
-     * Add a spawn entry for the supplied entity in the supplied {@link BiomeGenBase} list
+     * Add a spawn entry for the supplied entity in the supplied {@link Biome} list
      * @param entityName The entity name
      * @param weightedProb Probability
      * @param min Min spawn count

@@ -1667,7 +1667,6 @@ public class GuiConfigEntries extends GuiListExtended
     {
         /**
          * Gets the IConfigElement object owned by this entry.
-         * @return
          */
         public IConfigElement getConfigElement();
 

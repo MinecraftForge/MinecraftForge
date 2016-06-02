@@ -104,20 +104,20 @@ public interface ModContainer
     String getSortingRules();
 
     /**
-     * Register the event bus for the mod and the controller for error handling
-     * Returns if this bus was successfully registered - disabled mods and other
-     * mods that don't need real events should return false and avoid further
-     * processing
+     * Register the {@link EventBus} for the mod and the {@link LoadController} for error handling<br>
+     * Returns if this bus was successfully registered - disabled mods and other<br>
+     * mods that don't need real events should return false and avoid further<br>
+     * processing.<br>
      *
-     * @param bus
-     * @param controller
+     * @param bus The {@link EventBus} for the mod.
+     * @param controller The {@link LoadController} for error handling.
      */
     boolean registerBus(EventBus bus, LoadController controller);
 
     /**
-     * Does this mod match the supplied mod
+     * Does this mod match the supplied mod?
      *
-     * @param mod
+     * @param mod The supplied mod.
      */
     boolean matches(Object mod);
 

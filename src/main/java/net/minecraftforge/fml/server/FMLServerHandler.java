@@ -13,7 +13,6 @@
 package net.minecraftforge.fml.server;
 
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +82,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
      *
-     * @param minecraftServer
+     * @param minecraftServer The {@link MinecraftServer}.
      */
     @Override
     public void beginServerLoading(MinecraftServer minecraftServer)

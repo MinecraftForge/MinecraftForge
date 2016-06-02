@@ -22,9 +22,6 @@ public class MessageContext {
      * The Side this message has been received on
      */
     public final Side side;
-    /**
-     * @param netHandler
-     */
     MessageContext(INetHandler netHandler, Side side)
     {
         this.netHandler = netHandler;

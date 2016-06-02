@@ -2,7 +2,6 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBow;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,7 +20,7 @@ import net.minecraft.world.World;
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
 public class ArrowLooseEvent extends PlayerEvent

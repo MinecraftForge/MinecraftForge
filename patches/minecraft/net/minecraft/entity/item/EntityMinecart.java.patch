@@ -400,7 +400,7 @@
 +     * current movement and cannot be overridden. The value however can never be
 +     * higher than getMaxCartSpeedOnRail().
 +     *
-+     * @return
++     * @return The current speed cap for the cart when traveling on rails
 +     */
 +    public final float getCurrentCartSpeedCapOnRail()
 +    {

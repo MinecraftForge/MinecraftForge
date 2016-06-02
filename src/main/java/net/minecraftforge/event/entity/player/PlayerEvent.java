@@ -2,23 +2,20 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.fml.common.eventhandler.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 public class PlayerEvent extends LivingEvent
 {
@@ -48,7 +45,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     public static class HarvestCheck extends PlayerEvent
     {
@@ -84,7 +81,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
@@ -124,7 +121,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event does not have a result. {@link HasResult}
      * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      **/
     public static class NameFormat extends PlayerEvent
     {
@@ -253,7 +250,7 @@ public class PlayerEvent extends LivingEvent
         /**
          * Construct and return a recommended file for the supplied suffix
          * @param suffix The suffix to use.
-         * @return
+         * @return A recommended file for the supplied suffix
          */
         public File getPlayerFile(String suffix)
         {
@@ -306,7 +303,7 @@ public class PlayerEvent extends LivingEvent
         /**
          * Construct and return a recommended file for the supplied suffix
          * @param suffix The suffix to use.
-         * @return
+         * @return A recommended file for the supplied suffix
          */
         public File getPlayerFile(String suffix)
         {

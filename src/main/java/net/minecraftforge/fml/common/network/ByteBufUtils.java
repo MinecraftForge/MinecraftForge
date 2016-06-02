@@ -58,8 +58,8 @@ public class ByteBufUtils {
     /**
      * An extended length short. Used by custom payload packets to extend size.
      *
-     * @param buf
-     * @return
+     * @param buf The buffer to read from
+     * @return The integer
      */
     public static int readVarShort(ByteBuf buf)
     {

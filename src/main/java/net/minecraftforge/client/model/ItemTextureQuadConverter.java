@@ -20,16 +20,17 @@ public final class ItemTextureQuadConverter
     }
 
     /**
-     * Takes a texture and converts it into BakedQuads.
-     * The conversion is done by scanning the texture horizontally and vertically and creating "strips" of the texture.
-     * Strips that are of the same size and follow each other are converted into one bigger quad.
-     * </br>
-     * The resulting list of quads is the texture represented as a list of horizontal OR vertical quads,
-     * depending on which creates less quads. If the amount of quads is equal, horizontal is preferred.
+     * Takes a texture and converts it into BakedQuads.<br>
+     * The conversion is done by scanning the texture horizontally and vertically and creating "strips" of the texture.<br>
+     * Strips that are of the same size and follow each other are converted into one bigger quad.<br>
+     * <br>
+     * The resulting list of quads is the texture represented as a list of horizontal OR vertical quads,<br>
+     * depending on which creates less quads. If the amount of quads is equal, horizontal is preferred.<br>
      *
-     * @param format
-     * @param template The input texture to convert
-     * @param sprite   The texture whose UVs shall be used   @return The generated quads.
+     * @param format The {@link VertexFormat} for this texture.
+     * @param template The input texture to convert.
+     * @param sprite   The texture whose UVs shall be used.
+     * @return The generated quads.
      */
     public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
     {

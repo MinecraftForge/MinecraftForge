@@ -47,7 +47,7 @@
                                          }
                                      }
                                  }
-@@ -266,4 +243,71 @@
+@@ -266,4 +243,72 @@
              }
          }
      }
@@ -82,13 +82,14 @@
 +     * tries to make the floor the biome's top block
 +     *
 +     * @param data Block data array
-+     * @param index Pre-calculated index into block data
 +     * @param x local X position
 +     * @param y local Y position
 +     * @param z local Z position
 +     * @param chunkX Chunk X position
 +     * @param chunkZ Chunk Y position
 +     * @param foundTop True if we've encountered the biome's top block. Ideally if we've broken the surface.
++     * @param state The current state of the current block
++     * @param up The current state of the block on top of the current block
 +     */
 +    protected void digBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop, IBlockState state, IBlockState up)
 +    {

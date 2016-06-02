@@ -77,7 +77,7 @@
 +    /**
 +     * Creates a new world type, the ID is hidden and should not be referenced by modders.
 +     * It will automatically expand the underlying workdType array if there are no IDs left.
-+     * @param name
++     * @param name The name for this world type.
 +     */
 +    public WorldType(String name)
 +    {

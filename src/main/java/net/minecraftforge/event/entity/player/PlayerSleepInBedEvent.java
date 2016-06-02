@@ -3,7 +3,6 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
@@ -18,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event does not have a result. {@link HasResult}
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {

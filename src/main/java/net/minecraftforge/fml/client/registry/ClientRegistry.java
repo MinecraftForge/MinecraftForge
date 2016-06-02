@@ -34,9 +34,9 @@ public class ClientRegistry
      *
      * Utility method for registering a tile entity and it's renderer at once - generally you should register them separately
      *
-     * @param tileEntityClass
-     * @param id
-     * @param specialRenderer
+     * @param tileEntityClass The tile entity to be registered.
+     * @param id The id for the tile entity.
+     * @param specialRenderer The {@link TileEntitySpecialRenderer} for the tile entity.
      */
     public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<? super T> specialRenderer)
     {
@@ -59,8 +59,8 @@ public class ClientRegistry
      * Register a shader for an entity. This shader gets activated when a spectator begins spectating an entity.
      * Vanilla examples of this are the green effect for creepers and the invert effect for endermen.
      *
-     * @param entityClass
-     * @param shader
+     * @param entityClass The entity to be registered.
+     * @param shader The shader for the entity.
      */
     public static void registerEntityShader(Class<? extends Entity> entityClass, ResourceLocation shader)
     {

@@ -50,7 +50,7 @@
          Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
-@@ -426,11 +432,557 @@
+@@ -426,11 +432,558 @@
          return false;
      }
  
@@ -279,10 +279,11 @@
 +     *
 +     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
 +     *
++     * @param stack The {@link ItemStack} the player is wielding
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @param player The Player that is wielding the item
-+     * @return
++     * @return {@code true} if this item allow sneak-clicks to pass through to the underlying block, otherwise {@code false}.
 +     */
 +    public boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.IBlockAccess world, BlockPos pos, EntityPlayer player)
 +    {
@@ -402,8 +403,8 @@
 +
 +    /**
 +     * This used to be 'display damage' but its really just 'aux' data in the ItemStack, usually shares the same variable as damage.
-+     * @param stack
-+     * @return
++     * @param stack The supplied {@link ItemStack}.
++     * @return The metadata of the supplied {@link ItemStack}.
 +     */
 +    public int getMetadata(ItemStack stack)
 +    {
@@ -608,7 +609,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -956,6 +1508,10 @@
+@@ -956,6 +1509,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -619,7 +620,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -990,9 +1546,36 @@
+@@ -990,9 +1547,36 @@
              return this.field_78008_j;
          }
  

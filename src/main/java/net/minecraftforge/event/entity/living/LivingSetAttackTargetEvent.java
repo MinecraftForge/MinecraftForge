@@ -2,9 +2,6 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * LivingSetAttackTargetEvent is fired when an Entity sets a target to attack.<br>
@@ -12,15 +9,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * {@link EntityLiving#setAttackTarget(EntityLivingBase)} and
  * {@link EntityLivingBase#setRevengeTarget(EntityLivingBase)}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingSetAttackTarget(EntityLivingBase, EntityLivingBase)}.<br>
+ * This event is fired via the {@link net.minecraftforge.common.ForgeHooks#onLivingSetAttackTarget(EntityLivingBase, EntityLivingBase)}.<br>
  * <br>
  * {@link #target} contains the newly targeted Entity.<br>
  * <br>
- * This event is not {@link Cancelable}.<br>
+ * This event is not {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result. {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  **/
 public class LivingSetAttackTargetEvent extends LivingEvent
 {

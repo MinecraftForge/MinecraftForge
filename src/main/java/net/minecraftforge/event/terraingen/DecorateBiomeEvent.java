@@ -3,7 +3,6 @@ package net.minecraftforge.event.terraingen;
 import java.util.Random;
 
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
@@ -23,7 +22,7 @@ import net.minecraft.world.World;
  * <br>
  * This event does not have a result. {@link HasResult}
  * <br>
- * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.
  **/
 public class DecorateBiomeEvent extends Event
 {

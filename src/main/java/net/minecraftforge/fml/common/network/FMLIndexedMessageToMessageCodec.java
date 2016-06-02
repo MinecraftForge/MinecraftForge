@@ -88,7 +88,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     /**
      * Called to verify the message received. This can be used to hard disconnect in case of an unexpected packet,
      * say due to a weird protocol mismatch. Use with caution.
-     * @param msg
+     * @param msg The message to be verified.
      */
     protected void testMessageValidity(FMLProxyPacket msg)
     {
