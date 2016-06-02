@@ -43,8 +43,8 @@ public class CriticalHitEvent extends PlayerEvent
     {
         return this.damageModifier;
     }
-	
-	public EntityLivingBase getTarget()
+    
+    public EntityLivingBase getTarget()
     {
         return livingTarget;
     }
