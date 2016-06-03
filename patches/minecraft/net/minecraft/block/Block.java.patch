@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1185 @@
+@@ -887,6 +906,1186 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -485,6 +485,7 @@
 +     * @param state The current state of this block
 +     * @return A instance of a class extending TileEntity
 +     */
++    @Nullable
 +    public TileEntity createTileEntity(World world, IBlockState state)
 +    {
 +        if (isTileProvider)
