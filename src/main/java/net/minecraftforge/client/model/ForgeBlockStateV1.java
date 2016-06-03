@@ -530,11 +530,14 @@ public class ForgeBlockStateV1 extends Marker
                         // item/handheld
                         else if (transform.equals("forge:default-tool"))
                         {
-                            ret.state = Optional.<IModelState>of(new SimpleModelState(ImmutableMap.of(
-                                TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f),
-                                TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f),
-                                TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f),
-                                TransformType.FIRST_PERSON_LEFT_HAND,  get(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f))));
+                            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+                            builder.put(TransformType.GROUND,                  get(0, 2, 0,            0, 0, 0,    0.5f));
+                            builder.put(TransformType.HEAD,                    get(0, 13, 7,           0, 180, 0,  1));
+                            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, get(0, 4, 0.5f,         0, -90, 55, 0.85f));
+                            builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  get(0, 4, 0.5f,         0, 90, -55, 0.85f));
+                            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f));
+                            builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f));
+                            ret.state = Optional.<IModelState>of(new SimpleModelState(builder.build()));
                         }
                         else
                         {
