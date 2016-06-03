@@ -350,6 +350,15 @@
                      throw new ReportedException(crashreport1);
                  }
              }
+@@ -1677,7 +1789,7 @@
+             {
+                 BlockPos blockpos = tileentity.func_174877_v();
+ 
+-                if (this.func_175667_e(blockpos) && this.field_175728_M.func_177746_a(blockpos))
++                if (this.func_175668_a(blockpos, false) && this.field_175728_M.func_177746_a(blockpos)) //Forge: Fix TE's getting an extra tick on the client side....
+                 {
+                     try
+                     {
 @@ -1690,6 +1802,13 @@
                          CrashReport crashreport2 = CrashReport.func_85055_a(throwable, "Ticking block entity");
                          CrashReportCategory crashreportcategory2 = crashreport2.func_85058_a("Block entity being ticked");
