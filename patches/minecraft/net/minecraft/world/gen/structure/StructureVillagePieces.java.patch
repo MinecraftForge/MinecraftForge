@@ -52,7 +52,26 @@
                  }
              }
  
-@@ -1660,6 +1670,9 @@
+@@ -1647,19 +1657,27 @@
+                         EntityVillager entityvillager = new EntityVillager(p_74893_1_);
+                         entityvillager.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
+                         entityvillager.func_180482_a(p_74893_1_.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null);
+-                        entityvillager.func_70938_b(this.func_180779_c(i, entityvillager.func_70946_n()));
++                        entityvillager.setProfession(this.chooseForgeProfession(i, entityvillager.getProfessionForge()));
+                         p_74893_1_.func_72838_d(entityvillager);
+                     }
+                 }
+             }
+ 
++            @Deprecated // Use Forge version below.
+             protected int func_180779_c(int p_180779_1_, int p_180779_2_)
+             {
+                 return p_180779_2_;
+             }
++            protected net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession chooseForgeProfession(int count, net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
++            {
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.getById(func_180779_c(count, net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof)));
++            }
  
              protected IBlockState func_175847_a(IBlockState p_175847_1_)
              {
