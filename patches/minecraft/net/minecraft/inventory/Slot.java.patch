@@ -9,7 +9,7 @@
      }
  
      public ItemStack func_75209_a(int p_75209_1_)
-@@ -115,4 +115,63 @@
+@@ -115,4 +115,73 @@
      {
          return true;
      }
@@ -70,6 +70,16 @@
 +    public int getSlotIndex()
 +    {
 +        return field_75225_a;
++    }
++
++    /**
++     * Checks if the other slot is in the same inventory, by comparing the inventory reference.
++     * @param other
++     * @return true if the other slot is in the same inventory
++     */
++    public boolean isSameInventory(Slot other)
++    {
++        return this.field_75224_c == other.field_75224_c;
 +    }
 +    /*========================================= FORGE END =====================================*/
  }
