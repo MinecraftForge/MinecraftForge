@@ -164,6 +164,22 @@
  
          if (this.field_77990_d != null)
          {
+@@ -649,13 +655,13 @@
+                     double d0 = attributemodifier.func_111164_d();
+                     boolean flag = false;
+ 
+-                    if (attributemodifier.func_111167_a() == Item.field_111210_e)
++                    if (attributemodifier.func_111167_a().equals(Item.field_111210_e)) // FORGE - Fix improper attribute modifier formatting
+                     {
+                         d0 = d0 + p_82840_1_.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111125_b();
+                         d0 = d0 + (double)EnchantmentHelper.func_152377_a(this, EnumCreatureAttribute.UNDEFINED);
+                         flag = true;
+                     }
+-                    else if (attributemodifier.func_111167_a() == Item.field_185050_h)
++                    else if (attributemodifier.func_111167_a().equals(Item.field_185050_h)) // FORGE - Fix improper attribute modifier formatting
+                     {
+                         d0 += p_82840_1_.func_110148_a(SharedMonsterAttributes.field_188790_f).func_111125_b();
+                         flag = true;
 @@ -759,6 +765,7 @@
              }
          }
