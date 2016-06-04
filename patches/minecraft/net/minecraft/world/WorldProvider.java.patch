@@ -219,7 +219,7 @@
 +    {
 +        return 0;
 +    }
-+    
++
 +    /**
 +     * Called from {@link World#initCapabilities()}, to gather capabilities for this world.
 +     * It's safe to access world here since this is called after world is registered.
