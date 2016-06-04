@@ -25,7 +25,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -58,9 +57,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IJsonSerializable;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -80,6 +77,7 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.TextComponentSerializable;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
@@ -1128,15 +1126,17 @@ public class ForgeHooks
 
     public static boolean onTextComponentSerialize(ITextComponent tc, JsonObject jsonobject)
     {
-        if (tc instanceof IJsonSerializable)
+        if(!(tc instanceof TextComponentSerializable))
         {
-            jsonobject.add("text", new JsonPrimitive("{Unsupported component type: "+tc.getClass().getName()+"}"));
-            jsonobject.add("data", ((IJsonSerializable)tc).getSerializableElement());
-            jsonobject.add("class", new JsonPrimitive(tc.getClass().getName()));
-            return true;
+            FMLLog.warning("Serializing custom chat components requires extending TextComponentSerializable");
+            return false;
         }
 
-        return false;
+        TextComponentSerializable component = (TextComponentSerializable)tc;
+        jsonobject.add("text", new JsonPrimitive(component.getFallbackText()));
+        jsonobject.add("data", component.getSerializableElement());
+        jsonobject.add("class", new JsonPrimitive(tc.getClass().getName()));
+        return true;
     }
 
     public static ITextComponent onTextComponentDeserialize(JsonObject jsonobject) 
@@ -1149,8 +1149,8 @@ public class ForgeHooks
         {
             Class<?> clazz = Class.forName(jsonobject.get("class").getAsString());
             tc = (ITextComponent) clazz.newInstance();
-            if(!(tc instanceof IJsonSerializable))
-                throw new UnsupportedOperationException("Deserializing custom chat components requires IJsonSerializable");
+            if(!(tc instanceof TextComponentSerializable))
+                throw new UnsupportedOperationException("Deserializing custom chat components requires extending TextComponentSerializable");
         }
         catch (Exception e)
         {
@@ -1159,7 +1159,7 @@ public class ForgeHooks
         }
 
         if (jsonobject.has("data"))
-            ((IJsonSerializable)tc).fromJson(jsonobject.get("data"));
+            ((TextComponentSerializable)tc).fromJson(jsonobject.get("data"));
 
         return tc;
     }

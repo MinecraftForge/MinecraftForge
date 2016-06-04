@@ -1,10 +1,7 @@
 package net.minecraftforge.debug;
 
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import net.minecraft.crash.CrashReport;
@@ -15,19 +12,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IJsonSerializable;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.TextComponentSerializable;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 @Mod(modid="CustomTextComponentDebug", name="CustomTextComponentDebug", version="0.0.0", acceptableRemoteVersions="*")
 public class CustomTextComponentDebug
@@ -47,46 +41,52 @@ public class CustomTextComponentDebug
         if(ENABLE && !ev.getWorld().isRemote && (ev.getEntity() instanceof EntityPlayer))
             ev.getEntity().addChatMessage(new TextComponentItemStack(new ItemStack(Items.COOKIE)));
     }
-    
-    public static class TextComponentItemStack extends TextComponentBase implements IJsonSerializable
+
+    public static class TextComponentItemStack extends TextComponentSerializable
     {
         private ItemStack stack;
-    
+
         public TextComponentItemStack()
         {
         }
-    
+
         public TextComponentItemStack(ItemStack stack)
         {
             this.stack = stack.copy();
         }
-    
+
         public ItemStack getItemStack()
         {
             return stack;
         }
-    
+
         @Override
         public String getUnformattedComponentText()
         {
             return "[" + stack.getDisplayName() + "]";
         }
-    
+
+        @Override
+        public String getFallbackText()
+        {
+            return getUnformattedComponentText();
+        }
+
         @Override
         public TextComponentItemStack createCopy()
         {
             TextComponentItemStack copy = new TextComponentItemStack(stack);
-    
+
             copy.setStyle(this.getStyle().createShallowCopy());
-    
+
             for (ITextComponent itextcomponent : this.getSiblings())
             {
                 copy.appendSibling(itextcomponent.createCopy());
             }
-    
+
             return copy;
         }
-    
+
         public boolean equals(Object other)
         {
             if (this == other)
@@ -102,14 +102,14 @@ public class CustomTextComponentDebug
                 return ItemStack.areItemStacksEqual(this.stack, ((TextComponentItemStack) other).getItemStack()) && super.equals(other);
             }
         }
-    
+
         public String toString()
         {
             ResourceLocation item = stack.getItem().getRegistryName();
             int meta = stack.getMetadata();
             int stackSize = stack.stackSize;
             NBTTagCompound tag = stack.getTagCompound();
-    
+
             StringBuilder b = new StringBuilder();
             b.append("ItemStack{item='"); b.append(item.toString()); b.append("'");
             b.append(", stackSize="); b.append(stackSize);
@@ -122,7 +122,7 @@ public class CustomTextComponentDebug
                 b.append(", tag="); b.append(tag.toString());
             }
             b.append("}");
-    
+
             return b.toString();
         }
 
@@ -136,7 +136,7 @@ public class CustomTextComponentDebug
             int stackSize = obj.get("stackSize").getAsInt();
 
             stack = new ItemStack(item, stackSize, meta);
-            
+
             if (obj.has("tag"))
             {
                 try
