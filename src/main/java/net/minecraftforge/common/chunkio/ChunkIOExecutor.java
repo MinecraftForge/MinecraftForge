@@ -2,7 +2,6 @@ package net.minecraftforge.common.chunkio;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,8 +18,8 @@ import net.minecraftforge.fml.common.FMLLog;
 
 public class ChunkIOExecutor
 {
-    static final int BASE_THREADS = 1;
-    static final int PLAYERS_PER_THREAD = 50;
+    private static final int BASE_THREADS = 1;
+    private static final int PLAYERS_PER_THREAD = 50;
 
     private static final Map<QueuedChunk, ChunkIOProvider> tasks = Maps.newConcurrentMap();
     private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(BASE_THREADS, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
@@ -41,8 +40,8 @@ public class ChunkIOExecutor
     //Load the chunk completely in this thread. Dequeue as needed...
     public static Chunk syncChunkLoad(World world, AnvilChunkLoader loader, ChunkProviderServer provider, int x, int z)
     {
-        QueuedChunk key = new QueuedChunk(x, z, loader, world, provider);
-        ChunkIOProvider task = tasks.get(key);
+        QueuedChunk key = new QueuedChunk(x, z, world);
+        ChunkIOProvider task = tasks.remove(key); // Remove task because we will call the sync callbacks directly
         if (task != null)
         {
             if (!pool.remove(task)) // If it wasn't in the pool, and run hasn't finished, then wait for the async thread.
@@ -62,10 +61,15 @@ public class ChunkIOExecutor
                     }
                 }
             }
+            else
+            {
+                // If the task was not run yet we still need to load the chunk
+                task.run();
+            }
         }
         else
         {
-            task = new ChunkIOProvider(key);
+            task = new ChunkIOProvider(key, loader, provider);
             task.run();
         }
         task.syncCallback();
@@ -75,11 +79,11 @@ public class ChunkIOExecutor
     //Queue the chunk to be loaded, and call the runnable when finished
     public static void queueChunkLoad(World world, AnvilChunkLoader loader, ChunkProviderServer provider, int x, int z, Runnable runnable)
     {
-        QueuedChunk key = new QueuedChunk(x, z, loader, world, provider);
+        QueuedChunk key = new QueuedChunk(x, z, world);
         ChunkIOProvider task = tasks.get(key);
         if (task == null)
         {
-            task = new ChunkIOProvider(key);
+            task = new ChunkIOProvider(key, loader, provider);
             task.addCallback(runnable); // Add before calling execute for thread safety
             tasks.put(key, task);
             pool.execute(task);
@@ -90,11 +94,10 @@ public class ChunkIOExecutor
         }
     }
 
-    // Abuses the fact that hashCode and equals for QueuedChunk only use world and coords
     // Remove the chunk from the queue if it's in the list.
     public static void dropQueuedChunkLoad(World world, int x, int z, Runnable runnable)
     {
-        QueuedChunk key = new QueuedChunk(x, z, null, world, null);
+        QueuedChunk key = new QueuedChunk(x, z, world);
         ChunkIOProvider task = tasks.get(key);
         if (task == null)
         {
@@ -113,8 +116,7 @@ public class ChunkIOExecutor
 
     public static void adjustPoolSize(int players)
     {
-        int size = Math.max(BASE_THREADS, (int) Math.ceil(players / PLAYERS_PER_THREAD));
-        pool.setCorePoolSize(size);
+        pool.setCorePoolSize(Math.max(BASE_THREADS, players / PLAYERS_PER_THREAD));
     }
 
     public static void tick()
@@ -123,11 +125,13 @@ public class ChunkIOExecutor
         while (itr.hasNext())
         {
             ChunkIOProvider task = itr.next();
-            if (task.runFinished() && task.hasCallback())
+            if (task.runFinished())
             {
-                task.syncCallback();
+                if (task.hasCallback())
+                    task.syncCallback();
+
+                itr.remove();
             }
-            itr.remove();
         }
     }
 }
