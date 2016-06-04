@@ -85,12 +85,12 @@
 +    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
 +    {
 +    }
-+    
++
 +    /**
 +     * Called when the chunk's TE update tag, gotten from {@link #getUpdateTag()}, is received on the client.
 +     * <p>
 +     * Used to handle this tag in a special way. By default this simply calls {@link #readFromNBT(NBTTagCompound)}.
-+     * 
++     *
 +     * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
 +     */
 +    public void handleUpdateTag(NBTTagCompound tag)
