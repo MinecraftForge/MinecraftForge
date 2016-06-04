@@ -970,4 +970,31 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
+
+    public static void onBlockRandomTick(World worldIn, BlockPos pos, IBlockState state, Random random)
+    {
+    	if(BlockEvent.RandomTickEvent.RandomBlockTickEventRegistry.isBlockRegistred(state.getBlock()))
+    	{
+    		BlockEvent.RandomTickEvent rte = new BlockEvent.RandomTickEvent(worldIn, pos, state);
+    		MinecraftForge.EVENT_BUS.post(rte);
+    		if(!rte.isCanceled())
+    		{
+    			state.getBlock().randomTick(worldIn, pos, state, random);
+    			BlockEvent.RandomTickEvent.Post post = new BlockEvent.RandomTickEvent.Post(worldIn, pos, state);
+    			MinecraftForge.EVENT_BUS.post(post);
+    		}
+    		else
+    		{
+    			if(rte.getState() != state)
+    			{
+    				if(!worldIn.isRemote)
+    				{
+    					worldIn.setBlockState(pos, rte.getState(), 3);
+    				}
+    			}
+    		}
+    	}
+    	else
+    		state.getBlock().randomTick(worldIn, pos, state, random);
+    }
 }
