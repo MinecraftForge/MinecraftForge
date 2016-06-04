@@ -32,7 +32,7 @@ public interface IEntityAdditionalSpawnData
      * Called by the client when it receives a Entity spawn packet.
      * Data should be read out of the stream in the same way as it was written.
      *
-     * @param data The packet data stream
+     * @param additionalData The packet data stream
      */
     public void readSpawnData(ByteBuf additionalData);
 }

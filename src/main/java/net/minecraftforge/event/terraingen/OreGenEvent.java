@@ -1,6 +1,10 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
+
+import net.minecraft.world.biome.BiomeDecorator;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.util.math.BlockPos;
@@ -49,7 +53,7 @@ public class OreGenEvent extends Event
     /**
      * OreGenEvent.Pre is fired just before a chunk is populated with ores.<br>
      * This event is fired just before ore generation in
-     * BiomeDecorator#generateOres().<br>
+     * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -68,7 +72,7 @@ public class OreGenEvent extends Event
     /**
      * OreGenEvent.Post is fired just after a chunk is populated with ores.<br>
      * This event is fired just after ore generation in
-     * BiomeDecorator#generateOres().<br>
+     * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -87,7 +91,7 @@ public class OreGenEvent extends Event
     /**
      * GenerateMinable is fired when a mineable block is generated in a chunk.<br>
      * This event is fired just after ore generation in
-     * BiomeDecorator#generateOres().<br>
+     * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
      * {@link #type} contains the enum value for the Ore attempting to be generated.<br>
      * {@link #generator} contains the WorldGenerator generating this ore. <br>

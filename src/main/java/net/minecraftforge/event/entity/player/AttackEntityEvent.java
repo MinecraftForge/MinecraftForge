@@ -1,5 +1,6 @@
 package net.minecraftforge.event.entity.player;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * AttackEntityEvent is fired when a player attacks an Entity.<br>
  * This event is fired whenever a player attacks an Entity in
- * EntityPlayer#attackTargetEntityWithCurrentItem(Entity).<br>
+ * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)}.<br>
  * <br>
  * {@link #target} contains the Entity that was damaged by the player. <br>
  * <br>

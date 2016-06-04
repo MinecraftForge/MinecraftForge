@@ -721,7 +721,7 @@ public class FluidUtil
                 max = fluidContainer.getCapacity(container);
             }
             FluidStack drained = fluidContainer.drain(container, max, false);
-            if (drained != null)
+            if (drained != null && tank.canFill(side, drained.getFluid()))
             {
                 // check how much we can fill into the tank
                 int filled = tank.fill(side, drained, false);

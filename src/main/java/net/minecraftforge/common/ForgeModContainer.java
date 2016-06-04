@@ -14,12 +14,20 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.logging.log4j.Level;
+
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -37,6 +45,7 @@ import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -45,10 +54,13 @@ import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
@@ -323,6 +335,36 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void modConstruction(FMLConstructionEvent evt)
     {
+        List<String> all = Lists.newArrayList();
+        for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashReportDetail.class.getName().replace('.', '/')))
+            all.add(asm.getClassName());
+        for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashCallable.class.getName().replace('.', '/')))
+            all.add(asm.getClassName());
+
+        Iterator<String> itr = all.iterator();
+        while (itr.hasNext())
+        {
+            String cls = itr.next();
+            if (!cls.startsWith("net/minecraft/") &&
+                !cls.startsWith("net/minecraftforge/"))
+                itr.remove();
+        }
+
+        FMLLog.log("Forge", Level.DEBUG, "Preloading CrashReport Classes");
+        Collections.sort(all); //Sort it because I like pretty output ;)
+        for (String name : all)
+        {
+            FMLLog.log("Forge", Level.DEBUG, "\t" + name);
+            try
+            {
+                Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
     }
@@ -395,6 +437,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public void mappingChanged(FMLModIdMappingEvent evt)
     {
         OreDictionary.rebakeMap();
+        StatList.reinit();
     }
 
 
@@ -464,4 +507,5 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     {
         return updateJSONUrl;
     }
+
 }

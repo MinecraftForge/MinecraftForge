@@ -1,7 +1,12 @@
 package net.minecraftforge.event.world;
 
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * ChunkDataEvent is fired when an event involving chunk data occurs.<br>
@@ -30,7 +35,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Load is fired when vanilla Minecraft attempts to load Chunk data.<br>
      * This event is fired during chunk loading in
-     * ChunkIOProvider#callStage2(QueuedChunk, Chunk). <br>
+     * {@link net.minecraftforge.common.chunkio.ChunkIOProvider#syncCallback()}.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -49,7 +54,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Save is fired when vanilla Minecraft attempts to save Chunk data.<br>
      * This event is fired during chunk saving in 
-     * AnvilChunkLoader#saveChunk(World, Chunk). <br>
+     * {@link AnvilChunkLoader#saveChunk(World, Chunk)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>

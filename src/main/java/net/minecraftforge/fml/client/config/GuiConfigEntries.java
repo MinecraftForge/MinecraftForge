@@ -1694,18 +1694,18 @@ public class GuiConfigEntries extends GuiListExtended
         public boolean enabled();
 
         /**
-         * Handles user keystrokes for any GuiTextField objects in this entry. Call {@code GuiTextField.keyTyped()} for any GuiTextField
+         * Handles user keystrokes for any GuiTextField objects in this entry. Call {@link GuiTextField#textboxKeyTyped(char, int)} for any GuiTextField
          * objects that should receive the input provided.
          */
         public void keyTyped(char eventChar, int eventKey);
 
         /**
-         * Call {@code GuiTextField.updateCursorCounter()} for any GuiTextField objects in this entry.
+         * Call {@link GuiTextField#updateCursorCounter()} for any GuiTextField objects in this entry.
          */
         public void updateCursorCounter();
 
         /**
-         * Call {@code GuiTextField.mouseClicked()} for and GuiTextField objects in this entry.
+         * Call {@link GuiTextField#mouseClicked(int, int, int)} for and GuiTextField objects in this entry.
          */
         public void mouseClicked(int x, int y, int mouseEvent);
 

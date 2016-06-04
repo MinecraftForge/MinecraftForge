@@ -234,6 +234,7 @@ public class EntityRegistry
         {
             List<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature);
 
+            boolean found = false;
             for (SpawnListEntry entry : spawns)
             {
                 //Adjusting an existing spawn entry
@@ -242,11 +243,13 @@ public class EntityRegistry
                     entry.itemWeight = weightedProb;
                     entry.minGroupCount = min;
                     entry.maxGroupCount = max;
+                    found = true;
                     break;
                 }
             }
 
-            spawns.add(new SpawnListEntry(entityClass, weightedProb, min, max));
+            if (!found)
+                spawns.add(new SpawnListEntry(entityClass, weightedProb, min, max));
         }
     }
 

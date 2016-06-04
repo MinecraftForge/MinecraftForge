@@ -1,7 +1,11 @@
 package net.minecraftforge.event.entity.player;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
@@ -11,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * This event has a result. {@link HasResult}<br>
  *
  * setResult(ALLOW) informs game that player is still "in bed"<br>
- * setResult(DEFAULT) causes game to check {@link net.minecraft.block.Block#isBed(net.minecraft.world.IBlockAccess, BlockPos, net.minecraft.entity.Entity)} instead
+ * setResult(DEFAULT) causes game to check {@link Block#isBed(IBlockState, IBlockAccess, BlockPos, Entity)} instead
  */
 @HasResult
 public class SleepingLocationCheckEvent extends PlayerEvent

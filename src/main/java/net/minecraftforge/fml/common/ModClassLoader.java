@@ -131,7 +131,14 @@ public class ModClassLoader extends URLClassLoader
             "log4j-core-",
             "lwjgl-",
             "lwjgl_util-",
-            "twitch-"
+            "twitch-",
+            "jline-",
+            "jna-",
+            "platform-",
+            "oshi-core-",
+            "netty-",
+            "libraryjavasound-",
+            "fastutil-"
         };
         for (String s : prefixes)
         {

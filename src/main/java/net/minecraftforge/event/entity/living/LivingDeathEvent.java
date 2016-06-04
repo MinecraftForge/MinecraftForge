@@ -1,5 +1,9 @@
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.EntityLivingBase;
@@ -7,9 +11,9 @@ import net.minecraft.entity.EntityLivingBase;
 /**
  * LivingDeathEvent is fired when an Entity dies. <br>
  * This event is fired whenever an Entity dies in 
- * EntityLivingBase#onDeath(DamageSource), 
- * EntityPlayer#onDeath(DamageSource), and 
- * EntityPlayerMP#onDeath(DamageSource). <br>
+ * {@link EntityLivingBase#onDeath(DamageSource)},
+ * {@link EntityPlayer#onDeath(DamageSource)}, and
+ * {@link EntityPlayerMP#onDeath(DamageSource)}. <br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingDeath(EntityLivingBase, DamageSource)}.<br>
  * <br>

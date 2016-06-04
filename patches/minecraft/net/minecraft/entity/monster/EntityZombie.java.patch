@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -102,7 +102,7 @@
+@@ -61,6 +61,7 @@
+     private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, 1);
+     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
+     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.<Integer>func_187226_a(EntityZombie.class, DataSerializers.field_187192_b);
++    private static final DataParameter<String>  VILLAGER_TYPE_STR = EntityDataManager.<String>func_187226_a(EntityZombie.class, DataSerializers.field_187194_d);
+     private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
+     private static final DataParameter<Boolean> field_184740_by = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
+     private final EntityAIBreakDoor field_146075_bs = new EntityAIBreakDoor(this);
+@@ -102,7 +103,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
          this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
          this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
@@ -9,7 +17,68 @@
      }
  
      protected void func_70088_a()
-@@ -260,12 +260,24 @@
+@@ -110,6 +111,7 @@
+         super.func_70088_a();
+         this.func_184212_Q().func_187214_a(field_184737_bv, Boolean.valueOf(false));
+         this.func_184212_Q().func_187214_a(field_184738_bw, Integer.valueOf(0));
++        this.func_184212_Q().func_187214_a(VILLAGER_TYPE_STR, "");
+         this.func_184212_Q().func_187214_a(field_184739_bx, Boolean.valueOf(false));
+         this.func_184212_Q().func_187214_a(field_184740_by, Boolean.valueOf(false));
+     }
+@@ -183,18 +185,33 @@
+ 
+     public boolean func_82231_m()
+     {
+-        return ((Integer)this.func_184212_Q().func_187225_a(field_184738_bw)).intValue() > 0;
++        return getVillagerTypeForge() != null;
+     }
+ 
++    @Deprecated // Use Forge Variant
+     public int func_184736_de()
+     {
+         return ((Integer)this.func_184212_Q().func_187225_a(field_184738_bw)).intValue() - 1;
+     }
++    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
++    @Nullable
++    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getVillagerTypeForge()
++    {
++        return this.prof;
++    }
+ 
++    @Deprecated //Use Forge version below
+     public void func_184735_a(int p_184735_1_)
+     {
+         this.func_184212_Q().func_187227_b(field_184738_bw, Integer.valueOf(p_184735_1_ + 1));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, p_184735_1_);
+     }
++    public void setVillagerType(@Nullable net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession type)
++    {
++        this.prof = type;
++        this.func_184212_Q().func_187227_b(VILLAGER_TYPE_STR, type == null ? "" : type.getRegistryName().toString());
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, type);
++    }
+ 
+     public void func_184732_df()
+     {
+@@ -207,6 +224,17 @@
+         {
+             this.func_146071_k(this.func_70631_g_());
+         }
++        else if (field_184738_bw.equals(p_184206_1_))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.func_184212_Q().func_187225_a(field_184738_bw) - 1);
++        }
++        else if (VILLAGER_TYPE_STR.equals(p_184206_1_))
++        {
++            String name = this.func_184212_Q().func_187225_a(VILLAGER_TYPE_STR);
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
++                    "".equals(name) ? null : net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new ResourceLocation(name));
++            this.setVillagerType(p);
++        }
+ 
+         super.func_184206_a(p_184206_1_);
+     }
+@@ -260,12 +288,24 @@
                  entitylivingbase = (EntityLivingBase)p_70097_1_.func_76346_g();
              }
  
@@ -39,7 +108,7 @@
  
                  for (int l = 0; l < 50; ++l)
                  {
-@@ -273,14 +285,14 @@
+@@ -273,14 +313,14 @@
                      int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                      int k1 = k + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
  
@@ -56,7 +125,43 @@
                              entityzombie.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombie)), (IEntityLivingData)null);
                              this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
                              entityzombie.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
-@@ -486,7 +498,7 @@
+@@ -394,6 +434,7 @@
+         {
+             p_70014_1_.func_74757_a("IsVillager", true);
+             p_70014_1_.func_74768_a("VillagerProfession", this.func_184736_de());
++            p_70014_1_.func_74778_a("VillagerProfessionName", this.getVillagerTypeForge() == null ? "" : this.getVillagerTypeForge().getRegistryName().toString());
+         }
+ 
+         p_70014_1_.func_74768_a("ConversionTime", this.func_82230_o() ? this.field_82234_d : -1);
+@@ -417,8 +458,17 @@
+             }
+             else
+             {
+-                this.func_184735_a(this.field_70170_p.field_73012_v.nextInt(5));
++                net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
+             }
++            String name = p_70037_1_.func_74779_i("VillagerProfessionName");
++            if (!"".equals(name))
++            {
++                net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
++                    net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new ResourceLocation(name));
++                if (p == null)
++                    p = net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new ResourceLocation("minecraft:farmer"));
++                this.setVillagerType(p);
++            }
+         }
+ 
+         if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1)
+@@ -445,7 +495,7 @@
+             entityzombie.func_82149_j(p_70074_1_);
+             this.field_70170_p.func_72900_e(p_70074_1_);
+             entityzombie.func_180482_a(this.field_70170_p.func_175649_E(new BlockPos(entityzombie)), new EntityZombie.GroupData(false, true));
+-            entityzombie.func_184735_a(entityvillager.func_70946_n());
++            entityzombie.setVillagerType(entityvillager.getProfessionForge());
+             entityzombie.func_82227_f(p_70074_1_.func_70631_g_());
+             entityzombie.func_94061_f(entityvillager.func_175446_cd());
+ 
+@@ -486,7 +536,7 @@
  
          if (p_180482_2_ == null)
          {
@@ -65,3 +170,24 @@
          }
  
          if (p_180482_2_ instanceof EntityZombie.GroupData)
+@@ -495,7 +545,7 @@
+ 
+             if (entityzombie$groupdata.field_142046_b)
+             {
+-                this.func_184735_a(this.field_70146_Z.nextInt(5));
++                net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70146_Z);
+             }
+ 
+             if (entityzombie$groupdata.field_142048_a)
+@@ -629,7 +679,10 @@
+ 
+         this.field_70170_p.func_72900_e(this);
+         entityvillager.func_94061_f(this.func_175446_cd());
+-        entityvillager.func_70938_b(this.func_184736_de());
++        if (this.getVillagerTypeForge() != null)
++            entityvillager.setProfession(this.getVillagerTypeForge());
++        else
++            entityvillager.func_70938_b(0);
+ 
+         if (this.func_145818_k_())
+         {

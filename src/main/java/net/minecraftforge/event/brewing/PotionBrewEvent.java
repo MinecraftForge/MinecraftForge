@@ -1,6 +1,8 @@
 package net.minecraftforge.event.brewing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityBrewingStand;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
@@ -38,9 +40,9 @@ public class PotionBrewEvent extends Event
      * PotionBrewEvent.Pre is fired before vanilla brewing takes place.
      * All changes made to the event's array will be made to the TileEntity if the event is canceled.
      * <br>
-     * The event is fired during the TileEntityBrewingStand#brewPotions() method invocation.<br>
+     * The event is fired during the {@link TileEntityBrewingStand#brewPotions()} method invocation.<br>
      * <br>
-     * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
+     * {@link #stacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the vanilla brewing will take place instead of modded brewing.
@@ -63,9 +65,9 @@ public class PotionBrewEvent extends Event
     /**
      * PotionBrewEvent.Post is fired when a potion is brewed in the brewing stand.
      * <br>
-     * The event is fired during the TileEntityBrewingStand#brewPotions() method invocation.<br>
+     * The event is fired during the {@link TileEntityBrewingStand#brewPotions()} method invocation.<br>
      * <br>
-     * {@link #brewingStacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
+     * {@link #stacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>

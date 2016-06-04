@@ -135,6 +135,8 @@ public class ForgeEventFactory
 
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
     {
+        if (entity == null)
+            return Result.DEFAULT;
         LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();

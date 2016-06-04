@@ -1,11 +1,21 @@
 package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -37,10 +47,11 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Load is fired when Minecraft loads a world.<br>
      * This event is fired when a world is loaded in
-     * WorldClient#WorldClient(NetHandlerPlayClient, WorldSettings, int, EnumDifficulty, Profiler),
-     * MinecraftServer#loadAllWorlds(String, String, long, WorldType, String),
-     * DimensionManager#initDimension(int),
-     * and ForgeInternalHandler#onDimensionLoad(Load). <br>
+     * {@link WorldClient#WorldClient(NetHandlerPlayClient, WorldSettings, int, EnumDifficulty, Profiler)},
+     * {@link MinecraftServer#loadAllWorlds(String, String, long, WorldType, String)},
+     * {@link IntegratedServer#loadAllWorlds(String, String, long, WorldType, String)}
+     * {@link DimensionManager#initDimension(int)},
+     * and {@link ForgeInternalHandler#onDimensionLoad(Load)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -56,11 +67,10 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Unload is fired when Minecraft unloads a world.<br>
      * This event is fired when a world is unloaded in
-     * Minecraft#loadWorld(WorldClient, String),
-     * MinecraftServer#deleteWorldAndStopServer(),
-     * MinecraftServer#stopServer(),
-     * DimensionManager#unloadWorlds(Hashtable<Integer, long[]>),
-     * ForgeInternalHandler#onDimensionUnload(Unload). <br>
+     * {@link Minecraft#loadWorld(WorldClient, String)},
+     * {@link MinecraftServer#stopServer()},
+     * {@link DimensionManager#unloadWorlds(Hashtable)},
+     * {@link ForgeInternalHandler#onDimensionUnload(Unload)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -76,8 +86,8 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Save is fired when Minecraft saves a world.<br>
      * This event is fired when a world is saved in
-     * WorldServer#saveAllChunks(boolean, IProgressUpdate),
-     * ForgeInternalHandler#onDimensionSave(Save). <br>
+     * {@link WorldServer#saveAllChunks(boolean, IProgressUpdate)},
+     * {@link ForgeInternalHandler#onDimensionSave(Save)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -93,8 +103,8 @@ public class WorldEvent extends Event
     /**
      * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
      * If an entry is added to the list, it needs to be a globally unique instance.
-     * The event is called in WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos) as well as
-     * WorldServer#canCreatureTypeSpawnHere(EnumCreatureType creatureType, BiomeGenBase.SpawnListEntry spawnListEntry, BlockPos pos)
+     * The event is called in {@link WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos)} as well as
+     * {@link WorldServer#canCreatureTypeSpawnHere(EnumCreatureType, SpawnListEntry, BlockPos)}
      * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */

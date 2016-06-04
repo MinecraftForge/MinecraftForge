@@ -3,12 +3,14 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.
  * <br>
  * This event is fired whenever a player sleeps in a bed in
- * EntityPlayer#sleepInBedAt(BlockPos).<br>
+ * {@link EntityPlayer#trySleep(BlockPos)}.<br>
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
  * <br>

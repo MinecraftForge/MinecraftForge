@@ -26,11 +26,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
@@ -942,10 +945,12 @@ public class Loader
      * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
      * save, but missing from the runtime, are to be handled.
      *
-     * @param missing Map containing missing names with their associated id, blocks need to come before items for remapping.
+     * @param missingBlocks Map containing the missing block names with their associated id. Remapped blocks will be removed from it.
+     * @param missingItems Map containing the missing block names with their associated id. Remapped items will be removed from it.
      * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
-     * @param gameData GameData instance where the new map's config is to be loaded into.
-     * @return List with the mapping results.
+     * @param remapBlocks Returns a map containing the remapped block names and an array containing the original and new id for the block.
+     * @param remapItems Returns a map containing the remapped item names and an array containing the original and new id for the item.
+     * @return List with the names of the failed remappings.
      */
     public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
     {
