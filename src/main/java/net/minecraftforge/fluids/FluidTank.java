@@ -122,7 +122,21 @@ public class FluidTank implements IFluidTank, IFluidHandler
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (resource == null || resource.amount <= 0 || !canFillFluidType(resource))
+        if (!canFillFluidType(resource))
+        {
+            return 0;
+        }
+
+        return fillInternal(resource, doFill);
+    }
+
+    /**
+     * Use this method to bypass the restrictions from {@link #canFillFluidType(FluidStack)}
+     * Meant for use by the owner of the tank when they have {@link #canFill() set to false}.
+     */
+    public int fillInternal(FluidStack resource, boolean doFill)
+    {
+        if (resource == null || resource.amount <= 0)
         {
             return 0;
         }
@@ -183,17 +197,43 @@ public class FluidTank implements IFluidTank, IFluidHandler
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain)
     {
-        if (resource == null || !resource.isFluidEqual(getFluid()))
+        if (!canDrainFluidType(getFluid()))
         {
             return null;
         }
-        return drain(resource.amount, doDrain);
+        return drainInternal(resource, doDrain);
     }
 
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
-        if (fluid == null || maxDrain <= 0 || !canDrainFluidType(fluid))
+        if (!canDrainFluidType(fluid))
+        {
+            return null;
+        }
+        return drainInternal(maxDrain, doDrain);
+    }
+
+    /**
+     * Use this method to bypass the restrictions from {@link #canDrainFluidType(FluidStack)}
+     * Meant for use by the owner of the tank when they have {@link #canDrain()} set to false}.
+     */
+    public FluidStack drainInternal(FluidStack resource, boolean doDrain)
+    {
+        if (resource == null || !resource.isFluidEqual(getFluid()))
+        {
+            return null;
+        }
+        return drainInternal(resource.amount, doDrain);
+    }
+
+    /**
+     * Use this method to bypass the restrictions from {@link #canDrainFluidType(FluidStack)}
+     * Meant for use by the owner of the tank when they have {@link #canDrain()} set to false}.
+     */
+    public FluidStack drainInternal(int maxDrain, boolean doDrain)
+    {
+        if (fluid == null || maxDrain <= 0)
         {
             return null;
         }
