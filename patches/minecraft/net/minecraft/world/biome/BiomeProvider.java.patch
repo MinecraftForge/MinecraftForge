@@ -20,7 +20,7 @@
      {
          this();
          GenLayer[] agenlayer = GenLayer.func_180781_a(p_i45744_1_, p_i45744_3_, p_i45744_4_);
-+        agenlayer = getModdedBiomeerators(p_i45744_3_, p_i45744_1_, agenlayer);
++        agenlayer = getModdedBiomeGenerators(p_i45744_3_, p_i45744_1_, agenlayer);
          this.field_76944_d = agenlayer[0];
          this.field_76945_e = agenlayer[1];
      }
@@ -29,7 +29,7 @@
          this.field_76942_f.func_76838_a();
      }
 +
-+    public GenLayer[] getModdedBiomeerators(WorldType worldType, long seed, GenLayer[] original)
++    public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original)
 +    {
 +        net.minecraftforge.event.terraingen.WorldTypeEvent.InitBiomeGens event = new net.minecraftforge.event.terraingen.WorldTypeEvent.InitBiomeGens(worldType, seed, original);
 +        net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS.post(event);
