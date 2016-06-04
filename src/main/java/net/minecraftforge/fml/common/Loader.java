@@ -808,6 +808,7 @@ public class Loader
         return "Minecraft " + mccversion;
     }
 
+    @Deprecated
     public boolean serverStarting(Object server)
     {
         try
@@ -823,12 +824,14 @@ public class Loader
         return true;
     }
 
+    @Deprecated
     public void serverStarted()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STARTED);
         modController.transition(LoaderState.SERVER_STARTED, false);
     }
 
+    @Deprecated
     public void serverStopping()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPING);
@@ -870,6 +873,7 @@ public class Loader
         return String.format("MCP %s", mcpversion);
     }
 
+    @Deprecated
     public void serverStopped()
     {
         PersistentRegistryManager.revertToFrozen();
@@ -878,6 +882,7 @@ public class Loader
         modController.transition(LoaderState.AVAILABLE, true);
     }
 
+    @Deprecated
     public boolean serverAboutToStart(Object server)
     {
         try
