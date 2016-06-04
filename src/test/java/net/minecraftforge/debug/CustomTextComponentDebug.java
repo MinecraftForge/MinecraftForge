@@ -39,7 +39,12 @@ public class CustomTextComponentDebug
     public void playerLogin(EntityJoinWorldEvent ev)
     {
         if(ENABLE && !ev.getWorld().isRemote && (ev.getEntity() instanceof EntityPlayer))
-            ev.getEntity().addChatMessage(new TextComponentItemStack(new ItemStack(Items.COOKIE)));
+        {
+            ItemStack stack = new ItemStack(Items.COOKIE);
+            stack.setStackDisplayName("Jaffa Cake");
+
+            ev.getEntity().addChatMessage(new TextComponentItemStack(stack));
+        }
     }
 
     public static class TextComponentItemStack extends TextComponentSerializable
@@ -63,7 +68,7 @@ public class CustomTextComponentDebug
         @Override
         public String getUnformattedComponentText()
         {
-            return "[" + stack.getDisplayName() + "]";
+            return "This TextComponent represents " + stack.stackSize + "x " + stack.getDisplayName();
         }
 
         @Override
@@ -105,25 +110,7 @@ public class CustomTextComponentDebug
 
         public String toString()
         {
-            ResourceLocation item = stack.getItem().getRegistryName();
-            int meta = stack.getMetadata();
-            int stackSize = stack.stackSize;
-            NBTTagCompound tag = stack.getTagCompound();
-
-            StringBuilder b = new StringBuilder();
-            b.append("ItemStack{item='"); b.append(item.toString()); b.append("'");
-            b.append(", stackSize="); b.append(stackSize);
-            if (meta != 0)
-            {
-                b.append(", meta="); b.append(meta);
-            }
-            if(tag != null && !tag.hasNoTags())
-            {
-                b.append(", tag="); b.append(tag.toString());
-            }
-            b.append("}");
-
-            return b.toString();
+            return getSerializableElement().toString();
         }
 
         @Override
@@ -165,7 +152,7 @@ public class CustomTextComponentDebug
             if(meta != 0) obj.add("meta", new JsonPrimitive(meta));
             if(tag != null && !tag.hasNoTags())
             {
-                obj.add("tag", new JsonPrimitive(tag.toString()).getAsJsonObject());
+                obj.add("tag", new JsonPrimitive(tag.toString()));
             }
 
             return obj;
