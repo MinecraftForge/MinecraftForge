@@ -49,6 +49,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -89,6 +90,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingPotionEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -489,6 +491,22 @@ public class ForgeHooks
     public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
+    }
+
+    public static boolean onLivingPotionAdded(EntityLivingBase entity, PotionEffect effect) {
+        return MinecraftForge.EVENT_BUS.post(new LivingPotionEvent.LivingPotionAddedEvent(entity, effect));
+    }
+
+    public static boolean onLivingPotionCured(EntityLivingBase entity, PotionEffect effect, ItemStack curativeItem) {
+        return MinecraftForge.EVENT_BUS.post(new LivingPotionEvent.LivingPotionCuredEvent(entity, effect, curativeItem));
+    }
+
+    public static void onLivingPotionRemoved(EntityLivingBase entity, PotionEffect effect, boolean byCommand) {
+        MinecraftForge.EVENT_BUS.post(new LivingPotionEvent.LivingPotionRemovedEvent(entity, effect, byCommand));
+    }
+
+    public static void onLivingPotionExpired(EntityLivingBase entity, PotionEffect effect) {
+        MinecraftForge.EVENT_BUS.post(new LivingPotionEvent.LivingPotionExpiredEvent(entity, effect));
     }
 
     public static float[] onLivingFall(EntityLivingBase entity, float distance, float damageMultiplier)
