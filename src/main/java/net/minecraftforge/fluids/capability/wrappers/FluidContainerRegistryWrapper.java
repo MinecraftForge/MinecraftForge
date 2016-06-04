@@ -21,121 +21,121 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 @Deprecated
 public class FluidContainerRegistryWrapper implements IFluidHandler, ICapabilityProvider
 {
-	protected final ItemStack container;
+    protected final ItemStack container;
 
-	public FluidContainerRegistryWrapper(ItemStack container)
-	{
-		this.container = container;
-	}
+    public FluidContainerRegistryWrapper(ItemStack container)
+    {
+        this.container = container;
+    }
 
-	private void updateContainer(ItemStack newContainerData)
-	{
-		container.setItem(newContainerData.getItem());
-		container.setTagCompound(newContainerData.getTagCompound());
-		container.setItemDamage(newContainerData.getItemDamage());
-		container.stackSize = newContainerData.stackSize;
-	}
+    private void updateContainer(ItemStack newContainerData)
+    {
+        container.setItem(newContainerData.getItem());
+        container.setTagCompound(newContainerData.getTagCompound());
+        container.setItemDamage(newContainerData.getItemDamage());
+        container.stackSize = newContainerData.stackSize;
+    }
 
-	@Override
-	public IFluidTankProperties[] getTankProperties()
-	{
-		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(container);
-		int capacity = FluidContainerRegistry.getContainerCapacity(fluid, container);
-		return new FluidTankProperties[] { new FluidTankProperties(fluid, capacity) };
-	}
+    @Override
+    public IFluidTankProperties[] getTankProperties()
+    {
+        FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(container);
+        int capacity = FluidContainerRegistry.getContainerCapacity(fluid, container);
+        return new FluidTankProperties[] { new FluidTankProperties(fluid, capacity) };
+    }
 
-	@Override
-	public int fill(FluidStack resource, boolean doFill)
-	{
-		if (container.stackSize != 1 || resource == null)
-		{
-			return 0;
-		}
+    @Override
+    public int fill(FluidStack resource, boolean doFill)
+    {
+        if (container.stackSize != 1 || resource == null)
+        {
+            return 0;
+        }
 
-		FluidStack originalContained = FluidContainerRegistry.getFluidForFilledItem(container);
+        FluidStack originalContained = FluidContainerRegistry.getFluidForFilledItem(container);
 
-		ItemStack result = FluidContainerRegistry.fillFluidContainer(resource, container);
-		if (result == null)
-		{
-			return 0;
-		}
+        ItemStack result = FluidContainerRegistry.fillFluidContainer(resource, container);
+        if (result == null)
+        {
+            return 0;
+        }
 
-		if (doFill)
-		{
-			updateContainer(result);
-		}
+        if (doFill)
+        {
+            updateContainer(result);
+        }
 
-		FluidStack newContained = FluidContainerRegistry.getFluidForFilledItem(result);
+        FluidStack newContained = FluidContainerRegistry.getFluidForFilledItem(result);
 
-		int originalAmount = originalContained == null ? 0 : originalContained.amount;
-		int newAmount = newContained == null ? 0 : newContained.amount;
-		return newAmount - originalAmount;
-	}
+        int originalAmount = originalContained == null ? 0 : originalContained.amount;
+        int newAmount = newContained == null ? 0 : newContained.amount;
+        return newAmount - originalAmount;
+    }
 
-	@Nullable
-	@Override
-	public FluidStack drain(FluidStack resource, boolean doDrain)
-	{
-		if (container.stackSize != 1 || resource == null)
-		{
-			return null;
-		}
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain)
+    {
+        if (container.stackSize != 1 || resource == null)
+        {
+            return null;
+        }
 
-		FluidStack contained = FluidContainerRegistry.getFluidForFilledItem(container);
-		if (contained != null && contained.isFluidEqual(resource))
-		{
-			return drain(resource.amount, doDrain);
-		}
+        FluidStack contained = FluidContainerRegistry.getFluidForFilledItem(container);
+        if (contained != null && contained.isFluidEqual(resource))
+        {
+            return drain(resource.amount, doDrain);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Nullable
-	@Override
-	public FluidStack drain(int maxDrain, boolean doDrain)
-	{
-		if (container.stackSize != 1)
-		{
-			return null;
-		}
+    @Nullable
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain)
+    {
+        if (container.stackSize != 1)
+        {
+            return null;
+        }
 
-		FluidStack contained = FluidContainerRegistry.getFluidForFilledItem(container);
-		if (contained != null)
-		{
-			if (contained.amount <= maxDrain)
-			{
-				ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(container);
-				if (emptyContainer != null)
-				{
-					if (doDrain)
-					{
-						if (FluidContainerRegistry.hasNullEmptyContainer(container))
-						{
-							emptyContainer.stackSize = 0;
-						}
-						updateContainer(emptyContainer);
-					}
-					return contained;
-				}
-			}
-		}
+        FluidStack contained = FluidContainerRegistry.getFluidForFilledItem(container);
+        if (contained != null)
+        {
+            if (contained.amount <= maxDrain)
+            {
+                ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(container);
+                if (emptyContainer != null)
+                {
+                    if (doDrain)
+                    {
+                        if (FluidContainerRegistry.hasNullEmptyContainer(container))
+                        {
+                            emptyContainer.stackSize = 0;
+                        }
+                        updateContainer(emptyContainer);
+                    }
+                    return contained;
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
-	{
-		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
-	}
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+    {
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+    }
 
-	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
-	{
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-		{
-			return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this);
-		}
-		return null;
-	}
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+    {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+        {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this);
+        }
+        return null;
+    }
 }

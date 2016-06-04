@@ -357,7 +357,7 @@ public class FluidUtil
         }
     }
 
-	/**
+    /**
      * Helper method to get the fluid contained in an itemStack
      */
     @Nullable
@@ -463,7 +463,7 @@ public class FluidUtil
         return true;
     }
 
-	/**
+    /**
      * Attempts to pick up a fluid in the world and put it in an empty container item.
      *
      * @param emptyContainer The empty container to fill. Will not be modified.
@@ -472,7 +472,7 @@ public class FluidUtil
      * @param pos            The position of the fluid in the world.
      * @param side           The side of the fluid that is being drained.
      * @return a filled container if it was successful. returns null on failure.
-	 */
+     */
     @Nullable
     public static ItemStack tryPickUpFluid(ItemStack emptyContainer, @Nullable EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side)
     {

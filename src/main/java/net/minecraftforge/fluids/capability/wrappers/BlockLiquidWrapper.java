@@ -24,102 +24,102 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  */
 public class BlockLiquidWrapper implements IFluidHandler
 {
-	protected final BlockLiquid blockLiquid;
-	protected final World world;
-	protected final BlockPos blockPos;
+    protected final BlockLiquid blockLiquid;
+    protected final World world;
+    protected final BlockPos blockPos;
 
-	public BlockLiquidWrapper(BlockLiquid blockLiquid, World world, BlockPos blockPos)
-	{
-		this.blockLiquid = blockLiquid;
-		this.world = world;
-		this.blockPos = blockPos;
-	}
+    public BlockLiquidWrapper(BlockLiquid blockLiquid, World world, BlockPos blockPos)
+    {
+        this.blockLiquid = blockLiquid;
+        this.world = world;
+        this.blockPos = blockPos;
+    }
 
-	@Override
-	public IFluidTankProperties[] getTankProperties()
-	{
-		FluidStack containedStack = null;
-		IBlockState blockState = world.getBlockState(blockPos);
-		if (blockState.getBlock() == blockLiquid)
-		{
-			containedStack = getStack(blockState);
-		}
-		return new FluidTankProperties[]{new FluidTankProperties(containedStack, Fluid.BUCKET_VOLUME, false, true)};
-	}
+    @Override
+    public IFluidTankProperties[] getTankProperties()
+    {
+        FluidStack containedStack = null;
+        IBlockState blockState = world.getBlockState(blockPos);
+        if (blockState.getBlock() == blockLiquid)
+        {
+            containedStack = getStack(blockState);
+        }
+        return new FluidTankProperties[]{new FluidTankProperties(containedStack, Fluid.BUCKET_VOLUME, false, true)};
+    }
 
-	@Override
-	public int fill(FluidStack resource, boolean doFill)
-	{
-		return 0;
-	}
+    @Override
+    public int fill(FluidStack resource, boolean doFill)
+    {
+        return 0;
+    }
 
-	@Nullable
-	@Override
-	public FluidStack drain(FluidStack resource, boolean doDrain)
-	{
-		if (resource == null || resource.amount < Fluid.BUCKET_VOLUME)
-		{
-			return null;
-		}
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain)
+    {
+        if (resource == null || resource.amount < Fluid.BUCKET_VOLUME)
+        {
+            return null;
+        }
 
-		IBlockState blockState = world.getBlockState(blockPos);
-		if (blockState.getBlock() == blockLiquid && blockState.getValue(BlockLiquid.LEVEL) == 0)
-		{
-			FluidStack containedStack = getStack(blockState);
-			if (containedStack != null && resource.containsFluid(containedStack))
-			{
-				if (doDrain)
-				{
-					world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
-				}
-				return containedStack;
-			}
+        IBlockState blockState = world.getBlockState(blockPos);
+        if (blockState.getBlock() == blockLiquid && blockState.getValue(BlockLiquid.LEVEL) == 0)
+        {
+            FluidStack containedStack = getStack(blockState);
+            if (containedStack != null && resource.containsFluid(containedStack))
+            {
+                if (doDrain)
+                {
+                    world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
+                }
+                return containedStack;
+            }
 
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	@Nullable
-	@Override
-	public FluidStack drain(int maxDrain, boolean doDrain)
-	{
-		if (maxDrain < Fluid.BUCKET_VOLUME)
-		{
-			return null;
-		}
+    @Nullable
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain)
+    {
+        if (maxDrain < Fluid.BUCKET_VOLUME)
+        {
+            return null;
+        }
 
-		IBlockState blockState = world.getBlockState(blockPos);
-		if (blockState.getBlock() == blockLiquid)
-		{
-			FluidStack containedStack = getStack(blockState);
-			if (containedStack != null && containedStack.amount <= maxDrain)
-			{
-				if (doDrain)
-				{
-					world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
-				}
-				return containedStack;
-			}
+        IBlockState blockState = world.getBlockState(blockPos);
+        if (blockState.getBlock() == blockLiquid)
+        {
+            FluidStack containedStack = getStack(blockState);
+            if (containedStack != null && containedStack.amount <= maxDrain)
+            {
+                if (doDrain)
+                {
+                    world.setBlockState(blockPos, Blocks.AIR.getDefaultState(), 11);
+                }
+                return containedStack;
+            }
 
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	@Nullable
-	private FluidStack getStack(IBlockState blockState)
-	{
-		Material material = blockState.getMaterial();
-		if (material == Material.WATER && blockState.getValue(BlockLiquid.LEVEL) == 0)
-		{
-			return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
-		}
-		else if (material == Material.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
-		{
-			return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
-		}
-		else
-		{
-			return null;
-		}
-	}
+    @Nullable
+    private FluidStack getStack(IBlockState blockState)
+    {
+        Material material = blockState.getMaterial();
+        if (material == Material.WATER && blockState.getValue(BlockLiquid.LEVEL) == 0)
+        {
+            return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
+        }
+        else if (material == Material.LAVA && blockState.getValue(BlockLiquid.LEVEL) == 0)
+        {
+            return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
+        }
+        else
+        {
+            return null;
+        }
+    }
 }
