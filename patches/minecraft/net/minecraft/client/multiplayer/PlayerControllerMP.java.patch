@@ -50,7 +50,15 @@
                  return flag;
              }
          }
-@@ -218,14 +224,17 @@
+@@ -207,6 +213,7 @@
+             if (this.field_78779_k.func_77145_d())
+             {
+                 this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
++                if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(this.field_78776_a.field_71439_g, func_78757_d() + 1)).isCanceled())
+                 func_178891_a(this.field_78776_a, this, p_180511_1_, p_180511_2_);
+                 this.field_78781_i = 5;
+             }
+@@ -218,14 +225,17 @@
                  }
  
                  this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
@@ -69,7 +77,7 @@
                  if (flag && iblockstate.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F)
                  {
                      this.func_187103_a(p_180511_1_);
-@@ -372,13 +381,32 @@
+@@ -372,13 +382,32 @@
          }
          else
          {
@@ -104,7 +112,7 @@
                  }
  
                  if (!flag && p_187099_3_ != null && p_187099_3_.func_77973_b() instanceof ItemBlock)
-@@ -394,7 +422,7 @@
+@@ -394,7 +423,7 @@
  
              this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_4_, p_187099_5_, p_187099_7_, f, f1, f2));
  
@@ -113,7 +121,7 @@
              {
                  if (p_187099_3_ == null)
                  {
-@@ -412,14 +440,19 @@
+@@ -412,14 +441,19 @@
                  {
                      int i = p_187099_3_.func_77960_j();
                      int j = p_187099_3_.field_77994_a;
@@ -134,7 +142,7 @@
                  }
              }
              else
-@@ -446,6 +479,7 @@
+@@ -446,6 +480,7 @@
              }
              else
              {
@@ -142,7 +150,7 @@
                  int i = p_187101_3_.field_77994_a;
                  ActionResult<ItemStack> actionresult = p_187101_3_.func_77957_a(p_187101_2_, p_187101_1_, p_187101_4_);
                  ItemStack itemstack = (ItemStack)actionresult.func_188398_b();
-@@ -454,9 +488,10 @@
+@@ -454,9 +489,10 @@
                  {
                      p_187101_1_.func_184611_a(p_187101_4_, itemstack);
  
@@ -153,4 +161,12 @@
 +                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_4_);
                      }
                  }
+ 
+@@ -494,6 +530,7 @@
+         this.func_78750_j();
+         Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
+         this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_5_, vec3d));
++        if(net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_187102_1_, p_187102_2_, p_187102_3_, p_187102_1_.func_184586_b(p_187102_5_), p_187102_5_)) return EnumActionResult.PASS;
+         return this.field_78779_k == WorldSettings.GameType.SPECTATOR ? EnumActionResult.PASS : p_187102_2_.func_184199_a(p_187102_1_, vec3d, p_187102_4_, p_187102_5_);
+     }
  
