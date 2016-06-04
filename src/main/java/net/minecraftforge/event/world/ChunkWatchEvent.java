@@ -41,7 +41,7 @@ public class ChunkWatchEvent extends Event
     /**
      * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
-     * {@link EntityPlayerMP#onUpdate()}. <br>
+     * {@link PlayerChunkMapEntry#addPlayer(EntityPlayerMP)} and {@link PlayerChunkMapEntry#sentToPlayers()}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
