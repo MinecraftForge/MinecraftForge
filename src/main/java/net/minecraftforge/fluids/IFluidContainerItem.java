@@ -1,6 +1,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
 
 /**
  * Implement this interface on Item classes that support external manipulation of their internal
@@ -10,7 +11,10 @@ import net.minecraft.item.ItemStack;
  *
  * NOTE: Use of NBT data on the containing ItemStack is encouraged.
  *
+ * @deprecated See {@link net.minecraftforge.fluids.capability.ItemFluidContainer} for a CapabilityProvider implementing the Capability {@link net.minecraftforge.fluids.capability.IFluidHandler}
+ * @see FluidContainerItemWrapper
  */
+@Deprecated
 public interface IFluidContainerItem
 {
     /**

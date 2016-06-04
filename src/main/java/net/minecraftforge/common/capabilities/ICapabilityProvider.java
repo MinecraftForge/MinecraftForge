@@ -1,5 +1,7 @@
 package net.minecraftforge.common.capabilities;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.EnumFacing;
 
 public interface ICapabilityProvider
@@ -19,7 +21,7 @@ public interface ICapabilityProvider
      *   CAN BE NULL. Null is defined to represent 'internal' or 'self'
      * @return True if this object supports the capability.
      */
-    boolean hasCapability(Capability<?> capability, EnumFacing facing);
+    boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing);
 
     /**
      * Retrieves the handler for the capability requested on the specific side.
@@ -31,5 +33,5 @@ public interface ICapabilityProvider
      *   CAN BE NULL. Null is defined to represent 'internal' or 'self'
      * @return True if this object supports the capability.
      */
-    <T> T getCapability(Capability<T> capability, EnumFacing facing);
+    <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing);
 }

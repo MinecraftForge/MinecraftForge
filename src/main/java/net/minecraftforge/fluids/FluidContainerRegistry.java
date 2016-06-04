@@ -17,10 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
  * Register simple items that contain fluids here. Useful for buckets, bottles, and things that have
  * ID/metadata mappings.
  *
- * For more complex items, use {@link IFluidContainerItem} instead.
- *
- * Deprecated: We will eventually be moving this ALL away from a registry and instead EVERYTHING will use IFluidContainerItem.
- * We need to decide a way of swapping Items/Stacks.
+ * @deprecated This will be removed soon. Create an item like {@link net.minecraftforge.fluids.capability.ItemFluidContainer}
  */
 @Deprecated
 public abstract class FluidContainerRegistry
@@ -70,8 +67,11 @@ public abstract class FluidContainerRegistry
     private static Map<ContainerKey, FluidContainerData> filledContainerMap = Maps.newHashMap();
     private static Set<ContainerKey> emptyContainers = Sets.newHashSet();
 
-    public static final int BUCKET_VOLUME = 1000;
+    @Deprecated
+    public static final int BUCKET_VOLUME = Fluid.BUCKET_VOLUME;
+    @Deprecated
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Items.BUCKET);
+    @Deprecated
     public static final ItemStack EMPTY_BOTTLE = new ItemStack(Items.GLASS_BOTTLE);
     private static final ItemStack NULL_EMPTYCONTAINER = new ItemStack(Items.BUCKET);
 
@@ -346,6 +346,21 @@ public abstract class FluidContainerRegistry
     public static boolean isFilledContainer(ItemStack container)
     {
         return container != null && getFluidForFilledItem(container) != null;
+    }
+
+    public static boolean hasNullEmptyContainer(ItemStack container)
+    {
+        if (container == null)
+        {
+            return false;
+        }
+
+        FluidContainerData data = containerFluidMap.get(new ContainerKey(container));
+        if (data != null)
+        {
+            return data.emptyContainer == NULL_EMPTYCONTAINER;
+        }
+        return false;
     }
 
     public static FluidContainerData[] getRegisteredFluidContainerData()
