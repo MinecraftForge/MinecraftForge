@@ -126,6 +126,13 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
+    public int getSlotLimit(int slot)
+    {
+        boolean accessingUpperChest = slot < 27;
+        return getChest(accessingUpperChest).getInventoryStackLimit();
+    }
+
+    @Override
     public boolean equals(Object o)
     {
         if (this == o)

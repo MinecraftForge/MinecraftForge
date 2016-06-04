@@ -56,4 +56,12 @@ public interface IItemHandler
      * @return ItemStack extracted from the slot, must be null, if nothing can be extracted
      **/
     ItemStack extractItem(int slot, int amount, boolean simulate);
+
+    /**
+     * Retrieves the maximum stack size allowed to exist in the given slot.
+     *
+     * @param slot Slot to query.
+     * @return     The maximum stack size allowed in the slot.
+     */
+    int getSlotLimit(int slot);
 }
