@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -529,9 +530,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         for (int i = 0; i < flow.length; i++)
         {
-            if (flow[i] >= 0.875F && end != 1F)
+            if (flow[i] >= 14f / 16)
             {
-                end = flow[i];
+                total += flow[i] * 10;
+                count += 10;
             }
 
             if (flow[i] >= 0)
@@ -562,6 +564,10 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
             {
                 return 0.875F;
             }
+        }
+        if (here.getBlock() instanceof BlockLiquid)
+        {
+            return Math.min(1 - BlockLiquid.getLiquidHeightPercent(here.getValue(BlockLiquid.LEVEL)), 14f / 16);
         }
         return !here.getMaterial().isSolid() && up.getBlock() == this ? 1 : this.getQuantaPercentage(world, pos) * 0.875F;
     }
