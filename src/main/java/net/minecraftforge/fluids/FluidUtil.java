@@ -414,15 +414,21 @@ public class FluidUtil
      *
      * Modeled after {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
      *
-     * @param player  Player who places the fluid. May be null for blocks like dispensers.
-     * @param worldIn World to place the fluid in
-     * @param fluid   The fluid to place.
-     * @param pos     The position in the world to place the fluid block
+     * @param player     Player who places the fluid. May be null for blocks like dispensers.
+     * @param worldIn    World to place the fluid in
+     * @param fluidStack The fluidStack to place.
+     * @param pos        The position in the world to place the fluid block
      * @return true if successful
      */
-    public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World worldIn, FluidStack fluid, BlockPos pos)
+    public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World worldIn, FluidStack fluidStack, BlockPos pos)
     {
-        if (worldIn == null || fluid == null || fluid.getFluid() == null || pos == null)
+        if (worldIn == null || fluidStack == null || pos == null)
+        {
+            return false;
+        }
+
+        Fluid fluid = fluidStack.getFluid();
+        if (fluid == null || !fluid.canBePlacedInWorld())
         {
             return false;
         }
@@ -437,16 +443,9 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        IBlockState fluidBlockState = fluid.getFluid().getBlock().getDefaultState();
-
-        if (worldIn.provider.doesWaterVaporize() && fluidBlockState.getMaterial() == Material.WATER)
+        if (worldIn.provider.doesWaterVaporize() && fluid.doesVaporize(fluidStack))
         {
-            worldIn.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
-
-            for (int l = 0; l < 8; ++l)
-            {
-                worldIn.spawnParticle(EnumParticleTypes.SMOKE_LARGE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
-            }
+            fluid.vaporize(player, worldIn, pos, fluidStack);
         }
         else
         {
@@ -455,9 +454,10 @@ public class FluidUtil
                 worldIn.destroyBlock(pos, true);
             }
 
-            SoundEvent soundevent = fluid.getFluid().getEmptySound(worldIn, pos);
+            SoundEvent soundevent = fluid.getEmptySound(fluidStack);
             worldIn.playSound(player, pos, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
+            IBlockState fluidBlockState = fluid.getBlock().getDefaultState();
             worldIn.setBlockState(pos, fluidBlockState, 11);
         }
         return true;
