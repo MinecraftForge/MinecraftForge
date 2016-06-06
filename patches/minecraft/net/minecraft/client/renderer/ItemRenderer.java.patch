@@ -54,7 +54,15 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -597,8 +602,8 @@
+@@ -512,6 +517,7 @@
+ 
+     private void func_78448_c(float p_78448_1_)
+     {
++        if (net.minecraftforge.client.ForgeHooksClient.renderUnderwaterOverlay()) return;
+         this.field_78455_a.func_110434_K().func_110577_a(field_110929_d);
+         Tessellator tessellator = Tessellator.func_178181_a();
+         VertexBuffer vertexbuffer = tessellator.func_178180_c();
+@@ -597,8 +603,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);

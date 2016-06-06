@@ -78,6 +78,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderUnderwaterOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -714,6 +715,10 @@ public class ForgeHooksClient
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static boolean renderUnderwaterOverlay() {
+        return MinecraftForge.EVENT_BUS.post(new RenderUnderwaterOverlayEvent());
     }
 
 }
