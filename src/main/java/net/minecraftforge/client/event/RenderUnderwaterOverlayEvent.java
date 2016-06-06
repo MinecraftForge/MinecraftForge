@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 /**
  * This event is fired before the underwater overlay is rendered
  * This event is {@link Cancelable}
+ * If canceled, the underwater overlay will not be rendered.
  * This event is fired from {@link net.minecraft.client.renderer.ItemRenderer#renderWaterOverlayTexture(float)}
  */
 @Cancelable
