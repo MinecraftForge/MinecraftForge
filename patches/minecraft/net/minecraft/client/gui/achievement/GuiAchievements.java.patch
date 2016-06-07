@@ -77,7 +77,8 @@
 +        java.util.List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : net.minecraftforge.common.AchievementPage.getAchievementPage(currentPage).getAchievements());
 +        for (int j5 = 0; j5 < achievementList.size(); ++j5)
          {
-             Achievement achievement1 = (Achievement)AchievementList.field_187981_e.get(j5);
+-            Achievement achievement1 = (Achievement)AchievementList.field_187981_e.get(j5);
++            Achievement achievement1 = achievementList.get(j5);
  
 -            if (achievement1.field_75992_c != null)
 +            if (achievement1.field_75992_c != null && achievementList.contains(achievement1.field_75992_c))
