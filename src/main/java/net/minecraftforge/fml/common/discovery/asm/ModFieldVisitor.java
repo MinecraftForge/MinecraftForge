@@ -12,21 +12,22 @@
 
 package net.minecraftforge.fml.common.discovery.asm;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
+
+import java.util.Map;
 
 public class ModFieldVisitor extends FieldVisitor
 {
-
     private String fieldName;
     private ASMModParser discoverer;
+    private Map<String, String> fieldSignatureMap;
 
-    public ModFieldVisitor(String name, ASMModParser discoverer)
+    public ModFieldVisitor(String name, ASMModParser discoverer, String signature)
     {
         super(Opcodes.ASM5);
         this.fieldName = name;
         this.discoverer = discoverer;
+        this.fieldSignatureMap = discoverer.parseVariableOrMethodSignature(signature);
     }
     
     @Override
@@ -34,5 +35,19 @@ public class ModFieldVisitor extends FieldVisitor
     {
         discoverer.startFieldAnnotation(fieldName, annotationName);
         return new ModAnnotationVisitor(discoverer);
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String annotationName, boolean runtimeVisible)
+    {
+        if (typePath != null)
+        {
+            discoverer.startFieldTypeAnnotation(fieldName, typePath.toString(), fieldSignatureMap.get(typePath.toString()), annotationName);
+            return new ModAnnotationVisitor(discoverer);
+        }
+        else
+        {
+            return null;
+        }
     }
 }

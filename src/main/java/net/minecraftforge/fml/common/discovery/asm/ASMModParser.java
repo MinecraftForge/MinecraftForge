@@ -14,16 +14,13 @@ package net.minecraftforge.fml.common.discovery.asm;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.collect.Maps;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
-
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -35,7 +32,6 @@ import com.google.common.collect.Sets;
 
 public class ASMModParser
 {
-
     private Type asmType;
     private int classVersion;
     private Type asmSuperType;
@@ -45,7 +41,7 @@ public class ASMModParser
 
     static enum AnnotationType
     {
-        CLASS, FIELD, METHOD, SUBTYPE;
+        CLASS, FIELD, METHOD, SUBTYPE, TYPE, PARAMETER, LOCAL_VARIABLE
     }
 
     public ASMModParser(InputStream stream) throws IOException
@@ -77,6 +73,12 @@ public class ASMModParser
         annotations.addFirst(ann);
     }
 
+    public void startClassTypeAnnotation(String annotationName, String classSignature)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), classSignature);
+        annotations.addFirst(ann);
+    }
+
     public void addAnnotationProperty(String key, Object value)
     {
         annotations.getFirst().addProperty(key, value);
@@ -85,6 +87,30 @@ public class ASMModParser
     public void startFieldAnnotation(String fieldName, String annotationName)
     {
         ModAnnotation ann = new ModAnnotation(AnnotationType.FIELD, Type.getType(annotationName), fieldName);
+        annotations.addFirst(ann);
+    }
+
+    public enum EnumMethodAdditionalInfo
+    {
+        RETURN_VALUE_TYPE,
+        PARAMETER_TYPE
+    }
+
+    public void startFieldTypeAnnotation(String fieldName, String typePath, String signature, String annotationName)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), typePath + "(" + signature + ")", fieldName);
+        annotations.addFirst(ann);
+    }
+
+    public void startMethodTypeAnnotation(String methodName, String typePath, String signature, String annotationName, EnumMethodAdditionalInfo additionalInfo)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), typePath + "(" + signature + ")" + "[" + additionalInfo.toString() + "]", methodName);
+        annotations.addFirst(ann);
+    }
+
+    public void startLocalVariableTypeAnnotation(String methodName, String methodDescriptor, String typePath, String annotationName, String localVariableName, String localVariableDescriptor)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.LOCAL_VARIABLE, Type.getType(annotationName), typePath + "(" + localVariableDescriptor + ")", methodName + methodDescriptor + "$" + localVariableName);
         annotations.addFirst(ann);
     }
 
@@ -149,7 +175,14 @@ public class ASMModParser
     {
         for (ModAnnotation ma : annotations)
         {
-            table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
+            if (ma.getExtraName() != null)
+            {
+                table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName() + "$" + ma.getExtraName(), ma.member, ma.values);
+            }
+            else
+            {
+                table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
+            }
         }
 
         for (String intf : interfaces)
@@ -192,5 +225,214 @@ public class ASMModParser
     {
         ModAnnotation ann = new ModAnnotation(AnnotationType.METHOD, Type.getType(annotationName), methodName+methodDescriptor);
         annotations.addFirst(ann);
+    }
+
+    public void startMethodParameterAnnotation(int parameter, String methodName, String methodDescriptor, String parameterDescriptor, String annotationName)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.PARAMETER, Type.getType(annotationName), parameter + "(" + parameterDescriptor + ")", methodName + methodDescriptor);
+        annotations.addFirst(ann);
+    }
+
+    public void startLocalVariableAnnotation(String methodName, String methodDescriptor, String annotationName, String localVariableName)
+    {
+        ModAnnotation ann = new ModAnnotation(AnnotationType.LOCAL_VARIABLE, Type.getType(annotationName), localVariableName, methodName + methodDescriptor);
+        annotations.addFirst(ann);
+    }
+
+    public Map<Integer, String> parseClassSignature(String signature)
+    {
+        if (signature == null)
+        {
+            return Maps.newHashMap();
+        }
+        final List<String> classSignatures = Lists.newArrayList();
+        boolean isStarted = false;
+        final List<Boolean> notSplitList = Lists.newArrayList();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < signature.length(); i++)
+        {
+            char currentChar = signature.charAt(i);
+            if (currentChar == '<')
+            {
+                if (isStarted)
+                {
+                    builder.append(currentChar);
+                    notSplitList.add(true);
+                }
+                isStarted = true;
+                continue;
+            }
+            if (currentChar == '>')
+            {
+                if (!notSplitList.isEmpty())
+                {
+                    notSplitList.remove(0);
+                    builder.append(currentChar);
+                    if (notSplitList.isEmpty())
+                    {
+                        classSignatures.add(builder.toString());
+                        builder = new StringBuilder();
+                    }
+                    continue;
+                }
+                else
+                {
+                    classSignatures.add(builder.toString());
+                    break;
+                }
+            }
+            if (currentChar == ';')
+            {
+                if (notSplitList.isEmpty())
+                {
+                    classSignatures.add(builder.toString());
+                    builder = new StringBuilder();
+                    continue;
+                }
+            }
+            if (isStarted)
+            {
+                builder.append(currentChar);
+            }
+        }
+        classSignatures.removeIf(String::isEmpty);
+        Map<Integer, String> classSignatureMap = Maps.newHashMap();
+        for (int i = 0; i < classSignatures.size(); i++)
+        {
+            classSignatureMap.put(i, classSignatures.get(i));
+        }
+        return classSignatureMap;
+    }
+
+    public Map<String, String> parseVariableOrMethodSignature(String signature)
+    {
+        if (signature == null)
+        {
+            return Maps.newHashMap();
+        }
+        final Map<String, String> fieldSignatureMap = Maps.newHashMap();
+        boolean isStarted = false;
+        final List<Boolean> notSplitList = Lists.newArrayList();
+        final List<Integer> typePathNumber = Lists.newArrayList();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < signature.length(); i++)
+        {
+            char currentChar = signature.charAt(i);
+            if (currentChar == '<')
+            {
+                if (isStarted)
+                {
+                    String stringKey = "";
+                    for (int number : typePathNumber)
+                    {
+                        stringKey += number + "*";
+                    }
+                    stringKey = stringKey.substring(0, stringKey.length() - 1);
+                    fieldSignatureMap.put(stringKey, builder.toString());
+                    builder = new StringBuilder();
+                    notSplitList.add(true);
+                }
+                isStarted = true;
+                typePathNumber.add(0);
+            }
+            else if (currentChar == '*')
+            {
+                builder.append(currentChar);
+                String stringKey = "";
+                for (int number : typePathNumber)
+                {
+                    stringKey += number + "*";
+                }
+                stringKey = stringKey.substring(0, stringKey.length() - 1);
+                fieldSignatureMap.put(stringKey, builder.toString());
+                builder = new StringBuilder();
+            }
+            else if (currentChar == '>')
+            {
+                if (!notSplitList.isEmpty())
+                {
+                    notSplitList.remove(0);
+                    builder.append(currentChar);
+                    typePathNumber.remove(typePathNumber.size() - 1);
+                    if (notSplitList.isEmpty())
+                    {
+                        builder = new StringBuilder();
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else if (currentChar == ';')
+            {
+                String stringKey = "";
+                for (int number : typePathNumber)
+                {
+                    stringKey += number + "*";
+                }
+                if (!stringKey.isEmpty())
+                {
+                    stringKey = stringKey.substring(0, stringKey.length() - 1);
+                }
+                if (!fieldSignatureMap.containsKey(stringKey))
+                {
+                    fieldSignatureMap.put(stringKey, builder.toString());
+                }
+                builder = new StringBuilder();
+                if (!typePathNumber.isEmpty())
+                {
+                    typePathNumber.set(typePathNumber.size() - 1, typePathNumber.get(typePathNumber.size() - 1) + 1);
+                }
+                if (notSplitList.isEmpty())
+                {
+                    builder = new StringBuilder();
+                }
+            }
+            else if (isStarted)
+            {
+                if (currentChar != '+')
+                {
+                    builder.append(currentChar);
+                }
+            }
+        }
+        if (signature.contains("<"))
+        {
+            fieldSignatureMap.put("", signature.substring(0, signature.indexOf("<")));
+        }
+        else
+        {
+            fieldSignatureMap.put("", signature.substring(0, signature.length() - 1));
+        }
+        return fieldSignatureMap;
+    }
+
+    public Map<EnumMethodAdditionalInfo, Map<String, String>> parseMethodSignature(String signature)
+    {
+        if (signature == null)
+        {
+            return Maps.newHashMap();
+        }
+        Map<EnumMethodAdditionalInfo, Map<String, String>> methodSignatureMap = Maps.newHashMap();
+        methodSignatureMap.put(EnumMethodAdditionalInfo.RETURN_VALUE_TYPE, parseVariableOrMethodSignature(signature.substring(signature.indexOf(")") + 1)));
+        methodSignatureMap.put(EnumMethodAdditionalInfo.PARAMETER_TYPE, parseVariableOrMethodSignature(signature.substring(0, signature.indexOf(")"))));
+        return methodSignatureMap;
+    }
+
+    public Map<Integer, String> parseMethodDescriptor(String methodDescriptor)
+    {
+        if (methodDescriptor == null)
+        {
+            return Maps.newHashMap();
+        }
+        String processingMethodDescriptor = methodDescriptor.substring("(".length(), methodDescriptor.indexOf(")"));
+        String[] splitMethodDescriptor = processingMethodDescriptor.split(";");
+        Map<Integer, String> methodDescriptorMap = Maps.newHashMap();
+        for (int i = 0; i < splitMethodDescriptor.length; i++)
+        {
+            methodDescriptorMap.put(i, splitMethodDescriptor[i]);
+        }
+        return methodDescriptorMap;
     }
 }

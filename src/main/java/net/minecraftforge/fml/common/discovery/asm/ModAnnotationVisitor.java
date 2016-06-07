@@ -59,12 +59,14 @@ public class ModAnnotationVisitor extends AnnotationVisitor
     {
         return new ModAnnotationVisitor(discoverer, name);
     }
+
     @Override
     public AnnotationVisitor visitAnnotation(String name, String desc)
     {
         discoverer.addSubAnnotation(name, desc);
         return new ModAnnotationVisitor(discoverer, true);
     }
+
     @Override
     public void visitEnd()
     {
