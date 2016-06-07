@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1141 @@
+@@ -887,6 +906,1146 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1331,6 +1331,11 @@
 +     */
 +    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
 +    {
++    }
++
++    public boolean drawFlowingWaterOverlay(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing facing)
++    {
++        return true;
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
