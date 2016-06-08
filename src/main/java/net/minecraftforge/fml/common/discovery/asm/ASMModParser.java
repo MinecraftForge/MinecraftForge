@@ -29,6 +29,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.objectweb.asm.TypeReference;
 
 public class ASMModParser
 {
@@ -90,27 +91,21 @@ public class ASMModParser
         annotations.addFirst(ann);
     }
 
-    public enum EnumMethodAdditionalInfo
-    {
-        RETURN_VALUE_TYPE,
-        PARAMETER_TYPE
-    }
-
     public void startFieldTypeAnnotation(String fieldName, String typePath, String signature, String annotationName)
     {
-        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), typePath + "(" + signature + ")", fieldName);
+        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), fieldName + "$" + typePath + "(" + signature + ")");
         annotations.addFirst(ann);
     }
 
-    public void startMethodTypeAnnotation(String methodName, String typePath, String signature, String annotationName, EnumMethodAdditionalInfo additionalInfo)
+    public void startMethodTypeAnnotation(String methodName, String typePath, String signature, String annotationName, String additionalInfo)
     {
-        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), typePath + "(" + signature + ")" + "[" + additionalInfo.toString() + "]", methodName);
+        ModAnnotation ann = new ModAnnotation(AnnotationType.TYPE, Type.getType(annotationName), methodName + "$" + typePath + "(" + signature + ")" + "[" + additionalInfo.toString() + "]");
         annotations.addFirst(ann);
     }
 
     public void startLocalVariableTypeAnnotation(String methodName, String methodDescriptor, String typePath, String annotationName, String localVariableName, String localVariableDescriptor)
     {
-        ModAnnotation ann = new ModAnnotation(AnnotationType.LOCAL_VARIABLE, Type.getType(annotationName), typePath + "(" + localVariableDescriptor + ")", methodName + methodDescriptor + "$" + localVariableName);
+        ModAnnotation ann = new ModAnnotation(AnnotationType.LOCAL_VARIABLE, Type.getType(annotationName), methodName + methodDescriptor + "$" + localVariableName + "$" + typePath + "(" + localVariableDescriptor + ")");
         annotations.addFirst(ann);
     }
 
@@ -175,14 +170,7 @@ public class ASMModParser
     {
         for (ModAnnotation ma : annotations)
         {
-            if (ma.getExtraName() != null)
-            {
-                table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName() + "$" + ma.getExtraName(), ma.member, ma.values);
-            }
-            else
-            {
-                table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
-            }
+            table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
         }
 
         for (String intf : interfaces)
@@ -229,13 +217,13 @@ public class ASMModParser
 
     public void startMethodParameterAnnotation(int parameter, String methodName, String methodDescriptor, String parameterDescriptor, String annotationName)
     {
-        ModAnnotation ann = new ModAnnotation(AnnotationType.PARAMETER, Type.getType(annotationName), parameter + "(" + parameterDescriptor + ")", methodName + methodDescriptor);
+        ModAnnotation ann = new ModAnnotation(AnnotationType.PARAMETER, Type.getType(annotationName), methodName + methodDescriptor + "$" + parameter + "(" + parameterDescriptor + ")");
         annotations.addFirst(ann);
     }
 
     public void startLocalVariableAnnotation(String methodName, String methodDescriptor, String annotationName, String localVariableName)
     {
-        ModAnnotation ann = new ModAnnotation(AnnotationType.LOCAL_VARIABLE, Type.getType(annotationName), localVariableName, methodName + methodDescriptor);
+        ModAnnotation ann = new ModAnnotation(AnnotationType.LOCAL_VARIABLE, Type.getType(annotationName), methodName + methodDescriptor + "$" + localVariableName);
         annotations.addFirst(ann);
     }
 
@@ -408,15 +396,15 @@ public class ASMModParser
         return fieldSignatureMap;
     }
 
-    public Map<EnumMethodAdditionalInfo, Map<String, String>> parseMethodSignature(String signature)
+    public Map<Integer, Map<String, String>> parseMethodSignature(String signature)
     {
         if (signature == null)
         {
             return Maps.newHashMap();
         }
-        Map<EnumMethodAdditionalInfo, Map<String, String>> methodSignatureMap = Maps.newHashMap();
-        methodSignatureMap.put(EnumMethodAdditionalInfo.RETURN_VALUE_TYPE, parseVariableOrMethodSignature(signature.substring(signature.indexOf(")") + 1)));
-        methodSignatureMap.put(EnumMethodAdditionalInfo.PARAMETER_TYPE, parseVariableOrMethodSignature(signature.substring(0, signature.indexOf(")"))));
+        Map<Integer, Map<String, String>> methodSignatureMap = Maps.newHashMap();
+        methodSignatureMap.put(TypeReference.METHOD_RETURN, parseVariableOrMethodSignature(signature.substring(signature.indexOf(")") + 1)));
+        methodSignatureMap.put(TypeReference.METHOD_FORMAL_PARAMETER, parseVariableOrMethodSignature(signature.substring(0, signature.indexOf(")"))));
         return methodSignatureMap;
     }
 

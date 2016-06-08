@@ -12,7 +12,7 @@ public class ModMethodVisitor extends MethodVisitor {
     private String methodDescriptor;
     private ASMModParser discoverer;
     private Map<Integer, String> methodDescriptorMap;
-    private Map<ASMModParser.EnumMethodAdditionalInfo, Map<String, String>> methodSignatureMap;
+    private Map<Integer, Map<String, String>> methodSignatureMap;
     private Map<Integer, Pair<String, String>> localVariableMap = Maps.newHashMap();
     private Map<Integer, Map<String, String>> localVariableSignatureMap = Maps.newHashMap();
 
@@ -38,14 +38,14 @@ public class ModMethodVisitor extends MethodVisitor {
     {
         if (typePath != null)
         {
-            if (typeRef == 335544320)
+            if (typeRef == TypeReference.newTypeReference(TypeReference.METHOD_RETURN).getValue())
             {
-                discoverer.startMethodTypeAnnotation(methodName, typePath.toString(), methodSignatureMap.get(ASMModParser.EnumMethodAdditionalInfo.RETURN_VALUE_TYPE).get(typePath.toString()), annotationName, ASMModParser.EnumMethodAdditionalInfo.RETURN_VALUE_TYPE);
+                discoverer.startMethodTypeAnnotation(methodName, typePath.toString(), methodSignatureMap.get(TypeReference.METHOD_RETURN).get(typePath.toString()), annotationName, "METHOD_RETURN");
                 return new ModAnnotationVisitor(discoverer);
             }
-            else if (typeRef == 369098752)
+            else if (typeRef == TypeReference.newTypeReference(TypeReference.METHOD_FORMAL_PARAMETER).getValue())
             {
-                discoverer.startMethodTypeAnnotation(methodName, typePath.toString(), methodSignatureMap.get(ASMModParser.EnumMethodAdditionalInfo.PARAMETER_TYPE).get(typePath.toString()), annotationName, ASMModParser.EnumMethodAdditionalInfo.PARAMETER_TYPE);
+                discoverer.startMethodTypeAnnotation(methodName, typePath.toString(), methodSignatureMap.get(TypeReference.METHOD_FORMAL_PARAMETER).get(typePath.toString()), annotationName, "METHOD_FORMAL_PARAMETER");
                 return new ModAnnotationVisitor(discoverer);
             }
             return null;

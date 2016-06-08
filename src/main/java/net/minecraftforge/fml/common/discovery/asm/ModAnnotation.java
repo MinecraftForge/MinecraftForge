@@ -43,7 +43,6 @@ public class ModAnnotation
     Map<String,Object> values = Maps.newHashMap();
     private ArrayList<Object> arrayList;
     private String arrayName;
-    private String extraName;
     public ModAnnotation(AnnotationType type, Type asmType, String member)
     {
         this.type = type;
@@ -55,12 +54,6 @@ public class ModAnnotation
     {
         this.type = type;
         this.asmType = asmType;
-    }
-
-    public ModAnnotation(AnnotationType type, Type asmType, String member, String extraName)
-    {
-        this(type, asmType, member);
-        this.extraName = extraName;
     }
 
     @Override
@@ -104,11 +97,6 @@ public class ModAnnotation
         {
             values.put(key, value);
         }
-    }
-
-    public String getExtraName()
-    {
-        return extraName;
     }
 
     public void addEnumProperty(String key, String enumName, String value)

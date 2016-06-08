@@ -19,7 +19,6 @@ public class ModAnnotationVisitor extends AnnotationVisitor
 {
     private ASMModParser discoverer;
     private boolean array;
-    private String name;
     private boolean isSubAnnotation;
 
     public ModAnnotationVisitor(ASMModParser discoverer)
@@ -32,7 +31,6 @@ public class ModAnnotationVisitor extends AnnotationVisitor
     {
         this(discoverer);
         this.array = true;
-        this.name = name;
         discoverer.addAnnotationArray(name);
     }
 

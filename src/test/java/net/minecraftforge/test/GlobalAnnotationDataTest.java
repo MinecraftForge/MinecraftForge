@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * --------------------<br>
- * A mod for debugging global annotation.<br>
+ * A mod for testing global annotation.<br>
  * Adding Feature :<br>
  * ---Type Annotation---<br>
  * Class Type Annotation : Success<br>
@@ -71,7 +71,7 @@ public class GlobalAnnotationDataTest
         {
             public static Class<@TestAnnotation ? extends Annotation> methodAnnotationTest(@TestAnnotation Object object, @TestAnnotation Object object2)
             {
-                @TestAnnotation
+                @TestAnnotation2("Null")
                 String a = null;
                 @TestAnnotation
                 Class<@TestAnnotation ? extends Class<@TestAnnotation ?>> abc = null;
@@ -84,7 +84,16 @@ public class GlobalAnnotationDataTest
         @Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE, ElementType.LOCAL_VARIABLE})
         public @interface TestAnnotation
         {
+            @TestAnnotation
+            String value() default "Null";
+        }
 
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE, ElementType.LOCAL_VARIABLE})
+        public @interface TestAnnotation2
+        {
+            @TestAnnotation
+            String value();
         }
     }
     */
