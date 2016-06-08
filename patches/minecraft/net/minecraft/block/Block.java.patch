@@ -147,9 +147,9 @@
      {
      }
  
-+    public IBlockState onBlockPlaced(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, ItemStack stack, EntityLivingBase p_180642_8_)
++    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, ItemStack stack)
 +    {
-+        return this.func_180642_a(p_180642_1_, p_180642_2_, p_180642_3_, p_180642_4_, p_180642_5_, p_180642_6_, p_180642_7_, p_180642_8_);
++        return this.func_180642_a(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
 +    }
 +
 +    // Forge: Use the ItemStack aware variant
