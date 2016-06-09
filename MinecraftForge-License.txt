@@ -8,7 +8,7 @@ Version 1.0
 
 Minecraft: Denotes a copy of the Minecraft game licensed by Mojang AB
 
-User: Anybody that interract with the software in one of the following ways:
+User: Anybody that interacts with the software in one of the following ways:
    - play
    - decompile
    - recompile or compile
@@ -26,7 +26,7 @@ the Minecraft sources that are required to have Minecraft Forge working.
 
 The present license is granted to any user of Minecraft Forge, for all files included 
 unless stated otherwise in the file itself. As a prerequisite, a user of Minecraft 
-Forge must own a legally aquired copy of Minecraft.
+Forge must own a legally acquired copy of Minecraft.
 
 2. Play rights
 --------------
@@ -58,10 +58,10 @@ partially, in totallity, or included in a distribution. When distributing
 binaries or class files, the user must provide means to obtain the sources of
 the distributed version of Minecraft Forge at no costs. This includes the
 files as well as any dependency that the code may rely on, including patches to
-minecraft original sources.
+Minecraft original sources.
 
 Modification of Minecraft Forge as well as dependencies, including patches to
-minecraft original sources, has to remain under the terms of the present
+Minecraft original sources, has to remain under the terms of the present
 license.
 
 The right to distribute Minecraft Forge does not extend to the right to distribute
