@@ -69,34 +69,24 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     protected void setFluid(Fluid fluid) {
         if (fluid == null)
         {
-            container.setItem(Items.BUCKET);
-            container.setTagCompound(null);
-            container.setItemDamage(0);
+            container.deserializeNBT(new ItemStack(Items.BUCKET).serializeNBT());
         }
         else if (fluid == FluidRegistry.WATER)
         {
-            container.setItem(Items.WATER_BUCKET);
-            container.setTagCompound(null);
-            container.setItemDamage(0);
+            container.deserializeNBT(new ItemStack(Items.WATER_BUCKET).serializeNBT());
         }
         else if (fluid == FluidRegistry.LAVA)
         {
-            container.setItem(Items.LAVA_BUCKET);
-            container.setTagCompound(null);
-            container.setItemDamage(0);
+            container.deserializeNBT(new ItemStack(Items.LAVA_BUCKET).serializeNBT());
         }
         else if (fluid.getName().equals("milk"))
         {
-            container.setItem(Items.MILK_BUCKET);
-            container.setTagCompound(null);
-            container.setItemDamage(0);
+            container.deserializeNBT(new ItemStack(Items.MILK_BUCKET).serializeNBT());
         }
         else if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
         {
             ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
-            container.setItem(filledBucket.getItem());
-            container.setTagCompound(filledBucket.getTagCompound());
-            container.setItemDamage(filledBucket.getItemDamage());
+            container.deserializeNBT(filledBucket.serializeNBT());
         }
     }
 
