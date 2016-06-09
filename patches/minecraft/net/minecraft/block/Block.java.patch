@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1146 @@
+@@ -887,6 +906,1154 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1333,6 +1333,14 @@
 +    {
 +    }
 +
++    /**
++     * If false is returned, the flowing water overlay will not be rendered over this block when underwater and the fix applied to glass in 1.9 will be applied to this block. (Useful for glass blocks)
++     * @param state the state of the block with the overlay
++     * @param world world this block is in
++     * @param pos position of this block
++     * @param facing the side the overlay is being rendered
++     * @return whether the game should render the flowing water overlay
++     */
 +    public boolean drawFlowingWaterOverlay(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing facing)
 +    {
 +        return true;
