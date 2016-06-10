@@ -187,7 +187,7 @@ public class ForgeVersion
                     ComparableVersion target = null;
 
                     InputStream con = url.openStream();
-                    String data = new String(ByteStreams.toByteArray(con));
+                    String data = new String(ByteStreams.toByteArray(con), "UTF-8");
                     con.close();
 
                     FMLLog.log("ForgeVersionCheck", Level.DEBUG, "[%s] Received version check data:\n%s", mod.getModId(), data);
