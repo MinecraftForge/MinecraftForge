@@ -1,14 +1,14 @@
 # Installation Instructions
 
-## For Mod Users:
+## Mod Users
 
 Download the latest **Installer** (or **Installer-win** for Windows users) from http://files.minecraftforge.net and follow the installation instructions.
 
-## For Mod Devs:
+## Mod Devs
 
 Read the [MinecraftForge Documentation]([MinecraftForge Documentation](http://http://mcforge.readthedocs.io/)
 
-Download the latest **Minecraft Development Kit (MDK)** (the Forge Source Distribution) from http://files.minecraftforge.net and unzip it to a folder.
+The Forge source distribution is called the **Minecraft Development Kit (MDK)** download it from http://files.minecraftforge.net and unzip it to a folder.
 
 Open a command prompt, navigate to the directory where you unzipped the **MDK**, and run:
 
@@ -18,11 +18,11 @@ If you have [Gradle](https://docs.gradle.org/current/userguide/installation.html
 
 If you DO NOT have Gradle installed:
 
-### Windows 
+**Windows**
 
     ./gradlew.bat setupDevWorkspace
 
-### MacOS/Linux:
+**MacOS/Linux**
 
     ./gradlew setupDevWorkspace
 
@@ -40,23 +40,22 @@ If you have Gradle:
 
 If you DO NOT have Gradle installed:
 
-### Windows
+**Windows**
 
     ./gradlew.bat setupDecompWorkspace
 
-### MacOS/Linux
+**MacOS/Linux**
 
     ./gradlew setupDecompWorkspace
 
-## For Contributors
+##  Contributors
 
-This assumes you have Gradle installed. If you don't, use `gradlew.bat` or `./gradlew` instead of `gradle`.
+If you don't have Gradle installed. , use `gradlew.bat` or `./gradlew` instead of `gradle` below.
 
     git clone git@github.com:MinecraftForge/MinecraftForge.git
     gradle setupForge
 
 To use Eclipse, point your Eclipse workspace at the `eclipse` folder.
-
 
 ## Development Requirements 
 (For mod devs and contributors)
