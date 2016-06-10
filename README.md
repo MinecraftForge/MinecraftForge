@@ -6,7 +6,7 @@ Download the latest **Installer** (or **Installer-win** for Windows users) from 
 
 ## Mod Devs
 
-Read the [MinecraftForge Documentation]([MinecraftForge Documentation](http://http://mcforge.readthedocs.io/)
+Read the [MinecraftForge Documentation](http://http://mcforge.readthedocs.io/)
 
 The Forge source distribution is called the **Minecraft Development Kit (MDK)** download it from http://files.minecraftforge.net and unzip it to a folder.
 
