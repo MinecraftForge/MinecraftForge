@@ -4,7 +4,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
@@ -33,9 +32,7 @@ public class ItemHandlerHelper
         if (a == null || !a.isItemEqual(b))
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        return ItemStack.areItemStackTagsEqual(a, b);
     }
 
     /**
@@ -56,9 +53,7 @@ public class ItemHandlerHelper
         if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        return ItemStack.areItemStackTagsEqual(a, b);
     }
 
     public static ItemStack copyStackWithSize(ItemStack itemStack, int size)
