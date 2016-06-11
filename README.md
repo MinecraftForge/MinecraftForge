@@ -12,27 +12,27 @@ The Forge source distribution is called the **Minecraft Development Kit (MDK)** 
 
 Open a command prompt, navigate to the directory where you unzipped the **MDK**, and run:
 
-    gradle setupDevWorkspace
+    gradlew setupDevWorkspace
 
 To use Eclipse, run this instead:
 
-    gradle eclipse 
+    gradlew eclipse 
     
 You can install the [Gradle Plugin for Eclipse](https://marketplace.eclipse.org/content/gradle-sts-integration-eclipse) and import the MDK folder.
 
 To get the decompiled classes:
 
-    gradle setupDecompWorkspace
+    gradlew setupDecompWorkspace
 
 ##  Contributors
 
     git clone git@github.com:MinecraftForge/MinecraftForge.git
-    gradle setupForge
+    gradlew setupForge
 
 To use Eclipse, point your Eclipse workspace at the `eclipse` folder.
 
 ## Development Requirements 
 (For mod devs and contributors)
 
-  - JDK
-  - [Gradle](https://docs.gradle.org/current/userguide/installation.html) is recommended, but you can use  `gradlew` (or `gradlew.bat`) instead.
+  - [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+  - [Gradle](https://docs.gradle.org/current/userguide/installation.html) can be used in place of `gradlew` above if installed.
