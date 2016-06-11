@@ -134,6 +134,15 @@
              float f = 0.5F;
              double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+@@ -596,7 +603,7 @@
+         Vec3d vec3d = p_185503_2_.func_178786_a((double)p_185503_1_.func_177958_n(), (double)p_185503_1_.func_177956_o(), (double)p_185503_1_.func_177952_p());
+         Vec3d vec3d1 = p_185503_3_.func_178786_a((double)p_185503_1_.func_177958_n(), (double)p_185503_1_.func_177956_o(), (double)p_185503_1_.func_177952_p());
+         RayTraceResult raytraceresult = p_185503_4_.func_72327_a(vec3d, vec3d1);
+-        return raytraceresult == null ? null : new RayTraceResult(raytraceresult.field_72307_f.func_72441_c((double)p_185503_1_.func_177958_n(), (double)p_185503_1_.func_177956_o(), (double)p_185503_1_.func_177952_p()), raytraceresult.field_178784_b, p_185503_1_);
++        return raytraceresult == null ? null : new RayTraceResult(raytraceresult.field_72307_f.func_72441_c((double)p_185503_1_.func_177958_n(), (double)p_185503_1_.func_177956_o(), (double)p_185503_1_.func_177952_p()), raytraceresult.field_178784_b, p_185503_1_, p_185503_4_);
+     }
+ 
+     public void func_180652_a(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_)
 @@ -621,7 +628,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
@@ -195,7 +204,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1141 @@
+@@ -887,6 +906,1234 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1029,19 +1038,47 @@
 +    {
 +        return this == net.minecraft.init.Blocks.field_150475_bE || this == net.minecraft.init.Blocks.field_150340_R || this == net.minecraft.init.Blocks.field_150484_ah || this == net.minecraft.init.Blocks.field_150339_S;
 +    }
-+
++    
 +    /**
-+     * Rotate the block. For vanilla blocks this rotates around the axis passed in (generally, it should be the "face" that was hit).
-+     * Note: for mod blocks, this is up to the block and modder to decide. It is not mandated that it be a rotation around the
-+     * face, but could be a rotation to orient *to* that face, or a visiting of possible rotations.
-+     * The method should return true if the rotation was successful though.
++     * Checks if the block can be rotated around the specified axis, clockwise as looking from that side. Doesn't take into
++     * account the player and where on the block they're looking.<br/>
++     * Note: for mod blocks, this is up to the block and modder to decide, but it <b>IS</b> mandated that it be a rotation around the
++     * face, for compatibility reasons. If you know about the player and where they're looking at, implement
++     * {@link Block#canPlayerRotate(World, BlockPos, EnumFacing, EntityPlayer, RayTraceResult)}.
 +     *
 +     * @param world The world
 +     * @param pos Block position in world
 +     * @param axis The axis to rotate around
-+     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     * @return True if it can be rotated, false if it can't
 +     */
-+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    public boolean canRotateBlockAround(World world, BlockPos pos, EnumFacing axis)
++    {
++        IBlockState state = world.func_180495_p(pos);
++        for (IProperty<?> prop : state.func_177228_b().keySet())
++        {
++            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
++            {
++                if(state.func_177231_a(prop).func_177229_b(prop) != state.func_177229_b(prop))
++                {
++                    return true;
++                }
++            }
++        }
++        return false;
++    }
++    
++    /**
++     * Rotate the block around the specified axis, clockwise as looking from that side. Doesn't take into account
++     * the player and where on the block they're looking.<br/>
++     * Note: for mod blocks, this is up to the block and modder to decide, but it <b>IS</b> mandated that it be a rotation around the
++     * face, for compatibility reasons. If you know about the player and where they're looking at, implement
++     * {@link Block#rotateBlock(World, BlockPos, EnumFacing, EntityPlayer, RayTraceResult)}.
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param axis The axis to rotate around
++     */
++    public void rotateBlockAround(World world, BlockPos pos, EnumFacing axis)
 +    {
 +        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty<?> prop : state.func_177228_b().keySet())
@@ -1049,19 +1086,69 @@
 +            if (prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation"))
 +            {
 +                world.func_175656_a(pos, state.func_177231_a(prop));
-+                return true;
++                return;
 +            }
 +        }
-+        return false;
++    }
++    
++    /**
++     * Checks if the block can be rotated by the player. Takes into account
++     * the player and where on the block they're looking.<br/>
++     * Note: for mod blocks, its behavior is up to the block and modder to decide, but it is <b>NOT</b> mandated that it be a
++     * rotation around the face. If you don't know about the player or where they're looking at, implement
++     * {@link Block#canRotateBlockAround(World, BlockPos, EnumFacing)}.
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param axis The axis to rotate around
++     * @param player The player that's attempting to rotate the block
++     * @param hit The position on the block where the player clicked
++     * @return True if it can be rotated, false if it can't
++     */
++    public boolean canPlayerRotate(World world, BlockPos pos, EnumFacing axis, EntityPlayer player, RayTraceResult hit)
++    {
++        return canRotateBlockAround(world, pos, axis);
++    }
++    
++    /**
++     * Rotate the block. Takes into account the player and where on the block they're looking.<br/>
++     * Note: for mod blocks, its behavior is up to the block and modder to decide, but it is <b>NOT</b> mandated that it be a
++     * rotation around the face. If you don't know about the player or where they're looking at, implement
++     * {@link Block#rotateBlockAround(World, BlockPos, EnumFacing)}.<br/>
++     * Defaults to {@link Block#rotateBlockAround(World, BlockPos, EnumFacing)}.
++     *
++     * @param world The world
++     * @param pos Block position in world
++     * @param axis The axis to rotate around
++     * @param player The player that's rotating the block
++     * @param hit The position on the block where the player clicked
++     */
++    public void rotateBlock(World world, BlockPos pos, EnumFacing axis, EntityPlayer player, RayTraceResult hit)
++    {
++        rotateBlockAround(world, pos, axis);
 +    }
 +
 +    /**
-+     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
-+     * Note, this is up to the block to decide. It may not be accurate or representative.
-+     * @param world The world
-+     * @param pos Block position in world
-+     * @return An array of valid axes to rotate around, or null for none or unknown
++     * Deprecated in favor of {@link Block#canRotateBlockAround(World, BlockPos, EnumFacing)}+
++     * {@link Block#rotateBlockAround(World, BlockPos, EnumFacing)}, as well as 
++     * {@link Block#canPlayerRotate(World, BlockPos, EnumFacing, EntityPlayer, RayTraceResult)}+
++     * {@link Block#rotateBlock(World, BlockPos, EnumFacing, EntityPlayer, RayTraceResult)}
 +     */
++    @Deprecated
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        if (!canRotateBlockAround(world, pos, axis))
++        {
++            return false;
++        }
++        rotateBlockAround(world, pos, axis);
++        return true;
++    }
++
++    /**
++     * Completely pointless method by this point?
++     */
++    @Deprecated
 +    public EnumFacing[] getValidRotations(World world, BlockPos pos)
 +    {
 +        IBlockState state = world.func_180495_p(pos);
@@ -1113,6 +1200,21 @@
 +            }
 +        }
 +        return false;
++    }
++
++    /**
++     * Common way to recolor a block with an external tool
++     * @param world The world
++     * @param pos Block position in world
++     * @param side The side hit with the coloring tool
++     * @param color The color to change to
++     * @param player The player that's attempting to recolor the block
++     * @param hit The position on the block where the player clicked
++     * @return If the recoloring was successful
++     */
++    public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, net.minecraft.item.EnumDyeColor color, EntityPlayer player, RayTraceResult hit)
++    {
++        return recolorBlock(world, pos, side, color);
 +    }
 +
 +    /**

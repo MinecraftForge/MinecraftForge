@@ -30,6 +30,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fmp.multipart.MultipartRegistry.MultipartRegistryEntry;
 
 import com.google.common.collect.BiMap;
 import org.apache.logging.log4j.Level;
@@ -40,6 +41,8 @@ public class GameData
     private static final int MAX_BLOCK_ID = 4095;
     private static final int MIN_ITEM_ID = 4096;
     private static final int MAX_ITEM_ID = 31999;
+    private static final int MIN_MULTIPART_ID = 0;
+    private static final int MAX_MULTIPART_ID = Integer.MAX_VALUE >> 5;
     private static final int MIN_POTION_ID = 0; // 0-~31 are vanilla, forge start at 32
     private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
     private static final int MIN_BIOME_ID = 0;
@@ -60,6 +63,7 @@ public class GameData
     {
         iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MIN_BLOCK_ID, MAX_BLOCK_ID, true, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE);
         iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
+        iMultipartRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.MULTIPARTS, MultipartRegistryEntry.class, null, MIN_MULTIPART_ID, MAX_MULTIPART_ID, true, null, null, null);
         iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE);
         iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, Biome.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE);
         iSoundEventRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.SOUNDEVENTS, SoundEvent.class, null, MIN_SOUND_ID, MAX_SOUND_ID, false, null, null, null);
@@ -70,6 +74,7 @@ public class GameData
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
+    private final FMLControlledNamespacedRegistry<MultipartRegistryEntry> iMultipartRegistry;
     private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry;
     private final FMLControlledNamespacedRegistry<Biome> iBiomeRegistry;
     private final FMLControlledNamespacedRegistry<SoundEvent> iSoundEventRegistry;
@@ -88,6 +93,13 @@ public class GameData
     public static FMLControlledNamespacedRegistry<Item> getItemRegistry()
     {
         return getMain().iItemRegistry;
+    }
+
+    /** INTERNAL ONLY */
+    @Deprecated
+    public static FMLControlledNamespacedRegistry<MultipartRegistryEntry> getMultipartRegistry()
+    {
+        return getMain().iMultipartRegistry;
     }
 
     /** INTERNAL ONLY */

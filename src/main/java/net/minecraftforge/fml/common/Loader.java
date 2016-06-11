@@ -944,20 +944,22 @@ public class Loader
     /**
      * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
      * save, but missing from the runtime, are to be handled.
+     * @param missingMultiparts 
      *
      * @param missing Map containing missing names with their associated id, blocks need to come before items for remapping.
      * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
+     * @param remapMultiparts 
      * @param gameData GameData instance where the new map's config is to be loaded into.
      * @return List with the mapping results.
      */
-    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
+    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer> missingMultiparts, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, Map<ResourceLocation, Integer[]> remapMultiparts)
     {
         if (missingBlocks.isEmpty() && missingItems.isEmpty()) // nothing to do
         {
             return ImmutableList.of();
         }
 
-        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size());
+        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size() + missingMultiparts.size());
         ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
 
         for (Map.Entry<ResourceLocation, Integer> mapping : missingBlocks.entrySet())
@@ -968,6 +970,11 @@ public class Loader
         for (Map.Entry<ResourceLocation, Integer> mapping : missingItems.entrySet())
         {
             MissingMapping m = new MissingMapping(GameRegistry.Type.ITEM, mapping.getKey(), mapping.getValue());
+            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
+        }
+        for (Map.Entry<ResourceLocation, Integer> mapping : missingMultiparts.entrySet())
+        {
+            MissingMapping m = new MissingMapping(GameRegistry.Type.MULTIPART, mapping.getKey(), mapping.getValue());
             missingMappings.put(m.resourceLocation.getResourceDomain(), m);
         }
 
@@ -988,7 +995,7 @@ public class Loader
                         didWarn = true;
                     }
 
-                    FMLLog.severe("Unidentified %s: %s, id %d", mapping.type == Type.BLOCK ? "block" : "item", mapping.name, mapping.id);
+                    FMLLog.severe("Unidentified %s: %s, id %d", mapping.type == Type.BLOCK ? "block" : mapping.type == Type.ITEM ? "item" : "multipart", mapping.name, mapping.id);
                 }
             }
         }
@@ -1010,12 +1017,12 @@ public class Loader
             }
         }
 
-        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, remapBlocks, remapItems);
+        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, missingMultiparts, remapBlocks, remapItems, remapMultiparts);
     }
 
-    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
+    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, Map<ResourceLocation, Integer[]> remapMultiparts, boolean isFreezing)
     {
-        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, remapMultiparts, isFreezing));
     }
 
     public void runtimeDisableMod(String modId)

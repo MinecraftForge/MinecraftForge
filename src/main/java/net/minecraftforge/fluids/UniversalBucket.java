@@ -14,6 +14,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -109,7 +110,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         // clicked on a block?
         RayTraceResult mop = this.rayTrace(world, player, false);
 
-        if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
+        if(mop == null || mop.typeOfHit != Type.BLOCK)
         {
             return ActionResult.newResult(EnumActionResult.PASS, itemstack);
         }
@@ -235,7 +236,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         }
 
         // needs to target a block
-        if (event.getTarget() == null || event.getTarget().typeOfHit != RayTraceResult.Type.BLOCK)
+        if (event.getTarget() == null || event.getTarget().typeOfHit != Type.BLOCK)
         {
             return;
         }

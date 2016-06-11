@@ -24,7 +24,7 @@ import net.minecraft.util.ResourceLocation;
  * @author cpw
  */
 public class FMLModIdMappingEvent extends FMLEvent {
-    public enum RemapTarget { BLOCK, ITEM }
+    public enum RemapTarget { BLOCK, ITEM, MULTIPART }
     public class ModRemapping
     {
         public final int oldId;
@@ -45,7 +45,7 @@ public class FMLModIdMappingEvent extends FMLEvent {
     }
     public final ImmutableList<ModRemapping> remappedIds;
     public final boolean isFrozen;
-    public FMLModIdMappingEvent(Map<ResourceLocation, Integer[]> blocks, Map<ResourceLocation, Integer[]> items, boolean isFrozen)
+    public FMLModIdMappingEvent(Map<ResourceLocation, Integer[]> blocks, Map<ResourceLocation, Integer[]> items, Map<ResourceLocation, Integer[]> multiparts, boolean isFrozen)
     {
         this.isFrozen = isFrozen;
         List<ModRemapping> remappings = Lists.newArrayList();
@@ -56,6 +56,10 @@ public class FMLModIdMappingEvent extends FMLEvent {
         for (Entry<ResourceLocation, Integer[]> mapping : items.entrySet())
         {
             remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey(), RemapTarget.ITEM));
+        }
+        for (Entry<ResourceLocation, Integer[]> mapping : multiparts.entrySet())
+        {
+            remappings.add(new ModRemapping(mapping.getValue()[0], mapping.getValue()[1], mapping.getKey(), RemapTarget.MULTIPART));
         }
 
         Collections.sort(remappings, new Comparator<ModRemapping>() {
