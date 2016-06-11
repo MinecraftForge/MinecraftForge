@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "normal": { "model": "mcmultipart:multipart" },
+        "inventory": { "model": "mcmultipart:multipart" }
+    }
+}
