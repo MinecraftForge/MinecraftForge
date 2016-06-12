@@ -110,7 +110,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
          */
         public void remap(Block target)
         {
-            if (type != GameRegistry.Type.BLOCK) throw new IllegalArgumentException("Can't remap an item to a block.");
+            if (type != GameRegistry.Type.BLOCK) throw new IllegalArgumentException("Can't remap an item/multipart to a block.");
             if (target == null) throw new NullPointerException("remap target is null");
             if (GameData.getBlockRegistry().getId(target) < 0) throw new IllegalArgumentException(String.format("The specified block %s hasn't been registered at startup.", target));
 
@@ -128,9 +128,27 @@ public class FMLMissingMappingsEvent extends FMLEvent {
          */
         public void remap(Item target)
         {
-            if (type != GameRegistry.Type.ITEM) throw new IllegalArgumentException("Can't remap a block to an item.");
+            if (type != GameRegistry.Type.ITEM) throw new IllegalArgumentException("Can't remap a block/multipart to an item.");
             if (target == null) throw new NullPointerException("remap target is null");
             if (GameData.getItemRegistry().getId(target) < 0) throw new IllegalArgumentException(String.format("The specified item %s hasn't been registered at startup.", target));
+
+            action = Action.REMAP;
+            this.target = target;
+        }
+
+        /**
+         * Remap the missing multipart to the specified ResourceLocation.
+         *
+         * Use this if you have renamed an IMultipart.
+         * Existing references using the old name will point to the new one.
+         *
+         * @param target ResourceLocation to remap to.
+         */
+        public void remapMultipart(ResourceLocation target)
+        {
+            if (type != GameRegistry.Type.MULTIPART) throw new IllegalArgumentException("Can't remap a block/item to a multipart.");
+            if (target == null) throw new NullPointerException("remap target is null");
+            if (GameData.getMultipartRegistry().getId(target) < 0) throw new IllegalArgumentException(String.format("The specified multipart %s hasn't been registered at startup.", target));
 
             action = Action.REMAP;
             this.target = target;

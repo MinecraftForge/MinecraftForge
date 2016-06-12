@@ -946,19 +946,21 @@ public class Loader
      *
      * @param missingBlocks Map containing the missing block names with their associated id. Remapped blocks will be removed from it.
      * @param missingItems Map containing the missing block names with their associated id. Remapped items will be removed from it.
+     * @param missingMultiparts Map containing the missing multipart names with their associated id. Remapped multiparts will be removed from it.
      * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
      * @param remapBlocks Returns a map containing the remapped block names and an array containing the original and new id for the block.
      * @param remapItems Returns a map containing the remapped item names and an array containing the original and new id for the item.
+     * @param remapMultiparts Returns a map containing the remapped multipart names and an array containing the original and new id for the multipart.
      * @return List with the names of the failed remappings.
      */
-    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
+    public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer> missingMultiparts, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, Map<ResourceLocation, Integer[]> remapMultiparts)
     {
         if (missingBlocks.isEmpty() && missingItems.isEmpty()) // nothing to do
         {
             return ImmutableList.of();
         }
 
-        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size());
+        FMLLog.fine("There are %d mappings missing - attempting a mod remap", missingBlocks.size() + missingItems.size() + missingMultiparts.size());
         ArrayListMultimap<String, MissingMapping> missingMappings = ArrayListMultimap.create();
 
         for (Map.Entry<ResourceLocation, Integer> mapping : missingBlocks.entrySet())
@@ -969,6 +971,11 @@ public class Loader
         for (Map.Entry<ResourceLocation, Integer> mapping : missingItems.entrySet())
         {
             MissingMapping m = new MissingMapping(GameRegistry.Type.ITEM, mapping.getKey(), mapping.getValue());
+            missingMappings.put(m.resourceLocation.getResourceDomain(), m);
+        }
+        for (Map.Entry<ResourceLocation, Integer> mapping : missingMultiparts.entrySet())
+        {
+            MissingMapping m = new MissingMapping(GameRegistry.Type.MULTIPART, mapping.getKey(), mapping.getValue());
             missingMappings.put(m.resourceLocation.getResourceDomain(), m);
         }
 
@@ -989,7 +996,7 @@ public class Loader
                         didWarn = true;
                     }
 
-                    FMLLog.severe("Unidentified %s: %s, id %d", mapping.type == Type.BLOCK ? "block" : "item", mapping.name, mapping.id);
+                    FMLLog.severe("Unidentified %s: %s, id %d", mapping.type == Type.BLOCK ? "block" : mapping.type == Type.ITEM ? "item" : "multipart", mapping.name, mapping.id);
                 }
             }
         }
@@ -1011,12 +1018,12 @@ public class Loader
             }
         }
 
-        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, remapBlocks, remapItems);
+        return PersistentRegistryManager.processIdRematches(missingMappings.values(), isLocalWorld, missingBlocks, missingItems, missingMultiparts, remapBlocks, remapItems, remapMultiparts);
     }
 
-    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
+    public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, Map<ResourceLocation, Integer[]> remapMultiparts, boolean isFreezing)
     {
-        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, remapMultiparts, isFreezing));
     }
 
     public void runtimeDisableMod(String modId)

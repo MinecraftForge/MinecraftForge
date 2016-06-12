@@ -133,3 +133,12 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
+@@ -1904,7 +1935,7 @@
+                 double d0 = p_72731_1_.field_70142_S + (p_72731_1_.field_70165_t - p_72731_1_.field_70142_S) * (double)p_72731_4_;
+                 double d1 = p_72731_1_.field_70137_T + (p_72731_1_.field_70163_u - p_72731_1_.field_70137_T) * (double)p_72731_4_;
+                 double d2 = p_72731_1_.field_70136_U + (p_72731_1_.field_70161_v - p_72731_1_.field_70136_U) * (double)p_72731_4_;
+-                func_181561_a(iblockstate.func_185918_c(this.field_72769_h, blockpos).func_186662_g(0.0020000000949949026D).func_72317_d(-d0, -d1, -d2));
++                func_181561_a((p_72731_2_.boxHit != null ? p_72731_2_.boxHit.func_186662_g(0.0020000000949949026D).func_186670_a(blockpos) : iblockstate.func_185918_c(this.field_72769_h, blockpos)).func_186662_g(0.0020000000949949026D).func_72317_d(-d0, -d1, -d2));
+             }
+ 
+             GlStateManager.func_179132_a(true);

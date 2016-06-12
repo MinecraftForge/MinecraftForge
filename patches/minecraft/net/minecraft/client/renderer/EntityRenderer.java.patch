@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/EntityRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/EntityRenderer.java
-@@ -208,6 +208,7 @@
+@@ -136,6 +136,7 @@
+     private int field_147713_ae;
+     private boolean field_175083_ad;
+     private int field_175084_ae;
++    private AxisAlignedBB pointedEntityBox;
+ 
+     public EntityRenderer(Minecraft p_i45076_1_, IResourceManager p_i45076_2_)
+     {
+@@ -208,6 +209,7 @@
              {
                  this.func_175069_a(new ResourceLocation("shaders/post/invert.json"));
              }
@@ -8,7 +16,25 @@
          }
      }
  
-@@ -399,7 +400,7 @@
+@@ -381,7 +383,8 @@
+                 for (int j = 0; j < list.size(); ++j)
+                 {
+                     Entity entity1 = (Entity)list.get(j);
+-                    AxisAlignedBB axisalignedbb = entity1.func_174813_aQ().func_186662_g((double)entity1.func_70111_Y());
++                    AxisAlignedBB entitybb = entity1.func_174813_aQ();
++                    AxisAlignedBB axisalignedbb = entitybb.func_186662_g((double)entity1.func_70111_Y());
+                     RayTraceResult raytraceresult = axisalignedbb.func_72327_a(vec3d, vec3d2);
+ 
+                     if (axisalignedbb.func_72318_a(vec3d))
+@@ -389,6 +392,7 @@
+                         if (d2 >= 0.0D)
+                         {
+                             this.field_78528_u = entity1;
++                            this.pointedEntityBox = entitybb;
+                             vec3d3 = raytraceresult == null ? vec3d : raytraceresult.field_72307_f;
+                             d2 = 0.0D;
+                         }
+@@ -399,17 +403,19 @@
  
                          if (d3 < d2 || d2 == 0.0D)
                          {
@@ -17,7 +43,34 @@
                              {
                                  if (d2 == 0.0D)
                                  {
-@@ -492,7 +493,7 @@
+                                     this.field_78528_u = entity1;
++                                    this.pointedEntityBox = entitybb;
+                                     vec3d3 = raytraceresult.field_72307_f;
+                                 }
+                             }
+                             else
+                             {
+                                 this.field_78528_u = entity1;
++                                this.pointedEntityBox = entitybb;
+                                 vec3d3 = raytraceresult.field_72307_f;
+                                 d2 = d3;
+                             }
+@@ -420,12 +426,13 @@
+                 if (this.field_78528_u != null && flag && vec3d.func_72438_d(vec3d3) > 3.0D)
+                 {
+                     this.field_78528_u = null;
++                    this.pointedEntityBox = null;
+                     this.field_78531_r.field_71476_x = new RayTraceResult(RayTraceResult.Type.MISS, vec3d3, (EnumFacing)null, new BlockPos(vec3d3));
+                 }
+ 
+                 if (this.field_78528_u != null && (d2 < d1 || this.field_78531_r.field_71476_x == null))
+                 {
+-                    this.field_78531_r.field_71476_x = new RayTraceResult(this.field_78528_u, vec3d3);
++                    this.field_78531_r.field_71476_x = new RayTraceResult(this.field_78528_u, vec3d3, this.pointedEntityBox);
+ 
+                     if (this.field_78528_u instanceof EntityLivingBase || this.field_78528_u instanceof EntityItemFrame)
+                     {
+@@ -492,7 +499,7 @@
                  f = f * 60.0F / 70.0F;
              }
  
@@ -26,7 +79,7 @@
          }
      }
  
-@@ -556,14 +557,8 @@
+@@ -556,14 +563,8 @@
              {
                  BlockPos blockpos = new BlockPos(entity);
                  IBlockState iblockstate = this.field_78531_r.field_71441_e.func_180495_p(blockpos);
@@ -42,7 +95,7 @@
                  GlStateManager.func_179114_b(entity.field_70126_B + (entity.field_70177_z - entity.field_70126_B) * p_78467_1_ + 180.0F, 0.0F, -1.0F, 0.0F);
                  GlStateManager.func_179114_b(entity.field_70127_C + (entity.field_70125_A - entity.field_70127_C) * p_78467_1_, -1.0F, 0.0F, 0.0F);
              }
-@@ -630,17 +625,20 @@
+@@ -630,17 +631,20 @@
  
          if (!this.field_78531_r.field_71474_y.field_74325_U)
          {
@@ -70,7 +123,7 @@
          }
  
          GlStateManager.func_179109_b(0.0F, -f, 0.0F);
-@@ -758,6 +756,7 @@
+@@ -758,6 +762,7 @@
  
              boolean flag = this.field_78531_r.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_78531_r.func_175606_aa()).func_70608_bn();
  
@@ -78,7 +131,7 @@
              if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
              {
                  this.func_180436_i();
-@@ -1093,7 +1092,7 @@
+@@ -1093,7 +1098,7 @@
  
                  try
                  {
@@ -87,7 +140,7 @@
                  }
                  catch (Throwable throwable)
                  {
-@@ -1188,7 +1187,7 @@
+@@ -1188,7 +1193,7 @@
  
                      if (this.field_78531_r.field_71442_b.func_178889_l() == WorldSettings.GameType.SPECTATOR)
                      {
@@ -96,7 +149,7 @@
                      }
                      else
                      {
-@@ -1313,7 +1312,9 @@
+@@ -1313,7 +1318,9 @@
              GlStateManager.func_179094_E();
              RenderHelper.func_74519_b();
              this.field_78531_r.field_71424_I.func_76318_c("entities");
@@ -106,7 +159,7 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
          }
-@@ -1326,6 +1327,7 @@
+@@ -1326,6 +1333,7 @@
              EntityPlayer entityplayer = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -114,7 +167,7 @@
              renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
              GlStateManager.func_179141_d();
          }
-@@ -1367,6 +1369,17 @@
+@@ -1367,6 +1375,17 @@
          GlStateManager.func_179103_j(7425);
          this.field_78531_r.field_71424_I.func_76318_c("translucent");
          renderglobal.func_174977_a(BlockRenderLayer.TRANSLUCENT, (double)p_175068_2_, p_175068_1_, entity);
@@ -132,7 +185,7 @@
          GlStateManager.func_179103_j(7424);
          GlStateManager.func_179132_a(true);
          GlStateManager.func_179089_o();
-@@ -1379,6 +1392,9 @@
+@@ -1379,6 +1398,9 @@
              this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_);
          }
  
@@ -142,7 +195,7 @@
          this.field_78531_r.field_71424_I.func_76318_c("hand");
  
          if (this.field_175074_C)
-@@ -1491,6 +1507,13 @@
+@@ -1491,6 +1513,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -156,7 +209,7 @@
          float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f > 0.0F)
-@@ -1821,6 +1844,13 @@
+@@ -1821,6 +1850,13 @@
              this.field_175081_S = f7;
          }
  
@@ -170,7 +223,7 @@
          GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
      }
  
-@@ -1831,7 +1861,9 @@
+@@ -1831,7 +1867,9 @@
          GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78468_2_);
@@ -181,7 +234,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
          {
              float f1 = 5.0F;
-@@ -1916,6 +1948,7 @@
+@@ -1916,6 +1954,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
              }

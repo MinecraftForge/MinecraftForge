@@ -8,6 +8,7 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
+import net.minecraftforge.fmp.multipart.MultipartRegistry.MultipartRegistryEntry;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -18,14 +19,15 @@ public class ForgeRegistries
 {
     static { init(); } // This must be above the fields so we guarantee it's run before findRegistry is called. Yay static inializers
 
-    public static final IForgeRegistry<Block>        BLOCKS       = GameRegistry.findRegistry(Block.class);
-    public static final IForgeRegistry<Item>         ITEMS        = GameRegistry.findRegistry(Item.class);
-    public static final IForgeRegistry<Potion>       POTIONS      = GameRegistry.findRegistry(Potion.class);
-    public static final IForgeRegistry<Biome>        BIOMES       = GameRegistry.findRegistry(Biome.class);
-    public static final IForgeRegistry<SoundEvent>   SOUND_EVENTS = GameRegistry.findRegistry(SoundEvent.class);
-    public static final IForgeRegistry<PotionType>   POTION_TYPES = GameRegistry.findRegistry(PotionType.class);
-    public static final IForgeRegistry<Enchantment>  ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
-    public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
+    public static final IForgeRegistry<Block>                  BLOCKS       = GameRegistry.findRegistry(Block.class);
+    public static final IForgeRegistry<Item>                   ITEMS        = GameRegistry.findRegistry(Item.class);
+    public static final IForgeRegistry<MultipartRegistryEntry> MULTIPARTS   = GameRegistry.findRegistry(MultipartRegistryEntry.class);
+    public static final IForgeRegistry<Potion>                 POTIONS      = GameRegistry.findRegistry(Potion.class);
+    public static final IForgeRegistry<Biome>                  BIOMES       = GameRegistry.findRegistry(Biome.class);
+    public static final IForgeRegistry<SoundEvent>             SOUND_EVENTS = GameRegistry.findRegistry(SoundEvent.class);
+    public static final IForgeRegistry<PotionType>             POTION_TYPES = GameRegistry.findRegistry(PotionType.class);
+    public static final IForgeRegistry<Enchantment>            ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
+    public static final IForgeRegistry<VillagerProfession>     VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
 
 
     /**

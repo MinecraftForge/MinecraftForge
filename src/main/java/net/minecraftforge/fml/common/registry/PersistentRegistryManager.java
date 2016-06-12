@@ -19,6 +19,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fmp.ForgeMultipartModContainer;
+import net.minecraftforge.fmp.multipart.MultipartRegistry.MultipartRegistryEntry;
 
 import org.apache.logging.log4j.Level;
 
@@ -128,6 +130,7 @@ public class PersistentRegistryManager
 
     public static final ResourceLocation BLOCKS = new ResourceLocation("minecraft:blocks");
     public static final ResourceLocation ITEMS = new ResourceLocation("minecraft:items");
+    public static final ResourceLocation MULTIPARTS = new ResourceLocation(ForgeMultipartModContainer.MODID, "multiparts");
     public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
     public static final ResourceLocation BIOMES = new ResourceLocation("minecraft:biomes");
     public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
@@ -200,6 +203,14 @@ public class PersistentRegistryManager
             final Class<? extends IForgeRegistryEntry> registrySuperType = PersistentRegistry.ACTIVE.getRegistrySuperType(snapshotEntry.getKey());
             loadPersistentDataToStagingRegistry(injectFrozenData, remaps, missing, snapshotEntry, registrySuperType);
         }
+        if(!missing.containsKey(MULTIPARTS))
+        {
+            missing.put(MULTIPARTS, Maps.<ResourceLocation, Integer>newLinkedHashMap());
+        }
+        if(!remaps.containsKey(MULTIPARTS))
+        {
+            remaps.put(MULTIPARTS, Maps.<ResourceLocation, Integer[]>newHashMap());
+        }
 
         // Handle dummied blocks
         for (ResourceLocation dummy : snapshot.entries.get(BLOCKS).dummied)
@@ -230,7 +241,7 @@ public class PersistentRegistryManager
         }
 
         // If we have missed data, fire the missing mapping event
-        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missing.get(BLOCKS), missing.get(ITEMS), isLocalWorld, remaps.get(BLOCKS), remaps.get(ITEMS));
+        List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missing.get(BLOCKS), missing.get(ITEMS), missing.get(MULTIPARTS), isLocalWorld, remaps.get(BLOCKS), remaps.get(ITEMS), remaps.get(MULTIPARTS));
         // If there's still missed mappings, we return, because that's an error
         if (!missedMappings.isEmpty())
         {
@@ -275,7 +286,7 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.ACTIVE, DumpRegistryFunction.OPERATION);
 
         // Tell mods that the ids have changed
-        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS), false);
+        Loader.instance().fireRemapEvent(remaps.get(BLOCKS), remaps.get(ITEMS), remaps.get(MULTIPARTS), false);
 
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -404,7 +415,7 @@ public class PersistentRegistryManager
             loadRegistry(r.getKey(), PersistentRegistry.FROZEN, PersistentRegistry.ACTIVE, registrySuperType);
         }
         // the id mapping has reverted, fire remap events for those that care about id changes
-        Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of(), true);
+        Loader.instance().fireRemapEvent(ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of(), ImmutableMap.<ResourceLocation, Integer[]>of(), true);
 
         // the id mapping has reverted, ensure we sync up the object holders
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
@@ -436,12 +447,13 @@ public class PersistentRegistryManager
         FMLLog.fine("Vanilla freeze snapshot created");
     }
 
-    public static List<String> processIdRematches(Iterable<FMLMissingMappingsEvent.MissingMapping> missedMappings, boolean isLocalWorld, Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems)
+    public static List<String> processIdRematches(Iterable<FMLMissingMappingsEvent.MissingMapping> missedMappings, boolean isLocalWorld, Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, Map<ResourceLocation, Integer> missingMultiparts, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, Map<ResourceLocation, Integer[]> remapMultiparts)
     {
         List<String> failed = Lists.newArrayList();
         List<String> ignored = Lists.newArrayList();
         List<String> warned = Lists.newArrayList();
         List<String> defaulted = Lists.newArrayList();
+        Set<String> defaultedShort = Sets.newHashSet();
 
         final PersistentRegistry staging = PersistentRegistry.STAGING;
         final PersistentRegistry active = PersistentRegistry.ACTIVE;
@@ -475,6 +487,16 @@ public class PersistentRegistryManager
                     newId = staging.getRegistry(ITEMS, Item.class).add(remap.id, newName, (Item)remap.getTarget());
                     staging.getRegistry(ITEMS, Item.class).addAlias(remap.resourceLocation, newName);
                 }
+                else if (remap.type == GameRegistry.Type.MULTIPART)
+                {
+                    currId = staging.getRegistry(MULTIPARTS, MultipartRegistryEntry.class).getId((ResourceLocation)remap.getTarget());
+                    newName = (ResourceLocation)remap.getTarget();
+                    FMLLog.fine("The IMultipart %s is being remapped to %s.", remap.name, newName);
+
+                    missingItems.remove(new ResourceLocation(remap.name));
+                    newId = staging.getRegistry(MULTIPARTS, MultipartRegistryEntry.class).add(remap.id, newName, staging.getRegistry(MULTIPARTS, MultipartRegistryEntry.class).getObject(newName));
+                    staging.getRegistry(MULTIPARTS, MultipartRegistryEntry.class).addAlias(remap.resourceLocation, newName);
+                }
                 else
                 {
                     // currently not remapping non-blocks and items
@@ -488,8 +510,8 @@ public class PersistentRegistryManager
 
                 if (currId != newId)
                 {
-                    FMLLog.info("Fixed %s id mismatch %s: %d (init) -> %d (map).", remap.type == GameRegistry.Type.BLOCK ? "block" : "item", newName, currId, newId);
-                    (remap.type == GameRegistry.Type.BLOCK ? remapBlocks : remapItems).put(newName, new Integer[] {currId, newId});
+                    FMLLog.info("Fixed %s id mismatch %s: %d (init) -> %d (map).", remap.type == GameRegistry.Type.BLOCK ? "block" : remap.type == GameRegistry.Type.ITEM ? "item" : "multipart", newName, currId, newId);
+                    (remap.type == GameRegistry.Type.BLOCK ? remapBlocks : remap.type == GameRegistry.Type.ITEM ? remapItems : remapMultiparts).put(newName, new Integer[] {currId, newId});
                 }
             }
             else if (action == FMLMissingMappingsEvent.Action.BLOCKONLY)
@@ -504,6 +526,7 @@ public class PersistentRegistryManager
                 if (action == FMLMissingMappingsEvent.Action.DEFAULT)
                 {
                     defaulted.add(remap.name);
+                    defaultedShort.add(remap.name);
                 }
                 else if (action == FMLMissingMappingsEvent.Action.IGNORE)
                 {
@@ -526,18 +549,22 @@ public class PersistentRegistryManager
                 {
                     staging.getRegistry(ITEMS, Item.class).blockId(remap.id);
                 }
+                else if (remap.type == GameRegistry.Type.MULTIPART)
+                {
+                    staging.getRegistry(MULTIPARTS, MultipartRegistryEntry.class).blockId(remap.id);
+                }
             }
         }
 
         if (!defaulted.isEmpty())
         {
-            String text = "Forge Mod Loader detected missing blocks/items.\n\n" +
-                    "There are " + defaulted.size() + " missing blocks and items in this save.\n" +
-                    "If you continue the missing blocks/items will get removed.\n" +
+            String text = "Forge Mod Loader detected missing blocks/items/multiparts.\n\n" +
+                    "There are " + defaultedShort.size() + " (" + defaulted.size() + " in total) missing blocks, items and multiparts in this save.\n" +
+                    "If you continue the missing blocks/items/multiparts will get removed.\n" +
                     "A world backup will be automatically created in your saves directory.\n\n" +
-                    "Missing Blocks/Items:\n";
+                    "Missing Blocks/Items/Multiparts:\n";
 
-            for (String s : defaulted) text += s + "\n";
+            for (String s : defaultedShort) text += s + "\n";
 
             boolean confirmed = StartupQuery.confirm(text);
             if (!confirmed)
@@ -567,12 +594,12 @@ public class PersistentRegistryManager
         }
         if (!failed.isEmpty())
         {
-            FMLLog.severe("This world contains blocks and items that refuse to be remapped. The world will not be loaded");
+            FMLLog.severe("This world contains blocks, items and multiparts that refuse to be remapped. The world will not be loaded");
             return failed;
         }
         if (!warned.isEmpty())
         {
-            FMLLog.warning("This world contains block and item mappings that may cause world breakage");
+            FMLLog.warning("This world contains block, item and multipart mappings that may cause world breakage");
             return failed;
         }
         else if (!ignored.isEmpty())

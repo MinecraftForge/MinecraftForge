@@ -14,7 +14,18 @@
  
      @SideOnly(Side.CLIENT)
      boolean func_185895_e();
-@@ -90,5 +94,10 @@
+@@ -73,6 +77,10 @@
+ 
+     IBlockState func_185899_b(IBlockAccess p_185899_1_, BlockPos p_185899_2_);
+ 
++    /**
++     * @deprecated This is only a fallback method. Forge will now get the bounding box from RayTraceResult#boxHit
++     */
++    @Deprecated
+     @SideOnly(Side.CLIENT)
+     AxisAlignedBB func_185918_c(World p_185918_1_, BlockPos p_185918_2_);
+ 
+@@ -90,5 +98,10 @@
  
      RayTraceResult func_185910_a(World p_185910_1_, BlockPos p_185910_2_, Vec3d p_185910_3_, Vec3d p_185910_4_);
  
