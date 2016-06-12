@@ -222,6 +222,15 @@ public class FMLInterModComms {
         }
 
         /**
+         * Is this an {@link ResourceLocation} type message
+         * @return if this is an NBT type message
+         */
+        public boolean isResourceLocationMessage()
+        {
+            return ResourceLocation.class.isAssignableFrom(getMessageType());
+        }
+
+        /**
          * Is this a {@link Function} type message
          * @return if this is a function type message
          */
