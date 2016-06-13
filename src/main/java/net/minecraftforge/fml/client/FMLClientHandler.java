@@ -204,10 +204,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        FMLCommonHandler.instance().beginLoading(this);
+        List<String> injectedModContainers = FMLCommonHandler.instance().beginLoading(this);
         try
         {
-            Loader.instance().loadMods();
+            Loader.instance().loadMods(injectedModContainers);
         }
         catch (WrongMinecraftVersionException wrong)
         {

@@ -13,7 +13,6 @@
 package net.minecraftforge.fml.server;
 
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -74,22 +73,22 @@ public class FMLServerHandler implements IFMLSidedHandler
      * A reference to the server itself
      */
     private MinecraftServer server;
-
+    private List<String> injectedModContainers;
     private FMLServerHandler()
     {
-        FMLCommonHandler.instance().beginLoading(this);
+        injectedModContainers = FMLCommonHandler.instance().beginLoading(this);
     }
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
      *
-     * @param minecraftServer
+     * @param minecraftServer server
      */
     @Override
     public void beginServerLoading(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
-        Loader.instance().loadMods();
+        Loader.instance().loadMods(injectedModContainers);
         Loader.instance().preinitializeMods();
     }
 

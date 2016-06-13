@@ -26,14 +26,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
@@ -338,8 +335,9 @@ public class Loader
      * Finally, if they are successfully loaded as classes, they are then added
      * to the available mod list.
      */
-    private ModDiscoverer identifyMods()
+    private ModDiscoverer identifyMods(List<String> additionalContainers)
     {
+        injectedContainers.addAll(additionalContainers);
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
         // Add in the MCP mod container
         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
@@ -487,8 +485,9 @@ public class Loader
      * Called from the hook to start mod loading. We trigger the
      * {@link #identifyMods()} and Constructing, Preinitalization, and Initalization phases here. Finally,
      * the mod list is frozen completely and is consider immutable from then on.
+     * @param injectedModContainers
      */
-    public void loadMods()
+    public void loadMods(List<String> injectedModContainers)
     {
         progressBar = ProgressManager.push("Loading", 7);
         progressBar.step("Constructing Mods");
@@ -497,7 +496,7 @@ public class Loader
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING, false);
-        discoverer = identifyMods();
+        discoverer = identifyMods(injectedModContainers);
         ModAPIManager.INSTANCE.manageAPI(modClassLoader, discoverer);
         disableRequestedMods();
         modController.distributeStateMessage(FMLLoadEvent.class);
