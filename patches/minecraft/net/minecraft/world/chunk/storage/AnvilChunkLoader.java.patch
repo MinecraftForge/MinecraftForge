@@ -102,7 +102,22 @@
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -267,8 +327,17 @@
+@@ -195,13 +255,7 @@
+         {
+             this.field_183014_e = true;
+ 
+-            while (true)
+-            {
+-                if (this.func_75814_c())
+-                {
+-                    continue;
+-                }
+-            }
++            while (this.func_75814_c()); // Fernflower decompile issue...
+         }
+         finally
+         {
+@@ -267,8 +321,17 @@
  
                  if (entity.func_70039_c(nbttagcompound2))
                  {
@@ -120,7 +135,7 @@
                  }
              }
          }
-@@ -278,8 +347,17 @@
+@@ -278,8 +341,17 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -138,7 +153,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -348,6 +426,12 @@
+@@ -348,6 +420,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -151,7 +166,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -400,8 +484,6 @@
+@@ -400,8 +478,6 @@
                  }
              }
          }
