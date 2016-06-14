@@ -170,9 +170,7 @@ public class FluidUtil
             ItemStack filledReal = tryFillContainer(container, fluidSource, maxAmount, player, true);
             if (filledReal != null)
             {
-                container.setItem(filledReal.getItem());
-                container.setTagCompound(filledReal.getTagCompound());
-                container.setItemDamage(filledReal.getItemDamage());
+                container.deserializeNBT(filledReal.serializeNBT());
                 return true;
             }
         }
@@ -243,9 +241,7 @@ public class FluidUtil
                 }
                 else
                 {
-                    container.setItem(emptiedReal.getItem());
-                    container.setTagCompound(emptiedReal.getTagCompound());
-                    container.setItemDamage(emptiedReal.getItemDamage());
+                    container.deserializeNBT(emptiedReal.serializeNBT());
                 }
                 return true;
             }

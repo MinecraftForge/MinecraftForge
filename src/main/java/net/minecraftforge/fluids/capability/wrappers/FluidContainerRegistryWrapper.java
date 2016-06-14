@@ -28,14 +28,6 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
         this.container = container;
     }
 
-    private void updateContainer(ItemStack newContainerData)
-    {
-        container.setItem(newContainerData.getItem());
-        container.setTagCompound(newContainerData.getTagCompound());
-        container.setItemDamage(newContainerData.getItemDamage());
-        container.stackSize = newContainerData.stackSize;
-    }
-
     @Override
     public IFluidTankProperties[] getTankProperties()
     {
@@ -62,7 +54,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
 
         if (doFill)
         {
-            updateContainer(result);
+            container.deserializeNBT(result.serializeNBT());
         }
 
         FluidStack newContained = FluidContainerRegistry.getFluidForFilledItem(result);
@@ -113,7 +105,7 @@ public class FluidContainerRegistryWrapper implements IFluidHandler, ICapability
                         {
                             emptyContainer.stackSize = 0;
                         }
-                        updateContainer(emptyContainer);
+                        container.deserializeNBT(emptyContainer.serializeNBT());
                     }
                     return contained;
                 }

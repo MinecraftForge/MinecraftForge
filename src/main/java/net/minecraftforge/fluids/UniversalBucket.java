@@ -280,8 +280,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         {
             if (doFill)
             {
-                container.setItem(Items.WATER_BUCKET);
-                container.setTagCompound(null);
+                container.deserializeNBT(new ItemStack(Items.WATER_BUCKET).serializeNBT());
             }
             return getCapacity();
         }
@@ -289,8 +288,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         {
             if (doFill)
             {
-                container.setItem(Items.LAVA_BUCKET);
-                container.setTagCompound(null);
+                container.deserializeNBT(new ItemStack(Items.LAVA_BUCKET).serializeNBT());
             }
             return getCapacity();
         }
@@ -318,9 +316,7 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         {
             if(getEmpty() != null)
             {
-                container.setItem(getEmpty().getItem());
-                container.setTagCompound(getEmpty().getTagCompound());
-                container.setItemDamage(getEmpty().getItemDamage());
+                container.deserializeNBT(getEmpty().serializeNBT());
             }
             else {
                 container.stackSize = 0;

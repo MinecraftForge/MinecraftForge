@@ -198,9 +198,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         protected void setContainerToEmpty()
         {
             super.setContainerToEmpty();
-            container.setItem(emptyContainer.getItem());
-            container.setTagCompound(emptyContainer.getTagCompound());
-            container.setItemDamage(emptyContainer.getItemDamage());
+            container.deserializeNBT(emptyContainer.serializeNBT());
         }
     }
 }
