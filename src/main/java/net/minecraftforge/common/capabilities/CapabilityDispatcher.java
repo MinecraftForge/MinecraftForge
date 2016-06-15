@@ -69,11 +69,14 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
     {
-        for (ICapabilityProvider cap : caps)
+        if (capability != null)
         {
-            if (cap.hasCapability(capability, facing))
+            for (ICapabilityProvider cap : caps)
             {
-                return true;
+                if (cap.hasCapability(capability, facing))
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -82,12 +85,15 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
-        for (ICapabilityProvider cap : caps)
+        if (capability != null)
         {
-            T ret = cap.getCapability(capability, facing);
-            if (ret != null)
+            for (ICapabilityProvider cap : caps)
             {
-                return ret;
+                T ret = cap.getCapability(capability, facing);
+                if (ret != null)
+                {
+                    return ret;
+                }
             }
         }
         return null;
