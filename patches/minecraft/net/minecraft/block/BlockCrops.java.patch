@@ -14,7 +14,13 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -162,7 +162,8 @@
+@@ -157,12 +157,13 @@
+             }
+         }
+ 
+-        return f;
++        return net.minecraftforge.event.ForgeEventFactory.getGrowthChance(p_180672_0_, p_180672_1_, p_180672_2_, f);
+     }
  
      public boolean func_180671_f(World p_180671_1_, BlockPos p_180671_2_, IBlockState p_180671_3_)
      {

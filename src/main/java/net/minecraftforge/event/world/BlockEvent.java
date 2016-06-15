@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -231,6 +232,43 @@ public class BlockEvent extends Event
         public EnumSet<EnumFacing> getNotifiedSides()
         {
             return notifiedSides;
+        }
+    }
+
+    /**
+     * Fired when crop calculates it's growth chance to grow.
+     * <br>
+     * {@link BlockEvent#pos} and {@link BlockEvent#state} are soil's position and state.
+     * <br>
+     * For example, crop extending {@link BlockCrops} will grow if random int between 0 and 25/growthChance + 1 is 0 (<code>rand.nextInt((int)(25.0F / growthChance) + 1) == 0</code>).
+     * @author elix_x
+     *
+     */
+    public static class GetGrowthChanceEvent extends BlockEvent
+    {
+        private final IPlantable plant;
+        private float growthChance;
+
+        public GetGrowthChanceEvent(World world, BlockPos pos, IBlockState soil, IPlantable plant, float growthChance)
+        {
+            super(world, pos, soil);
+            this.plant = plant;
+            this.growthChance = growthChance;
+        }
+
+        public IPlantable getPlant()
+        {
+            return plant;
+        }
+
+        public float getGrowthChance()
+        {
+            return growthChance;
+        }
+
+        public void setGrowthChance(float growthChance)
+        {
+            this.growthChance = growthChance;
         }
     }
 }
