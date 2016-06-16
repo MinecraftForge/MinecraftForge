@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -61,6 +61,7 @@
-     private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, 1);
-     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
+@@ -63,6 +63,7 @@
      private static final DataParameter<Integer> field_184738_bw = EntityDataManager.<Integer>func_187226_a(EntityZombie.class, DataSerializers.field_187192_b);
-+    private static final DataParameter<String>  VILLAGER_TYPE_STR = EntityDataManager.<String>func_187226_a(EntityZombie.class, DataSerializers.field_187194_d);
      private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
      private static final DataParameter<Boolean> field_184740_by = EntityDataManager.<Boolean>func_187226_a(EntityZombie.class, DataSerializers.field_187198_h);
++    private static final DataParameter<String>  VILLAGER_TYPE_STR = EntityDataManager.<String>func_187226_a(EntityZombie.class, DataSerializers.field_187194_d);
      private final EntityAIBreakDoor field_146075_bs = new EntityAIBreakDoor(this);
+     private int field_82234_d;
+     private boolean field_146076_bu = false;
 @@ -102,7 +103,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23000000417232513D);
          this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
