@@ -234,7 +234,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -991,4 +1026,26 @@
+@@ -991,4 +1026,45 @@
              return false;
          }
      }
@@ -259,5 +259,24 @@
 +        NBTTagCompound ret = new NBTTagCompound();
 +        this.func_77955_b(ret);
 +        return ret;
++    }
++
++    public boolean areCapsCompatible(ItemStack other)
++    {
++        if (this.capabilities == null)
++        {
++            if (other.capabilities == null)
++            {
++                return true;
++            }
++            else
++            {
++                return other.capabilities.areCompatible(null);
++            }
++        }
++        else
++        {
++            return this.capabilities.areCompatible(other.capabilities);
++        }
 +    }
  }
