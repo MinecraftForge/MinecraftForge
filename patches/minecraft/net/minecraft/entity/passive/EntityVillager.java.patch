@@ -147,7 +147,7 @@
              }
  
 -            if (s1 != null)
-+            s1 = "entity.Villager." + this.getProfessionForge().getCareer(this.field_175563_bv).getName();
++            s1 = "entity.Villager." + this.getProfessionForge().getCareer(this.field_175563_bv-1).getName();
              {
 -                TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("entity.Villager." + s1, new Object[0]);
 +                TextComponentTranslation textcomponenttranslation = new TextComponentTranslation(s1, new Object[0]);
