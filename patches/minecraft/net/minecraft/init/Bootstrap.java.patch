@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -541,6 +541,7 @@
+@@ -264,6 +264,9 @@
+         };
+         BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
+         BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
++        BlockDispenser.field_149943_a.func_82595_a(Items.field_151117_aB, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++        BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++        if (false)
+         BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
+         {
+             private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
+@@ -541,6 +544,7 @@
              StatList.func_151178_a();
              Biome.func_185358_q();
              func_151353_a();

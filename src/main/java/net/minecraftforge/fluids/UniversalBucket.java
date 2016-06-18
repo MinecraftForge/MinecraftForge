@@ -1,6 +1,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,6 +56,8 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         this.setMaxStackSize(1);
 
         this.setCreativeTab(CreativeTabs.MISC);
+
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseFluidContainer.getInstance());
     }
 
     @SideOnly(Side.CLIENT)
