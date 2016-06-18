@@ -165,6 +165,17 @@ fml.messages.javaversion=Your Java version is Java %s (version string %s)
 fml.messages.upgradejavaorremove=%s%sUpdate Java%s or remove these mods to play
 fml.messages.upgradejava=\n\nPros of updating to Java 8\n- Better Performance\n- Better Security\n- Better Compatibility with newer mods
 fml.messages.countbadandgood=%s of %s mods have this problem
+fml.messages.mod.missing.dependencies=%s is missing mods it depends on.
+fml.messages.mod.missing.dependencies.fix=Include the following mods or remove %s.
+fml.messages.mod.missing.dependencies.see.log=See '%s' for technical information.
+fml.messages.version.restriction.any=any
+fml.messages.version.restriction.lower.inclusive=%s or above
+fml.messages.version.restriction.lower.exclusive=above %s
+fml.messages.version.restriction.upper.inclusive=%s or below
+fml.messages.version.restriction.upper.exclusive=below %s
+fml.messages.version.restriction.bounded=between %s and %s
 
 fml.button.visitjavadownloads=Oracle Java SE Downloads
 fml.button.continue=Continue
+fml.button.open.mods.folder=Open Mods Folder
+fml.button.open.file=Open %s

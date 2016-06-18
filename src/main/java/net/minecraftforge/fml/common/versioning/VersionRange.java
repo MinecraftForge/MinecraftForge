@@ -496,6 +496,23 @@ public class VersionRange
         }
     }
 
+    public String toStringFriendly()
+    {
+        if ( recommendedVersion != null )
+        {
+            return recommendedVersion.getVersionString();
+        }
+        else
+        {
+            List<String> friendlyRestrictions = new ArrayList<String>(restrictions.size());
+            for (Restriction restriction : restrictions)
+            {
+                friendlyRestrictions.add(restriction.toStringFriendly());
+            }
+            return Joiner.on(", ").join(friendlyRestrictions);
+        }
+    }
+
     public ArtifactVersion matchVersion( List<ArtifactVersion> versions )
     {
         // TODO: could be more efficient by sorting the list and then moving along the restrictions in order?
