@@ -63,22 +63,27 @@
          }
      }
  
-@@ -367,6 +366,21 @@
+@@ -367,6 +366,26 @@
          }
      }
  
 +    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
 +    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
++    net.minecraftforge.items.IItemHandler handlerSides = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.NORTH);
 +
 +    @SuppressWarnings("unchecked")
 +    @Override
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
 +    {
 +        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
 +            if (facing == EnumFacing.UP)
 +                return (T) handlerInput;
-+            else
++            else if (facing == EnumFacing.DOWN)
 +                return (T) handlerOutput;
++            else
++                return (T) handlerSides;
++        }
 +        return super.getCapability(capability, facing);
 +    }
 +
