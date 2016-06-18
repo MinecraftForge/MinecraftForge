@@ -59,6 +59,6 @@ public final class AnimationItemOverrideList extends ItemOverrideList
             IModelState state = asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             return model.bake(new ModelStateComposition(state, this.state), format, bakedTextureGetter);
         }
-        return originalModel;
+        return super.handleItemState(originalModel, stack, world, entity);
     }
 }

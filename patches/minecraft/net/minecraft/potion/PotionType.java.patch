@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionType.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionType.java
-@@ -8,10 +8,11 @@
+@@ -9,10 +9,11 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  

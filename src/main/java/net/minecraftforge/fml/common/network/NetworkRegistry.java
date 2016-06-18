@@ -110,7 +110,7 @@ public enum NetworkRegistry
      * <ul>
      * <li> {@link #newSimpleChannel(String)} provides {@link SimpleNetworkWrapper}, a simple implementation of a netty handler, suitable for those who don't
      * wish to dive too deeply into netty.
-     * <li> {@link #newEventChannel(String)} provides {@link FMLEventChannel} an event driven implementation, with lower level
+     * <li> {@link #newEventDrivenChannel(String)} (String)} provides {@link FMLEventChannel} an event driven implementation, with lower level
      * access to the network data stream, for those with advanced bitbanging needs that don't wish to poke netty too hard.
      * <li> Alternatively, simply use the netty features provided here and implement the full power of the netty stack.
      * </ul>
@@ -124,7 +124,7 @@ public enum NetworkRegistry
      *
      * The first handler in the pipeline is special and should not be removed or moved from the head - it transforms
      * packets from the outbound of this pipeline into custom packets, based on the current {@link AttributeKey} value
-     * {@link NetworkRegistry#FML_MESSAGETARGET} and {@link NetworkRegistry#FML_MESSAGETARGETARGS} set on the channel.
+     * {@link FMLOutboundHandler#FML_MESSAGETARGET} and {@link FMLOutboundHandler#FML_MESSAGETARGETARGS} set on the channel.
      * For the client to server channel (source side : CLIENT) this is fixed as "TOSERVER". For SERVER to CLIENT packets,
      * several possible values exist.
      *
@@ -132,7 +132,7 @@ public enum NetworkRegistry
      * a utility codec, {@link FMLIndexedMessageToMessageCodec} that transforms from {@link FMLProxyPacket} to a mod
      * message using a message discriminator byte. This is optional, but highly recommended for use.
      *
-     * Note also that the handlers supplied need to be {@link ChannelHandler.Shareable} - they are injected into two
+     * Note also that the handlers supplied need to be {@link ChannelHandler.Sharable} - they are injected into two
      * channels.
      *
      * @param name
@@ -258,7 +258,7 @@ public enum NetworkRegistry
      * @param x X coord
      * @param y Y coord
      * @param z Z coord
-     * @return The client side GUI object (An instance of {@link GUI})
+     * @return The client side GUI object (An instance of {@link net.minecraft.client.gui.Gui})
      */
     public Object getLocalGuiContainer(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
     {

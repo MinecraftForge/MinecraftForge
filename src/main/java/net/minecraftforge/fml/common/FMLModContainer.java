@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
 import net.minecraftforge.fml.common.asm.transformers.BlamingTransformer;
@@ -466,6 +467,10 @@ public class FMLModContainer implements ModContainer
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
             modClassLoader.clearNegativeCacheFor(candidate.getClassList());
+
+            //Only place I could think to add this...
+            MinecraftForge.preloadCrashClasses(event.getASMHarvestedData(), getModId(), candidate.getClassList());
+
             Class<?> clazz = Class.forName(className, true, modClassLoader);
 
             Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();

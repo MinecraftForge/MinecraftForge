@@ -43,6 +43,7 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.SPacketDisconnect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
@@ -140,11 +141,12 @@ public class FMLCommonHandler
         return eventBus;
     }
 
-    public void beginLoading(IFMLSidedHandler handler)
+    public List<String> beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
         MinecraftForge.initialize();
 //        MinecraftForge.registerCrashCallable();
+        return ImmutableList.<String>of();
     }
 
     /**
@@ -366,7 +368,7 @@ public class FMLCommonHandler
     {
         for (ICrashCallable call: crashCallables)
         {
-            category.addCrashSectionCallable(call.getLabel(), call);
+            category.setDetail(call.getLabel(), call);
         }
     }
 
@@ -733,5 +735,10 @@ public class FMLCommonHandler
     public String stripSpecialChars(String message)
     {
         return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;
+    }
+    
+    public DataFixer getDataFixer()
+    {
+    	return sidedDelegate.getDataFixer();
     }
 }

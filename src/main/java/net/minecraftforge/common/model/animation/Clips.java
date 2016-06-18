@@ -282,11 +282,16 @@ public final class Clips
                     return Optional.absent();
                 }
                 IJoint joint = (IJoint)part.get();
-                if(!joint.getParent().isPresent())
+                // TODO: Cache clip application?
+                TRSRTransformation jointTransform = clip.apply(joint).apply(time).compose(joint.getInvBindPose());
+                Optional<? extends IJoint> parent = joint.getParent();
+                while(parent.isPresent())
                 {
-                    return Optional.of(clip.apply(joint).apply(time).compose(joint.getInvBindPose()));
+                    TRSRTransformation parentTransform = clip.apply(parent.get()).apply(time);
+                    jointTransform = parentTransform.compose(jointTransform);
+                    parent = parent.get().getParent();
                 }
-                return Optional.of(clip.apply(joint.getParent().get()).apply(time).compose(clip.apply(joint).apply(time)).compose(joint.getInvBindPose()));
+                return Optional.of(jointTransform);
             }
         }, clip.pastEvents(lastPollTime, time));
     }

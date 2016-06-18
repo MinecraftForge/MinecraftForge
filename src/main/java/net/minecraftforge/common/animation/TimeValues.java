@@ -332,7 +332,7 @@ public final class TimeValues
                         if(SimpleExprValue.opsPattern.matcher(type).matches())
                         {
                             ImmutableList.Builder<ITimeValue> builder = ImmutableList.builder();
-                            while(in.peek() != JsonToken.END_ARRAY)
+                            while(in.hasNext())
                             {
                                 builder.add(read(in));
                             }

@@ -15,6 +15,8 @@ import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.signature.SignatureReader;
+import org.objectweb.asm.signature.SignatureWriter;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -97,8 +99,16 @@ public class ModAPITransformer implements IClassTransformer {
 
     private void stripInterface(ClassNode classNode, String interfaceName, boolean stripRefs)
     {
-        String ifaceName = interfaceName.replace('.', '/');
+        final String ifaceName = interfaceName.replace('.', '/');
         boolean found = classNode.interfaces.remove(ifaceName);
+        if (found && classNode.signature != null)
+        {
+            SignatureReader sr = new SignatureReader(classNode.signature);
+            final RemovingSignatureWriter signatureWriter = new RemovingSignatureWriter(ifaceName);
+            sr.accept(signatureWriter);
+            classNode.signature = signatureWriter.toString();
+            if (logDebugInfo) FMLRelaunchLog.finer("Optional removal - interface %s removed from type signature");
+        }
         if (found && logDebugInfo) FMLRelaunchLog.finer("Optional removal - interface %s removed", interfaceName);
         if (!found && logDebugInfo) FMLRelaunchLog.finer("Optional removal - interface %s NOT removed - not found", interfaceName);
 
@@ -157,4 +167,25 @@ public class ModAPITransformer implements IClassTransformer {
         }
     }
 
+    private static class RemovingSignatureWriter extends SignatureWriter
+    {
+        private final String ifaceName;
+
+        RemovingSignatureWriter(String ifaceName)
+        {
+            this.ifaceName = ifaceName;
+        }
+
+        @Override
+        public void visitClassType(String name)
+        {
+            if (name.equals(ifaceName)) {
+                super.visitClassType("java/lang/Object");
+            }
+            else
+            {
+                super.visitClassType(name);
+            }
+        }
+    }
 }

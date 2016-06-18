@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
-@@ -32,7 +32,9 @@
+@@ -33,7 +33,9 @@
  
      public TextureAtlasSprite func_178087_a(Item p_178087_1_, int p_178087_2_)
      {

@@ -2,8 +2,8 @@ package net.minecraftforge.fml.common.network.simpleimpl;
 
 
 /**
- * A message handler based on {@link IMessage}. Implement and override {@link #onMessage(IMessage)} to
- * process your packet. Supply the class to {@link SimpleNetworkWrapper#registerMessage(Class, Class, byte, net.minecraftforge.fml.relauncher.Side)}
+ * A message handler based on {@link IMessage}. Implement and override {@link #onMessage(IMessage, MessageContext)} to
+ * process your packet. Supply the class to {@link SimpleNetworkWrapper#registerMessage(Class, Class, int, net.minecraftforge.fml.relauncher.Side)}
  * to register both the message type and it's associated handler.
  *
  * @author cpw

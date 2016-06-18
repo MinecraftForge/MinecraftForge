@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/IBakedModel.java
-@@ -20,6 +20,7 @@
+@@ -21,6 +21,7 @@
  
      TextureAtlasSprite func_177554_e();
  

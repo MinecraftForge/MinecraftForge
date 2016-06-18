@@ -95,7 +95,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 }
             }
 
-            EntityTracker.func_187254_a(entity, spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ);
+            EntityTracker.updateServerPosition(entity, spawnMsg.rawX, spawnMsg.rawY, spawnMsg.rawZ);
 
             EntityPlayerSP clientPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entity instanceof IThrowableEntity)

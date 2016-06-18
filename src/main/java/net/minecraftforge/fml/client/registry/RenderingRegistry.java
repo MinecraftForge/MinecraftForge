@@ -49,9 +49,6 @@ public class RenderingRegistry
      * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
      * render map for entities.
      * Call this during Preinitialization phase.
-     *
-     * @param entityClass
-     * @param renderer
      */
     public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory)
     {

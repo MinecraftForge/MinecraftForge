@@ -22,8 +22,8 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ClassInheritanceMultiMap;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -90,7 +90,7 @@ public class ForgeChunkManager
 
     private static Map<String, LoadingCallback> callbacks = Maps.newHashMap();
 
-    private static Map<World, ImmutableSetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
+    private static Map<World, ImmutableSetMultimap<ChunkPos,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
     private static Map<World,Cache<Long, Chunk>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
@@ -112,13 +112,13 @@ public class ForgeChunkManager
 
     public static Iterator<Chunk> getPersistentChunksIterableFor(final World world, Iterator<Chunk> chunkIterator)
     {
-        final ImmutableSetMultimap<ChunkCoordIntPair, Ticket> persistentChunksFor = getPersistentChunksFor(world);
+        final ImmutableSetMultimap<ChunkPos, Ticket> persistentChunksFor = getPersistentChunksFor(world);
         final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
         world.theProfiler.startSection("forcedChunkLoading");
-        builder.addAll(Iterators.transform(persistentChunksFor.keys().iterator(), new Function<ChunkCoordIntPair, Chunk>() {
+        builder.addAll(Iterators.transform(persistentChunksFor.keys().iterator(), new Function<ChunkPos, Chunk>() {
             @Nullable
             @Override
-            public Chunk apply(@Nullable ChunkCoordIntPair input)
+            public Chunk apply(@Nullable ChunkPos input)
             {
                 return world.getChunkFromChunkCoords(input.chunkXPos, input.chunkZPos);
             }
@@ -216,7 +216,7 @@ public class ForgeChunkManager
     {
         private String modId;
         private Type ticketType;
-        private LinkedHashSet<ChunkCoordIntPair> requestedChunks;
+        private LinkedHashSet<ChunkPos> requestedChunks;
         private NBTTagCompound modData;
         public final World world;
         private int maxDepth;
@@ -363,7 +363,7 @@ public class ForgeChunkManager
         /**
          * Gets a list of requested chunks for this ticket.
          */
-        public ImmutableSet<ChunkCoordIntPair> getChunkList()
+        public ImmutableSet<ChunkPos> getChunkList()
         {
             return ImmutableSet.copyOf(requestedChunks);
         }
@@ -371,9 +371,9 @@ public class ForgeChunkManager
 
     public static class ForceChunkEvent extends Event {
         private final Ticket ticket;
-        private final ChunkCoordIntPair location;
+        private final ChunkPos location;
 
-        public ForceChunkEvent(Ticket ticket, ChunkCoordIntPair location)
+        public ForceChunkEvent(Ticket ticket, ChunkPos location)
         {
             this.ticket = ticket;
             this.location = location;
@@ -384,7 +384,7 @@ public class ForgeChunkManager
             return ticket;
         }
 
-        public ChunkCoordIntPair getLocation()
+        public ChunkPos getLocation()
         {
             return location;
         }
@@ -392,9 +392,9 @@ public class ForgeChunkManager
 
     public static class UnforceChunkEvent extends Event {
         private final Ticket ticket;
-        private final ChunkCoordIntPair location;
+        private final ChunkPos location;
 
-        public UnforceChunkEvent(Ticket ticket, ChunkCoordIntPair location)
+        public UnforceChunkEvent(Ticket ticket, ChunkPos location)
         {
             this.ticket = ticket;
             this.location = location;
@@ -405,7 +405,7 @@ public class ForgeChunkManager
             return ticket;
         }
 
-        public ChunkCoordIntPair getLocation()
+        public ChunkPos getLocation()
         {
             return location;
         }
@@ -444,7 +444,7 @@ public class ForgeChunkManager
         ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.create();
         tickets.put(world, newTickets);
 
-        forcedChunks.put(world, ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of());
+        forcedChunks.put(world, ImmutableSetMultimap.<ChunkPos,Ticket>of());
 
         if (!(world instanceof WorldServer))
         {
@@ -743,7 +743,7 @@ public class ForgeChunkManager
         }
         if (ticket.requestedChunks!=null)
         {
-            for (ChunkCoordIntPair chunk : ImmutableSet.copyOf(ticket.requestedChunks))
+            for (ChunkPos chunk : ImmutableSet.copyOf(ticket.requestedChunks))
             {
                 unforceChunk(ticket, chunk);
             }
@@ -767,7 +767,7 @@ public class ForgeChunkManager
      * @param ticket The ticket registering the chunk
      * @param chunk The chunk to force
      */
-    public static void forceChunk(Ticket ticket, ChunkCoordIntPair chunk)
+    public static void forceChunk(Ticket ticket, ChunkPos chunk)
     {
         if (ticket == null || chunk == null)
         {
@@ -785,11 +785,11 @@ public class ForgeChunkManager
         ticket.requestedChunks.add(chunk);
         MinecraftForge.EVENT_BUS.post(new ForceChunkEvent(ticket, chunk));
 
-        ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>builder().putAll(forcedChunks.get(ticket.world)).put(chunk, ticket).build();
+        ImmutableSetMultimap<ChunkPos, Ticket> newMap = ImmutableSetMultimap.<ChunkPos,Ticket>builder().putAll(forcedChunks.get(ticket.world)).put(chunk, ticket).build();
         forcedChunks.put(ticket.world, newMap);
         if (ticket.maxDepth > 0 && ticket.requestedChunks.size() > ticket.maxDepth)
         {
-            ChunkCoordIntPair removed = ticket.requestedChunks.iterator().next();
+            ChunkPos removed = ticket.requestedChunks.iterator().next();
             unforceChunk(ticket,removed);
         }
     }
@@ -802,7 +802,7 @@ public class ForgeChunkManager
      * @param ticket The ticket holding the chunk list
      * @param chunk The chunk you wish to push to the end (so that it would be unloaded last)
      */
-    public static void reorderChunk(Ticket ticket, ChunkCoordIntPair chunk)
+    public static void reorderChunk(Ticket ticket, ChunkPos chunk)
     {
         if (ticket == null || chunk == null || !ticket.requestedChunks.contains(chunk))
         {
@@ -817,7 +817,7 @@ public class ForgeChunkManager
      * @param ticket The ticket holding the chunk
      * @param chunk The chunk to unforce
      */
-    public static void unforceChunk(Ticket ticket, ChunkCoordIntPair chunk)
+    public static void unforceChunk(Ticket ticket, ChunkPos chunk)
     {
         if (ticket == null || chunk == null)
         {
@@ -825,9 +825,9 @@ public class ForgeChunkManager
         }
         ticket.requestedChunks.remove(chunk);
         MinecraftForge.EVENT_BUS.post(new UnforceChunkEvent(ticket, chunk));
-        LinkedHashMultimap<ChunkCoordIntPair, Ticket> copy = LinkedHashMultimap.create(forcedChunks.get(ticket.world));
+        LinkedHashMultimap<ChunkPos, Ticket> copy = LinkedHashMultimap.create(forcedChunks.get(ticket.world));
         copy.remove(chunk, ticket);
-        ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.copyOf(copy);
+        ImmutableSetMultimap<ChunkPos, Ticket> newMap = ImmutableSetMultimap.copyOf(copy);
         forcedChunks.put(ticket.world,newMap);
     }
 
@@ -857,9 +857,9 @@ public class ForgeChunkManager
      * @param world
      * @return the list of persistent chunks in the world
      */
-    public static ImmutableSetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
+    public static ImmutableSetMultimap<ChunkPos, Ticket> getPersistentChunksFor(World world)
     {
-        return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of();
+        return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.<ChunkPos,Ticket>of();
     }
 
     static void saveWorld(World world)

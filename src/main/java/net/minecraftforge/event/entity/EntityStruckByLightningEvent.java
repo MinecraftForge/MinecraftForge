@@ -1,5 +1,7 @@
 package net.minecraftforge.event.entity;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -7,7 +9,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 /**
  * EntityStruckByLightningEvent is fired when an Entity is about to be struck by lightening.<br>
  * This event is fired whenever an EntityLightningBolt is updated to strike an Entity in
- * EntityLightningBolt#onUpdate() via {@link ForgeEventFactory#onEntityStruckByLightning(Entity, EntityLightningBolt)}.<br>
+ * {@link EntityLightningBolt#onUpdate()} via {@link ForgeEventFactory#onEntityStruckByLightning(Entity, EntityLightningBolt)}.<br>
  * <br>
  * {@link #lightning} contains the instance of EntityLightningBolt attempting to strike an entity.<br>
  * <br>

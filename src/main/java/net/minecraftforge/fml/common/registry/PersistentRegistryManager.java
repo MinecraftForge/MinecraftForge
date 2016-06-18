@@ -168,6 +168,32 @@ public class PersistentRegistryManager
         forAllRegistries(PersistentRegistry.ACTIVE, DumpRegistryFunction.OPERATION);
         forAllRegistries(PersistentRegistry.ACTIVE, ResetDelegatesFunction.OPERATION);
 
+        List<ResourceLocation> missingRegs = Lists.newArrayList();
+        for (ResourceLocation name : snapshot.entries.keySet())
+        {
+            name = getFixedName(name);
+            if (PersistentRegistry.ACTIVE.getRegistry(name, null) == null)
+            {
+                missingRegs.add(name);
+            }
+        }
+
+        if (missingRegs.size() > 0)
+        {
+            String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                    "There are " + missingRegs.size() + " missing registries in this save.\n" +
+                    "If you continue the missing registries will get removed.\n" +
+                    "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
+                    "Missing Registries:\n";
+
+            for (ResourceLocation s : missingRegs)
+                text += s.toString() + "\n";
+
+            boolean confirmed = StartupQuery.confirm(text);
+            if (!confirmed)
+                StartupQuery.abort();
+        }
+
         // Load the snapshot into the "STAGING" registry
         for (Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapshotEntry : snapshot.entries.entrySet())
         {
@@ -316,21 +342,25 @@ public class PersistentRegistryManager
         newRegistry.loadIds(frozenRegistry.getEntriesNotIn(newRegistry), Maps.<ResourceLocation, Integer>newLinkedHashMap(), remaps.get(registryName), frozenRegistry, registryName);
     }
 
-    private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
+    // TODO: Remove when we don't care about loading 1.7.10(?) worlds?
+    private static ResourceLocation getFixedName(ResourceLocation registryName)
     {
-        ResourceLocation registryName = snapEntry.getKey();
-
         //Translate old names
         if ("fml:blocks".equals(registryName.toString())) registryName = PersistentRegistryManager.BLOCKS;
         else if ("fml:items".equals(registryName.toString())) registryName = PersistentRegistryManager.ITEMS;
         else if ("fmlgr:villagerprofessions".equals(registryName.toString())) registryName = VillagerRegistry.PROFESSIONS;
 
+        return registryName;
+    }
+
+    private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(boolean injectFrozenData, Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing, Map.Entry<ResourceLocation, GameDataSnapshot.Entry> snapEntry, Class<T> regType)
+    {
+        ResourceLocation registryName = getFixedName(snapEntry.getKey());
+
         FMLControlledNamespacedRegistry<T> currentRegistry = PersistentRegistry.ACTIVE.getRegistry(registryName, regType);
         if (currentRegistry == null)
         {
-            FMLLog.severe("An unknown persistent registry type \"%s\" has been encountered. This Forge instance cannot understand it.", registryName);
-            StartupQuery.abort();
-            return; // fake exit to shut up null analysis
+            return; // We've already asked the user if they wish to continue. So if the reg isnt found just assume the user knows and accepted it.
         }
         FMLControlledNamespacedRegistry<T> newRegistry = PersistentRegistry.STAGING.getOrShallowCopyRegistry(registryName, regType, currentRegistry);
         // Copy the persistent substitution set from the currently active one into the new registry

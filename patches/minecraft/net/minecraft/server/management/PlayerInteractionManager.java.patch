@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -27,6 +27,8 @@
+@@ -28,6 +28,8 @@
  
  public class PlayerInteractionManager
  {
@@ -9,7 +9,7 @@
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
      private WorldSettings.GameType field_73091_c = WorldSettings.GameType.NOT_SET;
-@@ -88,7 +90,7 @@
+@@ -89,7 +91,7 @@
              IBlockState iblockstate = this.field_73092_a.func_180495_p(this.field_180241_i);
              Block block = iblockstate.func_177230_c();
  
@@ -18,7 +18,7 @@
              {
                  this.field_73097_j = false;
              }
-@@ -115,7 +117,7 @@
+@@ -116,7 +118,7 @@
              IBlockState iblockstate1 = this.field_73092_a.func_180495_p(this.field_180240_f);
              Block block1 = iblockstate1.func_177230_c();
  
@@ -27,7 +27,7 @@
              {
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
                  this.field_73094_o = -1;
-@@ -124,7 +126,7 @@
+@@ -125,7 +127,7 @@
              else
              {
                  int k = this.field_73100_i - this.field_73089_e;
@@ -36,7 +36,7 @@
                  int l = (int)(f1 * 10.0F);
  
                  if (l != this.field_73094_o)
-@@ -138,6 +140,15 @@
+@@ -139,6 +141,15 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -52,7 +52,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -173,17 +184,36 @@
+@@ -174,17 +185,36 @@
                  }
              }
  
@@ -93,7 +93,7 @@
              {
                  this.func_180237_b(p_180784_1_);
              }
-@@ -205,7 +235,7 @@
+@@ -206,7 +236,7 @@
              int i = this.field_73100_i - this.field_73089_e;
              IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180785_1_);
  
@@ -102,7 +102,7 @@
              {
                  float f = iblockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
-@@ -234,13 +264,17 @@
+@@ -235,13 +265,17 @@
  
      private boolean func_180235_c(BlockPos p_180235_1_)
      {
@@ -124,7 +124,7 @@
          }
  
          return flag;
-@@ -248,7 +282,8 @@
+@@ -249,7 +283,8 @@
  
      public boolean func_180237_b(BlockPos p_180237_1_)
      {
@@ -134,7 +134,7 @@
          {
              return false;
          }
-@@ -264,41 +299,22 @@
+@@ -265,58 +300,46 @@
              }
              else
              {
@@ -181,7 +181,13 @@
  
                      if (itemstack1 != null)
                      {
-@@ -310,12 +326,18 @@
+                         itemstack1.func_179548_a(this.field_73092_a, iblockstate, p_180237_1_, this.field_73090_b);
+ 
+-                        if (itemstack1.field_77994_a == 0)
++                        if (itemstack1.field_77994_a <= 0)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_73090_b, itemstack1, EnumHand.MAIN_HAND);
+                             this.field_73090_b.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
                          }
                      }
  
@@ -200,7 +206,7 @@
                  return flag1;
              }
          }
-@@ -333,6 +355,7 @@
+@@ -334,6 +357,7 @@
          }
          else
          {
@@ -208,7 +214,7 @@
              int i = p_187250_3_.field_77994_a;
              int j = p_187250_3_.func_77960_j();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -359,6 +382,7 @@
+@@ -360,6 +384,7 @@
                  if (itemstack.field_77994_a == 0)
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
@@ -216,7 +222,7 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
-@@ -403,13 +427,26 @@
+@@ -404,13 +429,26 @@
          }
          else
          {
@@ -246,7 +252,7 @@
                  }
              }
  
-@@ -429,14 +466,21 @@
+@@ -430,14 +468,21 @@
              {
                  int j = p_187251_3_.func_77960_j();
                  int i = p_187251_3_.field_77994_a;
@@ -268,7 +274,7 @@
              }
          }
      }
-@@ -445,4 +489,13 @@
+@@ -446,4 +491,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }

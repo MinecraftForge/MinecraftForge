@@ -90,7 +90,7 @@ public class FMLNetworkHandler
                 embeddedChannel.writeOutbound(openGui);
                 entityPlayerMP.openContainer = remoteGuiContainer;
                 entityPlayerMP.openContainer.windowId = windowId;
-                entityPlayerMP.openContainer.onCraftGuiOpened(entityPlayerMP);
+                entityPlayerMP.openContainer.addListener(entityPlayerMP);
             }
         }
         else if (entityPlayer instanceof FakePlayer)

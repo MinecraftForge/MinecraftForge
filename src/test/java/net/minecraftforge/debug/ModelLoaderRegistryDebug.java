@@ -1,7 +1,6 @@
 package net.minecraftforge.debug;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.vecmath.AxisAngle4d;
@@ -10,6 +9,8 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4f;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.UnmodifiableIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -36,16 +37,17 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -120,13 +122,12 @@ public class ModelLoaderRegistryDebug
         public static final CustomModelBlock instance = new CustomModelBlock();
         public static final String name = "CustomModelBlock";
         private int counter = 1;
-        public ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{B3DLoader.B3DFrameProperty.INSTANCE});
 
         private CustomModelBlock()
         {
-            super(Material.iron);
+            super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -163,7 +164,7 @@ public class ModelLoaderRegistryDebug
         {
             //Only return an IExtendedBlockState from this method and createState(), otherwise block placement might break!
             B3DLoader.B3DState newState = new B3DLoader.B3DState(null, counter);
-            return ((IExtendedBlockState) state).withProperty(B3DLoader.B3DFrameProperty.INSTANCE, newState);
+            return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, newState);
         }
 
         @Override
@@ -183,7 +184,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public BlockStateContainer createBlockState()
         {
-            return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{B3DLoader.B3DFrameProperty.INSTANCE});
+            return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{Properties.AnimationProperty});
         }
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
@@ -221,12 +222,11 @@ public class ModelLoaderRegistryDebug
     {
         public static final OBJTesseractBlock instance = new OBJTesseractBlock();
         public static final String name = "OBJTesseractBlock";
-        private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{OBJModel.OBJProperty.INSTANCE});
 
         private OBJTesseractBlock()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -247,19 +247,10 @@ public class ModelLoaderRegistryDebug
         public boolean isVisuallyOpaque() { return false; }
 
         @Override
-        public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
-        {
-            OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
-            OBJModel.OBJState retState = new OBJModel.OBJState(tileEntity == null ? Lists.newArrayList(OBJModel.Group.ALL) : tileEntity.visible, true);
-            return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.INSTANCE, retState);
-        }
-
-        @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) == null) world.setTileEntity(pos, new OBJTesseractTileEntity());
             OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
-            IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(MODID.toLowerCase() + ":" + "block/tesseract.obj"));
 
             if (player.isSneaking())
             {
@@ -267,19 +258,9 @@ public class ModelLoaderRegistryDebug
             }
             else
             {
-                if (model != ModelLoaderRegistry.getMissingModel())
-                {
-                    tileEntity.setMax(((OBJModel) model).getMatLib().getGroups().keySet().size() - 1);
-                    tileEntity.increment();
-                }
+                tileEntity.increment();
             }
 
-            if (world.isRemote)
-            {
-                // wtf
-                //OBJBakedModel objBaked = (OBJBakedModel) Minecraft.getMinecraft().getBlockRendererDispatcher().getModelFromBlockState(state, world, pos);
-                //objBaked.scheduleRebake();  //not necessarily needed for this specific case, but is available
-            }
             world.markBlockRangeForRenderUpdate(pos, pos);
             return false;
         }
@@ -289,68 +270,84 @@ public class ModelLoaderRegistryDebug
         {
             return true;
         }
+
+        @Override
+        public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+        {
+            if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJTesseractTileEntity)
+            {
+                OBJTesseractTileEntity te = (OBJTesseractTileEntity) world.getTileEntity(pos);
+                return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, te.state);
+            }
+            return state;
+        }
+
+        @Override
+        public BlockStateContainer createBlockState()
+        {
+            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {Properties.AnimationProperty});
+        }
     }
 
     public static class OBJTesseractTileEntity extends TileEntity
     {
         private int counter = 1;
-        private int max = 2;
-        public List<String> visible = new ArrayList<String>();
-
-        public OBJTesseractTileEntity()
+        private int max = 32;
+        private final List<String> hidden = new ArrayList<String>();
+        private final IModelState state = new IModelState()
         {
-            this.visible.add(OBJModel.Group.ALL);
-        }
+            private final Optional<TRSRTransformation> value = Optional.of(TRSRTransformation.identity());
+
+            @Override
+            public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
+            {
+                if(part.isPresent())
+                {
+                    // This whole thing is subject to change, but should do for now.
+                    UnmodifiableIterator<String> parts = Models.getParts(part.get());
+                    if(parts.hasNext())
+                    {
+                        String name = parts.next();
+                        // only interested in the root level
+                        if(!parts.hasNext() && hidden.contains(name))
+                        {
+                            return value;
+                        }
+                    }
+                }
+                return Optional.absent();
+            }
+        };
 
         public void increment()
         {
-            if (this.visible.contains(OBJModel.Group.ALL)) this.visible.remove(OBJModel.Group.ALL);
             if (this.counter == max)
             {
                 this.counter = 0;
-                this.visible.clear();
+                this.hidden.clear();
             }
             this.counter++;
-            this.visible.add(Integer.toString(this.counter));
+            this.hidden.add(Integer.toString(this.counter));
             TextComponentString text = new TextComponentString("" + this.counter);
             if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
 
         public void decrement()
         {
-            if (this.visible.contains(OBJModel.Group.ALL)) this.visible.remove(OBJModel.Group.ALL);
             if (this.counter == 1)
             {
                 this.counter = max + 1;
-                for (int i = 1; i < max; i++) this.visible.add(Integer.toString(i));
+                for (int i = 1; i < max; i++) this.hidden.add(Integer.toString(i));
             }
-            this.visible.remove(Integer.toString(this.counter));
+            this.hidden.remove(Integer.toString(this.counter));
             this.counter--;
             TextComponentString text = new TextComponentString("" + this.counter);
             if (this.worldObj.isRemote) Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
         }
 
-        public void reset()
-        {
-            this.counter = 1;
-            this.max = 2;
-            this.visible.clear();
-            this.visible.add(Integer.toString(this.counter));
-        }
-
-        public int getMax()
-        {
-            return this.max;
-        }
-
         public void setMax(int max)
         {
             this.max = max;
-        }
-
-        public void setToMax()
-        {
-            this.counter = this.max;
         }
     }
 
@@ -371,8 +368,8 @@ public class ModelLoaderRegistryDebug
 
         private OBJVertexColoring1()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -403,9 +400,9 @@ public class ModelLoaderRegistryDebug
 
         private OBJDirectionEye()
         {
-            super(Material.iron);
+            super(Material.IRON);
             setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -431,7 +428,7 @@ public class ModelLoaderRegistryDebug
         @Override
         public BlockStateContainer createBlockState()
         {
-            return new ExtendedBlockState(this, new IProperty[] {FACING}, new IUnlistedProperty[] {OBJModel.OBJProperty.INSTANCE});
+            return new BlockStateContainer(this, FACING);
         }
 
         @Override
@@ -442,15 +439,6 @@ public class ModelLoaderRegistryDebug
 
         @Override
         public boolean isVisuallyOpaque() { return false; }
-
-        @Override
-        public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
-        {
-            EnumFacing facing = (EnumFacing) state.getValue(FACING);
-            TRSRTransformation transform = new TRSRTransformation(facing);
-            OBJModel.OBJState retState = new OBJModel.OBJState(Arrays.asList(new String[]{OBJModel.Group.ALL}), true, transform);
-            return ((IExtendedBlockState) state).withProperty(OBJModel.OBJProperty.INSTANCE, retState);
-        }
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
         {
@@ -487,8 +475,8 @@ public class ModelLoaderRegistryDebug
 
         private OBJVertexColoring2()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -586,13 +574,12 @@ public class ModelLoaderRegistryDebug
         public static final PropertyDirection FACING = PropertyDirection.create("facing");
         public static final OBJDirectionBlock instance = new OBJDirectionBlock();
         public static final String name = "OBJDirectionBlock";
-        public ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{OBJModel.OBJProperty.INSTANCE});
 
         private OBJDirectionBlock()
         {
-            super(Material.iron);
+            super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -625,19 +612,9 @@ public class ModelLoaderRegistryDebug
         }
 
         @Override
-        public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
-        {
-            //Only return an IExtendedBlockState from this method and createState(), otherwise block placement will break!
-            EnumFacing facing = (EnumFacing) state.getValue(FACING);
-            TRSRTransformation transform = new TRSRTransformation(facing);
-            OBJModel.OBJState newState = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true, transform);
-            return ((IExtendedBlockState) state).withProperty(OBJModel.OBJProperty.INSTANCE, newState);
-        }
-
-        @Override
         public BlockStateContainer createBlockState()
         {
-            return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{OBJModel.OBJProperty.INSTANCE});
+            return new BlockStateContainer(this, FACING);
         }
 
         public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
@@ -678,9 +655,9 @@ public class ModelLoaderRegistryDebug
 
         private OBJCustomDataBlock()
         {
-            super(Material.iron);
+            super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, false).withProperty(SOUTH, false).withProperty(WEST, false).withProperty(EAST, false));
-            setCreativeTab(CreativeTabs.tabBlock);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -732,11 +709,10 @@ public class ModelLoaderRegistryDebug
     {
         public static final OBJDynamicEye instance = new OBJDynamicEye();
         public static final String name = "OBJDynamicEye";
-        public ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {OBJModel.OBJProperty.INSTANCE});
         private OBJDynamicEye()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -771,9 +747,9 @@ public class ModelLoaderRegistryDebug
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJDynamicEyeTileEntity)
             {
                 OBJDynamicEyeTileEntity te = (OBJDynamicEyeTileEntity) world.getTileEntity(pos);
-                if (te.state != null)
+                if (te.transform != TRSRTransformation.identity())
                 {
-                    return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.INSTANCE, te.state);
+                    return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, te.transform);
                 }
             }
             return state;
@@ -782,18 +758,13 @@ public class ModelLoaderRegistryDebug
         @Override
         public BlockStateContainer createBlockState()
         {
-            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {OBJModel.OBJProperty.INSTANCE});
+            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] {Properties.AnimationProperty});
         }
     }
 
     public static class OBJDynamicEyeTileEntity extends TileEntity implements ITickable
     {
-        public OBJModel.OBJState state;
-
-        public OBJDynamicEyeTileEntity()
-        {
-            this.state = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true);
-        }
+        private TRSRTransformation transform = TRSRTransformation.identity();
 
         @Override
         public void update()
@@ -821,9 +792,7 @@ public class ModelLoaderRegistryDebug
                 Matrix4f matrix = new Matrix4f();
                 matrix.setIdentity();
                 matrix.setRotation(rot);
-                TRSRTransformation transform = new TRSRTransformation(matrix);
-                transform = TRSRTransformation.blockCenterToCorner(transform);
-                this.state = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true, transform);
+                transform = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(matrix));
                 this.worldObj.markBlockRangeForRenderUpdate(this.pos, this.pos);
             }
         }

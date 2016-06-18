@@ -158,8 +158,8 @@ public class ModelFluidDebug
 
         private TestFluidBlock()
         {
-            super(TestFluid.instance, Material.water);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(TestFluid.instance, Material.WATER);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -172,8 +172,8 @@ public class ModelFluidDebug
 
         private MilkFluidBlock()
         {
-            super(milkFluid, Material.water);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(milkFluid, Material.WATER);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
@@ -186,8 +186,8 @@ public class ModelFluidDebug
 
         private TestGasBlock()
         {
-            super(TestGas.instance, Material.lava);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(TestGas.instance, Material.LAVA);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }

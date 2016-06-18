@@ -1,7 +1,10 @@
 package net.minecraftforge.event.entity.living;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.item.EntityItem;
@@ -10,9 +13,9 @@ import net.minecraft.entity.EntityLivingBase;
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
  * This event is fired whenever an Entity dies and drops items in
- * EntityLivingBase#onDeath(DamageSource).<br>
+ * {@link EntityLivingBase#onDeath(DamageSource)}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingDrops(EntityLivingBase, DamageSource, ArrayList<EntityItem>, int, boolean, int)}.<br>
+ * This event is fired via the {@link ForgeHooks#onLivingDrops(EntityLivingBase, DamageSource, ArrayList, int, boolean)}.<br>
  * <br>
  * {@link #source} contains the DamageSource that caused the drop to occur.<br>
  * {@link #drops} contains the ArrayList of EntityItems that will be dropped.<br>

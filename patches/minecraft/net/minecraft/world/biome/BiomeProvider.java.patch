@@ -1,18 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeProvider.java
-@@ -15,6 +15,7 @@
+@@ -16,6 +16,7 @@
  
  public class BiomeProvider
  {
-+    public static List<BiomeGenBase> allowedBiomes = Lists.newArrayList(Biomes.field_76767_f, Biomes.field_76772_c, Biomes.field_76768_g, Biomes.field_76784_u, Biomes.field_76785_t, Biomes.field_76782_w, Biomes.field_76792_x);
++    public static List<Biome> allowedBiomes = Lists.newArrayList(Biomes.field_76767_f, Biomes.field_76772_c, Biomes.field_76768_g, Biomes.field_76784_u, Biomes.field_76785_t, Biomes.field_76782_w, Biomes.field_76792_x);
      private GenLayer field_76944_d;
      private GenLayer field_76945_e;
      private final BiomeCache field_76942_f;
-@@ -23,13 +24,14 @@
+@@ -24,13 +25,14 @@
      protected BiomeProvider()
      {
          this.field_76942_f = new BiomeCache(this);
--        this.field_76943_g = Lists.newArrayList(new BiomeGenBase[] {Biomes.field_76767_f, Biomes.field_76772_c, Biomes.field_76768_g, Biomes.field_76784_u, Biomes.field_76785_t, Biomes.field_76782_w, Biomes.field_76792_x});
+-        this.field_76943_g = Lists.newArrayList(new Biome[] {Biomes.field_76767_f, Biomes.field_76772_c, Biomes.field_76768_g, Biomes.field_76784_u, Biomes.field_76785_t, Biomes.field_76782_w, Biomes.field_76792_x});
 +        this.field_76943_g = Lists.newArrayList(allowedBiomes);
      }
  
@@ -24,7 +24,7 @@
          this.field_76944_d = agenlayer[0];
          this.field_76945_e = agenlayer[1];
      }
-@@ -196,4 +198,11 @@
+@@ -198,4 +200,11 @@
      {
          this.field_76942_f.func_76838_a();
      }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/stats/StatList.java
 +++ ../src-work/minecraft/net/minecraft/stats/StatList.java
-@@ -155,7 +155,7 @@
+@@ -162,7 +162,7 @@
              }
          }
  
@@ -9,7 +9,7 @@
      }
  
      private static void func_151181_c()
-@@ -177,7 +177,7 @@
+@@ -184,7 +184,7 @@
              }
          }
  
@@ -18,7 +18,7 @@
      }
  
      private static void func_75925_c()
-@@ -201,7 +201,7 @@
+@@ -208,7 +208,7 @@
              }
          }
  
@@ -27,7 +27,7 @@
      }
  
      private static void func_151179_e()
-@@ -220,7 +220,7 @@
+@@ -227,7 +227,7 @@
              }
          }
  
@@ -36,7 +36,7 @@
      }
  
      private static void func_188054_f()
-@@ -240,7 +240,7 @@
+@@ -247,7 +247,7 @@
              }
          }
  
@@ -45,7 +45,7 @@
      }
  
      private static String func_180204_a(Item p_180204_0_)
-@@ -249,28 +249,35 @@
+@@ -256,28 +256,35 @@
          return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
      }
  
@@ -99,3 +99,40 @@
  
          if (p_151180_0_[i] != null && p_151180_0_[j] == null)
          {
+@@ -306,4 +313,36 @@
+     {
+         return (StatBase)field_188093_a.get(p_151177_0_);
+     }
++
++    @Deprecated //MODDER DO NOT CALL THIS ITS JUST A EVENT CALLBACK FOR FORGE
++    public static void reinit()
++    {
++        field_188093_a.clear();
++        field_188094_c.clear();
++        field_188095_d.clear();
++        field_188096_e.clear();
++
++        for (StatBase[] sb : new StatBase[][]{field_188065_ae,  field_188066_af, field_75929_E, field_75930_F, field_188067_ai, field_188068_aj})
++        {
++            for (int x = 0; x < sb.length; x++)
++            {
++                if (sb[x] != null)
++                {
++                    field_75940_b.remove(sb[x]);
++                    sb[x] = null;
++                }
++            }
++        }
++        List<StatBase> unknown = Lists.newArrayList(field_75940_b);
++        field_75940_b.clear();
++
++        for (StatBase b : unknown)
++            b.func_75971_g();
++
++        func_151181_c();
++        func_75925_c();
++        func_151179_e();
++        func_75918_d();
++        func_188054_f();
++    }
+ }

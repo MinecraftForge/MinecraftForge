@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -58,17 +58,18 @@
+@@ -59,17 +59,18 @@
  
      public WorldClient(NetHandlerPlayClient p_i45063_1_, WorldSettings p_i45063_2_, int p_i45063_3_, EnumDifficulty p_i45063_4_, Profiler p_i45063_5_)
      {
 -        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), DimensionType.func_186069_a(p_i45063_3_).func_186070_d(), p_i45063_5_, true);
 +        super(new SaveHandlerMP(), new WorldInfo(p_i45063_2_, "MpServer"), net.minecraftforge.common.DimensionManager.createProviderFor(p_i45063_3_), p_i45063_5_, true);
          this.field_184158_M = this.field_73012_v.nextInt(12000);
-         this.field_184157_a = Sets.<ChunkCoordIntPair>newHashSet();
+         this.field_184157_a = Sets.<ChunkPos>newHashSet();
          this.field_73035_a = p_i45063_1_;
          this.func_72912_H().func_176144_a(p_i45063_4_);
 -        this.func_175652_B(new BlockPos(8, 64, 8));

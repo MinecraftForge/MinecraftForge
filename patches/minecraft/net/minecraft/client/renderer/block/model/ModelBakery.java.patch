@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBakery.java
-@@ -102,6 +102,21 @@
+@@ -103,6 +103,21 @@
              {
                  try
                  {
@@ -22,16 +22,16 @@
                      ModelBlockDefinition modelblockdefinition = this.func_177586_a(resourcelocation);
                      Map<IBlockState, ModelResourceLocation> map = blockstatemapper.func_188181_b(block);
  
-@@ -109,7 +124,7 @@
+@@ -110,7 +125,7 @@
                      {
                          Collection<ModelResourceLocation> collection = Sets.newHashSet(map.values());
                          modelblockdefinition.func_188001_c().func_188138_a(block.func_176194_O());
 -                        this.field_188642_k.put(modelblockdefinition, Lists.newArrayList(Iterables.filter(collection, new Predicate<ModelResourceLocation>()
 +                        registerMultipartVariant(modelblockdefinition, Lists.newArrayList(Iterables.filter(collection, new Predicate<ModelResourceLocation>()
                          {
-                             public boolean apply(ModelResourceLocation p_apply_1_)
+                             public boolean apply(@Nullable ModelResourceLocation p_apply_1_)
                              {
-@@ -126,22 +141,18 @@
+@@ -127,22 +142,18 @@
                          {
                              try
                              {
@@ -56,7 +56,7 @@
              }
          }
      }
-@@ -370,6 +381,7 @@
+@@ -371,6 +382,7 @@
  
      protected void func_177592_e()
      {
@@ -64,7 +64,7 @@
          this.field_177613_u.put(Item.func_150898_a(Blocks.field_150348_b), Lists.newArrayList(new String[] {"stone", "granite", "granite_smooth", "diorite", "diorite_smooth", "andesite", "andesite_smooth"}));
          this.field_177613_u.put(Item.func_150898_a(Blocks.field_150346_d), Lists.newArrayList(new String[] {"dirt", "coarse_dirt", "podzol"}));
          this.field_177613_u.put(Item.func_150898_a(Blocks.field_150344_f), Lists.newArrayList(new String[] {"oak_planks", "spruce_planks", "birch_planks", "jungle_planks", "acacia_planks", "dark_oak_planks"}));
-@@ -413,6 +425,10 @@
+@@ -414,6 +426,10 @@
          this.field_177613_u.put(Item.func_150898_a(Blocks.field_180407_aO), Lists.newArrayList(new String[] {"oak_fence"}));
          this.field_177613_u.put(Items.field_179570_aq, Lists.newArrayList(new String[] {"oak_door"}));
          this.field_177613_u.put(Items.field_151124_az, Lists.newArrayList(new String[] {"oak_boat"}));
@@ -75,7 +75,7 @@
      }
  
      protected List<String> func_177596_a(Item p_177596_1_)
-@@ -429,7 +445,7 @@
+@@ -430,7 +446,7 @@
  
      protected ResourceLocation func_177583_a(String p_177583_1_)
      {
@@ -84,7 +84,7 @@
          return new ResourceLocation(resourcelocation.func_110624_b(), "item/" + resourcelocation.func_110623_a());
      }
  
-@@ -536,7 +552,7 @@
+@@ -538,7 +554,7 @@
          for (Entry<String, ResourceLocation> entry : this.field_177615_s.entrySet())
          {
              ResourceLocation resourcelocation = (ResourceLocation)entry.getValue();
@@ -93,8 +93,8 @@
              ModelBlock modelblock = (ModelBlock)this.field_177611_h.get(resourcelocation);
  
              if (modelblock != null && modelblock.func_178303_d())
-@@ -623,6 +639,11 @@
- 
+@@ -626,6 +642,11 @@
+     @Nullable
      private IBakedModel func_177578_a(ModelBlock p_177578_1_, ModelRotation p_177578_2_, boolean p_177578_3_)
      {
 +        return bakeModel(p_177578_1_, (net.minecraftforge.common.model.ITransformation)p_177578_2_, p_177578_3_);
@@ -105,7 +105,7 @@
          TextureAtlasSprite textureatlassprite = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c("particle")));
          SimpleBakedModel.Builder simplebakedmodel$builder = (new SimpleBakedModel.Builder(p_177578_1_, p_177578_1_.func_187967_g())).func_177646_a(textureatlassprite);
  
-@@ -639,13 +660,13 @@
+@@ -642,13 +663,13 @@
                      BlockPartFace blockpartface = (BlockPartFace)blockpart.field_178240_c.get(enumfacing);
                      TextureAtlasSprite textureatlassprite1 = (TextureAtlasSprite)this.field_177599_g.get(new ResourceLocation(p_177578_1_.func_178308_c(blockpartface.field_178242_d)));
  
@@ -122,7 +122,7 @@
                      }
                  }
              }
-@@ -656,9 +677,14 @@
+@@ -659,9 +680,14 @@
  
      private BakedQuad func_177589_a(BlockPart p_177589_1_, BlockPartFace p_177589_2_, TextureAtlasSprite p_177589_3_, EnumFacing p_177589_4_, ModelRotation p_177589_5_, boolean p_177589_6_)
      {
@@ -138,7 +138,7 @@
      private void func_177597_h()
      {
          this.func_177574_i();
-@@ -878,4 +904,23 @@
+@@ -882,4 +908,23 @@
          field_177606_o.field_178317_b = "generation marker";
          field_177616_r.field_178317_b = "block entity marker";
      }

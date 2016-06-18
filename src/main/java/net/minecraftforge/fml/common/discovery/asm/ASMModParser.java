@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
@@ -30,6 +31,7 @@ import org.objectweb.asm.Type;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ASMModParser
 {
@@ -38,6 +40,7 @@ public class ASMModParser
     private int classVersion;
     private Type asmSuperType;
     private LinkedList<ModAnnotation> annotations = Lists.newLinkedList();
+    private Set<String> interfaces = Sets.newHashSet();
     private String baseModProperties;
 
     static enum AnnotationType
@@ -59,11 +62,13 @@ public class ASMModParser
         }
     }
 
-    public void beginNewTypeName(String typeQName, int classVersion, String superClassQName)
+    public void beginNewTypeName(String typeQName, int classVersion, String superClassQName, String[] interfaces)
     {
         this.asmType = Type.getObjectType(typeQName);
         this.classVersion = classVersion;
         this.asmSuperType = !Strings.isNullOrEmpty(superClassQName) ? Type.getObjectType(superClassQName) : null;
+        for (String intf : interfaces)
+            this.interfaces.add(intf);
     }
 
     public void startClassAnnotation(String annotationName)
@@ -145,6 +150,11 @@ public class ASMModParser
         for (ModAnnotation ma : annotations)
         {
             table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
+        }
+
+        for (String intf : interfaces)
+        {
+            table.addASMData(candidate, intf, this.asmType.getInternalName(), null, null);
         }
     }
 

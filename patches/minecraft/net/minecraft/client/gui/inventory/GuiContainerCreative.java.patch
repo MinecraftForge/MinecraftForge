@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -49,6 +49,8 @@
+@@ -50,6 +50,8 @@
      private Slot field_147064_C;
      private boolean field_147057_D;
      private CreativeCrafting field_147059_E;
@@ -9,7 +9,7 @@
  
      public GuiContainerCreative(EntityPlayer p_i1088_1_)
      {
-@@ -258,6 +260,13 @@
+@@ -259,6 +261,13 @@
              this.func_147050_b(CreativeTabs.field_78032_a[i]);
              this.field_147059_E = new CreativeCrafting(this.field_146297_k);
              this.field_146297_k.field_71439_g.field_71069_bz.func_75132_a(this.field_147059_E);
@@ -23,7 +23,7 @@
          }
          else
          {
-@@ -279,7 +288,7 @@
+@@ -280,7 +289,7 @@
  
      protected void func_73869_a(char p_73869_1_, int p_73869_2_) throws IOException
      {
@@ -32,7 +32,7 @@
          {
              if (GameSettings.func_100015_a(this.field_146297_k.field_71474_y.field_74310_D))
              {
-@@ -317,6 +326,14 @@
+@@ -318,6 +327,14 @@
          GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
          guicontainercreative$containercreative.field_148330_a.clear();
  
@@ -47,7 +47,7 @@
          for (Item item : Item.field_150901_e)
          {
              if (item != null && item.func_77640_w() != null)
-@@ -324,7 +341,13 @@
+@@ -325,7 +342,13 @@
                  item.func_150895_a(item, (CreativeTabs)null, guicontainercreative$containercreative.field_148330_a);
              }
          }
@@ -57,11 +57,11 @@
 +    //split from above for custom search tabs
 +    private void updateFilteredItems(GuiContainerCreative.ContainerCreative guicontainercreative$containercreative)
 +    {
-+    	if (CreativeTabs.field_78032_a[field_147058_w] == CreativeTabs.field_78027_g) // FORGE: Only add enchanted books to the regular search
++        if (CreativeTabs.field_78032_a[field_147058_w] == CreativeTabs.field_78027_g) // FORGE: Only add enchanted books to the regular search
          for (Enchantment enchantment : Enchantment.field_185264_b)
          {
              if (enchantment != null && enchantment.field_77351_y != null)
-@@ -332,7 +355,6 @@
+@@ -333,7 +356,6 @@
                  Items.field_151134_bR.func_92113_a(enchantment, guicontainercreative$containercreative.field_148330_a);
              }
          }
@@ -69,7 +69,7 @@
          Iterator<ItemStack> iterator = guicontainercreative$containercreative.field_148330_a.iterator();
          String s1 = this.field_147062_A.func_146179_b().toLowerCase();
  
-@@ -364,7 +386,7 @@
+@@ -365,7 +387,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -78,7 +78,7 @@
          {
              GlStateManager.func_179084_k();
              this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c(), new Object[0]), 8, 6, 4210752);
-@@ -399,7 +421,7 @@
+@@ -400,7 +422,7 @@
  
              for (CreativeTabs creativetabs : CreativeTabs.field_78032_a)
              {
@@ -87,7 +87,7 @@
                  {
                      this.func_147050_b(creativetabs);
                      return;
-@@ -412,11 +434,13 @@
+@@ -413,11 +435,13 @@
  
      private boolean func_147055_p()
      {
@@ -101,7 +101,7 @@
          int i = field_147058_w;
          field_147058_w = p_147050_1_.func_78021_a();
          GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
-@@ -487,12 +511,14 @@
+@@ -488,12 +512,14 @@
  
          if (this.field_147062_A != null)
          {
@@ -117,7 +117,7 @@
                  this.func_147053_i();
              }
              else
-@@ -562,20 +588,43 @@
+@@ -563,20 +589,43 @@
          }
  
          super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
@@ -137,7 +137,7 @@
              }
          }
  
-+        if (!rendered && func_147052_b(CreativeTabs.field_78027_g, p_73863_1_, p_73863_2_))
++        if (!rendered && !func_147052_b(CreativeTabs.field_78027_g, p_73863_1_, p_73863_2_))
 +        {
 +            func_147052_b(CreativeTabs.field_78036_m, p_73863_1_, p_73863_2_);
 +        }
@@ -162,7 +162,7 @@
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          GlStateManager.func_179140_f();
      }
-@@ -637,16 +686,35 @@
+@@ -638,16 +687,35 @@
          RenderHelper.func_74520_c();
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -199,7 +199,7 @@
          this.field_146297_k.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.func_78015_f()));
          this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
          this.field_147062_A.func_146194_f();
-@@ -661,6 +729,14 @@
+@@ -662,6 +730,14 @@
              this.func_73729_b(i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
          }
  
@@ -214,7 +214,7 @@
          this.func_147051_a(creativetabs);
  
          if (creativetabs == CreativeTabs.field_78036_m)
-@@ -671,6 +747,14 @@
+@@ -672,6 +748,14 @@
  
      protected boolean func_147049_a(CreativeTabs p_147049_1_, int p_147049_2_, int p_147049_3_)
      {
@@ -229,7 +229,7 @@
          int i = p_147049_1_.func_78020_k();
          int j = 28 * i;
          int k = 0;
-@@ -767,6 +851,8 @@
+@@ -768,6 +852,8 @@
          }
  
          GlStateManager.func_179140_f();
@@ -238,7 +238,7 @@
          this.func_73729_b(l, i1, j, k, 28, j1);
          this.field_73735_i = 100.0F;
          this.field_146296_j.field_77023_b = 100.0F;
-@@ -793,6 +879,15 @@
+@@ -794,6 +880,15 @@
          {
              this.field_146297_k.func_147108_a(new GuiStats(this, this.field_146297_k.field_71439_g.func_146107_m()));
          }

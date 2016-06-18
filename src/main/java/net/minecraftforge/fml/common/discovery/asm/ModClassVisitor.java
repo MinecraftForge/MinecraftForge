@@ -32,7 +32,7 @@ public class ModClassVisitor extends ClassVisitor
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
     {
-        discoverer.beginNewTypeName(name, version, superName);
+        discoverer.beginNewTypeName(name, version, superName, interfaces);
     }
 
     @Override

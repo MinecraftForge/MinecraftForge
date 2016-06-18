@@ -67,8 +67,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.SaveFormatComparator;
+import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -204,10 +205,10 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
-        FMLCommonHandler.instance().beginLoading(this);
+        List<String> injectedModContainers = FMLCommonHandler.instance().beginLoading(this);
         try
         {
-            Loader.instance().loadMods();
+            Loader.instance().loadMods(injectedModContainers);
         }
         catch (WrongMinecraftVersionException wrong)
         {
@@ -662,7 +663,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public NetworkManager getClientToServerNetworkManager()
     {
-        return this.client.getNetHandler()!=null ? this.client.getNetHandler().getNetworkManager() : null;
+        return this.client.getConnection()!=null ? this.client.getConnection().getNetworkManager() : null;
     }
 
     public void handleClientWorldClosing(WorldClient world)
@@ -683,7 +684,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return new File(client.mcDataDir, "saves");
     }
-    public void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, SaveFormatComparator comparator)
+    public void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, WorldSummary comparator)
     {
         File dir = new File(getSavesDir(), comparator.getFileName());
         NBTTagCompound leveldat;
@@ -1026,4 +1027,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         // We can't handle many unicode points in the splash renderer
         return CharMatcher.anyOf(ALLOWED_CHARS).retainFrom(StringUtils.stripControlCodes(message));
     }
+
+    @Override
+    public DataFixer getDataFixer()
+    {
+        return client.getDataFixer();
+    }
+    
 }

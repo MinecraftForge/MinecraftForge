@@ -20,6 +20,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -66,4 +67,6 @@ public interface IFMLSidedHandler
     void processWindowMessages();
 
     String stripSpecialChars(String message);
+
+    DataFixer getDataFixer();
 }

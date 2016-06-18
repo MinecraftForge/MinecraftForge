@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -52,26 +52,12 @@
+@@ -53,26 +53,12 @@
  
      protected void func_76572_b()
      {
@@ -9,7 +9,7 @@
 -        if (worldtype == WorldType.field_77138_c)
 -        {
 -            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
--            this.field_76578_c = new BiomeProviderSingle(BiomeGenBase.func_180276_a(flatgeneratorinfo.func_82648_a(), Biomes.field_180279_ad));
+-            this.field_76578_c = new BiomeProviderSingle(Biome.func_180276_a(flatgeneratorinfo.func_82648_a(), Biomes.field_180279_ad));
 -        }
 -        else if (worldtype == WorldType.field_180272_g)
 -        {
@@ -29,7 +29,7 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -156,7 +142,7 @@
+@@ -158,7 +144,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -38,7 +38,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -172,13 +158,13 @@
+@@ -174,13 +160,13 @@
  
      public int func_76557_i()
      {
@@ -54,7 +54,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -212,6 +198,327 @@
+@@ -214,6 +200,327 @@
          return new WorldBorder();
      }
  
@@ -222,9 +222,9 @@
 +
 +    /*======================================= Start Moved From World =========================================*/
 +
-+    public BiomeGenBase getBiomeGenForCoords(BlockPos pos)
++    public Biome getBiomeForCoords(BlockPos pos)
 +    {
-+        return field_76579_a.getBiomeGenForCoordsBody(pos);
++        return field_76579_a.getBiomeForCoordsBody(pos);
 +    }
 +
 +    public boolean isDaytime()

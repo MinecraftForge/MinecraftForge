@@ -77,10 +77,10 @@ public class ModelAnimationDebug
     {
         public void preInit(FMLPreInitializationEvent event)
         {
-            GameRegistry.register(new Block(Material.wood)
+            GameRegistry.register(new Block(Material.WOOD)
             {
                 {
-                    setCreativeTab(CreativeTabs.tabBlock);
+                    setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
                     setUnlocalizedName(MODID + "." + blockName);
                     setRegistryName(blockId);
                 }
@@ -152,7 +152,7 @@ public class ModelAnimationDebug
                     return true;
                 }
             });
-            GameRegistry.register(new ItemBlock(Block.blockRegistry.getObject(blockId))
+            GameRegistry.register(new ItemBlock(Block.REGISTRY.getObject(blockId))
             {
                 @Override
                 public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
@@ -181,7 +181,7 @@ public class ModelAnimationDebug
         {
             super.preInit(event);
             B3DLoader.INSTANCE.addDomain(MODID);
-            ModelLoader.setCustomModelResourceLocation(Item.itemRegistry.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.REGISTRY.getObject(blockId), 0, new ModelResourceLocation(blockId, "inventory"));
             ClientRegistry.bindTileEntitySpecialRenderer(Chest.class, new AnimationTESR<Chest>()
             {
                 @Override
@@ -219,7 +219,7 @@ public class ModelAnimationDebug
                     {
                         protected ResourceLocation getEntityTexture(EntityChest entity)
                         {
-                            return TextureMap.locationBlocksTexture;
+                            return TextureMap.LOCATION_BLOCKS_TEXTURE;
                         }
                     };
                 }

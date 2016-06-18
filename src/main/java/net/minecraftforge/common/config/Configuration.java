@@ -36,7 +36,10 @@ import java.util.regex.Pattern;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
+import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
@@ -114,7 +117,7 @@ public class Configuration
                 File fileBak = new File(file.getAbsolutePath() + "_" +
                         new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
                 FMLLog.severe("An exception occurred while loading config file %s. This file will be renamed to %s " +
-                		"and a new config file will be generated.", file.getName(), fileBak.getName());
+                        "and a new config file will be generated.", file.getName(), fileBak.getName());
                 e.printStackTrace();
 
                 file.renameTo(fileBak);
@@ -688,11 +691,6 @@ public class Configuration
      */
     public Property get(String category, String key, String defaultValue, String comment, Property.Type type)
     {
-        if (!caseSensitiveCustomCategories)
-        {
-            category = category.toLowerCase(Locale.ENGLISH);
-        }
-
         ConfigCategory cat = getCategory(category);
 
         if (cat.containsKey(key))
@@ -736,11 +734,6 @@ public class Configuration
      */
     public Property get(String category, String key, String[] defaultValues, String comment, Property.Type type)
     {
-        if (!caseSensitiveCustomCategories)
-        {
-            category = category.toLowerCase(Locale.ENGLISH);
-        }
-
         ConfigCategory cat = getCategory(category);
 
         if (cat.containsKey(key))
@@ -780,11 +773,15 @@ public class Configuration
 
     public boolean hasCategory(String category)
     {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
         return categories.get(category) != null;
     }
 
     public boolean hasKey(String category, String key)
     {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
         ConfigCategory cat = categories.get(category);
         return cat != null && cat.containsKey(key);
     }
@@ -906,6 +903,8 @@ public class Configuration
                                     if (tmpList != null) // allow special characters as part of string lists
                                         break;
                                     name = line.substring(nameStart, nameEnd + 1);
+                                    if (!caseSensitiveCustomCategories)
+                                        name = name.toLowerCase(Locale.ENGLISH);
                                     String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
 
                                     ConfigCategory cat = categories.get(qualifiedName);
@@ -1119,6 +1118,9 @@ public class Configuration
 
     public ConfigCategory getCategory(String category)
     {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+
         ConfigCategory ret = categories.get(category);
 
         if (ret == null)
@@ -1188,8 +1190,6 @@ public class Configuration
      */
     public Configuration setCategoryComment(String category, String comment)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setComment(comment);
         return this;
     }
@@ -1207,23 +1207,24 @@ public class Configuration
      */
     public Configuration setCategoryLanguageKey(String category, String langKey)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setLanguageKey(langKey);
         return this;
     }
 
     /**
      * Sets the custom IConfigEntry class that should be used in place of the standard entry class (which is just a button that
-     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent
-     * GuiConfig screen will be provided), {@code GuiPropertyList} (the parent GuiPropertyList will be provided), {@code IConfigElement}
+     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@link GuiConfig} (the parent
+     * GuiConfig screen will be provided), {@link GuiConfigEntries} (the parent GuiConfigEntries will be provided), {@link IConfigElement}
      * (the IConfigElement for this Property will be provided).
+     *
+     * @see GuiConfigEntries.ListEntryBase
+     * @see GuiConfigEntries.StringEntry
+     * @see GuiConfigEntries.BooleanEntry
+     * @see GuiConfigEntries.DoubleEntry
+     * @see GuiConfigEntries.IntegerEntry
      */
     public Configuration setCategoryConfigEntryClass(String category, Class<? extends IConfigEntry> clazz)
     {
-
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setConfigEntryClass(clazz);
         return this;
     }
@@ -1235,8 +1236,6 @@ public class Configuration
      */
     public Configuration setCategoryRequiresWorldRestart(String category, boolean requiresWorldRestart)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setRequiresWorldRestart(requiresWorldRestart);
         return this;
     }
@@ -1249,8 +1248,6 @@ public class Configuration
      */
     public Configuration setCategoryRequiresMcRestart(String category, boolean requiresMcRestart)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setRequiresMcRestart(requiresMcRestart);
         return this;
     }
@@ -1261,8 +1258,6 @@ public class Configuration
      */
     public Configuration setCategoryPropertyOrder(String category, List<String> propOrder)
     {
-        if (!caseSensitiveCustomCategories)
-            category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setPropertyOrder(propOrder);
         return this;
     }
@@ -1561,7 +1556,7 @@ public class Configuration
      *
      * @param name Name of the property.
      * @param category Category of the property.
-     * @param defaultValue Default value of the property.
+     * @param defaultValues Default values of the property.
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -56,10 +56,10 @@
+@@ -57,10 +57,10 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -14,7 +14,7 @@
      private static final IItemPropertyGetter field_185046_b = new IItemPropertyGetter()
      {
          @SideOnly(Side.CLIENT)
-@@ -192,6 +192,7 @@
+@@ -196,6 +196,7 @@
          return p_77654_1_;
      }
  
@@ -22,7 +22,7 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -312,6 +313,7 @@
+@@ -316,6 +317,7 @@
          return this.field_77700_c;
      }
  
@@ -30,7 +30,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -367,7 +369,7 @@
+@@ -371,7 +373,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -39,7 +39,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -385,6 +387,10 @@
+@@ -389,6 +391,10 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -50,7 +50,7 @@
          Vec3d vec3d1 = vec3d.func_72441_c((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
-@@ -422,11 +428,557 @@
+@@ -426,11 +432,557 @@
          return false;
      }
  
@@ -608,7 +608,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -935,6 +1487,10 @@
+@@ -956,6 +1508,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -619,7 +619,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -969,9 +1525,36 @@
+@@ -990,9 +1546,36 @@
              return this.field_78008_j;
          }
  

@@ -24,7 +24,7 @@ public class BlockFluidClassic extends BlockFluidBase
     public BlockFluidClassic(Fluid fluid, Material material)
     {
         super(fluid, material);
-        stack = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+        stack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
     }
 
     public BlockFluidClassic setFluidStack(FluidStack stack)
@@ -43,7 +43,7 @@ public class BlockFluidClassic extends BlockFluidBase
     public int getQuantaValue(IBlockAccess world, BlockPos pos)
     {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == Blocks.air)
+        if (state.getBlock() == Blocks.AIR)
         {
             return 0;
         }
@@ -291,9 +291,9 @@ public class BlockFluidClassic extends BlockFluidBase
 
         Material material = state.getMaterial();
         if (material.blocksMovement()  ||
-            material == Material.water ||
-            material == Material.lava  ||
-            material == Material.portal)
+            material == Material.WATER ||
+            material == Material.LAVA  ||
+            material == Material.PORTAL)
         {
             return false;
         }

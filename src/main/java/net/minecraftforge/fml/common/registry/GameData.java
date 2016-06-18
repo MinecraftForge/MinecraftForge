@@ -26,7 +26,7 @@ import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.RegistryNamespaced;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -49,7 +49,7 @@ public class GameData
     private static final int MIN_POTIONTYPE_ID = 0; // Int
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MIN_ENCHANTMENT_ID = 0; // Int
-    private static final int MAX_ENCHANTMENT_ID = Integer.MAX_VALUE >> 5; // Int - not serialized as an ID?
+    private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -61,7 +61,7 @@ public class GameData
         iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MIN_BLOCK_ID, MAX_BLOCK_ID, true, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE);
         iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
         iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE);
-        iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, BiomeGenBase.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE);
+        iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, Biome.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE);
         iSoundEventRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.SOUNDEVENTS, SoundEvent.class, null, MIN_SOUND_ID, MAX_SOUND_ID, false, null, null, null);
         ResourceLocation WATER = new ResourceLocation("water");
         iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null);
@@ -71,7 +71,7 @@ public class GameData
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
     private final FMLControlledNamespacedRegistry<Item> iItemRegistry;
     private final FMLControlledNamespacedRegistry<Potion> iPotionRegistry;
-    private final FMLControlledNamespacedRegistry<BiomeGenBase> iBiomeRegistry;
+    private final FMLControlledNamespacedRegistry<Biome> iBiomeRegistry;
     private final FMLControlledNamespacedRegistry<SoundEvent> iSoundEventRegistry;
     private final FMLControlledNamespacedRegistry<PotionType> iPotionTypeRegistry;
     private final FMLControlledNamespacedRegistry<Enchantment> iEnchantmentRegistry;
@@ -98,7 +98,7 @@ public class GameData
 
     /** INTERNAL ONLY */
     @Deprecated
-    public static FMLControlledNamespacedRegistry<BiomeGenBase> getBiomeRegistry() { return getMain().iBiomeRegistry; }
+    public static FMLControlledNamespacedRegistry<Biome> getBiomeRegistry() { return getMain().iBiomeRegistry; }
 
     /** INTERNAL ONLY */
     @Deprecated
@@ -356,12 +356,12 @@ public class GameData
             // no op for the minute?
         }
     }
-    private static class BiomeCallbacks implements IForgeRegistry.AddCallback<BiomeGenBase>,IForgeRegistry.ClearCallback<BiomeGenBase>,IForgeRegistry.CreateCallback<BiomeGenBase>
+    private static class BiomeCallbacks implements IForgeRegistry.AddCallback<Biome>,IForgeRegistry.ClearCallback<Biome>,IForgeRegistry.CreateCallback<Biome>
     {
         static final BiomeCallbacks INSTANCE = new BiomeCallbacks();
 
         @Override
-        public void onAdd(BiomeGenBase potion, int id, Map<ResourceLocation, ?> slaves) {
+        public void onAdd(Biome potion, int id, Map<ResourceLocation, ?> slaves) {
             // no op for the minute?
         }
 

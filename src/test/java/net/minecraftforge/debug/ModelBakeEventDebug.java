@@ -132,8 +132,8 @@ public class ModelBakeEventDebug
 
         private CustomModelBlock()
         {
-            super(Material.iron);
-            setCreativeTab(CreativeTabs.tabBlock);
+            super(Material.IRON);
+            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(blockName);
         }

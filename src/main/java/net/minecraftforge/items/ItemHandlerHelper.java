@@ -158,7 +158,7 @@ public class ItemHandlerHelper
         if (remainder == null || remainder.stackSize != stack.stackSize)
         {
             world.playSound(player, player.posX, player.posY, player.posZ,
-                    SoundEvents.entity_item_pickup, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                    SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world

@@ -189,13 +189,13 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
                     completeServerSideConnection(ConnectionType.MODDED);
                 }
                 // FORGE: sometimes the netqueue will tick while login is occurring, causing an NPE. We shouldn't tick until the connection is complete
-                if (this.playerEntity.playerNetServerHandler != this) return;
+                if (this.playerEntity.connection != this) return;
                 super.update();
             }
         };
         this.netHandler = serverHandler;
         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
-        player.playerNetServerHandler = null;
+        player.connection = null;
         // manually for the manager into the PLAY state, so we can send packets later
         this.manager.setConnectionState(EnumConnectionState.PLAY);
 
@@ -562,7 +562,15 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         // Stop the epic channel closed spam at close
         if (!(cause instanceof ClosedChannelException))
         {
-            FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+            // Mute the reset by peer exception - it's disconnection noise
+            if (cause.getMessage().contains("Connection reset by peer"))
+            {
+                FMLLog.log(Level.DEBUG, cause, "Muted NetworkDispatcher exception");
+            }
+            else
+            {
+                FMLLog.log(Level.ERROR, cause, "NetworkDispatcher exception");
+            }
         }
         super.exceptionCaught(ctx, cause);
     }

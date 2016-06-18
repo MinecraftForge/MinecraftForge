@@ -59,7 +59,7 @@
 +    }
 +
 +    //Exception biomes to make sure we generate like vanilla
-+    private boolean isExceptionBiome(net.minecraft.world.biome.BiomeGenBase biome)
++    private boolean isExceptionBiome(net.minecraft.world.biome.Biome biome)
 +    {
 +        if (biome == net.minecraft.init.Biomes.field_76787_r) return true;
 +        if (biome == net.minecraft.init.Biomes.field_76769_d) return true;
@@ -70,7 +70,7 @@
 +    //Vanilla bugs to make sure that we generate the map the same way vanilla does.
 +    private boolean isTopBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ)
 +    {
-+        net.minecraft.world.biome.BiomeGenBase biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
++        net.minecraft.world.biome.Biome biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
 +        IBlockState state = data.func_177856_a(x, y, z);
 +        return (isExceptionBiome(biome) ? state.func_177230_c() == Blocks.field_150349_c : state.func_177230_c() == biome.field_76752_A);
 +    }
@@ -92,7 +92,7 @@
 +     */
 +    protected void digBlock(ChunkPrimer data, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop, IBlockState state, IBlockState up)
 +    {
-+        net.minecraft.world.biome.BiomeGenBase biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
++        net.minecraft.world.biome.Biome biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
 +        IBlockState top = biome.field_76752_A;
 +        IBlockState filler = biome.field_76753_B;
 +

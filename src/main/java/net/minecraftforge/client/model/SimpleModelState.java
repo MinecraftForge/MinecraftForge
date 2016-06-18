@@ -28,7 +28,14 @@ public final class SimpleModelState implements IModelState
 
     public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
     {
-        if(!part.isPresent() || !map.containsKey(part.get())) return def;
+        if(!part.isPresent())
+        {
+            return def;
+        }
+        if(!map.containsKey(part.get()))
+        {
+            return Optional.absent();
+        }
         return Optional.fromNullable(map.get(part.get()));
     }
 }

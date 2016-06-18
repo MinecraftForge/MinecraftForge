@@ -1,11 +1,19 @@
 package net.minecraftforge.fluids;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
 
@@ -27,6 +35,8 @@ import net.minecraft.item.EnumRarity;
  */
 public class Fluid
 {
+    public static final int BUCKET_VOLUME = 1000;
+
     /** The unique identification name for this fluid. */
     protected final String fluidName;
 
@@ -35,6 +45,9 @@ public class Fluid
 
     protected final ResourceLocation still;
     protected final ResourceLocation flowing;
+
+    private SoundEvent fillSound;
+    private SoundEvent emptySound;
 
     /**
      * The light level emitted by this fluid.
@@ -158,6 +171,18 @@ public class Fluid
         return this;
     }
 
+    public Fluid setFillSound(SoundEvent fillSound)
+    {
+        this.fillSound = fillSound;
+        return this;
+    }
+
+    public Fluid setEmptySound(SoundEvent emptySound)
+    {
+        this.emptySound = emptySound;
+        return this;
+    }
+
     public final String getName()
     {
         return this.fluidName;
@@ -171,6 +196,42 @@ public class Fluid
     public final boolean canBePlacedInWorld()
     {
         return block != null;
+    }
+
+	/**
+     * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
+     * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
+     * This prevents players from making the nether safe with a single bucket.
+     * Based on {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     *
+     * @param fluidStack The fluidStack is trying to be placed.
+     * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
+     */
+    public boolean doesVaporize(FluidStack fluidStack)
+    {
+        if (block == null)
+            return false;
+        return block.getDefaultState().getMaterial() == Material.WATER;
+    }
+
+	/**
+     * Called instead of placing the fluid block if {@link WorldProvider#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
+     * Override this to make your explosive liquid blow up instead of the default smoke, etc.
+     * Based on {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     *
+     * @param player     Player who tried to place the fluid. May be null for blocks like dispensers.
+     * @param worldIn    World to vaporize the fluid in.
+     * @param pos        The position in the world the fluid block was going to be placed.
+     * @param fluidStack The fluidStack that was going to be placed.
+     */
+    public void vaporize(@Nullable EntityPlayer player, World worldIn, BlockPos pos, FluidStack fluidStack)
+    {
+        worldIn.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
+
+        for (int l = 0; l < 8; ++l)
+        {
+            worldIn.spawnParticle(EnumParticleTypes.SMOKE_LARGE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+        }
     }
 
     /**
@@ -244,6 +305,40 @@ public class Fluid
         return flowing;
     }
 
+    public SoundEvent getFillSound()
+    {
+        if(fillSound == null)
+        {
+            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
+            {
+                fillSound = SoundEvents.ITEM_BUCKET_FILL_LAVA;
+            }
+            else
+            {
+                fillSound = SoundEvents.ITEM_BUCKET_FILL;
+            }
+        }
+
+        return fillSound;
+    }
+
+    public SoundEvent getEmptySound()
+    {
+        if(emptySound == null)
+        {
+            if(getBlock() != null && getBlock().getDefaultState().getMaterial() == Material.LAVA)
+            {
+                emptySound = SoundEvents.ITEM_BUCKET_EMPTY_LAVA;
+            }
+            else
+            {
+                emptySound = SoundEvents.ITEM_BUCKET_EMPTY;
+            }
+        }
+
+        return emptySound;
+    }
+
     /* Stack-based Accessors */
     public int getLuminosity(FluidStack stack){ return getLuminosity(); }
     public int getDensity(FluidStack stack){ return getDensity(); }
@@ -254,6 +349,8 @@ public class Fluid
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStill(FluidStack stack) { return getStill(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowing(); }
+    public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
+    public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
     /* World-based Accessors */
     public int getLuminosity(World world, BlockPos pos){ return getLuminosity(); }
@@ -265,5 +362,7 @@ public class Fluid
     public int getColor(World world, BlockPos pos){ return getColor(); }
     public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
     public ResourceLocation getFlowing(World world, BlockPos pos) { return getFlowing(); }
+    public SoundEvent getFillSound(World world, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(World world, BlockPos pos) { return getEmptySound(); }
 
 }

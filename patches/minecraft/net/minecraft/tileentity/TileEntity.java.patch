@@ -17,30 +17,30 @@
 +        if (this.capabilities != null && p_145839_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_145839_1_.func_74775_l("ForgeCaps"));
      }
  
-     public void func_145841_b(NBTTagCompound p_145841_1_)
-@@ -76,6 +78,8 @@
-             p_145841_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
-             p_145841_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
-             p_145841_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
-+            if (this.customTileData != null) p_145841_1_.func_74782_a("ForgeData", this.customTileData);
-+            if (this.capabilities != null) p_145841_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
+@@ -81,6 +83,8 @@
+             p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
+             p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
+             p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
++            if (this.customTileData != null) p_189516_1_.func_74782_a("ForgeData", this.customTileData);
++            if (this.capabilities != null) p_189516_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
+             return p_189516_1_;
          }
      }
- 
-@@ -83,10 +87,11 @@
+@@ -89,10 +93,11 @@
      {
          TileEntity tileentity = null;
-         String s = p_184246_1_.func_74779_i("id");
+         String s = p_189514_0_.func_74779_i("id");
 +        Class <? extends TileEntity > oclass = null;
  
          try
          {
 -            Class <? extends TileEntity > oclass = (Class)field_145855_i.get(s);
-+            oclass = (Class)field_145855_i.get(s);
++            oclass = field_145855_i.get(s);
  
              if (oclass != null)
              {
-@@ -96,6 +101,9 @@
+@@ -102,6 +107,9 @@
          catch (Throwable throwable1)
          {
              field_145852_a.error("Failed to create block entity " + s, throwable1);
@@ -50,7 +50,7 @@
          }
  
          if (tileentity != null)
-@@ -107,6 +115,9 @@
+@@ -113,6 +121,9 @@
              catch (Throwable throwable)
              {
                  field_145852_a.error("Failed to load data for block entity " + s, throwable);
@@ -60,7 +60,7 @@
                  tileentity = null;
              }
          }
-@@ -144,7 +155,6 @@
+@@ -150,7 +161,6 @@
          }
      }
  
@@ -68,7 +68,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -271,6 +281,186 @@
+@@ -283,6 +293,198 @@
          return false;
      }
  
@@ -84,6 +84,18 @@
 +     */
 +    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
 +    {
++    }
++
++    /**
++     * Called when the chunk's TE update tag, gotten from {@link #getUpdateTag()}, is received on the client.
++     * <p>
++     * Used to handle this tag in a special way. By default this simply calls {@link #readFromNBT(NBTTagCompound)}.
++     *
++     * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
++     */
++    public void handleUpdateTag(NBTTagCompound tag)
++    {
++        this.func_145839_a(tag);
 +    }
 +
 +    /**
@@ -248,7 +260,7 @@
 +    public NBTTagCompound serializeNBT()
 +    {
 +        NBTTagCompound ret = new NBTTagCompound();
-+        this.func_145841_b(ret);
++        this.func_189515_b(ret);
 +        return ret;
 +    }
 +

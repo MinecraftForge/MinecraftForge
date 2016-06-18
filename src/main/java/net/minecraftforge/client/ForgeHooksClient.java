@@ -6,6 +6,8 @@ import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Collections;
@@ -67,7 +69,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.BossInfoLerping;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -77,6 +79,7 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
@@ -246,7 +249,7 @@ public class ForgeHooksClient
             for (int z = -distance; z <= distance; ++z)
             {
                 BlockPos pos = center.add(x, 0, z);
-                BiomeGenBase biome = world.getBiomeGenForCoords(pos);
+                Biome biome = world.getBiomeGenForCoords(pos);
                 int colour = biome.getSkyColorByTemp(biome.getFloatTemperature(pos));
                 r += (colour & 0xFF0000) >> 16;
                 g += (colour & 0x00FF00) >> 8;
@@ -705,4 +708,12 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
     }
+
+    public static ScreenshotEvent onScreenshot(BufferedImage image, File screenshotFile)
+    {
+        ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
 }

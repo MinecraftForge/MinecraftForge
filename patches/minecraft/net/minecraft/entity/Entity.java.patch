@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -76,7 +76,7 @@
+@@ -77,7 +77,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,16 @@
  {
      private static final Logger field_184243_a = LogManager.getLogger();
      private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-@@ -195,8 +195,16 @@
+@@ -188,7 +188,7 @@
+ 
+         if (p_i1582_1_ != null)
+         {
+-            this.field_71093_bK = p_i1582_1_.field_73011_w.func_186058_p().func_186068_a();
++            this.field_71093_bK = p_i1582_1_.field_73011_w.getDimension();
+         }
+ 
+         this.field_70180_af = new EntityDataManager(this);
+@@ -198,8 +198,16 @@
          this.field_70180_af.func_187214_a(field_184242_az, "");
          this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
          this.func_70088_a();
@@ -26,7 +35,7 @@
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -1134,12 +1142,12 @@
+@@ -1138,12 +1146,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -43,17 +52,17 @@
              }
              else
              {
-@@ -1534,6 +1542,9 @@
-                 p_70109_1_.func_74782_a("Tags", nbttaglist);
+@@ -1539,6 +1547,9 @@
+                 p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
-+            if (customEntityData != null) p_70109_1_.func_74782_a("ForgeData", customEntityData);
-+            if (this.capabilities != null) p_70109_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
++            if (customEntityData != null) p_189511_1_.func_74782_a("ForgeData", customEntityData);
++            if (this.capabilities != null) p_189511_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
 +
-             this.func_70014_b(p_70109_1_);
+             this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1629,6 +1640,9 @@
+@@ -1637,6 +1648,9 @@
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
  
@@ -63,7 +72,7 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1715,7 +1729,10 @@
+@@ -1723,7 +1737,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -75,7 +84,7 @@
              return entityitem;
          }
          else
-@@ -1824,6 +1841,7 @@
+@@ -1833,6 +1850,7 @@
  
      public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_)
      {
@@ -83,7 +92,7 @@
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -2279,6 +2297,7 @@
+@@ -2289,6 +2307,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -91,7 +100,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2372,7 +2391,7 @@
+@@ -2382,7 +2401,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -100,7 +109,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2662,6 +2681,165 @@
+@@ -2679,6 +2698,164 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -258,8 +267,7 @@
 +    {
 +        NBTTagCompound ret = new NBTTagCompound();
 +        ret.func_74778_a("id", this.func_70022_Q());
-+        this.func_70109_d(ret);
-+        return ret;
++        return this.func_189511_e(ret);
 +    }
 +    /* ================================== Forge End =====================================*/
 +

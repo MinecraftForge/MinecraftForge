@@ -15,12 +15,12 @@ public class FOVModifierTest {
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-    	MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
-    
+
     @SubscribeEvent
     public void getFOVModifier(EntityViewRenderEvent.FOVModifier event) {
-        if(event.getState().getMaterial() == Material.water)
+        if(event.getState().getMaterial() == Material.WATER)
             event.setFOV(event.getFOV() / 60.0f * 50.0f);
     }
 }

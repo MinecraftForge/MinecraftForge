@@ -3,10 +3,14 @@ package net.minecraftforge.fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.capability.wrappers.FluidContainerItemWrapper;
 
 /**
  * Reference implementation of {@link IFluidContainerItem}. Use/extend this or implement your own.
+ * @deprecated See {@link net.minecraftforge.fluids.capability.ItemFluidContainer}
  */
+@Deprecated
 public class ItemFluidContainer extends Item implements IFluidContainerItem
 {
     protected int capacity;
@@ -152,5 +156,11 @@ public class ItemFluidContainer extends Item implements IFluidContainerItem
             container.getTagCompound().setTag("Fluid", fluidTag);
         }
         return stack;
+    }
+
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
+    {
+        return new FluidContainerItemWrapper(this, stack);
     }
 }

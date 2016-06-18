@@ -2,8 +2,19 @@ package net.minecraftforge.common.model.animation;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.*;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -25,12 +36,6 @@ import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 
 public final class AnimationStateMachine implements IAnimationStateMachine
@@ -38,7 +43,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     private final ImmutableMap<String, ITimeValue> parameters;
     private final ImmutableMap<String, IClip> clips;
     private final ImmutableList<String> states;
-    private final ImmutableMap<String, String> transitions;
+    private final ImmutableMultimap<String, String> transitions;
     @SerializedName("start_state")
     private final String startState;
 
@@ -58,7 +63,25 @@ public final class AnimationStateMachine implements IAnimationStateMachine
             }
         });
 
+    @Deprecated
     public AnimationStateMachine(ImmutableMap<String, ITimeValue> parameters, ImmutableMap<String, IClip> clips, ImmutableList<String> states, ImmutableMap<String, String> transitions, String startState)
+    {
+        this(parameters, clips, states, ImmutableMultimap.copyOf(Multimaps.newSetMultimap(Maps.transformValues(transitions, new Function<String, Collection<String>>()
+        {
+            public Collection<String> apply(String input)
+            {
+                return ImmutableSet.of(input);
+            }
+        }), new Supplier<Set<String>>()
+        {
+            public Set<String> get()
+            {
+                return Sets.newHashSet();
+            }
+        })), startState);
+    }
+
+    public AnimationStateMachine(ImmutableMap<String, ITimeValue> parameters, ImmutableMap<String, IClip> clips, ImmutableList<String> states, ImmutableMultimap<String, String> transitions, String startState)
     {
         this.parameters = parameters;
         this.clips = clips;
@@ -148,7 +171,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         {
             throw new IllegalStateException("unknown state: " + newState);
         }
-        if(!transitions.get(currentStateName).equals(newState))
+        if(!transitions.containsEntry(currentStateName, newState))
         {
             throw new IllegalArgumentException("no transition from current clip \"" + currentStateName + "\" to the clip \"" + newState + "\" found.");
         }
@@ -208,7 +231,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         ImmutableMap.<String, ITimeValue>of(),
         ImmutableMap.of("missingno", (IClip)Clips.IdentityClip.INSTANCE),
         ImmutableList.of("missingno"),
-        ImmutableMap.<String, String>of(),
+        ImmutableMultimap.<String, String>of(),
         "missingno");
 
     static
@@ -216,7 +239,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         missing.initialize();
     }
 
-    public static final AnimationStateMachine getMissing()
+    public static AnimationStateMachine getMissing()
     {
         return missing;
     }
@@ -257,8 +280,62 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         .registerTypeAdapterFactory(Clips.CommonClipTypeAdapterFactory.INSTANCE)
         //.registerTypeAdapterFactory(ClipProviders.CommonClipProviderTypeAdapterFactory.INSTANCE)
         .registerTypeAdapterFactory(TimeValues.CommonTimeValueTypeAdapterFactory.INSTANCE)
+        .registerTypeAdapterFactory(TransitionsAdapterFactory.INSTANCE)
         .setPrettyPrinting()
         .enableComplexMapKeySerialization()
         .disableHtmlEscaping()
         .create();
+
+    private enum TransitionsAdapterFactory implements TypeAdapterFactory
+    {
+        INSTANCE;
+
+        @SuppressWarnings("unchecked")
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
+        {
+            if(type.getRawType() != ImmutableMultimap.class || !(type.getType() instanceof ParameterizedType))
+            {
+                return null;
+            }
+            final Type[] typeArguments = ((ParameterizedType) type.getType()).getActualTypeArguments();
+            if(typeArguments.length != 2 || typeArguments[0] != String.class || typeArguments[1] != String.class)
+            {
+                return null;
+            }
+            final TypeAdapter<Map<String, Collection<String>>> mapAdapter = gson.getAdapter(new TypeToken<Map<String, Collection<String>>>(){});
+            final TypeAdapter<Collection<String>> collectionAdapter = gson.getAdapter(new TypeToken<Collection<String>>(){});
+            return (TypeAdapter<T>)new TypeAdapter<ImmutableMultimap<String, String>>()
+            {
+                @Override
+                public void write(JsonWriter out, ImmutableMultimap<String, String> value) throws IOException
+                {
+                    mapAdapter.write(out, value.asMap());
+                }
+
+                @Override
+                public ImmutableMultimap<String, String> read(JsonReader in) throws IOException
+                {
+                    ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.builder();
+                    in.beginObject();
+                    while(in.hasNext())
+                    {
+                        String key = in.nextName();
+                        switch(in.peek())
+                        {
+                            case STRING:
+                                builder.put(key, in.nextString());
+                                break;
+                            case BEGIN_ARRAY:
+                                builder.putAll(key, collectionAdapter.read(in));
+                                break;
+                            default:
+                                throw new JsonParseException("Expected String or Array, got " + in.peek());
+                        }
+                    }
+                    in.endObject();
+                    return builder.build();
+                }
+            };
+        }
+    }
 }

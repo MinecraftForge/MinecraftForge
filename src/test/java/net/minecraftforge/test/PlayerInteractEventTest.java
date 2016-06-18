@@ -50,11 +50,11 @@ public class PlayerInteractEventTest
 
         if (evt.getItemStack() != null)
         {
-            if (evt.getItemStack().getItem() == Items.golden_pickaxe)
+            if (evt.getItemStack().getItem() == Items.GOLDEN_PICKAXE)
                 evt.setCanceled(true); // Redstone should not activate and pick should not be able to dig anything
-            if (evt.getItemStack().getItem() == Items.diamond_pickaxe)
+            if (evt.getItemStack().getItem() == Items.DIAMOND_PICKAXE)
                 evt.setUseBlock(Event.Result.DENY); // Redstone should not activate, pick should still dig
-            if (evt.getItemStack().getItem() == Items.iron_pickaxe)
+            if (evt.getItemStack().getItem() == Items.IRON_PICKAXE)
                 evt.setUseItem(Event.Result.DENY); // Pick should not dig, Redstone should still activate
         }
 
@@ -88,18 +88,18 @@ public class PlayerInteractEventTest
         // Case: Flint and steel in main hand on top of a TE will light a fire, not open the TE.
         // Note that if you do this on a chest, the f+s will fail, but then your off hand will open the chest
         // If you dual wield flints and steels and right click a chest nothing should happen
-        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.flint_and_steel)
+        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.FLINT_AND_STEEL)
             evt.setUseBlock(Event.Result.DENY);
 
         // Case: Painting in main hand
         // Opening a TE will also place a painting on the TE if possible
-        if (evt.getHand() == EnumHand.MAIN_HAND && evt.getItemStack() != null && evt.getItemStack().getItem() == Items.painting) {
+        if (evt.getHand() == EnumHand.MAIN_HAND && evt.getItemStack() != null && evt.getItemStack().getItem() == Items.PAINTING) {
             evt.setUseItem(Event.Result.ALLOW);
         }
 
         // Spawn egg in main hand, block in offhand -> block should be placed
         // Sword in main hand, spawn egg in offhand -> nothing should happen
-        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.spawn_egg) {
+        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.SPAWN_EGG) {
             evt.setCanceled(true);
         }
 
@@ -115,7 +115,7 @@ public class PlayerInteractEventTest
         // Case: Ender pearl in main hand, bow in offhand with arrows in inv -> Bow should trigger
         // Case: Sword in main hand, ender pearl in offhand -> Nothing should happen
 
-        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.ender_pearl)
+        if (evt.getItemStack() != null && evt.getItemStack().getItem() == Items.ENDER_PEARL)
             evt.setCanceled(true);
     }
 
@@ -127,7 +127,7 @@ public class PlayerInteractEventTest
 
         if (evt.getItemStack() != null
                 && evt.getTarget() instanceof EntityArmorStand
-                && evt.getItemStack().getItem() == Items.iron_helmet)
+                && evt.getItemStack().getItem() == Items.IRON_HELMET)
             evt.setCanceled(true); // Should not be able to place iron helmet onto armor stand (you will put it on instead)
 
         if (evt.getWorld().isRemote

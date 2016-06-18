@@ -44,7 +44,7 @@ import net.minecraft.client.renderer.block.model.multipart.Multipart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.renderer.texture.IIconCreator;
+import net.minecraft.client.renderer.texture.ITextureMapPopulator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -63,14 +63,16 @@ import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -131,7 +133,7 @@ public final class ModelLoader extends ModelBakery
         textures.remove(TextureMap.LOCATION_MISSING_TEXTURE);
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
 
-        textureMap.loadSprites(resourceManager, new IIconCreator()
+        textureMap.loadSprites(resourceManager, new ITextureMapPopulator()
         {
             public void registerSprites(TextureMap map)
             {
@@ -182,7 +184,7 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.blockRegistry, new Predicate<Block>()
+        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, new Predicate<Block>()
         {
             public boolean apply(Block block)
             {
@@ -266,7 +268,7 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<Item> items = Lists.newArrayList(Iterables.filter(Item.itemRegistry, new Predicate<Item>()
+        List<Item> items = Lists.newArrayList(Iterables.filter(Item.REGISTRY, new Predicate<Item>()
         {
             public boolean apply(Item item)
             {
@@ -336,7 +338,7 @@ public final class ModelLoader extends ModelBakery
             }
 
             // empty bucket
-            for(String s : getVariantNames(Items.bucket))
+            for(String s : getVariantNames(Items.BUCKET))
             {
                 ModelResourceLocation memory = getInventoryVariant(s);
                 IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket"));
@@ -347,23 +349,24 @@ public final class ModelLoader extends ModelBakery
                 }
             }
 
-            setBucketModel(Items.water_bucket);
-            setBucketModel(Items.lava_bucket);
+            setBucketModel(Items.WATER_BUCKET);
+            setBucketModel(Items.LAVA_BUCKET);
             // milk bucket only replaced if some mod adds milk
             if(FluidRegistry.isFluidRegistered("milk"))
             {
                 // can the milk be put into a bucket?
                 Fluid milk = FluidRegistry.getFluid("milk");
-                FluidStack milkStack = new FluidStack(milk, FluidContainerRegistry.BUCKET_VOLUME);
-                if(FluidContainerRegistry.getContainerCapacity(milkStack, new ItemStack(Items.bucket)) == FluidContainerRegistry.BUCKET_VOLUME)
+                FluidStack milkStack = new FluidStack(milk, Fluid.BUCKET_VOLUME);
+                IFluidHandler bucketHandler = FluidUtil.getFluidHandler(new ItemStack(Items.BUCKET));
+                if (bucketHandler != null && bucketHandler.fill(milkStack, false) == Fluid.BUCKET_VOLUME)
                 {
-                    setBucketModel(Items.milk_bucket);
+                    setBucketModel(Items.MILK_BUCKET);
                 }
             }
             else
             {
                 // milk bucket if no milk fluid is present
-                for(String s : getVariantNames(Items.milk_bucket))
+                for(String s : getVariantNames(Items.MILK_BUCKET))
                 {
                     ModelResourceLocation memory = getInventoryVariant(s);
                     IModel model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation("forge", "item/bucket_milk"));
@@ -526,6 +529,10 @@ public final class ModelLoader extends ModelBakery
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.createOverrides())).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
+                if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(Integer.toString(i))))).isPresent())
+                {
+                    continue;
+                }
                 BlockPart part = model.getElements().get(i);
                 TRSRTransformation transformation = baseState;
                 if(newTransforms.get(i) != null)

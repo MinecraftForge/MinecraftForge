@@ -1,5 +1,7 @@
 package net.minecraftforge.fluids;
 
+import javax.annotation.Nullable;
+
 /**
  * A tank is the unit of interaction with Fluid inventories.
  *
@@ -10,6 +12,7 @@ public interface IFluidTank
     /**
      * @return FluidStack representing the fluid in the tank, null if the tank is empty.
      */
+    @Nullable
     FluidStack getFluid();
 
     /**
@@ -46,9 +49,10 @@ public interface IFluidTank
      *
      * @param maxDrain
      *            Maximum amount of fluid to be removed from the container.
-     * @param doFill
-     *            If false, the fill will only be simulated.
+     * @param doDrain
+     *            If false, the drain will only be simulated.
      * @return Amount of fluid that was removed from the tank.
      */
+    @Nullable
     FluidStack drain(int maxDrain, boolean doDrain);
 }

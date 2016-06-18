@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -41,7 +41,7 @@
+@@ -42,7 +42,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
      public int field_77994_a;
-@@ -55,6 +55,10 @@
+@@ -56,6 +56,10 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
@@ -20,7 +20,7 @@
      public ItemStack(Block p_i1876_1_)
      {
          this((Block)p_i1876_1_, 1);
-@@ -80,13 +84,15 @@
+@@ -81,13 +85,15 @@
          this((Item)p_i1880_1_, p_i1880_2_, 0);
      }
  
@@ -38,7 +38,7 @@
          this.field_77994_a = p_i1881_2_;
          this.field_77991_e = p_i1881_3_;
  
-@@ -114,7 +120,7 @@
+@@ -115,7 +121,7 @@
      public ItemStack func_77979_a(int p_77979_1_)
      {
          p_77979_1_ = Math.min(p_77979_1_, this.field_77994_a);
@@ -47,7 +47,7 @@
  
          if (this.field_77990_d != null)
          {
-@@ -127,11 +133,12 @@
+@@ -128,11 +134,12 @@
  
      public Item func_77973_b()
      {
@@ -61,7 +61,7 @@
          EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
  
          if (enumactionresult == EnumActionResult.SUCCESS)
-@@ -169,12 +176,16 @@
+@@ -171,12 +178,16 @@
              p_77955_1_.func_74782_a("tag", this.field_77990_d);
          }
  
@@ -79,7 +79,7 @@
          this.field_77994_a = p_77963_1_.func_74771_c("Count");
          this.field_77991_e = p_77963_1_.func_74765_d("Damage");
  
-@@ -196,7 +207,7 @@
+@@ -198,7 +209,7 @@
  
      public int func_77976_d()
      {
@@ -88,7 +88,7 @@
      }
  
      public boolean func_77985_e()
-@@ -206,7 +217,7 @@
+@@ -208,7 +219,7 @@
  
      public boolean func_77984_f()
      {
@@ -97,7 +97,7 @@
      }
  
      public boolean func_77981_g()
-@@ -216,32 +227,27 @@
+@@ -218,32 +229,27 @@
  
      public boolean func_77951_h()
      {
@@ -135,7 +135,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -273,8 +279,8 @@
+@@ -275,8 +281,8 @@
                  }
              }
  
@@ -146,7 +146,7 @@
          }
      }
  
-@@ -328,7 +334,7 @@
+@@ -330,7 +336,7 @@
  
      public boolean func_150998_b(IBlockState p_150998_1_)
      {
@@ -155,7 +155,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -338,7 +344,7 @@
+@@ -340,7 +346,7 @@
  
      public ItemStack func_77946_l()
      {
@@ -164,7 +164,41 @@
  
          if (this.field_77990_d != null)
          {
-@@ -759,6 +765,7 @@
+@@ -352,7 +358,19 @@
+ 
+     public static boolean func_77970_a(@Nullable ItemStack p_77970_0_, @Nullable ItemStack p_77970_1_)
+     {
+-        return p_77970_0_ == null && p_77970_1_ == null ? true : (p_77970_0_ != null && p_77970_1_ != null ? (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null ? false : p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) : false);
++        if (p_77970_0_ == null && p_77970_1_ == null) return true;
++        if (p_77970_0_ == null && p_77970_1_ != null) return false;
++        if (p_77970_0_ != null && p_77970_1_ == null) return false;
++        if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) return false;
++        if (p_77970_0_.field_77990_d != null && p_77970_1_.field_77990_d == null) return false;
++        if (p_77970_0_.field_77990_d != null && !p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) return false;
++        if (p_77970_0_.capabilities != null || p_77970_1_.capabilities != null)
++        {
++            boolean ret = p_77970_0_.capabilities != null ? p_77970_0_.capabilities.areCompatible(p_77970_1_.capabilities) : p_77970_1_.capabilities.areCompatible(null);
++            if (!ret) return false;
++        }
++
++        return true;
+     }
+ 
+     public static boolean func_77989_b(@Nullable ItemStack p_77989_0_, @Nullable ItemStack p_77989_1_)
+@@ -362,7 +380,11 @@
+ 
+     private boolean func_77959_d(ItemStack p_77959_1_)
+     {
+-        return this.field_77994_a != p_77959_1_.field_77994_a ? false : (this.field_151002_e != p_77959_1_.field_151002_e ? false : (this.field_77991_e != p_77959_1_.field_77991_e ? false : (this.field_77990_d == null && p_77959_1_.field_77990_d != null ? false : this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d))));
++        if (this.field_77994_a != p_77959_1_.field_77994_a) return false;
++        if (this.field_151002_e != p_77959_1_.field_151002_e) return false;
++        if (this.field_77991_e != p_77959_1_.field_77991_e) return false;
++        if (!ItemStack.func_77970_a(this, p_77959_1_)) return false;
++        return true;
+     }
+ 
+     public static boolean func_179545_c(@Nullable ItemStack p_179545_0_, @Nullable ItemStack p_179545_1_)
+@@ -762,6 +784,7 @@
              }
          }
  
@@ -172,7 +206,7 @@
          return list;
      }
  
-@@ -869,7 +876,7 @@
+@@ -873,7 +896,7 @@
          }
          else
          {
@@ -181,8 +215,8 @@
          }
  
          return multimap;
-@@ -901,6 +908,18 @@
- 
+@@ -906,6 +929,18 @@
+     @Deprecated
      public void func_150996_a(Item p_150996_1_)
      {
 +        if (p_150996_1_ == this.field_151002_e && field_151002_e != null && this.capabilities != null) //Item Didn't change but refreshed
@@ -200,7 +234,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -987,4 +1006,26 @@
+@@ -991,4 +1026,26 @@
              return false;
          }
      }

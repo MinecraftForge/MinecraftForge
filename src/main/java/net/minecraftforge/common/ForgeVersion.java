@@ -33,15 +33,15 @@ public class ForgeVersion
     //This number is incremented every time we remove deprecated code/major API changes, never reset
     public static final int majorVersion    = 12;
     //This number is incremented every minecraft release, never reset
-    public static final int minorVersion    = 16;
+    public static final int minorVersion    = 17;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
     public static final int revisionVersion = 0;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
-    public static final String mcVersion = "1.9";
+    public static final String mcVersion = "1.9.4";
     // This is the MCP data version we're using
-    public static final String mcpVersion = "9.23";
+    public static final String mcpVersion = "9.28";
     @SuppressWarnings("unused")
     private static Status status = PENDING;
     @SuppressWarnings("unused")
@@ -92,7 +92,7 @@ public class ForgeVersion
         AHEAD(),
         BETA(),
         BETA_OUTDATED(6, true);
-        
+
         final int sheetOffset;
         final boolean draw, animated;
 
@@ -100,39 +100,39 @@ public class ForgeVersion
         {
             this(0, false, false);
         }
-        
+
         Status(int sheetOffset)
         {
             this(sheetOffset, true, false);
         }
-        
+
         Status(int sheetOffset, boolean animated)
         {
             this(sheetOffset, true, animated);
         }
-        
+
         Status(int sheetOffset, boolean draw, boolean animated)
         {
             this.sheetOffset = sheetOffset;
             this.draw = draw;
             this.animated = animated;
         }
-        
+
         public int getSheetOffset()
         {
             return sheetOffset;
         }
-        
+
         public boolean shouldDraw()
         {
             return draw;
         }
-        
+
         public boolean isAnimated()
         {
             return animated;
         }
-        
+
     }
 
     public static class CheckResult
@@ -187,7 +187,7 @@ public class ForgeVersion
                     ComparableVersion target = null;
 
                     InputStream con = url.openStream();
-                    String data = new String(ByteStreams.toByteArray(con));
+                    String data = new String(ByteStreams.toByteArray(con), "UTF-8");
                     con.close();
 
                     FMLLog.log("ForgeVersionCheck", Level.DEBUG, "[%s] Received version check data:\n%s", mod.getModId(), data);

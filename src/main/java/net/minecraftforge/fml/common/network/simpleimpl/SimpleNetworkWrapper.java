@@ -16,6 +16,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
@@ -32,7 +33,7 @@ import net.minecraftforge.fml.relauncher.Side;
  * Usage is simple:<ul>
  * <li>construct, and store, an instance of this class. It will automatically register and configure your underlying netty channel.
  *
- * <li>Then, call {@link #registerMessage(Class, Class, byte, Side)} for each message type you want to exchange
+ * <li>Then, call {@link #registerMessage(Class, Class, int, Side)} for each message type you want to exchange
  * providing an {@link IMessageHandler} implementation class as well as an {@link IMessage} implementation class. The side parameter
  * to that method indicates which side (server or client) the <em>message processing</em> will occur on. The discriminator byte
  * should be unique for this channelName - it is used to discriminate between different types of message that might
@@ -193,7 +194,7 @@ public class SimpleNetworkWrapper {
 
     /**
      * Construct a minecraft packet from the supplied message. Can be used where minecraft packets are required, such as
-     * {@link TileEntity#func_145844_m}.
+     * {@link TileEntity#getDescriptionPacket()}.
      *
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderEnd.java
-@@ -39,6 +39,9 @@
+@@ -40,6 +40,9 @@
      double[] field_185967_f;
      double[] field_185968_g;
      private final WorldGenEndIsland field_185975_r = new WorldGenEndIsland();
@@ -10,7 +10,7 @@
  
      public ChunkProviderEnd(World p_i46667_1_, boolean p_i46667_2_, long p_i46667_3_)
      {
-@@ -51,6 +54,16 @@
+@@ -52,6 +55,16 @@
          this.field_73214_a = new NoiseGeneratorOctaves(this.field_73220_k, 10);
          this.field_73212_b = new NoiseGeneratorOctaves(this.field_73220_k, 16);
          this.field_185973_o = new NoiseGeneratorSimplex(this.field_73220_k);
@@ -27,7 +27,7 @@
      }
  
      public void func_180518_a(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_)
-@@ -123,6 +136,7 @@
+@@ -124,6 +137,7 @@
  
      public void func_185962_a(ChunkPrimer p_185962_1_)
      {
@@ -35,7 +35,7 @@
          for (int i = 0; i < 16; ++i)
          {
              for (int j = 0; j < 16; ++j)
-@@ -174,6 +188,7 @@
+@@ -175,6 +189,7 @@
  
      public Chunk func_185932_a(int p_185932_1_, int p_185932_2_)
      {
@@ -43,7 +43,7 @@
          this.field_73220_k.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
          ChunkPrimer chunkprimer = new ChunkPrimer();
          this.field_73231_z = this.field_73230_p.func_72959_q().func_76933_b(this.field_73231_z, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
-@@ -255,6 +270,10 @@
+@@ -256,6 +271,10 @@
  
      private double[] func_185963_a(double[] p_185963_1_, int p_185963_2_, int p_185963_3_, int p_185963_4_, int p_185963_5_, int p_185963_6_, int p_185963_7_)
      {
@@ -54,19 +54,19 @@
          if (p_185963_1_ == null)
          {
              p_185963_1_ = new double[p_185963_5_ * p_185963_6_ * p_185963_7_];
-@@ -327,6 +346,7 @@
+@@ -328,6 +347,7 @@
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
-+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_73230_p, p_185931_1_, p_185931_2_, false);
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.field_73230_p, this.field_73220_k, p_185931_1_, p_185931_2_, false);
          BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
  
          if (this.field_73229_q)
-@@ -374,6 +394,7 @@
+@@ -375,6 +395,7 @@
              }
          }
  
-+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_73230_p, p_185931_1_, p_185931_2_, false);
++        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(false, this, this.field_73230_p, this.field_73220_k, p_185931_1_, p_185931_2_, false);
          BlockFalling.field_149832_M = false;
      }
  

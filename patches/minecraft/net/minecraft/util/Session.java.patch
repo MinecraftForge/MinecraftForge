@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/Session.java
 +++ ../src-work/minecraft/net/minecraft/util/Session.java
-@@ -15,9 +15,25 @@
+@@ -16,9 +16,25 @@
      private final String field_148257_b;
      private final String field_148258_c;
      private final Session.Type field_152429_d;
@@ -26,7 +26,7 @@
          this.field_74286_b = p_i1098_1_;
          this.field_148257_b = p_i1098_2_;
          this.field_148258_c = p_i1098_3_;
-@@ -49,14 +65,29 @@
+@@ -50,14 +66,29 @@
          try
          {
              UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());

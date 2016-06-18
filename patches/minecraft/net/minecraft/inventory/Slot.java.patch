@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Slot.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
-@@ -89,7 +89,7 @@
+@@ -92,7 +92,7 @@
      @SideOnly(Side.CLIENT)
      public String func_178171_c()
      {
@@ -9,7 +9,7 @@
      }
  
      public ItemStack func_75209_a(int p_75209_1_)
-@@ -112,4 +112,63 @@
+@@ -115,4 +115,73 @@
      {
          return true;
      }
@@ -70,6 +70,16 @@
 +    public int getSlotIndex()
 +    {
 +        return field_75225_a;
++    }
++
++    /**
++     * Checks if the other slot is in the same inventory, by comparing the inventory reference.
++     * @param other
++     * @return true if the other slot is in the same inventory
++     */
++    public boolean isSameInventory(Slot other)
++    {
++        return this.field_75224_c == other.field_75224_c;
 +    }
 +    /*========================================= FORGE END =====================================*/
  }

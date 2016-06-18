@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -90,6 +90,10 @@
+@@ -91,6 +91,10 @@
              boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
  
@@ -11,7 +11,7 @@
              if (itemstack != null || flag)
              {
                  if (itemstack == null)
-@@ -97,12 +101,11 @@
+@@ -98,12 +102,11 @@
                      itemstack = new ItemStack(Items.field_151032_g);
                  }
  
@@ -21,11 +21,11 @@
                  if ((double)f >= 0.1D)
                  {
 -                    boolean flag1 = flag && itemstack.func_77973_b() == Items.field_151032_g;
-+                    boolean flag1 = flag && itemstack.func_77973_b() instanceof ItemArrow; //Forge: Fix consuming custom arrows.
++                    boolean flag1 = entityplayer.field_71075_bZ.field_75098_d || (itemstack.func_77973_b() instanceof ItemArrow ? ((ItemArrow)itemstack.func_77973_b()).isInfinite(itemstack, p_77615_1_, entityplayer) : false);
  
                      if (!p_77615_2_.field_72995_K)
                      {
-@@ -189,6 +192,9 @@
+@@ -190,6 +193,9 @@
      {
          boolean flag = this.func_185060_a(p_77659_3_) != null;
  

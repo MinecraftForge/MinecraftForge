@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -56,6 +56,7 @@
+@@ -55,6 +55,7 @@
      private boolean field_71338_p;
      private WorldSettings.GameType field_71337_q;
      private boolean field_71335_s;
@@ -8,7 +8,7 @@
  
      public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
      {
-@@ -89,6 +90,7 @@
+@@ -88,6 +89,7 @@
          {
              public void run()
              {
@@ -16,7 +16,7 @@
                  BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in));
                  String s4;
  
-@@ -114,6 +116,8 @@
+@@ -113,6 +115,8 @@
              field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
@@ -25,7 +25,7 @@
          field_155771_h.info("Loading properties");
          this.field_71340_o = new PropertyManager(new File("server.properties"));
          this.field_154332_n = new ServerEula(new File("eula.txt"));
-@@ -205,6 +209,7 @@
+@@ -204,6 +208,7 @@
              }
              else
              {
@@ -33,7 +33,7 @@
                  this.func_184105_a(new DedicatedPlayerList(this));
                  long j = System.nanoTime();
  
-@@ -254,6 +259,7 @@
+@@ -253,6 +258,7 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -41,7 +41,7 @@
                  field_155771_h.info("Preparing level \"" + this.func_71270_I() + "\"");
                  this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
-@@ -282,7 +288,7 @@
+@@ -281,7 +287,7 @@
                      thread1.start();
                  }
  
@@ -50,7 +50,16 @@
              }
          }
      }
-@@ -580,6 +586,9 @@
+@@ -505,7 +511,7 @@
+ 
+     public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
+     {
+-        if (p_175579_1_.field_73011_w.func_186058_p().func_186068_a() != 0)
++        if (p_175579_1_.field_73011_w.getDimension() != 0)
+         {
+             return false;
+         }
+@@ -579,6 +585,9 @@
          return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
      }
  

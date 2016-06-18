@@ -584,7 +584,7 @@ public class GuiModList extends GuiScreen
                 for (ITextComponent part : line) {
                     if (!(part instanceof TextComponentString))
                         continue;
-                    k += GuiModList.this.fontRendererObj.getStringWidth(((TextComponentString)part).getChatComponentText_TextValue());
+                    k += GuiModList.this.fontRendererObj.getStringWidth(((TextComponentString)part).getText());
                     if (k >= x)
                     {
                         GuiModList.this.handleComponentClick(part);

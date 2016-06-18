@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -140,7 +140,7 @@
+@@ -141,7 +141,7 @@
  
      private boolean func_145934_k()
      {
@@ -9,7 +9,7 @@
          {
              ItemStack itemstack = this.field_145945_j[3];
  
-@@ -165,25 +165,23 @@
+@@ -166,25 +166,23 @@
          }
          else
          {
@@ -40,7 +40,7 @@
  
              if (itemstack.field_77994_a <= 0)
              {
-@@ -202,6 +200,7 @@
+@@ -203,6 +201,7 @@
  
          this.field_145945_j[3] = itemstack;
          this.field_145850_b.func_175718_b(1035, blockpos, 0);
@@ -48,7 +48,7 @@
      }
  
      public void func_145839_a(NBTTagCompound p_145839_1_)
-@@ -303,12 +302,12 @@
+@@ -308,12 +307,12 @@
      {
          if (p_94041_1_ == 3)
          {
@@ -63,7 +63,7 @@
          }
      }
  
-@@ -362,6 +361,21 @@
+@@ -367,6 +366,21 @@
          }
      }
  

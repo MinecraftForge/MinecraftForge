@@ -174,12 +174,7 @@ public class FluidStack
             return false;
         }
 
-        if (other.getItem() instanceof IFluidContainerItem)
-        {
-            return isFluidEqual(((IFluidContainerItem) other.getItem()).getFluid(other));
-        }
-
-        return isFluidEqual(FluidContainerRegistry.getFluidForFilledItem(other));
+        return isFluidEqual(FluidUtil.getFluidContained(other));
     }
 
     @Override

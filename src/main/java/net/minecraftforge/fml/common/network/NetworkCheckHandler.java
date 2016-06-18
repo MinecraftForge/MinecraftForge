@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * A method annotated with this will be called when a remote network connection is offered.
- * The method should have two parameters, of types {@link Map<String,String>} and {@link Side}. It should return a boolean
+ * The method should have two parameters, of types Map<String,String> and {@link Side}. It should return a boolean
  * true indicating that the remote party is acceptable, or false if not.
  *
  * <p>

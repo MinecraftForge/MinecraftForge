@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
 @@ -91,8 +91,10 @@
  
-     protected void func_150513_a(BiomeGenBase p_150513_1_, World p_150513_2_, Random p_150513_3_)
+     protected void func_150513_a(Biome p_150513_1_, World p_150513_2_, Random p_150513_3_)
      {
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Pre(p_150513_2_, p_150513_3_, field_180294_c));
          this.func_76797_b(p_150513_2_, p_150513_3_);

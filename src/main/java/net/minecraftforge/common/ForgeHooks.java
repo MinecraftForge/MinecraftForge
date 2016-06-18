@@ -3,11 +3,20 @@ package net.minecraftforge.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -47,6 +56,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -61,6 +72,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
+import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -161,11 +176,11 @@ public class ForgeHooks
 
         if (!canHarvestBlock(state.getBlock(), player, world, pos))
         {
-            return player.getBreakSpeed(state, pos) / hardness / 100F;
+            return player.getDigSpeed(state, pos) / hardness / 100F;
         }
         else
         {
-            return player.getBreakSpeed(state, pos) / hardness / 30F;
+            return player.getDigSpeed(state, pos) / hardness / 30F;
         }
     }
 
@@ -207,20 +222,21 @@ public class ForgeHooks
             block.setHarvestLevel("axe", 0);
         }
 
-        Blocks.obsidian.setHarvestLevel("pickaxe", 3);
+        Blocks.OBSIDIAN.setHarvestLevel("pickaxe", 3);
+        Blocks.ENCHANTING_TABLE.setHarvestLevel("pickaxe", 0);
         Block[] oreBlocks = new Block[] {
-                Blocks.emerald_ore, Blocks.emerald_block, Blocks.diamond_ore, Blocks.diamond_block,
-                Blocks.gold_ore, Blocks.gold_block, Blocks.redstone_ore, Blocks.lit_redstone_ore
+                Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
+                Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE
         };
         for (Block block : oreBlocks)
         {
             block.setHarvestLevel("pickaxe", 2);
         }
-        Blocks.iron_ore.setHarvestLevel("pickaxe", 1);
-        Blocks.iron_block.setHarvestLevel("pickaxe", 1);
-        Blocks.lapis_ore.setHarvestLevel("pickaxe", 1);
-        Blocks.lapis_block.setHarvestLevel("pickaxe", 1);
-        Blocks.quartz_ore.setHarvestLevel("pickaxe", 0);
+        Blocks.IRON_ORE.setHarvestLevel("pickaxe", 1);
+        Blocks.IRON_BLOCK.setHarvestLevel("pickaxe", 1);
+        Blocks.LAPIS_ORE.setHarvestLevel("pickaxe", 1);
+        Blocks.LAPIS_BLOCK.setHarvestLevel("pickaxe", 1);
+        Blocks.QUARTZ_ORE.setHarvestLevel("pickaxe", 0);
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
@@ -243,11 +259,11 @@ public class ForgeHooks
 
     static
     {
-        seedList.add(new SeedEntry(new ItemStack(Items.wheat_seeds), 10)
+        seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10)
         {
             public ItemStack getStack(Random rand, int fortune)
             {
-                return new ItemStack(Items.wheat_seeds, 1 + rand.nextInt(fortune * 2 + 1));
+                return new ItemStack(Items.WHEAT_SEEDS, 1 + rand.nextInt(fortune * 2 + 1));
             }
         });
         initTools();
@@ -407,7 +423,7 @@ public class ForgeHooks
 
             if (target.typeOfHit == RayTraceResult.Type.BLOCK)
             {
-                s1 = Block.blockRegistry.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
+                s1 = Block.REGISTRY.getNameForObject(world.getBlockState(target.getBlockPos()).getBlock()).toString();
             }
             else if (target.typeOfHit == RayTraceResult.Type.ENTITY)
             {
@@ -425,7 +441,7 @@ public class ForgeHooks
 
         if (isCreative)
         {
-            player.inventory.func_184434_a(result);
+            player.inventory.setPickedItemStack(result);
             Minecraft.getMinecraft().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
@@ -561,9 +577,9 @@ public class ForgeHooks
 
 
     static final Pattern URL_PATTERN = Pattern.compile(
-            //         schema                          ipv4            OR           namespace                 port     path         ends
-            //   |-----------------|        |-------------------------|  |----------------------------|    |---------| |--|   |---------------|
-            "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_\\.]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
+            //         schema                          ipv4            OR        namespace                 port     path         ends
+            //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
+            "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
             Pattern.CASE_INSENSITIVE);
 
     public static ITextComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
@@ -621,9 +637,9 @@ public class ForgeHooks
 
             // Set the click event and append the link.
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
-            link.getChatStyle().setChatClickEvent(click);
-            link.getChatStyle().setUnderlined(true);
-            link.getChatStyle().setColor(TextFormatting.BLUE);
+            link.getStyle().setClickEvent(click);
+            link.getStyle().setUnderlined(true);
+            link.getStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
                 ichat = link;
             else
@@ -670,8 +686,8 @@ public class ForgeHooks
         if (world.getTileEntity(pos) == null)
         {
             SPacketBlockChange packet = new SPacketBlockChange(world, pos);
-            packet.blockState = Blocks.air.getDefaultState();
-            entityPlayer.playerNetServerHandler.sendPacket(packet);
+            packet.blockState = Blocks.AIR.getDefaultState();
+            entityPlayer.connection.sendPacket(packet);
         }
 
         // Post the block break event
@@ -684,16 +700,16 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.playerNetServerHandler.sendPacket(new SPacketBlockChange(world, pos));
+            entityPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
 
             // Update any tile entity data for this block
             TileEntity tileentity = world.getTileEntity(pos);
             if (tileentity != null)
             {
-                Packet<?> pkt = tileentity.getDescriptionPacket();
+                Packet<?> pkt = tileentity.getUpdatePacket();
                 if (pkt != null)
                 {
-                    entityPlayer.playerNetServerHandler.sendPacket(pkt);
+                    entityPlayer.connection.sendPacket(pkt);
                 }
             }
         }
@@ -783,7 +799,7 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.func_188060_a(itemstack.getItem()));
+                player.addStat(StatList.getCraftStats(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
@@ -970,4 +986,140 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
+
+    public static void onEmptyLeftClick(EntityPlayer player, ItemStack stack)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player, stack));
+    }
+
+    private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
+    private static LootTableContext getLootTableContext()
+    {
+        LootTableContext ctx = lootContext.get().peek();
+
+        if (ctx == null)
+            throw new JsonParseException("Invalid call stack, could to grab json context!"); // Show I throw this? Do we care about custom deserializers outside the manager?
+
+        return ctx;
+    }
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom)
+    {
+        Deque<LootTableContext> que = lootContext.get();
+        if (que == null)
+        {
+            que = Queues.newArrayDeque();
+            lootContext.set(que);
+        }
+
+        LootTable ret = null;
+        try
+        {
+            que.push(new LootTableContext(name, custom));
+            ret = gson.fromJson(data, LootTable.class);
+            que.pop();
+        }
+        catch (JsonParseException e)
+        {
+            que.pop();
+            throw e;
+        }
+
+        if (!custom)
+            ret = ForgeEventFactory.loadLootTable(name, ret);
+
+        if (ret != null)
+            ret.freeze();
+
+        return ret;
+    }
+
+    private static class LootTableContext
+    {
+        public final ResourceLocation name;
+        private final boolean vanilla;
+        public final boolean custom;
+        public int poolCount = 0;
+        public int entryCount = 0;
+        private HashSet<String> entryNames = Sets.newHashSet();
+
+        private LootTableContext(ResourceLocation name, boolean custom)
+        {
+            this.name = name;
+            this.custom = custom;
+            this.vanilla = "minecraft".equals(this.name.getResourceDomain());
+        }
+
+        private void resetPoolCtx()
+        {
+            this.entryCount = 0;
+            this.entryNames.clear();
+        }
+
+        public String validateEntryName(String name)
+        {
+            if (!this.entryNames.contains(name))
+            {
+                this.entryNames.add(name);
+                return name;
+            }
+
+            if (!this.vanilla)
+                throw new JsonParseException("Loot Table \"" + this.name.toString() + "\" Duplicate entry name \"" + name + "\" for pool #" + (this.poolCount - 1) + " entry #" + (this.entryCount-1));
+
+            int x = 0;
+            while (this.entryNames.contains(name + "#" + x))
+                x++;
+
+            name = name + "#" + x;
+            this.entryNames.add(name);
+
+            return name;
+        }
+    }
+
+    public static String readPoolName(JsonObject json)
+    {
+        LootTableContext ctx = ForgeHooks.getLootTableContext();
+        ctx.resetPoolCtx();
+
+        if (json.has("name"))
+            return JsonUtils.getString(json, "name");
+
+        if (ctx.custom)
+            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
+
+        ctx.poolCount++;
+
+        if (!ctx.vanilla)
+            throw new JsonParseException("Loot Table \"" + ctx.name.toString() + "\" Missing `name` entry for pool #" + (ctx.poolCount - 1));
+
+        return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
+    }
+
+    public static String readLootEntryName(JsonObject json, String type)
+    {
+        LootTableContext ctx = ForgeHooks.getLootTableContext();
+        ctx.entryCount++;
+
+        if (json.has("entryName"))
+            return ctx.validateEntryName(JsonUtils.getString(json, "entryName"));
+
+        if (ctx.custom)
+            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
+
+        String name = null;
+        if ("item".equals(type))
+            name = JsonUtils.getString(json, "name");
+        else if ("loot_table".equals(type))
+            name = JsonUtils.getString(json, "name");
+        else if ("empty".equals(type))
+            name = "empty";
+
+        return ctx.validateEntryName(name);
+    }
+
+
+    //TODO: Some registry to support custom LootEntry types?
+    public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
+    public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
 }

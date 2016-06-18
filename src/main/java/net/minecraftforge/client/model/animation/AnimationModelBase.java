@@ -70,7 +70,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
 
         lighter.setParent(new VertexBufferConsumer(VertexBuffer));
         lighter.setWorld(entity.worldObj);
-        lighter.setState(Blocks.air.getDefaultState());
+        lighter.setState(Blocks.AIR.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;
         List<BakedQuad> quads = bakedModel.getQuads(null, null, 0);

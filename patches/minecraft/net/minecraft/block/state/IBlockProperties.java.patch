@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/state/IBlockProperties.java
 +++ ../src-work/minecraft/net/minecraft/block/state/IBlockProperties.java
-@@ -25,9 +25,13 @@
+@@ -26,9 +26,13 @@
  
      boolean func_185913_b();
  
@@ -14,7 +14,7 @@
  
      @SideOnly(Side.CLIENT)
      boolean func_185895_e();
-@@ -88,5 +92,10 @@
+@@ -90,5 +94,10 @@
  
      RayTraceResult func_185910_a(World p_185910_1_, BlockPos p_185910_2_, Vec3d p_185910_3_, Vec3d p_185910_4_);
  
