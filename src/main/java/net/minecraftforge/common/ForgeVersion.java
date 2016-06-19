@@ -142,7 +142,7 @@ public class ForgeVersion
         public final Map<ComparableVersion, String> changes;
         public final String url;
 
-        private CheckResult(Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url)
+        public CheckResult(Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url)
         {
             this.status = status;
             this.target = target;
@@ -302,6 +302,20 @@ public class ForgeVersion
             mod = ((InjectedModContainer)mod).wrappedContainer;
         CheckResult ret = results.get(mod);
         return ret == null ? PENDING_CHECK : ret;
+    }
+    
+    public static CheckResult setResult(ModContainer mod, CheckResult result)
+    {
+        if (mod == null)
+            throw new IllegalArgumentException("Cannot set a CheckResult for a null Mod");
+        if (mod instanceof InjectedModContainer)
+            mod = ((InjectedModContainer)mod).wrappedContainer;
+        if (result == null)
+        {
+            return results.remove(mod);
+        }
+        else
+            return results.put(mod, result);
     }
 }
 
