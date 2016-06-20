@@ -296,7 +296,7 @@ public class GameRegistry
     }
 
     /**
-     * ObjectHolder can be used to automatically populate public static final fields with entries
+     * ObjectHolder can be used to automatically populate public static fields with entries
      * from the registry. These values can then be referred within mod code directly.
      */
     @Retention(RetentionPolicy.RUNTIME)
@@ -314,7 +314,7 @@ public class GameRegistry
     }
 
     /**
-     * ItemStackHolder can be used to automatically populate public static final fields with
+     * ItemStackHolder can be used to automatically populate public static fields with
      * {@link ItemStack} instances, referring a specific item, potentially configured with NBT.
      * These values can then be used in things like recipes and other places where ItemStacks
      * might be required.
