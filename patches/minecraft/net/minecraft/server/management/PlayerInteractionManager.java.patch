@@ -206,15 +206,24 @@
                  return flag1;
              }
          }
+<<<<<<< HEAD
 @@ -336,6 +359,7 @@
+=======
+@@ -334,6 +357,8 @@
+>>>>>>> 83231e9... Allow cancel result to be changed
          }
          else
          {
-+            if (net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_, p_187250_3_)) return net.minecraft.util.EnumActionResult.PASS;
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem evt = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_, p_187250_3_);
++            if(evt.isCanceled()) return evt.getSubstituteResult();
              int i = p_187250_3_.field_77994_a;
              int j = p_187250_3_.func_77960_j();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
+<<<<<<< HEAD
 @@ -362,6 +386,7 @@
+=======
+@@ -360,6 +385,7 @@
+>>>>>>> 83231e9... Allow cancel result to be changed
                  if (itemstack.field_77994_a == 0)
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
@@ -222,14 +231,18 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
+<<<<<<< HEAD
 @@ -406,13 +431,26 @@
+=======
+@@ -404,13 +430,26 @@
+>>>>>>> 83231e9... Allow cancel result to be changed
          }
          else
          {
 -            if (!p_187251_1_.func_70093_af() || p_187251_1_.func_184614_ca() == null && p_187251_1_.func_184592_cb() == null)
 +            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
 +                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_3_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(field_73090_b, getBlockReachDistance() + 1));
-+            if (event.isCanceled()) return EnumActionResult.PASS;
++            if (event.isCanceled()) return event.getSubstituteResult();
 +
 +            net.minecraft.item.Item item = p_187251_3_ == null ? null : p_187251_3_.func_77973_b();
 +            EnumActionResult ret = item == null ? EnumActionResult.PASS : item.onItemUseFirst(p_187251_3_, p_187251_1_, p_187251_2_, p_187251_5_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_, p_187251_4_);
@@ -252,6 +265,7 @@
                  }
              }
  
+<<<<<<< HEAD
 @@ -440,14 +478,20 @@
                  {
                      int j = p_187251_3_.func_77960_j();
@@ -274,6 +288,31 @@
              }
          }
 @@ -457,4 +501,13 @@
+=======
+@@ -430,14 +469,21 @@
+             {
+                 int j = p_187251_3_.func_77960_j();
+                 int i = p_187251_3_.field_77994_a;
++                if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
++                        || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) {
+                 EnumActionResult enumactionresult = p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
+                 p_187251_3_.func_77964_b(j);
+                 p_187251_3_.field_77994_a = i;
+                 return enumactionresult;
++                } else return result;
++
+             }
+             else
+             {
++                if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
++                        || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
+                 return p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
++                else return result;
+             }
+         }
+     }
+@@ -446,4 +492,13 @@
+>>>>>>> 83231e9... Allow cancel result to be changed
      {
          this.field_73092_a = p_73080_1_;
      }
