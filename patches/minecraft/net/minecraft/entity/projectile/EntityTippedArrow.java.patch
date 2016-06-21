@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityTippedArrow.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityTippedArrow.java
+@@ -176,6 +176,7 @@
+ 
+         for (PotionEffect potioneffect : this.field_184560_g.func_185170_a())
+         {
++            if(potioneffect.func_188419_a().func_76403_b()) potioneffect.func_188419_a().func_180793_a(this, field_70250_c, p_184548_1_, potioneffect.func_76458_c(), 1); else // FORGE: Fix MC-91728 Tipped Arrows do not apply instant effects
+             p_184548_1_.func_70690_d(new PotionEffect(potioneffect.func_188419_a(), potioneffect.func_76459_b() / 8, potioneffect.func_76458_c(), potioneffect.func_82720_e(), potioneffect.func_188418_e()));
+         }
+ 
