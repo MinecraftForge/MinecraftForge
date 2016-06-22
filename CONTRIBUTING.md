@@ -8,3 +8,15 @@ Contributing to Forge
 3) Follow Forge coding guidelines (braces on newlines, spaces instead of tabs, etc)
 
 For more information, refer to [the wiki](https://github.com/MinecraftForge/MinecraftForge/wiki/If-you-want-to-contribute-to-Forge)
+
+
+Contributor License Agreement
+=============================
+Starting as soon as the technology is in place, contributors will need to sign a contributors license agreement.
+
+- You grant Forge a license to use your code contributed to the primary codebase (basically, everything under src) in Forge, under the LGPLv2.1 license.
+- You grant assign copyright ownership of your contributions to the patches codebase (basically, anything under patches) to Forge, where it will be licensed under the LGPLv2.1 license.
+
+Additionally, while 1.9.4 is being maintained, you will be asked to acknowledge these two additional clauses.
+- You grant Forge a license to use your code contributed to the primary codebase (basically, everything under src) in Forge, under the MinecraftForge license.
+- You grant assign copyright ownership of your contributions to the patches codebase (basically, anything under patches) to Forge, where it will be licensed under the MinecraftForge license.
