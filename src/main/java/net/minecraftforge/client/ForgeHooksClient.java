@@ -715,5 +715,4 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
-
 }

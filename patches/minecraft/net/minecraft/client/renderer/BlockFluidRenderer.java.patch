@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockFluidRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockFluidRenderer.java
+@@ -186,7 +186,7 @@
+                 {
+                     Block block = p_178270_1_.func_180495_p(blockpos).func_177230_c();
+ 
+-                    if (block == Blocks.field_150359_w || block == Blocks.field_150399_cn)
++                    if (block == Blocks.field_150359_w || block == Blocks.field_150399_cn || !block.drawFlowingWaterOverlay(p_178270_1_.func_180495_p(blockpos), p_178270_1_, blockpos, EnumFacing.func_176731_b(i1)))
+                     {
+                         textureatlassprite1 = this.field_187501_d;
+                     }
