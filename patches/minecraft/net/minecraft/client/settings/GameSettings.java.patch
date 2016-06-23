@@ -24,19 +24,20 @@
          try
          {
              if (!this.field_74354_ai.exists())
-@@ -887,6 +890,11 @@
+@@ -886,7 +889,11 @@
+                     {
                          if (s1.equals("key_" + keybinding.func_151464_g()))
                          {
-                             keybinding.func_151462_b(Integer.parseInt(s2));
+-                            keybinding.func_151462_b(Integer.parseInt(s2));
 +                            if (s2.indexOf(':') != -1)
 +                            {
 +                                String[] t = s2.split(":");
 +                                keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(t[1]), Integer.parseInt(t[0]));
-+                            }
++                            } else { keybinding.func_151462_b(Integer.parseInt(s2)); }
                          }
                      }
  
-@@ -1016,7 +1024,8 @@
+@@ -1016,7 +1023,8 @@
  
              for (KeyBinding keybinding : this.field_74324_K)
              {
@@ -46,7 +47,7 @@
              }
  
              for (SoundCategory soundcategory : SoundCategory.values())
-@@ -1249,4 +1258,24 @@
+@@ -1249,4 +1257,24 @@
              return p_148264_1_;
          }
      }
