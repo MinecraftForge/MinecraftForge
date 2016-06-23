@@ -24,19 +24,17 @@
          try
          {
              if (!this.field_74354_ai.exists())
-@@ -886,7 +889,11 @@
+@@ -886,6 +889,10 @@
                      {
                          if (s1.equals("key_" + keybinding.func_151464_g()))
                          {
--                            keybinding.func_151462_b(Integer.parseInt(s2));
-+                            if (s2.indexOf(':') != -1)
-+                            {
++                            if (s2.indexOf(':') != -1) {
 +                                String[] t = s2.split(":");
 +                                keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(t[1]), Integer.parseInt(t[0]));
-+                            } else { keybinding.func_151462_b(Integer.parseInt(s2)); }
++                            } else
+                             keybinding.func_151462_b(Integer.parseInt(s2));
                          }
                      }
- 
 @@ -1016,7 +1023,8 @@
  
              for (KeyBinding keybinding : this.field_74324_K)
