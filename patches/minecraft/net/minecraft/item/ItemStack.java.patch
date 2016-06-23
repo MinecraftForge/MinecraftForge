@@ -79,7 +79,12 @@
          this.field_77994_a = p_77963_1_.func_74771_c("Count");
          this.field_77991_e = p_77963_1_.func_74765_d("Damage");
  
-@@ -198,7 +209,7 @@
+@@ -194,11 +205,12 @@
+                 this.field_151002_e.func_179215_a(this.field_77990_d);
+             }
+         }
++        else this.field_77990_d = null;
+     }
  
      public int func_77976_d()
      {
@@ -88,7 +93,7 @@
      }
  
      public boolean func_77985_e()
-@@ -208,7 +219,7 @@
+@@ -208,7 +220,7 @@
  
      public boolean func_77984_f()
      {
@@ -97,7 +102,7 @@
      }
  
      public boolean func_77981_g()
-@@ -218,32 +229,27 @@
+@@ -218,32 +230,27 @@
  
      public boolean func_77951_h()
      {
@@ -135,7 +140,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -275,8 +281,8 @@
+@@ -275,8 +282,8 @@
                  }
              }
  
@@ -146,7 +151,7 @@
          }
      }
  
-@@ -330,7 +336,7 @@
+@@ -330,7 +337,7 @@
  
      public boolean func_150998_b(IBlockState p_150998_1_)
      {
@@ -155,7 +160,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -340,7 +346,7 @@
+@@ -340,7 +347,7 @@
  
      public ItemStack func_77946_l()
      {
@@ -164,7 +169,7 @@
  
          if (this.field_77990_d != null)
          {
-@@ -352,7 +358,19 @@
+@@ -352,7 +359,19 @@
  
      public static boolean func_77970_a(@Nullable ItemStack p_77970_0_, @Nullable ItemStack p_77970_1_)
      {
@@ -185,7 +190,7 @@
      }
  
      public static boolean func_77989_b(@Nullable ItemStack p_77989_0_, @Nullable ItemStack p_77989_1_)
-@@ -362,7 +380,11 @@
+@@ -362,7 +381,11 @@
  
      private boolean func_77959_d(ItemStack p_77959_1_)
      {
@@ -198,7 +203,7 @@
      }
  
      public static boolean func_179545_c(@Nullable ItemStack p_179545_0_, @Nullable ItemStack p_179545_1_)
-@@ -762,6 +784,7 @@
+@@ -762,6 +785,7 @@
              }
          }
  
@@ -206,7 +211,7 @@
          return list;
      }
  
-@@ -873,7 +896,7 @@
+@@ -873,7 +897,7 @@
          }
          else
          {
@@ -215,7 +220,7 @@
          }
  
          return multimap;
-@@ -906,6 +929,18 @@
+@@ -906,6 +930,18 @@
      @Deprecated
      public void func_150996_a(Item p_150996_1_)
      {
@@ -234,7 +239,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -991,4 +1026,26 @@
+@@ -991,4 +1027,26 @@
              return false;
          }
      }
