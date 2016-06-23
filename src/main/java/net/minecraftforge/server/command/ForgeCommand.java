@@ -65,31 +65,6 @@ public class ForgeCommand extends CommandBase {
         }
     }
 
-    @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
-    {
-        if (args.length == 1)
-        {
-            return getListOfStringsMatchingLastWord(args, "tps", "track");
-        }
-        else if (args.length == 2)
-        {
-            if ("tps".equals(args[0])) {
-                ArrayList list = new ArrayList();
-                for (Integer l : server.worldTickTimes.keySet())
-                {
-                    list.add(l.toString());
-                }
-                return list;
-            }
-            else if ("track".equals(args[0]))
-            {
-                return getListOfStringsMatchingLastWord(args, "te");
-            }
-        }
-        return null;
-    }
-
     private void handleTracking(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (args.length != 3)
