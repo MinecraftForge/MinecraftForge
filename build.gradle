@@ -184,11 +184,10 @@ task makeMdk(type: Zip) {
         exclude 'eclipse'
         rename 'gitignore\\.txt', '.gitignore'
         from 'MinecraftForge-Credits.txt'
-        from 'MinecraftForge-License.txt'
+        from 'LICENSE-new.txt'
         from 'Paulscode IBXM Library License.txt'
         from 'Paulscode SoundSystem CodecIBXM License.txt'
         from 'CREDITS-fml.txt'
-        from 'LICENSE-fml.txt'
     }
 }
 tasks.build.dependsOn makeMdk
