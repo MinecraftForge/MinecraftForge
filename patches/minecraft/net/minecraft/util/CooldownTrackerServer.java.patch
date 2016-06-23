@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/util/CooldownTrackerServer.java
++++ ../src-work/minecraft/net/minecraft/util/CooldownTrackerServer.java
+@@ -24,4 +24,11 @@
+         super.func_185146_c(p_185146_1_);
+         this.field_185149_a.field_71135_a.func_147359_a(new SPacketCooldown(p_185146_1_, 0));
+     }
++
++    @Override
++    public void func_185145_a(Item itemIn, int ticksIn)
++    {
++        net.minecraftforge.event.entity.player.CooldownSetEvent event = new net.minecraftforge.event.entity.player.CooldownSetEvent(field_185149_a, itemIn, ticksIn);
++        if (!event.isCanceled()) super.func_185145_a(itemIn, event.getCooldownTime());
++    }
+ }
