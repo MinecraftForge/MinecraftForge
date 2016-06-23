@@ -107,10 +107,9 @@ task crowdin(type: CrowdinDownload) {
 
 def extraTxts = [
     changelog, // yeah we can do thi, because gradle and groovy are awesome
-    "LICENSE-fml.txt",
     "CREDITS-fml.txt",
+    "LICENSE-new.txt",
     "MinecraftForge-Credits.txt",
-    "MinecraftForge-License.txt",
     "Paulscode SoundSystem CodecIBXM License.txt",
     "Paulscode IBXM Library License.txt"
 ]
