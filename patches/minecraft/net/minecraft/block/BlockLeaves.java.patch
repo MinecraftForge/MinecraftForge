@@ -31,7 +31,7 @@
 -                                    if (iblockstate.func_185904_a() == Material.field_151584_j)
 +                                    if (block.isLeaves(iblockstate, p_180650_1_, blockpos$mutableblockpos.func_181079_c(k + i2, l + j2, i1 + k2)))
                                      {
-                                         this.field_150128_a[(i2 + l1) * k1 + (j2 + l1) * j1 + k2 + l1] = -2;
+                                         this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
                                      }
 @@ -207,40 +207,7 @@
  

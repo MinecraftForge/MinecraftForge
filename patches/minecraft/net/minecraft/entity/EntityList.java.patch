@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -92,6 +92,7 @@
+@@ -93,6 +93,7 @@
  
      public static void func_75618_a(Class <? extends Entity > p_75618_0_, String p_75618_1_, int p_75618_2_)
      {
@@ -8,7 +8,7 @@
          if (field_75625_b.containsKey(p_75618_1_))
          {
              throw new IllegalArgumentException("ID is already registered: " + p_75618_1_);
-@@ -151,9 +152,10 @@
+@@ -152,9 +153,10 @@
      {
          Entity entity = null;
  
@@ -20,7 +20,7 @@
  
              if (oclass != null)
              {
-@@ -167,7 +169,17 @@
+@@ -168,7 +170,17 @@
  
          if (entity != null)
          {
@@ -38,7 +38,7 @@
          }
          else
          {
-@@ -207,7 +219,8 @@
+@@ -208,7 +220,8 @@
      @Nullable
      public static Entity func_188429_b(String p_188429_0_, World p_188429_1_)
      {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -28,6 +28,8 @@
+@@ -29,6 +29,8 @@
  
  public class PlayerInteractionManager
  {
@@ -8,8 +8,8 @@
 +    private double blockReachDistance = 5.0d;
      public World field_73092_a;
      public EntityPlayerMP field_73090_b;
-     private WorldSettings.GameType field_73091_c = WorldSettings.GameType.NOT_SET;
-@@ -89,7 +91,7 @@
+     private GameType field_73091_c = GameType.NOT_SET;
+@@ -90,7 +92,7 @@
              IBlockState iblockstate = this.field_73092_a.func_180495_p(this.field_180241_i);
              Block block = iblockstate.func_177230_c();
  
@@ -18,7 +18,7 @@
              {
                  this.field_73097_j = false;
              }
-@@ -116,7 +118,7 @@
+@@ -117,7 +119,7 @@
              IBlockState iblockstate1 = this.field_73092_a.func_180495_p(this.field_180240_f);
              Block block1 = iblockstate1.func_177230_c();
  
@@ -27,7 +27,7 @@
              {
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
                  this.field_73094_o = -1;
-@@ -125,7 +127,7 @@
+@@ -126,7 +128,7 @@
              else
              {
                  int k = this.field_73100_i - this.field_73089_e;
@@ -36,7 +36,7 @@
                  int l = (int)(f1 * 10.0F);
  
                  if (l != this.field_73094_o)
-@@ -139,6 +141,15 @@
+@@ -140,6 +142,15 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -52,7 +52,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -174,17 +185,36 @@
+@@ -175,17 +186,36 @@
                  }
              }
  
@@ -93,7 +93,7 @@
              {
                  this.func_180237_b(p_180784_1_);
              }
-@@ -206,7 +236,7 @@
+@@ -207,7 +237,7 @@
              int i = this.field_73100_i - this.field_73089_e;
              IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180785_1_);
  
@@ -102,7 +102,7 @@
              {
                  float f = iblockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_180785_1_) * (float)(i + 1);
  
-@@ -235,13 +265,17 @@
+@@ -236,13 +266,17 @@
  
      private boolean func_180235_c(BlockPos p_180235_1_)
      {
@@ -124,7 +124,7 @@
          }
  
          return flag;
-@@ -249,7 +283,8 @@
+@@ -250,7 +284,8 @@
  
      public boolean func_180237_b(BlockPos p_180237_1_)
      {
@@ -134,13 +134,13 @@
          {
              return false;
          }
-@@ -265,58 +300,46 @@
+@@ -267,58 +302,46 @@
              }
              else
              {
 -                if (this.field_73091_c.func_82752_c())
 -                {
--                    if (this.field_73091_c == WorldSettings.GameType.SPECTATOR)
+-                    if (this.field_73091_c == GameType.SPECTATOR)
 -                    {
 -                        return false;
 -                    }
@@ -156,7 +156,7 @@
 -                            return false;
 -                        }
 -
--                        if (!itemstack.func_179544_c(iblockstate.func_177230_c()))
+-                        if (!itemstack.func_179544_c(block))
 -                        {
 -                            return false;
 -                        }
@@ -206,7 +206,7 @@
                  return flag1;
              }
          }
-@@ -334,6 +357,7 @@
+@@ -336,6 +359,7 @@
          }
          else
          {
@@ -214,7 +214,7 @@
              int i = p_187250_3_.field_77994_a;
              int j = p_187250_3_.func_77960_j();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -360,6 +384,7 @@
+@@ -362,6 +386,7 @@
                  if (itemstack.field_77994_a == 0)
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
@@ -222,7 +222,7 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
-@@ -404,13 +429,26 @@
+@@ -406,13 +431,26 @@
          }
          else
          {
@@ -252,29 +252,28 @@
                  }
              }
  
-@@ -430,14 +468,21 @@
-             {
-                 int j = p_187251_3_.func_77960_j();
-                 int i = p_187251_3_.field_77994_a;
-+                if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
-+                        || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) {
-                 EnumActionResult enumactionresult = p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
-                 p_187251_3_.func_77964_b(j);
-                 p_187251_3_.field_77994_a = i;
-                 return enumactionresult;
-+                } else return result;
-+
-             }
-             else
-             {
-+                if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
-+                        || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
-                 return p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
-+                else return result;
+@@ -440,14 +478,20 @@
+                 {
+                     int j = p_187251_3_.func_77960_j();
+                     int i = p_187251_3_.field_77994_a;
++                    if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
++                            || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) {
+                     EnumActionResult enumactionresult = p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
+                     p_187251_3_.func_77964_b(j);
+                     p_187251_3_.field_77994_a = i;
+                     return enumactionresult;
++                    } else return result;
+                 }
+                 else
+                 {
++                    if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
++                            || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
+                     return p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
++                    else return result;
+                 }
              }
          }
-     }
-@@ -446,4 +491,13 @@
+@@ -457,4 +501,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }

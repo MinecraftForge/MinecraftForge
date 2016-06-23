@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBeacon.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBeacon.java
-@@ -145,7 +145,7 @@
+@@ -146,7 +146,7 @@
  
          public boolean func_75214_a(@Nullable ItemStack p_75214_1_)
          {

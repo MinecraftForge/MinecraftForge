@@ -3,7 +3,7 @@
 @@ -11,12 +11,13 @@
  public class WorldServerMulti extends WorldServer
  {
-     private WorldServer field_175743_a;
+     private final WorldServer field_175743_a;
 +    private IBorderListener borderListener;
  
      public WorldServerMulti(MinecraftServer p_i45923_1_, ISaveHandler p_i45923_2_, int p_i45923_3_, WorldServer p_i45923_4_, Profiler p_i45923_5_)

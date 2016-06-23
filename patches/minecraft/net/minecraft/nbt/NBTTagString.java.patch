@@ -18,4 +18,4 @@
 +        return "\"" + org.apache.commons.lang3.StringUtils.replaceEach(this.field_74751_a, new String[]{"\\","\""}, new String[]{"\\\\","\\\""}) + "\"";
      }
  
-     public NBTBase func_74737_b()
+     public NBTTagString func_74737_b()

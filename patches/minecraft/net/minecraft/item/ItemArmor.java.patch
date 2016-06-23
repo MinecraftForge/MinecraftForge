@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
-@@ -239,6 +239,8 @@
+@@ -236,6 +236,8 @@
          private final int field_78055_h;
          private final SoundEvent field_185020_j;
          private final float field_189417_k;
@@ -9,7 +9,7 @@
  
          private ArmorMaterial(String p_i47117_3_, int p_i47117_4_, int[] p_i47117_5_, int p_i47117_6_, SoundEvent p_i47117_7_, float p_i47117_8_)
          {
-@@ -272,7 +274,15 @@
+@@ -269,7 +271,15 @@
  
          public Item func_151685_b()
          {

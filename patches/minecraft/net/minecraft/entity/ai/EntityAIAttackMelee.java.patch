@@ -29,7 +29,7 @@
              this.field_75438_g = this.field_75441_b.func_70661_as().func_75494_a(entitylivingbase);
              return this.field_75438_g != null;
          }
-@@ -89,6 +104,23 @@
+@@ -88,6 +103,23 @@
              this.field_151496_k = entitylivingbase.field_70161_v;
              this.field_75445_i = 4 + this.field_75441_b.func_70681_au().nextInt(7);
  

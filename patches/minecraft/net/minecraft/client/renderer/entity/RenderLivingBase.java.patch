@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderLivingBase.java
 @@ -32,6 +32,9 @@
      protected List<LayerRenderer<T>> field_177097_h = Lists.<LayerRenderer<T>>newArrayList();
-     protected boolean field_188323_j = false;
+     protected boolean field_188323_j;
  
 +    public static float NAME_TAG_RANGE = 64.0f;
 +    public static float NAME_TAG_RANGE_SNEAK = 32.0f;

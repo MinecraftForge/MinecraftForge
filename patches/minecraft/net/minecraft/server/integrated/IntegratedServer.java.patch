@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-@@ -68,8 +68,6 @@
-     protected void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
+@@ -69,8 +69,6 @@
+     public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
      {
          this.func_71237_c(p_71247_1_);
 -        this.field_71305_c = new WorldServer[3];
@@ -9,7 +9,7 @@
          ISaveHandler isavehandler = this.func_71254_M().func_75804_a(p_71247_1_, true);
          this.func_175584_a(this.func_71270_I(), isavehandler);
          WorldInfo worldinfo = isavehandler.func_75757_d();
-@@ -83,44 +81,23 @@
+@@ -84,44 +82,23 @@
              worldinfo.func_76062_a(p_71247_2_);
          }
  
@@ -65,7 +65,7 @@
          {
              this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M);
          }
-@@ -138,9 +115,10 @@
+@@ -139,9 +116,10 @@
          this.func_71245_h(true);
          field_147148_h.info("Generating keypair");
          this.func_71253_a(CryptManager.func_75891_b());
@@ -77,7 +77,7 @@
      }
  
      public void func_71217_p()
-@@ -213,6 +191,7 @@
+@@ -214,6 +192,7 @@
  
      public EnumDifficulty func_147135_j()
      {

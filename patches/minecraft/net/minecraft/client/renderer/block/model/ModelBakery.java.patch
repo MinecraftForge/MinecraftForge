@@ -42,7 +42,7 @@
                              {
                                  if (!modelblockdefinition.func_188002_b())
                                  {
--                                    field_177603_c.warn("Unable to load variant: " + modelresourcelocation.func_177518_c() + " from " + modelresourcelocation);
+-                                    field_177603_c.warn("Unable to load variant: {} from {}", new Object[] {modelresourcelocation.func_177518_c(), modelresourcelocation});
 +                                    field_177603_c.warn("Unable to load variant: " + modelresourcelocation.func_177518_c() + " from " + modelresourcelocation, var12);
                                  }
                              }
@@ -51,7 +51,7 @@
                  }
 -                catch (Exception exception)
 -                {
--                    field_177603_c.warn((String)("Unable to load definition " + resourcelocation), (Throwable)exception);
+-                    field_177603_c.warn("Unable to load definition {}", new Object[] {resourcelocation, exception});
 -                }
              }
          }

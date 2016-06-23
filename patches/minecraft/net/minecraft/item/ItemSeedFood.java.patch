@@ -7,8 +7,8 @@
 -public class ItemSeedFood extends ItemFood
 +public class ItemSeedFood extends ItemFood implements net.minecraftforge.common.IPlantable
  {
-     private Block field_150908_b;
-     private Block field_82809_c;
+     private final Block field_150908_b;
+     private final Block field_82809_c;
 @@ -22,7 +22,8 @@
  
      public EnumActionResult func_180614_a(ItemStack p_180614_1_, EntityPlayer p_180614_2_, World p_180614_3_, BlockPos p_180614_4_, EnumHand p_180614_5_, EnumFacing p_180614_6_, float p_180614_7_, float p_180614_8_, float p_180614_9_)

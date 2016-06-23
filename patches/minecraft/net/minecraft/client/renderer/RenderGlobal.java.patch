@@ -13,7 +13,7 @@
          else
 @@ -560,9 +562,12 @@
              this.field_72769_h.field_72984_F.func_76320_a("prepare");
-             TileEntityRendererDispatcher.field_147556_a.func_178470_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), p_180446_3_);
+             TileEntityRendererDispatcher.field_147556_a.func_190056_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), this.field_72777_q.field_71476_x, p_180446_3_);
              this.field_175010_j.func_180597_a(this.field_72769_h, this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), this.field_72777_q.field_147125_j, this.field_72777_q.field_71474_y, p_180446_3_);
 +            if(pass == 0)
 +            {
@@ -93,7 +93,7 @@
                  {
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity1, p_180446_3_, destroyblockprogress.func_73106_e());
                  }
-@@ -1214,6 +1229,13 @@
+@@ -1213,6 +1228,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
@@ -107,7 +107,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
              this.func_180448_r();
-@@ -1431,6 +1453,12 @@
+@@ -1430,6 +1452,12 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_)
      {
@@ -120,7 +120,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1858,8 +1886,11 @@
+@@ -1857,8 +1885,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -141,7 +141,7 @@
+@@ -144,7 +144,7 @@
  
      private boolean func_145934_k()
      {
@@ -9,7 +9,7 @@
          {
              ItemStack itemstack = this.field_145945_j[3];
  
-@@ -166,25 +166,23 @@
+@@ -169,25 +169,23 @@
          }
          else
          {
@@ -40,15 +40,15 @@
  
              if (itemstack.field_77994_a <= 0)
              {
-@@ -203,6 +201,7 @@
+@@ -206,6 +204,7 @@
  
          this.field_145945_j[3] = itemstack;
          this.field_145850_b.func_175718_b(1035, blockpos, 0);
 +        net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
      }
  
-     public void func_145839_a(NBTTagCompound p_145839_1_)
-@@ -308,12 +307,12 @@
+     public static void func_189675_a(DataFixer p_189675_0_)
+@@ -316,12 +315,12 @@
      {
          if (p_94041_1_ == 3)
          {
@@ -63,7 +63,7 @@
          }
      }
  
-@@ -367,6 +366,26 @@
+@@ -375,6 +374,26 @@
          }
      }
  

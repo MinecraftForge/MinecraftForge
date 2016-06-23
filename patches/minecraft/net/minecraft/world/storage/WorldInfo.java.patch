@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
-@@ -61,6 +61,7 @@
+@@ -66,6 +66,7 @@
      private int field_176155_J = 15;
      private final Map<DimensionType, NBTTagCompound> field_186348_N = Maps.newEnumMap(DimensionType.class);
      private GameRules field_82577_x = new GameRules();
@@ -8,7 +8,7 @@
  
      protected WorldInfo()
      {
-@@ -786,6 +787,26 @@
+@@ -807,6 +808,26 @@
          });
      }
  

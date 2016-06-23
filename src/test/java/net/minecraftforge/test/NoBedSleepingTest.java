@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTBase.NBTPrimitive;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;

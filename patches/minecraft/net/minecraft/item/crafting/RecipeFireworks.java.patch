@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
 @@ -87,9 +87,9 @@
              {
-                 this.field_92102_a = new ItemStack(Items.field_151152_bP);
+                 this.field_92102_a = new ItemStack(Items.field_151152_bP, 3);
  
 +                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                  if (l > 0)

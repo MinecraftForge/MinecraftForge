@@ -20,7 +20,7 @@
 package net.minecraftforge.client;
 
 import net.minecraft.util.Util.EnumOS;
-import net.minecraft.world.WorldSettings.GameType;
+import net.minecraft.world.GameType;
 import net.minecraft.client.settings.GameSettings.Options;
 import net.minecraftforge.common.util.EnumHelper;
 

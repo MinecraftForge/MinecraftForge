@@ -63,7 +63,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
     private ItemStack fillContainer(IBlockSource source, ItemStack stack)
     {
         World world = source.getWorld();
-        EnumFacing dispenserFacing = BlockDispenser.getFacing(source.getBlockMetadata());
+        EnumFacing dispenserFacing = source.func_189992_e().getValue(BlockDispenser.FACING);
         BlockPos blockpos = source.getBlockPos().offset(dispenserFacing);
 
         ItemStack result = FluidUtil.tryPickUpFluid(stack, null, world, blockpos, dispenserFacing.getOpposite());
@@ -100,7 +100,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
         }
 
         FluidStack fluidStack = fluidHandler.drain(Fluid.BUCKET_VOLUME, false);
-        EnumFacing dispenserFacing = BlockDispenser.getFacing(source.getBlockMetadata());
+        EnumFacing dispenserFacing = source.func_189992_e().getValue(BlockDispenser.FACING);
         BlockPos blockpos = source.getBlockPos().offset(dispenserFacing);
 
         if (fluidStack != null && fluidStack.amount == Fluid.BUCKET_VOLUME && FluidUtil.tryPlaceFluid(null, source.getWorld(), fluidStack, blockpos))

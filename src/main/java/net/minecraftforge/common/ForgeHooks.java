@@ -90,7 +90,7 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldSettings.GameType;
+import net.minecraft.world.GameType;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
@@ -682,7 +682,7 @@ public class ForgeHooks
 
         if (gameType.isAdventure())
         {
-            if (gameType == WorldSettings.GameType.SPECTATOR)
+            if (gameType == GameType.SPECTATOR)
                 preCancelEvent = true;
 
             if (!entityPlayer.isAllowEdit())

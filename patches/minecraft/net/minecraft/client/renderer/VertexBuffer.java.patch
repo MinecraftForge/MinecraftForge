@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/VertexBuffer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/VertexBuffer.java
-@@ -126,6 +126,8 @@
+@@ -123,6 +123,8 @@
  
-             bitset.set(l1);
+             bitset.set(i1);
          }
 +        this.field_178999_b.limit(this.field_178999_b.capacity());
 +        this.field_178999_b.position(this.func_181664_j());
      }
  
      public VertexBuffer.State func_181672_a()
-@@ -510,15 +512,15 @@
+@@ -507,15 +509,15 @@
                  break;
              case USHORT:
              case SHORT:
@@ -31,7 +31,7 @@
          }
  
          this.func_181667_k();
-@@ -609,4 +611,9 @@
+@@ -606,4 +608,9 @@
              return this.field_179018_e;
          }
      }

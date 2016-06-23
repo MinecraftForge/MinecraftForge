@@ -13,11 +13,20 @@
 -        BlockPos blockpos = p_i45285_2_.func_175694_M();
 +        BlockPos blockpos = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
  
--        if (!p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
-+        if (false && !p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != WorldSettings.GameType.ADVENTURE)
+-        if (!p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != GameType.ADVENTURE)
++        if (false && !p_i45285_2_.field_73011_w.func_177495_o() && p_i45285_2_.func_72912_H().func_76077_q() != GameType.ADVENTURE)
          {
              int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
              int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
+@@ -252,7 +253,7 @@
+ 
+         this.field_71070_bA.func_75142_b();
+ 
+-        if (!this.field_70170_p.field_72995_K && !this.field_71070_bA.func_75145_c(this))
++        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && this.field_71070_bA.func_75145_c(this))
+         {
+             this.func_71053_j();
+             this.field_71070_bA = this.field_71069_bz;
 @@ -435,6 +436,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
@@ -64,7 +73,7 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -924,6 +940,7 @@
+@@ -921,6 +937,7 @@
      {
          if (p_71064_1_ != null)
          {

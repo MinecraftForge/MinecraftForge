@@ -181,7 +181,7 @@
 +    {
 +        BlockPos ret = this.field_76579_a.func_175694_M();
 +
-+        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == WorldSettings.GameType.ADVENTURE;
++        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == GameType.ADVENTURE;
 +        int spawnFuzz = this.field_76579_a instanceof WorldServer ? field_76577_b.getSpawnFuzz((WorldServer)this.field_76579_a, this.field_76579_a.func_73046_m()) : 1;
 +        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
 +        if (border < spawnFuzz) spawnFuzz = border;

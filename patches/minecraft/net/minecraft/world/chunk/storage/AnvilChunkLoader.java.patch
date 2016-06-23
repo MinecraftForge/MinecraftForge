@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -47,9 +47,43 @@
+@@ -49,9 +49,43 @@
          this.field_186055_e = p_i46673_2_;
      }
  
@@ -44,7 +44,7 @@
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
          NBTTagCompound nbttagcompound = (NBTTagCompound)this.field_75828_a.get(chunkpos);
  
-@@ -65,11 +99,17 @@
+@@ -67,11 +101,17 @@
              nbttagcompound = this.field_186055_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
          }
  
@@ -62,9 +62,9 @@
 +    {
          if (!p_75822_4_.func_150297_b("Level", 10))
          {
-             field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is missing level data, skipping");
-@@ -93,10 +133,29 @@
-                     field_151505_a.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.field_76635_g + ", " + chunk.field_76647_h + ")");
+             field_151505_a.error("Chunk file at {},{} is missing level data, skipping", new Object[] {Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_)});
+@@ -95,10 +135,29 @@
+                     field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", new Object[] {Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h)});
                      nbttagcompound.func_74768_a("xPos", p_75822_2_);
                      nbttagcompound.func_74768_a("zPos", p_75822_3_);
 +
@@ -94,30 +94,15 @@
              }
          }
      }
-@@ -112,6 +171,7 @@
+@@ -114,6 +173,7 @@
              nbttagcompound.func_74782_a("Level", nbttagcompound1);
-             nbttagcompound.func_74768_a("DataVersion", 184);
+             nbttagcompound.func_74768_a("DataVersion", 510);
              this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
              this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
          }
          catch (Exception exception)
-@@ -195,13 +255,7 @@
-         {
-             this.field_183014_e = true;
- 
--            while (true)
--            {
--                if (this.func_75814_c())
--                {
--                    continue;
--                }
--            }
-+            while (this.func_75814_c()); // Fernflower decompile issue...
-         }
-         finally
-         {
-@@ -267,8 +321,17 @@
+@@ -299,8 +359,17 @@
  
                  if (entity.func_70039_c(nbttagcompound2))
                  {
@@ -135,7 +120,7 @@
                  }
              }
          }
-@@ -278,8 +341,17 @@
+@@ -310,8 +379,17 @@
  
          for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
          {
@@ -153,7 +138,7 @@
          }
  
          p_75820_3_.func_74782_a("TileEntities", nbttaglist2);
-@@ -348,6 +420,12 @@
+@@ -380,6 +458,12 @@
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
          }
  
@@ -166,7 +151,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.func_150295_c("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -400,8 +478,6 @@
+@@ -432,8 +516,6 @@
                  }
              }
          }

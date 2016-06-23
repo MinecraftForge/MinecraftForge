@@ -8,3 +8,12 @@
                      this.field_175092_e = Minecraft.func_71386_F();
                      networkmanager.func_179290_a(new CPacketPing(this.field_175092_e));
                      this.field_147403_d = true;
+@@ -176,7 +177,7 @@
+ 
+         try
+         {
+-            networkmanager.func_179290_a(new C00Handshake(210, serveraddress.func_78861_a(), serveraddress.func_78864_b(), EnumConnectionState.STATUS));
++            networkmanager.func_179290_a(new C00Handshake(210, serveraddress.func_78861_a(), serveraddress.func_78864_b(), EnumConnectionState.STATUS, true));
+             networkmanager.func_179290_a(new CPacketServerQuery());
+         }
+         catch (Throwable throwable)

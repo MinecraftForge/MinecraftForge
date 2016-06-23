@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
 @@ -98,30 +98,39 @@
      private int field_147489_T;
-     private List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();
+     private final List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();
  
 +    /** Stores the recently processed (lighting) chunks */
 +    protected Set<ChunkPos> doneChunks = new java.util.HashSet<ChunkPos>();
@@ -138,7 +138,7 @@
 +                    //byte b0 = isForced ? 0 : 8;
                      int k = 0;
  
-                     if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(-k, -k, -k), nextticklistentry1.field_180282_a.func_177982_a(k, k, k)))
+                     if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
 @@ -837,6 +855,10 @@
  
      public boolean func_175660_a(EntityPlayer p_175660_1_, BlockPos p_175660_2_)

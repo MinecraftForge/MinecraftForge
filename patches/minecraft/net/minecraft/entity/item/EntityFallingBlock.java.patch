@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
-@@ -130,6 +130,7 @@
+@@ -135,6 +135,7 @@
                  {
                      IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos1);
  

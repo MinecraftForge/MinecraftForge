@@ -25,7 +25,7 @@
      }
  
      public List<TextureAtlasSprite> func_94309_g()
-@@ -238,7 +244,7 @@
+@@ -240,7 +246,7 @@
  
              public String toString()
              {

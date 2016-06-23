@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -102,7 +102,7 @@
+@@ -103,7 +103,7 @@
      @SideOnly(Side.SERVER)
      private String field_71320_r;
      private int field_71319_s = -1;
@@ -9,9 +9,9 @@
      private PlayerList field_71318_t;
      private boolean field_71317_u = true;
      private boolean field_71316_v;
-@@ -119,7 +119,8 @@
+@@ -120,7 +120,8 @@
      private int field_71280_D;
-     private int field_143008_E = 0;
+     private int field_143008_E;
      public final long[] field_71311_j = new long[100];
 -    public long[][] field_71312_k;
 +    //public long[][] timeOfLastDimensionTick;
@@ -19,7 +19,7 @@
      private KeyPair field_71292_I;
      private String field_71293_J;
      private String field_71294_K;
-@@ -217,8 +218,6 @@
+@@ -218,8 +219,6 @@
      {
          this.func_71237_c(p_71247_1_);
          this.func_71192_d("menu.loadingLevel");
@@ -28,7 +28,7 @@
          ISaveHandler isavehandler = this.field_71310_m.func_75804_a(p_71247_1_, true);
          this.func_175584_a(this.func_71270_I(), isavehandler);
          WorldInfo worldinfo = isavehandler.func_75757_d();
-@@ -249,47 +248,21 @@
+@@ -250,47 +249,21 @@
              worldsettings = new WorldSettings(worldinfo);
          }
  
@@ -84,22 +84,22 @@
          this.func_147139_a(this.func_147135_j());
          this.func_71222_d();
      }
-@@ -304,7 +277,7 @@
+@@ -305,7 +278,7 @@
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
-         field_147145_h.info("Preparing start region for level " + j1);
--        WorldServer worldserver = this.field_71305_c[j1];
+         field_147145_h.info("Preparing start region for level 0");
+-        WorldServer worldserver = this.field_71305_c[0];
 +        WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(j1);
          BlockPos blockpos = worldserver.func_175694_M();
          long k1 = func_130071_aq();
  
-@@ -422,9 +395,15 @@
+@@ -423,9 +396,16 @@
              {
-                 if (this.field_71305_c[j] != null)
+                 if (worldserver1 != null)
                  {
-+                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(this.field_71305_c[j]));                }
-                     this.field_71305_c[j].func_73041_k();
--                }
++                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
+                     worldserver1.func_73041_k();
+                 }
              }
 +
 +            WorldServer[] tmp = field_71305_c;
@@ -110,7 +110,7 @@
          }
  
          if (this.field_71307_n.func_76468_d())
-@@ -449,6 +428,7 @@
+@@ -450,6 +430,7 @@
          {
              if (this.func_71197_b())
              {
@@ -118,7 +118,7 @@
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
                  this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
-@@ -493,12 +473,20 @@
+@@ -494,12 +475,20 @@
                      Thread.sleep(Math.max(1L, 50L - i));
                      this.field_71296_Q = true;
                  }
@@ -139,7 +139,7 @@
          catch (Throwable throwable1)
          {
              field_147145_h.error("Encountered an unexpected exception", throwable1);
-@@ -524,14 +512,15 @@
+@@ -525,14 +514,15 @@
                  field_147145_h.error("We were unable to save this crash report to disk.");
              }
  
@@ -156,7 +156,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -539,6 +528,8 @@
+@@ -540,6 +530,8 @@
              }
              finally
              {
@@ -165,7 +165,7 @@
                  this.func_71240_o();
              }
          }
-@@ -606,6 +597,7 @@
+@@ -607,6 +599,7 @@
      public void func_71217_p()
      {
          long i = System.nanoTime();
@@ -173,7 +173,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -632,6 +624,7 @@
+@@ -633,6 +626,7 @@
  
              Collections.shuffle(Arrays.asList(agameprofile));
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -181,7 +181,7 @@
          }
  
          if (this.field_71315_w % 900 == 0)
-@@ -659,6 +652,7 @@
+@@ -660,6 +654,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -189,7 +189,7 @@
      }
  
      public void func_71190_q()
-@@ -674,24 +668,28 @@
+@@ -675,24 +670,28 @@
          }
  
          this.field_71304_b.func_76318_c("levels");
@@ -222,7 +222,7 @@
  
                  try
                  {
-@@ -715,6 +713,7 @@
+@@ -716,6 +715,7 @@
                      throw new ReportedException(crashreport1);
                  }
  
@@ -230,7 +230,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();
-@@ -722,9 +721,11 @@
+@@ -723,9 +723,11 @@
                  this.field_71304_b.func_76319_b();
              }
  
@@ -243,7 +243,7 @@
          this.field_71304_b.func_76318_c("connection");
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-@@ -746,6 +747,7 @@
+@@ -747,6 +749,7 @@
  
      public void func_71256_s()
      {
@@ -251,7 +251,7 @@
          this.field_175590_aa = new Thread(this, "Server thread");
          this.field_175590_aa.start();
      }
-@@ -762,7 +764,13 @@
+@@ -763,7 +766,13 @@
  
      public WorldServer func_71218_a(int p_71218_1_)
      {
@@ -266,7 +266,7 @@
      }
  
      public String func_71249_w()
-@@ -792,7 +800,7 @@
+@@ -793,7 +802,7 @@
  
      public String getServerModName()
      {

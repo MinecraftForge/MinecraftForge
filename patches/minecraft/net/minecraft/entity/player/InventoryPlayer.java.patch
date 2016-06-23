@@ -1,22 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -272,13 +272,8 @@
+@@ -279,6 +279,7 @@
+                     itemstack.func_77982_d(p_70452_1_.func_77978_p().func_74737_b());
+                 }
  
-             if (itemstack == null)
-             {
--                itemstack = new ItemStack(item, 0, p_70452_1_.func_77960_j());
--
--                if (p_70452_1_.func_77942_o())
--                {
--                    itemstack.func_77982_d((NBTTagCompound)p_70452_1_.func_77978_p().func_74737_b());
--                }
--
 +                itemstack = p_70452_1_.func_77946_l(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
-+                itemstack.field_77994_a = 0;
                  this.func_70299_a(j, itemstack);
              }
  
-@@ -346,6 +341,14 @@
+@@ -344,6 +345,14 @@
                  }
              }
          }

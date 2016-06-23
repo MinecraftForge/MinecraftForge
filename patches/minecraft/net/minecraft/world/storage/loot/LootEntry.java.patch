@@ -35,7 +35,7 @@
 +                LootEntry ret = net.minecraftforge.common.ForgeHooks.deserializeJsonLootEntry(s, jsonobject, i, j, alootcondition);
 +                if (ret != null) return ret;
 +
-                 if (s.equals("item"))
+                 if ("item".equals(s))
                  {
                      return LootEntryItem.func_186367_a(jsonobject, p_deserialize_3_, i, j, alootcondition);
 @@ -78,6 +85,8 @@

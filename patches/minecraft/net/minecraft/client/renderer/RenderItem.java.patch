@@ -83,7 +83,7 @@
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
                  GlStateManager.func_179090_x();
-@@ -1054,6 +1043,7 @@
+@@ -1059,6 +1048,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");

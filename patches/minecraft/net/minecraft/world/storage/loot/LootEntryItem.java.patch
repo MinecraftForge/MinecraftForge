@@ -12,7 +12,7 @@
          this.field_186368_a = p_i46644_1_;
          this.field_186369_b = p_i46644_4_;
      }
-@@ -42,7 +42,7 @@
+@@ -39,7 +39,7 @@
  
          if (itemstack.field_77994_a > 0)
          {
@@ -21,7 +21,7 @@
              {
                  p_186363_1_.add(itemstack);
              }
-@@ -82,6 +82,7 @@
+@@ -79,6 +79,7 @@
  
      public static LootEntryItem func_186367_a(JsonObject p_186367_0_, JsonDeserializationContext p_186367_1_, int p_186367_2_, int p_186367_3_, LootCondition[] p_186367_4_)
      {
@@ -29,7 +29,7 @@
          Item item = JsonUtils.func_188180_i(p_186367_0_, "name");
          LootFunction[] alootfunction;
  
-@@ -94,6 +95,6 @@
+@@ -91,6 +92,6 @@
              alootfunction = new LootFunction[0];
          }
  

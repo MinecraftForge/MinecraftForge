@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.ZombieType;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.ITradeList;
 import net.minecraft.util.EnumFacing;
@@ -355,8 +356,8 @@ public class VillagerRegistry
     {
         if (prof == null)
         {
-            if (entity.getVillagerType() != 0)
-                entity.setVillagerType(-1);
+            if (entity.func_189777_di() != ZombieType.NORMAL)
+                entity.func_189778_a(ZombieType.NORMAL);
             return;
         }
 
@@ -366,21 +367,31 @@ public class VillagerRegistry
             throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
         }
 
-        if (network != entity.getVillagerType())
-            entity.setVillagerType(network);
+        if (network >= 0 && network < 5) // Vanilla
+        {
+            if (entity.func_189777_di() == null || entity.func_189777_di().func_190150_a() != network + 1)
+            {
+                entity.func_189778_a(ZombieType.func_190144_b(network));
+            }
+        }
+        else if (entity.func_189777_di() != null)
+            entity.func_189778_a(null);
     }
-    public static void onSetProfession(EntityZombie entity, int network)
+    public static void onSetProfession(EntityZombie entity, ZombieType type, int network)
     {
-        if (network == -1)
+        if (type == ZombieType.NORMAL || type == ZombieType.HUSK)
         {
             if (entity.getVillagerTypeForge() != null)
                 entity.setVillagerType(null);
             return;
         }
-        VillagerProfession prof = INSTANCE.professions.getObjectById(network);
-        if (prof == null && network != 0 || INSTANCE.professions.getId(prof) != network)
+        int realID = network - 1;
+        if (type == null) //Forge type?
+            realID = network * -1; // Forge encoded as -ID
+        VillagerProfession prof = INSTANCE.professions.getObjectById(realID);
+        if (prof == null && network != 0 || INSTANCE.professions.getId(prof) != realID)
         {
-            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
+            throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + realID + " " + prof);
         }
 
         if (prof != entity.getVillagerTypeForge())

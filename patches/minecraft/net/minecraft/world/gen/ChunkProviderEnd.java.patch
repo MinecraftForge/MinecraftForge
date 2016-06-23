@@ -35,7 +35,7 @@
          for (int i = 0; i < 16; ++i)
          {
              for (int j = 0; j < 16; ++j)
-@@ -175,6 +189,7 @@
+@@ -169,6 +183,7 @@
  
      public Chunk func_185932_a(int p_185932_1_, int p_185932_2_)
      {
@@ -43,7 +43,7 @@
          this.field_73220_k.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
          ChunkPrimer chunkprimer = new ChunkPrimer();
          this.field_73231_z = this.field_73230_p.func_72959_q().func_76933_b(this.field_73231_z, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
-@@ -256,6 +271,10 @@
+@@ -250,6 +265,10 @@
  
      private double[] func_185963_a(double[] p_185963_1_, int p_185963_2_, int p_185963_3_, int p_185963_4_, int p_185963_5_, int p_185963_6_, int p_185963_7_)
      {
@@ -54,7 +54,7 @@
          if (p_185963_1_ == null)
          {
              p_185963_1_ = new double[p_185963_5_ * p_185963_6_ * p_185963_7_];
-@@ -328,6 +347,7 @@
+@@ -322,6 +341,7 @@
      public void func_185931_b(int p_185931_1_, int p_185931_2_)
      {
          BlockFalling.field_149832_M = true;
@@ -62,7 +62,7 @@
          BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
  
          if (this.field_73229_q)
-@@ -375,6 +395,7 @@
+@@ -369,6 +389,7 @@
              }
          }
  

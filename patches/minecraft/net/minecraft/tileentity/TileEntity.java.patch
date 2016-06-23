@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -18,7 +18,7 @@
+@@ -21,7 +21,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,8 +8,8 @@
 +public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
      private static final Logger field_145852_a = LogManager.getLogger();
-     private static Map < String, Class <? extends TileEntity >> field_145855_i = Maps. < String, Class <? extends TileEntity >> newHashMap();
-@@ -60,6 +60,8 @@
+     private static final Map < String, Class <? extends TileEntity >> field_145855_i = Maps. < String, Class <? extends TileEntity >> newHashMap();
+@@ -63,6 +63,8 @@
      public void func_145839_a(NBTTagCompound p_145839_1_)
      {
          this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
@@ -18,7 +18,7 @@
      }
  
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
-@@ -81,6 +83,8 @@
+@@ -84,6 +86,8 @@
              p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
              p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
              p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -27,10 +27,10 @@
              return p_189516_1_;
          }
      }
-@@ -89,10 +93,11 @@
+@@ -92,10 +96,11 @@
      {
          TileEntity tileentity = null;
-         String s = p_189514_0_.func_74779_i("id");
+         String s = p_190200_1_.func_74779_i("id");
 +        Class <? extends TileEntity > oclass = null;
  
          try
@@ -40,27 +40,27 @@
  
              if (oclass != null)
              {
-@@ -102,6 +107,9 @@
+@@ -105,6 +110,9 @@
          catch (Throwable throwable1)
          {
-             field_145852_a.error("Failed to create block entity " + s, throwable1);
+             field_145852_a.error("Failed to create block entity {}", new Object[] {s, throwable1});
 +            net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, throwable1,
 +                    "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
 +                    s, oclass.getName());
          }
  
          if (tileentity != null)
-@@ -113,6 +121,9 @@
+@@ -117,6 +125,9 @@
              catch (Throwable throwable)
              {
-                 field_145852_a.error("Failed to load data for block entity " + s, throwable);
+                 field_145852_a.error("Failed to load data for block entity {}", new Object[] {s, throwable});
 +                net.minecraftforge.fml.common.FMLLog.log(org.apache.logging.log4j.Level.ERROR, throwable,
 +                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
 +                        s, oclass.getName());
                  tileentity = null;
              }
          }
-@@ -150,7 +161,6 @@
+@@ -158,7 +169,6 @@
          }
      }
  
@@ -68,8 +68,8 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -283,6 +293,198 @@
-         return false;
+@@ -305,6 +315,198 @@
+     {
      }
  
 +    // -- BEGIN FORGE PATCHES --

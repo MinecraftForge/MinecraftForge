@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/particle/ParticleManager.java
 +++ ../src-work/minecraft/net/minecraft/client/particle/ParticleManager.java
-@@ -145,6 +145,7 @@
+@@ -146,6 +146,7 @@
  
      public void func_78873_a(Particle p_78873_1_)
      {
@@ -8,7 +8,7 @@
          this.field_187241_h.add(p_78873_1_);
      }
  
-@@ -378,7 +379,7 @@
+@@ -380,7 +381,7 @@
  
      public void func_180533_a(BlockPos p_180533_1_, IBlockState p_180533_2_)
      {
@@ -17,7 +17,7 @@
          {
              p_180533_2_ = p_180533_2_.func_185899_b(this.field_78878_a, p_180533_1_);
              int i = 4;
-@@ -462,4 +463,13 @@
+@@ -464,4 +465,13 @@
  
          return "" + i;
      }

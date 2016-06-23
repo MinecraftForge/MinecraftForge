@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMultiplayer.java
-@@ -40,6 +40,7 @@
+@@ -41,6 +41,7 @@
      public GuiMultiplayer(GuiScreen p_i1040_1_)
      {
          this.field_146798_g = p_i1040_1_;
@@ -8,7 +8,7 @@
      }
  
      public void func_73866_w_()
-@@ -372,7 +373,7 @@
+@@ -375,7 +376,7 @@
  
      private void func_146791_a(ServerData p_146791_1_)
      {

@@ -478,7 +478,6 @@ public class GuiIngameForge extends GuiIngame
 
         FoodStats stats = mc.thePlayer.getFoodStats();
         int level = stats.getFoodLevel();
-        int levelLast = stats.getPrevFoodLevel();
 
         for (int i = 0; i < 10; ++i)
         {
@@ -501,14 +500,6 @@ public class GuiIngameForge extends GuiIngame
             }
 
             drawTexturedModalRect(x, y, 16 + background * 9, 27, 9, 9);
-
-            if (unused)
-            {
-                if (idx < levelLast)
-                    drawTexturedModalRect(x, y, icon + 54, 27, 9, 9);
-                else if (idx == levelLast)
-                    drawTexturedModalRect(x, y, icon + 63, 27, 9, 9);
-            }
 
             if (idx < level)
                 drawTexturedModalRect(x, y, icon + 36, 27, 9, 9);

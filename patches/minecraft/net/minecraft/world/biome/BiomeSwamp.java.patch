@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeSwamp.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSwamp.java
-@@ -86,4 +86,10 @@
+@@ -97,4 +97,10 @@
      {
          return 6975545;
      }

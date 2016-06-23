@@ -158,7 +158,7 @@ public class BlockSnapshot implements Serializable
     public TileEntity getTileEntity()
     {
         if (getNbt() != null)
-            return TileEntity.create(getNbt());
+            return TileEntity.func_190200_a(getWorld(), getNbt());
         else return null;
     }
 

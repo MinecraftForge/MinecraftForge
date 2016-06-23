@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecart.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecart.java
-@@ -55,6 +55,20 @@
+@@ -58,6 +58,20 @@
      @SideOnly(Side.CLIENT)
      private double field_70506_as;
  
@@ -21,7 +21,7 @@
      public EntityMinecart(World p_i1712_1_)
      {
          super(p_i1712_1_);
-@@ -101,18 +115,20 @@
+@@ -104,18 +118,20 @@
      @Nullable
      public AxisAlignedBB func_70114_g(Entity p_70114_1_)
      {
@@ -43,7 +43,7 @@
      }
  
      public EntityMinecart(World p_i1713_1_, double p_i1713_2_, double p_i1713_4_, double p_i1713_6_)
-@@ -318,7 +334,7 @@
+@@ -326,7 +342,7 @@
              BlockPos blockpos = new BlockPos(k, l, i1);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -52,19 +52,32 @@
              {
                  this.func_180460_a(blockpos, iblockstate);
  
-@@ -357,7 +373,10 @@
+@@ -365,9 +381,13 @@
  
              this.func_70101_b(this.field_70177_z, this.field_70125_A);
  
--            for (Entity entity : this.field_70170_p.func_72839_b(this, this.func_174813_aQ().func_72314_b(0.20000000298023224D, 0.0D, 0.20000000298023224D)))
+-            if (this.func_184264_v() == EntityMinecart.Type.RIDEABLE && this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y > 0.01D)
 +            AxisAlignedBB box;
 +            if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
 +            else                               box = this.func_174813_aQ().func_72314_b(0.20000000298023224D, 0.0D, 0.20000000298023224D);
-+            for (Entity entity : this.field_70170_p.func_72839_b(this, box))
++
++            if (canBeRidden() && this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y > 0.01D)
              {
-                 if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof EntityMinecart)
+-                List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ().func_72314_b(0.20000000298023224D, 0.0D, 0.20000000298023224D), EntitySelectors.<Entity>func_188442_a(this));
++                List<Entity> list = this.field_70170_p.func_175674_a(this, box, EntitySelectors.<Entity>func_188442_a(this));
+ 
+                 if (!list.isEmpty())
                  {
-@@ -366,6 +385,7 @@
+@@ -388,7 +408,7 @@
+             }
+             else
+             {
+-                for (Entity entity : this.field_70170_p.func_72839_b(this, this.func_174813_aQ().func_72314_b(0.20000000298023224D, 0.0D, 0.20000000298023224D)))
++                for (Entity entity : this.field_70170_p.func_72839_b(this, box))
+                 {
+                     if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof EntityMinecart)
+                     {
+@@ -398,6 +418,7 @@
              }
  
              this.func_70072_I();
@@ -72,7 +85,7 @@
          }
      }
  
-@@ -380,10 +400,21 @@
+@@ -412,10 +433,21 @@
  
      protected void func_180459_n()
      {
@@ -95,7 +108,7 @@
          if (this.field_70122_E)
          {
              this.field_70159_w *= 0.5D;
-@@ -391,13 +422,13 @@
+@@ -423,13 +455,13 @@
              this.field_70179_y *= 0.5D;
          }
  
@@ -113,7 +126,7 @@
          }
      }
  
-@@ -417,25 +448,25 @@
+@@ -449,25 +481,25 @@
              flag1 = !flag;
          }
  
@@ -145,7 +158,7 @@
                  ++this.field_70163_u;
          }
  
-@@ -481,7 +512,7 @@
+@@ -513,7 +545,7 @@
              }
          }
  
@@ -154,9 +167,9 @@
          {
              double d17 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
-@@ -527,20 +558,8 @@
-         this.field_70165_t = d19 + d1 * d18;
-         this.field_70161_v = d20 + d2 * d18;
+@@ -559,20 +591,8 @@
+         this.field_70165_t = d18 + d1 * d10;
+         this.field_70161_v = d19 + d2 * d10;
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
 -        double d22 = this.field_70159_w;
 -        double d23 = this.field_70179_y;
@@ -176,7 +189,7 @@
          if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2])
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
-@@ -577,8 +596,14 @@
+@@ -609,8 +629,14 @@
              this.field_70179_y = d5 * (double)(i - p_180460_1_.func_177952_p());
          }
  
@@ -192,7 +205,7 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
-@@ -798,13 +823,19 @@
+@@ -832,6 +858,12 @@
  
      public void func_70108_f(Entity p_70108_1_)
      {
@@ -205,15 +218,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              if (!p_70108_1_.field_70145_X && !this.field_70145_X)
-             {
-                 if (!this.func_184196_w(p_70108_1_))
-                 {
--                    if (p_70108_1_ instanceof EntityLivingBase && this.func_184264_v() == EntityMinecart.Type.RIDEABLE && this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y > 0.01D && !(p_70108_1_ instanceof EntityPlayer) && !(p_70108_1_ instanceof EntityIronGolem) && !this.func_184207_aI() && !p_70108_1_.func_184218_aH())
-+                    if (p_70108_1_ instanceof EntityLivingBase && canBeRidden() && this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y > 0.01D && !(p_70108_1_ instanceof EntityPlayer) && !(p_70108_1_ instanceof EntityIronGolem) && !this.func_184207_aI() && !p_70108_1_.func_184218_aH())
-                     {
-                         p_70108_1_.func_184220_m(this);
-                     }
-@@ -850,7 +881,7 @@
+@@ -879,7 +911,7 @@
                              double d7 = p_70108_1_.field_70159_w + this.field_70159_w;
                              double d8 = p_70108_1_.field_70179_y + this.field_70179_y;
  
@@ -222,7 +227,7 @@
                              {
                                  this.field_70159_w *= 0.20000000298023224D;
                                  this.field_70179_y *= 0.20000000298023224D;
-@@ -858,7 +889,7 @@
+@@ -887,7 +919,7 @@
                                  p_70108_1_.field_70159_w *= 0.949999988079071D;
                                  p_70108_1_.field_70179_y *= 0.949999988079071D;
                              }
@@ -231,7 +236,7 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -985,6 +1016,221 @@
+@@ -1017,6 +1049,221 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
  

@@ -235,7 +235,7 @@
          GlStateManager.func_179140_f();
 +        GlStateManager.func_179124_c(1F, 1F, 1F); //Forge: Reset color in case Items change it.
 +        GlStateManager.func_179147_l(); //Forge: Make sure blend is enabled else tabs show a white border.
-         this.func_73729_b(l, i1, j, k, 28, j1);
+         this.func_73729_b(l, i1, j, k, 28, 32);
          this.field_73735_i = 100.0F;
          this.field_146296_j.field_77023_b = 100.0F;
 @@ -794,6 +880,15 @@

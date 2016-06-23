@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomePlains.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomePlains.java
-@@ -92,4 +92,19 @@
- 
+@@ -95,6 +95,21 @@
          super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
      }
-+
+ 
 +    @Override
 +    public void addDefaultFlowers()
 +    {
@@ -19,4 +18,7 @@
 +        addFlower(red.func_176223_P().func_177226_a(red.func_176494_l(), BlockFlower.EnumFlowerType.OXEYE_DAISY), 20);
 +        addFlower(yel.func_176223_P().func_177226_a(yel.func_176494_l(), BlockFlower.EnumFlowerType.DANDELION), 30);
 +    }
- }
++
+     public WorldGenAbstractTree func_150567_a(Random p_150567_1_)
+     {
+         return (WorldGenAbstractTree)(p_150567_1_.nextInt(3) == 0 ? field_76758_O : field_76757_N);

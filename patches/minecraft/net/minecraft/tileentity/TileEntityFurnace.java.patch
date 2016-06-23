@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -114,9 +114,9 @@
+@@ -122,9 +122,9 @@
              }
          }
  
@@ -13,7 +13,7 @@
          this.field_145963_i = func_145952_a(this.field_145957_n[1]);
  
          if (p_145839_1_.func_150297_b("CustomName", 8))
-@@ -128,9 +128,9 @@
+@@ -136,9 +136,9 @@
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
      {
          super.func_189515_b(p_189515_1_);
@@ -26,7 +26,7 @@
          NBTTagList nbttaglist = new NBTTagList();
  
          for (int i = 0; i < this.field_145957_n.length; ++i)
-@@ -198,8 +198,7 @@
+@@ -207,8 +207,7 @@
  
                              if (this.field_145957_n[1].field_77994_a == 0)
                              {
@@ -36,7 +36,7 @@
                              }
                          }
                      }
-@@ -254,7 +253,11 @@
+@@ -263,7 +262,11 @@
          else
          {
              ItemStack itemstack = FurnaceRecipes.func_77602_a().func_151395_a(this.field_145957_n[0]);
@@ -49,7 +49,7 @@
          }
      }
  
-@@ -270,7 +273,7 @@
+@@ -279,7 +282,7 @@
              }
              else if (this.field_145957_n[2].func_77973_b() == itemstack.func_77973_b())
              {
@@ -58,14 +58,14 @@
              }
  
              if (this.field_145957_n[0].func_77973_b() == Item.func_150898_a(Blocks.field_150360_v) && this.field_145957_n[0].func_77960_j() == 1 && this.field_145957_n[1] != null && this.field_145957_n[1].func_77973_b() == Items.field_151133_ar)
-@@ -317,7 +320,15 @@
+@@ -326,7 +329,15 @@
                  }
              }
  
--            return item instanceof ItemTool && ((ItemTool)item).func_77861_e().equals("WOOD") ? 200 : (item instanceof ItemSword && ((ItemSword)item).func_150932_j().equals("WOOD") ? 200 : (item instanceof ItemHoe && ((ItemHoe)item).func_77842_f().equals("WOOD") ? 200 : (item == Items.field_151055_y ? 100 : (item == Items.field_151044_h ? 1600 : (item == Items.field_151129_at ? 20000 : (item == Item.func_150898_a(Blocks.field_150345_g) ? 100 : (item == Items.field_151072_bj ? 2400 : 0)))))));
-+            if (item instanceof ItemTool && ((ItemTool)item).func_77861_e().equals("WOOD")) return 200;
-+            if (item instanceof ItemSword && ((ItemSword)item).func_150932_j().equals("WOOD")) return 200;
-+            if (item instanceof ItemHoe && ((ItemHoe)item).func_77842_f().equals("WOOD")) return 200;
+-            return item instanceof ItemTool && "WOOD".equals(((ItemTool)item).func_77861_e()) ? 200 : (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j()) ? 200 : (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f()) ? 200 : (item == Items.field_151055_y ? 100 : (item == Items.field_151044_h ? 1600 : (item == Items.field_151129_at ? 20000 : (item == Item.func_150898_a(Blocks.field_150345_g) ? 100 : (item == Items.field_151072_bj ? 2400 : 0)))))));
++            if (item instanceof ItemTool && "WOOD".equals(((ItemTool)item).func_77861_e())) return 200;
++            if (item instanceof ItemSword && "WOOD".equals(((ItemSword)item).func_150932_j())) return 200;
++            if (item instanceof ItemHoe && "WOOD".equals(((ItemHoe)item).func_77842_f())) return 200;
 +            if (item == Items.field_151055_y) return 100;
 +            if (item == Items.field_151044_h) return 1600;
 +            if (item == Items.field_151129_at) return 20000;
@@ -75,7 +75,7 @@
          }
      }
  
-@@ -438,4 +449,22 @@
+@@ -447,4 +458,22 @@
              this.field_145957_n[i] = null;
          }
      }

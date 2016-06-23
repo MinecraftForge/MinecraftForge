@@ -267,7 +267,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> fieldMap = getFieldMap(owner);
-        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : name;
+        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : fieldMap!=null && fieldMap.containsKey(name+":null") ? fieldMap.get(name+":null") :name;
     }
 
     @Override
@@ -443,7 +443,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     public String getStaticFieldType(String oldType, String oldName, String newType, String newName)
     {
-        String fType = getFieldType(oldType, oldName);
+        String fType = getFieldType(newType, newName);
         if (oldType.equals(newType))
         {
             return fType;

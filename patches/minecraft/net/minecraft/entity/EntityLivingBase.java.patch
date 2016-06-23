@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -191,10 +191,11 @@
+@@ -193,10 +193,11 @@
          {
              float f = (float)MathHelper.func_76123_f(this.field_70143_R - 3.0F);
  
@@ -13,7 +13,7 @@
                  ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.func_176210_f(p_184231_4_)});
              }
          }
-@@ -271,7 +272,7 @@
+@@ -273,7 +274,7 @@
                      }
                  }
  
@@ -22,7 +22,7 @@
                  {
                      this.func_184210_p();
                  }
-@@ -370,7 +371,7 @@
+@@ -372,7 +373,7 @@
              if (!this.field_70170_p.field_72995_K && (this.func_70684_aJ() || this.field_70718_bc > 0 && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_82766_b("doMobLoot")))
              {
                  int i = this.func_70693_a(this.field_70717_bb);
@@ -31,7 +31,7 @@
                  while (i > 0)
                  {
                      int j = EntityXPOrb.func_70527_a(i);
-@@ -431,6 +432,7 @@
+@@ -433,6 +434,7 @@
      {
          this.field_70755_b = p_70604_1_;
          this.field_70756_c = this.field_70173_aa;
@@ -39,7 +39,7 @@
      }
  
      public EntityLivingBase func_110144_aD()
-@@ -784,6 +786,8 @@
+@@ -793,6 +795,8 @@
  
      public void func_70691_i(float p_70691_1_)
      {
@@ -48,7 +48,7 @@
          float f = this.func_110143_aJ();
  
          if (f > 0.0F)
-@@ -804,6 +808,7 @@
+@@ -813,6 +817,7 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -56,7 +56,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -892,9 +897,9 @@
+@@ -902,9 +907,9 @@
                          this.field_70718_bc = 100;
                          this.field_70717_bb = (EntityPlayer)entity;
                      }
@@ -68,7 +68,7 @@
  
                          if (entitywolf.func_70909_n())
                          {
-@@ -1016,6 +1021,7 @@
+@@ -1043,6 +1048,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)
      {
@@ -76,7 +76,7 @@
          if (!this.field_70729_aU)
          {
              Entity entity = p_70645_1_.func_76346_g();
-@@ -1043,11 +1049,24 @@
+@@ -1070,11 +1076,24 @@
                      i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
                  }
  
@@ -101,7 +101,7 @@
              }
  
              this.field_70170_p.func_72960_a(this, (byte)3);
-@@ -1124,7 +1143,7 @@
+@@ -1151,7 +1170,7 @@
              BlockPos blockpos = new BlockPos(i, j, k);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
              Block block = iblockstate.func_177230_c();
@@ -110,7 +110,7 @@
          }
      }
  
-@@ -1150,6 +1169,9 @@
+@@ -1177,6 +1196,9 @@
  
      public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
@@ -120,7 +120,7 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
-@@ -1242,6 +1264,8 @@
+@@ -1270,6 +1292,8 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -129,7 +129,7 @@
              p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
-@@ -1290,6 +1314,11 @@
+@@ -1319,6 +1343,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -141,7 +141,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1491,6 +1520,7 @@
+@@ -1521,6 +1550,7 @@
  
      public void func_110145_l(Entity p_110145_1_)
      {
@@ -149,7 +149,7 @@
          if (!(p_110145_1_ instanceof EntityBoat) && !(p_110145_1_ instanceof EntityHorse))
          {
              double d1 = p_110145_1_.field_70165_t;
-@@ -1515,7 +1545,7 @@
+@@ -1545,7 +1575,7 @@
  
                  if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                  {
@@ -158,7 +158,7 @@
                      {
                          this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                          return;
-@@ -1523,14 +1553,14 @@
+@@ -1553,14 +1583,14 @@
  
                      BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
@@ -175,7 +175,7 @@
                  {
                      d1 = d11;
                      d13 = this.field_70163_u + 2.0D;
-@@ -1601,6 +1631,7 @@
+@@ -1631,6 +1661,7 @@
          }
  
          this.field_70160_al = true;
@@ -183,7 +183,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1860,6 +1891,7 @@
+@@ -1903,6 +1934,7 @@
  
      public void func_70071_h_()
      {
@@ -191,7 +191,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2366,6 +2398,40 @@
+@@ -2409,6 +2441,40 @@
          this.field_70752_e = true;
      }
  
@@ -232,7 +232,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2386,12 +2452,19 @@
+@@ -2429,12 +2495,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -253,7 +253,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2409,8 +2482,10 @@
+@@ -2452,8 +2525,10 @@
  
          if (itemstack != null && !this.func_184587_cr())
          {
@@ -265,7 +265,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2493,6 +2568,8 @@
+@@ -2536,6 +2611,8 @@
              this.func_184584_a(this.field_184627_bm, 16);
              ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
  
@@ -274,7 +274,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  itemstack = null;
-@@ -2523,7 +2600,8 @@
+@@ -2566,7 +2643,8 @@
      {
          if (this.field_184627_bm != null)
          {
@@ -284,7 +284,7 @@
          }
  
          this.func_184602_cy();
-@@ -2642,4 +2720,28 @@
+@@ -2685,4 +2763,28 @@
      {
          return true;
      }

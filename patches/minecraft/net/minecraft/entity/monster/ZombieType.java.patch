@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/ZombieType.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/ZombieType.java
+@@ -38,8 +38,10 @@
+         return this.field_190163_h ? this.func_190150_a() - 1 : 0;
+     }
+ 
++    @javax.annotation.Nullable
+     public static ZombieType func_190146_a(int p_190146_0_)
+     {
++        if (p_190146_0_ < 0 || p_190146_0_ >= values().length) return null;
+         return values()[p_190146_0_];
+     }
+ 

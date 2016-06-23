@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -200,6 +200,7 @@
+@@ -209,6 +209,7 @@
  
      public boolean func_184230_a(EntityPlayer p_184230_1_, @Nullable ItemStack p_184230_2_, EnumHand p_184230_3_)
      {
@@ -8,7 +8,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              p_184230_1_.func_71007_a(this);
-@@ -279,6 +280,25 @@
+@@ -288,6 +289,25 @@
          }
      }
  

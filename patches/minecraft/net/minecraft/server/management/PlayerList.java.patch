@@ -199,8 +199,8 @@
 -        if (p_82448_1_.field_71093_bK == -1)
 +        if (false && p_82448_1_.field_71093_bK == -1)
          {
-             d0 = MathHelper.func_151237_a(d0 / d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
-             d1 = MathHelper.func_151237_a(d1 / d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+             d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
+             d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
 @@ -587,7 +646,7 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }
@@ -208,8 +208,8 @@
 -        else if (p_82448_1_.field_71093_bK == 0)
 +        else if (false && p_82448_1_.field_71093_bK == 0)
          {
-             d0 = MathHelper.func_151237_a(d0 * d2, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
-             d1 = MathHelper.func_151237_a(d1 * d2, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
+             d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
+             d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
 @@ -598,7 +657,8 @@
                  p_82448_3_.func_72866_a(p_82448_1_, false);
              }

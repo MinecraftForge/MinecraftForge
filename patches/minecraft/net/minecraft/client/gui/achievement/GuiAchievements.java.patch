@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 @@ -49,6 +49,10 @@
-     private StatisticsManager field_146556_E;
+     private final StatisticsManager field_146556_E;
      private boolean field_146558_F = true;
  
 +    private int currentPage = -1;
@@ -11,10 +11,10 @@
      public GuiAchievements(GuiScreen p_i45026_1_, StatisticsManager p_i45026_2_)
      {
          this.field_146562_a = p_i45026_1_;
-@@ -57,6 +61,14 @@
-         int j = 141;
-         this.field_146569_s = this.field_146567_u = this.field_146565_w = (double)(AchievementList.field_187982_f.field_75993_a * 24 - i / 2 - 12);
-         this.field_146568_t = this.field_146566_v = this.field_146573_x = (double)(AchievementList.field_187982_f.field_75991_b * 24 - j / 2);
+@@ -61,6 +65,14 @@
+         this.field_146573_x = (double)(AchievementList.field_187982_f.field_75991_b * 24 - 70);
+         this.field_146568_t = this.field_146573_x;
+         this.field_146566_v = this.field_146573_x;
 +        minecraftAchievements.clear();
 +        for (Achievement achievement : AchievementList.field_187981_e)
 +        {
@@ -26,7 +26,7 @@
      }
  
      public void func_73866_w_()
-@@ -64,6 +76,7 @@
+@@ -68,6 +80,7 @@
          this.field_146297_k.func_147114_u().func_147297_a(new CPacketClientStatus(CPacketClientStatus.State.REQUEST_STATS));
          this.field_146292_n.clear();
          this.field_146292_n.add(new GuiOptionButton(1, this.field_146294_l / 2 + 24, this.field_146295_m / 2 + 74, 80, 20, I18n.func_135052_a("gui.done", new Object[0])));
@@ -34,7 +34,7 @@
      }
  
      protected void func_146284_a(GuiButton p_146284_1_) throws IOException
-@@ -74,12 +87,22 @@
+@@ -78,12 +91,22 @@
              {
                  this.field_146297_k.func_147108_a(this.field_146562_a);
              }
@@ -58,7 +58,7 @@
          {
              this.field_146297_k.func_147108_a((GuiScreen)null);
              this.field_146297_k.func_71381_h();
-@@ -257,7 +280,9 @@
+@@ -264,7 +287,9 @@
          GlStateManager.func_179143_c(518);
          GlStateManager.func_179094_E();
          GlStateManager.func_179109_b((float)i1, (float)j1, -200.0F);
@@ -69,7 +69,7 @@
          GlStateManager.func_179098_w();
          GlStateManager.func_179140_f();
          GlStateManager.func_179091_B();
-@@ -331,11 +356,12 @@
+@@ -338,11 +363,12 @@
          GlStateManager.func_179143_c(515);
          this.field_146297_k.func_110434_K().func_110577_a(field_146561_C);
  
@@ -85,7 +85,7 @@
              {
                  int k5 = achievement1.field_75993_a * 24 - i + 11;
                  int l5 = achievement1.field_75991_b * 24 - j + 11;
-@@ -389,9 +415,9 @@
+@@ -396,9 +422,9 @@
          GlStateManager.func_179091_B();
          GlStateManager.func_179142_g();
  
@@ -97,7 +97,7 @@
              int l6 = achievement2.field_75993_a * 24 - i;
              int j7 = achievement2.field_75991_b * 24 - j;
  
-@@ -432,6 +458,7 @@
+@@ -439,6 +465,7 @@
  
                  this.field_146297_k.func_110434_K().func_110577_a(field_146561_C);
  
@@ -105,7 +105,7 @@
                  if (achievement2.func_75984_f())
                  {
                      this.func_73729_b(l6 - 2, j7 - 2, 26, 202, 26, 26);
-@@ -440,6 +467,7 @@
+@@ -447,6 +474,7 @@
                  {
                      this.func_73729_b(l6 - 2, j7 - 2, 0, 202, 26, 26);
                  }
@@ -113,7 +113,7 @@
  
                  if (!this.field_146556_E.func_77442_b(achievement2))
                  {
-@@ -448,7 +476,7 @@
+@@ -455,7 +483,7 @@
                      this.field_146296_j.func_175039_a(false);
                  }
  

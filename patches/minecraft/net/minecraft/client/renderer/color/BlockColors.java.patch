@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/color/BlockColors.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/color/BlockColors.java
-@@ -26,7 +26,8 @@
+@@ -27,7 +27,8 @@
  @SideOnly(Side.CLIENT)
  public class BlockColors
  {
@@ -10,7 +10,16 @@
  
      public static BlockColors func_186723_a()
      {
-@@ -146,7 +147,7 @@
+@@ -147,7 +148,7 @@
+ 
+     public int func_189991_a(IBlockState p_189991_1_)
+     {
+-        IBlockColor iblockcolor = (IBlockColor)this.field_186725_a.func_148745_a(Block.func_149682_b(p_189991_1_.func_177230_c()));
++        IBlockColor iblockcolor = (IBlockColor)this.blockColorMap.get(p_189991_1_.func_177230_c().delegate);
+ 
+         if (iblockcolor != null)
+         {
+@@ -162,7 +163,7 @@
  
      public int func_186724_a(IBlockState p_186724_1_, @Nullable IBlockAccess p_186724_2_, @Nullable BlockPos p_186724_3_, int p_186724_4_)
      {
@@ -19,14 +28,14 @@
          return iblockcolor == null ? -1 : iblockcolor.func_186720_a(p_186724_1_, p_186724_2_, p_186724_3_, p_186724_4_);
      }
  
-@@ -156,7 +157,9 @@
- 
-         for (int j = p_186722_2_.length; i < j; ++i)
+@@ -170,7 +171,9 @@
+     {
+         for (Block block : p_186722_2_)
          {
--            this.field_186725_a.func_148746_a(p_186722_1_, Block.func_149682_b(p_186722_2_[i]));
-+            if (p_186722_2_[i] == null) throw new IllegalArgumentException("Block registered to block color handler cannot be null!");
-+            if (p_186722_2_[i].getRegistryName() == null) throw new IllegalArgumentException("Block must be registered before assigning color handler.");
-+            this.blockColorMap.put(p_186722_2_[i].delegate, p_186722_1_);
+-            this.field_186725_a.func_148746_a(p_186722_1_, Block.func_149682_b(block));
++            if (block == null) throw new IllegalArgumentException("Block registered to block color handler cannot be null!");
++            if (block.getRegistryName() == null) throw new IllegalArgumentException("Block must be registered before assigning color handler.");
++            this.blockColorMap.put(block.delegate, p_186722_1_);
          }
      }
  }

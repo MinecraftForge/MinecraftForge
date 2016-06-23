@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
-@@ -59,17 +59,18 @@
+@@ -60,17 +60,18 @@
  
      public WorldClient(NetHandlerPlayClient p_i45063_1_, WorldSettings p_i45063_2_, int p_i45063_3_, EnumDifficulty p_i45063_4_, Profiler p_i45063_5_)
      {

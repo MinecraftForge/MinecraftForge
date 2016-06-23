@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -268,7 +268,7 @@
+@@ -271,7 +271,7 @@
      {
          PacketThreadUtil.func_180031_a(p_147282_1_, this, this.field_147299_f);
          this.field_147299_f.field_71442_b = new PlayerControllerMP(this.field_147299_f, this);
@@ -9,7 +9,7 @@
          this.field_147299_f.field_71474_y.field_74318_M = p_147282_1_.func_149192_g();
          this.field_147299_f.func_71403_a(this.field_147300_g);
          this.field_147299_f.field_71439_g.field_71093_bK = p_147282_1_.func_149194_f();
-@@ -719,7 +719,7 @@
+@@ -725,7 +725,7 @@
  
              if (tileentity != null)
              {
@@ -18,7 +18,7 @@
              }
          }
      }
-@@ -797,14 +797,16 @@
+@@ -803,14 +803,16 @@
      public void func_147251_a(SPacketChat p_147251_1_)
      {
          PacketThreadUtil.func_180031_a(p_147251_1_, this, this.field_147299_f);
@@ -37,7 +37,7 @@
          }
      }
  
-@@ -860,6 +862,11 @@
+@@ -866,6 +868,11 @@
          float f = (float)(p_147281_1_.func_149028_l() * 360) / 256.0F;
          float f1 = (float)(p_147281_1_.func_149030_m() * 360) / 256.0F;
          EntityLivingBase entitylivingbase = (EntityLivingBase)EntityList.func_75616_a(p_147281_1_.func_149025_e(), this.field_147299_f.field_71441_e);
@@ -47,9 +47,9 @@
 +            return;
 +        }
          EntityTracker.func_187254_a(entitylivingbase, d0, d1, d2);
-         entitylivingbase.field_70761_aq = entitylivingbase.field_70759_as = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
-         Entity[] aentity = entitylivingbase.func_70021_al();
-@@ -931,7 +938,7 @@
+         entitylivingbase.field_70761_aq = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+         entitylivingbase.field_70759_as = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+@@ -938,7 +945,7 @@
  
                      if (entity1 == this.field_147299_f.field_71439_g && !flag)
                      {
@@ -58,7 +58,7 @@
                      }
                  }
              }
-@@ -1162,6 +1169,10 @@
+@@ -1169,6 +1176,10 @@
              {
                  tileentity.func_145839_a(p_147273_1_.func_148857_g());
              }
@@ -69,7 +69,7 @@
  
              if (flag && this.field_147299_f.field_71462_r instanceof GuiCommandBlock)
              {
-@@ -1259,15 +1270,15 @@
+@@ -1266,15 +1277,15 @@
              }
              else if (f == 101.0F)
              {
@@ -88,7 +88,7 @@
              }
          }
          else if (i == 6)
-@@ -1361,7 +1372,7 @@
+@@ -1368,7 +1379,7 @@
  
          if (entity instanceof EntityLivingBase)
          {

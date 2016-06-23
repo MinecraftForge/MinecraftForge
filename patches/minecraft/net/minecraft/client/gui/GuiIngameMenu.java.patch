@@ -1,17 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngameMenu.java
-@@ -30,8 +30,9 @@
+@@ -30,7 +30,8 @@
  
-         this.field_146292_n.add(new GuiButton(4, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 24 + i, I18n.func_135052_a("menu.returnToGame", new Object[0])));
-         this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 96 + i, 98, 20, I18n.func_135052_a("menu.options", new Object[0])));
+         this.field_146292_n.add(new GuiButton(4, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 24 + -16, I18n.func_135052_a("menu.returnToGame", new Object[0])));
+         this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 96 + -16, 98, 20, I18n.func_135052_a("menu.options", new Object[0])));
+-        GuiButton guibutton = this.func_189646_b(new GuiButton(7, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + -16, 98, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
 +        this.field_146292_n.add(new GuiButton(12, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + i, 98, 20, I18n.func_135052_a("fml.menu.modoptions")));
-         GuiButton guibutton;
--        this.field_146292_n.add(guibutton = new GuiButton(7, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 96 + i, 98, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
-+        this.field_146292_n.add(guibutton = new GuiButton(7, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 72 + i, 200, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
-         this.field_146292_n.add(new GuiButton(5, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 48 + i, 98, 20, I18n.func_135052_a("gui.achievements", new Object[0])));
-         this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 48 + i, 98, 20, I18n.func_135052_a("gui.stats", new Object[0])));
++        GuiButton guibutton = this.func_189646_b(new GuiButton(7, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 72 + -16, 200, 20, I18n.func_135052_a("menu.shareToLan", new Object[0])));
          guibutton.field_146124_l = this.field_146297_k.func_71356_B() && !this.field_146297_k.func_71401_C().func_71344_c();
-@@ -74,13 +75,19 @@
+         this.field_146292_n.add(new GuiButton(5, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 48 + -16, 98, 20, I18n.func_135052_a("gui.achievements", new Object[0])));
+         this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 + 2, this.field_146295_m / 4 + 48 + -16, 98, 20, I18n.func_135052_a("gui.stats", new Object[0])));
+@@ -73,13 +74,19 @@
                  this.field_146297_k.func_71381_h();
                  break;
              case 5:

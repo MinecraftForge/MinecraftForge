@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -42,7 +42,7 @@
+@@ -46,7 +46,7 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
@@ -9,7 +9,7 @@
  {
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
      public int field_77994_a;
-@@ -56,6 +56,10 @@
+@@ -60,6 +60,10 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
@@ -20,25 +20,21 @@
      public ItemStack(Block p_i1876_1_)
      {
          this((Block)p_i1876_1_, 1);
-@@ -81,13 +85,15 @@
+@@ -85,9 +89,11 @@
          this((Item)p_i1880_1_, p_i1880_2_, 0);
      }
  
 -    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
-+    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_) { this (p_i1881_1_, p_i1881_2_, p_i1881_3_, null); }
++    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_){ this(p_i1881_1_, p_i1881_2_, p_i1881_3_, null); }
 +    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_, NBTTagCompound capNBT)
      {
-+        this.capNBT = capNBT;
-         this.field_179552_h = null;
-         this.field_179553_i = false;
-         this.field_179550_j = null;
-         this.field_179551_k = false;
 -        this.field_151002_e = p_i1881_1_;
++        this.capNBT = capNBT;
 +        this.func_150996_a(p_i1881_1_);
          this.field_77994_a = p_i1881_2_;
          this.field_77991_e = p_i1881_3_;
  
-@@ -115,7 +121,7 @@
+@@ -117,7 +123,7 @@
      public ItemStack func_77979_a(int p_77979_1_)
      {
          p_77979_1_ = Math.min(p_77979_1_, this.field_77994_a);
@@ -47,7 +43,7 @@
  
          if (this.field_77990_d != null)
          {
-@@ -128,11 +134,12 @@
+@@ -130,11 +136,12 @@
  
      public Item func_77973_b()
      {
@@ -61,7 +57,7 @@
          EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
  
          if (enumactionresult == EnumActionResult.SUCCESS)
-@@ -171,12 +178,16 @@
+@@ -173,12 +180,16 @@
              p_77955_1_.func_74782_a("tag", this.field_77990_d);
          }
  
@@ -79,7 +75,7 @@
          this.field_77994_a = p_77963_1_.func_74771_c("Count");
          this.field_77991_e = p_77963_1_.func_74765_d("Damage");
  
-@@ -194,11 +205,12 @@
+@@ -196,11 +207,12 @@
                  this.field_151002_e.func_179215_a(this.field_77990_d);
              }
          }
@@ -93,7 +89,7 @@
      }
  
      public boolean func_77985_e()
-@@ -208,7 +220,7 @@
+@@ -210,7 +222,7 @@
  
      public boolean func_77984_f()
      {
@@ -102,7 +98,7 @@
      }
  
      public boolean func_77981_g()
-@@ -218,32 +230,27 @@
+@@ -220,32 +232,27 @@
  
      public boolean func_77951_h()
      {
@@ -140,7 +136,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -275,8 +282,8 @@
+@@ -277,8 +284,8 @@
                  }
              }
  
@@ -151,7 +147,7 @@
          }
      }
  
-@@ -330,7 +337,7 @@
+@@ -332,7 +339,7 @@
  
      public boolean func_150998_b(IBlockState p_150998_1_)
      {
@@ -160,7 +156,7 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -340,7 +347,7 @@
+@@ -342,7 +349,7 @@
  
      public ItemStack func_77946_l()
      {
@@ -169,7 +165,7 @@
  
          if (this.field_77990_d != null)
          {
-@@ -352,7 +359,19 @@
+@@ -354,7 +361,19 @@
  
      public static boolean func_77970_a(@Nullable ItemStack p_77970_0_, @Nullable ItemStack p_77970_1_)
      {
@@ -190,7 +186,7 @@
      }
  
      public static boolean func_77989_b(@Nullable ItemStack p_77989_0_, @Nullable ItemStack p_77989_1_)
-@@ -362,7 +381,11 @@
+@@ -364,7 +383,11 @@
  
      private boolean func_77959_d(ItemStack p_77959_1_)
      {
@@ -203,7 +199,7 @@
      }
  
      public static boolean func_179545_c(@Nullable ItemStack p_179545_0_, @Nullable ItemStack p_179545_1_)
-@@ -762,6 +785,7 @@
+@@ -764,6 +787,7 @@
              }
          }
  
@@ -211,7 +207,7 @@
          return list;
      }
  
-@@ -873,7 +897,7 @@
+@@ -875,7 +899,7 @@
          }
          else
          {
@@ -220,7 +216,7 @@
          }
  
          return multimap;
-@@ -906,6 +930,18 @@
+@@ -908,6 +932,18 @@
      @Deprecated
      public void func_150996_a(Item p_150996_1_)
      {
@@ -239,7 +235,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -991,4 +1027,45 @@
+@@ -993,4 +1029,45 @@
              return false;
          }
      }

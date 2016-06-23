@@ -35,7 +35,7 @@
              map2.put(map1, blockstatecontainer$stateimplementation);
              list1.add(blockstatecontainer$stateimplementation);
          }
-@@ -166,6 +176,13 @@
+@@ -165,6 +175,13 @@
                  this.field_177237_b = p_i45660_2_;
              }
  
@@ -49,7 +49,7 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -441,5 +458,86 @@
+@@ -445,5 +462,86 @@
              {
                  this.field_177239_a.func_189540_a(this, p_189546_1_, p_189546_2_, p_189546_3_);
              }

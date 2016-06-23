@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
-@@ -58,6 +58,7 @@
+@@ -68,6 +68,7 @@
          list.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Field2.class, 3, MathHelper.func_76136_a(p_75084_0_, 2 + p_75084_1_, 4 + p_75084_1_ * 2)));
          list.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House2.class, 15, MathHelper.func_76136_a(p_75084_0_, 0, 1 + p_75084_1_)));
          list.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House3.class, 8, MathHelper.func_76136_a(p_75084_0_, 0 + p_75084_1_, 3 + p_75084_1_ * 2)));
@@ -8,7 +8,7 @@
          Iterator<StructureVillagePieces.PieceWeight> iterator = list.iterator();
  
          while (iterator.hasNext())
-@@ -130,6 +131,10 @@
+@@ -140,6 +141,10 @@
          {
              structurevillagepieces$village = StructureVillagePieces.House3.func_175849_a(p_176065_0_, p_176065_2_, p_176065_3_, p_176065_4_, p_176065_5_, p_176065_6_, p_176065_7_, p_176065_8_);
          }
@@ -19,7 +19,7 @@
  
          return structurevillagepieces$village;
      }
-@@ -1447,6 +1452,7 @@
+@@ -1539,6 +1544,7 @@
              public List<StructureVillagePieces.PieceWeight> field_74931_h;
              public List<StructureComponent> field_74932_i = Lists.<StructureComponent>newArrayList();
              public List<StructureComponent> field_74930_j = Lists.<StructureComponent>newArrayList();
@@ -27,38 +27,48 @@
  
              public Start()
              {
-@@ -1460,6 +1466,8 @@
+@@ -1551,6 +1557,8 @@
+                 this.field_74931_h = p_i2104_6_;
                  this.field_74928_c = p_i2104_7_;
                  Biome biome = p_i2104_1_.func_180300_a(new BlockPos(p_i2104_4_, 0, p_i2104_5_), Biomes.field_180279_ad);
-                 this.field_74927_b = biome == Biomes.field_76769_d || biome == Biomes.field_76786_s;
 +                this.biome = biome;
 +                this.startPiece = this;
-                 this.func_175846_a(this.field_74927_b);
-             }
  
-@@ -1520,6 +1528,7 @@
-             protected int field_143015_k = -1;
+                 if (biome instanceof BiomeDesert)
+                 {
+@@ -1623,6 +1631,7 @@
              private int field_74896_a;
-             private boolean field_143014_b;
+             protected int field_189928_h;
+             protected boolean field_189929_i;
 +            protected StructureVillagePieces.Start startPiece;
  
              public Village()
              {
-@@ -1532,6 +1541,7 @@
-                 if (p_i2107_1_ != null)
+@@ -1636,6 +1645,7 @@
                  {
-                     this.field_143014_b = p_i2107_1_.field_74927_b;
+                     this.field_189928_h = p_i2107_1_.field_189928_h;
+                     this.field_189929_i = p_i2107_1_.field_189929_i;
 +                    startPiece = p_i2107_1_;
                  }
              }
  
-@@ -1647,19 +1657,27 @@
-                         EntityVillager entityvillager = new EntityVillager(p_74893_1_);
-                         entityvillager.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
-                         entityvillager.func_180482_a(p_74893_1_.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null);
--                        entityvillager.func_70938_b(this.func_180779_c(i, entityvillager.func_70946_n()));
-+                        entityvillager.setProfession(this.chooseForgeProfession(i, entityvillager.getProfessionForge()));
-                         p_74893_1_.func_72838_d(entityvillager);
+@@ -1768,7 +1778,7 @@
+                             EntityZombie entityzombie = new EntityZombie(p_74893_1_);
+                             entityzombie.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
+                             entityzombie.func_180482_a(p_74893_1_.func_175649_E(new BlockPos(entityzombie)), (IEntityLivingData)null);
+-                            entityzombie.func_189778_a(ZombieType.func_190144_b(this.func_180779_c(i, 0)));
++                            entityzombie.setVillagerType(chooseForgeProfession(i, net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation("minecraft:farmer"))));
+                             entityzombie.func_110163_bv();
+                             p_74893_1_.func_72838_d(entityzombie);
+                         }
+@@ -1777,20 +1787,28 @@
+                             EntityVillager entityvillager = new EntityVillager(p_74893_1_);
+                             entityvillager.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
+                             entityvillager.func_180482_a(p_74893_1_.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null);
+-                            entityvillager.func_70938_b(this.func_180779_c(i, entityvillager.func_70946_n()));
++                            entityvillager.setProfession(this.chooseForgeProfession(i, entityvillager.getProfessionForge()));
+                             p_74893_1_.func_72838_d(entityvillager);
+                         }
                      }
                  }
              }
@@ -78,6 +88,6 @@
 +                net.minecraftforge.event.terraingen.BiomeEvent.GetVillageBlockID event = new net.minecraftforge.event.terraingen.BiomeEvent.GetVillageBlockID(startPiece == null ? null : startPiece.biome, p_175847_1_);
 +                net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS.post(event);
 +                if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.getReplacement();
-                 if (this.field_143014_b)
+                 if (this.field_189928_h == 1)
                  {
                      if (p_175847_1_.func_177230_c() == Blocks.field_150364_r || p_175847_1_.func_177230_c() == Blocks.field_150363_s)

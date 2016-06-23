@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderZombie.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderZombie.java
-@@ -69,21 +69,7 @@
+@@ -83,21 +83,7 @@
      {
          if (p_110775_1_.func_82231_m())
          {

@@ -21,8 +21,8 @@
                                              continue;
                                          }
                                      }
--                                    else if (p_184881_3_[8].equals("replace") && !block.func_149716_u())
-+                                    else if (p_184881_3_[8].equals("replace") && !block.hasTileEntity(state))
+-                                    else if ("replace".equals(p_184881_3_[8]) && !block.func_149716_u())
++                                    else if ("replace".equals(p_184881_3_[8]) && !block.hasTileEntity(state))
                                      {
                                          if (p_184881_3_.length > 9)
                                          {
