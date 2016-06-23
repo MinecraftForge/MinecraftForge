@@ -93,7 +93,6 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -653,13 +652,6 @@ public class ForgeHooks
         else if (end.length() > 0)
             ichat.appendText(string.substring(lastEnd));
         return ichat;
-    }
-
-    public static boolean canInteractWith(EntityPlayer player, Container openContainer)
-    {
-        PlayerOpenContainerEvent event = new PlayerOpenContainerEvent(player, openContainer);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.DEFAULT ? event.isCanInteractWith() : event.getResult() == Event.Result.ALLOW ? true : false;
     }
 
     public static int onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, BlockPos pos)

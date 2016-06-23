@@ -18,15 +18,6 @@
          {
              int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
              int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
-@@ -252,7 +253,7 @@
- 
-         this.field_71070_bA.func_75142_b();
- 
--        if (!this.field_70170_p.field_72995_K && !this.field_71070_bA.func_75145_c(this))
-+        if (!this.field_70170_p.field_72995_K && !net.minecraftforge.common.ForgeHooks.canInteractWith(this, this.field_71070_bA))
-         {
-             this.func_71053_j();
-             this.field_71070_bA = this.field_71069_bz;
 @@ -435,6 +436,7 @@
  
      public void func_70645_a(DamageSource p_70645_1_)

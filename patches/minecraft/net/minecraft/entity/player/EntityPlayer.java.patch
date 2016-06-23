@@ -20,15 +20,6 @@
          this.field_70145_X = this.func_175149_v();
  
          if (this.func_175149_v())
-@@ -220,7 +226,7 @@
- 
-         super.func_70071_h_();
- 
--        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !this.field_71070_bA.func_75145_c(this))
-+        if (!this.field_70170_p.field_72995_K && this.field_71070_bA != null && !net.minecraftforge.common.ForgeHooks.canInteractWith(this, this.field_71070_bA))
-         {
-             this.func_71053_j();
-             this.field_71070_bA = this.field_71069_bz;
 @@ -361,6 +367,7 @@
                  this.func_70105_a(f, f1);
              }
