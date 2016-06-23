@@ -47,7 +47,18 @@
                  this.func_70106_y();
              }
          }
-@@ -280,6 +296,7 @@
+@@ -196,6 +212,10 @@
+                     {
+                         return false;
+                     }
++                    else if (!itemstack.areCapsCompatible(itemstack1))
++                    {
++                        return false;
++                    }
+                     else
+                     {
+                         itemstack1.field_77994_a += itemstack.field_77994_a;
+@@ -280,6 +300,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -55,7 +66,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -320,20 +337,23 @@
+@@ -320,20 +341,23 @@
          NBTTagCompound nbttagcompound = p_70037_1_.func_74775_l("Item");
          this.func_92058_a(ItemStack.func_77949_a(nbttagcompound));
  
@@ -84,7 +95,7 @@
              {
                  if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150364_r))
                  {
-@@ -370,6 +390,7 @@
+@@ -370,6 +394,7 @@
                      }
                  }
  
@@ -92,7 +103,7 @@
                  if (!this.func_174814_R())
                  {
                      this.field_70170_p.func_184148_a((EntityPlayer)null, p_70100_1_.field_70165_t, p_70100_1_.field_70163_u, p_70100_1_.field_70161_v, SoundEvents.field_187638_cR, SoundCategory.PLAYERS, 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-@@ -416,11 +437,6 @@
+@@ -416,11 +441,6 @@
  
          if (itemstack == null)
          {
@@ -104,7 +115,7 @@
              return new ItemStack(Blocks.field_150348_b);
          }
          else
-@@ -494,6 +510,6 @@
+@@ -494,6 +514,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
