@@ -20,11 +20,18 @@ public class MissingModsException extends EnhancedRuntimeException
 {
     private static final long serialVersionUID = 1L;
     public final Set<ArtifactVersion> missingMods;
+    private final String modName;
 
     public MissingModsException(Set<ArtifactVersion> missingMods, String id, String name)
     {
         super(String.format("Mod %s (%s) requires %s", id, name, missingMods));
         this.missingMods = missingMods;
+        this.modName = name;
+    }
+
+    public String getModName()
+    {
+        return modName;
     }
 
     @Override

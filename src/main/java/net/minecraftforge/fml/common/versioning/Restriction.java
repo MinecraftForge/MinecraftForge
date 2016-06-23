@@ -31,6 +31,8 @@ package net.minecraftforge.fml.common.versioning;
  * under the License.
  */
 
+import net.minecraft.client.resources.I18n;
+
 /**
  * Describes a restriction in versioning.
  *
@@ -208,5 +210,46 @@ public class Restriction
         buf.append( isUpperBoundInclusive() ? "]" : ")" );
 
         return buf.toString();
+    }
+
+    public String toStringFriendly()
+    {
+        if ( getLowerBound() == null && getUpperBound() == null )
+        {
+            return I18n.format("fml.messages.version.restriction.any");
+        }
+        else if ( getLowerBound() != null && getUpperBound() != null )
+        {
+            if ( getLowerBound().equals(getUpperBound()) )
+            {
+                return getLowerBound().toString();
+            }
+            else
+            {
+                return I18n.format("fml.messages.version.restriction.bounded", getLowerBound(), getUpperBound());
+            }
+        }
+        else if ( getLowerBound() != null )
+        {
+            if ( isLowerBoundInclusive() )
+            {
+                return I18n.format("fml.messages.version.restriction.lower.inclusive", getLowerBound());
+            }
+            else
+            {
+                return I18n.format("fml.messages.version.restriction.lower.exclusive", getLowerBound());
+            }
+        }
+        else
+        {
+            if ( isUpperBoundInclusive() )
+            {
+                return I18n.format("fml.messages.version.restriction.upper.inclusive", getUpperBound());
+            }
+            else
+            {
+                return I18n.format("fml.messages.version.restriction.upper.exclusive", getUpperBound());
+            }
+        }
     }
 }
