@@ -375,7 +375,7 @@ public class VillagerRegistry
             }
         }
         else if (entity.func_189777_di() != null)
-            entity.func_189778_a(null);
+            entity.func_189778_a(ZombieType.NORMAL);
     }
     public static void onSetProfession(EntityZombie entity, ZombieType type, int network)
     {
