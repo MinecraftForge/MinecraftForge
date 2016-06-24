@@ -892,6 +892,7 @@ public final class ModelLoader extends ModelBakery
         private White()
         {
             super(LOCATION.toString());
+            this.width = this.height = 16;
         }
 
         @Override
@@ -903,10 +904,10 @@ public final class ModelLoader extends ModelBakery
         @Override
         public boolean load(IResourceManager manager, ResourceLocation location)
         {
-            BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage image = new BufferedImage(this.getIconWidth(), this.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = image.createGraphics();
             graphics.setBackground(Color.WHITE);
-            graphics.clearRect(0, 0, 16, 16);
+            graphics.clearRect(0, 0, this.getIconWidth(), this.getIconHeight());
             int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
             pixels[0] = new int[image.getWidth() * image.getHeight()];
             image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth());
