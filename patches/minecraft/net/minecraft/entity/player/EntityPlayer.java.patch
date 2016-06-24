@@ -390,7 +390,31 @@
      }
  
      protected void func_71061_d_()
-@@ -2027,6 +2123,18 @@
+@@ -1867,6 +1963,7 @@
+ 
+     public void func_71023_q(int p_71023_1_)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerAddXpEvent(this, p_71023_1_))) return;
+         this.func_85039_t(p_71023_1_);
+         int i = Integer.MAX_VALUE - this.field_71067_cb;
+ 
+@@ -1891,6 +1988,7 @@
+ 
+     public void func_71013_b(int p_71013_1_)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeLevelEvent(this, -p_71013_1_))) return;
+         this.field_71068_ca -= p_71013_1_;
+ 
+         if (this.field_71068_ca < 0)
+@@ -1905,6 +2003,7 @@
+ 
+     public void func_82242_a(int p_82242_1_)
+     {
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerChangeLevelEvent(this, p_82242_1_))) return;
+         this.field_71068_ca += p_82242_1_;
+ 
+         if (this.field_71068_ca < 0)
+@@ -2027,6 +2126,18 @@
          this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
@@ -409,7 +433,7 @@
      }
  
      protected boolean func_70041_e_()
-@@ -2126,7 +2234,10 @@
+@@ -2126,7 +2237,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -421,7 +445,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2135,7 +2246,7 @@
+@@ -2135,7 +2249,7 @@
  
      public float func_70047_e()
      {
@@ -430,7 +454,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2346,6 +2457,161 @@
+@@ -2346,6 +2460,161 @@
          return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
      }
  
