@@ -73,7 +73,39 @@
          {
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
-@@ -921,6 +937,7 @@
+@@ -740,6 +756,7 @@
+             this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
+             this.field_71070_bA.field_75152_c = this.field_71139_cq;
+             this.field_71070_bA.func_75132_a(this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+         }
+     }
+ 
+@@ -783,6 +800,7 @@
+ 
+             this.field_71070_bA.field_75152_c = this.field_71139_cq;
+             this.field_71070_bA.func_75132_a(this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+         }
+     }
+ 
+@@ -792,6 +810,7 @@
+         this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
+         this.field_71070_bA.field_75152_c = this.field_71139_cq;
+         this.field_71070_bA.func_75132_a(this);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+         IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
+         ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
+         this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
+@@ -890,6 +909,7 @@
+     public void func_71128_l()
+     {
+         this.field_71070_bA.func_75134_a(this);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.field_71070_bA));
+         this.field_71070_bA = this.field_71069_bz;
+     }
+ 
+@@ -921,6 +941,7 @@
      {
          if (p_71064_1_ != null)
          {

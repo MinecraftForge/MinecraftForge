@@ -98,6 +98,7 @@ public class FMLNetworkHandler
                 entityPlayerMP.openContainer = remoteGuiContainer;
                 entityPlayerMP.openContainer.windowId = windowId;
                 entityPlayerMP.openContainer.addListener(entityPlayerMP);
+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(entityPlayer, entityPlayer.openContainer));
             }
         }
         else if (entityPlayer instanceof FakePlayer)
