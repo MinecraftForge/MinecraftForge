@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class PlayerAddXpEvent extends PlayerEvent
 {
-    private final int amount;
+    private int amount;
 
     public PlayerAddXpEvent(EntityPlayer player, int amount)
     {
@@ -22,5 +22,10 @@ public class PlayerAddXpEvent extends PlayerEvent
     public int getAmount()
     {
         return this.amount;
+    }
+    
+    public void setAmount(int amount)
+    {
+        this.amount = amount;
     }
 }

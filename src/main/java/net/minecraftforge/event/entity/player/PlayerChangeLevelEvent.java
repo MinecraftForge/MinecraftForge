@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class PlayerChangeLevelEvent extends PlayerEvent
 {
-    private final int levels;
+    private int levels;
 
     public PlayerChangeLevelEvent(EntityPlayer player, int levels)
     {
@@ -23,5 +23,10 @@ public class PlayerChangeLevelEvent extends PlayerEvent
     public int getLevels()
     {
         return this.levels;
+    }
+    
+    public void setLevels(int levels)
+    {
+        this.levels = levels;
     }
 }
