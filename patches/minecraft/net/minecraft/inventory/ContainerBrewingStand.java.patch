@@ -9,7 +9,15 @@
              }
  
              public int func_75219_a()
-@@ -245,8 +245,7 @@
+@@ -229,6 +229,7 @@
+ 
+             public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
+             {
++                net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_82870_1_, p_82870_2_);
+                 if (PotionUtils.func_185191_c(p_82870_2_) != PotionTypes.field_185230_b)
+                 {
+                     this.field_75244_a.func_71029_a(AchievementList.field_187970_B);
+@@ -245,8 +246,7 @@
                  }
                  else
                  {
