@@ -143,7 +143,16 @@
      }
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, @Nullable ItemStack p_180639_6_, EnumFacing p_180639_7_, float p_180639_8_, float p_180639_9_, float p_180639_10_)
-@@ -674,25 +681,35 @@
+@@ -633,6 +640,8 @@
+     {
+     }
+ 
++    // Forge: Use getStateForPlacement
++    @Deprecated
+     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
+     {
+         return this.func_176203_a(p_180642_7_);
+@@ -674,25 +683,35 @@
          p_180657_2_.func_71029_a(StatList.func_188055_a(this));
          p_180657_2_.func_71020_j(0.025F);
  
@@ -182,7 +191,7 @@
      }
  
      @Nullable
-@@ -788,9 +805,11 @@
+@@ -788,9 +807,11 @@
      }
  
      @Nullable
@@ -195,7 +204,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -887,6 +906,1141 @@
+@@ -887,6 +908,1159 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1331,6 +1340,24 @@
 +     */
 +    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
 +    {
++    }
++
++    /**
++     * Get the {@link IBlockState} to place
++     * @param world The world the block is being placed in
++     * @param pos The position the block is being placed at
++     * @param facing The side the block is being placed on
++     * @param hitX The x coordinate of the hit vector
++     * @param hitY The y coordinate of the hit vector
++     * @param hitZ The z coordinate of the hit vector
++     * @param meta The metadata of the {@link ItemStack} as processed by {@link Item#getMetadata(int)}
++     * @param placer The entity placing the block
++     * @param stack The {@link ItemStack} being used to place this block
++     * @return The {@link IBlockState} to be placed in the world
++     */
++    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, ItemStack stack)
++    {
++        return this.func_180642_a(world, pos, facing, hitX, hitY, hitZ, meta, placer);
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +

@@ -1,8 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -51,16 +51,8 @@
+@@ -49,18 +49,10 @@
+         if (p_180614_1_.field_77994_a != 0 && p_180614_2_.func_175151_a(p_180614_4_, p_180614_6_, p_180614_1_) && p_180614_3_.func_175716_a(this.field_150939_a, p_180614_4_, false, p_180614_6_, (Entity)null, p_180614_1_))
+         {
              int i = this.func_77647_b(p_180614_1_.func_77960_j());
-             IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_);
+-            IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_);
++            IBlockState iblockstate1 = this.field_150939_a.getStateForPlacement(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_, p_180614_1_);
  
 -            if (p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 11))
 +            if (placeBlockAt(p_180614_1_, p_180614_2_, p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, iblockstate1))
