@@ -687,7 +687,7 @@
 +     */
 +    public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return !state.func_185913_b();
++        return isAir(state, world, pos) || isLeaves(state, world, pos); //!state.isFullBlock();
 +    }
 +
 +    /**
