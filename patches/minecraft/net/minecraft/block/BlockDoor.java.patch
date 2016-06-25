@@ -9,6 +9,15 @@
          }
          else
          {
+@@ -176,7 +176,7 @@
+                 flag1 = true;
+             }
+ 
+-            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
++            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).isSideSolid(p_189540_2_,  p_189540_3_.func_177977_b(), EnumFacing.UP))
+             {
+                 p_189540_2_.func_175698_g(p_189540_3_);
+                 flag1 = true;
 @@ -221,7 +221,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
