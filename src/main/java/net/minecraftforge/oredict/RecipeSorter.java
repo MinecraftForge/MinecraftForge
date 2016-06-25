@@ -157,11 +157,17 @@ public class RecipeSorter implements Comparator<IRecipe>
     {
         Category c1 = getCategory(r1);
         Category c2 = getCategory(r2);
-        if (c1 == SHAPELESS && c2 == SHAPED) return  1;
-        if (c1 == SHAPED && c2 == SHAPELESS) return -1;
-        if (r2.getRecipeSize() < r1.getRecipeSize()) return -1;
-        if (r2.getRecipeSize() > r1.getRecipeSize()) return  1;
-        return getPriority(r2) - getPriority(r1); // high priority value first!
+        int categoryComparison = -c1.compareTo(c2);
+        if (categoryComparison != 0)
+        {
+            return categoryComparison;
+        }
+        else
+        {
+            if (r2.getRecipeSize() < r1.getRecipeSize()) return -1;
+            if (r2.getRecipeSize() > r1.getRecipeSize()) return  1;
+            return getPriority(r2) - getPriority(r1); // high priority value first!
+        }
     }
 
     private static Set<Class<?>> warned = Sets.newHashSet();
