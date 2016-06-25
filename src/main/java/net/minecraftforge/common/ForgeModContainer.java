@@ -77,15 +77,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
-    public static boolean disableStitchedFileSaving = false;
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
     public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
-    public static int defaultSpawnFuzz = 20;
-    public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static long java8Reminder = 0;
@@ -212,10 +209,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
-        prop.setComment("Set this to just disable the texture stitcher from writing the '{name}_{mipmap}.png files to disc. Just a small performance tweak. Default: true");
-        disableStitchedFileSaving = prop.getBoolean(true);
-
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
         prop.setComment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false");
         prop.setLanguageKey("forge.configgui.fullBoundingBoxLadders").setRequiresWorldRestart(true);
@@ -240,24 +233,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
-            "The spawn fuzz when a player respawns in the world, this is controllable by WorldType, this config option is for the default overworld.",
-            1, Integer.MAX_VALUE);
-        prop.setLanguageKey("forge.configgui.spawnfuzz").setRequiresWorldRestart(false);
-        defaultSpawnFuzz = prop.getInt(20);
-        propOrder.add(prop.getName());
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "spawnHasFuzz", Boolean.TRUE,
-                "If the overworld has ANY spawn fuzz at all. If not, the spawn will always be the exact same location.");
-        prop.setLanguageKey("forge.configgui.hasspawnfuzz").setRequiresWorldRestart(false);
-        defaultHasSpawnFuzz = prop.getBoolean(Boolean.TRUE);
-        propOrder.add(prop.getName());
-
-        prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,
-                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
-        forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
-        propOrder.add(prop.getName());
-
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
         propOrder = new ArrayList<String>();
@@ -268,10 +243,19 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         // Client-Side only properties
         propOrder = new ArrayList<String>();
-        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
+        // Move lighting pipeline setting from General to Client.
+        if (config.hasKey(CATEGORY_GENERAL, "forgeLightPipelineEnabled"))
+            config.moveProperty(CATEGORY_GENERAL, "forgeLightPipelineEnabled", CATEGORY_CLIENT);
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeLightPipelineEnabled", true,
+                "Enable the forge block rendering pipeline - fixes the lighting of custom models, may be required by some mods.");
+        prop.setLanguageKey("forge.configgui.forgeLightPipeline").setRequiresWorldRestart(true);
+        forgeLightPipelineEnabled = prop.getBoolean(true);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", false,
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
-        replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        replaceVanillaBucketModel = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
@@ -301,18 +285,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {
-        if (getMetadata().modId.equals(event.getModID()) && !event.isWorldRunning())
+        if (getMetadata().modId.equals(event.getModID()))
         {
-            if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
-            {
-                syncConfig(false);
-            }
-            else if ("chunkLoader".equals(event.getConfigID()))
+            if ("chunkLoader".equals(event.getConfigID()))
             {
                 ForgeChunkManager.syncConfigDefaults();
                 ForgeChunkManager.loadConfiguration();
             }
-            else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
+            else
             {
                 syncConfig(false);
             }
