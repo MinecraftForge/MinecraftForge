@@ -154,7 +154,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,37 @@
+@@ -318,4 +363,42 @@
      {
          return this.field_94249_f;
      }
@@ -182,6 +182,7 @@
 +     * @param entry Entry instance
 +     * @return True if the entry was added to the map, false otherwise.
 +     */
++    @Deprecated //Use non-String version
 +    public boolean setTextureEntry(String name, TextureAtlasSprite entry)
 +    {
 +        if (!field_110574_e.containsKey(name))
@@ -190,5 +191,9 @@
 +            return true;
 +        }
 +        return false;
++    }
++    public boolean setTextureEntry(TextureAtlasSprite entry)
++    {
++        return setTextureEntry(entry.func_94215_i(), entry);
 +    }
  }
