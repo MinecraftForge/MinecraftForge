@@ -356,7 +356,7 @@ public class VillagerRegistry
     {
         if (prof == null)
         {
-            if (entity.func_189777_di() != ZombieType.NORMAL)
+            if (entity.func_189777_di() != ZombieType.NORMAL && entity.func_189777_di() != ZombieType.HUSK)
                 entity.func_189778_a(ZombieType.NORMAL);
             return;
         }
