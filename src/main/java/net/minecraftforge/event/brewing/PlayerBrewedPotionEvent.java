@@ -23,6 +23,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
+/**
+ * This event is called when a player picks up a potion from a brewing stand.
+ */
 public class PlayerBrewedPotionEvent extends PlayerEvent
 {
     private final ItemStack stack;
@@ -33,6 +36,9 @@ public class PlayerBrewedPotionEvent extends PlayerEvent
         this.stack = stack;
     }
 
+    /**
+     * The ItemStack of the potion.
+     */
     public ItemStack getStack()
     {
         return stack;
