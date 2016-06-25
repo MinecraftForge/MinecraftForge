@@ -85,3 +85,11 @@
          return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
      }
  
+@@ -357,6 +336,7 @@
+ 
+     public void func_71263_m()
+     {
++        if (func_71278_l())
+         Futures.getUnchecked(this.func_152344_a(new Runnable()
+         {
+             public void run()

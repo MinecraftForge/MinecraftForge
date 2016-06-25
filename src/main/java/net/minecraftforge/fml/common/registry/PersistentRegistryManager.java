@@ -210,7 +210,10 @@ public class PersistentRegistryManager
 
             boolean confirmed = StartupQuery.confirm(text);
             if (!confirmed)
+            {
                 StartupQuery.abort();
+                ;
+            }
         }
 
         // Load the snapshot into the "STAGING" registry
