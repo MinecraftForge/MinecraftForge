@@ -46,7 +46,7 @@
 +    {
 +        int x = (pos.func_177958_n() >> 4) - this.field_72818_a;
 +        int z = (pos.func_177952_p() >> 4) - this.field_72816_b;
-+        if (pos.func_177956_o() >= 0 && pos.func_177956_o() < 256) return _default;
++        if (pos.func_177956_o() < 0 && pos.func_177956_o() >= 256) return _default;
 +        if (x < 0 || x >= field_72817_c.length || z < 0 || z >= field_72817_c[x].length) return _default;
 +        if (field_72817_c[x][z] == null) return _default;
 +
