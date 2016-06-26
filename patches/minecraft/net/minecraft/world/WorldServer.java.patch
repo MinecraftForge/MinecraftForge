@@ -43,16 +43,14 @@
          }
          else
          {
-@@ -156,7 +165,8 @@
+@@ -156,6 +165,7 @@
              this.func_175723_af().func_177750_a(this.field_72986_A.func_176137_E());
          }
  
--        return this;
 +        this.initCapabilities();
-+        return super.func_175643_b();
+         return this;
      }
  
-     public void func_72835_b()
 @@ -215,6 +225,10 @@
          this.field_175740_d.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
