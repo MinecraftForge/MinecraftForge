@@ -74,6 +74,7 @@ public abstract class FluidContainerRegistry
             ContainerKey ck = (ContainerKey)o;
             if (container.getItem() != ck.container.getItem()) return false;
             if (container.getItemDamage() != ck.container.getItemDamage()) return false;
+            if (!ItemStack.areItemStackTagsEqual(container, ck.container)) return false;
             if (fluid == null && ck.fluid != null) return false;
             if (fluid != null && ck.fluid == null) return false;
             if (fluid == null && ck.fluid == null) return true;
