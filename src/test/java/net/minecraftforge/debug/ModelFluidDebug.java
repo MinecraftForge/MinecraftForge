@@ -27,13 +27,21 @@ public class ModelFluidDebug
     public static final String MODID = "ForgeDebugModelFluid";
     public static final String VERSION = "1.0";
 
+    public static final boolean ENABLE = false;
+
     @SidedProxy
     public static CommonProxy proxy;
 
     public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation("forge", "blocks/milk_still"), new ResourceLocation("forge", "blocks/milk_flow"));
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) { proxy.preInit(event); }
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        if (ENABLE)
+        {
+            proxy.preInit(event);
+        }
+    }
 
     public static class CommonProxy
     {
