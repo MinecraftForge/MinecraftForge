@@ -53,6 +53,9 @@ public class RecipeSorter implements Comparator<IRecipe>
 {
     public enum Category
     {
+        /**
+         * Do not use UNKNOWN - it is for recipe types with no clear driver
+         */
         UNKNOWN,
         SHAPELESS,
         SHAPED
@@ -231,7 +234,7 @@ public class RecipeSorter implements Comparator<IRecipe>
         {
             if (!warned.contains(cls))
             {
-                FMLLog.info("  Unknown recipe class! %s Modder please refer to %s", cls.getName(), RecipeSorter.class.getName());
+                FMLLog.bigWarning("Unknown recipe class! %s Modders need to register their recipe types with %s", cls.getName(), RecipeSorter.class.getName());
                 warned.add(cls);
             }
             cls = cls.getSuperclass();
