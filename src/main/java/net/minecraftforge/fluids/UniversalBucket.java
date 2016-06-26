@@ -85,12 +85,15 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
-            // add all fluids that the bucket can be filled  with
-            FluidStack fs = new FluidStack(fluid, getCapacity());
-            ItemStack stack = new ItemStack(this);
-            if (fill(stack, fs, true) == fs.amount)
+            if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !fluid.getName().equals("milk"))
             {
-                subItems.add(stack);
+                // add all fluids that the bucket can be filled  with
+                FluidStack fs = new FluidStack(fluid, getCapacity());
+                ItemStack stack = new ItemStack(this);
+                if (fill(stack, fs, true) == fs.amount)
+                {
+                    subItems.add(stack);
+                }
             }
         }
     }
