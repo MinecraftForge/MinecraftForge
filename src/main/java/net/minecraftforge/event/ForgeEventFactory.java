@@ -161,6 +161,19 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
+    public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z)
+    {
+        Result result = canEntitySpawn(entity, world, x, y, z);
+        if (result == Result.DEFAULT)
+        {
+            return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic
+        }
+        else
+        {
+            return result == Result.ALLOW;
+        }
+    }
+
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z));
