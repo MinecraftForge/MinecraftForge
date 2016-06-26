@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.ForgeModContainer;
@@ -118,7 +119,7 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || getFluid() != null || !canFillFluidType(resource))
+        if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
         {
             return 0;
         }
