@@ -10,7 +10,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
 /**
- * LivingSpawnEvent is fired for any events associated with Living Enttnies spawn status. <br>
+ * LivingSpawnEvent is fired for any events associated with Living Entities' spawn status. <br>
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
