@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
 +++ ../src-work/minecraft/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -415,6 +415,15 @@
+@@ -111,6 +111,7 @@
+     private boolean field_189811_cr = true;
+     private int field_189812_cs;
+     private boolean field_189813_ct;
++    private float autoJumpDistance = 7.0f;
+ 
+     public EntityPlayerSP(Minecraft p_i46278_1_, World p_i46278_2_, NetHandlerPlayClient p_i46278_3_, StatisticsManager p_i46278_4_)
+     {
+@@ -415,6 +416,15 @@
          this.field_71159_c.field_71456_v.func_146158_b().func_146227_a(p_146105_1_);
      }
  
@@ -16,7 +24,7 @@
      protected boolean func_145771_j(double p_145771_1_, double p_145771_3_, double p_145771_5_)
      {
          if (this.field_70145_X)
-@@ -427,30 +436,34 @@
+@@ -427,30 +437,34 @@
              double d0 = p_145771_1_ - (double)blockpos.func_177958_n();
              double d1 = p_145771_5_ - (double)blockpos.func_177952_p();
  
@@ -56,7 +64,7 @@
                  {
                      d2 = 1.0D - d1;
                      i = 5;
-@@ -485,7 +498,7 @@
+@@ -485,7 +499,7 @@
  
      private boolean func_175162_d(BlockPos p_175162_1_)
      {
@@ -65,7 +73,7 @@
      }
  
      public void func_70031_b(boolean p_70031_1_)
-@@ -530,7 +543,13 @@
+@@ -530,7 +544,13 @@
  
      public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_)
      {
@@ -80,3 +88,27 @@
      }
  
      public boolean func_70613_aW()
+@@ -1047,7 +1067,7 @@
+                                     f7 += (float)(this.func_70660_b(MobEffects.field_76430_j).func_76458_c() + 1) * 0.75F;
+                                 }
+ 
+-                                float f8 = Math.max(f * 7.0F, 1.0F / f12);
++                                float f8 = Math.max(f * getAutoJumpDistance(), 1.0F / f12);
+                                 Vec3d vec3d4 = vec3d1.func_178787_e(vec3d12.func_186678_a((double)f8));
+                                 float f9 = this.field_70130_N;
+                                 float f10 = this.field_70131_O;
+@@ -1132,4 +1152,14 @@
+             }
+         }
+     }
++
++    public float getAutoJumpDistance()
++    {
++        return autoJumpDistance;
++    }
++    
++    public void setAutoJumpDistance(float distance)
++    {
++        autoJumpDistance = distance;
++    }
+ }
