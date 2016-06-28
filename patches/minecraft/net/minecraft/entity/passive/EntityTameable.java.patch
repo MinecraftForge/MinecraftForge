@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityTameable.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityTameable.java
+@@ -137,6 +137,8 @@
+         return (((Byte)this.field_70180_af.func_187225_a(field_184755_bv)).byteValue() & 4) != 0;
+     }
+ 
++    public abstract boolean isTamingItem(net.minecraft.item.ItemStack stack);
++
+     public void func_70903_f(boolean p_70903_1_)
+     {
+         byte b0 = ((Byte)this.field_70180_af.func_187225_a(field_184755_bv)).byteValue();

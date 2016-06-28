@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
+@@ -188,7 +188,7 @@
+                 this.field_70911_d.func_75270_a(!this.func_70906_o());
+             }
+         }
+-        else if ((this.field_70914_e == null || this.field_70914_e.func_75277_f()) && p_184645_3_ != null && p_184645_3_.func_77973_b() == Items.field_151115_aP && p_184645_1_.func_70068_e(this) < 9.0D)
++        else if ((this.field_70914_e == null || this.field_70914_e.func_75277_f()) && isTamingItem(p_184645_3_) && p_184645_1_.func_70068_e(this) < 9.0D)
+         {
+             if (!p_184645_1_.field_71075_bZ.field_75098_d)
+             {
 @@ -288,7 +288,7 @@
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos.func_177977_b());
              Block block = iblockstate.func_177230_c();
@@ -9,3 +18,14 @@
              {
                  return true;
              }
+@@ -307,6 +307,10 @@
+         super.func_70903_f(p_70903_1_);
+     }
+ 
++    public boolean isTamingItem(ItemStack stack)
++    {
++        return stack != null && stack.func_77973_b() == Items.field_151115_aP;
++    }
+     protected void func_175544_ck()
+     {
+         if (this.field_175545_bm == null)
