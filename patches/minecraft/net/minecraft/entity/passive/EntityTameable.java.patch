@@ -6,7 +6,7 @@
  
 +    public boolean isTamingItem(net.minecraft.item.ItemStack stack)
 +    {
-+        return false;
++        return stack != null && ((stack.func_77973_b() == net.minecraft.init.Items.field_151103_aS && this instanceof EntityWolf) || (stack.func_77973_b() == net.minecraft.init.Items.field_151115_aP && this instanceof EntityOcelot));
 +    }
 +
      public void func_70903_f(boolean p_70903_1_)

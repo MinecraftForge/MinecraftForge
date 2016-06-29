@@ -1,18 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
-@@ -355,6 +355,11 @@
-         this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(4.0D);
-     }
- 
-+    public boolean isTamingItem(ItemStack stack)
-+    {
-+        return stack != null && stack.func_77973_b() == Items.field_151103_aS;
-+    }
-+
-     public boolean func_184645_a(EntityPlayer p_184645_1_, EnumHand p_184645_2_, @Nullable ItemStack p_184645_3_)
-     {
-         if (this.func_70909_n())
-@@ -402,7 +407,7 @@
+@@ -402,7 +402,7 @@
                  this.func_70624_b((EntityLivingBase)null);
              }
          }

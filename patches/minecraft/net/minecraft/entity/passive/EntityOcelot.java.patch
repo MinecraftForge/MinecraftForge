@@ -18,14 +18,3 @@
              {
                  return true;
              }
-@@ -307,6 +307,10 @@
-         super.func_70903_f(p_70903_1_);
-     }
- 
-+    public boolean isTamingItem(ItemStack stack)
-+    {
-+        return stack != null && stack.func_77973_b() == Items.field_151115_aP;
-+    }
-     protected void func_175544_ck()
-     {
-         if (this.field_175545_bm == null)
