@@ -17,7 +17,7 @@
          this.field_72988_C = new SaveDataMemoryStorage();
          this.func_72966_v();
          this.func_72947_a();
-+        this.func_175643_b();
++        this.initCapabilities();
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
      }
  
