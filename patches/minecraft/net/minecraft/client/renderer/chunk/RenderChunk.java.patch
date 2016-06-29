@@ -7,7 +7,7 @@
 -                if (block.func_149716_u())
 +                if (block.hasTileEntity(iblockstate))
                  {
-                     TileEntity tileentity = this.field_189564_r.func_175625_s(new BlockPos(blockpos$mutableblockpos));
+                     TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
 @@ -181,7 +181,9 @@
                      }

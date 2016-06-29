@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
 +++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
-@@ -63,6 +63,8 @@
+@@ -69,6 +69,8 @@
      {
-         int i = (p_175625_1_.func_177958_n() >> 4) - this.field_72818_a;
-         int j = (p_175625_1_.func_177952_p() >> 4) - this.field_72816_b;
+         int i = (p_190300_1_.func_177958_n() >> 4) - this.field_72818_a;
+         int j = (p_190300_1_.func_177952_p() >> 4) - this.field_72816_b;
 +        if (i < 0 || i >= field_72817_c.length || j < 0 || j >= field_72817_c[i].length) return null;
 +        if (field_72817_c[i][j] == null) return null;
-         return this.field_72817_c[i][j].func_177424_a(p_175625_1_, Chunk.EnumCreateEntityType.IMMEDIATE);
+         return this.field_72817_c[i][j].func_177424_a(p_190300_1_, p_190300_2_);
      }
  
-@@ -143,6 +145,8 @@
+@@ -149,6 +151,8 @@
              {
                  int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
                  int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -18,7 +18,7 @@
                  return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
-@@ -154,7 +158,8 @@
+@@ -160,7 +164,8 @@
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
@@ -28,7 +28,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -164,6 +169,7 @@
+@@ -170,6 +175,7 @@
          {
              int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
              int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -36,7 +36,7 @@
              return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
-@@ -182,4 +188,17 @@
+@@ -188,4 +194,17 @@
      {
          return this.field_72815_e.func_175624_G();
      }
