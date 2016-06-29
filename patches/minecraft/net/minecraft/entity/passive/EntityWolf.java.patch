@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -402,7 +402,7 @@
+                 this.func_70624_b((EntityLivingBase)null);
+             }
+         }
+-        else if (p_184645_3_ != null && p_184645_3_.func_77973_b() == Items.field_151103_aS && !this.func_70919_bu())
++        else if (isTamingItem(p_184645_3_) && !this.func_70919_bu())
+         {
+             if (!p_184645_1_.field_71075_bZ.field_75098_d)
+             {
