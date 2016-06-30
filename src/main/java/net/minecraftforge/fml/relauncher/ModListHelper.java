@@ -62,12 +62,28 @@ public class ModListHelper {
                 tryAddFile(modFile, null, modFile);
             }
         }
+
+        String[] extras = new String[]
+        {
+            "mods/mod_list.json",
+            "mods/" + FMLInjectionData.mccversion + "/mod_list.json"
+        };
+
+        for (String extra : extras)
+        {
+            if ((new File(mcDirectory, extra)).exists())
+                parseListFile(extra);
+        }
+
     }
     private static void parseListFile(String listFile) {
         File f;
         try
         {
-            f = new File(mcDirectory, listFile).getCanonicalFile();
+            if (listFile.startsWith("absolute:"))
+                f = new File(listFile.substring(9)).getCanonicalFile();
+            else
+                f = new File(mcDirectory, listFile).getCanonicalFile();
         } catch (IOException e2)
         {
             FMLRelaunchLog.log(Level.INFO, e2, "Unable to canonicalize path %s relative to %s", listFile, mcDirectory.getAbsolutePath());
