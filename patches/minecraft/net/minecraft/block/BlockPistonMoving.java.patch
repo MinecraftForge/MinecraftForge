@@ -13,7 +13,7 @@
                  iblockstate.func_177230_c().func_176226_b(p_180653_1_, p_180653_2_, iblockstate, 0);
              }
          }
-+        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, p_180653_4_, p_180653_5_);
++        super.func_180653_a(p_180653_1_, p_180653_2_, p_180653_3_, 1, p_180653_5_); // mimic vanilla behavior from above and ignore chance
      }
  
      public RayTraceResult func_180636_a(IBlockState p_180636_1_, World p_180636_2_, BlockPos p_180636_3_, Vec3d p_180636_4_, Vec3d p_180636_5_)
