@@ -40,7 +40,7 @@
 +
 +    public int getMinimumSpawnHeight(World world)
 +    {
-+        return this == field_77138_c ? 4 : 64;
++        return this == field_77138_c ? 4 : world.func_181545_F() + 1;
 +    }
 +
 +    public double getHorizon(World world)
