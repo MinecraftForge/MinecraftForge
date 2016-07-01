@@ -169,6 +169,7 @@ public class GuiIngameForge extends GuiIngame
 
         renderToolHighlight(res);
         renderHUDText(width, height);
+        renderFPSGraph();
         renderPotionIcons(res);
         renderRecordOverlay(width, height, partialTicks);
         renderSubtitles(res);
@@ -717,6 +718,15 @@ public class GuiIngameForge extends GuiIngame
         post(TEXT);
     }
 
+    protected void renderFPSGraph()
+    {
+        if (this.mc.gameSettings.showDebugInfo && this.mc.gameSettings.showLagometer && !pre(FPS_GRAPH))
+        {
+            this.debugOverlay.renderLagometer();
+            post(FPS_GRAPH);
+        }
+    }
+
     protected void renderRecordOverlay(int width, int height, float partialTicks)
     {
         if (recordPlayingUpFor > 0)
@@ -884,10 +894,22 @@ public class GuiIngameForge extends GuiIngame
 
     private class GuiOverlayDebugForge extends GuiOverlayDebug
     {
-        private GuiOverlayDebugForge(Minecraft mc){ super(mc); }
+        private Minecraft mc;
+        private GuiOverlayDebugForge(Minecraft mc)
+        {
+            super(mc);
+            this.mc = mc;
+        }
         @Override protected void renderDebugInfoLeft(){}
         @Override protected void renderDebugInfoRight(ScaledResolution res){}
-        private List<String> getLeft(){ return this.call(); }
+        private List<String> getLeft()
+        {
+            List<String> ret = this.call();
+            ret.add("");
+            ret.add("Debug: Pie [shift]: " + (this.mc.gameSettings.showDebugProfilerChart ? "visible" : "hidden") + " FPS [alt]: " + (this.mc.gameSettings.showLagometer ? "visible" : "hidden"));
+            ret.add("For help: press F3 + Q");
+            return ret;
+        }
         private List<String> getRight(){ return this.getDebugInfoRight(); }
     }
 }
