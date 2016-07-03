@@ -12,7 +12,7 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
-+        if (net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_145891_0_)) { return true; }
++        int r = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_145891_0_); if (r != net.minecraftforge.items.VanillaInventoryCodeHooks.RUN_VANILLA) return r == net.minecraftforge.items.VanillaInventoryCodeHooks.EXIT_TRUE;
          IInventory iinventory = func_145884_b(p_145891_0_);
  
          if (iinventory != null)
