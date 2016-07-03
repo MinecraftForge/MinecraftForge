@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common.asm.transformers.deobf;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.Remapper;
@@ -41,6 +42,16 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
         }
         FMLDeobfuscatingRemapper.INSTANCE.mergeSuperMaps(name, superName, interfaces);
         super.visit(version, access, name, signature, superName, interfaces);
+    }
+
+    @Override
+    public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
+        FieldVisitor fv = cv.visitField(access,
+            remapper.mapMemberFieldName(className, name, desc),
+            remapper.mapDesc(desc), remapper.mapSignature(signature, true),
+            remapper.mapValue(value));
+        return createRemappingFieldAdapter(fv);
     }
 
     @Override
