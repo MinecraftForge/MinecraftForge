@@ -8,15 +8,16 @@
          IInventory iinventory = this.func_145895_l();
  
          if (iinventory == null)
-@@ -357,6 +358,7 @@
+@@ -357,6 +358,8 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
-+        if (net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_145891_0_)) { return true; }
++        Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_145891_0_);
++        if (ret != null) return ret;
          IInventory iinventory = func_145884_b(p_145891_0_);
  
          if (iinventory != null)
-@@ -506,17 +508,31 @@
+@@ -506,17 +509,31 @@
  
              if (itemstack == null)
              {
@@ -49,7 +50,7 @@
              }
  
              if (flag)
-@@ -662,4 +678,10 @@
+@@ -662,4 +679,10 @@
              this.field_145900_a[i] = null;
          }
      }
