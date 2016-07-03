@@ -33,12 +33,14 @@ import net.minecraft.world.World;
 public class VanillaInventoryCodeHooks
 {
 
-    public static boolean extractHook(IHopper dest)
+    public static int RUN_VANILLA = 0, EXIT_FALSE = 1, EXIT_TRUE = 2;
+
+    public static int extractHook(IHopper dest)
     {
         TileEntity tileEntity = dest.getWorld().getTileEntity(new BlockPos(dest.getXPos(), dest.getYPos() + 1, dest.getZPos()));
 
         if (tileEntity == null || !tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN))
-            return false;
+            return RUN_VANILLA;
 
         IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 
@@ -61,13 +63,13 @@ public class VanillaInventoryCodeHooks
                             dest.setInventorySlotContents(j, destStack);
                         }
                         dest.markDirty();
-                        return true;
+                        return EXIT_TRUE;
                     }
                 }
             }
         }
 
-        return true;
+        return EXIT_FALSE;
     }
 
     public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, ItemStack stack)
