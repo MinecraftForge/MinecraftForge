@@ -109,6 +109,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -513,6 +514,12 @@ public class ForgeHooks
     {
         LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
+    }
+
+    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level) {
+        LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getLootingLevel();
     }
 
     public static boolean isLivingOnLadder(IBlockState state, World world, BlockPos pos, EntityLivingBase entity)
