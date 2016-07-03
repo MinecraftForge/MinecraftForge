@@ -45,7 +45,11 @@
          }
          else
          {
-@@ -75,6 +78,14 @@
+@@ -72,9 +75,18 @@
+             this.field_72982_D.func_82566_a(this);
+         }
+ 
++        this.initCapabilities();
          return this;
      }
  

@@ -43,7 +43,15 @@
          }
          else
          {
-@@ -215,6 +224,10 @@
+@@ -156,6 +165,7 @@
+             this.func_175723_af().func_177750_a(this.field_72986_A.func_176137_E());
+         }
+ 
++        this.initCapabilities();
+         return this;
+     }
+ 
+@@ -215,6 +225,10 @@
          this.field_175740_d.func_75528_a();
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
@@ -54,7 +62,7 @@
          this.field_72984_F.func_76319_b();
          this.func_147488_Z();
      }
-@@ -223,12 +236,14 @@
+@@ -223,12 +237,14 @@
      public Biome.SpawnListEntry func_175734_a(EnumCreatureType p_175734_1_, BlockPos p_175734_2_)
      {
          List<Biome.SpawnListEntry> list = this.func_72863_F().func_177458_a(p_175734_1_, p_175734_2_);
@@ -69,7 +77,7 @@
          return list != null && !list.isEmpty() ? list.contains(p_175732_2_) : false;
      }
  
-@@ -274,10 +289,7 @@
+@@ -274,10 +290,7 @@
  
      private void func_73051_P()
      {
@@ -81,7 +89,7 @@
      }
  
      public boolean func_73056_e()
-@@ -370,7 +382,7 @@
+@@ -370,7 +383,7 @@
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
  
@@ -90,7 +98,7 @@
              {
                  this.field_72984_F.func_76320_a("getChunk");
                  Chunk chunk = (Chunk)iterator.next();
-@@ -382,7 +394,7 @@
+@@ -382,7 +395,7 @@
                  chunk.func_150804_b(false);
                  this.field_72984_F.func_76318_c("thunder");
  
@@ -99,7 +107,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int l = this.field_73005_l >> 2;
-@@ -411,7 +423,7 @@
+@@ -411,7 +424,7 @@
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -108,7 +116,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
-@@ -527,7 +539,10 @@
+@@ -527,7 +540,10 @@
          {
              if (p_175654_2_.func_149698_L())
              {
@@ -120,7 +128,7 @@
                  {
                      IBlockState iblockstate = this.func_180495_p(p_175654_1_);
  
-@@ -587,7 +602,7 @@
+@@ -587,7 +603,7 @@
  
      public void func_72939_s()
      {
@@ -129,7 +137,7 @@
          {
              if (this.field_80004_Q++ >= 300)
              {
-@@ -711,6 +726,9 @@
+@@ -711,6 +727,9 @@
                  {
                      NextTickListEntry nextticklistentry1 = (NextTickListEntry)iterator.next();
                      iterator.remove();
@@ -139,7 +147,7 @@
                      int k = 0;
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
-@@ -837,6 +855,10 @@
+@@ -837,6 +856,10 @@
  
      public boolean func_175660_a(EntityPlayer p_175660_1_, BlockPos p_175660_2_)
      {
@@ -150,7 +158,7 @@
          return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
      }
  
-@@ -902,6 +924,7 @@
+@@ -902,6 +925,7 @@
          }
          else
          {
@@ -158,7 +166,7 @@
              this.field_72987_B = true;
              BiomeProvider biomeprovider = this.field_73011_w.func_177499_m();
              List<Biome> list = biomeprovider.func_76932_a();
-@@ -986,6 +1009,7 @@
+@@ -986,6 +1010,7 @@
              }
  
              chunkproviderserver.func_186027_a(p_73044_1_);
@@ -166,7 +174,7 @@
  
              for (Chunk chunk : Lists.newArrayList(chunkproviderserver.func_189548_a()))
              {
-@@ -1030,6 +1054,7 @@
+@@ -1030,6 +1055,7 @@
          this.field_72986_A.func_176135_e(this.func_175723_af().func_177732_i());
          this.field_73019_z.func_75755_a(this.field_72986_A, this.field_73061_a.func_184103_al().func_72378_q());
          this.field_72988_C.func_75744_a();
@@ -174,7 +182,7 @@
      }
  
      public boolean func_72838_d(Entity p_72838_1_)
-@@ -1041,7 +1066,7 @@
+@@ -1041,7 +1067,7 @@
      {
          for (Entity entity : Lists.newArrayList(p_175650_1_))
          {
@@ -183,7 +191,7 @@
              {
                  this.field_72996_f.add(entity);
                  this.func_72923_a(entity);
-@@ -1122,7 +1147,7 @@
+@@ -1122,7 +1148,7 @@
      {
          if (super.func_72942_c(p_72942_1_))
          {
@@ -192,7 +200,7 @@
              return true;
          }
          else
-@@ -1144,6 +1169,7 @@
+@@ -1144,6 +1170,7 @@
      public Explosion func_72885_a(@Nullable Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
@@ -200,7 +208,7 @@
          explosion.func_77278_a();
          explosion.func_77279_a(false);
  
-@@ -1189,7 +1215,7 @@
+@@ -1189,7 +1216,7 @@
              {
                  if (this.func_147485_a(blockeventdata))
                  {
@@ -209,7 +217,7 @@
                  }
              }
  
-@@ -1215,27 +1241,31 @@
+@@ -1215,27 +1242,31 @@
  
          if (this.field_73003_n != this.field_73004_o)
          {
@@ -247,7 +255,7 @@
          }
      }
  
-@@ -1314,6 +1344,11 @@
+@@ -1314,6 +1345,11 @@
          return this.field_73061_a.func_152345_ab();
      }
  
