@@ -52,7 +52,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +432,557 @@
+@@ -426,11 +432,718 @@
          return false;
      }
  
@@ -605,12 +605,173 @@
 +        return builder.build();
 +    }
 +
++    /**
++     * Vanilla's default Item effect color value.
++     * */
++    public static final int defaultItemEffectColor = 0xFF8040CC;
++
++    /**
++     * Vanilla's default armor effect color value. Uses half the alpha value than the Item color.
++     * */
++    public static final int defaultArmorEffectColor = 0xAA8040CC;
++
++    /**
++     * Vanilla's default Glint texture.
++     * */
++    public static final ResourceLocation defaultGlint = new ResourceLocation("textures/misc/enchanted_item_glint.png");
++
++    /**
++     * Used for effect coloring when the Item's effect passes are run.
++     * @param stack The ItemStack
++     * @param pass The render pass
++     * @return A hex int (ARGB) used for coloring the effect
++     * */
++    public int getItemEffectColorForPass(ItemStack stack, int pass)
++    {
++        return defaultItemEffectColor;
++    }
++
++    /**
++     * Used for effect repeat. Vanilla repeats every 3k ms for pass 0 & 4873ms for pass 1.
++     * @param stack The ItemStack
++     * @param pass The render pass
++     * @returnA long representing repeat time in milliseconds
++     * */
++    public long getItemEffectTimeRepeatForPass(ItemStack stack, int pass)
++    {
++        return pass == 0 ? 3000L : 4873L;
++    }
++
++    /**
++     * Used for effect TimeScaling
++     * @param stack The ItemStack
++     * @param pass The render pass
++     * @return A float representing scaling time in milliseconds
++     * */
++    public float getItemEffectSpeed(ItemStack stack, int pass)
++    
++    {
++        return pass == 0 ? 24000.0F : 38984.0F;
++    }
++
++    /**
++     * Used for effect scaling based on time.
++     * @param stack The ItemStack
++     * @param pass The render pass
++     * @param time The offset time
++     * @return A 3 value array of floats representing scaling
++     * */
++    public float[] getItemEffectScaleVectorForPass(ItemStack stack, int pass, float time)
++    {
++        return new float[] {8.0F, 8.0F, 8.0F};
++    }
++
++    /**
++     * Used for effect translation based on time.
++     * @param stack The ItemStack
++     * @param pass The render pass
++     * @param time The offset time
++     * @return A 3 value array of floats representing translation
++     * */
++    public float[] getItemEffectTranslationVectorForPass(ItemStack stack, int pass, float time)
++    {
++        return pass == 0 ? new float[] {time, 0.0F, 0.0F} : new float[] {-time, 0.0F, 0.0F};
++    }
++
++    /**
++     * Used for effect rotation based on time.
++     * @param stack The ItemStack
++     * @param pass The render pass
++     * @param time The offset time
++     * @return A 4 value array of floats representing rotation
++     * */
++    public float[] getItemEffectRotationVectorForPass(ItemStack stack, int pass, float time)
++    {
++        return pass == 0 ? new float[] {-50.0F, 0.0F, 0.0F, 1.0F} : new float[] {10.0F, 0.0F, 0.0F, 1.0F};
++    }
++
++    /**
++     * Used for setting the effect texture at the start of a pass.
++     * @param stack The ItemStack in question
++     * @return The ResourceLocation of the effect texture.
++     * */
++    public ResourceLocation getItemEffectTexture(ItemStack stack)
++    {
++        return defaultGlint;
++    }
++
++    /**
++     * Used for glint coloring when the Armor's effect passes are run.
++     * @param stack The ItemStack
++     * @param wearer The Entity in question
++     * @param pass The render pass
++     * @param armorSlot The slot the armor is in
++     * @return A hex int (ARGB) used for coloring the effect
++     * */
++    public int getArmorEffectColorForPass(ItemStack stack, EntityLivingBase wearer, int pass, EntityEquipmentSlot slot)
++    {
++        return defaultArmorEffectColor;
++    }
++
++    /**
++     * Used for effect scaling based on time.
++     * @param stack The ItemStack
++     * @param wearer The Entity in question
++     * @param pass The render pass
++     * @param slot The slot the armor is in
++     * @param time The offset time
++     * @return A 3 value array of floats representing scaling
++     * */
++    public float[] getArmorEffectScaleVectorForPass(ItemStack stack, EntityLivingBase wearer, int pass, EntityEquipmentSlot slot, float time)
++    {
++        return new float[] {0.33333334F, 0.33333334F, 0.33333334F};
++    }
++
++    /**
++     * Used for effect translation based on time.
++     * @param stack The ItemStack
++     * @param wearer The Entity in question
++     * @param pass The render pass
++     * @param slot The slot the armor is in
++     * @param time The offset time
++     * @return A 3 array of floats representing translation
++     * */
++    public float[] getArmorEffectTranslationVectorForPass(ItemStack stack, EntityLivingBase wearer, int pass, EntityEquipmentSlot slot, float time)
++    {
++        return new float[] {0.0F, time * (pass == 0 ? 0.0006F : 0.06006F), 0.0F};
++    }
++
++    /**
++     * Used for effect rotation based on time.
++     * @param stack The ItemStack
++     * @param wearer The Entity in question
++     * @param pass The render pass
++     * @param slot The slot the armor is in
++     * @param time The offset time
++     * @return A 4 value array of floats representing rotation
++     * */
++    public float[] getArmorEffectRotationVectorForPass(ItemStack stack, EntityLivingBase wearer, int pass, EntityEquipmentSlot slot, float time)
++    {
++        return new float[] {(pass == 0 ? 30F : -30F), 0.0F, 0.0F, 1.0F};
++    }
++
++    /**
++     * Used for setting the effect texture at the start of a pass.
++     * @param stack The ItemStack in question
++     * @param wearer The Entity in question
++     * @return The ResourceLocation of the effect texture.
++     * */
++    public ResourceLocation getArmorEffectTexture(ItemStack stack, EntityLivingBase wearer)
++    {
++        return defaultGlint;
++    }
++
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1514,10 @@
+@@ -962,6 +1675,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -621,7 +782,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1552,36 @@
+@@ -996,9 +1713,36 @@
              return this.field_78008_j;
          }
  

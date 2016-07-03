@@ -107,6 +107,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean defaultHasSpawnFuzz = true;
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
+    public static boolean forgeArmorOverlay = true;
+    public static boolean forgeItemOverlay = true;
     public static long java8Reminder = 0;
 
     private static Configuration config;
@@ -291,6 +293,20 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
+        propOrder.add(prop.getName());
+
+        propOrder = new ArrayList<String>();
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeItemOverlaysEnabled", Boolean.TRUE,
+                "Replaces vanilla's item effect overlays. Allows for item dependant appearances for supporting mods.");
+        prop.setLanguageKey("forge.configgui.itemEffect").setRequiresMcRestart(true);
+        forgeItemOverlay = prop.getBoolean(Boolean.TRUE);
+        propOrder.add(prop.getName());
+
+        propOrder = new ArrayList<String>();
+        prop = config.get(Configuration.CATEGORY_CLIENT, "forgeArmorOverlaysEnabled", Boolean.TRUE,
+                "Replaces vanilla's armor effect overlays. Allows for item dependant appearances for supporting mods.");
+        prop.setLanguageKey("forge.configgui.armorEffect").setRequiresMcRestart(true);
+        forgeArmorOverlay = prop.getBoolean(Boolean.TRUE);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
