@@ -76,9 +76,11 @@
          if (!this.field_70729_aU)
          {
              Entity entity = p_70645_1_.func_76346_g();
-@@ -1070,11 +1076,24 @@
+@@ -1069,12 +1075,26 @@
+                 {
                      i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
                  }
++                i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, p_70645_1_, i);
  
 +                captureDrops = true;
 +                capturedDrops.clear();
