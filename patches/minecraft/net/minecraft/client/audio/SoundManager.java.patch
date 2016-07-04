@@ -20,7 +20,7 @@
                  this.field_148620_e.stop(s);
              }
  
-+            this.field_189000_p.clear(); //Forge: Fixed paused sounds repeating when switching worlds
++            this.field_189000_p.clear(); //Forge: MC-35856 Fixed paused sounds repeating when switching worlds
              this.field_148629_h.clear();
              this.field_148626_m.clear();
              this.field_148625_l.clear();
