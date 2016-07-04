@@ -16,7 +16,17 @@
      }
  
      private synchronized void func_148608_i()
-@@ -338,6 +340,9 @@
+@@ -204,7 +206,8 @@
+             {
+                 this.field_148620_e.stop(s);
+             }
+-
++            
++            this.field_189000_p.clear(); //Forge: MC-35856 Fixed paused sounds repeating when switching worlds
+             this.field_148629_h.clear();
+             this.field_148626_m.clear();
+             this.field_148625_l.clear();
+@@ -338,6 +341,9 @@
      {
          if (this.field_148617_f)
          {
@@ -26,7 +36,7 @@
              SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
              ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
  
-@@ -400,10 +405,12 @@
+@@ -400,10 +406,12 @@
                              if (sound.func_188723_h())
                              {
                                  this.field_148620_e.newStreamingSource(false, s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
