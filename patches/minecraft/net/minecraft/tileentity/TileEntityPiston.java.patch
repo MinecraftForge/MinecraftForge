@@ -5,7 +5,7 @@
              {
                  this.field_145850_b.func_180501_a(this.field_174879_c, this.field_174932_a, 3);
 -                this.field_145850_b.func_180496_d(this.field_174879_c, this.field_174932_a.func_177230_c());
-+                if(!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(field_145850_b, field_174879_c, field_145850_b.func_180495_p(field_174879_c), java.util.EnumSet.noneOf(EnumFacing.class)).isCanceled())
++                if(!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(field_145850_b, field_174879_c, field_145850_b.func_180495_p(field_174879_c), java.util.EnumSet.of(this.field_174931_f.func_176734_d())).isCanceled())
 +                    this.field_145850_b.func_180496_d(this.field_174879_c, this.field_174932_a.func_177230_c());
              }
          }
@@ -15,7 +15,7 @@
              {
                  this.field_145850_b.func_180501_a(this.field_174879_c, this.field_174932_a, 3);
 -                this.field_145850_b.func_180496_d(this.field_174879_c, this.field_174932_a.func_177230_c());
-+                if(!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(field_145850_b, field_174879_c, field_145850_b.func_180495_p(field_174879_c), java.util.EnumSet.noneOf(EnumFacing.class)).isCanceled())
++                if(!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(field_145850_b, field_174879_c, field_145850_b.func_180495_p(field_174879_c), java.util.EnumSet.of(this.field_174931_f.func_176734_d())).isCanceled())
 +                    this.field_145850_b.func_180496_d(this.field_174879_c, this.field_174932_a.func_177230_c());
              }
          }
