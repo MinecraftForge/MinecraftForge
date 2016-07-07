@@ -23,7 +23,7 @@ public class NeighborNotifyEventTest
     public void onNeighborNotify(NeighborNotifyEvent event) 
     {
         if(ENABLE) {
-            System.out.println(event.getPos().toString());
+            System.out.println(event.getPos().toString() + " with face information: " + event.getNotifiedSides());
             event.setCanceled(true);
         }
     }
