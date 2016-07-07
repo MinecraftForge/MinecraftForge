@@ -352,7 +352,7 @@ String getVersionFromJava(File file)
     String branch = null;
     if (!System.getenv().containsKey("GIT_BRANCH"))
     {
-        // TODO: use grgit
+        // TODO: use grgit - Tried to switch 07/07/16 - jgit broken on windows?
         branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
     }
     else
@@ -363,8 +363,11 @@ String getVersionFromJava(File file)
 
     def out = "${minecraft.version.replace('-', '_')}-$major.$minor.$revision.$build"
 
-    if (branch && branch != 'master' && branch != 'HEAD')
-        out += "-$branch"
+    if (branch && branch != 'master' && branch != 'HEAD' && branch != minecraft.version && branch != minecraft.version + '.0')
+    {
+        if (!(branch.endsWith('.x') && minecraft.version.startsWith(branch.substring(0, branch.length() -1))))
+            out += "-$branch"
+    }
 
     return out;
 }
