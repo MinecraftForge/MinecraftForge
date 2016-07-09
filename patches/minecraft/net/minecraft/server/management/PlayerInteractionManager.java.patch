@@ -206,24 +206,16 @@
                  return flag1;
              }
          }
-<<<<<<< HEAD
-@@ -336,6 +359,7 @@
-=======
-@@ -334,6 +357,8 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -336,6 +359,8 @@
          }
          else
          {
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem evt = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_, p_187250_3_);
-+            if(evt.isCanceled()) return evt.getSubstituteResult();
++            EnumActionResult eventResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_, p_187250_3_);
++            if(eventResult != null) return eventResult;
              int i = p_187250_3_.field_77994_a;
              int j = p_187250_3_.func_77960_j();
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-<<<<<<< HEAD
-@@ -362,6 +386,7 @@
-=======
-@@ -360,6 +385,7 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -362,6 +387,7 @@
                  if (itemstack.field_77994_a == 0)
                  {
                      p_187250_1_.func_184611_a(p_187250_4_, (ItemStack)null);
@@ -231,11 +223,7 @@
                  }
  
                  if (!p_187250_1_.func_184587_cr())
-<<<<<<< HEAD
-@@ -406,13 +431,26 @@
-=======
-@@ -404,13 +430,26 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -406,13 +432,26 @@
          }
          else
          {
@@ -265,8 +253,7 @@
                  }
              }
  
-<<<<<<< HEAD
-@@ -440,14 +478,20 @@
+@@ -440,14 +479,20 @@
                  {
                      int j = p_187251_3_.func_77960_j();
                      int i = p_187251_3_.field_77994_a;
@@ -287,32 +274,7 @@
                  }
              }
          }
-@@ -457,4 +501,13 @@
-=======
-@@ -430,14 +469,21 @@
-             {
-                 int j = p_187251_3_.func_77960_j();
-                 int i = p_187251_3_.field_77994_a;
-+                if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
-+                        || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) {
-                 EnumActionResult enumactionresult = p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
-                 p_187251_3_.func_77964_b(j);
-                 p_187251_3_.field_77994_a = i;
-                 return enumactionresult;
-+                } else return result;
-+
-             }
-             else
-             {
-+                if (result != EnumActionResult.SUCCESS && event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY
-+                        || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
-                 return p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
-+                else return result;
-             }
-         }
-     }
-@@ -446,4 +492,13 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -457,4 +502,13 @@
      {
          this.field_73092_a = p_73080_1_;
      }

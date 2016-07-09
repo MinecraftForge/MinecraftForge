@@ -210,24 +210,16 @@
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
              p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
-<<<<<<< HEAD
-@@ -1086,6 +1155,7 @@
-=======
-@@ -1071,6 +1140,8 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1086,6 +1155,8 @@
          }
          else
          {
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract evt = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_184822_1_, p_184822_2_, p_184822_3_);
-+            if(evt.isCanceled()) return evt.getSubstituteResult();
++            EnumActionResult eventResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_184822_1_, p_184822_2_, p_184822_3_);
++            if(eventResult != null) return eventResult;
              ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.func_77946_l() : null;
  
              if (!p_184822_1_.func_184230_a(this, p_184822_2_, p_184822_3_))
-<<<<<<< HEAD
-@@ -1101,6 +1171,7 @@
-=======
-@@ -1086,6 +1157,7 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1101,6 +1172,7 @@
                      {
                          if (p_184822_2_.field_77994_a <= 0 && !this.field_71075_bZ.field_75098_d)
                          {
@@ -235,11 +227,7 @@
                              this.func_184611_a(p_184822_3_, (ItemStack)null);
                          }
  
-<<<<<<< HEAD
-@@ -1116,6 +1187,7 @@
-=======
-@@ -1101,6 +1173,7 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1116,6 +1188,7 @@
                  {
                      if (p_184822_2_.field_77994_a <= 0 && !this.field_71075_bZ.field_75098_d)
                      {
@@ -247,11 +235,7 @@
                          this.func_184611_a(p_184822_3_, (ItemStack)null);
                      }
                      else if (p_184822_2_.field_77994_a < itemstack.field_77994_a && this.field_71075_bZ.field_75098_d)
-<<<<<<< HEAD
-@@ -1142,6 +1214,7 @@
-=======
-@@ -1127,6 +1200,7 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1142,6 +1215,7 @@
  
      public void func_71059_n(Entity p_71059_1_)
      {
@@ -259,11 +243,7 @@
          if (p_71059_1_.func_70075_an())
          {
              if (!p_71059_1_.func_85031_j(this))
-<<<<<<< HEAD
-@@ -1340,6 +1413,7 @@
-=======
-@@ -1326,6 +1400,7 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1340,6 +1414,7 @@
                              if (itemstack1.field_77994_a <= 0)
                              {
                                  this.func_184611_a(EnumHand.MAIN_HAND, (ItemStack)null);
@@ -271,11 +251,7 @@
                              }
                          }
  
-<<<<<<< HEAD
-@@ -1428,6 +1502,8 @@
-=======
-@@ -1414,6 +1489,8 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1428,6 +1503,8 @@
  
      public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_)
      {
@@ -284,11 +260,7 @@
          if (!this.field_70170_p.field_72995_K)
          {
              if (this.func_70608_bn() || !this.func_70089_S())
-<<<<<<< HEAD
-@@ -1467,9 +1543,10 @@
-=======
-@@ -1453,9 +1530,10 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1467,9 +1544,10 @@
  
          this.func_70105_a(0.2F, 0.2F);
  
@@ -302,11 +274,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-<<<<<<< HEAD
-@@ -1534,13 +1611,14 @@
-=======
-@@ -1518,13 +1596,14 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1534,13 +1612,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -324,11 +292,7 @@
  
              if (blockpos == null)
              {
-<<<<<<< HEAD
-@@ -1549,6 +1627,10 @@
-=======
-@@ -1533,6 +1612,10 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1549,6 +1628,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -339,11 +303,7 @@
  
          this.field_71083_bS = false;
  
-<<<<<<< HEAD
-@@ -1567,15 +1649,16 @@
-=======
-@@ -1551,15 +1634,16 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1567,15 +1650,16 @@
  
      private boolean func_175143_p()
      {
@@ -363,11 +323,7 @@
          {
              if (!p_180467_2_)
              {
-<<<<<<< HEAD
-@@ -1590,16 +1673,17 @@
-=======
-@@ -1574,16 +1658,17 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1590,16 +1674,17 @@
          }
          else
          {
@@ -388,11 +344,7 @@
  
              switch (enumfacing)
              {
-<<<<<<< HEAD
-@@ -1639,16 +1723,24 @@
-=======
-@@ -1623,16 +1708,24 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1639,16 +1724,24 @@
  
      public BlockPos func_180470_cg()
      {
@@ -419,11 +371,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-<<<<<<< HEAD
-@@ -1843,6 +1935,10 @@
-=======
-@@ -1827,6 +1920,10 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -1843,6 +1936,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -434,11 +382,7 @@
      }
  
      protected void func_71061_d_()
-<<<<<<< HEAD
-@@ -2043,6 +2139,18 @@
-=======
-@@ -2027,6 +2124,18 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -2043,6 +2140,18 @@
          this.field_175152_f = p_71049_1_.field_175152_f;
          this.field_71078_a = p_71049_1_.field_71078_a;
          this.func_184212_Q().func_187227_b(field_184827_bp, p_71049_1_.func_184212_Q().func_187225_a(field_184827_bp));
@@ -457,11 +401,7 @@
      }
  
      protected boolean func_70041_e_()
-<<<<<<< HEAD
-@@ -2142,7 +2250,10 @@
-=======
-@@ -2126,7 +2235,10 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -2142,7 +2251,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -473,11 +413,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-<<<<<<< HEAD
-@@ -2151,7 +2262,7 @@
-=======
-@@ -2135,7 +2247,7 @@
->>>>>>> 83231e9... Allow cancel result to be changed
+@@ -2151,7 +2263,7 @@
  
      public float func_70047_e()
      {
@@ -486,13 +422,8 @@
  
          if (this.func_70608_bn())
          {
-<<<<<<< HEAD
-@@ -2367,6 +2478,161 @@
+@@ -2367,6 +2479,161 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
-=======
-@@ -2346,6 +2458,161 @@
-         return (float)this.func_110148_a(SharedMonsterAttributes.field_188792_h).func_111126_e();
->>>>>>> 83231e9... Allow cancel result to be changed
      }
  
 +    /**
