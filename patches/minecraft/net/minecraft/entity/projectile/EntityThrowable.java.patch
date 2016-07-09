@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -246,6 +246,7 @@
+             }
+             else
+             {
++                if(!net.minecraftforge.common.ForgeHooks.onThrowableImpact(this, raytraceresult))
+                 this.func_70184_a(raytraceresult);
+             }
+         }
