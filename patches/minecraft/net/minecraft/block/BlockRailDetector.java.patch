@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRailDetector.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRailDetector.java
+@@ -156,6 +156,8 @@
+     {
+         if (((Boolean)p_180641_1_.func_177229_b(field_176574_M)).booleanValue())
+         {
++            int result = net.minecraftforge.event.ForgeEventFactory.onDetectorRailCompare(p_180641_3_, func_176572_a(p_180641_3_));
++            if (result > -1) return result;
+             List<EntityMinecartCommandBlock> list = this.<EntityMinecartCommandBlock>func_176571_a(p_180641_2_, p_180641_3_, EntityMinecartCommandBlock.class, new Predicate[0]);
+ 
+             if (!list.isEmpty())
