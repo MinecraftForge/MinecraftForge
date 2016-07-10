@@ -2,12 +2,13 @@ package net.minecraftforge.gui.capability.impl;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
 import javax.annotation.Nullable;
 
-public class GuiProviderBlank implements IGuiProvider
+public class GuiProviderBlank implements IGuiProvider<Object>
 {
     @Override
     public void deserialize(ByteBuf buffer) { }
@@ -28,7 +29,7 @@ public class GuiProviderBlank implements IGuiProvider
     }
 
     @Override
-    public Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+    public Container getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner)
     {
         return null;
     }

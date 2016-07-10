@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
-public abstract class GuiProviderEntity implements IGuiProvider
+public abstract class GuiProviderEntity implements IGuiProvider<Entity>
 {
 
     private int entityID;
@@ -28,7 +28,7 @@ public abstract class GuiProviderEntity implements IGuiProvider
     }
 
     @Override
-    public Object getOwner(EntityPlayer player, World world)
+    public Entity getOwner(EntityPlayer player, World world)
     {
         if (world == null) return null;
         return world.getEntityByID(entityID);

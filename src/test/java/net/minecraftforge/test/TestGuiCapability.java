@@ -6,27 +6,33 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.gui.capability.CapabilityGuiProvider;
 import net.minecraftforge.gui.capability.IGuiProvider;
+import net.minecraftforge.gui.capability.impl.GuiProviderEntity;
 import net.minecraftforge.gui.capability.impl.GuiProviderItem;
 import net.minecraftforge.gui.capability.impl.GuiProviderTile;
 
@@ -56,6 +62,28 @@ public class TestGuiCapability
     public void init(FMLInitializationEvent event){
         if(!ENABLE) return;
         GameRegistry.registerTileEntity(TileTestBlock.class, "test_tile");
+        MinecraftForge.EVENT_BUS.register(INSTANCE);
+    }
+
+    @SubscribeEvent
+    public void attach(AttachCapabilitiesEvent.Entity entity)
+    {
+        if(entity.getEntity() instanceof EntityPig)
+            entity.addCapability(new ResourceLocation("gui", "guiTest"), new EntityHealthGui(entity.getEntity()));
+    }
+
+    @SubscribeEvent
+    public void entityHit(AttackEntityEvent event)
+    {
+        EntityPlayer source = event.getEntityPlayer();
+        if (event.getTarget() instanceof EntityPig)
+        {
+            if(event.getTarget().hasCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null))
+            {
+                IGuiProvider gui = event.getTarget().getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null);
+                source.openGui(gui);
+            }
+        }
     }
 
     private class TestBlock extends Block {
@@ -122,7 +150,7 @@ public class TestGuiCapability
             }
 
             @Override
-            public Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+            public Object getClientGuiElement(EntityPlayer player, World world, @Nullable TileEntity owner)
             {
                 return new GuiScreen()
                 {
@@ -136,7 +164,7 @@ public class TestGuiCapability
             }
 
             @Override
-            public Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+            public Container getServerGuiElement(EntityPlayer player, World world, @Nullable TileEntity owner)
             {
                 return null;
             }
@@ -205,7 +233,7 @@ public class TestGuiCapability
 
             @Nullable
             @Override
-            public Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+            public Object getClientGuiElement(EntityPlayer player, World world, @Nullable ItemStack owner)
             {
                 return new GuiScreen()
                 {
@@ -221,10 +249,60 @@ public class TestGuiCapability
 
             @Nullable
             @Override
-            public Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+            public Container getServerGuiElement(EntityPlayer player, World world, @Nullable ItemStack owner)
             {
                 return null;
             }
+        }
+    }
+
+    private class EntityHealthGui extends GuiProviderEntity implements ICapabilityProvider
+    {
+
+        private String entityName;
+        private Entity entity;
+        public EntityHealthGui(Entity entity)
+        {
+            super(entity);
+            this.entity = entity;
+            entityName = entity.getName();
+        }
+
+        @Nullable
+        @Override
+        public Object getClientGuiElement(EntityPlayer player, World world, @Nullable final Entity owner)
+        {
+            return new GuiScreen()
+            {
+                @Override
+                public void drawScreen(int mouseX, int mouseY, float partialTicks)
+                {
+                    drawDefaultBackground();
+                    super.drawScreen(mouseX, mouseY, partialTicks);
+                    fontRendererObj.drawString(entityName, 10, 10, 0xFF0000, true);
+                    fontRendererObj.drawString(" says OW!", fontRendererObj.getStringWidth(entityName) + 10, 10, 0xFFFFFF);
+                }
+            };
+        }
+
+        @Nullable
+        @Override
+        public Container getServerGuiElement(EntityPlayer player, World world, @Nullable Entity owner)
+        {
+            return null;
+        }
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+        {
+            return capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY;
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+        {
+            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new EntityHealthGui(this.entity);
+            return null;
         }
     }
 }

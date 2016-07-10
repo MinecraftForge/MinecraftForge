@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
-public abstract class GuiProviderItem implements IGuiProvider
+public abstract class GuiProviderItem implements IGuiProvider<ItemStack>
 {
     private ItemStack stack;
     private EnumHand hand;
@@ -34,7 +34,7 @@ public abstract class GuiProviderItem implements IGuiProvider
     }
 
     @Override
-    public Object getOwner(EntityPlayer player, World world)
+    public ItemStack getOwner(EntityPlayer player, World world)
     {
         return player.getHeldItem(hand);
     }

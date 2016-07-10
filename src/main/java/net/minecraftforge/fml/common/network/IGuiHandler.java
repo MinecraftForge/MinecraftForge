@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.network;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+@Deprecated // Use capability version instead
 public interface IGuiHandler
 {
     /**

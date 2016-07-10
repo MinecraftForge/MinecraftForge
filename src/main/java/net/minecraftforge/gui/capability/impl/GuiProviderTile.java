@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
-public abstract class GuiProviderTile implements IGuiProvider
+public abstract class GuiProviderTile implements IGuiProvider<TileEntity>
 {
     private BlockPos position;
     private EnumFacing side;
@@ -34,7 +34,7 @@ public abstract class GuiProviderTile implements IGuiProvider
     }
 
     @Override
-    public Object getOwner(EntityPlayer player, World world)
+    public TileEntity getOwner(EntityPlayer player, World world)
     {
         if (world == null) return null;
         return world.getTileEntity(this.position);

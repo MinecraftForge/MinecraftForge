@@ -2,6 +2,7 @@ package net.minecraftforge.gui.capability;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -9,7 +10,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a gui provider- something that activates a gui for a player to use.
  */
-public interface IGuiProvider
+public interface IGuiProvider<T>
 {
     /**
      * Deserializes a buffer from the server into the provider instance.
@@ -34,7 +35,7 @@ public interface IGuiProvider
      * @param world The world.
      * @return
      */
-    Object getOwner(EntityPlayer player, World world);
+    T getOwner(EntityPlayer player, World world);
 
     /**
      * Gets a client-side gui element (may be null) to display to a player.
@@ -45,7 +46,7 @@ public interface IGuiProvider
      * @return A Gui/GuiScreen to display on the client.
      */
     @Nullable
-    Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner);
+    Object getClientGuiElement(EntityPlayer player, World world, @Nullable T owner);
 
     /**
      * Gets a server-side container to handle slots and interaction on the server.
@@ -56,5 +57,5 @@ public interface IGuiProvider
      * @return A Container the server uses for processing.
      */
     @Nullable
-    Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner);
+    Container getServerGuiElement(EntityPlayer player, World world, @Nullable T owner);
 }
