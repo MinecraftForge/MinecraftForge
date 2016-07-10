@@ -356,4 +356,12 @@ public class PlayerInteractEvent extends PlayerEvent
         return getWorld().isRemote ? Side.CLIENT : Side.SERVER;
     }
 
+    /**
+     * @return The IBlockState of the block being interacted with. For all non-block interactions, this will return null.
+     */
+    @Nullable
+    public IBlockState getBlockState()
+    {
+        return face == null ? null : getWorld().getBlockState(pos);
+    }
 }
