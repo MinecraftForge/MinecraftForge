@@ -24,7 +24,7 @@ public abstract class GuiProviderEntity implements IGuiProvider
         buffer.writeInt(entityID);
     }
 
-    @Override public Object getOwner(EntityPlayer playerSP, World world)
+    @Override public Object getOwner(EntityPlayer player, World world)
     {
         if(world == null ) return null;
         return world.getEntityByID(entityID);

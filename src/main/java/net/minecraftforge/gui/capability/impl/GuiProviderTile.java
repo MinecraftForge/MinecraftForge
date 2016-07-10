@@ -31,7 +31,7 @@ public abstract class GuiProviderTile implements IGuiProvider
         buffer.writeInt(side.getIndex());
     }
 
-    @Override public Object getOwner(EntityPlayer playerSP, World world)
+    @Override public Object getOwner(EntityPlayer player, World world)
     {
         if(world == null) return null;
         return world.getTileEntity(this.position);

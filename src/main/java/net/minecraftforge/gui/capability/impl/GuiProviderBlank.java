@@ -19,7 +19,7 @@ public class GuiProviderBlank implements IGuiProvider
 
     }
 
-    @Override public Object getOwner(EntityPlayer playerSP, World world)
+    @Override public Object getOwner(EntityPlayer player, World world)
     {
         return null;
     }
