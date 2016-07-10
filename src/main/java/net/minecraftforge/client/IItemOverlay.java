@@ -36,24 +36,15 @@ public interface IItemOverlay
     public int getOverlayColor(ItemStack stack, int pass);
 
     /**
-     * Used for effect repeat. Vanilla repeats every 3k ms for pass 0 & 4873ms for pass 1.
+     * Used for timing offsets so it needn't be calculated per vector.
      * 
      * @param stack the ItemStack
      * @param pass the render pass
+     * @param long the time to be shifted
      * 
-     * @return a long representing repeat time in milliseconds
+     * @return a float representing the time frame for the pass
      * */
-    public long getOverlayRepeat(ItemStack stack, int pass);
-
-    /**
-     * Used for effect TimeScaling
-     * 
-     * @param stack the ItemStack
-     * @param pass the render pass
-     * 
-     * @return A float representing scaling time in milliseconds
-     * */
-    public float getOverlaySpeed(ItemStack stack, int pass);
+    public float getShiftedTime(ItemStack stack, int pass, long baseTime);
 
     /**
      * Used for effect scaling based on time.
@@ -62,7 +53,7 @@ public interface IItemOverlay
      * @param pass the render pass
      * @param time the offset time
      * 
-     * @return A 3 value array of floats representing scaling
+     * @return a 3 value array of floats representing scaling
      * */
     public float[] getOverlayScaleVector(ItemStack stack, int pass, float time);
 
@@ -73,7 +64,7 @@ public interface IItemOverlay
      * @param pass the render pass
      * @param time the offset time
      * 
-     * @return A 3 value array of floats representing translation
+     * @return a 3 value array of floats representing translation
      * */
     public float[] getOverlayTranslationVector(ItemStack stack, int pass, float time);
 
@@ -84,7 +75,7 @@ public interface IItemOverlay
      * @param pass the render pass
      * @param time the offset time
      * 
-     * @return A 4 value array of floats representing rotation
+     * @return a 4 value array of floats representing rotation
      * */
     public float[] getOverlayRotationVector(ItemStack stack, int pass, float time);
 
@@ -102,39 +93,39 @@ public interface IItemOverlay
 
         private Vanilla(){}
 
+        @Override
         public int getOverlayColor(ItemStack stack, int pass)
         {
             return defaultOverlayColor;
         }
 
-        public long getOverlayRepeat(ItemStack stack, int pass)
-        {
-            return pass == 0 ? 3000L : 4873L;
-        }
-
-        public float getOverlaySpeed(ItemStack stack, int pass)
-        {
-            return pass == 0 ? 24000.0F : 38984.0F;
-        }
-
+        @Override
         public float[] getOverlayScaleVector(ItemStack stack, int pass, float time)
         {
             return new float[] {8.0F, 8.0F, 8.0F};
         }
 
+        @Override
         public float[] getOverlayTranslationVector(ItemStack stack, int pass, float time)
         {
             return pass == 0 ? new float[] {time, 0.0F, 0.0F} : new float[] {-time, 0.0F, 0.0F};
         }
 
+        @Override
         public float[] getOverlayRotationVector(ItemStack stack, int pass, float time)
         {
             return pass == 0 ? new float[] {-50.0F, 0.0F, 0.0F, 1.0F} : new float[] {10.0F, 0.0F, 0.0F, 1.0F};
         }
 
+        @Override
         public ResourceLocation getOverlayTexture(ItemStack stack)
         {
             return defaultGlint;
+        }
+
+        @Override
+        public float getShiftedTime(ItemStack stack, int pass, long baseTime) {
+            return pass == 0 ? (baseTime % 3000L) / 24000.0F : (baseTime % 3873L) / 38984.0F;
         }
 
     }

@@ -35,18 +35,6 @@ public class EffectOverlayTest {
         }
 
         @Override
-        public long getOverlayRepeat(ItemStack stack, int pass)
-        {
-            return pass == 0 ? 8000L : 9873L;
-        }
-
-        @Override
-        public float getOverlaySpeed(ItemStack stack, int pass)
-        {
-            return pass == 0 ? 150000.0F : 177984.0F;
-        }
-
-        @Override
         public float[] getOverlayScaleVector(ItemStack stack, int pass, float time)
         {
             return new float[] {12.0F, 12.0F, 12.0F};
@@ -69,6 +57,11 @@ public class EffectOverlayTest {
         {
             return EMBER;
         }
+
+        @Override
+        public float getShiftedTime(ItemStack stack, int pass, long baseTime) {
+            return pass == 0 ?(baseTime % 3000L) / 150000.0F : (baseTime % 3873L) / 177984.0F;
+        }
         
     };
 
@@ -90,7 +83,7 @@ public class EffectOverlayTest {
         @Override
         public float[] getOverlayTranslationVector(ItemStack stack,EntityLivingBase wearer, int pass, EntityEquipmentSlot slot,float time)
         {
-            return new float[] { time * (pass == 0 ? 0.1003F : 0.03003F), 0.0F, 0.0F};
+            return new float[] { time  * (pass == 0 ? -0.0033F : 0.03003F), 0.0F, 0.0F};
         }
 
         @Override
@@ -104,6 +97,7 @@ public class EffectOverlayTest {
         {
             return EMBER;
         }
+
         
     };
 

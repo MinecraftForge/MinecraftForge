@@ -75,11 +75,10 @@ public class ArmorOverlayHandler
             return false;
         }
         return true;
-
     }
 
     /**
-     * Registers an instance of IItemOverlay to a group of items
+     * Registers an instance of IArmorOverlay to a group of items
      * 
      * @param armorOverlay the overlay being registered
      * @param itemsIn the items corresponding to the armor that will be using the overlay

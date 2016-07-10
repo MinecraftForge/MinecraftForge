@@ -57,11 +57,11 @@ public final class ItemOverlayHandler
             for(int CUR_PASS = 0; CUR_PASS < NUM_PASS; CUR_PASS++)
             {
                 color = current.getOverlayColor(stack, CUR_PASS);
+                time = current.getShiftedTime(stack, CUR_PASS, Minecraft.getSystemTime());
                 if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
                     GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
                 else
                     GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR, GlStateManager.DestFactor.ONE_MINUS_DST_COLOR);
-                time = (float)(Minecraft.getSystemTime() % current.getOverlayRepeat(stack, CUR_PASS)) / current.getOverlaySpeed(stack, CUR_PASS);
                 GlStateManager.pushMatrix();
  
                 vec = current.getOverlayScaleVector(stack, CUR_PASS, time);
