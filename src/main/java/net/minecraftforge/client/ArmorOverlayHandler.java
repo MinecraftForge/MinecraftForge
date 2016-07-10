@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -11,6 +12,11 @@ import net.minecraft.item.ItemStack;
  * */
 public class ArmorOverlayHandler
 {
+
+    private static final java.util.Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, IArmorOverlay> armorOverlayMap = com.google.common.collect.Maps.newHashMap();
+
+    private static IArmorOverlay current;
+
     /**
      * Number of passes to be run.
      * */
@@ -26,7 +32,12 @@ public class ArmorOverlayHandler
     public static boolean run(TextureManager textureManager, ItemStack stack, EntityLivingBase wearer, float partialTicks, EntityEquipmentSlot slot)
     {
         if(CUR_PASS == 0)
+        {
+            current = armorOverlayMap.get(stack.getItem().delegate);
+            if(current == null)
+                current = IArmorOverlay.VANILLA;
             begin(textureManager, stack, wearer, partialTicks, slot);
+        }
         else if(CUR_PASS < NUM_PASS) //Run pass
             {
                 prePass(stack, wearer, partialTicks, slot);
@@ -46,7 +57,7 @@ public class ArmorOverlayHandler
      * */
     private static void begin(TextureManager textureManager, ItemStack stack, EntityLivingBase wearer, float partialTicks, EntityEquipmentSlot slot)
     {
-        textureManager.bindTexture(stack.getItem().getArmorEffectTexture(stack, wearer));
+        textureManager.bindTexture(current.getOverlayTexture(stack, wearer));
         GlStateManager.enableBlend();
         GlStateManager.depthMask(false);
         GlStateManager.depthFunc(514);
@@ -65,16 +76,16 @@ public class ArmorOverlayHandler
      **/
     private static void prePass(ItemStack stack, EntityLivingBase wearer, float partialTicks, EntityEquipmentSlot slot)
     {
-        int color = stack.getItem().getArmorEffectColorForPass(stack, wearer, CUR_PASS, slot);
+        int color = current.getOverlayColor(stack, wearer, CUR_PASS, slot);
         float time = wearer.ticksExisted + partialTicks;
         GlStateManager.matrixMode(5890);
         GlStateManager.loadIdentity();
         GlStateManager.color((color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F,  (color & 255) / 255F , (color >> 24 & 255) / 255.0F);
-        float[] vec = stack.getItem().getArmorEffectScaleVectorForPass(stack, wearer, CUR_PASS, slot, time);
+        float[] vec = current.getOverlayScaleVector(stack, wearer, CUR_PASS, slot, time);
         GlStateManager.scale(vec[0], vec[1], vec[2]);
-        vec = stack.getItem().getArmorEffectRotationVectorForPass(stack, wearer, CUR_PASS, slot, time);
+        vec = current.getOverlayRotationVector(stack, wearer, CUR_PASS, slot, time);
         GlStateManager.rotate(vec[0], vec[1], vec[2], vec[3]);
-        vec = stack.getItem().getArmorEffectTranslationVectorForPass(stack, wearer, CUR_PASS, slot, time);
+        vec = current.getOverlayTranslationVector(stack, wearer, CUR_PASS, slot, time);
         GlStateManager.translate(vec[0], vec[1], vec[2]);
         GlStateManager.matrixMode(5888);
     }
@@ -94,11 +105,19 @@ public class ArmorOverlayHandler
     }
 
     /**
-     * Helper method for accessing pass color externally
-     * @return The effect color for the current pass.
+     * Registers an instance of IItemOverlay to a group of items
+     * 
+     * @param armorOverlay the overlay being registered
+     * @param itemsIn the items corresponding to the armor that will be using the overlay
      * */
-    public static int getColor(ItemStack stack)
+    public static void registerOverlayHandler(IArmorOverlay armorOverlay, Item... itemsIn)
     {
-        return stack.getItem().getItemEffectColorForPass(stack, CUR_PASS);
+        for (Item item : itemsIn)
+        {
+            if (item == null) throw new IllegalArgumentException("Item registered to item overlay handler cannot be null!");
+            if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning an overlay handler.");
+            armorOverlayMap.put(item.delegate, armorOverlay);
+        }
     }
+
 }
