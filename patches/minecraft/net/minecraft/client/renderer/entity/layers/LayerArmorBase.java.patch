@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -58,33 +58,35 @@
+@@ -58,33 +58,32 @@
              if (itemarmor.func_185083_B_() == p_188361_9_)
              {
                  T t = this.func_188360_a(p_188361_9_);
@@ -41,15 +41,12 @@
 +                        if (!this.field_177193_i && itemstack.func_77962_s())
                          {
 -                            func_188364_a(this.field_177190_a, p_188361_1_, t, p_188361_2_, p_188361_3_, p_188361_4_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
-+                            if(net.minecraftforge.common.ForgeModContainer.forgeArmorOverlay)
-+                                while(net.minecraftforge.client.ArmorOverlayHandler.run(field_177190_a.func_177068_d().field_78724_e, itemstack, p_188361_1_, p_188361_4_, p_188361_9_))
-+                                    t.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
-+                            else 
++                            if(net.minecraftforge.client.ArmorOverlayHandler.run(field_177190_a.func_177068_d().field_78724_e, itemstack, p_188361_1_, p_188361_4_, p_188361_9_, t, p_188361_2_, p_188361_3_, p_188361_6_, p_188361_7_, p_188361_8_))
 +                                func_188364_a(this.field_177190_a, p_188361_1_, t, p_188361_2_, p_188361_3_, p_188361_4_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
                          }
                  }
              }
-@@ -142,11 +144,13 @@
+@@ -142,11 +141,13 @@
          GlStateManager.func_179084_k();
      }
  
@@ -63,7 +60,7 @@
      private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_)
      {
          String s = String.format("textures/models/armor/%s_layer_%d%s.png", new Object[] {p_177178_1_.func_82812_d().func_179242_c(), Integer.valueOf(p_177178_2_ ? 2 : 1), p_177178_3_ == null ? "" : String.format("_%s", new Object[]{p_177178_3_})});
-@@ -164,4 +168,49 @@
+@@ -164,4 +165,49 @@
      protected abstract void func_177177_a();
  
      protected abstract void func_188359_a(T p_188359_1_, EntityEquipmentSlot p_188359_2_);

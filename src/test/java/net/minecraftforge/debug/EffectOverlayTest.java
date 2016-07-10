@@ -31,7 +31,7 @@ public class EffectOverlayTest {
         @Override
         public int getOverlayColor(ItemStack stack, int pass)
         {
-            return pass == 0 ? 0xCC22FF99 : 0xCCFF9900;
+            return pass == 0 ? 0xFF113311 : 0xFFCC1100;
         }
 
         @Override
@@ -78,7 +78,7 @@ public class EffectOverlayTest {
         @Override
         public int getOverlayColor(ItemStack stack, EntityLivingBase wearer, int pass, EntityEquipmentSlot slot)
         {
-            return pass == 0 ? 0xCC22FFFF  : 0xCCFF0000;
+            return pass == 0 ? 0xFF119999  : 0xCCFF0000;
         }
 
         @Override
