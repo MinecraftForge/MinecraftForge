@@ -209,4 +209,9 @@ public class FMLNetworkHandler
         fmlData.add("modList", modList);
         jsonobject.add("modinfo", fmlData);
     }
+
+    public static EmbeddedChannel getServerChannel()
+    {
+        return channelPair.get(Side.SERVER);
+    }
 }

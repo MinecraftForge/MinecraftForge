@@ -21,6 +21,7 @@ package net.minecraftforge.common.network;
 
 import java.util.EnumMap;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.gui.OpenGuiMessage;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
@@ -53,5 +54,6 @@ public class ForgeNetworkHandler
         String handlerName = clientChannel.findChannelHandlerNameForType(ForgeRuntimeCodec.class);
         clientChannel.pipeline().addAfter(handlerName, "DimensionHandler", new DimensionMessageHandler());
         clientChannel.pipeline().addAfter(handlerName, "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
+        clientChannel.pipeline().addAfter(handlerName, "EntityGuiCapabilityHandler", new OpenGuiMessage.Handler());
     }
 }
