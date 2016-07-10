@@ -38,7 +38,7 @@ import net.minecraftforge.gui.capability.impl.GuiProviderTile;
 
 import javax.annotation.Nullable;
 
-@Mod(modid = "gui", name = "Entity Gui Capability Test")
+@Mod(modid = "gui", name = "Gui Capability Test")
 public class TestGuiCapability
 {
     @Mod.Instance("gui")

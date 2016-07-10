@@ -30,7 +30,7 @@ public class ForgeGuiHandler
         if (player instanceof FakePlayer || player instanceof EntityPlayerSP) return;
         EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
-        Container container = (Container) provider.getServerGuiElement(player, worldObj, owner);
+        Container container = provider.getServerGuiElement(player, worldObj, owner);
         if (container == null) return;
 
         playerMP.getNextWindowId();

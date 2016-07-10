@@ -66,7 +66,9 @@ public abstract class FMLMessage {
         int windowId;
         String modId;
         int modGuiId;
-        int x, y, z;
+        int x;
+        int y;
+        int z;
 
         public OpenGui() {}
         OpenGui(int windowId, String modId, int modGuiId, int x, int y, int z)

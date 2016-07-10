@@ -443,7 +443,10 @@
 +
 +
 +    /* ======================================== FORGE START =====================================*/
-+    public void openGui(net.minecraftforge.gui.capability.IGuiProvider provider) { net.minecraftforge.gui.ForgeGuiHandler.openGui(this, field_70170_p, provider); }
++    public void openGui(net.minecraftforge.gui.capability.IGuiProvider provider)
++    {
++        net.minecraftforge.gui.ForgeGuiHandler.openGui(this, field_70170_p, provider);
++    }
 +
 +    /**
 +     * A dimension aware version of getBedLocation.

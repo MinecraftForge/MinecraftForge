@@ -3,7 +3,6 @@ package net.minecraftforge.gui;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -60,11 +59,10 @@ public class OpenGuiMessage implements IMessage
         private void process(OpenGuiMessage msg)
         {
             EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
-            WorldClient world = FMLClientHandler.instance().getWorldClient();
-            Object owner = msg.provider.getOwner(player, world);
+            Object owner = msg.provider.getOwner(player, player.worldObj);
 
             if(owner == null) return;
-            Object gui = msg.provider.getClientGuiElement(player, world, owner);
+            Object gui = msg.provider.getClientGuiElement(player, player.worldObj, owner);
             FMLClientHandler.instance().showGuiScreen(gui);
         }
     }

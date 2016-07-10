@@ -54,6 +54,6 @@ public class ForgeNetworkHandler
         String handlerName = clientChannel.findChannelHandlerNameForType(ForgeRuntimeCodec.class);
         clientChannel.pipeline().addAfter(handlerName, "DimensionHandler", new DimensionMessageHandler());
         clientChannel.pipeline().addAfter(handlerName, "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
-        clientChannel.pipeline().addAfter(handlerName, "EntityGuiCapabilityHandler", new OpenGuiMessage.Handler());
+        clientChannel.pipeline().addAfter(handlerName, "GuiCapabilityHandler", new OpenGuiMessage.Handler());
     }
 }
