@@ -17,20 +17,21 @@ public class ForgeGuiHandler
 {
     public static void openGui(EntityPlayer player, World worldObj, IGuiProvider provider)
     {
-        if(provider == null) return;
+        if (provider == null) return;
+
         Object owner = provider.getOwner(player, worldObj);
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        if (worldObj.isRemote)
         {
             Object gui = provider.getClientGuiElement(player, worldObj, owner);
             FMLCommonHandler.instance().showGuiScreen(gui);
             return;
         }
 
-        if(player instanceof FakePlayer || player instanceof EntityPlayerSP) return;
+        if (player instanceof FakePlayer || player instanceof EntityPlayerSP) return;
         EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
         Container container = (Container) provider.getServerGuiElement(player, worldObj, owner);
-        if(container == null) return;
+        if (container == null) return;
 
         playerMP.getNextWindowId();
         playerMP.closeContainer();

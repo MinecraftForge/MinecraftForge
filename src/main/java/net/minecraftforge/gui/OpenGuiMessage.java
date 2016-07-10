@@ -20,12 +20,14 @@ public class OpenGuiMessage implements IMessage
         this.provider = provider;
     }
 
-    @Override public void fromBytes(ByteBuf buf)
+    @Override
+    public void fromBytes(ByteBuf buf)
     {
         provider.deserialize(buf);
     }
 
-    @Override public void toBytes(ByteBuf buf)
+    @Override
+    public void toBytes(ByteBuf buf)
     {
         provider.serialize(buf);
     }
@@ -35,7 +37,8 @@ public class OpenGuiMessage implements IMessage
         @SuppressWarnings("unused")
         public Handler() {}
 
-        @Override protected void channelRead0(ChannelHandlerContext ctx, final OpenGuiMessage msg) throws Exception
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, final OpenGuiMessage msg) throws Exception
         {
             IThreadListener thread = FMLCommonHandler.instance().getWorldThread(ctx.channel().attr(NetworkRegistry.NET_HANDLER).get());
             if (thread.isCallingFromMinecraftThread())
