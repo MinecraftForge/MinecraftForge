@@ -214,7 +214,7 @@
          }
          else
          {
-+            EnumActionResult eventResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_184822_1_, p_184822_2_, p_184822_3_);
++            EnumActionResult eventResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAction(this, p_184822_1_, p_184822_2_, p_184822_3_);
 +            if(eventResult != null) return eventResult;
              ItemStack itemstack = p_184822_2_ != null ? p_184822_2_.func_77946_l() : null;
  

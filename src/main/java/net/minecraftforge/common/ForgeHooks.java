@@ -958,27 +958,51 @@ public class ForgeHooks
         return git == null ? null : git.hitVec;
     }
 
-    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, ItemStack stack, EnumHand hand)
+    @Deprecated
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, ItemStack stack, EnumHand hand)
     {
-        Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
-        return onInteractEntityAt(player, entity, vec3d, stack, hand);
+        return onInteractEntityAtAction(player, entity, ray, stack, hand) != null;
     }
 
-    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, ItemStack stack, EnumHand hand)
+    @Deprecated
+    public static boolean onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, ItemStack stack, EnumHand hand)
+    {
+        return onInteractEntityAtAction(player, entity, vec3d, stack, hand) != null;
+    }
+
+    public static EnumActionResult onInteractEntityAtAction(EntityPlayer player, Entity entity, RayTraceResult ray, ItemStack stack, EnumHand hand)
+    {
+        Vec3d vec3d = new Vec3d(ray.hitVec.xCoord - entity.posX, ray.hitVec.yCoord - entity.posY, ray.hitVec.zCoord - entity.posZ);
+        return onInteractEntityAtAction(player, entity, vec3d, stack, hand);
+    }
+
+    public static EnumActionResult onInteractEntityAtAction(EntityPlayer player, Entity entity, Vec3d vec3d, ItemStack stack, EnumHand hand)
     {
         PlayerInteractEvent.EntityInteractSpecific evt = new PlayerInteractEvent.EntityInteractSpecific(player, hand, stack, entity, vec3d);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.isCanceled() ? evt.getSubstituteResult() : null;
     }
 
-    public static EnumActionResult onInteractEntity(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
+    @Deprecated
+    public static boolean onInteractEntity(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
+    {
+        return onInteractEntityAction(player, entity, item, hand) != null;
+    }
+
+    public static EnumActionResult onInteractEntityAction(EntityPlayer player, Entity entity, ItemStack item, EnumHand hand)
     {
         PlayerInteractEvent.EntityInteract evt = new PlayerInteractEvent.EntityInteract(player, hand, item, entity);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.isCanceled() ? evt.getSubstituteResult() : null;
     }
 
-    public static EnumActionResult onItemRightClick(EntityPlayer player, EnumHand hand, ItemStack stack)
+    @Deprecated
+    public static boolean onItemRightClick(EntityPlayer player, EnumHand hand, ItemStack stack)
+    {
+        return onItemRightClickAction(player, hand, stack) != null;
+    }
+
+    public static EnumActionResult onItemRightClickAction(EntityPlayer player, EnumHand hand, ItemStack stack)
     {
         PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand, stack);
         MinecraftForge.EVENT_BUS.post(evt);

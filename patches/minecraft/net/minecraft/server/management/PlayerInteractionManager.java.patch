@@ -210,7 +210,7 @@
          }
          else
          {
-+            EnumActionResult eventResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187250_1_, p_187250_4_, p_187250_3_);
++            EnumActionResult eventResult = net.minecraftforge.common.ForgeHooks.onItemRightClickAction(p_187250_1_, p_187250_4_, p_187250_3_);
 +            if(eventResult != null) return eventResult;
              int i = p_187250_3_.field_77994_a;
              int j = p_187250_3_.func_77960_j();
