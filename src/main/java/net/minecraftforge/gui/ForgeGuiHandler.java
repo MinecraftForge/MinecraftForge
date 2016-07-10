@@ -1,7 +1,6 @@
 package net.minecraftforge.gui;
 
 import io.netty.channel.embedded.EmbeddedChannel;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -10,7 +9,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
 public class ForgeGuiHandler
@@ -27,26 +25,29 @@ public class ForgeGuiHandler
             return;
         }
 
-        if (player instanceof FakePlayer || player instanceof EntityPlayerSP) return;
-        EntityPlayerMP playerMP = (EntityPlayerMP) player;
+        if (player instanceof EntityPlayerMP && !(player instanceof FakePlayer))
+        {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
-        Container container = provider.getServerGuiElement(player, worldObj, owner);
-        if (container == null) return;
+            Container container = provider.getServerGuiElement(player, worldObj, owner);
+            if (container != null)
+            {
+                playerMP.getNextWindowId();
+                playerMP.closeContainer();
+                int windowId = playerMP.currentWindowId;
 
-        playerMP.getNextWindowId();
-        playerMP.closeContainer();
-        int windowId = playerMP.currentWindowId;
+                OpenGuiMessage openGui = new OpenGuiMessage(provider);
+                EmbeddedChannel embeddedChannel = FMLNetworkHandler.getServerChannel();
+                embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
+                embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(playerMP);
+                embeddedChannel.writeOutbound(openGui);
 
-        OpenGuiMessage openGui = new OpenGuiMessage(provider);
-        EmbeddedChannel embeddedChannel = FMLNetworkHandler.getServerChannel();
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(playerMP);
-        embeddedChannel.writeOutbound(openGui);
+                playerMP.openContainer = container;
+                playerMP.openContainer.windowId = windowId;
+                playerMP.openContainer.addListener(playerMP);
 
-        playerMP.openContainer = container;
-        playerMP.openContainer.windowId = windowId;
-        playerMP.openContainer.addListener(playerMP);
-
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(player, player.openContainer));
+                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(player, player.openContainer));
+            }
+        }
     }
 }

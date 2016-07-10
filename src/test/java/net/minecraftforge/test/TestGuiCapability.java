@@ -120,7 +120,7 @@ public class TestGuiCapability
         }
     }
 
-    private class TileTestBlock extends TileEntity
+    public static class TileTestBlock extends TileEntity
     {
 
         TestGuiProvider testGuiProvider;
@@ -142,7 +142,7 @@ public class TestGuiCapability
             return super.getCapability(capability, facing);
         }
 
-        private class TestGuiProvider extends GuiProviderTile
+        class TestGuiProvider extends GuiProviderTile
         {
             public TestGuiProvider(TileEntity tile, EnumFacing side)
             {
