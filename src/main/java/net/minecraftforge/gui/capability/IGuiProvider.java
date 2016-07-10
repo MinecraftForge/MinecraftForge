@@ -3,6 +3,7 @@ package net.minecraftforge.gui.capability;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -33,9 +34,10 @@ public interface IGuiProvider<T>
      *
      * @param player The player instance.
      * @param world The world.
+     * @param hand The hand being used to access the gui. May be null if not required.
      * @return An object that "owns" the gui- a tile, an entity, an item.
      */
-    T getOwner(EntityPlayer player, World world);
+    T getOwner(EntityPlayer player, World world, @Nullable EnumHand hand);
 
     /**
      * Gets a client-side gui element to display to a player.

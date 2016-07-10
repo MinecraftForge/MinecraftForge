@@ -20,6 +20,8 @@
 package net.minecraftforge.common.network;
 
 import java.util.EnumMap;
+
+import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.gui.OpenGuiMessage;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -45,6 +47,11 @@ public class ForgeNetworkHandler
         serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.NOWHERE);
         String handlerName = serverChannel.findChannelHandlerNameForType(ForgeRuntimeCodec.class);
         serverChannel.pipeline().addAfter(handlerName, "ServerToClientConnection", new ServerToClientConnectionEstablishedHandler());
+    }
+
+    public static EmbeddedChannel getChannel(Side side)
+    {
+        return channelPair.get(side);
     }
 
     @SideOnly(Side.CLIENT)

@@ -4,15 +4,19 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.gui.capability.IGuiProvider;
+
+import javax.annotation.Nullable;
 
 public abstract class GuiProviderTile implements IGuiProvider<TileEntity>
 {
     private BlockPos position;
     private EnumFacing side;
 
+    public GuiProviderTile() { }
     public GuiProviderTile(TileEntity tile, EnumFacing side)
     {
         this.position = tile.getPos();
@@ -34,7 +38,7 @@ public abstract class GuiProviderTile implements IGuiProvider<TileEntity>
     }
 
     @Override
-    public TileEntity getOwner(EntityPlayer player, World world)
+    public TileEntity getOwner(EntityPlayer player, World world, @Nullable EnumHand hand)
     {
         if (world == null) return null;
         return world.getTileEntity(this.position);

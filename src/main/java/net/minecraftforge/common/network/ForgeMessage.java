@@ -116,6 +116,6 @@ public abstract class ForgeMessage {
         }
     }
 
-    abstract void toBytes(ByteBuf bytes);
-    abstract void fromBytes(ByteBuf bytes);
+    protected abstract void toBytes(ByteBuf bytes);
+    protected abstract void fromBytes(ByteBuf bytes);
 }

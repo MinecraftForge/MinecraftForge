@@ -1,10 +1,11 @@
 package net.minecraftforge.test;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityPig;
@@ -22,7 +23,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +35,8 @@ import net.minecraftforge.gui.capability.IGuiProvider;
 import net.minecraftforge.gui.capability.impl.GuiProviderEntity;
 import net.minecraftforge.gui.capability.impl.GuiProviderItem;
 import net.minecraftforge.gui.capability.impl.GuiProviderTile;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -81,7 +83,7 @@ public class TestGuiCapability
             if(event.getTarget().hasCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null))
             {
                 IGuiProvider gui = event.getTarget().getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null);
-                source.openGui(gui);
+                source.openGui(gui, null);
             }
         }
     }
@@ -115,7 +117,7 @@ public class TestGuiCapability
         {
             TileTestBlock tile = (TileTestBlock) worldIn.getTileEntity(pos);
             IGuiProvider cap = tile.getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null);
-            playerIn.openGui(cap);
+            playerIn.openGui(cap, hand);
             return true;
         }
     }
@@ -142,32 +144,76 @@ public class TestGuiCapability
             return super.getCapability(capability, facing);
         }
 
-        class TestGuiProvider extends GuiProviderTile
+        public static class TestGuiProvider extends GuiProviderTile
         {
+            public TestGuiProvider() { }
             public TestGuiProvider(TileEntity tile, EnumFacing side)
             {
                 super(tile, side);
             }
 
             @Override
-            public Object getClientGuiElement(EntityPlayer player, World world, @Nullable TileEntity owner)
+            public Object getClientGuiElement(EntityPlayer player, World world, TileEntity owner)
             {
-                return new GuiScreen()
-                {
-                    @Override public void drawScreen(int mouseX, int mouseY, float partialTicks)
-                    {
-                        super.drawScreen(mouseX, mouseY, partialTicks);
-                        drawDefaultBackground();
-                        fontRendererObj.drawString("Gui test", 10, 10, 0xFFFFFF);
-                    }
-                };
+                return new GuiTileTest(player, (TileTestBlock) owner);
             }
 
             @Override
-            public Container getServerGuiElement(EntityPlayer player, World world, @Nullable TileEntity owner)
+            public Container getServerGuiElement(EntityPlayer player, World world, TileEntity owner)
             {
-                return null;
+                return new ContainerTileTest(player, (TileTestBlock) owner);
             }
+        }
+    }
+
+    private static class GuiTileTest extends GuiContainer
+    {
+        public GuiTileTest(EntityPlayer player, TileTestBlock tile)
+        {
+            super(new ContainerTileTest(player, tile));
+            xSize = 400;
+            ySize = 300;
+        }
+
+        @Override
+        protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+        {
+            super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(guiLeft, guiTop, 0);
+            fontRendererObj.drawString("Gui test", 10, 10, 0xFFFFFF);
+            GlStateManager.popMatrix();
+        }
+
+        @Override
+        protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+        {
+            drawDefaultBackground();
+        }
+    }
+
+    private static class ContainerTileTest extends Container
+    {
+        public ContainerTileTest(EntityPlayer player, TileTestBlock tile)
+        {
+            PlayerInvWrapper wrapper = new PlayerInvWrapper(player.inventory);
+            for(int i = 0; i < 9; ++i){
+                SlotItemHandler s = new SlotItemHandler(wrapper, i, 10 + (i * 18), 50);
+                this.addSlotToContainer(s);
+            }
+        }
+
+        @Override
+        public boolean canInteractWith(EntityPlayer playerIn)
+        {
+            return true;
+        }
+
+        @Nullable
+        @Override
+        public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
+        {
+            return null;
         }
     }
 
@@ -186,8 +232,8 @@ public class TestGuiCapability
         {
             if (itemStackIn.hasCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, EnumFacing.UP))
             {
-                IGuiProvider provider = itemStackIn.getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, hand == EnumHand.MAIN_HAND ? EnumFacing.UP : EnumFacing.DOWN);
-                playerIn.openGui(provider);
+                IGuiProvider provider = itemStackIn.getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null);
+                playerIn.openGui(provider, hand);
                 return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
             }
 
@@ -206,6 +252,7 @@ public class TestGuiCapability
 
         private ItemStack stack;
 
+        public ItemGuiHandler() { }
         public ItemGuiHandler(ItemStack stack)
         {
             this.stack = stack;
@@ -220,20 +267,20 @@ public class TestGuiCapability
         @Override
         public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
         {
-            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new TestItemGui(stack, facing == EnumFacing.UP ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND);
+            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new TestItemGui(stack);
             return null;
         }
 
         private class TestItemGui extends GuiProviderItem
         {
-            public TestItemGui(ItemStack stack, EnumHand hand)
+            public TestItemGui(ItemStack stack)
             {
-                super(stack, hand);
+                super(stack);
             }
 
             @Nullable
             @Override
-            public Object getClientGuiElement(EntityPlayer player, World world, @Nullable ItemStack owner)
+            public Object getClientGuiElement(EntityPlayer player, World world, ItemStack owner)
             {
                 return new GuiScreen()
                 {
@@ -249,7 +296,7 @@ public class TestGuiCapability
 
             @Nullable
             @Override
-            public Container getServerGuiElement(EntityPlayer player, World world, @Nullable ItemStack owner)
+            public Container getServerGuiElement(EntityPlayer player, World world, ItemStack owner)
             {
                 return null;
             }
@@ -258,9 +305,9 @@ public class TestGuiCapability
 
     private class EntityHealthGui extends GuiProviderEntity implements ICapabilityProvider
     {
-
         private String entityName;
         private Entity entity;
+        public EntityHealthGui() { }
         public EntityHealthGui(Entity entity)
         {
             super(entity);
@@ -270,7 +317,7 @@ public class TestGuiCapability
 
         @Nullable
         @Override
-        public Object getClientGuiElement(EntityPlayer player, World world, @Nullable final Entity owner)
+        public Object getClientGuiElement(EntityPlayer player, World world, Entity owner)
         {
             return new GuiScreen()
             {
@@ -287,7 +334,7 @@ public class TestGuiCapability
 
         @Nullable
         @Override
-        public Container getServerGuiElement(EntityPlayer player, World world, @Nullable Entity owner)
+        public Container getServerGuiElement(EntityPlayer player, World world, Entity owner)
         {
             return null;
         }

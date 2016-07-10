@@ -8,33 +8,32 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
+import javax.annotation.Nullable;
+
 public abstract class GuiProviderItem implements IGuiProvider<ItemStack>
 {
     private ItemStack stack;
-    private EnumHand hand;
 
-    public GuiProviderItem(ItemStack stack, EnumHand hand)
+    public GuiProviderItem() { }
+    public GuiProviderItem(ItemStack stack)
     {
         this.stack = stack;
-        this.hand = hand;
     }
 
     @Override
     public void deserialize(ByteBuf buffer)
     {
         stack = ByteBufUtils.readItemStack(buffer);
-        hand = buffer.readBoolean() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
     }
 
     @Override
     public void serialize(ByteBuf buffer)
     {
         ByteBufUtils.writeItemStack(buffer, stack);
-        buffer.writeBoolean(hand == EnumHand.MAIN_HAND);
     }
 
     @Override
-    public ItemStack getOwner(EntityPlayer player, World world)
+    public ItemStack getOwner(EntityPlayer player, World world, @Nullable EnumHand hand)
     {
         return player.getHeldItem(hand);
     }
