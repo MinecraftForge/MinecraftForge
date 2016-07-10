@@ -12,25 +12,29 @@ public abstract class GuiProviderItem implements IGuiProvider
 {
     private ItemStack stack;
     private EnumHand hand;
+
     public GuiProviderItem(ItemStack stack, EnumHand hand)
     {
         this.stack = stack;
         this.hand = hand;
     }
 
-    @Override public void deserialize(ByteBuf buffer)
+    @Override
+    public void deserialize(ByteBuf buffer)
     {
         stack = ByteBufUtils.readItemStack(buffer);
         hand = buffer.readInt() == 0 ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
     }
 
-    @Override public void serialize(ByteBuf buffer)
+    @Override
+    public void serialize(ByteBuf buffer)
     {
         ByteBufUtils.writeItemStack(buffer, stack);
         buffer.writeInt(hand == EnumHand.MAIN_HAND ? 0 : 1);
     }
 
-    @Override public Object getOwner(EntityPlayer player, World world)
+    @Override
+    public Object getOwner(EntityPlayer player, World world)
     {
         return player.getHeldItem(hand);
     }

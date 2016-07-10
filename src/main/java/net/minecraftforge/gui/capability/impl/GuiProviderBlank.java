@@ -9,27 +9,26 @@ import javax.annotation.Nullable;
 
 public class GuiProviderBlank implements IGuiProvider
 {
-    @Override public void deserialize(ByteBuf buffer)
-    {
+    @Override
+    public void deserialize(ByteBuf buffer) { }
 
-    }
+    @Override
+    public void serialize(ByteBuf buffer) { }
 
-    @Override public void serialize(ByteBuf buffer)
-    {
-
-    }
-
-    @Override public Object getOwner(EntityPlayer player, World world)
+    @Override
+    public Object getOwner(EntityPlayer player, World world)
     {
         return null;
     }
 
-    @Override public Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+    @Override
+    public Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner)
     {
         return null;
     }
 
-    @Override public Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner)
+    @Override
+    public Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner)
     {
         return null;
     }

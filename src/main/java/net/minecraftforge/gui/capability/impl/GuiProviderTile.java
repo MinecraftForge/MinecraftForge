@@ -19,21 +19,24 @@ public abstract class GuiProviderTile implements IGuiProvider
         this.side = side;
     }
 
-    @Override public void deserialize(ByteBuf buffer)
+    @Override
+    public void deserialize(ByteBuf buffer)
     {
         this.position = BlockPos.fromLong(buffer.readLong());
         this.side = EnumFacing.getFront(buffer.readInt());
     }
 
-    @Override public void serialize(ByteBuf buffer)
+    @Override
+    public void serialize(ByteBuf buffer)
     {
         buffer.writeLong(position.toLong());
         buffer.writeInt(side.getIndex());
     }
 
-    @Override public Object getOwner(EntityPlayer player, World world)
+    @Override
+    public Object getOwner(EntityPlayer player, World world)
     {
-        if(world == null) return null;
+        if (world == null) return null;
         return world.getTileEntity(this.position);
     }
 }

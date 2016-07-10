@@ -44,7 +44,8 @@ public interface IGuiProvider
      * @param owner The owner object of the gui. Usually a tile, item, or entity.
      * @return A Gui/GuiScreen to display on the client.
      */
-    @Nullable Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner);
+    @Nullable
+    Object getClientGuiElement(EntityPlayer player, World world, @Nullable Object owner);
 
     /**
      * Gets a server-side container to handle slots and interaction on the server.
@@ -54,5 +55,6 @@ public interface IGuiProvider
      * @param owner The owner object. Usually a tile, item, or entity.
      * @return A Container the server uses for processing.
      */
-    @Nullable Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner);
+    @Nullable
+    Object getServerGuiElement(EntityPlayer player, World world, @Nullable Object owner);
 }
