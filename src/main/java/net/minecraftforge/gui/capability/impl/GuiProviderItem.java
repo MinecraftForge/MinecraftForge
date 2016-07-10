@@ -23,14 +23,14 @@ public abstract class GuiProviderItem implements IGuiProvider<ItemStack>
     public void deserialize(ByteBuf buffer)
     {
         stack = ByteBufUtils.readItemStack(buffer);
-        hand = buffer.readInt() == 0 ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+        hand = buffer.readBoolean() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
     }
 
     @Override
     public void serialize(ByteBuf buffer)
     {
         ByteBufUtils.writeItemStack(buffer, stack);
-        buffer.writeInt(hand == EnumHand.MAIN_HAND ? 0 : 1);
+        buffer.writeBoolean(hand == EnumHand.MAIN_HAND);
     }
 
     @Override

@@ -33,12 +33,12 @@ public interface IGuiProvider<T>
      *
      * @param player The player instance.
      * @param world The world.
-     * @return
+     * @return An object that "owns" the gui- a tile, an entity, an item.
      */
     T getOwner(EntityPlayer player, World world);
 
     /**
-     * Gets a client-side gui element (may be null) to display to a player.
+     * Gets a client-side gui element to display to a player.
      *
      * @param player The player viewing the gui.
      * @param world The world the gui is being displayed in.
@@ -46,7 +46,7 @@ public interface IGuiProvider<T>
      * @return A Gui/GuiScreen to display on the client.
      */
     @Nullable
-    Object getClientGuiElement(EntityPlayer player, World world, @Nullable T owner);
+    Object getClientGuiElement(EntityPlayer player, World world, T owner);
 
     /**
      * Gets a server-side container to handle slots and interaction on the server.
@@ -57,5 +57,5 @@ public interface IGuiProvider<T>
      * @return A Container the server uses for processing.
      */
     @Nullable
-    Container getServerGuiElement(EntityPlayer player, World world, @Nullable T owner);
+    Container getServerGuiElement(EntityPlayer player, World world, T owner);
 }

@@ -15,7 +15,8 @@ public class CapabilityGuiProvider
     @CapabilityInject(IGuiProvider.class)
     public final static Capability<IGuiProvider> GUI_PROVIDER_CAPABILITY = null;
 
-    public static void register(){
+    public static void register()
+    {
         CapabilityManager.INSTANCE.register(IGuiProvider.class, new Capability.IStorage<IGuiProvider>()
         {
             @Override
