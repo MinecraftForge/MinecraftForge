@@ -51,7 +51,7 @@ public abstract class ForgeMessage {
         }
 
         @Override
-        void toBytes(ByteBuf bytes)
+        protected void toBytes(ByteBuf bytes)
         {
             bytes.writeInt(this.dimensionId);
             byte[] data = this.providerId.getBytes(Charsets.UTF_8);
@@ -60,7 +60,7 @@ public abstract class ForgeMessage {
         }
 
         @Override
-        void fromBytes(ByteBuf bytes)
+        protected void fromBytes(ByteBuf bytes)
         {
             dimensionId = bytes.readInt();
             byte[] data = new byte[bytes.readShort()];
@@ -74,7 +74,7 @@ public abstract class ForgeMessage {
         Set<String> defaultFluids = Sets.newHashSet();
         @SuppressWarnings("deprecation")
         @Override
-        void toBytes(ByteBuf bytes)
+        protected void toBytes(ByteBuf bytes)
         {
             Map<Fluid, Integer> ids = FluidRegistry.getRegisteredFluidIDs();
             bytes.writeInt(ids.size());
@@ -91,7 +91,7 @@ public abstract class ForgeMessage {
         }
 
         @Override
-        void fromBytes(ByteBuf bytes)
+        protected void fromBytes(ByteBuf bytes)
         {
             int listSize = bytes.readInt();
             for (int i = 0; i < listSize; i++) {
@@ -116,6 +116,6 @@ public abstract class ForgeMessage {
         }
     }
 
-    abstract void toBytes(ByteBuf bytes);
-    abstract void fromBytes(ByteBuf bytes);
+    protected abstract void toBytes(ByteBuf bytes);
+    protected abstract void fromBytes(ByteBuf bytes);
 }

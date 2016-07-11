@@ -21,7 +21,12 @@ package net.minecraftforge.fml.common.network;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.gui.IGuiProvider;
 
+/**
+ * @deprecated, use {@link IGuiProvider} instead
+ */
+@Deprecated
 public interface IGuiHandler
 {
     /**
