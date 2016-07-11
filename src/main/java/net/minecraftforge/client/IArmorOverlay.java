@@ -83,7 +83,7 @@ public interface IArmorOverlay
     public static class Vanilla implements IArmorOverlay
     {
 
-        private Vanilla(){}
+        protected Vanilla(){}
 
         @Override
         public int getOverlayColor(ItemStack stack, EntityLivingBase wearer, int pass, EntityEquipmentSlot slot)

@@ -9,16 +9,14 @@
          this.func_175041_b();
          this.field_184395_f = p_i46552_3_;
      }
-@@ -151,7 +151,8 @@
+@@ -151,6 +151,7 @@
  
                  if (p_180454_1_.func_77962_s())
                  {
--                    this.func_180451_a(p_180454_2_);
-+                    if(net.minecraftforge.client.ItemOverlayHandler.run(field_175057_n, p_180454_1_, p_180454_2_))
-+                        this.func_180451_a(p_180454_2_);
++                    if(net.minecraftforge.client.ItemOverlayHandler.applyForgeOverlay(field_175057_n, p_180454_1_, p_180454_2_)) //IItemOverlay handling. Allows custom overlays
+                     this.func_180451_a(p_180454_2_);
                  }
              }
- 
 @@ -224,7 +225,7 @@
                  k = k | -16777216;
              }

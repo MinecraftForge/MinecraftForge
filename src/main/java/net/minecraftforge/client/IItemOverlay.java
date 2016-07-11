@@ -91,7 +91,7 @@ public interface IItemOverlay
     public static class Vanilla implements IItemOverlay
     {
 
-        private Vanilla(){}
+        protected Vanilla(){}
 
         @Override
         public int getOverlayColor(ItemStack stack, int pass)

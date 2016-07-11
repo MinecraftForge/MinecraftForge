@@ -1,6 +1,9 @@
 package net.minecraftforge.client;
 
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -15,7 +18,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.fml.common.registry.RegistryDelegate;
 
 /**
  * Offshore handler for the Items' extra passes. Specifically for reducing patch size & maintaining readability.
@@ -23,68 +26,64 @@ import net.minecraftforge.common.ForgeModContainer;
 public final class ItemOverlayHandler
 {
 
-    private static final java.util.Map<net.minecraftforge.fml.common.registry.RegistryDelegate<Item>, IItemOverlay> itemOverlayMap = com.google.common.collect.Maps.newHashMap();
+    /**
+     * Map of active Item.delegate > IItemOverlay entries.
+     * */
+    private static final Map<RegistryDelegate<Item>, IItemOverlay> itemOverlayMap = Maps.newHashMap();
 
+    /**
+     * Number of passes to be run.
+     * */
     private static final byte NUM_PASS = 2;
 
     private ItemOverlayHandler(){}
 
     /**
-     * Handles the execution of overlays.
-     * 
-     * @param textureManager the current TextureManager
-     * @param stack the stack in question
-     * @param model 
-     * 
-     * @return true to render the item again, and false to end the pass loop.
+     * Handles the execution of overlays. This feeds from the {@value itenOverlayMap} for custom IITemOverlays to be run in lieu of the encapsulated vanilla
+     *  methodology. 
+     *  
+     * @return returns false canceling vanilla's default overlay for minimal patch size
      * */
-    public static boolean run(TextureManager textureManager, ItemStack stack, IBakedModel model)
+    public static boolean applyForgeOverlay(TextureManager textureManager, ItemStack stack, IBakedModel model)
     {
-        if(ForgeModContainer.forgeItemOverlay)
+        float[] vec;
+        int color;
+        float time;
+        IItemOverlay current = getItemOverlayForItem(stack.getItem());
+        GlStateManager.depthFunc(514);
+        GlStateManager.disableLighting();
+        GlStateManager.matrixMode(5890);
+        textureManager.bindTexture(current.getOverlayTexture(stack));
+
+        for(int CUR_PASS = 0; CUR_PASS < NUM_PASS; CUR_PASS++)
         {
-            float[] vec;
-            int color;
-            float time;
-            IItemOverlay current = itemOverlayMap.get(stack.getItem().delegate);
-            if(current == null)
-               current = IItemOverlay.VANILLA;
-            GlStateManager.depthMask(false);
-            GlStateManager.depthFunc(514);
-            GlStateManager.disableLighting();
-            GlStateManager.matrixMode(5890);
-            textureManager.bindTexture(current.getOverlayTexture(stack));
-            
-            for(int CUR_PASS = 0; CUR_PASS < NUM_PASS; CUR_PASS++)
-            {
-                color = current.getOverlayColor(stack, CUR_PASS);
-                time = current.getShiftedTime(stack, CUR_PASS, Minecraft.getSystemTime());
-                if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
-                    GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
-                else
-                    GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR, GlStateManager.DestFactor.ONE_MINUS_DST_COLOR);
-                GlStateManager.pushMatrix();
+            color = current.getOverlayColor(stack, CUR_PASS);
+            time = current.getShiftedTime(stack, CUR_PASS, Minecraft.getSystemTime());
+            if(((color >> 16 & 255) | (color >> 8 & 255) | (color & 255)) >= 0xA1)
+                GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
+            else
+                GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR, GlStateManager.DestFactor.ONE_MINUS_DST_COLOR);
+            GlStateManager.pushMatrix();
  
-                vec = current.getOverlayScaleVector(stack, CUR_PASS, time);
-                GlStateManager.scale(vec[0], vec[1], vec[2]);
+            vec = current.getOverlayScaleVector(stack, CUR_PASS, time);
+            GlStateManager.scale(vec[0], vec[1], vec[2]);
 
-                vec = current.getOverlayTranslationVector(stack, CUR_PASS, time);
-                GlStateManager.translate(vec[0], vec[1], vec[2]);
+            vec = current.getOverlayTranslationVector(stack, CUR_PASS, time);
+            GlStateManager.translate(vec[0], vec[1], vec[2]);
 
-                vec = current.getOverlayRotationVector(stack, CUR_PASS, time);
-                GlStateManager.rotate(vec[0], vec[1], vec[2], vec[3]);
+            vec = current.getOverlayRotationVector(stack, CUR_PASS, time);
+            GlStateManager.rotate(vec[0], vec[1], vec[2], vec[3]);
 
-                renderModelStreamlined(model, color);
-                GlStateManager.popMatrix();
-            }
-            GlStateManager.matrixMode(5888);
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            GlStateManager.enableLighting();
-            GlStateManager.depthFunc(515);
-            GlStateManager.depthMask(true);
-            textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            return false;
+            renderModelStreamlined(model, color);
+            GlStateManager.popMatrix();
         }
-        return true;
+        GlStateManager.matrixMode(5888);
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableLighting();
+        GlStateManager.depthFunc(515);
+        GlStateManager.depthMask(true);
+        textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        return false;
     }
 
     private static void renderModelStreamlined(IBakedModel model, int color)
@@ -118,6 +117,17 @@ public final class ItemOverlayHandler
             if (item.getRegistryName() == null) throw new IllegalArgumentException("Item must be registered before assigning an overlay handler.");
             itemOverlayMap.put(item.delegate, itemOverlay);
         }
+    }
+
+    /**
+     * Returns the corresponding IItemOverlay for the given Item. Falls back to IItemOverlay.VANILLA if no entry exists. 
+     * 
+     * @param item the Item in question
+     * */
+    public static IItemOverlay getItemOverlayForItem(Item item)
+    {
+        final IItemOverlay entry = itemOverlayMap.get(item.delegate);
+        return entry == null ? IItemOverlay.VANILLA : entry;
     }
 
 }

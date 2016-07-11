@@ -46,8 +46,6 @@ forge.configgui.zombieBaseSummonChance=Zombie Summon Chance
 forge.configgui.stencilbits=Enable GL Stencil Bits
 forge.configgui.spawnfuzz=Respawn Fuzz Diameter
 forge.configgui.replaceBuckets=Use Forges' bucket model
-forge.configgui.armorEffect=Use Forges' armor overlay
-forge.configgui.itemEffect=Use Forges' item overlay
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID
