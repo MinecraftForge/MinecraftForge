@@ -3,6 +3,7 @@ package net.minecraftforge.test;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.datafix.fixes.EntityHealth;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,6 +32,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GuiRegistry;
 import net.minecraftforge.gui.capability.CapabilityGuiProvider;
 import net.minecraftforge.gui.capability.IGuiProvider;
 import net.minecraftforge.gui.capability.impl.GuiProviderEntity;
@@ -58,6 +61,10 @@ public class TestGuiCapability
         ItemBlock testItemBlock = new ItemBlock(testBlock);
         testItemBlock.setRegistryName(testBlock.getRegistryName());
         GameRegistry.register(testItemBlock);
+
+        GuiRegistry.register(new TestItemGui());
+        GuiRegistry.register(new TileTestBlock.TestGuiProvider());
+        GuiRegistry.register(new EntityHealthGui());
     }
 
     @Mod.EventHandler
@@ -71,7 +78,10 @@ public class TestGuiCapability
     public void attach(AttachCapabilitiesEvent.Entity entity)
     {
         if(entity.getEntity() instanceof EntityPig)
-            entity.addCapability(new ResourceLocation("gui", "guiTest"), new EntityHealthGui(entity.getEntity()));
+        {
+            ICapabilityProvider newInstance = new EntityHealthGui(entity.getEntity());
+            entity.addCapability(new ResourceLocation("gui", "guiTest"), newInstance);
+        }
     }
 
     @SubscribeEvent
@@ -83,7 +93,7 @@ public class TestGuiCapability
             if(event.getTarget().hasCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null))
             {
                 IGuiProvider gui = event.getTarget().getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null);
-                source.openGui(gui, null);
+                source.openGui(gui);
             }
         }
     }
@@ -117,7 +127,7 @@ public class TestGuiCapability
         {
             TileTestBlock tile = (TileTestBlock) worldIn.getTileEntity(pos);
             IGuiProvider cap = tile.getCapability(CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY, null);
-            playerIn.openGui(cap, hand);
+            playerIn.openGui(cap, side, hand);
             return true;
         }
     }
@@ -125,11 +135,11 @@ public class TestGuiCapability
     public static class TileTestBlock extends TileEntity
     {
 
-        TestGuiProvider testGuiProvider;
+        private TestGuiProvider gui = new TestGuiProvider(this);
 
-        public TileTestBlock()
-        {
-            this.testGuiProvider = new TestGuiProvider(this, EnumFacing.UP);
+        public TileTestBlock() {
+
+            FMLLog.info(pos.toString());
         }
 
         @Override
@@ -140,28 +150,39 @@ public class TestGuiCapability
 
         @Override public <T> T getCapability(Capability<T> capability, EnumFacing facing)
         {
-            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) testGuiProvider;
+            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) gui;
             return super.getCapability(capability, facing);
         }
 
         public static class TestGuiProvider extends GuiProviderTile
         {
+
             public TestGuiProvider() { }
-            public TestGuiProvider(TileEntity tile, EnumFacing side)
+            public TestGuiProvider(TileEntity in)
             {
-                super(tile, side);
+                super(in, null);
+            }
+
+            public TestGuiProvider(TileEntity in, EnumFacing side)
+            {
+                super(in, side);
             }
 
             @Override
-            public Object getClientGuiElement(EntityPlayer player, World world, TileEntity owner)
+            public GuiScreen clientElement(World world, EntityPlayer player)
             {
                 return new GuiTileTest(player, (TileTestBlock) owner);
             }
 
             @Override
-            public Container getServerGuiElement(EntityPlayer player, World world, TileEntity owner)
+            public Container serverElement(World world, EntityPlayer player)
             {
                 return new ContainerTileTest(player, (TileTestBlock) owner);
+            }
+
+            @Override
+            public ResourceLocation getGuiIdentifier() {
+                return new ResourceLocation("forgetest:tile_gui");
             }
         }
     }
@@ -244,80 +265,21 @@ public class TestGuiCapability
         @Override
         public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
         {
-            return new ItemGuiHandler(stack);
+            return new TestItemGui(stack);
         }
     }
 
-    private class ItemGuiHandler implements ICapabilityProvider {
-
-        private ItemStack stack;
-
-        public ItemGuiHandler() { }
-        public ItemGuiHandler(ItemStack stack)
-        {
-            this.stack = stack;
-        }
-
-        @Override
-        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
-        {
-            return capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY;
-        }
-
-        @Override
-        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
-        {
-            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new TestItemGui(stack);
-            return null;
-        }
-
-        private class TestItemGui extends GuiProviderItem
-        {
-            public TestItemGui(ItemStack stack)
-            {
-                super(stack);
-            }
-
-            @Nullable
-            @Override
-            public Object getClientGuiElement(EntityPlayer player, World world, ItemStack owner)
-            {
-                return new GuiScreen()
-                {
-                    @Override
-                    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-                    {
-                        drawDefaultBackground();
-                        super.drawScreen(mouseX, mouseY, partialTicks);
-                        fontRendererObj.drawString("Item test", 10, 10, 0xFFFFFF);
-                    }
-                };
-            }
-
-            @Nullable
-            @Override
-            public Container getServerGuiElement(EntityPlayer player, World world, ItemStack owner)
-            {
-                return null;
-            }
-        }
-    }
-
-    private class EntityHealthGui extends GuiProviderEntity implements ICapabilityProvider
+    private class TestItemGui extends GuiProviderItem implements ICapabilityProvider
     {
-        private String entityName;
-        private Entity entity;
-        public EntityHealthGui() { }
-        public EntityHealthGui(Entity entity)
+
+        public TestItemGui() { }
+        public TestItemGui(ItemStack in)
         {
-            super(entity);
-            this.entity = entity;
-            entityName = entity.getName();
+            super(in);
         }
 
-        @Nullable
         @Override
-        public Object getClientGuiElement(EntityPlayer player, World world, Entity owner)
+        public GuiScreen clientElement(World world, EntityPlayer player)
         {
             return new GuiScreen()
             {
@@ -326,17 +288,73 @@ public class TestGuiCapability
                 {
                     drawDefaultBackground();
                     super.drawScreen(mouseX, mouseY, partialTicks);
-                    fontRendererObj.drawString(entityName, 10, 10, 0xFF0000, true);
-                    fontRendererObj.drawString(" says OW!", fontRendererObj.getStringWidth(entityName) + 10, 10, 0xFFFFFF);
+                    fontRendererObj.drawString("Item test", 10, 10, 0xFFFFFF);
                 }
             };
         }
 
         @Nullable
         @Override
-        public Container getServerGuiElement(EntityPlayer player, World world, Entity owner)
+        public Container serverElement(World world, EntityPlayer player) {
+            return null;
+        }
+
+        @Override
+        public ResourceLocation getGuiIdentifier()
+        {
+            return new ResourceLocation("forgetest:item_gui");
+        }
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+            return capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY;
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new TestItemGui(owner);
+            return null;
+        }
+    }
+
+    private class EntityHealthGui extends GuiProviderEntity implements ICapabilityProvider
+    {
+
+        public EntityHealthGui() { }
+        public EntityHealthGui(Entity in)
+        {
+            super(in);
+        }
+
+        @Override
+        public GuiScreen clientElement(World world, EntityPlayer player)
+        {
+            return new GuiScreen()
+            {
+                @Override
+                public void drawScreen(int mouseX, int mouseY, float partialTicks)
+                {
+                    drawDefaultBackground();
+                    super.drawScreen(mouseX, mouseY, partialTicks);
+                    if(owner != null)
+                    {
+                        fontRendererObj.drawString(owner.getName(), 10, 10, 0xFF0000, true);
+                        fontRendererObj.drawString(" says OW!", fontRendererObj.getStringWidth(owner.getName()) + 10, 10, 0xFFFFFF);
+                    }
+                }
+            };
+        }
+
+        @Nullable
+        @Override
+        public Container serverElement(World world, EntityPlayer player)
         {
             return null;
+        }
+
+        @Override
+        public ResourceLocation getGuiIdentifier() {
+            return new ResourceLocation("forgetest:entity_gui");
         }
 
         @Override
@@ -348,7 +366,7 @@ public class TestGuiCapability
         @Override
         public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
         {
-            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new EntityHealthGui(this.entity);
+            if(capability == CapabilityGuiProvider.GUI_PROVIDER_CAPABILITY) return (T) new EntityHealthGui(owner);
             return null;
         }
     }

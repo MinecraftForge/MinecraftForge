@@ -14,18 +14,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 
 public class ForgeGuiHandler
 {
-    public static void openGui(EntityPlayer player, World worldObj, IGuiProvider provider, @Nullable EnumHand hand)
+    public static void openGui(EntityPlayer player, World worldObj, IGuiProvider provider, Object... extras)
     {
         if (provider == null) return;
 
-        Object owner = provider.getOwner(player, worldObj, hand);
         if (worldObj.isRemote)
         {
-            Object gui = provider.getClientGuiElement(player, worldObj, owner);
+            Object gui = provider.clientElement(worldObj, player);
             FMLCommonHandler.instance().showGuiScreen(gui);
             return;
         }
@@ -34,14 +32,14 @@ public class ForgeGuiHandler
         {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
-            Container container = provider.getServerGuiElement(player, worldObj, owner);
+            Container container = provider.serverElement(worldObj, player);
             if (container != null)
             {
                 playerMP.getNextWindowId();
                 playerMP.closeContainer();
                 int windowId = playerMP.currentWindowId;
 
-                OpenGuiMessage openGui = new OpenGuiMessage(player, provider, hand);
+                OpenGuiMessage openGui = new OpenGuiMessage(player, provider, extras);
                 EmbeddedChannel embeddedChannel = ForgeNetworkHandler.getChannel(Side.SERVER);
                 embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
                 embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(playerMP);

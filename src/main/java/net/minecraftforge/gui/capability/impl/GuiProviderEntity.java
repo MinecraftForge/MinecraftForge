@@ -3,39 +3,40 @@ package net.minecraftforge.gui.capability.impl;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
-import javax.annotation.Nullable;
-
-public abstract class GuiProviderEntity implements IGuiProvider<Entity>
+public abstract class GuiProviderEntity extends GuiProviderBase<Entity>
 {
 
     private int entityID;
     public GuiProviderEntity() { }
 
-    public GuiProviderEntity(Entity entity)
+    public GuiProviderEntity(Entity in)
     {
-        this.entityID = entity.getEntityId();
+        super(in);
+        this.entityID = in.getEntityId();
     }
 
     @Override
-    public void deserialize(ByteBuf buffer)
+    public IGuiProvider deserialize(ByteBuf buffer)
     {
         entityID = buffer.readInt();
+        return this;
     }
 
     @Override
-    public void serialize(ByteBuf buffer)
+    public void serialize(ByteBuf buffer, Object... extras)
     {
-        buffer.writeInt(entityID);
+        buffer.writeInt(owner.getEntityId());
     }
 
     @Override
-    public Entity getOwner(EntityPlayer player, World world, @Nullable EnumHand hand)
+    public Entity getOwner(World world, EntityPlayer player)
     {
         if (world == null) return null;
-        return world.getEntityByID(entityID);
+        if (owner != null) return owner;
+        owner = world.getEntityByID(entityID);
+        return owner;
     }
 }

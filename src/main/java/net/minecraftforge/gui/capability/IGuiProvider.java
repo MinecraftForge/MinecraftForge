@@ -1,9 +1,11 @@
 package net.minecraftforge.gui.capability;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -15,10 +17,11 @@ public interface IGuiProvider<T>
 {
     /**
      * Deserializes a buffer from the server into the provider instance.
+     * In practice this is run after an open request to set the owner up on the client.
      *
      * @param buffer
      */
-    void deserialize(ByteBuf buffer);
+    IGuiProvider deserialize(ByteBuf buffer);
 
     /**
      * Serializes data on the server to send along with the open gui packet.
@@ -26,38 +29,35 @@ public interface IGuiProvider<T>
      *
      * @param buffer
      */
-    void serialize(ByteBuf buffer);
+    void serialize(ByteBuf buffer, Object... extras);
 
     /**
-     * Gets the gui provider object from the world, player, etc.
-     * Used in the get*Element methods to pass a direct instance to them.
+     * Gets the gui provider object from the instance, after being set with deserialize.
      *
-     * @param player The player instance.
      * @param world The world.
-     * @param hand The hand being used to access the gui. May be null if not required.
+     * @param player The player instance.
      * @return An object that "owns" the gui- a tile, an entity, an item.
      */
-    T getOwner(EntityPlayer player, World world, @Nullable EnumHand hand);
+    T getOwner(World world, EntityPlayer player);
 
     /**
      * Gets a client-side gui element to display to a player.
      *
-     * @param player The player viewing the gui.
      * @param world The world the gui is being displayed in.
-     * @param owner The owner object of the gui. Usually a tile, item, or entity.
+     * @param player The player viewing the gui.
      * @return A Gui/GuiScreen to display on the client.
      */
-    @Nullable
-    Object getClientGuiElement(EntityPlayer player, World world, T owner);
+    GuiScreen clientElement(World world, EntityPlayer player);
 
     /**
      * Gets a server-side container to handle slots and interaction on the server.
      *
-     * @param player The player viewing the gui.
      * @param world The world the gui is being accessed on.
-     * @param owner The owner object. Usually a tile, item, or entity.
+     * @param player The player viewing the gui.
      * @return A Container the server uses for processing.
      */
     @Nullable
-    Container getServerGuiElement(EntityPlayer player, World world, T owner);
+    Container serverElement(World world, EntityPlayer player);
+
+    ResourceLocation getGuiIdentifier();
 }

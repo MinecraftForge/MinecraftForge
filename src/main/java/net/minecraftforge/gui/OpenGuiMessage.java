@@ -4,73 +4,48 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.network.ForgeMessage;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.FMLNetworkException;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.registry.GuiRegistry;
 import net.minecraftforge.gui.capability.IGuiProvider;
 
 public class OpenGuiMessage extends ForgeMessage
 {
-    private IGuiProvider provider;
-    private EnumHand hand;
+    private GuiRegistry.GuiProvider provider;
+    private IGuiProvider instance;
+    private Object[] extraData;
     private int identifier;
-    private Class<? extends IGuiProvider> providerClass;
+    private EntityPlayer player;
 
     public OpenGuiMessage(){ }
 
-    public OpenGuiMessage(EntityPlayer player, IGuiProvider provider, EnumHand hand)
+    public OpenGuiMessage(EntityPlayer player, IGuiProvider provider, Object... extraData)
     {
         this.identifier = player.openContainer.windowId;
-        this.provider = provider;
-        this.providerClass = provider.getClass();
-        this.hand = hand;
+        this.provider = (GuiRegistry.GuiProvider) GuiRegistry.getRegistry().getObject(provider.getGuiIdentifier());
+        this.instance = provider;
+        this.extraData = extraData;
+        this.player = player;
     }
 
     @Override
     protected void fromBytes(ByteBuf buf)
     {
-        hand = buf.readBoolean() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
         identifier = buf.readInt();
-        String className = ByteBufUtils.readUTF8String(buf);
-        try
-        {
-            Class classAttempt = Class.forName(className);
-            if(classAttempt != null)
-            {
-                provider = (IGuiProvider) classAttempt.newInstance();
-                if(provider != null) provider.deserialize(buf);
-            }
-        }
-        catch (ClassNotFoundException e)
-        {
-            FMLLog.severe("%s", e);
-            return;
-        }
-        catch (InstantiationException e)
-        {
-            e.printStackTrace();
-            throw new FMLNetworkException("Error instantiating gui handler class: " + className);
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        int guiID = buf.readInt();
+        this.provider = (GuiRegistry.GuiProvider) GuiRegistry.getRegistry().getObjectById(guiID);
+        this.instance = provider.getInstance().deserialize(buf);
     }
 
     @Override
     protected void toBytes(ByteBuf buf)
     {
-        buf.writeBoolean(hand == EnumHand.MAIN_HAND);
         buf.writeInt(identifier);
-        ByteBufUtils.writeUTF8String(buf, provider.getClass().getName());
-        provider.serialize(buf);
+        buf.writeInt(GuiRegistry.getRegistry().getId(provider));
+        instance.serialize(buf, extraData);
     }
 
     public static class Handler extends SimpleChannelInboundHandler<OpenGuiMessage>    {
@@ -101,10 +76,10 @@ public class OpenGuiMessage extends ForgeMessage
         private void process(OpenGuiMessage msg)
         {
             EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
-            Object owner = msg.provider.getOwner(player, player.worldObj, msg.hand);
+            Object owner = msg.provider.getInstance().getOwner(player.worldObj, player);
 
             if(owner == null) return;
-            Object gui = msg.provider.getClientGuiElement(player, player.worldObj, owner);
+            Object gui = msg.provider.getInstance().clientElement(player.worldObj, player);
             FMLClientHandler.instance().showGuiScreen(gui);
             player.openContainer.windowId = msg.identifier;
         }

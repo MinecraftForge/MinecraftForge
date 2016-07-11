@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.gui.capability.impl.GuiProviderBlank;
+import net.minecraftforge.gui.capability.impl.GuiProviderBase;
 
 import java.util.concurrent.Callable;
 
@@ -32,7 +32,7 @@ public class CapabilityGuiProvider
             @Override
             public IGuiProvider call() throws Exception
             {
-                return new GuiProviderBlank();
+                return new GuiProviderBase();
             }
         });
     }

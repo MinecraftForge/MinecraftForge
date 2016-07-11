@@ -22,6 +22,7 @@ package net.minecraftforge.common.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
+import net.minecraftforge.gui.OpenGuiMessage;
 
 public class ForgeRuntimeCodec extends FMLIndexedMessageToMessageCodec<ForgeMessage> {
     public ForgeRuntimeCodec()
