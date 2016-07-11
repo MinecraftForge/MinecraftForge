@@ -5,15 +5,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class ForgeGuiHandler
 {
-    public static void openGui(EntityPlayer player, World worldObj, IGuiProvider provider, Object... extras)
+    public static void openGui(EntityPlayer player, World worldObj, GuiProvider provider, Object... extras)
     {
         if (provider == null) return;
 
@@ -28,7 +30,7 @@ public class ForgeGuiHandler
             openGuiRemote((EntityPlayerMP) player, worldObj, provider, extras);
     }
 
-    private static void openGuiRemote(EntityPlayerMP playerMP, World world, IGuiProvider provider, Object... extras)
+    private static void openGuiRemote(EntityPlayerMP playerMP, World world, GuiProvider provider, Object... extras)
     {
         Container container = provider.serverElement(world, playerMP);
         if (container != null)
@@ -47,7 +49,7 @@ public class ForgeGuiHandler
             playerMP.openContainer.windowId = windowId;
             playerMP.openContainer.addListener(playerMP);
 
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(playerMP, playerMP.openContainer));
+            MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(playerMP, playerMP.openContainer));
         }
     }
 }

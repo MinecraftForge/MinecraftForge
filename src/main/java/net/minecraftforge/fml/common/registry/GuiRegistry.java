@@ -1,7 +1,7 @@
 package net.minecraftforge.fml.common.registry;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.gui.IGuiProvider;
+import net.minecraftforge.gui.GuiProvider;
 
 public class GuiRegistry {
 
@@ -20,32 +20,4 @@ public class GuiRegistry {
         return INSTANCE.registry;
     }
 
-    public static void register(IGuiProvider guiHandler)
-    {
-        INSTANCE.registry.register(new GuiProvider(guiHandler));
-    }
-
-    public static class GuiProvider extends IForgeRegistryEntry.Impl<GuiProvider> {
-
-        private IGuiProvider instance;
-
-        public GuiProvider(IGuiProvider instance)
-        {
-            setRegistryName(instance.getGuiIdentifier());
-            this.instance = instance;
-        }
-
-        public GuiProvider(ResourceLocation regName, IGuiProvider instance)
-        {
-            setRegistryName(regName);
-            this.instance = instance;
-        }
-
-        public IGuiProvider getInstance()
-        {
-            return this.instance;
-        }
-
-
-    }
 }

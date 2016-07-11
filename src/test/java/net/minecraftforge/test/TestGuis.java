@@ -16,7 +16,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,8 +29,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.GuiRegistry;
-import net.minecraftforge.gui.IGuiProvider;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.gui.GuiProvider;
 import net.minecraftforge.gui.impl.GuiProviderEntity;
 import net.minecraftforge.gui.impl.GuiProviderItem;
 import net.minecraftforge.gui.impl.GuiProviderTile;
@@ -41,7 +45,7 @@ import java.awt.*;
 public class TestGuis
 {
     @Mod.Instance("gui")
-    public static TestGuis INSTANCE;
+    public static final TestGuis INSTANCE = null;
 
     final static boolean ENABLE = true;
 
@@ -55,9 +59,9 @@ public class TestGuis
         testItemBlock.setRegistryName(testBlock.getRegistryName());
         GameRegistry.register(testItemBlock);
 
-        GuiRegistry.register(new TestItemGui());
-        GuiRegistry.register(new TileTestBlock.TestGuiProvider());
-        GuiRegistry.register(new EntityHealthGui());
+        GameRegistry.register(new TestItemGui());
+        GameRegistry.register(new TileTestBlock.TestGuiProvider());
+        GameRegistry.register(new EntityHealthGui());
     }
 
     @Mod.EventHandler
@@ -73,7 +77,7 @@ public class TestGuis
         EntityPlayer source = event.getEntityPlayer();
         if (event.getTarget() instanceof EntityPig)
         {
-            IGuiProvider gui = new EntityHealthGui(event.getTarget());
+            GuiProvider gui = new EntityHealthGui(event.getTarget());
             source.openGui(gui);
         }
     }
@@ -106,7 +110,7 @@ public class TestGuis
                 @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             TileTestBlock tile = (TileTestBlock) worldIn.getTileEntity(pos);
-            IGuiProvider cap = new TileTestBlock.TestGuiProvider(tile, side);
+            GuiProvider cap = new TileTestBlock.TestGuiProvider(tile, side);
             playerIn.openGui(cap, hand);
             return true;
         }
@@ -120,18 +124,24 @@ public class TestGuis
         public static class TestGuiProvider extends GuiProviderTile
         {
 
-            public TestGuiProvider() { }
+            public TestGuiProvider()
+            {
+                setRegistryName("forgetest:tile_gui");
+            }
+
             public TestGuiProvider(TileEntity in)
             {
-                super(in, null);
+                this(in, null);
             }
 
             public TestGuiProvider(TileEntity in, EnumFacing side)
             {
                 super(in, side);
+                setRegistryName("forgetest:tile_gui");
             }
 
             @Override
+            @SideOnly(Side.CLIENT)
             public GuiScreen clientElement(World world, EntityPlayer player)
             {
                 return new GuiTileTest(player, (TileTestBlock) owner);
@@ -141,11 +151,6 @@ public class TestGuis
             public Container serverElement(World world, EntityPlayer player)
             {
                 return new ContainerTileTest(player, (TileTestBlock) owner);
-            }
-
-            @Override
-            public ResourceLocation getGuiIdentifier() {
-                return new ResourceLocation("forgetest:tile_gui");
             }
         }
     }
@@ -214,7 +219,7 @@ public class TestGuis
         @Override
         public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
         {
-            IGuiProvider provider = new TestItemGui(itemStackIn);
+            GuiProvider provider = new TestItemGui(itemStackIn);
             playerIn.openGui(provider, hand);
             return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
         }
@@ -223,13 +228,19 @@ public class TestGuis
     private class TestItemGui extends GuiProviderItem
     {
 
-        public TestItemGui() { }
+        public TestItemGui()
+        {
+            setRegistryName("forgetest:item_gui");
+        }
+
         public TestItemGui(ItemStack in)
         {
             super(in);
+            setRegistryName("forgetest:item_gui");
         }
 
         @Override
+        @SideOnly(Side.CLIENT)
         public GuiScreen clientElement(World world, EntityPlayer player)
         {
             return new GuiScreen()
@@ -243,30 +254,24 @@ public class TestGuis
                 }
             };
         }
-
-        @Nullable
-        @Override
-        public Container serverElement(World world, EntityPlayer player) {
-            return null;
-        }
-
-        @Override
-        public ResourceLocation getGuiIdentifier()
-        {
-            return new ResourceLocation("forgetest:item_gui");
-        }
     }
 
     private class EntityHealthGui extends GuiProviderEntity
     {
 
-        public EntityHealthGui() { }
+        public EntityHealthGui()
+        {
+            setRegistryName("forgetest:entity_gui");
+        }
+
         public EntityHealthGui(Entity in)
         {
             super(in);
+            setRegistryName("forgetest:entity_gui");
         }
 
         @Override
+        @SideOnly(Side.CLIENT)
         public GuiScreen clientElement(World world, EntityPlayer player)
         {
             return new GuiScreen()
@@ -278,7 +283,7 @@ public class TestGuis
                     super.drawScreen(mouseX, mouseY, partialTicks);
                     if(owner != null)
                     {
-                        fontRendererObj.drawString(String.format("<%s> Ow!", owner.getName()), 10, 10, 0xFF0000, true);
+                        fontRendererObj.drawString(String.format("<%s> Ow!", ((Entity) owner).getName()), 10, 10, 0xFF0000, true);
                         if(owner instanceof EntityLiving)
                         {
                             EntityLiving ownerLiving = (EntityLiving) owner;
@@ -288,18 +293,6 @@ public class TestGuis
                     }
                 }
             };
-        }
-
-        @Nullable
-        @Override
-        public Container serverElement(World world, EntityPlayer player)
-        {
-            return null;
-        }
-
-        @Override
-        public ResourceLocation getGuiIdentifier() {
-            return new ResourceLocation("forgetest:entity_gui");
         }
     }
 }

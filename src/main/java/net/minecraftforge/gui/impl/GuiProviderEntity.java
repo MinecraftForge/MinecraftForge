@@ -4,9 +4,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.gui.IGuiProvider;
+import net.minecraftforge.gui.GuiProvider;
 
-public abstract class GuiProviderEntity extends GuiProviderBase<Entity>
+public abstract class GuiProviderEntity extends GuiProvider
 {
 
     private int entityID;
@@ -19,24 +19,16 @@ public abstract class GuiProviderEntity extends GuiProviderBase<Entity>
     }
 
     @Override
-    public IGuiProvider deserialize(ByteBuf buffer)
+    public GuiProvider deserialize(ByteBuf buffer, World world, EntityPlayer player)
     {
         entityID = buffer.readInt();
+        owner = world.getEntityByID(entityID);
         return this;
     }
 
     @Override
     public void serialize(ByteBuf buffer, Object... extras)
     {
-        buffer.writeInt(owner.getEntityId());
-    }
-
-    @Override
-    public Entity getOwner(World world, EntityPlayer player)
-    {
-        if (world == null) return null;
-        if (owner != null) return owner;
-        owner = world.getEntityByID(entityID);
-        return owner;
+        buffer.writeInt(((Entity) owner).getEntityId());
     }
 }
