@@ -432,10 +432,9 @@
 +     * @param mod The mod trying to open a GUI
 +     * @param modGuiId GUI ID
 +     * @param world Current World
-+     * @param x Passed directly to IGuiHandler, data meaningless Typically world X position
-+     * @param y Passed directly to IGuiHandler, data meaningless Typically world Y position
-+     * @param z Passed directly to IGuiHandler, data meaningless Typically world Z position
++     * @deprecated, Use {@see #openGui(net.minecraftforge.gui.capability.IGuiProvider)} instead.
 +     */
++    @Deprecated
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
 +    {
 +        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
@@ -443,9 +442,15 @@
 +
 +
 +    /* ======================================== FORGE START =====================================*/
-+    public void openGui(net.minecraftforge.gui.capability.IGuiProvider provider)
++
++    /**
++     * Opens a gui given a provider and optional extra params.
++     * @param provider The gui provider to open.
++     * @param extras Extra parameters to use in getting a unique gui instance.
++     */
++    public void openGui(net.minecraftforge.gui.capability.IGuiProvider provider, Object... extras)
 +    {
-+        net.minecraftforge.gui.ForgeGuiHandler.openGui(this, field_70170_p, provider);
++        net.minecraftforge.gui.ForgeGuiHandler.openGui(this, field_70170_p, provider, extras);
 +    }
 +
 +    /**
