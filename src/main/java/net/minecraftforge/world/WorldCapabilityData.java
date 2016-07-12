@@ -3,14 +3,12 @@ package net.minecraftforge.world;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSavedData;
-import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class WorldCapabilityData extends WorldSavedData
 {
     private INBTSerializable<NBTTagCompound> serializable;
-    private NBTTagCompound data = null;
-    private int dimension;
+    private NBTTagCompound capNBT = null;
 
     public WorldCapabilityData(String name)
     {
@@ -21,7 +19,6 @@ public class WorldCapabilityData extends WorldSavedData
     {
         super(fileNameForProvider(provider));
         this.serializable = serializable;
-        this.dimension = provider.getDimension();
     }
 
 	@Override
@@ -29,9 +26,12 @@ public class WorldCapabilityData extends WorldSavedData
     {
 	    if(nbt.hasKey("ForgeCaps"))
 	    {
-	        this.data = nbt.getCompoundTag("ForgeCaps");
+	        this.capNBT = nbt.getCompoundTag("ForgeCaps");
 	        if(serializable != null)
-	            serializable.deserializeNBT(this.data);
+	        {
+	            serializable.deserializeNBT(this.capNBT);
+	            this.capNBT = null;
+	        }
 	    }
 	}
 
@@ -47,13 +47,15 @@ public class WorldCapabilityData extends WorldSavedData
     {
         return true;
     }
-    
+
     public void setCapabilities(WorldProvider provider, INBTSerializable<NBTTagCompound> capabilities)
     {
-        this.dimension = provider.getDimension();
         this.serializable = capabilities;
-        if(this.data != null)
-            serializable.deserializeNBT(this.data);
+        if(this.capNBT != null)
+        {
+            serializable.deserializeNBT(this.capNBT);
+            this.capNBT = null;
+        }
     }
 
     public static String fileNameForProvider(WorldProvider provider)
