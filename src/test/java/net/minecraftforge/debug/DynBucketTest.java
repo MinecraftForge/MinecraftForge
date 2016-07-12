@@ -54,9 +54,14 @@ public class DynBucketTest
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
     private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
+    private static final boolean ENABLE = false;
+
     static
     {
-        FluidRegistry.enableUniversalBucket();
+        if (ENABLE)
+        {
+            FluidRegistry.enableUniversalBucket();
+        }
     }
 
     @SidedProxy
@@ -78,6 +83,9 @@ public class DynBucketTest
         @Override
         void setupModels()
         {
+            if (!ENABLE)
+                return;
+
             ModelLoader.setBucketModelDefinition(dynBucket);
 
             final ModelResourceLocation bottle = new ModelResourceLocation(new ResourceLocation("forge", "dynbottle"), "inventory");
@@ -99,6 +107,9 @@ public class DynBucketTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        if (!ENABLE)
+            return;
+
         GameRegistry.register(new TestItem(), testItemName);
         Block tank = new BlockSimpleTank();
         GameRegistry.register(tank, simpleTankName);
