@@ -84,7 +84,16 @@
                  continue;
              }
              finally
-@@ -129,6 +158,7 @@
+@@ -117,6 +146,8 @@
+                 IOUtils.closeQuietly((Closeable)iresource);
+             }
+ 
++            if (checkForMipmapReduction(resourcelocation, textureatlassprite, k)) continue;
++
+             j = Math.min(j, Math.min(textureatlassprite.func_94211_a(), textureatlassprite.func_94216_b()));
+             int lvt_11_2_ = Math.min(Integer.lowestOneBit(textureatlassprite.func_94211_a()), Integer.lowestOneBit(textureatlassprite.func_94216_b()));
+ 
+@@ -129,6 +160,7 @@
              stitcher.func_110934_a(textureatlassprite);
          }
  
@@ -92,7 +101,7 @@
          int l = Math.min(j, k);
          int i1 = MathHelper.func_151239_c(l);
  
-@@ -140,9 +170,12 @@
+@@ -140,9 +172,12 @@
  
          this.field_94249_f.func_147963_d(this.field_147636_j);
          stitcher.func_110934_a(this.field_94249_f);
@@ -105,7 +114,7 @@
              stitcher.func_94305_f();
          }
          catch (StitcherException stitcherexception)
-@@ -151,11 +184,16 @@
+@@ -151,11 +186,16 @@
          }
  
          field_147635_d.info("Created: {}x{} {}-atlas", new Object[] {Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c});
@@ -122,7 +131,7 @@
              if (textureatlassprite1 == this.field_94249_f || this.func_184397_a(p_110571_1_, textureatlassprite1))
              {
                  String s = textureatlassprite1.func_94215_i();
-@@ -186,6 +224,13 @@
+@@ -186,6 +226,13 @@
          {
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
@@ -136,7 +145,7 @@
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -195,7 +240,7 @@
+@@ -195,7 +242,7 @@
          label9:
          {
              boolean flag;
@@ -145,7 +154,7 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +337,7 @@
+@@ -292,7 +339,7 @@
          }
          else
          {
@@ -154,7 +163,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,42 @@
+@@ -318,4 +365,64 @@
      {
          return this.field_94249_f;
      }
@@ -195,5 +204,27 @@
 +    public boolean setTextureEntry(TextureAtlasSprite entry)
 +    {
 +        return setTextureEntry(entry.func_94215_i(), entry);
++    }
++
++    /**
++     * Checks if a texture would reduce the client's mipmap level, if ForgeModContainer.preventMipmapReduction is true.
++     * @param resourceLocation   the location of the texture for logging purposes
++     * @param textureAtlasSprite the texture to check the size of
++     * @param desiredMipPower    the client's desired mipmap power
++     * @return true if ForgeModContainer.preventMipmapReduction is true and the texture would reduce the client's mipmap level.
++     */
++    private static boolean checkForMipmapReduction(ResourceLocation resourceLocation, TextureAtlasSprite textureAtlasSprite, int desiredMipPower)
++    {
++        if (net.minecraftforge.common.ForgeModContainer.preventMipmapReduction)
++        {
++            int mipPower = Math.min(Integer.lowestOneBit(textureAtlasSprite.func_94211_a()), Integer.lowestOneBit(textureAtlasSprite.func_94216_b()));
++            if (mipPower < desiredMipPower)
++            {
++                field_147635_d.warn("Texture {} with size {}x{} would limit mip level from {} to {}. Forge client config option preventMipmapReduction is enabled, so it is being replaced with a missing texture.", resourceLocation, textureAtlasSprite.func_94211_a(), textureAtlasSprite.func_94216_b(), MathHelper.func_151239_c(desiredMipPower), MathHelper.func_151239_c(mipPower));
++                return true;
++            }
++        }
++
++        return false;
 +    }
  }
