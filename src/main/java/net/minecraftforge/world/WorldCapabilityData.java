@@ -21,19 +21,19 @@ public class WorldCapabilityData extends WorldSavedData
         this.serializable = serializable;
     }
 
-	@Override
+    @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
-	    if(nbt.hasKey("ForgeCaps"))
-	    {
-	        this.capNBT = nbt.getCompoundTag("ForgeCaps");
-	        if(serializable != null)
-	        {
-	            serializable.deserializeNBT(this.capNBT);
-	            this.capNBT = null;
-	        }
-	    }
-	}
+        if(nbt.hasKey("ForgeCaps"))
+        {
+            this.capNBT = nbt.getCompoundTag("ForgeCaps");
+            if(serializable != null)
+            {
+                serializable.deserializeNBT(this.capNBT);
+                this.capNBT = null;
+            }
+        }
+    }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
