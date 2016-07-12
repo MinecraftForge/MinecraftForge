@@ -1,6 +1,8 @@
 
 package net.minecraftforge.fluids;
 
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -103,6 +105,24 @@ public class FluidEvent extends Event
     }
 
     /**
+     * Mods should fire this event when two different fluids are being {@link IFluidTank#fill(FluidStack, boolean)}
+     * or {@link IFluidHandler#drain(ForgeDirection, FluidStack, boolean)}.
+     * {@link FluidTank} and {@link TileFluidHandler} does this.
+     *
+     */
+    @Cancelable
+    public static class TankMixingEvent extends FluidEvent
+    {
+        public final IFluidTank tank;
+
+        public TankMixingEvent(FluidStack source, World world, int x, int y, int z, IFluidTank tank)
+        {
+            super(source, world, x, y, z);
+            this.tank = tank;
+        }
+    }
+
+    /**
      * Mods should fire this event when a fluid "spills", for example, if a block containing fluid
      * is broken.
      *
@@ -120,8 +140,8 @@ public class FluidEvent extends Event
      *
      * @param event
      */
-    public static final void fireEvent(FluidEvent event)
+    public static final boolean fireEvent(FluidEvent event)
     {
-        MinecraftForge.EVENT_BUS.post(event);
+        return MinecraftForge.EVENT_BUS.post(event);
     }
 }
