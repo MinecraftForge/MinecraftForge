@@ -21,6 +21,7 @@ package net.minecraftforge.fml.common.eventhandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.apache.logging.log4j.Level;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
 public class EventBus implements IEventExceptionHandler
@@ -75,9 +77,16 @@ public class EventBus implements IEventExceptionHandler
             activeModContainer = Loader.instance().getMinecraftModContainer();
         }
         listenerOwners.put(target, activeModContainer);
-        Set<? extends Class<?>> supers = TypeToken.of(target.getClass()).getTypes().rawTypes();
-        for (Method method : target.getClass().getMethods())
+        boolean isStatic = target.getClass() == Class.class;
+        @SuppressWarnings("unchecked")
+        Set<? extends Class<?>> supers = isStatic ? Sets.newHashSet((Class<?>)target) : TypeToken.of(target.getClass()).getTypes().rawTypes();
+        for (Method method : (isStatic ? (Class<?>)target : target.getClass()).getMethods())
         {
+            if (isStatic && !Modifier.isStatic(method.getModifiers()))
+                continue;
+            else if (!isStatic && Modifier.isStatic(method.getModifiers()))
+                continue;
+
             for (Class<?> cls : supers)
             {
                 try
