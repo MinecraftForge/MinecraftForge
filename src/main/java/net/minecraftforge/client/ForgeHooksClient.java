@@ -656,8 +656,7 @@ public class ForgeHooksClient
 
     public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IBlockAccess world, BlockPos pos)
     {
-        // TODO custom damage models
-        // state = state.block.getExtendedState(state, world, pos);
+        state = state.getBlock().getExtendedState(state, world, pos);
         return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
     }
 
