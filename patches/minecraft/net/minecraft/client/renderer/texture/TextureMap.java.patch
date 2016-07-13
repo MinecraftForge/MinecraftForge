@@ -168,7 +168,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +363,42 @@
+@@ -318,4 +363,52 @@
      {
          return this.field_94249_f;
      }
@@ -209,5 +209,15 @@
 +    public boolean setTextureEntry(TextureAtlasSprite entry)
 +    {
 +        return setTextureEntry(entry.func_94215_i(), entry);
++    }
++
++    public String getBasePath()
++    {
++        return field_94254_c;
++    }
++
++    public int getMipmapLevels()
++    {
++        return field_147636_j;
 +    }
  }
