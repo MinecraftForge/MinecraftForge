@@ -108,6 +108,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static long java8Reminder = 0;
+    public static boolean preventMipmapReduction = true;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -296,6 +297,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop = config.get(Configuration.CATEGORY_CLIENT, "java8Reminder", java8Reminder,
                 "The timestamp of the last reminder to update to Java 8 in number of milliseconds since January 1, 1970, 00:00:00 GMT. Nag will show only once every 24 hours. To disable it set this to some really high number.");
         java8Reminder = prop.getLong(java8Reminder);
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "preventMipmapReduction", preventMipmapReduction,
+                "Prevent incorrectly sized textures from reducing the client's mipmap setting. Replaces them with an error texture.");
+        prop.setLanguageKey("forge.configgui.preventMipmapReduction").setRequiresMcRestart(true);
+        preventMipmapReduction = prop.getBoolean(preventMipmapReduction);
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
