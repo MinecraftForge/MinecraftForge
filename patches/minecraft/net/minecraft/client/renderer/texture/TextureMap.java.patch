@@ -84,7 +84,16 @@
                  continue;
              }
              finally
-@@ -129,6 +158,7 @@
+@@ -122,17 +151,18 @@
+ 
+             if (lvt_11_2_ < k)
+             {
+-                field_147635_d.warn("Texture {} with size {}x{} limits mip level from {} to {}", new Object[] {resourcelocation, Integer.valueOf(textureatlassprite.func_94211_a()), Integer.valueOf(textureatlassprite.func_94216_b()), Integer.valueOf(MathHelper.func_151239_c(k)), Integer.valueOf(MathHelper.func_151239_c(lvt_11_2_))});
+-                k = lvt_11_2_;
++                // FORGE: do not lower the mipmap level, just log the problematic textures
++                field_147635_d.warn("Texture {} with size {}x{} will have visual artifacts at mip level {}, it can only support level {}. Please report to the mod author that the texture should be some multiple of 16x16.", resourcelocation, textureatlassprite.func_94211_a(), textureatlassprite.func_94216_b(), MathHelper.func_151239_c(k), MathHelper.func_151239_c(lvt_11_2_));
+             }
+ 
              stitcher.func_110934_a(textureatlassprite);
          }
  
@@ -92,6 +101,11 @@
          int l = Math.min(j, k);
          int i1 = MathHelper.func_151239_c(l);
  
+-        if (i1 < this.field_147636_j)
++        if (false && i1 < this.field_147636_j) // FORGE: do not lower the mipmap level
+         {
+             field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", new Object[] {this.field_94254_c, Integer.valueOf(this.field_147636_j), Integer.valueOf(i1), Integer.valueOf(l)});
+             this.field_147636_j = i1;
 @@ -140,9 +170,12 @@
  
          this.field_94249_f.func_147963_d(this.field_147636_j);
