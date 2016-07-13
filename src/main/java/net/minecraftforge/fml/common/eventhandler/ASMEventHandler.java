@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.eventhandler;
 import static org.objectweb.asm.Opcodes.*;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 import net.minecraftforge.fml.common.ModContainer;
@@ -51,7 +52,10 @@ public class ASMEventHandler implements IEventListener
     public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception
     {
         this.owner = owner;
-        handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
+        if (Modifier.isStatic(method.getModifiers()))
+            handler = (IEventListener)createWrapper(method).newInstance();
+        else
+            handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
         subInfo = method.getAnnotation(SubscribeEvent.class);
         readable = "ASM: " + target + " " + method.getName() + Type.getMethodDescriptor(method);
     }
@@ -87,6 +91,7 @@ public class ASMEventHandler implements IEventListener
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
+        boolean isStatic = Modifier.isStatic(callback.getModifiers());
         String name = getUniqueName(callback);
         String desc = name.replace('.',  '/');
         String instType = Type.getInternalName(callback.getDeclaringClass());
@@ -104,16 +109,20 @@ public class ASMEventHandler implements IEventListener
 
         cw.visitSource(".dynamic", null);
         {
-            cw.visitField(ACC_PUBLIC, "instance", "Ljava/lang/Object;", null, null).visitEnd();
+            if (!isStatic)
+                cw.visitField(ACC_PUBLIC, "instance", "Ljava/lang/Object;", null, null).visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/Object;)V", null, null);
+            mv = cw.visitMethod(ACC_PUBLIC, "<init>", isStatic ? "()V" : "(Ljava/lang/Object;)V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitFieldInsn(PUTFIELD, desc, "instance", "Ljava/lang/Object;");
+            if (!isStatic)
+            {
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitFieldInsn(PUTFIELD, desc, "instance", "Ljava/lang/Object;");
+            }
             mv.visitInsn(RETURN);
             mv.visitMaxs(2, 2);
             mv.visitEnd();
@@ -122,11 +131,14 @@ public class ASMEventHandler implements IEventListener
             mv = cw.visitMethod(ACC_PUBLIC, "invoke", HANDLER_FUNC_DESC, null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, desc, "instance", "Ljava/lang/Object;");
-            mv.visitTypeInsn(CHECKCAST, instType);
+            if (!isStatic)
+            {
+                mv.visitFieldInsn(GETFIELD, desc, "instance", "Ljava/lang/Object;");
+                mv.visitTypeInsn(CHECKCAST, instType);
+            }
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, eventType);
-            mv.visitMethodInsn(INVOKEVIRTUAL, instType, callback.getName(), Type.getMethodDescriptor(callback), false);
+            mv.visitMethodInsn(isStatic ? INVOKESTATIC : INVOKEVIRTUAL, instType, callback.getName(), Type.getMethodDescriptor(callback), false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(2, 2);
             mv.visitEnd();

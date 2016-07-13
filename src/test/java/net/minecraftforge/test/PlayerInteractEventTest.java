@@ -32,6 +32,7 @@ public class PlayerInteractEventTest
     {
         logger = event.getModLog();
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(PlayerInteractEventTest.class); // Test Static event listeners
     }
 
     @SubscribeEvent(receiveCanceled = true) // this triggers after the subclasses below, and we'd like to log them all
@@ -142,7 +143,7 @@ public class PlayerInteractEventTest
     }
 
     @SubscribeEvent
-    public void interactNormal(PlayerInteractEvent.EntityInteract evt)
+    public static void interactNormal(PlayerInteractEvent.EntityInteract evt)
     {
         if (!ENABLE) return;
 
