@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/PacketBuffer.java
++++ ../src-work/minecraft/net/minecraft/network/PacketBuffer.java
+@@ -331,6 +331,7 @@
+             this.writeShort(p_150788_1_.func_77960_j());
+             NBTTagCompound nbttagcompound = null;
+ 
++            this.func_150786_a(p_150788_1_.getCapNBT());
+             if (p_150788_1_.func_77973_b().func_77645_m() || p_150788_1_.func_77973_b().func_77651_p())
+             {
+                 nbttagcompound = p_150788_1_.func_77978_p();
+@@ -352,7 +353,7 @@
+         {
+             int j = this.readByte();
+             int k = this.readShort();
+-            itemstack = new ItemStack(Item.func_150899_d(i), j, k);
++            itemstack = new ItemStack(Item.func_150899_d(i), j, k, this.func_150793_b());
+             itemstack.func_77982_d(this.func_150793_b());
+         }
+ 

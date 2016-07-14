@@ -193,7 +193,17 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2409,6 +2442,40 @@
+@@ -1945,7 +1978,8 @@
+ 
+                 if (!ItemStack.func_77989_b(itemstack1, itemstack))
+                 {
+-                    ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
++                    if (itemstack == null || itemstack1 == null || (!itemstack.hasCapabilities() && !itemstack1.hasCapabilities()) || !ItemStack.areItemStacksEqualIgnoreCaps(itemstack1, itemstack))
++                        ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
+ 
+                     if (itemstack != null)
+                     {
+@@ -2409,6 +2443,40 @@
          this.field_70752_e = true;
      }
  
@@ -234,7 +244,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2429,12 +2496,19 @@
+@@ -2429,12 +2497,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -255,7 +265,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2452,8 +2526,10 @@
+@@ -2452,8 +2527,10 @@
  
          if (itemstack != null && !this.func_184587_cr())
          {
@@ -267,7 +277,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2536,6 +2612,8 @@
+@@ -2536,6 +2613,8 @@
              this.func_184584_a(this.field_184627_bm, 16);
              ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
  
@@ -276,7 +286,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  itemstack = null;
-@@ -2566,7 +2644,8 @@
+@@ -2566,7 +2645,8 @@
      {
          if (this.field_184627_bm != null)
          {
@@ -286,7 +296,7 @@
          }
  
          this.func_184602_cy();
-@@ -2685,4 +2764,28 @@
+@@ -2685,4 +2765,28 @@
      {
          return true;
      }
