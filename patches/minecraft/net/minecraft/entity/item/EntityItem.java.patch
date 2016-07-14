@@ -104,7 +104,19 @@
              return new ItemStack(Blocks.field_150348_b);
          }
          else
-@@ -494,6 +510,6 @@
+@@ -481,6 +497,11 @@
+         this.field_145804_b = p_174867_1_;
+     }
+ 
++    public int getPickupDelay()
++    {
++        return this.field_145804_b;
++    }
++
+     public boolean func_174874_s()
+     {
+         return this.field_145804_b > 0;
+@@ -494,6 +515,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
