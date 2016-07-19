@@ -55,7 +55,10 @@ public class ModClassLoader extends URLClassLoader
 
     public ModClassLoader(ClassLoader parent) {
         super(new URL[0], null);
-        this.mainClassLoader = (LaunchClassLoader)parent;
+        if (parent instanceof LaunchClassLoader)
+        {
+            this.mainClassLoader = (LaunchClassLoader)parent;
+        }
         this.sources = Lists.newArrayList();
     }
 

@@ -54,6 +54,8 @@ public class FMLRelaunchLog {
     private static void configureLogging()
     {
         log.myLog = LogManager.getLogger("FML");
+        // Default side to client for test harness purposes
+        if (side == null) side = Side.CLIENT;
         ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
         configured = true;
         

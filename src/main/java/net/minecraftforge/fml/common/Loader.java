@@ -204,7 +204,7 @@ public class Loader
         }
 
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
-        if (!mccversion.equals(MC_VERSION))
+        if (mccversion !=null && !mccversion.equals(MC_VERSION))
         {
             FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION);
             throw new LoaderException(String.format("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION));
@@ -1023,7 +1023,10 @@ public class Loader
 
     public void fireRemapEvent(Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems, boolean isFreezing)
     {
-        modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        if (modController!=null)
+        {
+            modController.propogateStateMessage(new FMLModIdMappingEvent(remapBlocks, remapItems, isFreezing));
+        }
     }
 
     public void runtimeDisableMod(String modId)

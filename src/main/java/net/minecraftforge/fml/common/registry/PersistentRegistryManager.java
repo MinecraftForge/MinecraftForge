@@ -61,7 +61,7 @@ import com.google.common.collect.Sets.SetView;
 @SuppressWarnings("WeakerAccess")
 public class PersistentRegistryManager
 {
-    private enum PersistentRegistry
+    enum PersistentRegistry
     {
         ACTIVE, VANILLA, FROZEN, STAGING;
 
