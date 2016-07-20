@@ -52,9 +52,7 @@ public class ItemHandlerHelper
         if (a == null || !a.isItemEqual(b))
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        return ItemStack.areItemStackTagsEqual(a, b);
     }
 
     /**
@@ -75,9 +73,7 @@ public class ItemHandlerHelper
         if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
             return false;
 
-        final NBTTagCompound aTag = a.getTagCompound();
-        final NBTTagCompound bTag = b.getTagCompound();
-        return (aTag != null || bTag == null) && (aTag == null || aTag.equals(bTag));
+        return ItemStack.areItemStackTagsEqual(a, b);
     }
 
     public static ItemStack copyStackWithSize(ItemStack itemStack, int size)
