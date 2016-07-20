@@ -66,6 +66,10 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
      */
     private final BiMap<ResourceLocation, I> persistentSubstitutions = HashBiMap.create();
     /**
+     * Substitution originals - these are the originals that are being substituted
+     */
+    private final BiMap<ResourceLocation, I> substitutionOriginals = HashBiMap.create();
+    /**
      * This is the current active substitution set for a particular world. It will change as worlds come and go.
      */
     private final BiMap<ResourceLocation, I> activeSubstitutions = HashBiMap.create();
@@ -602,6 +606,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             I sub = getPersistentSubstitutions().get(nameToReplace);
             getExistingDelegate(original).changeReference(sub);
             activeSubstitutions.put(nameToReplace, sub);
+            int id = getIDForObjectBypass(original);
+            // force the new object into the existing map
+            addObjectRaw(id, nameToReplace, sub);
+            // Track the original in the substitution originals collection
+            substitutionOriginals.put(nameToReplace, original);
             return original;
         }
         return null;
@@ -747,7 +756,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
                 remappedIds.put(itemName, new Integer[] {currId, newId});
             }
             I obj = currentRegistry.getRaw(itemName);
-
+            // If we have an object in the originals set, we use that for initial adding - substitute activation will readd the substitute if neceessary later
+            if (currentRegistry.substitutionOriginals.containsKey(itemName))
+            {
+                obj = currentRegistry.substitutionOriginals.get(itemName);
+            }
             add(newId, itemName, obj);
         }
     }

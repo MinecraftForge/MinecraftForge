@@ -13,9 +13,8 @@ import org.junit.runners.JUnit4;
 import org.junit.runners.model.InitializationError;
 
 /**
- * Uses {@code ResettingClassLoader} to load the test class, meaning the
- * {@code Quarantine} annotation can be used to ensure certain classes are
- * loaded separately.
+ * Uses {@code ResettingClassLoader} to load the test class. Minecraft and Forge
+ * classes are loaded using the separate class loader.
  *
  * Use of a separate class loader allows classes to be reloaded for each test
  * class, which is handy when you're testing frameworks that make use of static

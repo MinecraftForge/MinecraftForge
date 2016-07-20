@@ -199,6 +199,10 @@ public class LoadController
         return activeContainer != null ? activeContainer : findActiveContainerFromStack();
     }
 
+    void forceActiveContainer(ModContainer container)
+    {
+        activeContainer = container;
+    }
     @Subscribe
     public void propogateStateMessage(FMLEvent stateEvent)
     {
