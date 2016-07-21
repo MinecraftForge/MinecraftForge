@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotEquals;
  * Substitution test harness - tests that substitutions behave correctly
  */
 @RunWith(ForgeTestRunner.class)
-public class SubstitutionTests
+public class SubstitutionRemoveRestoreTest
 {
     private ResourceLocation myDirt = new ResourceLocation("minecraft:dirt");
     private BlockDirt toSub = new BlockDirt() {
@@ -37,7 +37,7 @@ public class SubstitutionTests
     }
 
     @Test
-    public void testSubstitution() throws Exception
+    public void testSubstitutionRemovalAndRestore() throws Exception
     {
         GameRegistry.addSubstitutionAlias("minecraft:dirt", GameRegistry.Type.BLOCK, toSub);
         PersistentRegistryManager.freezeData();
