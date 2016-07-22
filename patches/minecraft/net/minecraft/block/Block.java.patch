@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -893,6 +912,1141 @@
+@@ -893,6 +912,1185 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1331,6 +1331,50 @@
 +     */
 +    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
 +    {
++    }
++    
++    /**
++     * 
++     * @param worldIn The World of the Block
++     * @param pos The position of the Block
++     * @param entityIn The Entity that is requesting the sound
++     * @param type The SoundEvent type that should be returned
++     * @return The sound that will be played
++     */
++    public net.minecraft.util.SoundEvent getSoundEvent(IBlockAccess worldIn, BlockPos pos, @Nullable Entity entityIn, net.minecraftforge.common.EnumSoundEventType type)
++    {
++        switch(type)
++        {
++            case BLOCK_STEP : return this.field_149762_H.func_185844_d();
++            case BLOCK_PLACE : return this.field_149762_H.func_185841_e();
++            case BLOCK_HIT : return this.field_149762_H.func_185846_f();
++            case BLOCK_FALL : return this.field_149762_H.func_185842_g();
++            default : return this.field_149762_H.func_185845_c();
++        }
++    }
++
++    /**
++     * 
++     * @param worldIn The World of the Block
++     * @param pos The position of the Block
++     * @param entityIn The entity requesting the volume
++     * @return The volume that will be played
++     */
++    public float getSoundVolume(IBlockAccess worldIn, BlockPos pos, @Nullable Entity entityIn)
++    {
++        return this.field_149762_H.func_185843_a();
++    }
++
++    /**
++     * 
++     * @param worldIn The World of the Block
++     * @param pos The position of the Block
++     * @param entityIn The entity requesting the volume
++     * @return The volume that will be played
++     */
++    public float getSoundPitch(IBlockAccess worldIn, BlockPos pos, @Nullable Entity entityIn)
++    {
++        return this.field_149762_H.func_185847_b();
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +

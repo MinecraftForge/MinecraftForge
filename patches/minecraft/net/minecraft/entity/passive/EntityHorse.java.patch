@@ -1,6 +1,45 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
-@@ -441,6 +441,7 @@
+@@ -1,11 +1,13 @@
+ package net.minecraft.entity.passive;
+ 
+ import com.google.common.base.Optional;
+ import com.google.common.base.Predicate;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+-import net.minecraft.block.SoundType;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+@@ -58,6 +60,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.DifficultyInstance;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+@@ -400,13 +403,16 @@
+                 }
+             }
+ 
+-            IBlockState iblockstate = this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.2D - (double)this.field_70126_B, this.field_70161_v));
++            BlockPos pos = new BlockPos(this.field_70165_t, this.field_70163_u - 0.2D - (double)this.field_70126_B, this.field_70161_v);
++            IBlockState iblockstate = this.field_70170_p.func_180495_p(pos);
+             Block block = iblockstate.func_177230_c();
+ 
+             if (iblockstate.func_185904_a() != Material.field_151579_a && !this.func_174814_R())
+             {
+-                SoundType soundtype = block.func_185467_w();
+-                this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, soundtype.func_185844_d(), this.func_184176_by(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
++                net.minecraft.util.SoundEvent stepSound = block.getSoundEvent(this.field_70170_p, pos, this, net.minecraftforge.common.EnumSoundEventType.BLOCK_STEP);
++                float volume = block.getSoundVolume(this.field_70170_p, pos, this);
++                float pitch = block.getSoundPitch(this.field_70170_p, pos, this);
++                this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, stepSound, this.func_184176_by(), volume * 0.5F, pitch * 0.75F);
+             }
+         }
+     }
+@@ -441,6 +447,7 @@
  
          this.field_110296_bG.func_110134_a(this);
          this.func_110232_cE();
@@ -8,7 +47,56 @@
      }
  
      private void func_110232_cE()
-@@ -1212,6 +1213,7 @@
+@@ -556,11 +563,14 @@
+ 
+     protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
+     {
+-        SoundType soundtype = p_180429_2_.func_185467_w();
++        float volume = p_180429_2_.getSoundVolume(this.field_70170_p, p_180429_1_, this);
++        float pitch = p_180429_2_.getSoundPitch(this.field_70170_p, p_180429_1_, this);
++        Block block1 = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c();
+ 
+         if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
+         {
+-            soundtype = Blocks.field_150431_aC.func_185467_w();
++            volume = block1.getSoundVolume(this.field_70170_p, p_180429_1_.func_177984_a(), this);
++            pitch = block1.getSoundPitch(this.field_70170_p, p_180429_1_.func_177984_a(), this);
+         }
+ 
+         if (!p_180429_2_.func_176223_P().func_185904_a().func_76224_d())
+@@ -573,25 +583,25 @@
+ 
+                 if (this.field_110285_bP > 5 && this.field_110285_bP % 3 == 0)
+                 {
+-                    this.func_184185_a(SoundEvents.field_187714_cq, soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
++                    this.func_184185_a(SoundEvents.field_187714_cq, volume * 0.15F, pitch);
+ 
+                     if (horsetype == HorseType.HORSE && this.field_70146_Z.nextInt(10) == 0)
+                     {
+-                        this.func_184185_a(SoundEvents.field_187705_cn, soundtype.func_185843_a() * 0.6F, soundtype.func_185847_b());
++                        this.func_184185_a(SoundEvents.field_187705_cn, volume * 0.6F, pitch);
+                     }
+                 }
+                 else if (this.field_110285_bP <= 5)
+                 {
+-                    this.func_184185_a(SoundEvents.field_187732_cw, soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
++                    this.func_184185_a(SoundEvents.field_187732_cw, volume * 0.15F, pitch);
+                 }
+             }
+-            else if (soundtype == SoundType.field_185848_a)
++            else if (p_180429_2_.getSoundEvent(this.field_70170_p, p_180429_1_, this, EnumSoundEventType.BLOCK_STEP) == net.minecraft.init.SoundEvents.field_187897_gY)
+             {
+-                this.func_184185_a(SoundEvents.field_187732_cw, soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
++                this.func_184185_a(SoundEvents.field_187732_cw, volume * 0.15F, pitch);
+             }
+             else
+             {
+-                this.func_184185_a(SoundEvents.field_187729_cv, soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
++                this.func_184185_a(SoundEvents.field_187729_cv, volume * 0.15F, pitch);
+             }
+         }
+     }
+@@ -1212,6 +1222,7 @@
                  }
  
                  this.field_110277_bt = 0.0F;
@@ -16,7 +104,7 @@
              }
  
              this.field_70747_aH = this.func_70689_ay() * 0.1F;
-@@ -1813,4 +1815,21 @@
+@@ -1813,4 +1824,21 @@
                  this.field_188477_b = p_i46589_2_;
              }
          }

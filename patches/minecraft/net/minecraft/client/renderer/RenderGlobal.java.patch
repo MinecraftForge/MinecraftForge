@@ -1,6 +1,55 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -548,8 +548,10 @@
+@@ -1,10 +1,5 @@
+ package net.minecraft.client.renderer;
+ 
+-import com.google.common.collect.Lists;
+-import com.google.common.collect.Maps;
+-import com.google.common.collect.Queues;
+-import com.google.common.collect.Sets;
+-import com.google.gson.JsonSyntaxException;
+ import java.io.IOException;
+ import java.util.Collection;
+ import java.util.Iterator;
+@@ -13,13 +8,25 @@
+ import java.util.Queue;
+ import java.util.Random;
+ import java.util.Set;
++
+ import javax.annotation.Nullable;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++import org.lwjgl.util.vector.Vector3f;
++import org.lwjgl.util.vector.Vector4f;
++
++import com.google.common.collect.Lists;
++import com.google.common.collect.Maps;
++import com.google.common.collect.Queues;
++import com.google.common.collect.Sets;
++import com.google.gson.JsonSyntaxException;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockChest;
+ import net.minecraft.block.BlockEnderChest;
+ import net.minecraft.block.BlockSign;
+ import net.minecraft.block.BlockSkull;
+-import net.minecraft.block.SoundType;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.client.Minecraft;
+@@ -86,10 +93,6 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+-import org.lwjgl.util.vector.Vector3f;
+-import org.lwjgl.util.vector.Vector4f;
+ 
+ @SideOnly(Side.CLIENT)
+ public class RenderGlobal implements IWorldEventListener, IResourceManagerReloadListener
+@@ -548,8 +551,10 @@
  
      public void func_180446_a(Entity p_180446_1_, ICamera p_180446_2_, float p_180446_3_)
      {
@@ -11,7 +60,7 @@
              --this.field_72740_G;
          }
          else
-@@ -560,9 +562,12 @@
+@@ -560,9 +565,12 @@
              this.field_72769_h.field_72984_F.func_76320_a("prepare");
              TileEntityRendererDispatcher.field_147556_a.func_190056_a(this.field_72769_h, this.field_72777_q.func_110434_K(), this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), this.field_72777_q.field_71476_x, p_180446_3_);
              this.field_175010_j.func_180597_a(this.field_72769_h, this.field_72777_q.field_71466_p, this.field_72777_q.func_175606_aa(), this.field_72777_q.field_147125_j, this.field_72777_q.field_71474_y, p_180446_3_);
@@ -24,7 +73,7 @@
              Entity entity = this.field_72777_q.func_175606_aa();
              double d3 = entity.field_70142_S + (entity.field_70165_t - entity.field_70142_S) * (double)p_180446_3_;
              double d4 = entity.field_70137_T + (entity.field_70163_u - entity.field_70137_T) * (double)p_180446_3_;
-@@ -574,11 +579,15 @@
+@@ -574,11 +582,15 @@
              this.field_72777_q.field_71460_t.func_180436_i();
              this.field_72769_h.field_72984_F.func_76318_c("global");
              List<Entity> list = this.field_72769_h.func_72910_y();
@@ -40,7 +89,7 @@
                  ++this.field_72749_I;
  
                  if (entity1.func_145770_h(d0, d1, d2))
-@@ -601,6 +610,7 @@
+@@ -601,6 +613,7 @@
                  {
                      for (Entity entity2 : classinheritancemultimap)
                      {
@@ -48,7 +97,7 @@
                          boolean flag = this.field_175010_j.func_178635_a(entity2, p_180446_2_, d0, d1, d2) || entity2.func_184215_y(this.field_72777_q.field_71439_g);
  
                          if (flag)
-@@ -637,6 +647,7 @@
+@@ -637,6 +650,7 @@
                  }
              }
  
@@ -56,7 +105,7 @@
              if (this.func_174985_d() && (!list1.isEmpty() || this.field_184386_ad))
              {
                  this.field_72769_h.field_72984_F.func_76318_c("entityOutlines");
-@@ -676,6 +687,7 @@
+@@ -676,6 +690,7 @@
              this.field_72769_h.field_72984_F.func_76318_c("blockentities");
              RenderHelper.func_74519_b();
  
@@ -64,7 +113,7 @@
              for (RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation1 : this.field_72755_R)
              {
                  List<TileEntity> list3 = renderglobal$containerlocalrenderinformation1.field_178036_a.func_178571_g().func_178485_b();
-@@ -684,6 +696,7 @@
+@@ -684,6 +699,7 @@
                  {
                      for (TileEntity tileentity2 : list3)
                      {
@@ -72,7 +121,7 @@
                          TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity2, p_180446_3_, -1);
                      }
                  }
-@@ -693,9 +706,11 @@
+@@ -693,9 +709,11 @@
              {
                  for (TileEntity tileentity : this.field_181024_n)
                  {
@@ -84,7 +133,7 @@
  
              this.func_180443_s();
  
-@@ -722,7 +737,7 @@
+@@ -722,7 +740,7 @@
  
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
  
@@ -93,7 +142,7 @@
                  {
                      TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity1, p_180446_3_, destroyblockprogress.func_73106_e());
                  }
-@@ -1213,6 +1228,13 @@
+@@ -1213,6 +1231,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
@@ -107,7 +156,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
              this.func_180448_r();
-@@ -1430,6 +1452,12 @@
+@@ -1430,6 +1455,12 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_)
      {
@@ -120,7 +169,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1857,8 +1885,11 @@
+@@ -1857,8 +1888,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -133,3 +182,16 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
+@@ -2304,8 +2338,10 @@
+ 
+                 if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
+                 {
+-                    SoundType soundtype = block.func_185467_w();
+-                    this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
++                    net.minecraft.util.SoundEvent breakSound = block.getSoundEvent(this.field_72769_h, p_180439_3_, p_180439_1_, net.minecraftforge.common.EnumSoundEventType.BLOCK_BREAK);
++                    float volume = block.getSoundVolume(this.field_72769_h, p_180439_3_, p_180439_1_);
++                    float pitch = block.getSoundPitch(this.field_72769_h, p_180439_3_, p_180439_1_);
++                    this.field_72769_h.func_184156_a(p_180439_3_, breakSound, SoundCategory.BLOCKS, (volume + 1.0F) / 2.0F, pitch * 0.8F, false);
+                 }
+ 
+                 this.field_72777_q.field_71452_i.func_180533_a(p_180439_3_, block.func_176203_a(p_180439_4_ >> 12 & 255));

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -51,16 +51,8 @@
+@@ -51,18 +51,13 @@
              int i = this.func_77647_b(p_180614_1_.func_77960_j());
              IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_);
  
@@ -15,10 +15,17 @@
 -                    this.field_150939_a.func_180633_a(p_180614_3_, p_180614_4_, iblockstate1, p_180614_2_, p_180614_1_);
 -                }
 -
-                 SoundType soundtype = this.field_150939_a.func_185467_w();
-                 p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+-                SoundType soundtype = this.field_150939_a.func_185467_w();
+-                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                Block block1 = iblockstate1.func_177230_c();
++                net.minecraft.util.SoundEvent placeSound = block1.getSoundEvent(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundEventType.BLOCK_PLACE);
++                float volume = block1.getSoundVolume(p_180614_3_, p_180614_4_, p_180614_2_);
++                float pitch = block1.getSoundPitch(p_180614_3_, p_180614_4_, p_180614_2_);
++                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, placeSound, SoundCategory.BLOCKS, (volume + 1.0F) / 2.0F, pitch * 0.8F);
                  --p_180614_1_.field_77994_a;
-@@ -121,7 +113,7 @@
+             }
+ 
+@@ -121,7 +116,7 @@
      {
          Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
@@ -27,7 +34,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -159,4 +151,32 @@
+@@ -159,4 +154,32 @@
      {
          return this.field_150939_a;
      }
