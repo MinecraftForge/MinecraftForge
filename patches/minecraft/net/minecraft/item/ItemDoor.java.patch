@@ -1,0 +1,68 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemDoor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemDoor.java
+@@ -45,9 +45,11 @@
+                 int i = enumfacing.func_82601_c();
+                 int j = enumfacing.func_82599_e();
+                 boolean flag = i < 0 && p_180614_9_ < 0.5F || i > 0 && p_180614_9_ > 0.5F || j < 0 && p_180614_7_ > 0.5F || j > 0 && p_180614_7_ < 0.5F;
+-                func_179235_a(p_180614_3_, p_180614_4_, enumfacing, this.field_179236_a, flag);
+-                SoundType soundtype = this.field_179236_a.func_185467_w();
+-                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                Block block1 = placeDoor(p_180614_3_, p_180614_4_, enumfacing, this.field_179236_a, flag).func_177230_c();
++                net.minecraft.util.SoundEvent placeSound = block1.getSoundEvent(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundEventType.BLOCK_PLACE);
++                float volume = block1.getSoundVolume(p_180614_3_, p_180614_4_, p_180614_2_);
++                float pitch = block1.getSoundPitch(p_180614_3_, p_180614_4_, p_180614_2_);
++                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, placeSound, SoundCategory.BLOCKS, (volume + 1.0F) / 2.0F, pitch * 0.8F);
+                 --p_180614_1_.field_77994_a;
+                 return EnumActionResult.SUCCESS;
+             }
+@@ -58,33 +60,34 @@
+         }
+     }
+ 
+-    public static void func_179235_a(World p_179235_0_, BlockPos p_179235_1_, EnumFacing p_179235_2_, Block p_179235_3_, boolean p_179235_4_)
++    public static IBlockState placeDoor(World worldIn, BlockPos pos, EnumFacing facing, Block door, boolean isRightHinge)
+     {
+-        BlockPos blockpos = p_179235_1_.func_177972_a(p_179235_2_.func_176746_e());
+-        BlockPos blockpos1 = p_179235_1_.func_177972_a(p_179235_2_.func_176735_f());
+-        int i = (p_179235_0_.func_180495_p(blockpos1).func_185915_l() ? 1 : 0) + (p_179235_0_.func_180495_p(blockpos1.func_177984_a()).func_185915_l() ? 1 : 0);
+-        int j = (p_179235_0_.func_180495_p(blockpos).func_185915_l() ? 1 : 0) + (p_179235_0_.func_180495_p(blockpos.func_177984_a()).func_185915_l() ? 1 : 0);
+-        boolean flag = p_179235_0_.func_180495_p(blockpos1).func_177230_c() == p_179235_3_ || p_179235_0_.func_180495_p(blockpos1.func_177984_a()).func_177230_c() == p_179235_3_;
+-        boolean flag1 = p_179235_0_.func_180495_p(blockpos).func_177230_c() == p_179235_3_ || p_179235_0_.func_180495_p(blockpos.func_177984_a()).func_177230_c() == p_179235_3_;
++        BlockPos blockpos = pos.func_177972_a(facing.func_176746_e());
++        BlockPos blockpos1 = pos.func_177972_a(facing.func_176735_f());
++        int i = (worldIn.func_180495_p(blockpos1).func_185915_l() ? 1 : 0) + (worldIn.func_180495_p(blockpos1.func_177984_a()).func_185915_l() ? 1 : 0);
++        int j = (worldIn.func_180495_p(blockpos).func_185915_l() ? 1 : 0) + (worldIn.func_180495_p(blockpos.func_177984_a()).func_185915_l() ? 1 : 0);
++        boolean flag = worldIn.func_180495_p(blockpos1).func_177230_c() == door || worldIn.func_180495_p(blockpos1.func_177984_a()).func_177230_c() == door;
++        boolean flag1 = worldIn.func_180495_p(blockpos).func_177230_c() == door || worldIn.func_180495_p(blockpos.func_177984_a()).func_177230_c() == door;
+ 
+         if ((!flag || flag1) && j <= i)
+         {
+             if (flag1 && !flag || j < i)
+             {
+-                p_179235_4_ = false;
++                isRightHinge = false;
+             }
+         }
+         else
+         {
+-            p_179235_4_ = true;
++            isRightHinge = true;
+         }
+ 
+-        BlockPos blockpos2 = p_179235_1_.func_177984_a();
+-        boolean flag2 = p_179235_0_.func_175640_z(p_179235_1_) || p_179235_0_.func_175640_z(blockpos2);
+-        IBlockState iblockstate = p_179235_3_.func_176223_P().func_177226_a(BlockDoor.field_176520_a, p_179235_2_).func_177226_a(BlockDoor.field_176521_M, p_179235_4_ ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).func_177226_a(BlockDoor.field_176522_N, Boolean.valueOf(flag2)).func_177226_a(BlockDoor.field_176519_b, Boolean.valueOf(flag2));
+-        p_179235_0_.func_180501_a(p_179235_1_, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.LOWER), 2);
+-        p_179235_0_.func_180501_a(blockpos2, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.UPPER), 2);
+-        p_179235_0_.func_175685_c(p_179235_1_, p_179235_3_);
+-        p_179235_0_.func_175685_c(blockpos2, p_179235_3_);
++        BlockPos blockpos2 = pos.func_177984_a();
++        boolean flag2 = worldIn.func_175640_z(pos) || worldIn.func_175640_z(blockpos2);
++        IBlockState iblockstate = door.func_176223_P().func_177226_a(BlockDoor.field_176520_a, facing).func_177226_a(BlockDoor.field_176521_M, isRightHinge ? BlockDoor.EnumHingePosition.RIGHT : BlockDoor.EnumHingePosition.LEFT).func_177226_a(BlockDoor.field_176522_N, Boolean.valueOf(flag2)).func_177226_a(BlockDoor.field_176519_b, Boolean.valueOf(flag2));
++        worldIn.func_180501_a(pos, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.LOWER), 2);
++        worldIn.func_180501_a(blockpos2, iblockstate.func_177226_a(BlockDoor.field_176523_O, BlockDoor.EnumDoorHalf.UPPER), 2);
++        worldIn.func_175685_c(pos, door);
++        worldIn.func_175685_c(blockpos2, door);
++        return iblockstate;
+     }
+ }

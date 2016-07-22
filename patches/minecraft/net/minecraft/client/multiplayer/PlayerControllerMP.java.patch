@@ -1,6 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
-@@ -123,6 +123,12 @@
+@@ -1,11 +1,11 @@
+ package net.minecraft.client.multiplayer;
+ import javax.annotation.Nullable;
+ import io.netty.buffer.Unpooled;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockCommandBlock;
+ import net.minecraft.block.BlockStructure;
+-import net.minecraft.block.SoundType;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.client.Minecraft;
+@@ -15,7 +15,6 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.passive.EntityHorse;
+ import net.minecraft.entity.player.EntityPlayer;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.inventory.ClickType;
+ import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemStack;
+@@ -123,6 +122,12 @@
              }
          }
  
@@ -13,7 +32,7 @@
          if (this.field_78779_k.func_77145_d() && this.field_78776_a.field_71439_g.func_184614_ca() != null && this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b() instanceof ItemSword)
          {
              return false;
-@@ -144,14 +150,7 @@
+@@ -144,14 +149,7 @@
              else
              {
                  world.func_175718_b(2001, p_187103_1_, Block.func_176210_f(iblockstate));
@@ -28,7 +47,7 @@
                  this.field_178895_c = new BlockPos(this.field_178895_c.func_177958_n(), -1, this.field_178895_c.func_177952_p());
  
                  if (!this.field_78779_k.func_77145_d())
-@@ -162,13 +161,20 @@
+@@ -162,13 +160,20 @@
                      {
                          itemstack1.func_179548_a(world, iblockstate, p_187103_1_, this.field_78776_a.field_71439_g);
  
@@ -50,7 +69,7 @@
                  return flag;
              }
          }
-@@ -208,6 +214,7 @@
+@@ -208,6 +213,7 @@
              if (this.field_78779_k.func_77145_d())
              {
                  this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
@@ -58,7 +77,7 @@
                  func_178891_a(this.field_78776_a, this, p_180511_1_, p_180511_2_);
                  this.field_78781_i = 5;
              }
-@@ -219,14 +226,17 @@
+@@ -219,14 +225,17 @@
                  }
  
                  this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
@@ -77,7 +96,20 @@
                  if (flag && iblockstate.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F)
                  {
                      this.func_187103_a(p_180511_1_);
-@@ -373,13 +383,32 @@
+@@ -290,8 +299,10 @@
+ 
+                 if (this.field_78780_h % 4.0F == 0.0F)
+                 {
+-                    SoundType soundtype = block.func_185467_w();
+-                    this.field_78776_a.func_147118_V().func_147682_a(new PositionedSoundRecord(soundtype.func_185846_f(), SoundCategory.NEUTRAL, (soundtype.func_185843_a() + 1.0F) / 8.0F, soundtype.func_185847_b() * 0.5F, p_180512_1_));
++                    net.minecraft.util.SoundEvent hitSound = block.getSoundEvent(this.field_78776_a.field_71441_e, p_180512_1_, this.field_78776_a.field_71439_g, net.minecraftforge.common.EnumSoundEventType.BLOCK_HIT);
++                    float volume = block.getSoundVolume(this.field_78776_a.field_71441_e, p_180512_1_, this.field_78776_a.field_71439_g);
++                    float pitch = block.getSoundPitch(this.field_78776_a.field_71441_e, p_180512_1_, this.field_78776_a.field_71439_g);
++                    this.field_78776_a.func_147118_V().func_147682_a(new PositionedSoundRecord(hitSound, SoundCategory.NEUTRAL, (volume + 1.0F) / 8.0F, pitch * 0.5F, p_180512_1_));
+                 }
+ 
+                 ++this.field_78780_h;
+@@ -373,13 +384,32 @@
          }
          else
          {
@@ -112,7 +144,7 @@
                  }
  
                  if (!flag && p_187099_3_ != null && p_187099_3_.func_77973_b() instanceof ItemBlock)
-@@ -395,7 +424,7 @@
+@@ -395,7 +425,7 @@
  
              this.field_78774_b.func_147297_a(new CPacketPlayerTryUseItemOnBlock(p_187099_4_, p_187099_5_, p_187099_7_, f, f1, f2));
  
@@ -121,7 +153,7 @@
              {
                  if (p_187099_3_ == null)
                  {
-@@ -421,14 +450,19 @@
+@@ -421,14 +451,19 @@
                      {
                          int i = p_187099_3_.func_77960_j();
                          int j = p_187099_3_.field_77994_a;
@@ -142,7 +174,7 @@
                      }
                  }
              }
-@@ -456,6 +490,7 @@
+@@ -456,6 +491,7 @@
              }
              else
              {
@@ -150,7 +182,7 @@
                  int i = p_187101_3_.field_77994_a;
                  ActionResult<ItemStack> actionresult = p_187101_3_.func_77957_a(p_187101_2_, p_187101_1_, p_187101_4_);
                  ItemStack itemstack = (ItemStack)actionresult.func_188398_b();
-@@ -464,9 +499,10 @@
+@@ -464,9 +500,10 @@
                  {
                      p_187101_1_.func_184611_a(p_187101_4_, itemstack);
  
@@ -162,7 +194,7 @@
                      }
                  }
  
-@@ -504,6 +540,7 @@
+@@ -504,6 +541,7 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_5_, vec3d));
