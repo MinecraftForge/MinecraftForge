@@ -35,7 +35,29 @@
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -1151,12 +1159,12 @@
+@@ -945,15 +953,18 @@
+     protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
+     {
+         SoundType soundtype = p_180429_2_.func_185467_w();
++        SoundEvent stepSound = p_180429_2_.getSound(this.field_70170_p, p_180429_1_, this, net.minecraftforge.common.EnumSoundType.BLOCK_STEP);
++        Block block1 = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c();
+ 
+-        if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
++        if (block1 == Blocks.field_150431_aC)
+         {
+             soundtype = Blocks.field_150431_aC.func_185467_w();
+-            this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
++            stepSound = block1.getSound(this.field_70170_p, p_180429_1_.func_177984_a(), this, net.minecraftforge.common.EnumSoundType.BLOCK_STEP);
++            this.func_184185_a(stepSound, soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
+         }
+         else if (!p_180429_2_.func_176223_P().func_185904_a().func_76224_d())
+         {
+-            this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
++            this.func_184185_a(stepSound, soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
+         }
+     }
+ 
+@@ -1151,12 +1162,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
  
@@ -52,7 +74,7 @@
              }
              else
              {
-@@ -1568,6 +1576,9 @@
+@@ -1568,6 +1579,9 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -62,7 +84,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1675,6 +1686,9 @@
+@@ -1675,6 +1689,9 @@
              this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
              this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
  
@@ -72,7 +94,7 @@
              if (p_70020_1_.func_150297_b("Tags", 9))
              {
                  this.field_184236_aF.clear();
-@@ -1757,7 +1771,10 @@
+@@ -1757,7 +1774,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -84,7 +106,7 @@
              return entityitem;
          }
          else
-@@ -1867,6 +1884,7 @@
+@@ -1867,6 +1887,7 @@
  
      public boolean func_184205_a(Entity p_184205_1_, boolean p_184205_2_)
      {
@@ -92,7 +114,7 @@
          if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this))
          {
              if (this.func_184218_aH())
-@@ -2336,6 +2354,7 @@
+@@ -2336,6 +2357,7 @@
      {
          if (!this.field_70170_p.field_72995_K && !this.field_70128_L)
          {
@@ -100,7 +122,7 @@
              this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
              MinecraftServer minecraftserver = this.func_184102_h();
              int i = this.field_71093_bK;
-@@ -2429,7 +2448,7 @@
+@@ -2429,7 +2451,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -109,7 +131,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2726,6 +2745,164 @@
+@@ -2726,6 +2748,164 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  

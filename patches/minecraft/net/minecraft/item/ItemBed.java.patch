@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemBed.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBed.java
+@@ -5,19 +5,23 @@
+ import net.minecraft.block.SoundType;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
++import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.EnumActionResult;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.SoundCategory;
++import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
+ 
+ public class ItemBed extends Item
+ {
+-    public ItemBed()
++    private Entity playerIn;
++
++	public ItemBed()
+     {
+         this.func_77637_a(CreativeTabs.field_78031_c);
+     }
+@@ -64,7 +68,8 @@
+                     }
+ 
+                     SoundType soundtype = iblockstate1.func_177230_c().func_185467_w();
+-                    p_180614_3_.func_184133_a((EntityPlayer)null, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                    SoundEvent placeSound = iblockstate1.func_177230_c().getSound(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundType.BLOCK_PLACE);
++                    p_180614_3_.func_184133_a((EntityPlayer)null, p_180614_4_, placeSound, SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                     --p_180614_1_.field_77994_a;
+                     return EnumActionResult.SUCCESS;
+                 }

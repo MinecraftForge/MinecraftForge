@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSlab.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSlab.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.SoundCategory;
++import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+@@ -61,7 +62,8 @@
+                     if (axisalignedbb != Block.field_185506_k && p_180614_3_.func_72855_b(axisalignedbb.func_186670_a(p_180614_4_)) && p_180614_3_.func_180501_a(p_180614_4_, iblockstate1, 11))
+                     {
+                         SoundType soundtype = this.field_179226_c.func_185467_w();
+-                        p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                        SoundEvent placeSound = iblockstate1.func_177230_c().getSound(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundType.BLOCK_PLACE);
++                        p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, placeSound, SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                         --p_180614_1_.field_77994_a;
+                     }
+ 
+@@ -116,7 +118,8 @@
+                 if (axisalignedbb != Block.field_185506_k && p_180615_3_.func_72855_b(axisalignedbb.func_186670_a(p_180615_4_)) && p_180615_3_.func_180501_a(p_180615_4_, iblockstate1, 11))
+                 {
+                     SoundType soundtype = this.field_179226_c.func_185467_w();
+-                    p_180615_3_.func_184133_a(p_180615_1_, p_180615_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                    SoundEvent placeSound = iblockstate1.func_177230_c().getSound(p_180615_3_, p_180615_4_, p_180615_1_, net.minecraftforge.common.EnumSoundType.BLOCK_PLACE);
++                    p_180615_3_.func_184133_a(p_180615_1_, p_180615_4_, placeSound, SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                     --p_180615_2_.field_77994_a;
+                 }
+ 

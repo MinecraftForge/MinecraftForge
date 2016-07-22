@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -51,16 +51,8 @@
+@@ -16,6 +16,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.SoundCategory;
++import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+@@ -51,18 +52,11 @@
              int i = this.func_77647_b(p_180614_1_.func_77960_j());
              IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_3_, p_180614_4_, p_180614_6_, p_180614_7_, p_180614_8_, p_180614_9_, i, p_180614_2_);
  
@@ -16,9 +24,13 @@
 -                }
 -
                  SoundType soundtype = this.field_150939_a.func_185467_w();
-                 p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+-                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                SoundEvent placeSound = iblockstate1.func_177230_c().getSound(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundType.BLOCK_PLACE);
++                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, placeSound, SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
                  --p_180614_1_.field_77994_a;
-@@ -121,7 +113,7 @@
+             }
+ 
+@@ -121,7 +115,7 @@
      {
          Block block = p_179222_1_.func_180495_p(p_179222_2_).func_177230_c();
  
@@ -27,7 +39,7 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
-@@ -159,4 +151,32 @@
+@@ -159,4 +153,32 @@
      {
          return this.field_150939_a;
      }
