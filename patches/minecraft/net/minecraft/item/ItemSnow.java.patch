@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemSnow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemSnow.java
-@@ -68,4 +68,10 @@
+@@ -9,6 +9,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.SoundCategory;
++import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+@@ -49,7 +50,8 @@
+                     if (axisalignedbb != Block.field_185506_k && p_180614_3_.func_72855_b(axisalignedbb.func_186670_a(blockpos)) && p_180614_3_.func_180501_a(blockpos, iblockstate1, 10))
+                     {
+                         SoundType soundtype = this.field_150939_a.func_185467_w();
+-                        p_180614_3_.func_184133_a(p_180614_2_, blockpos, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                        SoundEvent placeSound = iblockstate1.func_177230_c().getSound(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundType.BLOCK_PLACE);
++                        p_180614_3_.func_184133_a(p_180614_2_, blockpos, placeSound, SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                         --p_180614_1_.field_77994_a;
+                         return EnumActionResult.SUCCESS;
+                     }
+@@ -68,4 +70,10 @@
      {
          return p_77647_1_;
      }

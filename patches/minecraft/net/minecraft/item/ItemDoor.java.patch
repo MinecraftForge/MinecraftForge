@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemDoor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemDoor.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.SoundCategory;
++import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
+@@ -47,7 +48,8 @@
+                 boolean flag = i < 0 && p_180614_9_ < 0.5F || i > 0 && p_180614_9_ > 0.5F || j < 0 && p_180614_7_ > 0.5F || j > 0 && p_180614_7_ < 0.5F;
+                 func_179235_a(p_180614_3_, p_180614_4_, enumfacing, this.field_179236_a, flag);
+                 SoundType soundtype = this.field_179236_a.func_185467_w();
+-                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
++                SoundEvent placeSound = this.field_179236_a.getSound(p_180614_3_, p_180614_4_, p_180614_2_, net.minecraftforge.common.EnumSoundType.BLOCK_PLACE);
++                p_180614_3_.func_184133_a(p_180614_2_, p_180614_4_, placeSound, SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                 --p_180614_1_.field_77994_a;
+                 return EnumActionResult.SUCCESS;
+             }
