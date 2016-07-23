@@ -133,3 +133,12 @@
                  {
                      if (d3 * d3 + d4 * d4 + d5 * d5 > 1024.0D)
                      {
+@@ -2304,7 +2335,7 @@
+ 
+                 if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
+                 {
+-                    SoundType soundtype = block.func_185467_w();
++                    SoundType soundtype = block.getSoundType(this.field_72769_h, p_180439_3_, p_180439_1_);
+                     this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
+                 }
+ 

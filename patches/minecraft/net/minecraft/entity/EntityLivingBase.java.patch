@@ -122,7 +122,22 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
-@@ -1270,6 +1293,8 @@
+@@ -1189,11 +1212,12 @@
+             int j = MathHelper.func_76128_c(this.field_70165_t);
+             int k = MathHelper.func_76128_c(this.field_70163_u - 0.20000000298023224D);
+             int l = MathHelper.func_76128_c(this.field_70161_v);
+-            IBlockState iblockstate = this.field_70170_p.func_180495_p(new BlockPos(j, k, l));
++            BlockPos pos = new BlockPos(j, k, l);
++            IBlockState iblockstate = this.field_70170_p.func_180495_p(pos);
+ 
+             if (iblockstate.func_185904_a() != Material.field_151579_a)
+             {
+-                SoundType soundtype = iblockstate.func_177230_c().func_185467_w();
++                SoundType soundtype = iblockstate.func_177230_c().getSoundType(this.field_70170_p, pos, this);
+                 this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
+             }
+         }
+@@ -1270,6 +1294,8 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -131,7 +146,7 @@
              p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
              p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
              float f = p_70665_2_;
-@@ -1319,6 +1344,11 @@
+@@ -1319,6 +1345,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -143,7 +158,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1521,6 +1551,7 @@
+@@ -1521,6 +1552,7 @@
  
      public void func_110145_l(Entity p_110145_1_)
      {
@@ -151,7 +166,7 @@
          if (!(p_110145_1_ instanceof EntityBoat) && !(p_110145_1_ instanceof EntityHorse))
          {
              double d1 = p_110145_1_.field_70165_t;
-@@ -1545,7 +1576,7 @@
+@@ -1545,7 +1577,7 @@
  
                  if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                  {
@@ -160,7 +175,7 @@
                      {
                          this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                          return;
-@@ -1553,14 +1584,14 @@
+@@ -1553,14 +1585,14 @@
  
                      BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
@@ -177,7 +192,7 @@
                  {
                      d1 = d11;
                      d13 = this.field_70163_u + 2.0D;
-@@ -1631,6 +1662,7 @@
+@@ -1631,6 +1663,7 @@
          }
  
          this.field_70160_al = true;
@@ -185,7 +200,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1903,6 +1935,7 @@
+@@ -1903,6 +1936,7 @@
  
      public void func_70071_h_()
      {
@@ -193,7 +208,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2409,6 +2442,40 @@
+@@ -2409,6 +2443,40 @@
          this.field_70752_e = true;
      }
  
@@ -234,7 +249,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2429,12 +2496,19 @@
+@@ -2429,12 +2497,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -255,7 +270,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2452,8 +2526,10 @@
+@@ -2452,8 +2527,10 @@
  
          if (itemstack != null && !this.func_184587_cr())
          {
@@ -267,7 +282,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2536,6 +2612,8 @@
+@@ -2536,6 +2613,8 @@
              this.func_184584_a(this.field_184627_bm, 16);
              ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
  
@@ -276,7 +291,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  itemstack = null;
-@@ -2566,7 +2644,8 @@
+@@ -2566,7 +2645,8 @@
      {
          if (this.field_184627_bm != null)
          {
@@ -286,7 +301,7 @@
          }
  
          this.func_184602_cy();
-@@ -2685,4 +2764,28 @@
+@@ -2685,4 +2765,28 @@
      {
          return true;
      }
