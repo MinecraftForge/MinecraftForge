@@ -29,6 +29,7 @@ import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -50,6 +51,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 
 import java.util.zip.ZipEntry;
@@ -119,8 +121,24 @@ public class FMLModContainer implements ModContainer
             this.languageAdapter = null;
             FMLLog.finer("Using custom language adapter %s for %s (modid: %s)", languageAdapterType, this.className, getModId());
         }
+        sanityCheckModId();
     }
 
+    private void sanityCheckModId()
+    {
+        String modid = (String)this.descriptor.get("modid");
+        if (Strings.isNullOrEmpty(modid))
+        {
+            throw new IllegalArgumentException("Modid cannot be null or empty");
+        }
+        if (modid.length() > 64) {
+            FMLLog.bigWarning("The modid %s is longer than the recommended maximum of 64 characters. Truncation will be enforced in 1.11", modid);
+        }
+        if (!modid.equals(modid.toLowerCase(Locale.ENGLISH)))
+        {
+            FMLLog.bigWarning("The modid %s is not the same as it's lowercase version. Lowercasing will be enforced in 1.11", modid);
+        }
+    }
     private ILanguageAdapter getLanguageAdapter()
     {
         if (languageAdapter == null)

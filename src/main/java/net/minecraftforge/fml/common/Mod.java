@@ -75,7 +75,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public @interface Mod
 {
     /**
-     * The unique mod identifier for this mod
+     * The unique mod identifier for this mod.
+     * <b>Required to be lowercased in the english locale for compatibility. Will be truncated to 64 characters long.</b>
+     *
+     * This will be used to identify your mod for third parties (other mods), it will be used to identify your mod for registries such as block and item registries.
+     * By default, you will have a resource domain that matches the modid. All these uses require that constraints are imposed on the format of the modid.
      */
     String modid();
     /**
