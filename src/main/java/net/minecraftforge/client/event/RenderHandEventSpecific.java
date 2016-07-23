@@ -2,6 +2,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import javax.annotation.Nullable;
@@ -11,6 +12,7 @@ import javax.annotation.Nullable;
  * whenever a hand is rendered in first person.
  * Canceling the event causes the hand to not render.
  */
+@Cancelable
 public class RenderHandEventSpecific extends Event
 {
     private final EnumHand hand;
