@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -893,6 +912,1141 @@
+@@ -893,6 +912,1151 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1331,6 +1331,16 @@
 +     */
 +    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
 +    {
++    }
++    
++    /**
++     * @param worldIn The IBlockAccess the Block exists in
++     * @param pos The position of the Block
++     * @param entityIn The Entity requesting the SoundType
++     */
++    public SoundType getSoundType(IBlockAccess worldIn, BlockPos pos, @Nullable Entity entityIn)
++    {
++    	return this.func_185467_w();
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +
