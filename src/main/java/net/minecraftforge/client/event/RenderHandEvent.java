@@ -23,6 +23,12 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.renderer.RenderGlobal;
 
+/**
+ * This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
+ * before both hands are rendered.
+ * Canceling this event prevents either hand from being rendered,
+ * and prevents {@link RenderHandEventSpecific} from firing.
+ */
 @Cancelable
 public class RenderHandEvent extends Event
 {

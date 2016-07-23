@@ -79,6 +79,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -97,6 +98,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderHandEventSpecific;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -166,6 +168,11 @@ public class ForgeHooksClient
     public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks, int renderPass)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass));
+    }
+
+    public static boolean renderFirstPersonHandSpecific(EnumHand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEventSpecific(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
     public static void onTextureStitchedPre(TextureMap map)
