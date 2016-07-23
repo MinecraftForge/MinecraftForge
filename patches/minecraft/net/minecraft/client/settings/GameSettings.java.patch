@@ -16,18 +16,20 @@
          this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X}, this.field_151456_ac);
          this.field_74318_M = EnumDifficulty.NORMAL;
          this.field_74332_R = "";
-@@ -887,6 +889,11 @@
+@@ -887,7 +889,12 @@
                      {
                          if (s1.equals("key_" + keybinding.func_151464_g()))
                          {
+-                            keybinding.func_151462_b(Integer.parseInt(s2));
 +                            if (s2.indexOf(':') != -1)
 +                            {
 +                                String[] t = s2.split(":");
 +                                keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(t[1]), Integer.parseInt(t[0]));
 +                            } else
-                             keybinding.func_151462_b(Integer.parseInt(s2));
++                            keybinding.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, Integer.parseInt(s2));
                          }
                      }
+ 
 @@ -944,6 +951,7 @@
  
      public void func_74303_b()
