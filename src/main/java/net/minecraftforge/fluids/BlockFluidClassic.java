@@ -27,6 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.
@@ -102,6 +103,17 @@ public class BlockFluidClassic extends BlockFluidBase
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
+        if (!isSourceBlock(world, pos) && ForgeEventFactory.canCreateFluidSource(world, pos, state, false))
+        {
+            int adjacentSourceBlocks =
+                    (isSourceBlock(world, pos.north()) ? 1 : 0) +
+                    (isSourceBlock(world, pos.south()) ? 1 : 0) +
+                    (isSourceBlock(world, pos.east()) ? 1 : 0) +
+                    (isSourceBlock(world, pos.west()) ? 1 : 0);
+            if (adjacentSourceBlocks >= 2 && (world.getBlockState(pos.up(densityDir)).getMaterial().isSolid() || isSourceBlock(world, pos.up(densityDir))))
+                world.setBlockState(pos, state.withProperty(LEVEL, 0));
+        }
+
         int quantaRemaining = quantaPerBlock - state.getValue(LEVEL);
         int expQuanta = -101;
 
