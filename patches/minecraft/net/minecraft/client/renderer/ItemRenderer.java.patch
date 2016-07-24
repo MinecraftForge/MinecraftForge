@@ -9,7 +9,23 @@
              {
                  EnumHand enumhand1 = abstractclientplayer.func_184600_cs();
                  flag = enumhand1 == EnumHand.MAIN_HAND;
-@@ -361,7 +361,7 @@
+@@ -334,6 +334,7 @@
+         {
+             float f3 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;
+             float f5 = 1.0F - (this.field_187470_g + (this.field_187469_f - this.field_187470_g) * p_78440_1_);
++            if(!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHandSpecific(EnumHand.MAIN_HAND, p_78440_1_, f1, f3, f5, this.field_187467_d))
+             this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.MAIN_HAND, f3, this.field_187467_d, f5);
+         }
+ 
+@@ -341,6 +342,7 @@
+         {
+             float f4 = enumhand == EnumHand.OFF_HAND ? f : 0.0F;
+             float f6 = 1.0F - (this.field_187472_i + (this.field_187471_h - this.field_187472_i) * p_78440_1_);
++            if(!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHandSpecific(EnumHand.OFF_HAND, p_78440_1_, f1, f4, f6, this.field_187468_e))
+             this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.OFF_HAND, f4, this.field_187468_e, f6);
+         }
+ 
+@@ -361,7 +363,7 @@
                  this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
              }
          }
@@ -18,7 +34,7 @@
          {
              if (flag && this.field_187468_e == null)
              {
-@@ -445,6 +445,7 @@
+@@ -445,6 +447,7 @@
          if (this.field_78455_a.field_71439_g.func_70094_T())
          {
              IBlockState iblockstate = this.field_78455_a.field_71441_e.func_180495_p(new BlockPos(this.field_78455_a.field_71439_g));
@@ -26,7 +42,7 @@
              EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
  
              for (int i = 0; i < 8; ++i)
-@@ -458,11 +459,13 @@
+@@ -458,11 +461,13 @@
                  if (iblockstate1.func_177230_c().func_176214_u())
                  {
                      iblockstate = iblockstate1;
@@ -40,7 +56,7 @@
                  this.func_178108_a(p_78447_1_, this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
              }
          }
-@@ -471,11 +474,13 @@
+@@ -471,11 +476,13 @@
          {
              if (this.field_78455_a.field_71439_g.func_70055_a(Material.field_151586_h))
              {
@@ -54,7 +70,7 @@
                  this.func_78442_d(p_78447_1_);
              }
          }
-@@ -597,8 +602,8 @@
+@@ -597,8 +604,8 @@
          else
          {
              float f = entityplayersp.func_184825_o(1.0F);
