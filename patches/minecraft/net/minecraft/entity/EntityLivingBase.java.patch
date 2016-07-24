@@ -127,13 +127,11 @@
              int k = MathHelper.func_76128_c(this.field_70163_u - 0.20000000298023224D);
              int l = MathHelper.func_76128_c(this.field_70161_v);
 -            IBlockState iblockstate = this.field_70170_p.func_180495_p(new BlockPos(j, k, l));
-+            BlockPos pos = new BlockPos(j, k, l);
-+            IBlockState iblockstate = this.field_70170_p.func_180495_p(pos);
  
              if (iblockstate.func_185904_a() != Material.field_151579_a)
              {
 -                SoundType soundtype = iblockstate.func_177230_c().func_185467_w();
-+                SoundType soundtype = iblockstate.func_177230_c().getSoundType(this.field_70170_p, pos, this);
++                SoundType soundtype = iblockstate.func_177230_c().getSoundType(this.field_70170_p, new BlockPos(j, k, l), this);
                  this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
