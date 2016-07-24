@@ -259,14 +259,42 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         rawMethodMaps.get(cl).put(oldName+sig, newName);
     }
 
+    String mapMemberFieldName(String owner, String name, String desc)
+    {
+        String remappedName = mapFieldName(owner, name, desc, true);
+        storeMemberFieldMapping(owner, name, desc, remappedName);
+        return remappedName;
+    }
+
+    private void storeMemberFieldMapping(String owner, String name, String desc, String remappedName) {
+        Map<String, String> fieldMap = getRawFieldMap(owner);
+
+        String key = name + ":" + desc;
+        String altKey = name + ":null";
+
+        if (!fieldMap.containsKey(key)) {
+            fieldMap.put(key, remappedName);
+            fieldMap.put(altKey, remappedName);
+
+            // Alternatively, maps could be made mutable and we could just set the relevant entry, saving
+            // the need to regenerate the super map each time
+            fieldNameMaps.remove(owner);
+        }
+    }
+
     @Override
     public String mapFieldName(String owner, String name, String desc)
+    {
+        return mapFieldName(owner, name, desc, false);
+    }
+
+    String mapFieldName(String owner, String name, String desc, boolean raw)
     {
         if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return name;
         }
-        Map<String, String> fieldMap = getFieldMap(owner);
+        Map<String, String> fieldMap = getFieldMap(owner, raw);
         return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : fieldMap!=null && fieldMap.containsKey(name+":null") ? fieldMap.get(name+":null") :name;
     }
 
@@ -332,8 +360,22 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         return super.mapSignature(signature, typeSignature);
     }
 
-    private Map<String,String> getFieldMap(String className)
+    private Map<String,String> getRawFieldMap(String className)
     {
+        if (!rawFieldMaps.containsKey(className))
+        {
+            rawFieldMaps.put(className, Maps.<String,String>newHashMap());
+        }
+        return rawFieldMaps.get(className);
+    }
+
+    private Map<String,String> getFieldMap(String className, boolean raw)
+    {
+        if (raw)
+        {
+            return getRawFieldMap(className);
+        }
+
         if (!fieldNameMaps.containsKey(className) && !negativeCacheFields.contains(className))
         {
             findAndMergeSuperMaps(className);
