@@ -236,7 +236,7 @@
                              {
                                  p_70108_1_.field_70159_w *= 0.20000000298023224D;
                                  p_70108_1_.field_70179_y *= 0.20000000298023224D;
-@@ -1017,6 +1049,221 @@
+@@ -1017,6 +1049,229 @@
          this.func_184212_Q().func_187227_b(field_184270_f, Boolean.valueOf(p_94096_1_));
      }
  
@@ -451,6 +451,14 @@
 +    public double getSlopeAdjustment()
 +    {
 +        return 0.0078125D;
++    }
++
++    /**
++     * Called from Detector Rails to retrieve a redstone power level for comparators.
++     */
++    public int getComparatorLevel()
++    {
++        return -1;
 +    }
 +
 +    /* =================================== FORGE END ===========================================*/
