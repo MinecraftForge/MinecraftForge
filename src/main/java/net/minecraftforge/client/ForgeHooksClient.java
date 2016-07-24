@@ -99,7 +99,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderHandEventSpecific;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -171,9 +171,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass));
     }
 
-    public static boolean renderFirstPersonHandSpecific(EnumHand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
+    public static boolean renderSpecificFirstPersonHand(EnumHand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderHandEventSpecific(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+        return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
     public static void onTextureStitchedPre(TextureMap map)

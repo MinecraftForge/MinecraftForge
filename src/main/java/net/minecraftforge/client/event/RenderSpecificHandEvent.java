@@ -11,9 +11,10 @@ import javax.annotation.Nullable;
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * whenever a hand is rendered in first person.
  * Canceling the event causes the hand to not render.
+ * TODO This may get merged in 11 with RenderHandEvent to make a generic hand rendering
  */
 @Cancelable
-public class RenderHandEventSpecific extends Event
+public class RenderSpecificHandEvent extends Event
 {
     private final EnumHand hand;
     private final float partialTicks;
@@ -22,7 +23,7 @@ public class RenderHandEventSpecific extends Event
     private final float equipProgress;
     private final ItemStack stack;
 
-    public RenderHandEventSpecific(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack)
+    public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
         this.hand = hand;
         this.partialTicks = partialTicks;
