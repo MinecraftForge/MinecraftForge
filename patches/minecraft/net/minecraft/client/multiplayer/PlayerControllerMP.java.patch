@@ -77,6 +77,15 @@
                  if (flag && iblockstate.func_185903_a(this.field_78776_a.field_71439_g, this.field_78776_a.field_71439_g.field_70170_p, p_180511_1_) >= 1.0F)
                  {
                      this.func_187103_a(p_180511_1_);
+@@ -290,7 +300,7 @@
+ 
+                 if (this.field_78780_h % 4.0F == 0.0F)
+                 {
+-                    SoundType soundtype = block.func_185467_w();
++                    SoundType soundtype = block.getSoundType(this.field_78776_a.field_71441_e, p_180512_1_, this.field_78776_a.field_71439_g);
+                     this.field_78776_a.func_147118_V().func_147682_a(new PositionedSoundRecord(soundtype.func_185846_f(), SoundCategory.NEUTRAL, (soundtype.func_185843_a() + 1.0F) / 8.0F, soundtype.func_185847_b() * 0.5F, p_180512_1_));
+                 }
+ 
 @@ -373,13 +383,32 @@
          }
          else

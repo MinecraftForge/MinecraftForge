@@ -1,6 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
-@@ -441,6 +441,7 @@
+@@ -400,12 +400,13 @@
+                 }
+             }
+ 
+             IBlockState iblockstate = this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.2D - (double)this.field_70126_B, this.field_70161_v));
+             Block block = iblockstate.func_177230_c();
+ 
+             if (iblockstate.func_185904_a() != Material.field_151579_a && !this.func_174814_R())
+             {
+-                SoundType soundtype = block.func_185467_w();
++                SoundType soundtype = block.getSoundType(this.field_70170_p, new BlockPos(this.field_70165_t, this.field_70163_u - 0.2D - (double)this.field_70126_B, this.field_70161_v), this);
+                 this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, soundtype.func_185844_d(), this.func_184176_by(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
+             }
+         }
+@@ -441,6 +442,7 @@
  
          this.field_110296_bG.func_110134_a(this);
          this.func_110232_cE();
@@ -8,7 +22,21 @@
      }
  
      private void func_110232_cE()
-@@ -1212,6 +1213,7 @@
+@@ -556,11 +558,11 @@
+ 
+     protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
+     {
+-        SoundType soundtype = p_180429_2_.func_185467_w();
++        SoundType soundtype = p_180429_2_.getSoundType(this.field_70170_p, p_180429_1_, this);
+ 
+         if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
+         {
+-            soundtype = Blocks.field_150431_aC.func_185467_w();
++            soundtype = Blocks.field_150431_aC.getSoundType(this.field_70170_p, p_180429_1_.func_177984_a(), this);
+         }
+ 
+         if (!p_180429_2_.func_176223_P().func_185904_a().func_76224_d())
+@@ -1212,6 +1214,7 @@
                  }
  
                  this.field_110277_bt = 0.0F;
@@ -16,7 +44,7 @@
              }
  
              this.field_70747_aH = this.func_70689_ay() * 0.1F;
-@@ -1813,4 +1815,21 @@
+@@ -1813,4 +1816,21 @@
                  this.field_188477_b = p_i46589_2_;
              }
          }
