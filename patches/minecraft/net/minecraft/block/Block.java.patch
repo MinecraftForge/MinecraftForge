@@ -1335,8 +1335,8 @@
 +    
 +    /**
 +     * @param worldIn The IBlockAccess the Block exists in
-+     * @param pos The position of the Block
-+     * @param entityIn The Entity requesting the SoundType
++     * @param pos The position of the Block. WARNING: THIS MAY NOT ACTUALLY BE THE POSITION OF THE BLOCK
++     * @param entityIn The Entity requesting the SoundType. THIS CAN BE NULL
 +     */
 +    public SoundType getSoundType(IBlockAccess worldIn, BlockPos pos, @Nullable Entity entityIn)
 +    {
