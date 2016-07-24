@@ -2,14 +2,20 @@ package net.minecraftforge.debug;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.Random;
 
 @Mod(modid = ItemLayerModelDebug.MODID, version = ItemLayerModelDebug.VERSION)
 public class ItemLayerModelDebug
@@ -54,6 +60,31 @@ public class ItemLayerModelDebug
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
+        }
+
+        @Override
+        public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setInteger("foo", new Random().nextInt());
+            stack.setTagCompound(tag);
+            stack.setStackDisplayName(String.valueOf(new Random().nextInt()));
+        }
+
+        @Override
+        public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
+        {
+            return shouldCauseReequipAnimation(oldStack, newStack, false);
+        }
+
+        @Override
+        public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
+        {
+            oldStack = oldStack.copy();
+            oldStack.setTagCompound(null);
+            newStack = newStack.copy();
+            newStack.setTagCompound(null);
+            return !ItemStack.areItemStacksEqual(oldStack, newStack);
         }
     }
 }

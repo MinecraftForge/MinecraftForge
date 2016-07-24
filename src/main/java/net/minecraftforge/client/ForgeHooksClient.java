@@ -32,6 +32,7 @@ import java.nio.FloatBuffer;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
@@ -675,6 +676,11 @@ public class ForgeHooksClient
             slotMainHand = slot;
         }
         return from.getItem().shouldCauseReequipAnimation(from, to, changed);
+    }
+
+    public static boolean shouldCauseBlockBreakReset(@Nonnull ItemStack from, @Nonnull ItemStack to)
+    {
+        return from.getItem().shouldCauseBlockBreakReset(from, to);
     }
 
     public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, EnumFacing originalSide, ITransformation rotation)
