@@ -1,6 +1,36 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeForest.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeForest.java
-@@ -147,6 +147,22 @@
+@@ -69,19 +69,23 @@
+ 
+     public void func_180624_a(World p_180624_1_, Random p_180624_2_, BlockPos p_180624_3_)
+     {
++    	if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SHROOM))
+         if (this.field_150632_aF == BiomeForest.Type.ROOFED)
+         {
+             this.func_185379_b(p_180624_1_, p_180624_2_, p_180624_3_);
+         }
+ 
+-        int i = p_180624_2_.nextInt(5) - 3;
+-
+-        if (this.field_150632_aF == BiomeForest.Type.FLOWER)
++    	if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.FLOWERS))
+         {
+-            i += 2;
+-        }
++    	    int i = p_180624_2_.nextInt(5) - 3;
+ 
+-        this.func_185378_a(p_180624_1_, p_180624_2_, p_180624_3_, i);
++            if (this.field_150632_aF == BiomeForest.Type.FLOWER)
++            {
++                i += 2;
++            }
++            
++            this.func_185378_a(p_180624_1_, p_180624_2_, p_180624_3_, i);
++        }
+         super.func_180624_a(p_180624_1_, p_180624_2_, p_180624_3_);
+     }
+ 
+@@ -147,6 +151,22 @@
          }
      }
  
