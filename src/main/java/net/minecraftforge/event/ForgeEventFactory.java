@@ -98,6 +98,7 @@ import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
@@ -583,6 +584,15 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event))
             return LootTable.EMPTY_LOOT_TABLE;
         return event.getTable();
+    }
+
+    public static boolean canCreateFluidSource(World world, BlockPos pos, IBlockState state, boolean def)
+    {
+        CreateFluidSourceEvent evt = new CreateFluidSourceEvent(world, pos, state);
+        MinecraftForge.EVENT_BUS.post(evt);
+
+        Result result = evt.getResult();
+        return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
 
 }

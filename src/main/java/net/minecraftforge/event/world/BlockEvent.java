@@ -252,4 +252,20 @@ public class BlockEvent extends Event
             return notifiedSides;
         }
     }
+
+    /**
+     * Fired to check whether a non-source block can turn into a source block.
+     * A result of ALLOW causes a source block to be created even if the liquid
+     * usually doesn't do that (like lava), and a result of DENY prevents creation
+     * even if the liquid usually does do that (like water).
+     */
+    @HasResult
+    public static class CreateFluidSourceEvent extends BlockEvent
+    {
+        public CreateFluidSourceEvent(World world, BlockPos pos, IBlockState state)
+        {
+            super(world, pos, state);
+        }
+    }
+
 }
