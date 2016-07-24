@@ -122,6 +122,15 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
+@@ -1193,7 +1216,7 @@
+ 
+             if (iblockstate.func_185904_a() != Material.field_151579_a)
+             {
+-                SoundType soundtype = iblockstate.func_177230_c().func_185467_w();
++                SoundType soundtype = iblockstate.func_177230_c().getSoundType(iblockstate, field_70170_p, new BlockPos(j, k, l), this);
+                 this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
+             }
+         }
 @@ -1270,6 +1293,8 @@
      {
          if (!this.func_180431_b(p_70665_1_))
