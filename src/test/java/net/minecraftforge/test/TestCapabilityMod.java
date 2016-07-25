@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid="forge.testcapmod",version="1.0")
+@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0")
 public class TestCapabilityMod
 {
     // A Holder/Marker for if this capability is installed.

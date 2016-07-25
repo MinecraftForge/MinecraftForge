@@ -26,10 +26,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import static org.lwjgl.opengl.GL11.*;
 
-@Mod(modid = ItemTileDebug.MODID)
+@Mod(modid = ItemTileDebug.MODID, name = "ForgeDebugItemTile", version = "1.0")
 public class ItemTileDebug
 {
-    public static final String MODID = "ForgeDebugItemTile";
+    public static final String MODID = "forgedebugitemtile";
 
     private static String blockName = MODID.toLowerCase() + ":" + TestBlock.name;
 
