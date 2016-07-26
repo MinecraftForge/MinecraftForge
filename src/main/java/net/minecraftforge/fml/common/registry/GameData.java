@@ -288,7 +288,10 @@ public class GameData
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = (ClearableObjectIntIdentityMap<IBlockState>)slaves.get(BLOCKSTATE_TO_ID);
             for (IBlockState state : block.getBlockState().getValidStates())
             {
-                blockstateMap.put(state, blockId << 4 | block.getMetaFromState(state));
+                final int meta = block.getMetaFromState(state); // meta value the block assigns for the state
+                final int bsmeta = blockId << 4 | meta; // computed blockstateid for that meta
+                final IBlockState blockState = block.getStateFromMeta(meta); // state that the block assigns for the meta value
+                blockstateMap.put(blockState, bsmeta); // store assigned state with computed blockstateid
             }
         }
 

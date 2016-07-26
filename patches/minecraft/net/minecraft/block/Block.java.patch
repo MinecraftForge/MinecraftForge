@@ -1337,3 +1337,16 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
+@@ -1169,11 +2323,7 @@
+             }
+             else
+             {
+-                for (IBlockState iblockstate : block16.func_176194_O().func_177619_a())
+-                {
+-                    int k = field_149771_c.func_148757_b(block16) << 4 | block16.func_176201_c(iblockstate);
+-                    field_176229_d.func_148746_a(iblockstate, k);
+-                }
++//                Handled in GameData.BlockCallbacks - leaving tripwire as it seems to be special cased
+             }
+         }
+     }
