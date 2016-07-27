@@ -109,7 +109,9 @@ public interface IModGuiFactory {
      *
      * @author cpw
      *
+     * TODO remove in 1.11 - this was never fully implemented and will be removed
      */
+    @Deprecated
     public interface RuntimeOptionGuiHandler {
         /**
          * Called to add widgets to the screen, such as buttons.
