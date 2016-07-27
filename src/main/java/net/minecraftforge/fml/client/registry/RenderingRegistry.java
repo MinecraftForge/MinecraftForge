@@ -39,7 +39,7 @@ public class RenderingRegistry
      * Call this during Initialization phase.
      *
      * @deprecated use the factory version during Preinitialization.
-     * Will be removed in 1.9.
+     * TODO Will be removed in 1.11.
      */
     @Deprecated
     public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> renderer)
