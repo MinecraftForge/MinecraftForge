@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.Loader;
@@ -45,6 +46,8 @@ public class SubstitutionInjectionTest
         GameRegistry.addSubstitutionAlias("minecraft:dirt", GameRegistry.Type.BLOCK, toSub);
         PersistentRegistryManager.freezeData();
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        // This should not throw an exception
+        StatList.reinit();
 
         final FMLControlledNamespacedRegistry<Block> blockRegistry = (FMLControlledNamespacedRegistry<Block>)PersistentRegistryManager.findRegistryByType(Block.class);
 
