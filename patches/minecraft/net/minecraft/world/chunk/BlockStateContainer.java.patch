@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
+@@ -123,7 +123,12 @@
+ 
+         for (int i = 0; i < 4096; ++i)
+         {
+-            int j = Block.field_176229_d.func_148747_b(this.func_186015_a(i));
++            IBlockState state = this.func_186015_a(i);
++            int j = Block.field_176229_d.func_148747_b(state);
++            //Forge: Because some blocks place weirdly to things that don't match serializeable states
++            if (j == -1 && state != null)
++                j = Block.field_176229_d.func_148747_b(state.func_177230_c().func_176203_a(state.func_177230_c().func_176201_c(state)));
++
+             int k = i & 15;
+             int l = i >> 8 & 15;
+             int i1 = i >> 4 & 15;
