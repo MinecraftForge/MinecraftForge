@@ -35,6 +35,15 @@
      public int func_145782_y()
      {
          return this.field_145783_c;
+@@ -944,7 +952,7 @@
+ 
+     protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
+     {
+-        SoundType soundtype = p_180429_2_.func_185467_w();
++        SoundType soundtype = p_180429_2_.getSoundType(field_70170_p.func_180495_p(p_180429_1_), field_70170_p, p_180429_1_, this);
+ 
+         if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
+         {
 @@ -1151,12 +1159,12 @@
              BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
