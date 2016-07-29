@@ -39,9 +39,9 @@ public class FreezingTests
     {
         Loader.instance();
         System.setProperty("fml.queryResult", "confirm");
-        registry = PersistentRegistryManager.createRegistry(resloc, RTest.class, null, 0, 255, false, null, null, null);
-        PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, null, 0, 255, false, null, null, null);
-        PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, 0, 255, false, null, null, null);
+        registry = PersistentRegistryManager.createRegistry(resloc, RTest.class, null, 0, 255, false, null, null, null, null);
+        PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, null, 0, 255, false, null, null, null, null);
+        PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, 0, 255, false, null, null, null, null);
         r1 = new RTest("test1");
         r2 = new RTest("test2");
         r3 = new RTest("test3");
@@ -58,9 +58,9 @@ public class FreezingTests
         ss.entries.put(resloc, new PersistentRegistryManager.GameDataSnapshot.Entry(PersistentRegistryManager.PersistentRegistry.ACTIVE.getRegistry(RTest.class)));
         PersistentRegistryManager.PersistentRegistry.ACTIVE.clean();
         PersistentRegistryManager.PersistentRegistry.FROZEN.clean();
-        registry = PersistentRegistryManager.createRegistry(resloc, RTest.class, null, 0, 255, false, null, null, null);
-        PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, null, 0, 255, false, null, null, null);
-        PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, 0, 255, false, null, null, null);
+        registry = PersistentRegistryManager.createRegistry(resloc, RTest.class, null, 0, 255, false, null, null, null, null);
+        PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, null, 0, 255, false, null, null, null, null);
+        PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, 0, 255, false, null, null, null, null);
     }
 
     @Test
