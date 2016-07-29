@@ -255,4 +255,12 @@ public class ShapedOreRecipe implements IRecipe
     {
         return this.input;
     }
+
+    public int getWidth() {
+      return this.width;
+    }
+
+    public int getHeight() {
+      return this.height;
+    }
 }
