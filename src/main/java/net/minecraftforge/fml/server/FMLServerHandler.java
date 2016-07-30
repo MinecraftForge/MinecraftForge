@@ -328,4 +328,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return message;
     }
+
+    @Override
+    public void reloadRenderers() {
+        // NOOP
+
+    }
 }
