@@ -66,6 +66,7 @@ public class UnpackedBakedQuad extends BakedQuad
         {
             consumer.setQuadTint(getTintIndex());
         }
+        consumer.setTexture(sprite);
         consumer.setQuadOrientation(getFace());
         for(int v = 0; v < 4; v++)
         {

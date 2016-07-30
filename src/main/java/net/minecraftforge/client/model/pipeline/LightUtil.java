@@ -102,6 +102,7 @@ public class LightUtil
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
+        consumer.setTexture(quad.getSprite());
         consumer.setQuadOrientation(quad.getFace());
         if(quad.hasTintIndex())
         {

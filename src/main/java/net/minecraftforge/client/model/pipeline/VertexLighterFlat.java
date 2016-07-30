@@ -24,6 +24,7 @@ import javax.vecmath.Vector3f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
@@ -262,6 +263,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     }
     public void setQuadOrientation(EnumFacing orientation) {}
     public void setQuadCulled() {}
+    public void setTexture( TextureAtlasSprite texture ) {}
     public void setApplyDiffuseLighting(boolean diffuse)
     {
         this.diffuse = diffuse;

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 
@@ -39,6 +40,11 @@ public class VertexTransformer implements IVertexConsumer
     public void setQuadTint(int tint)
     {
         parent.setQuadTint(tint);
+    }
+
+    public void setTexture(TextureAtlasSprite texture)
+    {
+        parent.setTexture(texture);
     }
 
     public void setQuadOrientation(EnumFacing orientation)
