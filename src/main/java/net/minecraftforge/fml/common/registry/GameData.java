@@ -290,12 +290,23 @@ public class GameData
         public void onAdd(Block block, int blockId, Map<ResourceLocation,?> slaves)
         {
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = (ClearableObjectIntIdentityMap<IBlockState>)slaves.get(BLOCKSTATE_TO_ID);
+
+            //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
+            //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
+            //Multiple states -> meta. But meta to CORRECT state.
+
+            final boolean[] usedMeta = new boolean[16]; //Hold a list of known meta from all states.
             for (IBlockState state : block.getBlockState().getValidStates())
             {
-                final int meta = block.getMetaFromState(state); // meta value the block assigns for the state
-                final int bsmeta = blockId << 4 | meta; // computed blockstateid for that meta
-                final IBlockState blockState = block.getStateFromMeta(meta); // state that the block assigns for the meta value
-                blockstateMap.put(blockState, bsmeta); // store assigned state with computed blockstateid
+                final int meta = block.getMetaFromState(state);
+                blockstateMap.put(state, blockId << 4 | meta); //Add ALL the things!
+                usedMeta[meta] = true;
+            }
+
+            for (int meta = 0; meta < 16; meta++)
+            {
+                if (usedMeta[meta])
+                    blockstateMap.put(block.getStateFromMeta(meta), blockId << 4 | meta); // Put the CORRECT thing!
             }
         }
 
@@ -329,7 +340,20 @@ public class GameData
         @Override
         public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
         {
-            final ClearableObjectIntIdentityMap<Block> idMap = new ClearableObjectIntIdentityMap<Block>();
+            final ClearableObjectIntIdentityMap<IBlockState> idMap = new ClearableObjectIntIdentityMap<IBlockState>()
+            {
+                @SuppressWarnings("deprecation")
+                @Override
+                public int get(IBlockState key)
+                {
+                    Integer integer = (Integer)this.identityMap.get(key);
+                    // There are some cases where this map is queried to serialize a state that is valid,
+                    //but somehow not in this list, so attempt to get real metadata. Doing this hear saves us 7 patches
+                    if (integer == null && key != null)
+                        integer = this.identityMap.get(key.getBlock().getStateFromMeta(key.getBlock().getMetaFromState(key)));
+                    return integer == null ? -1 : integer.intValue();
+                }
+            };
             ((Map<ResourceLocation,Object>)slaveset).put(BLOCKSTATE_TO_ID, idMap);
             final HashBiMap<Block, Item> map = HashBiMap.create();
             ((Map<ResourceLocation,Object>)slaveset).put(BLOCK_TO_ITEM, map);
