@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public final class ItemStack
-+public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<ItemStack, NBTTagCompound>
  {
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
      public int field_77994_a;
@@ -235,7 +235,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -993,4 +1029,45 @@
+@@ -993,4 +1029,46 @@
              return false;
          }
      }
@@ -250,9 +250,10 @@
 +        return this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
 +    }
 +
-+    public void deserializeNBT(NBTTagCompound nbt)
++    public ItemStack deserializeNBT(NBTTagCompound nbt)
 +    {
 +        this.func_77963_c(nbt);
++        return this;
 +    }
 +
 +    public NBTTagCompound serializeNBT()

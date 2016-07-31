@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Entity implements ICommandSender
-+public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<Entity, NBTTagCompound>
  {
      private static final Logger field_184243_a = LogManager.getLogger();
      private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -118,7 +118,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2726,6 +2745,164 @@
+@@ -2726,6 +2745,165 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -267,9 +267,10 @@
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }
 +
-+    public void deserializeNBT(NBTTagCompound nbt)
++    public Entity deserializeNBT(NBTTagCompound nbt)
 +    {
 +        this.func_70020_e(nbt);
++        return this;
 +    }
 +
 +    public NBTTagCompound serializeNBT()

@@ -41,10 +41,10 @@ import net.minecraftforge.common.util.INBTSerializable;
  * Internally the handlers are baked into arrays for fast iteration.
  * The ResourceLocations will be used for the NBT Key when serializing.
  */
-public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
+public final class CapabilityDispatcher implements INBTSerializable<CapabilityDispatcher, NBTTagCompound>, ICapabilityProvider
 {
     private ICapabilityProvider[] caps;
-    private INBTSerializable<NBTBase>[] writers;
+    private INBTSerializable<?, NBTBase>[] writers;
     private String[] names;
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
@@ -56,7 +56,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-        List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();
+        List<INBTSerializable<?, NBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
 
         if (parent != null) // Parents go first!
@@ -64,7 +64,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(parent);
             if (parent instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<NBTBase>)parent);
+                lstWriters.add((INBTSerializable<?, NBTBase>)parent);
                 lstNames.add("Parent");
             }
         }
@@ -75,7 +75,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(prov);
             if (prov instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<NBTBase>)prov);
+                lstWriters.add((INBTSerializable<?, NBTBase>)prov);
                 lstNames.add(entry.getKey().toString());
             }
         }
@@ -124,7 +124,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
+    public CapabilityDispatcher deserializeNBT(NBTTagCompound nbt)
     {
         for (int x = 0; x < writers.length; x++)
         {
@@ -133,6 +133,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
                 writers[x].deserializeNBT(nbt.getTag(names[x]));
             }
         }
+        return this;
     }
 
     public boolean areCompatible(CapabilityDispatcher other) //Called from ItemStack to compare equality.

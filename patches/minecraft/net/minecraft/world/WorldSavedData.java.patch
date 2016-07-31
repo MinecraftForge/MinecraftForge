@@ -5,18 +5,19 @@
  import net.minecraft.nbt.NBTTagCompound;
  
 -public abstract class WorldSavedData
-+public abstract class WorldSavedData implements net.minecraftforge.common.util.INBTSerializable<NBTTagCompound>
++public abstract class WorldSavedData implements net.minecraftforge.common.util.INBTSerializable<WorldSavedData, NBTTagCompound>
  {
      public final String field_76190_i;
      private boolean field_76189_a;
-@@ -30,4 +30,14 @@
+@@ -30,4 +30,15 @@
      {
          return this.field_76189_a;
      }
 +
-+    public void deserializeNBT(NBTTagCompound nbt)
++    public WorldSavedData deserializeNBT(NBTTagCompound nbt)
 +    {
 +        this.func_76184_a(nbt);
++        return this;
 +    }
 +
 +    public NBTTagCompound serializeNBT()

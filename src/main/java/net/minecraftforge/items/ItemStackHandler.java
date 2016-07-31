@@ -25,7 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound>
+public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<ItemStackHandler, NBTTagCompound>
 {
     protected ItemStack[] stacks;
 
@@ -174,7 +174,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
+    public ItemStackHandler deserializeNBT(NBTTagCompound nbt)
     {
         setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.length);
         NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
@@ -189,6 +189,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             }
         }
         onLoad();
+        return this;
     }
 
     protected void validateSlotIndex(int slot)
