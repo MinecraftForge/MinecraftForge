@@ -76,7 +76,9 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraftforge.client.event.MultiplayerConnectionEvent;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
@@ -867,7 +869,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
-            showGuiScreen(new GuiConnecting(guiMultiplayer, client, serverEntry));
+            if(!MinecraftForge.EVENT_BUS.post(new MultiplayerConnectionEvent.Pre(serverEntry)))
+            {
+                showGuiScreen(new GuiConnecting(guiMultiplayer, client, serverEntry));
+            }
         }
     }
 
