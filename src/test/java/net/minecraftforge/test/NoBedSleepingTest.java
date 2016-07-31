@@ -18,10 +18,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
@@ -76,7 +77,7 @@ public class NoBedSleepingTest
         @SubscribeEvent
         public void onEntityConstruct(AttachCapabilitiesEvent evt)
         {
-            evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<NBTPrimitive>()
+            evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<INBTSerializable, NBTPrimitive>()
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
                 @Override
@@ -95,8 +96,9 @@ public class NoBedSleepingTest
                 }
 
                 @Override
-                public void deserializeNBT(NBTPrimitive nbt) {
+                public INBTSerializable deserializeNBT(NBTPrimitive nbt) {
                     SLEEP_CAP.getStorage().readNBT(SLEEP_CAP, inst, null, nbt);
+                    return this;
                 }
             });
         }
