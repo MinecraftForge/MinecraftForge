@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/util/math/BlockPos.java
++++ ../src-work/minecraft/net/minecraft/util/math/BlockPos.java
+@@ -1,19 +1,20 @@
+ package net.minecraft.util.math;
+ 
+-import com.google.common.collect.AbstractIterator;
+-import com.google.common.collect.Lists;
+ import java.util.Iterator;
+ import java.util.List;
+ import javax.annotation.concurrent.Immutable;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++import com.google.common.collect.AbstractIterator;
++import com.google.common.collect.Lists;
+ import net.minecraft.entity.Entity;
++import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+ 
+ @Immutable
+-public class BlockPos extends Vec3i
++public class BlockPos extends Vec3i implements net.minecraftforge.common.util.INBTSerializable<BlockPos, net.minecraft.nbt.NBTTagCompound>
+ {
+     private static final Logger field_185335_c = LogManager.getLogger();
+     public static final BlockPos field_177992_a = new BlockPos(0, 0, 0);
+@@ -354,6 +355,8 @@
+             {
+                 return new BlockPos(this);
+             }
++            @Override
++            public BlockPos deserializeNBT(net.minecraft.nbt.NBTTagCompound compound) { this.func_181079_c(compound.func_74762_e("x"), compound.func_74762_e("y"), compound.func_74762_e("z")); return this.func_185334_h(); }
+         }
+ 
+     public static final class PooledMutableBlockPos extends BlockPos.MutableBlockPos
+@@ -452,4 +455,11 @@
+                 return (BlockPos.PooledMutableBlockPos)super.func_189534_c(p_189534_1_, p_189534_2_);
+             }
+         }
++    @Override public net.minecraft.nbt.NBTTagCompound serializeNBT()
++    {
++        net.minecraft.nbt.NBTTagCompound compound = new NBTTagCompound();
++        compound.func_74768_a("x", this.func_177958_n()); compound.func_74768_a("y", this.func_177956_o()); compound.func_74768_a("z", this.func_177952_p());
++        return compound;
++    }
++    @Override public BlockPos deserializeNBT(net.minecraft.nbt.NBTTagCompound compound) { return this; }
+ }
