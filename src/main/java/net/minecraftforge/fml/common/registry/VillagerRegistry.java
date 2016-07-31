@@ -132,7 +132,7 @@ public class VillagerRegistry
     }
 
     private boolean hasInit = false;
-    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 0, 1024, true, null, null, null);
+    private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 0, 1024, true, null, null, null, null);
     public IForgeRegistry<VillagerProfession> getRegistry() { return this.professions; }
 
 

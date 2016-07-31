@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -31,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
@@ -90,7 +88,9 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
     private final CreateCallback<I> createCallback;
 
-    FMLControlledNamespacedRegistry(ResourceLocation defaultKey, int minIdValue, int maxIdValue, Class<I> type, AddCallback<I> addCallback, ClearCallback<I> clearCallback, CreateCallback<I> createCallback)
+    private final SubstitutionCallback<I> substitutionCallback;
+
+    FMLControlledNamespacedRegistry(ResourceLocation defaultKey, int minIdValue, int maxIdValue, Class<I> type, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries, AddCallback<I> addCallback, ClearCallback<I> clearCallback, CreateCallback<I> createCallback, SubstitutionCallback<I> substitutionCallback)
     {
         super(defaultKey);
         this.superType = type;
@@ -102,9 +102,10 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         this.addCallback = addCallback;
         this.clearCallback = clearCallback;
         this.createCallback = createCallback;
+        this.substitutionCallback = substitutionCallback;
         if (createCallback != null)
         {
-            createCallback.onCreate(slaves);
+            createCallback.onCreate(slaves, registries);
         }
     }
 
@@ -168,7 +169,9 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         {
             throw new IllegalArgumentException("incompatible registry");
         }
-
+        final Map<ResourceLocation, Object> slaves = Maps.newHashMap(this.slaves);
+        slaves.put(PersistentRegistryManager.SUBSTITUTION_ORIGINALS, substitutionOriginals);
+        if (this.clearCallback!=null) this.clearCallback.onClear(this, slaves);
         this.optionalDefaultKey = otherRegistry.optionalDefaultKey;
         this.maxId = otherRegistry.maxId;
         this.minId = otherRegistry.minId;
@@ -187,7 +190,10 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         {
             addObjectRaw(otherRegistry.getId(thing), otherRegistry.getNameForObject(thing), thing);
         }
-        this.activeSubstitutions.putAll(otherRegistry.activeSubstitutions);
+        for (ResourceLocation resloc : otherRegistry.activeSubstitutions.keySet())
+        {
+            activateSubstitution(resloc);
+        }
     }
 
     // public api
@@ -611,6 +617,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
             addObjectRaw(id, nameToReplace, sub);
             // Track the original in the substitution originals collection
             substitutionOriginals.put(nameToReplace, original);
+            if (substitutionCallback!=null) substitutionCallback.onSubstituteActivated(slaves, original, sub, nameToReplace);
             return original;
         }
         return null;
@@ -668,9 +675,9 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     }
 
 
-    FMLControlledNamespacedRegistry<I> makeShallowCopy()
+    FMLControlledNamespacedRegistry<I> makeShallowCopy(BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
     {
-        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, minId, maxId, superType, addCallback, clearCallback, createCallback);
+        return new FMLControlledNamespacedRegistry<I>(optionalDefaultKey, minId, maxId, superType, registries, addCallback, clearCallback, createCallback, substitutionCallback);
     }
 
     void resetSubstitutionDelegates()
@@ -756,12 +763,17 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
                 remappedIds.put(itemName, new Integer[] {currId, newId});
             }
             I obj = currentRegistry.getRaw(itemName);
+            I sub = obj;
             // If we have an object in the originals set, we use that for initial adding - substitute activation will readd the substitute if neceessary later
             if (currentRegistry.substitutionOriginals.containsKey(itemName))
             {
                 obj = currentRegistry.substitutionOriginals.get(itemName);
             }
             add(newId, itemName, obj);
+            if (currentRegistry.substitutionOriginals.containsKey(itemName) && substitutionCallback != null)
+            {
+                substitutionCallback.onSubstituteActivated(slaves, sub, obj, itemName);
+            }
         }
     }
 

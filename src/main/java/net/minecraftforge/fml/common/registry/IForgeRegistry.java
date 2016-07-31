@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -62,7 +63,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
      * on the client side from a server side synchronization, or when a world is loaded.
      */
-    interface AddCallback<V>
+    interface AddCallback<V extends IForgeRegistryEntry<V>>
     {
         void onAdd(V obj, int id, Map<ResourceLocation, ?> slaveset);
     }
@@ -71,16 +72,21 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when the registry is cleared. This is done before a registry is reloaded from client
      * or server.
      */
-    interface ClearCallback<V>
+    interface ClearCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onClear(Map<ResourceLocation, ?> slaveset);
+        void onClear(IForgeRegistry<V> is, Map<ResourceLocation, ?> slaveset);
     }
 
     /**
      * Callback fired when a registry instance is created. Populate slave maps here.
      */
-    interface CreateCallback<V>
+    interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onCreate(Map<ResourceLocation, ?> slaveset);
+        void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries);
+    }
+
+    interface SubstitutionCallback<V extends IForgeRegistryEntry<V>>
+    {
+        void onSubstituteActivated(Map<ResourceLocation, ?> slaveset, V original, V replacement, ResourceLocation name);
     }
 }

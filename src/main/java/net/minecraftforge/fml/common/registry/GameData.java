@@ -19,8 +19,10 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.HashBiMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -32,13 +34,13 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 
 public class GameData
@@ -63,16 +65,28 @@ public class GameData
 
     private static final GameData mainData = new GameData();
 
+    private static Field blockField;
+
     public GameData()
     {
-        iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MIN_BLOCK_ID, MAX_BLOCK_ID, true, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE);
-        iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
-        iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE);
-        iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, Biome.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE);
-        iSoundEventRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.SOUNDEVENTS, SoundEvent.class, null, MIN_SOUND_ID, MAX_SOUND_ID, false, null, null, null);
+        iBlockRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BLOCKS, Block.class, new ResourceLocation("minecraft:air"), MIN_BLOCK_ID, MAX_BLOCK_ID, true, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE, BlockCallbacks.INSTANCE);
+        iItemRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ITEMS, Item.class, null, MIN_ITEM_ID, MAX_ITEM_ID, true, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE, ItemCallbacks.INSTANCE);
+        iPotionRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONS, Potion.class, null, MIN_POTION_ID, MAX_POTION_ID, false, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, PotionCallbacks.INSTANCE, null);
+        iBiomeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.BIOMES, Biome.class, null, MIN_BIOME_ID, MAX_BIOME_ID, false, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, BiomeCallbacks.INSTANCE, null);
+        iSoundEventRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.SOUNDEVENTS, SoundEvent.class, null, MIN_SOUND_ID, MAX_SOUND_ID, false, null, null, null, null);
         ResourceLocation WATER = new ResourceLocation("water");
-        iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null);
-        iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null);
+        iPotionTypeRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.POTIONTYPES, PotionType.class, WATER, MIN_POTIONTYPE_ID, MAX_POTIONTYPE_ID, false, null, null, null, null);
+        iEnchantmentRegistry = PersistentRegistryManager.createRegistry(PersistentRegistryManager.ENCHANTMENTS, Enchantment.class, null, MIN_ENCHANTMENT_ID, MAX_ENCHANTMENT_ID, false, null, null, null, null);
+
+        try
+        {
+            blockField = FinalFieldHelper.makeWritable(ReflectionHelper.findField(ItemBlock.class, "block", "field_150939" + "_a"));
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.FATAL, e, "Cannot access the 'block' field from ItemBlock, this is fatal!");
+            throw Throwables.propagate(e);
+        }
     }
     // internal registry objects
     private final FMLControlledNamespacedRegistry<Block> iBlockRegistry;
@@ -193,22 +207,12 @@ public class GameData
         if (type == GameRegistry.Type.BLOCK)
         {
             iBlockRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Block)toReplace);
-            Block orig = iBlockRegistry.activateSubstitution(nameToSubstitute);
-            if (blockItemMap.containsKey(orig))
-            {
-                Item i = blockItemMap.get(orig);
-                blockItemMap.forcePut((Block)toReplace,i);
-            }
+            iBlockRegistry.activateSubstitution(nameToSubstitute);
         }
         else if (type == GameRegistry.Type.ITEM)
         {
             iItemRegistry.addSubstitutionAlias(Loader.instance().activeModContainer().getModId(), nameToSubstitute, (Item)toReplace);
-            Item orig = iItemRegistry.activateSubstitution(nameToSubstitute);
-            if (blockItemMap.containsValue(orig))
-            {
-                Block b = blockItemMap.inverse().get(orig);
-                blockItemMap.forcePut(b, (Item)toReplace);
-            }
+            iItemRegistry.activateSubstitution(nameToSubstitute);
         }
     }
 
@@ -277,7 +281,7 @@ public class GameData
         return PersistentRegistryManager.makeDelegate(obj, rootClass);
     }
 
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>,IForgeRegistry.ClearCallback<Block>,IForgeRegistry.CreateCallback<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>,IForgeRegistry.ClearCallback<Block>,IForgeRegistry.CreateCallback<Block>, IForgeRegistry.SubstitutionCallback<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
@@ -297,23 +301,64 @@ public class GameData
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onClear(Map<ResourceLocation, ?> slaveset)
+        public void onClear(IForgeRegistry<Block> registry, Map<ResourceLocation, ?> slaveset)
         {
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = (ClearableObjectIntIdentityMap<IBlockState>)slaveset.get(BLOCKSTATE_TO_ID);
             blockstateMap.clear();
+            final Map<ResourceLocation, Block> originals = (Map<ResourceLocation, Block>)slaveset.get(PersistentRegistryManager.SUBSTITUTION_ORIGINALS);
+            final BiMap<Block, Item> blockItemMap = (BiMap<Block, Item>)slaveset.get(BLOCK_TO_ITEM);
+            for (Item it : blockItemMap.values())
+            {
+                if (it instanceof ItemBlock) {
+                    ItemBlock itemBlock = (ItemBlock)it;
+                    final ResourceLocation registryKey = registry.getKey(itemBlock.block);
+                    if (!originals.containsKey(registryKey)) continue;
+                    try
+                    {
+                        FinalFieldHelper.setField(blockField, itemBlock, originals.get(registryKey));
+                    }
+                    catch (Exception e)
+                    {
+                        throw Throwables.propagate(e);
+                    }
+                }
+            }
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
         {
             final ClearableObjectIntIdentityMap<Block> idMap = new ClearableObjectIntIdentityMap<Block>();
             ((Map<ResourceLocation,Object>)slaveset).put(BLOCKSTATE_TO_ID, idMap);
+            final HashBiMap<Block, Item> map = HashBiMap.create();
+            ((Map<ResourceLocation,Object>)slaveset).put(BLOCK_TO_ITEM, map);
+        }
 
+        @Override
+        public void onSubstituteActivated(Map<ResourceLocation, ?> slaveset, Block original, Block replacement, ResourceLocation name)
+        {
+            final BiMap<Block, Item> blockItemMap = (BiMap<Block, Item>)slaveset.get(BLOCK_TO_ITEM);
+            if (blockItemMap.containsKey(original))
+            {
+                Item i = blockItemMap.get(original);
+                if (i instanceof ItemBlock)
+                {
+                    try
+                    {
+                        FinalFieldHelper.setField(blockField, i, replacement);
+                    }
+                    catch (Exception e)
+                    {
+                        throw Throwables.propagate(e);
+                    }
+                }
+                blockItemMap.forcePut(replacement,i);
+            }
         }
     }
 
-    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>,IForgeRegistry.ClearCallback<Item>,IForgeRegistry.CreateCallback<Item>
+    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>,IForgeRegistry.ClearCallback<Item>,IForgeRegistry.CreateCallback<Item>, IForgeRegistry.SubstitutionCallback<Item>
     {
         static final ItemCallbacks INSTANCE = new ItemCallbacks();
 
@@ -324,13 +369,14 @@ public class GameData
             {
                 ItemBlock itemBlock = (ItemBlock)item;
                 @SuppressWarnings("unchecked") BiMap<Block, Item> blockToItem = (BiMap<Block, Item>)slaves.get(BLOCK_TO_ITEM);
-                blockToItem.forcePut(itemBlock.getBlock().delegate.get(), item);
+                final Block block = itemBlock.getBlock().delegate.get();
+                blockToItem.forcePut(block, item);
             }
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onClear(Map<ResourceLocation, ?> slaveset)
+        public void onClear(IForgeRegistry<Item> registry, Map<ResourceLocation, ?> slaveset)
         {
             Map<Block,Item> map = (Map<Block, Item>)slaveset.get(BLOCK_TO_ITEM);
             map.clear();
@@ -338,10 +384,17 @@ public class GameData
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
         {
-            final HashBiMap<Block, Item> map = HashBiMap.create();
-            ((Map<ResourceLocation,Object>)slaveset).put(BLOCK_TO_ITEM, map);
+            // We share the blockItem map between items and blocks registries
+            final BiMap blockItemMap = (BiMap<Block, Item>)registries.get(PersistentRegistryManager.BLOCKS).getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+            ((Map<ResourceLocation,Object>)slaveset).put(BLOCK_TO_ITEM, blockItemMap);
+        }
+
+        @Override
+        public void onSubstituteActivated(Map<ResourceLocation, ?> slaveset, Item original, Item replacement, ResourceLocation name)
+        {
+            final BiMap<Block, Item> blockItemMap = (BiMap<Block, Item>)slaveset.get(BLOCK_TO_ITEM);
         }
     }
 
@@ -355,13 +408,13 @@ public class GameData
         }
 
         @Override
-        public void onClear(Map<ResourceLocation, ?> slaveset)
+        public void onClear(IForgeRegistry<Potion> registry, Map<ResourceLocation, ?> slaveset)
         {
             // no op for the minute?
         }
 
         @Override
-        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
         {
             // no op for the minute?
         }
@@ -371,18 +424,18 @@ public class GameData
         static final BiomeCallbacks INSTANCE = new BiomeCallbacks();
 
         @Override
-        public void onAdd(Biome potion, int id, Map<ResourceLocation, ?> slaves) {
+        public void onAdd(Biome biome, int id, Map<ResourceLocation, ?> slaves) {
             // no op for the minute?
         }
 
         @Override
-        public void onClear(Map<ResourceLocation, ?> slaveset)
+        public void onClear(IForgeRegistry<Biome> registry, Map<ResourceLocation, ?> slaveset)
         {
             // no op for the minute?
         }
 
         @Override
-        public void onCreate(Map<ResourceLocation, ?> slaveset)
+        public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
         {
             // no op for the minute?
         }

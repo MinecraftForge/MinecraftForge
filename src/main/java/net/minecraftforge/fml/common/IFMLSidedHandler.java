@@ -73,4 +73,6 @@ public interface IFMLSidedHandler
     void processWindowMessages();
 
     String stripSpecialChars(String message);
+
+    void reloadRenderers();
 }

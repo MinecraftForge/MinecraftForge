@@ -72,6 +72,7 @@ import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.DummyModContainer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.LoadController;
@@ -105,6 +106,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static long java8Reminder = 0;
+    public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -285,6 +287,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         prop.setLanguageKey("forge.configgui.java8Reminder");
         propOrder.add(prop.getName());
 
+        prop = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", disableStairSlabCulling,
+                "Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.");
+        disableStairSlabCulling = prop.getBoolean(disableStairSlabCulling);
+        prop.setLanguageKey("forge.configgui.disableStairSlabCulling").setRequiresMcRestart(false);
+        propOrder.add(prop.getName());
+
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
 
         if (config.hasChanged())
@@ -307,20 +315,32 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {
-        if (getMetadata().modId.equals(event.getModID()) && !event.isWorldRunning())
+        if (getMetadata().modId.equals(event.getModID()))
         {
-            if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
+            if (!event.isWorldRunning())
             {
-                syncConfig(false);
+                if (Configuration.CATEGORY_GENERAL.equals(event.getConfigID()))
+                {
+                    syncConfig(false);
+                }
+                else if ("chunkLoader".equals(event.getConfigID()))
+                {
+                    ForgeChunkManager.syncConfigDefaults();
+                    ForgeChunkManager.loadConfiguration();
+                }
+                else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
+                {
+                    syncConfig(false);
+                }
             }
-            else if ("chunkLoader".equals(event.getConfigID()))
+            else
             {
-                ForgeChunkManager.syncConfigDefaults();
-                ForgeChunkManager.loadConfiguration();
-            }
-            else if (VERSION_CHECK_CAT.equals(event.getConfigID()))
-            {
-                syncConfig(false);
+                boolean tmp = config.get(Configuration.CATEGORY_CLIENT, "disableStairSlabCulling", disableStairSlabCulling).getBoolean();
+                if (disableStairSlabCulling != tmp)
+                {
+                    disableStairSlabCulling = tmp;
+                    FMLCommonHandler.instance().reloadRenderers();
+                }
             }
         }
     }

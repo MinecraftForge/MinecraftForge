@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -47,6 +47,16 @@
+@@ -47,6 +47,17 @@
          }
          else if (icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
          {
@@ -13,11 +13,12 @@
 +                }
 +                return 1;
 +            }
++            if (event.getParameters() != null) astring = event.getParameters();
 +
              if (i > -1)
              {
                  List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[i], Entity.class);
-@@ -110,7 +120,7 @@
+@@ -110,7 +121,7 @@
              TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("commands.generic.exception", new Object[0]);
              textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.RED);
              p_175786_1_.func_145747_a(textcomponenttranslation);

@@ -84,13 +84,13 @@ public class PersistentRegistryManager
         {
             if (!registries.containsKey(key))
             {
-                registries.put(key, other.makeShallowCopy());
+                registries.put(key, other.makeShallowCopy(registries));
                 registrySuperTypes.put(regType, key);
             }
             return getRegistry(key, regType);
         }
 
-        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback)
+        private <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> type, ResourceLocation defaultObjectKey, int minId, int maxId, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback, IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
         {
             Set<Class<?>> parents = Sets.newHashSet();
             findSuperTypes(type, parents);
@@ -101,7 +101,7 @@ public class PersistentRegistryManager
                 FMLLog.severe("Found existing registry of type %1s named %2s, you cannot create a new registry (%3s) with type %4s, as %4s has a parent of that type", foundType, registrySuperTypes.get(foundType), registryName, type);
                 throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
             }
-            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, addCallback, clearCallback, createCallback);
+            FMLControlledNamespacedRegistry<T> fmlControlledNamespacedRegistry = new FMLControlledNamespacedRegistry<T>(defaultObjectKey, minId, maxId, type, registries, addCallback, clearCallback, createCallback, substitutionCallback);
             registries.put(registryName, fmlControlledNamespacedRegistry);
             registrySuperTypes.put(type, registryName);
             return getRegistry(registryName, type);
@@ -152,10 +152,11 @@ public class PersistentRegistryManager
     public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
     public static final ResourceLocation POTIONTYPES = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
+    static final ResourceLocation SUBSTITUTION_ORIGINALS = new ResourceLocation("fml:suboriginals");
 
-    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int minId, int maxId, boolean hasDelegates, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback)
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int minId, int maxId, boolean hasDelegates, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback, IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
     {
-        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, addCallback, clearCallback, createCallback);
+        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, addCallback, clearCallback, createCallback, substitutionCallback);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

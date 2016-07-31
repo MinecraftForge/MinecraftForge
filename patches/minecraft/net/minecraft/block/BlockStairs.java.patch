@@ -1,12 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStairs.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStairs.java
-@@ -445,6 +445,17 @@
+@@ -445,6 +445,20 @@
          return new BlockStateContainer(this, new IProperty[] {field_176309_a, field_176308_b, field_176310_M});
      }
  
 +    @Override
 +    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
 +    {
++        if (net.minecraftforge.common.ForgeModContainer.disableStairSlabCulling)
++            return super.doesSideBlockRendering(state, world, pos, face);
++
 +        if ( state.func_185914_p() )
 +            return true;
 +

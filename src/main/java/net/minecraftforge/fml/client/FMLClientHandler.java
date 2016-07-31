@@ -1032,4 +1032,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         // We can't handle many unicode points in the splash renderer
         return CharMatcher.anyOf(ALLOWED_CHARS).retainFrom(StringUtils.stripControlCodes(message));
     }
+
+    @Override
+    public void reloadRenderers()
+    {
+        this.client.renderGlobal.loadRenderers();
+    }
 }

@@ -742,4 +742,8 @@ public class FMLCommonHandler
     {
         return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;
     }
+
+    public void reloadRenderers() {
+        sidedDelegate.reloadRenderers();
+    }
 }
