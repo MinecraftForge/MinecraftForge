@@ -195,7 +195,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -893,6 +912,1141 @@
+@@ -893,6 +912,1153 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1330,6 +1330,18 @@
 +     * @param advanced If the client has advanced debug tooltips enabled
 +     */
 +    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
++    {
++    }
++
++    /**
++     * Called after an EntityFallingBlock hits a solid surface and when canBePlaced passes
++     *  Note: This happens after the block is placed, and, if applicable, before the TileEntity data is set
++     *
++     * @param entity the instance of the entity, typically, but not always an EntityFallingBlock.
++     * @param world the World instance
++     * @param pos the BlockPos the final landing position of the entity
++     */
++    public void onFallingBlockLanded(Entity entity, World world, BlockPos pos)
 +    {
 +    }
 +    /* ========================================= FORGE END ======================================*/

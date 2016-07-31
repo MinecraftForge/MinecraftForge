@@ -18,3 +18,13 @@
                  {
                      ;
                  }
+@@ -120,4 +120,9 @@
+     {
+         return -16777216;
+     }
++
++    public void onFallingBlockLanded(net.minecraft.entity.Entity fallingBlock, World world, BlockPos pos)
++    {
++        this.func_176502_a_(world, pos);
++    }
+ }
