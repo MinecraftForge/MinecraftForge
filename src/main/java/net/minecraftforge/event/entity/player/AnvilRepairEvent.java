@@ -22,6 +22,13 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+/**
+ * Fired when the player removes a "repaired" item from the Anvil's Output slot.
+ *
+ * breakChance specifies as a percentage the chance that the anvil will be "damaged" when used.
+ *
+ * ItemStacks are the inputs/output from the anvil. They cannot be edited.
+ */
 public class AnvilRepairEvent extends PlayerEvent
 {
 
@@ -30,7 +37,7 @@ public class AnvilRepairEvent extends PlayerEvent
     private final ItemStack output; // Set this to set the output stack
     private float breakChance; // Anvil's chance to break (reduced by 1 durability) when this is complete. Default is 12% (0.12f)
 
-    public AnvilRepairEvent(EntityPlayer player, ItemStack output, ItemStack left, ItemStack right)
+    public AnvilRepairEvent(EntityPlayer player, ItemStack left, ItemStack right, ItemStack output)
     {
         super(player);
         this.output = output;
@@ -40,15 +47,42 @@ public class AnvilRepairEvent extends PlayerEvent
     }
 
     /**
-     * Fired when the player removes a "repaired" item from the Anvil's Output slot.
-     *
-     * breakChance specifies as a percentage the chance that the anvil will be "damaged" when used.
-     *
-     * ItemStacks are the inputs/output from the anvil. They cannot be edited.
+     * Deprecated in favour of {@link #getItemInput()} - this is actually the output slot of the anvil
+     * @return the output slot
      */
-    public ItemStack getLeft() { return left; }
-    public ItemStack getRight() { return right; }
-    public ItemStack getOutput() { return output; }
+    @Deprecated
+    public ItemStack getLeft() { return output; }
+    /**
+     * Deprecated in favour of {@link #getIngredientInput()}} - this is actually the first input slot of the anvil
+     * @return the first input slot
+     */
+    @Deprecated
+    public ItemStack getRight() { return left; }
+    /**
+     * Deprecated in favour of {@link #getItemResult()} - this is actually the second input slot of the anvil
+     * @return the second input slot
+     */
+    @Deprecated
+    public ItemStack getOutput() { return right; }
+
+    /**
+     * Get the output result from the anvil
+     * @return the output
+     */
+    public ItemStack getItemResult() { return output; }
+
+    /**
+     * Get the first item input into the anvil
+     * @return the first input slot
+     */
+    public ItemStack getItemInput() { return left; }
+
+    /**
+     * Get the second item input into the anvil
+     * @return the second input slot
+     */
+    public ItemStack getIngredientInput() { return right; }
+
     public float getBreakChance() { return breakChance; }
     public void setBreakChance(float breakChance) { this.breakChance = breakChance; }
 }

@@ -44,8 +44,9 @@ forge.configgui.zombieBabyChance=Zombie Baby Chance
 forge.configgui.zombieBaseSummonChance.tooltip=Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.
 forge.configgui.zombieBaseSummonChance=Zombie Summon Chance
 forge.configgui.stencilbits=Enable GL Stencil Bits
-forge.configgui.spawnfuzz=Respawn Fuzz Diameter
-forge.configgui.replaceBuckets=Use Forges' bucket model
+forge.configgui.replaceBuckets=Use Forge's bucket model
+forge.configgui.forgeLightPipelineEnabled=Forge Light Pipeline Enabled
+forge.configgui.java8Reminder=Java 8 Reminder timestamp
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID
