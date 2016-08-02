@@ -1,35 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/ScaledResolution.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/ScaledResolution.java
-@@ -20,21 +20,29 @@
+@@ -20,21 +20,16 @@
          this.field_78331_b = p_i46445_1_.field_71440_d;
          this.field_78330_e = 1;
          boolean flag = p_i46445_1_.func_152349_b();
 -        int i = p_i46445_1_.field_71474_y.field_74335_Z;
-+        double aspectRatio = (double)p_i46445_1_.field_71443_c / (double)p_i46445_1_.field_71440_d;
-+        int i = 2 + p_i46445_1_.field_71474_y.field_74335_Z;
-+        double di = (double)i;
++        int i = 3 + p_i46445_1_.field_71474_y.field_74335_Z;
  
 -        if (i == 0)
-+        double ws = 160.0;
-+        while (
-+          (double)this.field_78333_a  / (((double)this.field_78330_e + 1.0) * di) / ws >= 1.0 &&
-+          (double)this.field_78331_b / (((double)this.field_78330_e + 1.0) * di) / ws * aspectRatio >= 1.0
-+        )
-         {
+-        {
 -            i = 1000;
-+          this.field_78330_e += 1;
-         }
- 
+-        }
+-
 -        while (this.field_78330_e < i && this.field_78333_a / (this.field_78330_e + 1) >= 320 && this.field_78331_b / (this.field_78330_e + 1) >= 240)
 -        {
 -            ++this.field_78330_e;
-+        while(
-+          ((double)this.field_78333_a / (double)this.field_78330_e) / 320.0 < 1.0 ||
-+          ((double)this.field_78331_b / (double)this.field_78330_e) / 240.0 < 1.0
-+        ){
-+          this.field_78330_e -= 1;
-         }
- 
+-        }
+-
++        double ws = 160.0;
++        this.field_78330_e = (int)Math.round(Math.max((double)p_i46445_1_.field_71443_c / ws / i, 1.0));
++        this.field_78330_e = (int)Math.min(this.field_78330_e, Math.ceil(p_i46445_1_.field_71440_d / 240.0));
++        this.field_78330_e = (int)Math.min(this.field_78330_e, Math.ceil(p_i46445_1_.field_71443_c / 320.0));
++        
          if (flag && this.field_78330_e % 2 != 0 && this.field_78330_e != 1)
          {
 -            --this.field_78330_e;

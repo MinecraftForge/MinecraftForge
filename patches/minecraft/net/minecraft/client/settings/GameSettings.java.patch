@@ -5,7 +5,7 @@
      };
      public static final Splitter field_189990_a = Splitter.on(':');
 -    private static final String[] field_74367_ae = new String[] {"options.guiScale.auto", "options.guiScale.small", "options.guiScale.normal", "options.guiScale.large"};
-+    private static final String[] field_74367_ae = new String[] {"options.guiScale.enlarge", "options.guiScale.larger", "options.guiScale.large", "options.guiScale.medium", "options.guiScale.normal", "options.guiScale.small", "options.guiScale.smaller", "options.guiScale.little"};
++    private static final String[] field_74367_ae = new String[] {"options.guiScale.enlarge", "options.guiScale.larger", "options.guiScale.large", "options.guiScale.normal", "options.guiScale.medium", "options.guiScale.small", "options.guiScale.smaller", "options.guiScale.little"};
      private static final String[] field_74364_ag = new String[] {"options.particles.all", "options.particles.decreased", "options.particles.minimal"};
      private static final String[] field_98303_au = new String[] {"options.ao.off", "options.ao.min", "options.ao.max"};
      private static final String[] field_181149_aW = new String[] {"options.off", "options.graphics.fast", "options.graphics.fancy"};
