@@ -37,8 +37,6 @@ public class Resource {
 
     /** The unique identification name for this resource. */
     protected final String resourceName;
-    /** The color of this resource*/
-    protected int color = 0xFFFFFFFF;
 
 
     /**
@@ -57,13 +55,6 @@ public class Resource {
     {
         return resourceName;
     }
-
-    public Resource setColor(int color) {
-        this.color = color;
-        return this;
-    }
-
-    public int getColor() { return color; }
 
     public boolean registerProduction(String productionType, ItemStack production)
     {
