@@ -43,7 +43,7 @@ public class Resource
      * The string is the type of production like: ingot, nugget, block, ore, fluid, gas, gem.
      * The item stack is the production.
      */
-    static BiMap<String, ItemStack> productions = HashBiMap.create();
+    protected BiMap<String, ItemStack> productions = HashBiMap.create();
 
     public Resource(String resourceName)
     {
