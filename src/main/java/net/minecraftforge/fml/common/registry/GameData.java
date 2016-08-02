@@ -41,6 +41,7 @@ import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.collect.BiMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.resources.ResourceRegistry;
 import org.apache.logging.log4j.Level;
 
 public class GameData
@@ -264,6 +265,7 @@ public class GameData
     public static void vanillaSnapshot()
     {
         PersistentRegistryManager.freezeVanilla();
+        ResourceRegistry.registerVanilla();
     }
 
     //Lets us clear the map so we can rebuild it.
