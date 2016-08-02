@@ -19,29 +19,62 @@
 
 package net.minecraftforge.server.permission;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @ParametersAreNonnullByDefault
-public class Context
+public final class Context
 {
     public static final Context NO_CONTEXT = new Context();
 
-    // Some default custom map keys
-    public static final String CHUNK = "chunk";
-    public static final String ENTITY = "entity";
-    public static final String BLOCK_POS_2 = "block2";
-    public static final String BLOCK_STATE = "blockstate";
+    public static class Key<T>
+    {
+        private final String key;
 
-    private IBlockAccess blockAccess;
-    private EntityPlayer player;
-    private BlockPos blockPos;
-    private Map<String, Object> custom;
+        public Key(String key)
+        {
+            if(key.isEmpty())
+            {
+                throw new IllegalArgumentException("Context key can't be empty!");
+            }
+
+            this.key = key;
+        }
+
+        public int hashCode()
+        {
+            return key.hashCode();
+        }
+
+        public String toString()
+        {
+            return key;
+        }
+
+        public boolean equals(Object o)
+        {
+            return o == this || (o instanceof Key && ((Key) o).key.equals(key));
+        }
+    }
+
+    public static final Key<World> WORLD = new Key<World>("world");
+    public static final Key<EntityPlayer> PLAYER = new Key<EntityPlayer>("player");
+    public static final Key<BlockPos> BLOCK = new Key<BlockPos>("block");
+    public static final Key<ChunkPos> CHUNK = new Key<ChunkPos>("chunk");
+    public static final Key<Entity> ENTITY = new Key<Entity>("entity");
+    public static final Key<IBlockState> BLOCK_STATE = new Key<IBlockState>("blockstate");
+
+    private final Map<Key<?>, Object> map = new HashMap<Key<?>, Object>();
 
     public Context()
     {
@@ -49,98 +82,40 @@ public class Context
 
     public Context(EntityPlayer e)
     {
-        blockAccess = e.worldObj;
-        player = e;
+        set(WORLD, e.worldObj);
+        set(PLAYER, e);
     }
 
-    public Context(IBlockAccess w, BlockPos pos)
+    public Context(World world, BlockPos pos)
     {
-        blockAccess = w;
-        blockPos = pos;
+        set(WORLD, world);
+        set(BLOCK, pos);
     }
 
     public Context(EntityPlayer e, BlockPos pos)
     {
-        blockAccess = e.worldObj;
-        player = e;
-        blockPos = pos;
+        this(e);
+        set(BLOCK, pos);
     }
 
-    // IBlockAccess //
-
-    public IBlockAccess getBlockAccess()
+    public <T> T get(Key<T> key)
     {
-        return blockAccess;
+        return (T) map.get(key);
     }
 
-    public Context setBlockAccess(IBlockAccess w)
+    public boolean has(Key<?> key)
     {
-        blockAccess = w;
+        return map.containsKey(key);
+    }
+
+    public <T> Context set(Key<T> key, T obj)
+    {
+        map.put(key, obj);
         return this;
     }
 
-    public boolean hasBlockAccess()
+    public Set<Map.Entry<Key<?>, Object>> getContext()
     {
-        return blockAccess != null;
-    }
-
-    // Entity //
-
-    public EntityPlayer getPlayer()
-    {
-        return player;
-    }
-
-    public Context setPlayer(EntityPlayer e)
-    {
-        blockAccess = e.worldObj;
-        player = e;
-        return this;
-    }
-
-    public boolean hasPlayer()
-    {
-        return player != null;
-    }
-
-    // BlockPos //
-
-    public BlockPos getBlockPos()
-    {
-        return blockPos;
-    }
-
-    public Context setBlockPos(BlockPos pos)
-    {
-        blockPos = pos;
-        return this;
-    }
-
-    public boolean hasBlockPos()
-    {
-        return blockPos != null;
-    }
-
-    // Custom objects //
-
-    public Object getCustomObject(String id)
-    {
-        return (custom == null || id.isEmpty()) ? null : custom.get(id);
-    }
-
-    public boolean hasCustomObject(String id)
-    {
-        return custom != null && !id.isEmpty() && custom.containsKey(id);
-    }
-
-    public Context setCustomObject(String id, Object obj)
-    {
-        if(custom == null)
-        {
-            custom = new HashMap<String, Object>();
-        }
-
-        custom.put(id, obj);
-        return this;
+        return Collections.unmodifiableSet(map.entrySet());
     }
 }
