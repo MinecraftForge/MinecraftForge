@@ -91,12 +91,12 @@ public class ResourceRegistry {
      * @param resource the resource we're testing
      * @return if the resource's name has a registration entry
      */
-    public static boolean isFluidRegistered(Resource resource)
+    public static boolean isResourceRegistered(Resource resource)
     {
         return resource != null && resources.containsKey(resource.getName());
     }
 
-    public static boolean isFluidRegistered(String resourceName) { return resources.containsKey(resourceName); }
+    public static boolean isResourceRegistered(String resourceName) { return resources.containsKey(resourceName); }
 
     public static Resource getResource(String resourceName) { return resources.get(resourceName); }
 
