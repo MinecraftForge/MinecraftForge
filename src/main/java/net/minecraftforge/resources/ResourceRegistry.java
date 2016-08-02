@@ -40,8 +40,8 @@ import java.util.Map;
 /**
  * Handles Resource registrations. Resources MUST be registered in order to function.
  */
-public class ResourceRegistry {
-
+public class ResourceRegistry
+{
     static BiMap<String, Resource> resources = HashBiMap.create();
     static Map<Resource,ResourceRegistry.ResourceDelegate> delegates = Maps.newHashMap();
 
@@ -50,7 +50,8 @@ public class ResourceRegistry {
     public static final Resource EMERALD = new Resource("emerald");
     public static final Resource DIAMOND = new Resource("diamond");
 
-    public static void registerVanilla(){
+    public static void registerVanilla()
+    {
         IRON.registerProduction("ingot", new ItemStack(Items.IRON_INGOT));
         IRON.registerProduction("block", new ItemStack(Blocks.IRON_BLOCK));
         IRON.registerProduction("ore", new ItemStack(Blocks.IRON_ORE));

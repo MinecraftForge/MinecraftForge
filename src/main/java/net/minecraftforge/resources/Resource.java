@@ -33,11 +33,10 @@ import java.util.Map;
  * This is used to register ingots, nuggets, gems and other stuff like this, so that other mods can use this stuff
  * and don't have to register a new stuff.
  */
-public class Resource {
-
+public class Resource
+{
     /** The unique identification name for this resource. */
     protected final String resourceName;
-
 
     /**
      * The productions of the resource.
@@ -58,7 +57,7 @@ public class Resource {
 
     public boolean registerProduction(String productionType, ItemStack production)
     {
-        if(productions.containsKey(productionType)){
+        if (productions.containsKey(productionType)){
             return false;
         }
         productions.put(productionType, production);
