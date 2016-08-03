@@ -14,13 +14,13 @@
  
 -                    tileentitybeacon$beamsegment.func_177262_a();
 -                    continue;
-+                    // Allow any block to change the beacon beam colour
-+                    float[] colour = iblockstate.func_177230_c().getBeaconColour(field_145850_b, iblockstate);
-+                    if(colour == null || colour.length != 3){
++                    // Allow any block to change the beacon beam color
++                    float[] color = iblockstate.func_177230_c().getBeaconColor(field_145850_b, iblockstate);
++                    if(color == null || color.length != 3){
 +                        tileentitybeacon$beamsegment.func_177262_a();
 +                        continue;
 +                    }
-+                    afloat = colour;
++                    afloat = color;
 +                }else {
 +                    afloat = EntitySheep.func_175513_a((EnumDyeColor) iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a));
                  }
