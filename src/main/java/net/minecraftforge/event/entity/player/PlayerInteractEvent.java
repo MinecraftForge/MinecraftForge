@@ -27,6 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -323,13 +324,22 @@ public class PlayerInteractEvent extends PlayerEvent
 
     /**
      * This event is fired by mods, before they interact with blocks in non-standard way, so protection mods can cancel it.
+     * ResourceLocation 'action' has to be your modid:action, e.g "gravity_altering_mod:pick_up_block"
      */
     @Cancelable
     public static class ModifyBlock extends PlayerInteractEvent
     {
-        public ModifyBlock(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face)
+        private final ResourceLocation action;
+
+        public ModifyBlock(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face, ResourceLocation action)
         {
             super(player, hand, stack, pos, face);
+            this.action = Preconditions.checkNotNull(action, "Null action in PlayerInteractEvent!");
+        }
+
+        public ResourceLocation getAction()
+        {
+            return action;
         }
     }
 
