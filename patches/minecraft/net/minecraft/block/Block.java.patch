@@ -1355,15 +1355,15 @@
 +    }
 +
 +    /**
-+     * Gets the colour that the beacon beam should be blended with.
++     * Gets the color that the beacon beam should be blended with.
 +     *
 +     * This should return null for no change, and a three entry float array with RGB values from 0.0 to 1.0.
 +     *
 +     * @param world The world the block is in
 +     * @param blockState The state of the block
-+     * @return The float array of colours to blend
++     * @return The float array of colors to blend
 +     * */
-+    public float[] getBeaconColour(World world, IBlockState blockState) {
++    public float[] getBeaconColor(World world, IBlockState blockState) {
 +        return null;
 +    }
 +
