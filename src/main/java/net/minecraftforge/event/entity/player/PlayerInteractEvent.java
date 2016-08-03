@@ -322,6 +322,18 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
+     * This event is fired by mods, before they interact with blocks in non-standard way, so protection mods can cancel it.
+     */
+    @Cancelable
+    public static class ModifyBlock extends PlayerInteractEvent
+    {
+        public ModifyBlock(EntityPlayer player, EnumHand hand, ItemStack stack, BlockPos pos, EnumFacing face)
+        {
+            super(player, hand, stack, pos, face);
+        }
+    }
+
+    /**
      * @return The hand involved in this interaction. Will never be null.
      */
     public EnumHand getHand()
