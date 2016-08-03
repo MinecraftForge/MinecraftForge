@@ -17,17 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission;
-
-import com.mojang.authlib.GameProfile;
-import net.minecraftforge.server.permission.context.IContext;
+package net.minecraftforge.server.permission.context;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public interface IPermissionHandler
+public enum EmptyContext implements IContext
 {
-    /**
-     * @see PermissionAPI#hasPermission(GameProfile, String, boolean, IContext)
-     */
-    boolean hasPermission(@Nonnull GameProfile profile, @Nonnull String permission, boolean defaultForPlayer, @Nonnull IContext context);
+    INSTANCE;
+
+    @Override
+    public <T> T get(@Nonnull ContextKey<T> key)
+    {
+        return null;
+    }
+
+    @Override
+    public boolean has(@Nonnull ContextKey<?> key)
+    {
+        return false;
+    }
+
+    @Nonnull
+    @Override
+    public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    {
+        return this;
+    }
 }

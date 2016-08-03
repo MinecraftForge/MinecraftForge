@@ -22,16 +22,22 @@ package net.minecraftforge.server.permission;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.server.permission.context.IContext;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.Nonnull;
 
-@ParametersAreNonnullByDefault
+/**
+ * Default implementation of PermissionAPI.
+ * Returns returns true if it is a singleplayer world or the player is an OP
+ *
+ * @see PermissionAPI
+ */
 public enum DefaultPermissionHandler implements IPermissionHandler
 {
     INSTANCE;
 
     @Override
-    public boolean hasPermission(GameProfile profile, String permission, boolean defaultForPlayer, Context context)
+    public boolean hasPermission(@Nonnull GameProfile profile, @Nonnull String permission, boolean defaultForPlayer, @Nonnull IContext context)
     {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         return defaultForPlayer || server == null || !server.isDedicatedServer() || server.getPlayerList().getOppedPlayers().getPermissionLevel(profile) > 0;

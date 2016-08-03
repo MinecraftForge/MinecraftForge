@@ -17,17 +17,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission;
-
-import com.mojang.authlib.GameProfile;
-import net.minecraftforge.server.permission.context.IContext;
+package net.minecraftforge.server.permission.context;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface IPermissionHandler
+public class Context implements IContext
 {
-    /**
-     * @see PermissionAPI#hasPermission(GameProfile, String, boolean, IContext)
-     */
-    boolean hasPermission(@Nonnull GameProfile profile, @Nonnull String permission, boolean defaultForPlayer, @Nonnull IContext context);
+    private Map<ContextKey<?>, Object> map;
+
+    @Override
+    public <T> T get(@Nonnull ContextKey<T> key)
+    {
+        return map == null || map.isEmpty() ? null : (T) map.get(key);
+    }
+
+    @Override
+    public boolean has(@Nonnull ContextKey<?> key)
+    {
+        return map != null && !map.isEmpty() && map.containsKey(key);
+    }
+
+    @Nonnull
+    @Override
+    public <T> Context set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    {
+        if(map == null)
+        {
+            map = new HashMap<ContextKey<?>, Object>();
+        }
+
+        map.put(key, obj);
+        return this;
+    }
 }
