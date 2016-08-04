@@ -44,7 +44,14 @@ public class VertexTransformer implements IVertexConsumer
 
     public void setTexture(TextureAtlasSprite texture)
     {
-        parent.setTexture(texture);
+        try
+        {
+            parent.setTexture(texture);
+        }
+        catch(AbstractMethodError e)
+        {
+            // catch missing method errors caused by change to IVertexConsumer
+        }
     }
 
     public void setQuadOrientation(EnumFacing orientation)
