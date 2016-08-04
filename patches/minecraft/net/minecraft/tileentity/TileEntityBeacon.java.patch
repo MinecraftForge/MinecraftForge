@@ -14,12 +14,8 @@
  
 -                    tileentitybeacon$beamsegment.func_177262_a();
 -                    continue;
-+                    // Allow any block to change the beacon beam color
 +                    float[] color = iblockstate.func_177230_c().getBeaconColor(field_145850_b, iblockstate);
-+                    if(color == null){
-+                        tileentitybeacon$beamsegment.func_177262_a();
-+                        continue;
-+                    }
++                    if(color == null){ tileentitybeacon$beamsegment.func_177262_a(); continue; }
 +                    afloat = color;
 +                }else {
 +                    afloat = EntitySheep.func_175513_a((EnumDyeColor) iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a));
