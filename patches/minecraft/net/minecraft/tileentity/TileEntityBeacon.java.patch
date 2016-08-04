@@ -16,7 +16,7 @@
 -                    continue;
 +                    // Allow any block to change the beacon beam color
 +                    float[] color = iblockstate.func_177230_c().getBeaconColor(field_145850_b, iblockstate);
-+                    if(color == null || color.length != 3){
++                    if(color == null){
 +                        tileentitybeacon$beamsegment.func_177262_a();
 +                        continue;
 +                    }
