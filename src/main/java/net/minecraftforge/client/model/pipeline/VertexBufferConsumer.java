@@ -20,6 +20,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.BlockPos;
@@ -77,4 +78,5 @@ public class VertexBufferConsumer implements IVertexConsumer
     public void setQuadTint(int tint) {}
     public void setQuadOrientation(EnumFacing orientation) {}
     public void setApplyDiffuseLighting(boolean diffuse) {}
+    public void setTexture(TextureAtlasSprite texture ) {}
 }
