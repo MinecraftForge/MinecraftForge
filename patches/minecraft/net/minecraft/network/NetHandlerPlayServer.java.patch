@@ -5,13 +5,11 @@
                  if (!this.field_147369_b.func_175149_v())
                  {
 -                    ItemStack itemstack1 = this.field_147369_b.func_184586_b(EnumHand.OFF_HAND);
--                    this.field_147369_b.func_184611_a(EnumHand.OFF_HAND, this.field_147369_b.func_184586_b(EnumHand.MAIN_HAND));
--                    this.field_147369_b.func_184611_a(EnumHand.MAIN_HAND, itemstack1);
-+                	List<ItemStack> l = net.minecraftforge.common.ForgeHooks.onSwapHand(this.field_147369_b);
-+                	if(!l.isEmpty())
++                	if(net.minecraftforge.common.ForgeHooks.onSwapHand(this.field_147369_b))
 +                	{
-+                		this.field_147369_b.func_184611_a(EnumHand.OFF_HAND, l.get(0));
-+                    	this.field_147369_b.func_184611_a(EnumHand.MAIN_HAND, l.get(1));
++            		ItemStack itemstack1 = this.field_147369_b.func_184586_b(EnumHand.OFF_HAND);
+                     this.field_147369_b.func_184611_a(EnumHand.OFF_HAND, this.field_147369_b.func_184586_b(EnumHand.MAIN_HAND));
+                     this.field_147369_b.func_184611_a(EnumHand.MAIN_HAND, itemstack1);
 +                	}
                  }
  
