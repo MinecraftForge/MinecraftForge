@@ -15,8 +15,8 @@ import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 
 @Mod(modid="splashscreentest", name="Splash Screen Test", version="0.0.0", clientSideOnly = true)
-public class SplashScreenTest {
-
+public class SplashScreenTest
+{
     public static final boolean ENABLE = false;
 
     @EventHandler

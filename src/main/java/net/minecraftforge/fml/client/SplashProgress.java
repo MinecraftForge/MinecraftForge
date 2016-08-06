@@ -79,7 +79,7 @@ import org.lwjgl.util.glu.GLU;
 @SuppressWarnings("serial")
 public class SplashProgress
 {
-    private static ICustomSplashScreen customSplash = null;
+    private static ICustomSplashScreen splashRenderer = DefaultSplash.INSTANCE;
 
     private static Drawable d;
     private static volatile boolean pause = false;
@@ -112,10 +112,14 @@ public class SplashProgress
 
     /**
      * Sets a custom splash screen to show instead of the forge splash screen.
+     *
+     * If the argument is null then it will reset it back to the forge splash screen.
      */
     public static void setCustomSplashScreen(ICustomSplashScreen newSplash)
     {
-        customSplash = newSplash;
+        if (newSplash == null)
+            newSplash = DefaultSplash.INSTANCE;
+        splashRenderer = newSplash;
     }
 
     private static String getString(String name, String def)
@@ -246,11 +250,6 @@ public class SplashProgress
         //Thread mainThread = Thread.currentThread();
         thread = new Thread(new Runnable()
         {
-            private final int barWidth = 400;
-            private final int barHeight = 20;
-            private final int textHeight2 = 20;
-            private final int barOffset = 55;
-
             public void run()
             {
                 setGL();
@@ -262,102 +261,7 @@ public class SplashProgress
                 glDisable(GL_TEXTURE_2D);
                 while(!done)
                 {
-                    if (customSplash != null)
-                    {
-                        customSplash.renderFrame();
-                    }
-                    else
-                    {
-                        ProgressBar first = null, penult = null, last = null;
-                        Iterator<ProgressBar> i = ProgressManager.barIterator();
-                        while(i.hasNext())
-                        {
-                            if(first == null) first = i.next();
-                            else
-                            {
-                                penult = last;
-                                last = i.next();
-                            }
-                        }
-
-                        glClear(GL_COLOR_BUFFER_BIT);
-
-                        // matrix setup
-                        int w = Display.getWidth();
-                        int h = Display.getHeight();
-                        glViewport(0, 0, w, h);
-                        glMatrixMode(GL_PROJECTION);
-                        glLoadIdentity();
-                        glOrtho(320 - w/2, 320 + w/2, 240 + h/2, 240 - h/2, -1, 1);
-                        glMatrixMode(GL_MODELVIEW);
-                        glLoadIdentity();
-
-                        // mojang logo
-                        setColor(backgroundColor);
-                        glEnable(GL_TEXTURE_2D);
-                        logoTexture.bind();
-                        glBegin(GL_QUADS);
-                        logoTexture.texCoord(0, 0, 0);
-                        glVertex2f(320 - 256, 240 - 256);
-                        logoTexture.texCoord(0, 0, 1);
-                        glVertex2f(320 - 256, 240 + 256);
-                        logoTexture.texCoord(0, 1, 1);
-                        glVertex2f(320 + 256, 240 + 256);
-                        logoTexture.texCoord(0, 1, 0);
-                        glVertex2f(320 + 256, 240 - 256);
-                        glEnd();
-                        glDisable(GL_TEXTURE_2D);
-
-                        // bars
-                        if(first != null)
-                        {
-                            glPushMatrix();
-                            glTranslatef(320 - (float)barWidth / 2, 310, 0);
-                            drawBar(first);
-                            if(penult != null)
-                            {
-                                glTranslatef(0, barOffset, 0);
-                                drawBar(penult);
-                            }
-                            if(last != null)
-                            {
-                                glTranslatef(0, barOffset, 0);
-                                drawBar(last);
-                            }
-                            glPopMatrix();
-                        }
-
-                        angle += 1;
-
-                        // forge logo
-                        setColor(backgroundColor);
-                        float fw = (float)forgeTexture.getWidth() / 2 / 2;
-                        float fh = (float)forgeTexture.getHeight() / 2 / 2;
-                        if(rotate)
-                        {
-                            float sh = Math.max(fw, fh);
-                            glTranslatef(320 + w/2 - sh - logoOffset, 240 + h/2 - sh - logoOffset, 0);
-                            glRotatef(angle, 0, 0, 1);
-                        }
-                        else
-                        {
-                            glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
-                        }
-                        int f = (angle / 10) % forgeTexture.getFrames();
-                        glEnable(GL_TEXTURE_2D);
-                        forgeTexture.bind();
-                        glBegin(GL_QUADS);
-                        forgeTexture.texCoord(f, 0, 0);
-                        glVertex2f(-fw, -fh);
-                        forgeTexture.texCoord(f, 0, 1);
-                        glVertex2f(-fw, fh);
-                        forgeTexture.texCoord(f, 1, 1);
-                        glVertex2f(fw, fh);
-                        forgeTexture.texCoord(f, 1, 0);
-                        glVertex2f(fw, -fh);
-                        glEnd();
-                        glDisable(GL_TEXTURE_2D);
-                    }
+                    splashRenderer.renderFrame();
                     // We use mutex to indicate safely to the main thread that we're taking the display global lock
                     // So the main thread can skip processing messages while we're updating.
                     // There are system setups where this call can pause for a while, because the GL implementation
@@ -376,53 +280,6 @@ public class SplashProgress
                     Display.sync(100);
                 }
                 clearGL();
-            }
-
-            private void setColor(int color)
-            {
-                glColor3ub((byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
-            }
-
-            private void drawBox(int w, int h)
-            {
-                glBegin(GL_QUADS);
-                glVertex2f(0, 0);
-                glVertex2f(0, h);
-                glVertex2f(w, h);
-                glVertex2f(w, 0);
-                glEnd();
-            }
-
-            private void drawBar(ProgressBar b)
-            {
-                glPushMatrix();
-                // title - message
-                setColor(fontColor);
-                glScalef(2, 2, 1);
-                glEnable(GL_TEXTURE_2D);
-                fontRenderer.drawString(b.getTitle() + " - " + b.getMessage(), 0, 0, 0x000000);
-                glDisable(GL_TEXTURE_2D);
-                glPopMatrix();
-                // border
-                glPushMatrix();
-                glTranslatef(0, textHeight2, 0);
-                setColor(barBorderColor);
-                drawBox(barWidth, barHeight);
-                // interior
-                setColor(barBackgroundColor);
-                glTranslatef(1, 1, 0);
-                drawBox(barWidth - 2, barHeight - 2);
-                // slidy part
-                setColor(barColor);
-                drawBox((barWidth - 2) * (b.getStep() + 1) / (b.getSteps() + 1), barHeight - 2); // Step can sometimes be 0.
-                // progress text
-                String progress = "" + b.getStep() + "/" + b.getSteps();
-                glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
-                setColor(fontColor);
-                glScalef(2, 2, 1);
-                glEnable(GL_TEXTURE_2D);
-                fontRenderer.drawString(progress, 0, 0, 0x000000);
-                glPopMatrix();
             }
 
             private void setGL()
@@ -480,6 +337,157 @@ public class SplashProgress
         });
         thread.start();
         checkThreadState();
+    }
+
+    private enum DefaultSplash implements ICustomSplashScreen
+    {
+        INSTANCE;
+
+        private final int barWidth = 400;
+        private final int barHeight = 20;
+        private final int textHeight2 = 20;
+        private final int barOffset = 55;
+
+        @Override
+        public void renderFrame()
+        {
+            ProgressBar first = null, penult = null, last = null;
+            Iterator<ProgressBar> i = ProgressManager.barIterator();
+            while(i.hasNext())
+            {
+                if(first == null) first = i.next();
+                else
+                {
+                    penult = last;
+                    last = i.next();
+                }
+            }
+
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            // matrix setup
+            int w = Display.getWidth();
+            int h = Display.getHeight();
+            glViewport(0, 0, w, h);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(320 - w/2, 320 + w/2, 240 + h/2, 240 - h/2, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+
+            // mojang logo
+            setColor(backgroundColor);
+            glEnable(GL_TEXTURE_2D);
+            logoTexture.bind();
+            glBegin(GL_QUADS);
+            logoTexture.texCoord(0, 0, 0);
+            glVertex2f(320 - 256, 240 - 256);
+            logoTexture.texCoord(0, 0, 1);
+            glVertex2f(320 - 256, 240 + 256);
+            logoTexture.texCoord(0, 1, 1);
+            glVertex2f(320 + 256, 240 + 256);
+            logoTexture.texCoord(0, 1, 0);
+            glVertex2f(320 + 256, 240 - 256);
+            glEnd();
+            glDisable(GL_TEXTURE_2D);
+
+            // bars
+            if(first != null)
+            {
+                glPushMatrix();
+                glTranslatef(320 - (float)barWidth / 2, 310, 0);
+                drawBar(first);
+                if(penult != null)
+                {
+                    glTranslatef(0, barOffset, 0);
+                    drawBar(penult);
+                }
+                if(last != null)
+                {
+                    glTranslatef(0, barOffset, 0);
+                    drawBar(last);
+                }
+                glPopMatrix();
+            }
+
+            angle += 1;
+
+            // forge logo
+            setColor(backgroundColor);
+            float fw = (float)forgeTexture.getWidth() / 2 / 2;
+            float fh = (float)forgeTexture.getHeight() / 2 / 2;
+            if(rotate)
+            {
+                float sh = Math.max(fw, fh);
+                glTranslatef(320 + w/2 - sh - logoOffset, 240 + h/2 - sh - logoOffset, 0);
+                glRotatef(angle, 0, 0, 1);
+            }
+            else
+            {
+                glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
+            }
+            int f = (angle / 10) % forgeTexture.getFrames();
+            glEnable(GL_TEXTURE_2D);
+            forgeTexture.bind();
+            glBegin(GL_QUADS);
+            forgeTexture.texCoord(f, 0, 0);
+            glVertex2f(-fw, -fh);
+            forgeTexture.texCoord(f, 0, 1);
+            glVertex2f(-fw, fh);
+            forgeTexture.texCoord(f, 1, 1);
+            glVertex2f(fw, fh);
+            forgeTexture.texCoord(f, 1, 0);
+            glVertex2f(fw, -fh);
+            glEnd();
+            glDisable(GL_TEXTURE_2D);
+        }
+
+        private static void setColor(int color)
+        {
+            glColor3ub((byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
+        }
+
+        private static void drawBox(int w, int h)
+        {
+            glBegin(GL_QUADS);
+            glVertex2f(0, 0);
+            glVertex2f(0, h);
+            glVertex2f(w, h);
+            glVertex2f(w, 0);
+            glEnd();
+        }
+
+        private void drawBar(ProgressBar b)
+        {
+            glPushMatrix();
+            // title - message
+            setColor(fontColor);
+            glScalef(2, 2, 1);
+            glEnable(GL_TEXTURE_2D);
+            fontRenderer.drawString(b.getTitle() + " - " + b.getMessage(), 0, 0, 0x000000);
+            glDisable(GL_TEXTURE_2D);
+            glPopMatrix();
+            // border
+            glPushMatrix();
+            glTranslatef(0, textHeight2, 0);
+            setColor(barBorderColor);
+            drawBox(barWidth, barHeight);
+            // interior
+            setColor(barBackgroundColor);
+            glTranslatef(1, 1, 0);
+            drawBox(barWidth - 2, barHeight - 2);
+            // slidy part
+            setColor(barColor);
+            drawBox((barWidth - 2) * (b.getStep() + 1) / (b.getSteps() + 1), barHeight - 2); // Step can sometimes be 0.
+            // progress text
+            String progress = "" + b.getStep() + "/" + b.getSteps();
+            glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
+            setColor(fontColor);
+            glScalef(2, 2, 1);
+            glEnable(GL_TEXTURE_2D);
+            fontRenderer.drawString(progress, 0, 0, 0x000000);
+            glPopMatrix();
+        }
     }
 
     private static int max_texture_size = -1;
