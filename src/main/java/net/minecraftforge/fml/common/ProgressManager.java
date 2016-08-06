@@ -79,8 +79,9 @@ public class ProgressManager
         FMLCommonHandler.instance().processWindowMessages();
     }
 
-    /*
-     * Internal use only.
+    /**
+     * Used by splash screen's only - you should not need to use this if
+     * you are a normal mod.
      */
     public static Iterator<ProgressBar> barIterator()
     {

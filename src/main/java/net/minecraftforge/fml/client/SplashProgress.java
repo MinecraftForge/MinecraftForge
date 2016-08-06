@@ -79,6 +79,8 @@ import org.lwjgl.util.glu.GLU;
 @SuppressWarnings("serial")
 public class SplashProgress
 {
+    private static ICustomSplashScreen customSplash = null;
+
     private static Drawable d;
     private static volatile boolean pause = false;
     private static volatile boolean done = false;
@@ -86,7 +88,7 @@ public class SplashProgress
     private static volatile Throwable threadError;
     private static int angle = 0;
     private static final Lock lock = new ReentrantLock(true);
-    private static SplashFontRenderer fontRenderer;
+    public static SplashFontRenderer fontRenderer;
 
     private static final IResourcePack mcPack = Minecraft.getMinecraft().mcDefaultResourcePack;
     private static final IResourcePack fmlPack = createResourcePack(FMLSanityChecker.fmlLocation);
@@ -107,6 +109,14 @@ public class SplashProgress
     private static int barColor;
     private static int barBackgroundColor;
     static final Semaphore mutex = new Semaphore(1);
+
+    /**
+     * Sets a custom splash screen to show instead of the forge splash screen.
+     */
+    public static void setCustomSplashScreen(ICustomSplashScreen newSplash)
+    {
+        customSplash = newSplash;
+    }
 
     private static String getString(String name, String def)
     {
@@ -252,96 +262,102 @@ public class SplashProgress
                 glDisable(GL_TEXTURE_2D);
                 while(!done)
                 {
-                    ProgressBar first = null, penult = null, last = null;
-                    Iterator<ProgressBar> i = ProgressManager.barIterator();
-                    while(i.hasNext())
+                    if (customSplash != null)
                     {
-                        if(first == null) first = i.next();
-                        else
-                        {
-                            penult = last;
-                            last = i.next();
-                        }
-                    }
-
-                    glClear(GL_COLOR_BUFFER_BIT);
-
-                    // matrix setup
-                    int w = Display.getWidth();
-                    int h = Display.getHeight();
-                    glViewport(0, 0, w, h);
-                    glMatrixMode(GL_PROJECTION);
-                    glLoadIdentity();
-                    glOrtho(320 - w/2, 320 + w/2, 240 + h/2, 240 - h/2, -1, 1);
-                    glMatrixMode(GL_MODELVIEW);
-                    glLoadIdentity();
-
-                    // mojang logo
-                    setColor(backgroundColor);
-                    glEnable(GL_TEXTURE_2D);
-                    logoTexture.bind();
-                    glBegin(GL_QUADS);
-                    logoTexture.texCoord(0, 0, 0);
-                    glVertex2f(320 - 256, 240 - 256);
-                    logoTexture.texCoord(0, 0, 1);
-                    glVertex2f(320 - 256, 240 + 256);
-                    logoTexture.texCoord(0, 1, 1);
-                    glVertex2f(320 + 256, 240 + 256);
-                    logoTexture.texCoord(0, 1, 0);
-                    glVertex2f(320 + 256, 240 - 256);
-                    glEnd();
-                    glDisable(GL_TEXTURE_2D);
-
-                    // bars
-                    if(first != null)
-                    {
-                        glPushMatrix();
-                        glTranslatef(320 - (float)barWidth / 2, 310, 0);
-                        drawBar(first);
-                        if(penult != null)
-                        {
-                            glTranslatef(0, barOffset, 0);
-                            drawBar(penult);
-                        }
-                        if(last != null)
-                        {
-                            glTranslatef(0, barOffset, 0);
-                            drawBar(last);
-                        }
-                        glPopMatrix();
-                    }
-
-                    angle += 1;
-
-                    // forge logo
-                    setColor(backgroundColor);
-                    float fw = (float)forgeTexture.getWidth() / 2 / 2;
-                    float fh = (float)forgeTexture.getHeight() / 2 / 2;
-                    if(rotate)
-                    {
-                        float sh = Math.max(fw, fh);
-                        glTranslatef(320 + w/2 - sh - logoOffset, 240 + h/2 - sh - logoOffset, 0);
-                        glRotatef(angle, 0, 0, 1);
+                        customSplash.renderFrame();
                     }
                     else
                     {
-                        glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
-                    }
-                    int f = (angle / 10) % forgeTexture.getFrames();
-                    glEnable(GL_TEXTURE_2D);
-                    forgeTexture.bind();
-                    glBegin(GL_QUADS);
-                    forgeTexture.texCoord(f, 0, 0);
-                    glVertex2f(-fw, -fh);
-                    forgeTexture.texCoord(f, 0, 1);
-                    glVertex2f(-fw, fh);
-                    forgeTexture.texCoord(f, 1, 1);
-                    glVertex2f(fw, fh);
-                    forgeTexture.texCoord(f, 1, 0);
-                    glVertex2f(fw, -fh);
-                    glEnd();
-                    glDisable(GL_TEXTURE_2D);
+                        ProgressBar first = null, penult = null, last = null;
+                        Iterator<ProgressBar> i = ProgressManager.barIterator();
+                        while(i.hasNext())
+                        {
+                            if(first == null) first = i.next();
+                            else
+                            {
+                                penult = last;
+                                last = i.next();
+                            }
+                        }
 
+                        glClear(GL_COLOR_BUFFER_BIT);
+
+                        // matrix setup
+                        int w = Display.getWidth();
+                        int h = Display.getHeight();
+                        glViewport(0, 0, w, h);
+                        glMatrixMode(GL_PROJECTION);
+                        glLoadIdentity();
+                        glOrtho(320 - w/2, 320 + w/2, 240 + h/2, 240 - h/2, -1, 1);
+                        glMatrixMode(GL_MODELVIEW);
+                        glLoadIdentity();
+
+                        // mojang logo
+                        setColor(backgroundColor);
+                        glEnable(GL_TEXTURE_2D);
+                        logoTexture.bind();
+                        glBegin(GL_QUADS);
+                        logoTexture.texCoord(0, 0, 0);
+                        glVertex2f(320 - 256, 240 - 256);
+                        logoTexture.texCoord(0, 0, 1);
+                        glVertex2f(320 - 256, 240 + 256);
+                        logoTexture.texCoord(0, 1, 1);
+                        glVertex2f(320 + 256, 240 + 256);
+                        logoTexture.texCoord(0, 1, 0);
+                        glVertex2f(320 + 256, 240 - 256);
+                        glEnd();
+                        glDisable(GL_TEXTURE_2D);
+
+                        // bars
+                        if(first != null)
+                        {
+                            glPushMatrix();
+                            glTranslatef(320 - (float)barWidth / 2, 310, 0);
+                            drawBar(first);
+                            if(penult != null)
+                            {
+                                glTranslatef(0, barOffset, 0);
+                                drawBar(penult);
+                            }
+                            if(last != null)
+                            {
+                                glTranslatef(0, barOffset, 0);
+                                drawBar(last);
+                            }
+                            glPopMatrix();
+                        }
+
+                        angle += 1;
+
+                        // forge logo
+                        setColor(backgroundColor);
+                        float fw = (float)forgeTexture.getWidth() / 2 / 2;
+                        float fh = (float)forgeTexture.getHeight() / 2 / 2;
+                        if(rotate)
+                        {
+                            float sh = Math.max(fw, fh);
+                            glTranslatef(320 + w/2 - sh - logoOffset, 240 + h/2 - sh - logoOffset, 0);
+                            glRotatef(angle, 0, 0, 1);
+                        }
+                        else
+                        {
+                            glTranslatef(320 + w/2 - fw - logoOffset, 240 + h/2 - fh - logoOffset, 0);
+                        }
+                        int f = (angle / 10) % forgeTexture.getFrames();
+                        glEnable(GL_TEXTURE_2D);
+                        forgeTexture.bind();
+                        glBegin(GL_QUADS);
+                        forgeTexture.texCoord(f, 0, 0);
+                        glVertex2f(-fw, -fh);
+                        forgeTexture.texCoord(f, 0, 1);
+                        glVertex2f(-fw, fh);
+                        forgeTexture.texCoord(f, 1, 1);
+                        glVertex2f(fw, fh);
+                        forgeTexture.texCoord(f, 1, 0);
+                        glVertex2f(fw, -fh);
+                        glEnd();
+                        glDisable(GL_TEXTURE_2D);
+                    }
                     // We use mutex to indicate safely to the main thread that we're taking the display global lock
                     // So the main thread can skip processing messages while we're updating.
                     // There are system setups where this call can pause for a while, because the GL implementation
@@ -631,8 +647,7 @@ public class SplashProgress
 
     private static final IntBuffer buf = BufferUtils.createIntBuffer(4 * 1024 * 1024);
 
-    @SuppressWarnings("unused")
-    private static class Texture
+    public static class Texture
     {
         private final ResourceLocation location;
         private final int name;
@@ -763,7 +778,7 @@ public class SplashProgress
         }
     }
 
-    private static class SplashFontRenderer extends FontRenderer
+    public static class SplashFontRenderer extends FontRenderer
     {
         public SplashFontRenderer()
         {
