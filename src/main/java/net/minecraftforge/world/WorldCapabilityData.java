@@ -7,6 +7,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class WorldCapabilityData extends WorldSavedData
 {
+    public static final String ID = "capabilities";
+
     private INBTSerializable<NBTTagCompound> serializable;
     private NBTTagCompound capNBT = null;
 
@@ -15,31 +17,27 @@ public class WorldCapabilityData extends WorldSavedData
         super(name);
     }
 
-    public WorldCapabilityData(WorldProvider provider, INBTSerializable<NBTTagCompound> serializable)
+    public WorldCapabilityData(INBTSerializable<NBTTagCompound> serializable)
     {
-        super(fileNameForProvider(provider));
+        super(ID);
         this.serializable = serializable;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
-        if(nbt.hasKey("ForgeCaps"))
+        this.capNBT = nbt;
+        if(serializable != null)
         {
-            this.capNBT = nbt.getCompoundTag("ForgeCaps");
-            if(serializable != null)
-            {
-                serializable.deserializeNBT(this.capNBT);
-                this.capNBT = null;
-            }
+            serializable.deserializeNBT(this.capNBT);
+            this.capNBT = null;
         }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        nbt.setTag("ForgeCaps", serializable.serializeNBT());
-        return nbt;
+        return nbt = serializable.serializeNBT();
     }
 
     @Override
@@ -56,10 +54,5 @@ public class WorldCapabilityData extends WorldSavedData
             serializable.deserializeNBT(this.capNBT);
             this.capNBT = null;
         }
-    }
-
-    public static String fileNameForProvider(WorldProvider provider)
-    {
-        return "capabilities" + provider.getDimensionType().getSuffix();
     }
 }

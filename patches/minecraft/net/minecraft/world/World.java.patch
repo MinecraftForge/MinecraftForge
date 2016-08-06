@@ -913,10 +913,10 @@
 +    {
 +        net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, parent);
-+        net.minecraftforge.world.WorldCapabilityData data = (net.minecraftforge.world.WorldCapabilityData)perWorldStorage.func_75742_a(net.minecraftforge.world.WorldCapabilityData.class, net.minecraftforge.world.WorldCapabilityData.fileNameForProvider(field_73011_w));
++        net.minecraftforge.world.WorldCapabilityData data = (net.minecraftforge.world.WorldCapabilityData)perWorldStorage.func_75742_a(net.minecraftforge.world.WorldCapabilityData.class, net.minecraftforge.world.WorldCapabilityData.ID);
 +        if (data == null)
 +        {
-+            capabilityData = new net.minecraftforge.world.WorldCapabilityData(field_73011_w, capabilities);
++            capabilityData = new net.minecraftforge.world.WorldCapabilityData(capabilities);
 +            perWorldStorage.func_75745_a(capabilityData.field_76190_i, capabilityData);
 +        }
 +        else
