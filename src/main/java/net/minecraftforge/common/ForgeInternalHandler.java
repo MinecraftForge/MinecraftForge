@@ -24,12 +24,16 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.ingredients.capability.wrappers.VanillaIngredientCapabilityInjector;
 
 public class ForgeInternalHandler
 {
@@ -95,5 +99,15 @@ public class ForgeInternalHandler
         ForgeChunkManager.unloadWorld(event.getWorld());
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void attachVanillaIngredientCaps(AttachCapabilitiesEvent.Item event)
+    {
+        ICapabilityProvider cap = VanillaIngredientCapabilityInjector.getWrapperForItem(event.getItem(), event.getItemStack());
+        if(cap != null)
+        {
+            event.addCapability(VanillaIngredientCapabilityInjector.ResourceHandle, cap);
+        }
     }
 }

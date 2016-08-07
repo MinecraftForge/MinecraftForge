@@ -97,8 +97,10 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         if (contained == null)
         {
             int fillAmount = Math.min(capacity, resource.amount);
-            if (fillAmount == capacity) {
-                if (doFill) {
+            if (fillAmount == capacity)
+            {
+                if (doFill)
+                {
                     FluidStack filled = resource.copy();
                     filled.amount = fillAmount;
                     setFluid(filled);
@@ -136,10 +138,12 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         }
 
         final int drainAmount = Math.min(contained.amount, maxDrain);
-        if (drainAmount == capacity) {
+        if (drainAmount == capacity)
+        {
             FluidStack drained = contained.copy();
 
-            if (doDrain) {
+            if (doDrain)
+            {
                 setContainerToEmpty();
             }
 
