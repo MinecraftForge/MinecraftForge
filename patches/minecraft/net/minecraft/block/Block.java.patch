@@ -1354,6 +1354,24 @@
 +        return func_185467_w();
 +    }
 +
++    /**
++     * The values returned are blended with the RGB values the beam had before entering this block
++     *
++     * Return a float array with rgb elements in the range of 0-1 or null for no change
++     *
++     * The blending works like so: (old + new) / 2
++     *
++     * @param state The state
++     * @param world The world
++     * @param pos The position
++     * @return The color or null
++     */
++    @Nullable
++    public float[] getBeaconColor(IBlockState state, World world, BlockPos pos)
++    {
++        return null;
++    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()

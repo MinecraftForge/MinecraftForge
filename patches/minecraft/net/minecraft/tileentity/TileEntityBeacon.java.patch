@@ -9,6 +9,18 @@
                      {
                          this.field_146015_k = false;
                          this.field_174909_f.clear();
+                         break;
+                     }
+ 
++                    float[] color = iblockstate.func_177230_c().getBeaconColor(iblockstate, field_145850_b, blockpos$mutableblockpos); if(color != null){afloat=color;}else{
+                     tileentitybeacon$beamsegment.func_177262_a();
+                     continue;
+                 }
+ 
++                }else
+                 afloat = EntitySheep.func_175513_a((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a));
+             }
+ 
 @@ -181,7 +181,7 @@
                      {
                          Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
