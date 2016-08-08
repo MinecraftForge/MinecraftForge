@@ -139,7 +139,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
         if (drainAmount == capacity) {
             FluidStack drained = contained.copy();
 
-            if (doDrain){
+            if (doDrain) {
                 setContainerToEmpty();
             }
 
