@@ -42,14 +42,15 @@ public class IngredientRegistry {
     public static final Ingredient LAPIS    = new Ingredient("lapis").setBlock(Blocks.LAPIS_BLOCK).setDensity(2400 /*avg*/).setMeltingPoint(1250).setBoilingPoint(2750)/*not enough info on compound. Used estimates for feldspathoids*/;
     public static final Ingredient STONE    = new Ingredient("stone").setBlock(Blocks.STONE).setDensity(3011).setMeltingPoint(1395).setBoilingPoint(2503); /*treated as basalt*/
 
-    static
+    static   //Add identifiers here to help reduce class width, and maintain readability
     {
-        registerIngredient(IRON);
-        registerIngredient(GOLD);
-        registerIngredient(DIAMOND);
-        registerIngredient(COAL);
-        registerIngredient(CHARCOAL);
-        registerIngredient(LAPIS);
+        registerIngredient(IRON.addIdentifier("metal", "mineable"));
+        registerIngredient(GOLD.addIdentifier("metal","mineable"));
+        registerIngredient(DIAMOND.addIdentifier("crystal", "mineable"));
+        registerIngredient(COAL.addIdentifier("fuel","mineable"));
+        registerIngredient(CHARCOAL.addIdentifier("fuel","mineable"));
+        registerIngredient(LAPIS.addIdentifier("crystal", "mineable"));
+        registerIngredient(STONE.addIdentifier("mineable"));
     }
 
     private IngredientRegistry() {
@@ -116,7 +117,7 @@ public class IngredientRegistry {
     }
 
     /**
-     * Register a new Ingredient. If a ingredient with the same name already exists, registration the alternative ingredient is tracked
+     * Register a new Ingredient. If an ingredient with the same name already exists, registration the alternative ingredient is tracked
      * in case it is the default in another place
      *
      * @param ingredient The ingredient to register.
@@ -301,7 +302,7 @@ public class IngredientRegistry {
         }
 
         if (!illegalIngredients.isEmpty()) {
-            FMLLog.getLogger().log(Level.FATAL, "The ingredient registry is corrupted. Something has inserted a ingredient without registering it");
+            FMLLog.getLogger().log(Level.FATAL, "The ingredient registry is corrupted. Something has inserted an ingredient without registering it");
             FMLLog.getLogger().log(Level.FATAL, "There is {} unregistered ingredients", illegalIngredients.size());
             for (Ingredient f : illegalIngredients) {
                 FMLLog.getLogger().log(Level.FATAL, "  Ingredient name : {}, type: {}", f.getName(), f.getClass().getName());
@@ -311,8 +312,8 @@ public class IngredientRegistry {
         }
     }
 
-    static RegistryDelegate<Ingredient> makeDelegate(Ingredient fl) {
-        return delegates.get(fl);
+    static RegistryDelegate<Ingredient> makeDelegate(Ingredient ing) {
+        return delegates.get(ing);
     }
 
 

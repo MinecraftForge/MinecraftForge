@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 
 public final class VanillaIngredientCapabilityInjector
 {
-    public static final ResourceLocation ResourceHandle = new ResourceLocation(ForgeModContainer.getInstance().getModId(), "ingredient");
+    public static final ResourceLocation ResourceHandle = new ResourceLocation("forge", "ingredient");
 
     private static final Item ironOre;
     private static final Item ironBlock;
@@ -24,6 +24,8 @@ public final class VanillaIngredientCapabilityInjector
     private static final Item goldBlock;
     private static final Item diamondOre;
     private static final Item diamondBlock;
+    private static final Item coalBlock;
+    private static final Item coalOre;
 
     static
     {
@@ -34,6 +36,8 @@ public final class VanillaIngredientCapabilityInjector
         goldBlock = map.get(Blocks.GOLD_BLOCK);
         diamondBlock = map.get(Blocks.DIAMOND_BLOCK);
         diamondOre = map.get(Blocks.DIAMOND_ORE);
+        coalBlock = map.get(Blocks.COAL_BLOCK);
+        coalOre = map.get(Blocks.COAL_ORE);
     }
 
     private VanillaIngredientCapabilityInjector()
@@ -89,5 +93,10 @@ public final class VanillaIngredientCapabilityInjector
             return new WrapperPureItem(stack, new IngredientStack(IngredientRegistry.DIAMOND, Ingredient.FULL_BLOCK_VOLUME, EnumRefinementLevel.REFINED));
         }
         return null;
+    }
+
+    public static ICapabilityProvider getCoalWrapper(ItemStack stack)
+    {
+        return stack != null ? new WrapperPureItem(stack, new IngredientStack(stack.getMetadata() == 0 ? IngredientRegistry.COAL : IngredientRegistry.CHARCOAL, Ingredient.ORE_VOLUME, EnumRefinementLevel.REFINED)) : null;
     }
 }

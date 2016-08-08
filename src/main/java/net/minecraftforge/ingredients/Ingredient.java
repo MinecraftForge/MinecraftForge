@@ -1,5 +1,6 @@
 package net.minecraftforge.ingredients;
 
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.SoundEvent;
@@ -8,6 +9,8 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.Set;
 
 /**
  * Material equivalent to Fluids.
@@ -114,6 +117,8 @@ public class Ingredient
      * The correlating fluid, if the ingredient has one.
      * */
     protected Fluid fluid = null;
+
+    protected Set<String> indentifiers = Sets.newHashSet();
 
     private SoundEvent addSound;
     private SoundEvent removeSound;
@@ -226,6 +231,20 @@ public class Ingredient
         return this;
     }
 
+    /**
+     * Adds an indentifier to the ingredient. Useful for when the ingredient is being qualified.
+     * <p/>
+     * Use as generic of identifiers as possible. Such as 'metal' or 'mineable'
+     * */
+    public Ingredient addIdentifier(String... identifiers)
+    {
+        for(String toAdd : identifiers)
+        {
+            indentifiers.add(toAdd);
+        }
+        return this;
+    }
+
     /* Checks the default state based on the given temp of 300 degrees kelvin*/
     private void recheckDefaultState()
     {
@@ -321,6 +340,16 @@ public class Ingredient
     public final boolean canBePlacedInWorld()
     {
         return block != null;
+    }
+
+    /**
+     * Returns whether or not this ingredient has the given identifier
+     * <p/>
+     * This is useful for qualifying an item, eg. when checking if it is mineable, or a metal
+     * */
+    public final boolean hasIdentifier(String identifier)
+    {
+        return indentifiers.contains(identifier);
     }
 
     /* Stack based accessors */
