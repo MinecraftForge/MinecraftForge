@@ -766,7 +766,7 @@ public class PersistentRegistryManager
         if (cb == null)
             return null;
         try {
-            final Method mtd = cb.getClass().getMethod("onClear", Map.class);
+            final Method mtd = cb.getClass().getMethod("onCreate", Map.class);
             return new IForgeRegistry.CreateCallback<T>()
             {
                 @Override
