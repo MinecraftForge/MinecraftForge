@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
+@@ -144,7 +144,7 @@
+     private BlockPos field_184620_bC;
+     private DamageSource field_189750_bF;
+     private long field_189751_bG;
+-
++    private boolean canSwim = true;
+     public void func_174812_G()
+     {
+         this.func_70097_a(DamageSource.field_76380_i, Float.MAX_VALUE);
 @@ -193,10 +193,11 @@
          {
              float f = (float)MathHelper.func_76123_f(this.field_70143_R - 3.0F);
@@ -202,6 +211,20 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
+@@ -2163,11 +2196,11 @@
+ 
+         if (this.field_70703_bu)
+         {
+-            if (this.func_70090_H())
++            if (this.func_70090_H() && canSwim())
+             {
+                 this.func_70629_bd();
+             }
+-            else if (this.func_180799_ab())
++            else if (this.func_180799_ab() && canSwim())
+             {
+                 this.func_180466_bG();
+             }
 @@ -2409,6 +2442,40 @@
          this.field_70752_e = true;
      }
@@ -295,7 +318,7 @@
          }
  
          this.func_184602_cy();
-@@ -2685,4 +2764,28 @@
+@@ -2685,4 +2764,30 @@
      {
          return true;
      }
@@ -323,4 +346,6 @@
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }
++    public boolean canSwim() { return canSwim; }
++    public void setCanSwim(boolean canSwim) { this.canSwim = canSwim; }
  }
