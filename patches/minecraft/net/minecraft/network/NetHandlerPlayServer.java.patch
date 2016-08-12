@@ -1,6 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -611,7 +611,10 @@
+@@ -571,9 +571,12 @@
+ 
+                 if (!this.field_147369_b.func_175149_v())
+                 {
+-                    ItemStack itemstack1 = this.field_147369_b.func_184586_b(EnumHand.OFF_HAND);
++                	if(net.minecraftforge.common.ForgeHooks.onSwapHand(this.field_147369_b))
++                	{
++            		ItemStack itemstack1 = this.field_147369_b.func_184586_b(EnumHand.OFF_HAND);
+                     this.field_147369_b.func_184611_a(EnumHand.OFF_HAND, this.field_147369_b.func_184586_b(EnumHand.MAIN_HAND));
+                     this.field_147369_b.func_184611_a(EnumHand.MAIN_HAND, itemstack1);
++                	}
+                 }
+ 
+                 return;
+@@ -611,7 +614,10 @@
                  double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -12,7 +26,7 @@
                  {
                      return;
                  }
-@@ -669,7 +672,9 @@
+@@ -669,7 +675,9 @@
  
          if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z())
          {
@@ -23,7 +37,7 @@
              {
                  this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
-@@ -688,6 +693,7 @@
+@@ -688,6 +696,7 @@
          if (itemstack != null && itemstack.field_77994_a == 0)
          {
              this.field_147369_b.func_184611_a(enumhand, (ItemStack)null);
@@ -31,7 +45,7 @@
          }
      }
  
-@@ -707,6 +713,7 @@
+@@ -707,6 +716,7 @@
              if (itemstack != null && itemstack.field_77994_a == 0)
              {
                  this.field_147369_b.func_184611_a(enumhand, (ItemStack)null);
@@ -39,7 +53,7 @@
                  itemstack = null;
              }
          }
-@@ -886,7 +893,9 @@
+@@ -886,7 +896,9 @@
              }
              else
              {
@@ -50,7 +64,7 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-@@ -1016,6 +1025,7 @@
+@@ -1016,6 +1028,7 @@
                  {
                      EnumHand enumhand1 = p_147340_1_.func_186994_b();
                      ItemStack itemstack1 = this.field_147369_b.func_184586_b(enumhand1);
@@ -58,7 +72,7 @@
                      entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), itemstack1, enumhand1);
                  }
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
-@@ -1055,7 +1065,7 @@
+@@ -1055,7 +1068,7 @@
                          return;
                      }
  

@@ -72,6 +72,7 @@ import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -277,7 +278,16 @@ public class ForgeHooks
         }
         return ret;
     }
-
+    
+    public static boolean onSwapHand(EntityPlayer player)
+    {
+    	ItemStack itemstack1 = player.getHeldItem(EnumHand.OFF_HAND);
+	    ItemStack itemstack2 = player.getHeldItem(EnumHand.MAIN_HAND);
+	    ActionResult<ItemStack> res1 = itemstack1 != null ? itemstack1.getItem().onSwapHand(player, EnumHand.OFF_HAND, itemstack1, EnumHand.MAIN_HAND, itemstack2) : new ActionResult(EnumActionResult.PASS, null);
+	    ActionResult<ItemStack> res2 = itemstack2 != null ? itemstack2.getItem().onSwapHand(player, EnumHand.MAIN_HAND, itemstack2, EnumHand.OFF_HAND, itemstack1) : new ActionResult(EnumActionResult.PASS, null); 
+	    return res1.getType() == EnumActionResult.PASS && res2.getType() == EnumActionResult.PASS ;
+    }
+    
     static
     {
         seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10)

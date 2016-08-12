@@ -52,7 +52,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +432,569 @@
+@@ -426,11 +432,584 @@
          return false;
      }
  
@@ -84,7 +84,22 @@
 +    {
 +        return true;
 +    }
-+
++    
++    /**
++     * Called when a player press the keybinding for swapping item between the two hands
++     *
++     * @param playerIn The player that pressed the swapping keybinding
++     * @param fromHand The hand where the item stack come from, before the swap is done.
++     * @param itemStackFrom The item stack held in the fromHand, before the swap is done.
++     * @param toHand The hand where the item stack should go if the result is pass,before the swap is done.
++     * @param itemStackTo The item stack held in the toHand, before the swap is done.
++     * @return Return PASS to allow swapping, any other to cancel it.
++     */    
++    public ActionResult<ItemStack> onSwapHand(EntityPlayer playerIn, EnumHand fromHand, ItemStack itemStackFrom, EnumHand toHand, ItemStack itemStackTo)
++    {
++        return new ActionResult(EnumActionResult.PASS, itemStackFrom);
++    }
++    
 +    /**
 +     * Allow the item one last chance to modify its name used for the
 +     * tool highlight useful for adding something extra that can't be removed
@@ -622,7 +637,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1526,10 @@
+@@ -962,6 +1541,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -633,7 +648,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1564,36 @@
+@@ -996,9 +1579,36 @@
              return this.field_78008_j;
          }
  
