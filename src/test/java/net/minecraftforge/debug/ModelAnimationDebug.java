@@ -57,7 +57,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.collect.ImmutableMap;
 
-@Mod(modid = ModelAnimationDebug.MODID, version = ModelAnimationDebug.VERSION)
+@Mod(modid = ModelAnimationDebug.MODID, name = "ForgeDebugModelAnimation", version = ModelAnimationDebug.VERSION)
 public class ModelAnimationDebug
 {
     public static final String MODID = "forgedebugmodelanimation";

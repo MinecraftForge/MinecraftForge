@@ -45,10 +45,10 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
 
-@Mod(modid = DynBucketTest.MODID, version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
+@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
 public class DynBucketTest
 {
-    public static final String MODID = "DynBucketTest";
+    public static final String MODID = "dynbuckettest";
     public static final Item dynBucket = new DynBucket();
     public static final Item dynBottle = new DynBottle();
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");

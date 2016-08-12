@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid=LootTablesDebug.MODID)
+@Mod(modid = LootTablesDebug.MODID, name = "Loot Table Debug", version = "1.0")
 public class LootTablesDebug {
     public static final String MODID = "loot_table_debug";
     private static final ResourceLocation CUSTOM_LOOT = LootTableList.register(new ResourceLocation(MODID, "custom_loot"));

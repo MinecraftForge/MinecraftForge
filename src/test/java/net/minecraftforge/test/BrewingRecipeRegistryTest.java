@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
-@Mod(modid="BrewingRecipeRegistryTest", name="BrewingRecipeRegistryTest", version="0.0.0")
+@Mod(modid="brewingreciperegistrytest", name="BrewingRecipeRegistryTest", version="0.0.0")
 public class BrewingRecipeRegistryTest
 {
 
