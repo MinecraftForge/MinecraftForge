@@ -74,6 +74,7 @@ public class UnpackedBakedQuad extends BakedQuad
         {
             // catch missing method errors caused by change to IVertexConsumer
         }
+        consumer.setApplyDiffuseLighting(applyDiffuseLighting);
         consumer.setQuadOrientation(getFace());
         for(int v = 0; v < 4; v++)
         {
