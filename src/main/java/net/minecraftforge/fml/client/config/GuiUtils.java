@@ -26,12 +26,17 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 /**
  * This class provides several methods and constants used by the Config GUI classes.
@@ -205,6 +210,26 @@ public class GuiUtils
         tessellator.draw();
     }
 
+    private static ItemStack cachedTooltipStack;
+
+    /**
+     * Must be called from {@code GuiScreen.renderToolTip} before {@code GuiScreen.drawHoveringText} is called.
+     * 
+     * @param stack The stack for which a tooltip is about to be drawn.
+     */
+    public static void preItemToolTip(ItemStack stack)
+    {
+        cachedTooltipStack = stack;
+    }
+    
+    /**
+     * Must be called from {@code GuiScreen.renderToolTip} after {@code GuiScreen.drawHoveringText} is called.
+     */
+    public static void postItemToolTip()
+    {
+        cachedTooltipStack = null;
+    }
+
     /**
      *  Draws a tooltip box on the screen with text in it.
      *  Automatically positions the box relative to the mouse to match Mojang's implementation.
@@ -220,10 +245,32 @@ public class GuiUtils
      *                     Set to a negative number to have no max width.
      * @param font the font for drawing the text in the tooltip box
      */
-    public static void drawHoveringText(List<String> textLines, final int mouseX, final int mouseY, final int screenWidth, final int screenHeight, final int maxTextWidth, FontRenderer font)
+    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
+    {
+        drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
+    }
+    
+    /**
+     * Use this version if calling from somewhere where ItemStack context is available.
+     * 
+     * @see #drawHoveringText(List, int, int, int, int, int, FontRenderer)
+     */
+    public static void drawHoveringText(@Nullable final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
+            int maxTextWidth, FontRenderer font)
     {
         if (!textLines.isEmpty())
         {
+            RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
+            if (MinecraftForge.EVENT_BUS.post(event)) {
+                return;
+            }
+            mouseX = event.getX();
+            mouseY = event.getY();
+            screenWidth = event.getScreenWidth();
+            screenHeight = event.getScreenHeight();
+            maxTextWidth = event.getMaxWidth();
+            font = event.getFontRenderer();
+            
             GlStateManager.disableRescaleNormal();
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableLighting();
@@ -333,6 +380,9 @@ public class GuiUtils
             drawGradientRect(zLevel, tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
             drawGradientRect(zLevel, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
 
+            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
+            int tooltipTop = tooltipY;
+            
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber)
             {
                 String line = textLines.get(lineNumber);
@@ -345,6 +395,8 @@ public class GuiUtils
 
                 tooltipY += 10;
             }
+
+            MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(stack, textLines, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
 
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
