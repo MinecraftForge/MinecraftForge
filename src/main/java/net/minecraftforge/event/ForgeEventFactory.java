@@ -67,6 +67,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -487,6 +488,11 @@ public class ForgeEventFactory
     public static void onPotionBrewed(ItemStack[] brewingItemStacks)
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
+    }
+    
+    public static void onPlayerBrewedPotion(EntityPlayer player, ItemStack stack)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
     }
 
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
