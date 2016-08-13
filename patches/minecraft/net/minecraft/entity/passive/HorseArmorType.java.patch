@@ -1,22 +1,36 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/HorseArmorType.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/HorseArmorType.java
-@@ -62,16 +62,19 @@
+@@ -31,6 +31,13 @@
+         this.field_188586_e = "textures/entity/horse/armor/horse_armor_" + p_i46800_4_ + ".png";
+         this.field_188587_f = p_i46800_5_;
+     }
++    
++    private HorseArmorType(int armorStengthIn, String textureName)
++    {
++        this.field_188588_g = armorStengthIn;
++        this.field_188586_e = textureName;
++        this.field_188587_f = textureName;
++    }
+ 
+     public int func_188579_a()
+     {
+@@ -62,16 +69,19 @@
  
      public static HorseArmorType func_188580_a(@Nullable ItemStack p_188580_0_)
      {
-+    	if (p_188580_0_ != null && p_188580_0_.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor) return ((net.minecraftforge.common.IHorseArmor) p_188580_0_.func_77973_b()).getArmorType(p_188580_0_);
++        if (p_188580_0_ != null && p_188580_0_.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor) return ((net.minecraftforge.common.IHorseArmor) p_188580_0_.func_77973_b()).getArmorType(p_188580_0_);
          return p_188580_0_ == null ? NONE : func_188576_a(p_188580_0_.func_77973_b());
      }
  
      public static HorseArmorType func_188576_a(@Nullable Item p_188576_0_)
      {
-+    	if (p_188576_0_ instanceof net.minecraftforge.common.IHorseArmor) return ((net.minecraftforge.common.IHorseArmor) p_188576_0_).getArmorType(new ItemStack(p_188576_0_));
++        if (p_188576_0_ instanceof net.minecraftforge.common.IHorseArmor) return ((net.minecraftforge.common.IHorseArmor) p_188576_0_).getArmorType(new ItemStack(p_188576_0_));
          return p_188576_0_ == Items.field_151138_bX ? IRON : (p_188576_0_ == Items.field_151136_bY ? GOLD : (p_188576_0_ == Items.field_151125_bZ ? DIAMOND : NONE));
      }
  
      public static boolean func_188577_b(@Nullable Item p_188577_0_)
      {
-+    	if (p_188577_0_ instanceof net.minecraftforge.common.IHorseArmor) return true;
++        if (p_188577_0_ instanceof net.minecraftforge.common.IHorseArmor) return true;
          return func_188576_a(p_188577_0_) != NONE;
      }
  }

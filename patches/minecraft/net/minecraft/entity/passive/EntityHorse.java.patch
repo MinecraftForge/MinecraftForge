@@ -1,30 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
-@@ -77,6 +77,7 @@
-     private static final DataParameter<Integer> field_184789_bG = EntityDataManager.<Integer>func_187226_a(EntityHorse.class, DataSerializers.field_187192_b);
-     private static final DataParameter<Optional<UUID>> field_184790_bH = EntityDataManager.<Optional<UUID>>func_187226_a(EntityHorse.class, DataSerializers.field_187203_m);
-     private static final DataParameter<Integer> field_184791_bI = EntityDataManager.<Integer>func_187226_a(EntityHorse.class, DataSerializers.field_187192_b);
-+    private static final DataParameter<Optional<ItemStack>> ARMOR_STACK = EntityDataManager.<Optional<ItemStack>>func_187226_a(EntityHorse.class, DataSerializers.field_187196_f);
-     private static final String[] field_110268_bz = new String[] {"textures/entity/horse/horse_white.png", "textures/entity/horse/horse_creamy.png", "textures/entity/horse/horse_chestnut.png", "textures/entity/horse/horse_brown.png", "textures/entity/horse/horse_black.png", "textures/entity/horse/horse_gray.png", "textures/entity/horse/horse_darkbrown.png"};
-     private static final String[] field_110269_bA = new String[] {"hwh", "hcr", "hch", "hbr", "hbl", "hgr", "hdb"};
-     private static final String[] field_110291_bB = new String[] {null, "textures/entity/horse/horse_markings_white.png", "textures/entity/horse/horse_markings_whitefield.png", "textures/entity/horse/horse_markings_whitedots.png", "textures/entity/horse/horse_markings_blackdots.png"};
-@@ -137,6 +138,7 @@
-         this.field_70180_af.func_187214_a(field_184789_bG, Integer.valueOf(0));
-         this.field_70180_af.func_187214_a(field_184790_bH, Optional.<UUID>absent());
-         this.field_70180_af.func_187214_a(field_184791_bI, Integer.valueOf(HorseArmorType.NONE.func_188579_a()));
-+        this.field_70180_af.func_187214_a(ARMOR_STACK, Optional.<ItemStack>absent());
-     }
- 
-     public void func_184778_a(HorseType p_184778_1_)
-@@ -290,6 +292,7 @@
-     {
-         HorseArmorType horsearmortype = HorseArmorType.func_188580_a(p_146086_1_);
-         this.field_70180_af.func_187227_b(field_184791_bI, Integer.valueOf(horsearmortype.func_188579_a()));
-+        this.field_70180_af.func_187227_b(ARMOR_STACK, Optional.fromNullable(p_146086_1_));
-         this.func_110230_cF();
- 
-         if (!this.field_70170_p.field_72995_K)
-@@ -405,7 +408,7 @@
+@@ -405,7 +405,7 @@
  
              if (iblockstate.func_185904_a() != Material.field_151579_a && !this.func_174814_R())
              {
@@ -33,7 +9,7 @@
                  this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, soundtype.func_185844_d(), this.func_184176_by(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
-@@ -441,6 +444,7 @@
+@@ -441,6 +441,7 @@
  
          this.field_110296_bG.func_110134_a(this);
          this.func_110232_cE();
@@ -41,7 +17,7 @@
      }
  
      private void func_110232_cE()
-@@ -556,7 +560,7 @@
+@@ -556,7 +557,7 @@
  
      protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
      {
@@ -50,17 +26,7 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -682,6 +686,9 @@
- 
-         HorseArmorType horsearmortype = this.func_184783_dl();
-         this.field_110280_bR[2] = horsearmortype.func_188574_d();
-+        ItemStack armorStack = this.field_70180_af.func_187225_a(ARMOR_STACK).orNull();
-+        if (armorStack != null && armorStack.func_77973_b() instanceof net.minecraftforge.common.IHorseArmor)
-+        	this.field_110280_bR[2] = ((net.minecraftforge.common.IHorseArmor) armorStack.func_77973_b()).getArmorTexture(this, armorStack);
-         this.field_110286_bQ = this.field_110286_bQ + horsearmortype.func_188573_b();
-         this.field_175508_bO = true;
-     }
-@@ -1212,6 +1219,7 @@
+@@ -1212,6 +1213,7 @@
                  }
  
                  this.field_110277_bt = 0.0F;
@@ -68,7 +34,7 @@
              }
  
              this.field_70747_aH = this.func_70689_ay() * 0.1F;
-@@ -1813,4 +1821,21 @@
+@@ -1813,4 +1815,21 @@
                  this.field_188477_b = p_i46589_2_;
              }
          }

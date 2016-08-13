@@ -70,7 +70,7 @@ public class EnumHelper
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class},
-        {HorseArmorType.class, int.class, String.class, String.class}
+        {HorseArmorType.class, int.class, String.class}
     };
 
     public static EnumAction addAction(String name)
@@ -125,9 +125,9 @@ public class EnumHelper
     {
         return addEnum(EnumRarity.class, name, color, displayName);
     }
-    public static HorseArmorType addArmorType(String name, int protection, String texture, String hash)
+    public static HorseArmorType addArmorType(String name, int protection, String texture)
     {
-    	return addEnum(HorseArmorType.class, name, protection, texture, hash);
+    	return addEnum(HorseArmorType.class, name, protection, texture);
     }
 
     private static void setup()

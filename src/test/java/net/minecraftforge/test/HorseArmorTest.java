@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,9 +31,9 @@ public class HorseArmorTest
 {
     public static final String MODID = "forgedebughorsearmor";
     public static final String MODNAME = "Horse Armor Test";
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
     private static final Logger LOG = LogManager.getLogger(MODNAME);
-    private static final HorseArmorType TEST_MATERIAL = EnumHelper.addArmorType("FORGE_TEST", 23, MODID + ":textures/entity/horse/test_armor.png", "forge_test");
+    private static final HorseArmorType TEST_MATERIAL = EnumHelper.addArmorType("FORGE_TEST", 23, MODID + ":textures/entity/horse/test_armor.png");
 
     @EventHandler
     public void init(FMLPreInitializationEvent event) 
@@ -70,12 +69,6 @@ public class HorseArmorTest
         public HorseArmorType getArmorType(ItemStack stack) 
         {
             return TEST_MATERIAL;
-        }
-
-        @Override
-        public String getArmorTexture(EntityLivingBase wearer, ItemStack stack) 
-        {
-            return MODID + ":textures/entity/horse/test_armor.png";
         }
 
         @SideOnly(Side.CLIENT)
