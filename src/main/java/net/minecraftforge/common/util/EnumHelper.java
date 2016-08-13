@@ -32,6 +32,7 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
+import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
@@ -68,7 +69,8 @@ public class EnumHelper
         {EnumSkyBlock.class, int.class},
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, TextFormatting.class, String.class}
+        {EnumRarity.class, TextFormatting.class, String.class},
+        {HorseArmorType.class, int.class, String.class, String.class}
     };
 
     public static EnumAction addAction(String name)
@@ -122,6 +124,10 @@ public class EnumHelper
     public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
+    }
+    public static HorseArmorType addArmorType(String name, int protection, String texture, String hash)
+    {
+    	return addEnum(HorseArmorType.class, name, protection, texture, hash);
     }
 
     private static void setup()
