@@ -245,7 +245,7 @@ public class SplashProgress
             {
                 setGL();
                 fontTexture = new Texture(fontLoc);
-                logoTexture = new Texture(logoLoc);
+                logoTexture = new Texture(logoLoc, false);
                 forgeTexture = new Texture(forgeLoc);
                 glEnable(GL_TEXTURE_2D);
                 fontRenderer = new SplashFontRenderer();
@@ -643,11 +643,16 @@ public class SplashProgress
 
         public Texture(ResourceLocation location)
         {
+            this(location, true);
+        }
+
+        public Texture(ResourceLocation location, boolean allowRP)
+        {
             InputStream s = null;
             try
             {
                 this.location = location;
-                s = open(location);
+                s = open(location, allowRP);
                 ImageInputStream stream = ImageIO.createImageInputStream(s);
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
                 if(!readers.hasNext()) throw new IOException("No suitable reader found for image" + location);
@@ -811,8 +816,11 @@ public class SplashProgress
         }
     }
 
-    private static InputStream open(ResourceLocation loc) throws IOException
+    private static InputStream open(ResourceLocation loc, boolean allowRP) throws IOException
     {
+        if (!allowRP)
+            return mcPack.getInputStream(loc);
+
         if(miscPack.resourceExists(loc))
         {
             return miscPack.getInputStream(loc);
