@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-@Mod(modid = "wrnormal", version = "1.0")
+@Mod(modid = "wrnormal", name = "WRNormal", version = "1.0")
 public class WRNormalMod
 {
     @Instance("wrnormal")

@@ -17,10 +17,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Random;
 
-@Mod(modid = ItemLayerModelDebug.MODID, version = ItemLayerModelDebug.VERSION)
+@Mod(modid = ItemLayerModelDebug.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelDebug.VERSION)
 public class ItemLayerModelDebug
 {
-    public static final String MODID = "ForgeDebugItemLayerModel";
+    public static final String MODID = "forgedebugitemlayermodel";
     public static final String VERSION = "1.0";
 
     @SidedProxy

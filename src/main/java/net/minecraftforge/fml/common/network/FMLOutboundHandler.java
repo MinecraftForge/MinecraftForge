@@ -29,6 +29,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
@@ -128,7 +129,7 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
             {
                 EntityPlayerMP player = (EntityPlayerMP) args;
-                NetworkDispatcher dispatcher = player == null ? null : player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                NetworkDispatcher dispatcher = (player == null || player instanceof FakePlayer) ? null : player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
                 return dispatcher == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(dispatcher);
             }
         },

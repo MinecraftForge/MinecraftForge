@@ -13,12 +13,11 @@
 +                this.field_177190_a.func_110776_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, null));
  
 -                switch (itemarmor.func_82812_d())
--                {
+                 {
 -                    case LEATHER:
-                         int i = itemarmor.func_82814_b(itemstack);
-+                {
-+                    if (i != 0xFFFFFF) // Allow this for anything, not only cloth
++                    if (itemarmor.hasOverlay(itemstack)) // Allow this for anything, not only cloth
 +                    {
+                         int i = itemarmor.func_82814_b(itemstack);
                          float f = (float)(i >> 16 & 255) / 255.0F;
                          float f1 = (float)(i >> 8 & 255) / 255.0F;
                          float f2 = (float)(i & 255) / 255.0F;

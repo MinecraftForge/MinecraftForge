@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "CreateFluidSourceTest", version = "1.0")
+@Mod(modid = "createfluidsourcetest", name = "CreateFluidSourceTest", version = "1.0")
 public class CreateFluidSourceTest
 {
     public static final boolean ENABLE = false;

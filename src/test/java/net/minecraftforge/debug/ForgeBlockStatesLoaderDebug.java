@@ -30,9 +30,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
-@Mod(modid = ForgeBlockStatesLoaderDebug.MODID)
+@Mod(modid = ForgeBlockStatesLoaderDebug.MODID, name = "ForgeBlockStatesLoader", version = "1.0")
 public class ForgeBlockStatesLoaderDebug {
-    public static final String MODID = "ForgeBlockStatesLoader";
+    public static final String MODID = "forgeblockstatesloader";
     public static final String ASSETS = "forgeblockstatesloader:";
 
     //public static final Block blockCustom = new CustomMappedBlock();
