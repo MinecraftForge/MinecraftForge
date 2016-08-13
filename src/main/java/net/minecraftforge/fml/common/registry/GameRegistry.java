@@ -243,15 +243,19 @@ public class GameRegistry
     }
 
     public static void addSmelting(Block input, @Nonnull ItemStack output, float xp)
+    @Deprecated // Use FurnaceRecipeRegistry
+    public static void addSmelting(Block input, ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
     }
 
+    @Deprecated // Use FurnaceRecipeRegistry
     public static void addSmelting(Item input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmelting(input, output, xp);
     }
 
+    @Deprecated // Use FurnaceRecipeRegistry
     public static void addSmelting(@Nonnull ItemStack input, @Nonnull ItemStack output, float xp)
     {
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
