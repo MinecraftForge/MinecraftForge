@@ -525,6 +525,10 @@ public class ForgeEventFactory
         return gatherCapabilities(new AttachCapabilitiesEvent.Item(item, stack), parent);
     }
 
+    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent) {
+        return gatherCapabilities(new AttachCapabilitiesEvent.World(world), parent);
+    }
+
     private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent event, ICapabilityProvider parent)
     {
         MinecraftForge.EVENT_BUS.post(event);
