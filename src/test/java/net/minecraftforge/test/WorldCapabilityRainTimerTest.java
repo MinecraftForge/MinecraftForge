@@ -39,7 +39,8 @@ public class WorldCapabilityRainTimerTest {
         MinecraftForge.EVENT_BUS.register(new NormalEventHandler());
     }
 
-    public static class NormalEventHandler {
+    public static class NormalEventHandler
+    {
         @SubscribeEvent
         public void attatchTimer(AttachCapabilitiesEvent.World event)
         {
@@ -57,10 +58,11 @@ public class WorldCapabilityRainTimerTest {
             if(event.phase == TickEvent.Phase.END)
                 timer.onTick();
 
-            if(event.phase == TickEvent.Phase.START){
+            if(event.phase == TickEvent.Phase.START)
+            {
                 if(!event.world.provider.getHasNoSky() && event.world.isRaining())
                 {
-                	if(timer.getDuration() == 0)
+                    if(timer.getDuration() == 0)
                         timer.refreshTimer(1000, 0);
                     else if(timer.isTimerReachedDuration())
                         event.world.provider.resetRainAndThunder();
@@ -70,7 +72,8 @@ public class WorldCapabilityRainTimerTest {
         }
     }
 
-    public interface IRainTimer {
+    public interface IRainTimer
+    {
         public int getCurrentTime();
         public int getDuration();
 
@@ -81,7 +84,8 @@ public class WorldCapabilityRainTimerTest {
         public void onTick();
     }
 
-    public static class TimerStorage implements IStorage<IRainTimer> {
+    public static class TimerStorage implements IStorage<IRainTimer>
+    {
         @Override
         public NBTBase writeNBT(Capability<IRainTimer> capability, IRainTimer instance, EnumFacing side) {
             NBTTagCompound compound = new NBTTagCompound();
@@ -92,12 +96,13 @@ public class WorldCapabilityRainTimerTest {
 
         @Override
         public void readNBT(Capability<IRainTimer> capability, IRainTimer instance, EnumFacing side, NBTBase nbt) {
-        	NBTTagCompound data = (NBTTagCompound) nbt;
+            NBTTagCompound data = (NBTTagCompound) nbt;
             instance.refreshTimer(data.getInteger("duration"), data.getInteger("current"));
         }
     }
 
-    public static class DefaultTimer implements IRainTimer {
+    public static class DefaultTimer implements IRainTimer
+    {
         private int duration, current;
 
         @Override
@@ -131,7 +136,8 @@ public class WorldCapabilityRainTimerTest {
         }
     }
 
-    public static class RainTimerProvider implements ICapabilitySerializable<NBTTagCompound> {
+    public static class RainTimerProvider implements ICapabilitySerializable<NBTTagCompound>
+    {
         private IRainTimer timer = TIMER_CAP.getDefaultInstance();
 
         @Override

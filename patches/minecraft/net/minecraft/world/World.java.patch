@@ -25,7 +25,7 @@
 +    public boolean captureBlockSnapshots = false;
 +    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
-+    private net.minecraftforge.world.WorldCapabilityData capabilityData;
++    private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
      protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, WorldProvider p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_)
      {
@@ -913,10 +913,10 @@
 +    {
 +        net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, parent);
-+        net.minecraftforge.world.WorldCapabilityData data = (net.minecraftforge.world.WorldCapabilityData)perWorldStorage.func_75742_a(net.minecraftforge.world.WorldCapabilityData.class, net.minecraftforge.world.WorldCapabilityData.ID);
++        net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_75742_a(net.minecraftforge.common.util.WorldCapabilityData.class, net.minecraftforge.common.util.WorldCapabilityData.ID);
 +        if (data == null)
 +        {
-+            capabilityData = new net.minecraftforge.world.WorldCapabilityData(capabilities);
++            capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(capabilities);
 +            perWorldStorage.func_75745_a(capabilityData.field_76190_i, capabilityData);
 +        }
 +        else
