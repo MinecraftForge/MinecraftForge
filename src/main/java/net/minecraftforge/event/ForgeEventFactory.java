@@ -489,7 +489,7 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
-    
+
     public static void onPlayerBrewedPotion(EntityPlayer player, ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
@@ -525,7 +525,8 @@ public class ForgeEventFactory
         return gatherCapabilities(new AttachCapabilitiesEvent.Item(item, stack), parent);
     }
 
-    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent) {
+    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
+    {
         return gatherCapabilities(new AttachCapabilitiesEvent.World(world), parent);
     }
 

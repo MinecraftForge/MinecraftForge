@@ -26,7 +26,7 @@ public class WorldCapabilityData extends WorldSavedData
     public void readFromNBT(NBTTagCompound nbt)
     {
         this.capNBT = nbt;
-        if(serializable != null)
+        if (serializable != null)
         {
             serializable.deserializeNBT(this.capNBT);
             this.capNBT = null;
@@ -36,7 +36,9 @@ public class WorldCapabilityData extends WorldSavedData
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        return nbt = serializable.serializeNBT();
+        if (serializable != null)
+            nbt = serializable.serializeNBT();
+        return nbt;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class WorldCapabilityData extends WorldSavedData
     public void setCapabilities(WorldProvider provider, INBTSerializable<NBTTagCompound> capabilities)
     {
         this.serializable = capabilities;
-        if(this.capNBT != null)
+        if (this.capNBT != null)
         {
             serializable.deserializeNBT(this.capNBT);
             this.capNBT = null;

@@ -1,16 +1,9 @@
 package net.minecraftforge.test;
 
-import java.util.Map;
-import java.util.Set;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -44,7 +37,8 @@ public class WorldCapabilityRainTimerTest {
         @SubscribeEvent
         public void attatchTimer(AttachCapabilitiesEvent.World event)
         {
-            event.addCapability(new ResourceLocation(MODID, "rainTimer"), new RainTimerProvider());
+            if (!event.getWorld().isRemote && !event.getWorld().provider.getHasNoSky())
+                event.addCapability(new ResourceLocation(MODID, "rainTimer"), new RainTimerProvider());
         }
 
         @SubscribeEvent
@@ -55,18 +49,22 @@ public class WorldCapabilityRainTimerTest {
 
             IRainTimer timer = event.world.getCapability(TIMER_CAP, null);
 
-            if(event.phase == TickEvent.Phase.END)
+            if (timer == null)
+                return;
+
+            if (event.phase == TickEvent.Phase.END)
                 timer.onTick();
 
-            if(event.phase == TickEvent.Phase.START)
+            if (event.phase == TickEvent.Phase.START)
             {
-                if(!event.world.provider.getHasNoSky() && event.world.isRaining())
+                if(event.world.isRaining())
                 {
-                    if(timer.getDuration() == 0)
+                    if (timer.getDuration() == 0)
                         timer.refreshTimer(1000, 0);
-                    else if(timer.isTimerReachedDuration())
+                    else if (timer.isTimerReachedDuration())
                         event.world.provider.resetRainAndThunder();
-                } else
+                }
+                else
                     timer.refreshTimer(0, 0);
             }
         }

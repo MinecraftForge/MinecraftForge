@@ -74,8 +74,11 @@ public class NoBedSleepingTest
     public static class EventHandler
     {
         @SubscribeEvent
-        public void onEntityConstruct(AttachCapabilitiesEvent evt)
+        public void onEntityConstruct(AttachCapabilitiesEvent.Entity evt)
         {
+            if (!(evt.getEntity() instanceof EntityPlayer))
+                return;
+
             evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<NBTPrimitive>()
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
