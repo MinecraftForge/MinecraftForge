@@ -40,18 +40,18 @@ import java.util.List;
  * E.g. /team settings set [value]
  * settings is subcommand of team and set is subcommand of settings
  */
-public abstract class CommandSubBase extends CommandBase
+public abstract class CommandTreeBase extends CommandBase
 {
-    private final HashMap<String, ICommand> subCommands = new HashMap<String, ICommand>();
+    private final HashMap<String, ICommand> commandMap = new HashMap<String, ICommand>();
 
     public void addSubcommand(ICommand c)
     {
-        subCommands.put(c.getCommandName(), c);
+        commandMap.put(c.getCommandName(), c);
     }
 
     public Collection<ICommand> getSubCommands()
     {
-        return Collections.unmodifiableCollection(subCommands.values());
+        return Collections.unmodifiableCollection(commandMap.values());
     }
 
     private static String[] shiftArgs(String[] s)
@@ -73,7 +73,7 @@ public abstract class CommandSubBase extends CommandBase
         {
             List<String> keys = new ArrayList<String>();
 
-            for(ICommand c : subCommands.values())
+            for(ICommand c : commandMap.values())
             {
                 if(c.checkPermission(server, sender))
                 {
@@ -85,7 +85,7 @@ public abstract class CommandSubBase extends CommandBase
             return getListOfStringsMatchingLastWord(args, keys);
         }
 
-        ICommand cmd = subCommands.get(args[0]);
+        ICommand cmd = commandMap.get(args[0]);
 
         if(cmd != null)
         {
@@ -100,7 +100,7 @@ public abstract class CommandSubBase extends CommandBase
     {
         if(index > 0 && args.length > 1)
         {
-            ICommand cmd = subCommands.get(args[0]);
+            ICommand cmd = commandMap.get(args[0]);
             if(cmd != null)
             {
                 return cmd.isUsernameIndex(shiftArgs(args), index - 1);
@@ -115,15 +115,15 @@ public abstract class CommandSubBase extends CommandBase
     {
         if(args.length < 1)
         {
-            sender.addChatMessage(new TextComponentString(CommandBase.joinNiceStringFromCollection(subCommands.keySet())));
+            sender.addChatMessage(new TextComponentString(CommandBase.joinNiceStringFromCollection(commandMap.keySet())));
         }
         else
         {
-            ICommand cmd = subCommands.get(args[0]);
+            ICommand cmd = commandMap.get(args[0]);
 
             if(cmd == null)
             {
-                throw new CommandException("commands.basesub.invalid_subcommand", args[0]);
+                throw new CommandException("commands.tree_base.invalid_cmd", args[0]);
             }
             else if(!cmd.checkPermission(server, sender))
             {

@@ -7,25 +7,25 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.server.command.CommandSubBase;
+import net.minecraftforge.server.command.CommandTreeBase;
 
-@Mod(modid = SubCommandTest.MOD_ID, name = "SubCommandTest", version = "1.0.0")
-public class SubCommandTest
+@Mod(modid = CommandTreeBaseTest.MOD_ID, name = "CommandTreeBaseTest", version = "1.0.0")
+public class CommandTreeBaseTest
 {
-    public static final String MOD_ID = "SubCommandTest";
+    public static final String MOD_ID = "CommandTreeBaseTest";
 
-    @Mod.Instance(SubCommandTest.MOD_ID)
-    public static SubCommandTest inst;
+    @Mod.Instance(CommandTreeBaseTest.MOD_ID)
+    public static CommandTreeBaseTest inst;
 
     @Mod.EventHandler
     public void onServerStarted(FMLServerStartingEvent event)
     {
-        event.registerServerCommand(new CommandSubTest());
+        event.registerServerCommand(new CommandTreeTest());
     }
 
-    public static class CommandSubTest extends CommandSubBase
+    public static class CommandTreeTest extends CommandTreeBase
     {
-        public CommandSubTest()
+        public CommandTreeTest()
         {
             addSubcommand(new CommandPing());
             addSubcommand(new CommandValue());
@@ -34,13 +34,13 @@ public class SubCommandTest
         @Override
         public String getCommandName()
         {
-            return "subcommand_test";
+            return "treecommand_test";
         }
 
         @Override
         public String getCommandUsage(ICommandSender sender)
         {
-            return "commands.subcommand_test.usage";
+            return "commands.treecommand_test.usage";
         }
 
         public static class CommandPing extends CommandBase
@@ -54,7 +54,7 @@ public class SubCommandTest
             @Override
             public String getCommandUsage(ICommandSender sender)
             {
-                return "commands.subcommand_test.ping.usage";
+                return "commands.treecommand_test.ping.usage";
             }
 
             @Override
@@ -64,7 +64,7 @@ public class SubCommandTest
             }
         }
 
-        public static class CommandValue extends CommandSubBase
+        public static class CommandValue extends CommandTreeBase
         {
             private static int value = 0;
 
@@ -83,7 +83,7 @@ public class SubCommandTest
             @Override
             public String getCommandUsage(ICommandSender sender)
             {
-                return "commands.subcommand_test.value.usage";
+                return "commands.treecommand_test.value.usage";
             }
 
             public static class CommandSet extends CommandBase
@@ -97,13 +97,13 @@ public class SubCommandTest
                 @Override
                 public String getCommandUsage(ICommandSender sender)
                 {
-                    return "commands.subcommand_test.value.set.usage";
+                    return "commands.treecommand_test.value.set.usage";
                 }
 
                 @Override
                 public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
                 {
-                    value = CommandSubTest.parseInt(args[0]);
+                    value = CommandTreeTest.parseInt(args[0]);
                     sender.addChatMessage(new TextComponentString("Test value set to: " + value));
                 }
             }
@@ -119,7 +119,7 @@ public class SubCommandTest
                 @Override
                 public String getCommandUsage(ICommandSender sender)
                 {
-                    return "commands.subcommand_test.value.get.usage";
+                    return "commands.treecommand_test.value.get.usage";
                 }
 
                 @Override
