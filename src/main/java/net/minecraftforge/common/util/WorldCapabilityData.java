@@ -50,7 +50,7 @@ public class WorldCapabilityData extends WorldSavedData
     public void setCapabilities(WorldProvider provider, INBTSerializable<NBTTagCompound> capabilities)
     {
         this.serializable = capabilities;
-        if (this.capNBT != null)
+        if (this.capNBT != null && serializable != null)
         {
             serializable.deserializeNBT(this.capNBT);
             this.capNBT = null;
