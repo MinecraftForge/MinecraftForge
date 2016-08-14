@@ -26,6 +26,38 @@
      }
  
      public static IBlockState func_176220_d(int p_176220_0_)
+@@ -212,24 +214,24 @@
+         return p_185471_1_;
+     }
+ 
+-    public Block(Material p_i46399_1_, MapColor p_i46399_2_)
++    public Block(Material blockMaterialIn, MapColor blockMapColorIn, Object... blockStateInfo)
+     {
+         this.field_149790_y = true;
+         this.field_149762_H = SoundType.field_185851_d;
+         this.field_149763_I = 1.0F;
+         this.field_149765_K = 0.6F;
+-        this.field_149764_J = p_i46399_1_;
+-        this.field_181083_K = p_i46399_2_;
+-        this.field_176227_L = this.func_180661_e();
++        this.field_149764_J = blockMaterialIn;
++        this.field_181083_K = blockMapColorIn;
++        this.field_176227_L = this.createBlockStateContainer(blockStateInfo);
+         this.func_180632_j(this.field_176227_L.func_177621_b());
+         this.field_149787_q = this.func_176223_P().func_185914_p();
+         this.field_149786_r = this.field_149787_q ? 255 : 0;
+-        this.field_149785_s = !p_i46399_1_.func_76228_b();
++        this.field_149785_s = !blockMaterialIn.func_76228_b();
+     }
+ 
+-    public Block(Material p_i45394_1_)
++    public Block(Material materialIn, Object... blockStateInfo)
+     {
+-        this(p_i45394_1_, p_i45394_1_.func_151565_r());
++        this(materialIn, materialIn.func_151565_r(), blockStateInfo);
+     }
+ 
+     protected Block func_149672_a(SoundType p_149672_1_)
 @@ -292,7 +294,7 @@
  
      public boolean func_176200_f(IBlockAccess p_176200_1_, BlockPos p_176200_2_)
@@ -203,7 +235,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -893,6 +913,1155 @@
+@@ -893,6 +913,1162 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1353,13 +1385,20 @@
 +    {
 +        return func_185467_w();
 +    }
++    
++    /**
++     * Object sensitive version of {@link Block#createBlockState()}
++     * @param blockStateInfo Information passed to create the BlockStateContainer
++     * @return An object sensitive BlockStateContainer
++     */
++    protected BlockStateContainer createBlockStateContainer(Object... blockStateInfo) { return this.func_180661_e(); }
 +
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1169,11 +2338,7 @@
+@@ -1169,11 +2345,7 @@
              }
              else
              {
