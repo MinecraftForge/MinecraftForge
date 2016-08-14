@@ -3,6 +3,7 @@ commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types ar
 commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
+commands.basesub.invalid_subcommand=Invalid subcommand '%s'!
 forge.texture.preload.warning=Warning: Texture %s not preloaded, will cause render glitches!
 forge.client.shutdown.internal=Shutting down internal server...
 forge.update.newversion=New Forge version available: %s
