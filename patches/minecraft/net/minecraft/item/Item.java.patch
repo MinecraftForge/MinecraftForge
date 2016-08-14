@@ -522,17 +522,28 @@
 +    }
 +
 +    /**
-+     * Queries the harvest level of this item stack for the specifred tool class,
-+     * Returns -1 if this tool is not of the specified type
-+     *
-+     * @param stack This item stack instance
-+     * @param toolClass Tool Class
-+     * @return Harvest level, or -1 if not the specified tool type.
++     * Deprecated, Use the position aware variant instead
 +     */
++    @Deprecated
 +    public int getHarvestLevel(ItemStack stack, String toolClass)
 +    {
 +        Integer ret = toolClasses.get(toolClass);
 +        return ret == null ? -1 : ret;
++    }
++
++    /**
++     * Queries the harvest level of this item stack for the specified tool class,
++     * Returns -1 if this tool is not of the specified type
++     *
++     * @param stack This item stack instance
++     * @param toolClass Tool Class
++     * @param player The player trying to harvest the given blockstate
++     * @param blockState The block to harvest
++     * @return Harvest level, or -1 if not the specified tool type.
++     */
++    public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
++    {
++        return getHarvestLevel(stack, toolClass);
 +    }
 +
 +    /**
@@ -622,7 +633,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1526,10 @@
+@@ -962,6 +1537,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -633,7 +644,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1564,36 @@
+@@ -996,9 +1575,36 @@
              return this.field_78008_j;
          }
  
