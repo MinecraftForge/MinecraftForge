@@ -142,7 +142,18 @@
          this.field_78531_r.field_71424_I.func_76318_c("hand");
  
          if (this.field_175074_C)
-@@ -1498,6 +1514,13 @@
+@@ -1403,7 +1419,10 @@
+             GlStateManager.func_179128_n(5888);
+             GlStateManager.func_179094_E();
+             this.func_78468_a(0, p_180437_2_);
++            long start = System.nanoTime();
+             p_180437_1_.func_180447_b(p_180437_2_, p_180437_3_);
++            net.minecraftforge.client.CloudRenderer.time += System.nanoTime() - start;
++            net.minecraftforge.client.CloudRenderer.frames++;
+             GlStateManager.func_179106_n();
+             GlStateManager.func_179121_F();
+             GlStateManager.func_179128_n(5889);
+@@ -1498,6 +1517,13 @@
  
      protected void func_78474_d(float p_78474_1_)
      {
@@ -156,7 +167,7 @@
          float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
  
          if (f > 0.0F)
-@@ -1828,6 +1851,13 @@
+@@ -1828,6 +1854,13 @@
              this.field_175081_S = f7;
          }
  
@@ -170,7 +181,7 @@
          GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
      }
  
-@@ -1838,7 +1868,9 @@
+@@ -1838,7 +1871,9 @@
          GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78468_2_);
@@ -181,7 +192,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
          {
              float f1 = 5.0F;
-@@ -1923,6 +1955,7 @@
+@@ -1923,6 +1958,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
              }
