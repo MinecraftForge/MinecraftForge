@@ -20,47 +20,32 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class PlayerContext extends Context
 {
-    private final EntityPlayer player;
+    private final EntityPlayerMP player;
 
-    public PlayerContext(@Nonnull EntityPlayer ep)
+    public PlayerContext(@Nonnull EntityPlayerMP ep)
     {
-        Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
-        Preconditions.checkNotNull(ep.worldObj, "Player's world can't be null in PlayerContext!");
-        player = ep;
-    }
-
-    @Override
-    public <T> T get(@Nonnull ContextKey<T> key)
-    {
-        if(key.equals(ContextKey.PLAYER))
-        {
-            return (T) player;
-        }
-        else if(key.equals(ContextKey.WORLD))
-        {
-            return (T) player.getEntityWorld();
-        }
-
-        return super.get(key);
-    }
-
-    @Override
-    public boolean has(@Nonnull ContextKey<?> key)
-    {
-        return key.equals(ContextKey.PLAYER) || key.equals(ContextKey.WORLD) || super.has(key);
+        player = Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
     }
 
     @Nonnull
     @Override
-    public <T> Context set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    public World getWorld()
     {
-        return (key.equals(ContextKey.PLAYER) || key.equals(ContextKey.WORLD)) ? this : super.set(key, obj);
+        return player.getEntityWorld();
+    }
+
+    @Nullable
+    @Override
+    public EntityPlayerMP getPlayer()
+    {
+        return player;
     }
 }

@@ -20,19 +20,17 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
 public final class ContextKey<T>
 {
-    public static final ContextKey<World> WORLD = new ContextKey<World>("world");
-    public static final ContextKey<EntityPlayer> PLAYER = new ContextKey<EntityPlayer>("player");
-    public static final ContextKey<BlockPos> BLOCK = new ContextKey<BlockPos>("block");
+    public static final ContextKey<BlockPos> BLOCK_POS = new ContextKey<BlockPos>("blockpos");
+    public static final ContextKey<IBlockState> BLOCK_STATE = new ContextKey<IBlockState>("blockstate");
     public static final ContextKey<ChunkPos> CHUNK = new ContextKey<ChunkPos>("chunk");
     public static final ContextKey<Entity> ENTITY = new ContextKey<Entity>("entity");
 

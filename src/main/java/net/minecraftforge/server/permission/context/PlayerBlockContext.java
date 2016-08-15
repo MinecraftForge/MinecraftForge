@@ -20,9 +20,9 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,40 +30,44 @@ import javax.annotation.Nullable;
 public class PlayerBlockContext extends PlayerContext
 {
     private final BlockPos blockPos;
+    private IBlockState blockState;
 
-    public PlayerBlockContext(@Nonnull EntityPlayer ep, @Nonnull BlockPos pos)
+    public PlayerBlockContext(@Nonnull EntityPlayerMP ep, @Nonnull BlockPos pos, @Nullable IBlockState state)
     {
         super(ep);
-        Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerBlockContext!");
-        blockPos = pos;
+        blockPos = Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerBlockContext!");
+        blockState = state;
     }
 
     @Override
     public <T> T get(@Nonnull ContextKey<T> key)
     {
-        if(key.equals(ContextKey.BLOCK))
+        if(key.equals(ContextKey.BLOCK_POS))
         {
             return (T) blockPos;
         }
-        else if(key.equals(ContextKey.CHUNK))
+        else if(key.equals(ContextKey.BLOCK_STATE))
         {
-            ChunkPos chunkPos = super.get(ContextKey.CHUNK);
-            return (T) (chunkPos == null ? new ChunkPos(blockPos.getX() >> 4, blockPos.getZ() >> 4) : chunkPos);
-        }
+            if(blockState == null)
+            {
+                blockState = getWorld().getBlockState(blockPos);
+            }
 
+            return (T) blockState;
+        }
         return super.get(key);
     }
 
     @Override
     public boolean has(@Nonnull ContextKey<?> key)
     {
-        return key.equals(ContextKey.BLOCK) || super.has(key);
+        return key.equals(ContextKey.BLOCK_POS) || key.equals(ContextKey.BLOCK_STATE) || super.has(key);
     }
 
     @Nonnull
     @Override
-    public <T> Context set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
     {
-        return key.equals(ContextKey.BLOCK) ? this : super.set(key, obj);
+        return (key.equals(ContextKey.BLOCK_POS) || key.equals(ContextKey.BLOCK_STATE)) ? this : super.set(key, obj);
     }
 }

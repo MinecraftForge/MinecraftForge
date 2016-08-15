@@ -19,29 +19,33 @@
 
 package net.minecraftforge.server.permission.context;
 
+import com.google.common.base.Preconditions;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.World;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public enum EmptyContext implements IContext
+public class WorldContext extends Context
 {
-    INSTANCE;
+    private final World world;
 
-    @Override
-    public <T> T get(@Nonnull ContextKey<T> key)
+    public WorldContext(@Nonnull World w)
     {
-        return null;
-    }
-
-    @Override
-    public boolean has(@Nonnull ContextKey<?> key)
-    {
-        return false;
+        world = Preconditions.checkNotNull(w, "World can't be null in WorldContext!");
     }
 
     @Nonnull
     @Override
-    public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    public World getWorld()
     {
-        return this;
+        return world;
+    }
+
+    @Nullable
+    @Override
+    public EntityPlayerMP getPlayer()
+    {
+        return null;
     }
 }

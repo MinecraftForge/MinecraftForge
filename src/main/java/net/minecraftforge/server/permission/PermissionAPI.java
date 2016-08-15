@@ -42,7 +42,7 @@ public class PermissionAPI
      * @param profile          GameProfile of the player who is requesting permission. The player doesn't have to be online
      * @param permission       Permission node, best if it's lowercase and contains '.' (e.g. <code>"modid.subgroup.permission_id"</code>)
      * @param defaultForPlayer Default value for players. OPs should always have all permissions
-     * @param context          Context for this permission. Use <tt>PlayerContext</tt> or <tt>PlayerBlockContext</tt> when possible. When there is no context available, use <tt>EmptyContext.INSTANCE</tt> (not recommended)
+     * @param context          Context for this permission. Use <tt>PlayerContext</tt> or <tt>PlayerBlockContext</tt> when possible. Can't be null
      * @return true, if player has permission, false if he does not.
      * @see DefaultPermissionHandler
      */

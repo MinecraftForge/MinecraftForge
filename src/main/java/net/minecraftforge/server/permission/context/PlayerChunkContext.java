@@ -19,37 +19,50 @@
 
 package net.minecraftforge.server.permission.context;
 
+import com.google.common.base.Preconditions;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
-public abstract class Context implements IContext
+/**
+ * Created by LatvianModder on 15.08.2016.
+ */
+public class PlayerChunkContext extends PlayerContext
 {
-    private Map<ContextKey<?>, Object> map;
+    private final ChunkPos chunkPos;
+
+    public PlayerChunkContext(@Nonnull EntityPlayerMP ep, @Nonnull ChunkPos pos)
+    {
+        super(ep);
+        chunkPos = Preconditions.checkNotNull(pos, "ChunkPos can't be null in PlayerChunkContext!");
+    }
+
+    public PlayerChunkContext(@Nonnull EntityPlayerMP ep, @Nonnull BlockPos pos)
+    {
+        super(ep);
+        Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerChunkContext!");
+        chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
+    }
 
     @Override
     public <T> T get(@Nonnull ContextKey<T> key)
     {
-        return map == null || map.isEmpty() ? null : (T) map.get(key);
+        return key.equals(ContextKey.CHUNK) ? (T) chunkPos : super.get(key);
     }
 
     @Override
     public boolean has(@Nonnull ContextKey<?> key)
     {
-        return map != null && !map.isEmpty() && map.containsKey(key);
+        return key.equals(ContextKey.CHUNK) || super.has(key);
     }
 
     @Nonnull
     @Override
     public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
     {
-        if(map == null)
-        {
-            map = new HashMap<ContextKey<?>, Object>();
-        }
-
-        map.put(key, obj);
-        return this;
+        return key.equals(ContextKey.CHUNK) ? this : super.set(key, obj);
     }
 }

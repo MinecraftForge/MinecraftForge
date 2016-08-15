@@ -19,11 +19,27 @@
 
 package net.minecraftforge.server.permission.context;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.World;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface IContext
 {
+    /**
+     * Context always has to have a world, where the permission is requested from.
+     * If player is requesting permission, getWorld() is the current world that player is in.
+     */
+    @Nonnull
+    World getWorld();
+
+    /**
+     * @return Player requesting permission. Can be null
+     */
+    @Nullable
+    EntityPlayerMP getPlayer();
+
     /**
      * @param key Context key
      * @return Context object
