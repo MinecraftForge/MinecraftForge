@@ -25,15 +25,16 @@
          return HorseArmorType.func_188575_a(((Integer)this.field_70180_af.func_187225_a(field_184791_bI)).intValue());
      }
  
-@@ -289,6 +293,7 @@
+@@ -289,6 +293,8 @@
      public void func_146086_d(ItemStack p_146086_1_)
      {
          HorseArmorType horsearmortype = HorseArmorType.func_188580_a(p_146086_1_);
-+        if (horsearmortype.ordinal() > 3) this.field_70180_af.func_187227_b(ARMOR_STRING, horsearmortype.name()); else
++        this.field_70180_af.func_187227_b(ARMOR_STRING, horsearmortype.name());
++        if (horsearmortype.ordinal() <= 3)
          this.field_70180_af.func_187227_b(field_184791_bI, Integer.valueOf(horsearmortype.func_188579_a()));
          this.func_110230_cF();
  
-@@ -405,7 +410,7 @@
+@@ -405,7 +411,7 @@
  
              if (iblockstate.func_185904_a() != Material.field_151579_a && !this.func_174814_R())
              {
@@ -42,7 +43,7 @@
                  this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, soundtype.func_185844_d(), this.func_184176_by(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
-@@ -441,6 +446,7 @@
+@@ -441,6 +447,7 @@
  
          this.field_110296_bG.func_110134_a(this);
          this.func_110232_cE();
@@ -50,7 +51,7 @@
      }
  
      private void func_110232_cE()
-@@ -556,7 +562,7 @@
+@@ -556,7 +563,7 @@
  
      protected void func_180429_a(BlockPos p_180429_1_, Block p_180429_2_)
      {
@@ -59,7 +60,7 @@
  
          if (this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a()).func_177230_c() == Blocks.field_150431_aC)
          {
-@@ -1212,6 +1218,7 @@
+@@ -1212,6 +1219,7 @@
                  }
  
                  this.field_110277_bt = 0.0F;
@@ -67,7 +68,7 @@
              }
  
              this.field_70747_aH = this.func_70689_ay() * 0.1F;
-@@ -1813,4 +1820,21 @@
+@@ -1813,4 +1821,21 @@
                  this.field_188477_b = p_i46589_2_;
              }
          }
