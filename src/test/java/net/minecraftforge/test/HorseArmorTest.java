@@ -31,7 +31,7 @@ public class HorseArmorTest
 {
     public static final String MODID = "forgedebughorsearmor";
     public static final String MODNAME = "Horse Armor Test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static final Logger LOG = LogManager.getLogger(MODNAME);
     private static final HorseArmorType TEST_MATERIAL = EnumHelper.addArmorType("FORGE_TEST", 23, MODID + ":textures/entity/horse/test_armor.png");
 
