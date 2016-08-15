@@ -5,7 +5,7 @@
          this.field_187120_G = p_187108_1_;
      }
 +
-+    public World getWorldObj() {
++    public World getWorld() {
 +        return field_187122_b;
 +    }
 +
