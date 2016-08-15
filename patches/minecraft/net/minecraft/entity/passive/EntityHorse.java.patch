@@ -25,14 +25,14 @@
          return HorseArmorType.func_188575_a(((Integer)this.field_70180_af.func_187225_a(field_184791_bI)).intValue());
      }
  
-@@ -290,6 +294,7 @@
+@@ -289,6 +293,7 @@
+     public void func_146086_d(ItemStack p_146086_1_)
      {
          HorseArmorType horsearmortype = HorseArmorType.func_188580_a(p_146086_1_);
++        if (horsearmortype.ordinal() > 3) this.field_70180_af.func_187227_b(ARMOR_STRING, horsearmortype.name()); else
          this.field_70180_af.func_187227_b(field_184791_bI, Integer.valueOf(horsearmortype.func_188579_a()));
-+        this.field_70180_af.func_187227_b(ARMOR_STRING, horsearmortype.name());
          this.func_110230_cF();
  
-         if (!this.field_70170_p.field_72995_K)
 @@ -405,7 +410,7 @@
  
              if (iblockstate.func_185904_a() != Material.field_151579_a && !this.func_174814_R())
