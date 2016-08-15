@@ -14,7 +14,7 @@
 +     */
 +    public boolean hasOverlay(ItemStack stack)
 +    {
-+        return this.field_77878_bZ == ItemArmor.ArmorMaterial.LEATHER || func_82814_b(stack) != 0xFFFFFFFF;
++        return this.field_77878_bZ == ItemArmor.ArmorMaterial.LEATHER || func_82814_b(stack) != 0x00FFFFFF;
 +    }
 +
      public static enum ArmorMaterial
