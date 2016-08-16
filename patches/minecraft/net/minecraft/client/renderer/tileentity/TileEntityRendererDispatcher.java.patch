@@ -15,19 +15,23 @@
              BlockPos blockpos = p_180546_1_.func_174877_v();
              this.func_178469_a(p_180546_1_, (double)blockpos.func_177958_n() - field_147554_b, (double)blockpos.func_177956_o() - field_147555_c, (double)blockpos.func_177952_p() - field_147552_d, p_180546_2_, p_180546_3_);
          }
-@@ -136,6 +139,11 @@
+@@ -136,7 +139,14 @@
          {
              try
              {
+-                tileentityspecialrenderer.func_180535_a(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_);
 +                if(drawingBatch && p_178469_1_.hasFastRenderer())
 +                {
 +                    tileentityspecialrenderer.renderTileEntityFast(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_, batchBuffer.func_178180_c());
 +                }
-+                else
-                 tileentityspecialrenderer.func_180535_a(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_);
++                if(p_178469_1_.hasGLRenderer())
++                {
++                	tileentityspecialrenderer.func_180535_a(p_178469_1_, p_178469_2_, p_178469_4_, p_178469_6_, p_178469_8_, p_178469_9_);
++                }
              }
              catch (Throwable throwable)
-@@ -162,4 +170,52 @@
+             {
+@@ -162,4 +172,52 @@
      {
          return this.field_147557_n;
      }
