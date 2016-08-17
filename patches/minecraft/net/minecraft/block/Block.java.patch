@@ -203,7 +203,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -893,6 +913,1155 @@
+@@ -893,6 +913,1168 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1354,12 +1354,25 @@
 +        return func_185467_w();
 +    }
 +
++    /**
++     * @param state The state
++     * @param world The world
++     * @param pos The position of this state
++     * @param beaconPos The position of the beacon
++     * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
++     */
++    @Nullable
++    public float[] getBeaconColorMultiplier(IBlockState state, World world, BlockPos pos, BlockPos beaconPos)
++    {
++        return null;
++    }
++
 +    /* ========================================= FORGE END ======================================*/
 +
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1169,11 +2338,7 @@
+@@ -1169,11 +2351,7 @@
              }
              else
              {
