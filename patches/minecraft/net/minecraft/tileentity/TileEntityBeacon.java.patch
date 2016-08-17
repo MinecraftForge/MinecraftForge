@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -130,7 +130,7 @@
+@@ -130,17 +130,23 @@
              {
                  if (iblockstate.func_177230_c() != Blocks.field_150397_co)
                  {
@@ -9,7 +9,23 @@
                      {
                          this.field_146015_k = false;
                          this.field_174909_f.clear();
-@@ -181,7 +181,7 @@
+                         break;
+                     }
+ 
++                    float[] customColor = iblockstate.func_177230_c().getBeaconColorMultiplier(iblockstate, this.field_145850_b, blockpos$mutableblockpos, func_174877_v());
++                    if (customColor != null)
++                        afloat = customColor;
++                    else {
+                     tileentitybeacon$beamsegment.func_177262_a();
+                     continue;
++                    }
+                 }
+ 
++                else
+                 afloat = EntitySheep.func_175513_a((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a));
+             }
+ 
+@@ -181,7 +187,7 @@
                      {
                          Block block = this.field_145850_b.func_180495_p(new BlockPos(j1, i2, k1)).func_177230_c();
  
@@ -18,7 +34,7 @@
                          {
                              flag1 = false;
                              break;
-@@ -382,7 +382,7 @@
+@@ -382,7 +388,7 @@
  
      public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_)
      {
