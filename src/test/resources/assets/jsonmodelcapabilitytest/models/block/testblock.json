@@ -1,0 +1,39 @@
+{
+    "parent": "block/block",
+    "textures":{
+    	"all": "blocks/furnace_front_off"
+    },
+    "elements": [
+        {   
+        	"from": [ 4, 4, 4 ],
+            "to": [ 12, 12, 12 ],
+            "faces": {
+                "down":  { "texture": "all", "cullface": "down", "uv": [0, 0, 16, 16] },
+                "up":    { "texture": "all", "cullface": "up", "uv": [0, 0, 16, 16] },
+                "north": { "texture": "all", "cullface": "north", "uv": [0, 0, 16, 16] },
+                "south": { "texture": "all", "cullface": "south", "uv": [0, 0, 16, 16] },
+                "west":  { "texture": "all", "cullface": "west", "uv": [0, 0, 16, 16] },
+                "east":  { "texture": "all", "cullface": "east", "uv": [0, 0, 16, 16] }
+            },
+            "capabilities": {
+            	"modelcapstest:ctransform": {
+            		"translation": {
+            			"x": -0.25,
+            			"y": 0,
+            			"z": 0
+            		},
+            		"rotation": {
+            			"x": 0,
+            			"y": 0,
+            			"z": 90
+            		},
+            		"scale": {
+            			"x": 1,
+            			"y": 2,
+            			"z": 0.5
+            		}
+            	}
+            }
+        }
+    ]
+}

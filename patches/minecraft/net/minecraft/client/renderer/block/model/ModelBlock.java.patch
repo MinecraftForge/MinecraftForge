@@ -1,0 +1,81 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ModelBlock.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ModelBlock.java
+@@ -28,7 +28,7 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ @SideOnly(Side.CLIENT)
+-public class ModelBlock
++public class ModelBlock implements net.minecraftforge.common.capabilities.ICapabilityProvider
+ {
+     private static final Logger field_178313_f = LogManager.getLogger();
+     @VisibleForTesting
+@@ -45,6 +45,7 @@
+     public ModelBlock field_178315_d;
+     @VisibleForTesting
+     protected ResourceLocation field_178316_e;
++    private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
+ 
+     public static ModelBlock func_178307_a(Reader p_178307_0_)
+     {
+@@ -56,15 +57,17 @@
+         return func_178307_a(new StringReader(p_178294_0_));
+     }
+ 
+-    public ModelBlock(@Nullable ResourceLocation p_i46573_1_, List<BlockPart> p_i46573_2_, Map<String, String> p_i46573_3_, boolean p_i46573_4_, boolean p_i46573_5_, ItemCameraTransforms p_i46573_6_, List<ItemOverride> p_i46573_7_)
++    public ModelBlock(@Nullable ResourceLocation parentLocationIn, List<BlockPart> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemCameraTransforms cameraTransformsIn, List<ItemOverride> overridesIn, net.minecraft.nbt.NBTTagCompound capabilities)
+     {
+-        this.field_178314_g = p_i46573_2_;
+-        this.field_178322_i = p_i46573_4_;
+-        this.field_178321_h = p_i46573_5_;
+-        this.field_178318_c = p_i46573_3_;
+-        this.field_178316_e = p_i46573_1_;
+-        this.field_178320_j = p_i46573_6_;
+-        this.field_187968_k = p_i46573_7_;
++        this.field_178314_g = elementsIn;
++        this.field_178322_i = ambientOcclusionIn;
++        this.field_178321_h = gui3dIn;
++        this.field_178318_c = texturesIn;
++        this.field_178316_e = parentLocationIn;
++        this.field_178320_j = cameraTransformsIn;
++        this.field_187968_k = overridesIn;
++        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilitiesNotNull(new net.minecraftforge.client.event.ClientAttachCapabilitiesEvent.ModelBlock(this));
++        if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
+     }
+ 
+     public List<BlockPart> func_178298_a()
+@@ -226,7 +229,26 @@
+             }
+         }
+     }
++    
++    public net.minecraftforge.common.capabilities.CapabilityDispatcher getCapabilities()
++    {
++        return capabilities;
++    }
+ 
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (getCapability(capability, facing) != null)
++            return true;
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    @Override
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++    
+     @SideOnly(Side.CLIENT)
+     static final class Bookkeep
+         {
+@@ -259,7 +281,7 @@
+ 
+                 List<ItemOverride> list1 = this.func_187964_a(p_deserialize_3_, jsonobject);
+                 ResourceLocation resourcelocation = s.isEmpty() ? null : new ResourceLocation(s);
+-                return new ModelBlock(resourcelocation, list, map, flag, true, itemcameratransforms, list1);
++                return new ModelBlock(resourcelocation, list, map, flag, true, itemcameratransforms, list1, net.minecraftforge.client.ForgeHooksClient.capabilitiesJsonToNbt(ModelBlock.field_178319_a.toJson(jsonobject.get("capabilities"))));
+             }
+ 
+             protected List<ItemOverride> func_187964_a(JsonDeserializationContext p_187964_1_, JsonObject p_187964_2_)

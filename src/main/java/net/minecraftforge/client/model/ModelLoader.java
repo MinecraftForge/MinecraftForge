@@ -73,13 +73,21 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.event.ClientAttachCapabilitiesEvent;
+import net.minecraftforge.client.event.VanillaModelWrapperEvent;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.IAnimatedModel;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
@@ -430,19 +438,47 @@ public final class ModelLoader extends ModelBakery
         return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
     }
 
-    private final class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IModelUVLock, IAnimatedModel
+    public final class VanillaModelWrapper implements IRetexturableModel, IModelSimpleProperties, IModelUVLock, IAnimatedModel, ICapabilityProvider
     {
         private final ResourceLocation location;
         private final ModelBlock model;
         private final boolean uvlock;
         private final ModelBlockAnimation animation;
+        private final CapabilityDispatcher capabilities;
 
-        public VanillaModelWrapper(ResourceLocation location, ModelBlock model, boolean uvlock, ModelBlockAnimation animation)
+        private VanillaModelWrapper(ResourceLocation location, ModelBlock model, boolean uvlock, ModelBlockAnimation animation)
         {
             this.location = location;
             this.model = model;
             this.uvlock = uvlock;
             this.animation = animation;
+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilitiesNotNull(new ClientAttachCapabilitiesEvent.VanillaModelWrapper(this));
+        }
+        
+        private VanillaModelWrapper(ResourceLocation location, ModelBlock model, boolean uvlock, ModelBlockAnimation animation, NBTTagCompound capabilities)
+        {
+            this(location, model, uvlock, animation);
+            if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
+        }
+
+        public ResourceLocation getLocation()
+        {
+            return location;
+        }
+
+        public ModelBlock getModel()
+        {
+            return model;
+        }
+
+        public boolean uvlock()
+        {
+            return uvlock;
+        }
+
+        public ModelBlockAnimation getAnimation()
+        {
+            return animation;
         }
 
         public Collection<ResourceLocation> getDependencies()
@@ -461,7 +497,7 @@ public final class ModelLoader extends ModelBakery
             {
                 set.add(model.getParentLocation());
             }
-            return ImmutableSet.copyOf(set);
+            return ImmutableSet.copyOf(ForgeHooksClient.getDependencies(this, set));
         }
 
         public Collection<ResourceLocation> getTextures()
@@ -508,7 +544,7 @@ public final class ModelLoader extends ModelBakery
                     builder.add(new ResourceLocation(s));
                 }
             }
-            return builder.build();
+            return ForgeHooksClient.getTextures(this, builder);
         }
 
         public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -535,7 +571,7 @@ public final class ModelLoader extends ModelBakery
 
             if(hasItemModel(model))
             {
-                return new ItemLayerModel(model).bake(perState, format, bakedTextureGetter);
+                return new ItemLayerModel(model, capabilities.serializeNBT()).bake(perState, format, bakedTextureGetter);
             }
             if(isCustomRenderer(model)) return new BuiltInModel(transforms, model.createOverrides());
             return bakeNormal(model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
@@ -543,9 +579,14 @@ public final class ModelLoader extends ModelBakery
 
         private IBakedModel bakeNormal(ModelBlock model, IModelState perState, final IModelState modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
-            final TRSRTransformation baseState = modelState.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
+            TRSRTransformation baseState = modelState.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
             SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.createOverrides())).setTexture(particle);
+            VanillaModelWrapperEvent.Bake.Model mevent = new VanillaModelWrapperEvent.Bake.Model.Pre(this, model, perState, modelState, newTransforms, format, bakedTextureGetter, uvLocked, baseState, particle, builder);
+            MinecraftForge.EVENT_BUS.post(mevent);
+            baseState = mevent.getBaseState();
+            particle = mevent.getParticle();
+            builder = mevent.getBuilder();
             for(int i = 0; i < model.getElements().size(); i++)
             {
                 if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(Integer.toString(i))))).isPresent())
@@ -559,8 +600,12 @@ public final class ModelLoader extends ModelBakery
                     transformation = transformation.compose(newTransforms.get(i));
                     BlockPartRotation rot = part.partRotation;
                     if(rot == null) rot = new BlockPartRotation(new org.lwjgl.util.vector.Vector3f(), EnumFacing.Axis.Y, 0, false);
-                    part = new BlockPart(part.positionFrom, part.positionTo, part.mapFaces, rot, part.shade);
+                    part = new BlockPart(part.positionFrom, part.positionTo, part.mapFaces, rot, part.shade, part.capabilities.serializeNBT());
                 }
+                VanillaModelWrapperEvent.Bake.BlockPart event = new VanillaModelWrapperEvent.Bake.BlockPart.Pre(this, model, perState, modelState, newTransforms, format, bakedTextureGetter, uvLocked, part, transformation);
+                MinecraftForge.EVENT_BUS.post(event);
+                part = event.getPart();
+                transformation = event.getTransformation();
                 for(Map.Entry<EnumFacing, BlockPartFace> e : part.mapFaces.entrySet())
                 {
                     TextureAtlasSprite textureatlassprite1 = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName(e.getValue().texture)));
@@ -574,7 +619,14 @@ public final class ModelLoader extends ModelBakery
                         builder.addFaceQuad(baseState.rotate(e.getValue().cullFace), makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), transformation, uvLocked));
                     }
                 }
+                MinecraftForge.EVENT_BUS.post(new VanillaModelWrapperEvent.Bake.BlockPart.Post(this, model, perState, modelState, newTransforms, format, bakedTextureGetter, uvLocked, part, transformation));
             }
+
+            mevent = new VanillaModelWrapperEvent.Bake.Model.Post(this, model, perState, modelState, newTransforms, format, bakedTextureGetter, uvLocked, baseState, particle, builder);
+            MinecraftForge.EVENT_BUS.post(mevent);
+            baseState = mevent.getBaseState();
+            particle = mevent.getParticle();
+            builder = mevent.getBuilder();
 
             return new IPerspectiveAwareModel.MapWrapper(builder.makeBakedModel(), perState)
             {
@@ -616,12 +668,12 @@ public final class ModelLoader extends ModelBakery
             List<BlockPart> elements = Lists.newArrayList(); //We have to duplicate this so we can edit it below.
             for (BlockPart part : this.model.getElements())
             {
-                elements.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade));
+                elements.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade, part.capabilities.serializeNBT()));
             }
 
             ModelBlock newModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
-                model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
+                model.getAllTransforms(), Lists.newArrayList(model.getOverrides()), model.getCapabilities().serializeNBT());
             newModel.name = this.model.name;
             newModel.parent = this.model.parent;
 
@@ -665,7 +717,7 @@ public final class ModelLoader extends ModelBakery
                 }
             }
 
-            return new VanillaModelWrapper(location, newModel, uvlock, animation);
+            return new VanillaModelWrapper(location, newModel, uvlock, animation, capabilities.serializeNBT());
         }
 
         @Override
@@ -690,10 +742,10 @@ public final class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.getAllTransforms(), Lists.newArrayList(model.getOverrides()), model.getCapabilities().serializeNBT());
             newModel.parent = model.parent;
             newModel.name = model.name;
-            return new VanillaModelWrapper(location, newModel, uvlock, animation);
+            return new VanillaModelWrapper(location, newModel, uvlock, animation, capabilities.serializeNBT());
         }
 
         @Override
@@ -703,10 +755,10 @@ public final class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.getAllTransforms(), Lists.newArrayList(model.getOverrides()), model.getCapabilities().serializeNBT());
             newModel.parent = model.parent;
             newModel.name = model.name;
-            return new VanillaModelWrapper(location, newModel, uvlock, animation);
+            return new VanillaModelWrapper(location, newModel, uvlock, animation, capabilities.serializeNBT());
         }
 
         @Override
@@ -716,8 +768,23 @@ public final class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            return new VanillaModelWrapper(location, model, value, animation);
+            return new VanillaModelWrapper(location, model, value, animation, capabilities.serializeNBT());
         }
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        {
+            if (getCapability(capability, facing) != null)
+                return true;
+            return capabilities == null ? false : capabilities.hasCapability(capability, facing);
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        {
+            return capabilities == null ? null : capabilities.getCapability(capability, facing);
+        }
+
     }
 
     private static final class WeightedRandomModel implements IModel

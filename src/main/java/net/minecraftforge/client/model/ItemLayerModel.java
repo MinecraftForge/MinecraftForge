@@ -39,9 +39,16 @@ import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.BakeItemLayerModelEvent;
+import net.minecraftforge.client.event.ClientAttachCapabilitiesEvent;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -51,27 +58,30 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public final class ItemLayerModel implements IRetexturableModel
+public final class ItemLayerModel implements IRetexturableModel, ICapabilityProvider
 {
-    public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.<ResourceLocation>of());
+    public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.<ResourceLocation>of(), new NBTTagCompound());
 
     private final ImmutableList<ResourceLocation> textures;
     private final ItemOverrideList overrides;
+    private final CapabilityDispatcher capabilities;
 
-    public ItemLayerModel(ImmutableList<ResourceLocation> textures)
+    public ItemLayerModel(ImmutableList<ResourceLocation> textures, NBTTagCompound capabilities)
     {
-        this(textures, ItemOverrideList.NONE);
+        this(textures, ItemOverrideList.NONE, capabilities);
     }
 
-    public ItemLayerModel(ImmutableList<ResourceLocation> textures, ItemOverrideList overrides)
+    public ItemLayerModel(ImmutableList<ResourceLocation> textures, ItemOverrideList overrides, NBTTagCompound capabilities)
     {
         this.textures = textures;
         this.overrides = overrides;
+        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilitiesNotNull(new ClientAttachCapabilitiesEvent.ItemLayerModel(this));
+        if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
     }
 
-    public ItemLayerModel(ModelBlock model)
+    public ItemLayerModel(ModelBlock model, NBTTagCompound capabilities)
     {
-        this(getTextures(model), model.createOverrides());
+        this(getTextures(model), model.createOverrides(), capabilities);
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
@@ -87,6 +97,16 @@ public final class ItemLayerModel implements IRetexturableModel
     public Collection<ResourceLocation> getDependencies()
     {
         return ImmutableList.of();
+    }
+
+    public ItemOverrideList getOverrides()
+    {
+        return overrides;
+    }
+
+    public CapabilityDispatcher getCapabilities()
+    {
+        return capabilities;
     }
 
     public Collection<ResourceLocation> getTextures()
@@ -113,13 +133,17 @@ public final class ItemLayerModel implements IRetexturableModel
                 builder.add(this.textures.get(i));
             }
         }
-        return new ItemLayerModel(builder.build(), overrides);
+        return new ItemLayerModel(builder.build(), overrides, capabilities.serializeNBT());
     }
 
     public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.<IModelPart>absent());
+        BakeItemLayerModelEvent event = new BakeItemLayerModelEvent.Pre(this, state, format, bakedTextureGetter, builder, transform);
+        MinecraftForge.EVENT_BUS.post(event);
+        builder = event.getBuilder();
+        transform = event.getTransform();
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
@@ -127,7 +151,23 @@ public final class ItemLayerModel implements IRetexturableModel
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, map, overrides, null);
+        BakeItemLayerModelEvent.Post pevent = new BakeItemLayerModelEvent.Post(this, state, format, bakedTextureGetter, builder, transform, particle, map);
+        MinecraftForge.EVENT_BUS.post(pevent);
+        return new BakedItemModel(pevent.getBuilder().build(), pevent.getParticle(), pevent.getMap(), overrides, null);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    {
+        if (getCapability(capability, facing) != null)
+            return true;
+        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    {
+        return capabilities == null ? null : capabilities.getCapability(capability, facing);
     }
 
     private static final class BakedItemModel implements IPerspectiveAwareModel
@@ -247,18 +287,18 @@ public final class ItemLayerModel implements IRetexturableModel
         }
         // front
         builder.add(buildQuad(format, transform, EnumFacing.NORTH, sprite, tint,
-            0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
-            0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
-            1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
-            1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
-        ));
+                0, 0, 7.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
+                0, 1, 7.5f / 16f, sprite.getMinU(), sprite.getMinV(),
+                1, 1, 7.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
+                1, 0, 7.5f / 16f, sprite.getMaxU(), sprite.getMaxV()
+                ));
         // back
         builder.add(buildQuad(format, transform, EnumFacing.SOUTH, sprite, tint,
-            0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
-            1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
-            1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
-            0, 1, 8.5f / 16f, sprite.getMinU(), sprite.getMinV()
-        ));
+                0, 0, 8.5f / 16f, sprite.getMinU(), sprite.getMaxV(),
+                1, 0, 8.5f / 16f, sprite.getMaxU(), sprite.getMaxV(),
+                1, 1, 8.5f / 16f, sprite.getMaxU(), sprite.getMinV(),
+                0, 1, 8.5f / 16f, sprite.getMinU(), sprite.getMinV()
+                ));
         return builder.build();
     }
 
@@ -351,20 +391,20 @@ public final class ItemLayerModel implements IRetexturableModel
             throw new IllegalArgumentException("can't handle z-oriented side");
         }
         return buildQuad(
-            format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
-            x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
-            x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
-            x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
-            x0, y0, z2, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
-        );
+                format, transform, side.getOpposite(), sprite, tint, // getOpposite is related either to the swapping of V direction, or something else
+                x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
+                x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
+                x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
+                x0, y0, z2, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
+                );
     }
 
     private static final BakedQuad buildQuad(
-        VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, TextureAtlasSprite sprite, int tint,
-        float x0, float y0, float z0, float u0, float v0,
-        float x1, float y1, float z1, float u1, float v1,
-        float x2, float y2, float z2, float u2, float v2,
-        float x3, float y3, float z3, float u3, float v3)
+            VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, TextureAtlasSprite sprite, int tint,
+            float x0, float y0, float z0, float u0, float v0,
+            float x1, float y1, float z1, float u1, float v1,
+            float x2, float y2, float z2, float u2, float v2,
+            float x3, float y3, float z3, float u3, float v3)
     {
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
         builder.setQuadTint(tint);
@@ -426,9 +466,9 @@ public final class ItemLayerModel implements IRetexturableModel
         public boolean accepts(ResourceLocation modelLocation)
         {
             return modelLocation.getResourceDomain().equals("forge") && (
-                modelLocation.getResourcePath().equals("item-layer") ||
-                modelLocation.getResourcePath().equals("models/block/item-layer") ||
-                modelLocation.getResourcePath().equals("models/item/item-layer"));
+                    modelLocation.getResourcePath().equals("item-layer") ||
+                    modelLocation.getResourcePath().equals("models/block/item-layer") ||
+                    modelLocation.getResourcePath().equals("models/item/item-layer"));
         }
 
         public IModel loadModel(ResourceLocation modelLocation)
