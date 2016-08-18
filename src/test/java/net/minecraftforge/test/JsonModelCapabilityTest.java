@@ -1,24 +1,41 @@
 package net.minecraftforge.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.BakeBlockPartFaceEvent;
 import net.minecraftforge.client.event.ClientAttachCapabilitiesEvent;
 import net.minecraftforge.client.event.VanillaModelWrapperEvent;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.Mod;
@@ -33,30 +50,43 @@ public class JsonModelCapabilityTest
 {
 
     public static boolean tblock;
-    
-    @CapabilityInject(ComplexTransforms.class)
-    private static final Capability<ComplexTransforms> complexTransforms = null;
+
+    @CapabilityInject(Include.class)
+    private static final Capability<Include> include = null;
+
+    @CapabilityInject(UVLightmap.class)
+    private static final Capability<UVLightmap> uvlightmap = null;
 
     @SidedProxy
     static ServerProxy proxy;
-    
+
     private Block testBlock;
-    
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event){
-        GameRegistry.register(testBlock = new Block(Material.IRON).setRegistryName("jsonmodelcapabilitytest", "testblock").setCreativeTab(CreativeTabs.DECORATIONS));
+        GameRegistry.register(testBlock = new Block(Material.IRON){
+
+            public boolean isOpaqueCube(IBlockState state) {
+                return false;
+            }
+
+            public BlockRenderLayer getBlockLayer(){
+                return BlockRenderLayer.CUTOUT;
+            }
+
+        }.setRegistryName("jsonmodelcapabilitytest", "testblock").setCreativeTab(CreativeTabs.DECORATIONS));
         GameRegistry.register(new ItemBlock(testBlock).setRegistryName("jsonmodelcapabilitytest", "testblock"));
         MinecraftForge.EVENT_BUS.register(this);
         proxy.preInit(event);
     }
 
     public static class ServerProxy {
-        
+
         public void preInit(FMLPreInitializationEvent event)
         {
-           
+
         }
-        
+
     }
 
     public static final class ClientProxy extends ServerProxy
@@ -64,83 +94,247 @@ public class JsonModelCapabilityTest
         @Override
         public void preInit(FMLPreInitializationEvent event)
         {
-            CapabilityManager.INSTANCE.register(ComplexTransforms.class, new ComplexTransforms.Storage(), ComplexTransforms.class);
+            CapabilityManager.INSTANCE.register(Include.class, new Include.Storage(), Include.class);
+            CapabilityManager.INSTANCE.register(UVLightmap.class, new UVLightmap.Storage(), UVLightmap.class);
         }
     }
 
     @SubscribeEvent
-    public void attachCaps(ClientAttachCapabilitiesEvent.BlockPart event){
-        event.addCapability(new ResourceLocation("modelcapstest:ctransform"), new ICapabilitySerializable<NBTBase>() {
+    public void attachCapsModel(ClientAttachCapabilitiesEvent.ModelBlock event){
+        event.addCapability(new ResourceLocation("test:include"), new ICapabilitySerializable<NBTBase>() {
 
-            ComplexTransforms instance = complexTransforms.getDefaultInstance();
+            Include instance = include.getDefaultInstance();
 
             @Override
             public boolean hasCapability(Capability<?> capability, EnumFacing facing)
             {
-                return capability == complexTransforms;
+                return capability == include;
             }
 
             @Override
             public <T> T getCapability(Capability<T> capability, EnumFacing facing)
             {
-                return capability == complexTransforms ? complexTransforms.<T>cast(instance) : null;
+                return capability == include ? include.<T>cast(instance) : null;
             }
 
             @Override
             public NBTBase serializeNBT()
             {
-                return complexTransforms.writeNBT(instance, null);
+                return include.writeNBT(instance, null);
             }
 
             @Override
             public void deserializeNBT(NBTBase nbt)
             {
-                complexTransforms.readNBT(instance, null, nbt);
+                include.readNBT(instance, null, nbt);
             }
 
         });
     }
 
     @SubscribeEvent
-    public void transform(VanillaModelWrapperEvent.Bake.BlockPart.Pre event){
-        if(event.getPart().hasCapability(complexTransforms, null)){
-            ComplexTransforms trans = event.getPart().capabilities.getCapability(complexTransforms, null);
-            TRSRTransformation compTrans = new TRSRTransformation(TRSRTransformation.toVecmath(new Matrix4f().translate(trans.translation).rotate((float) Math.toRadians(trans.rotation.x), new Vector3f(1, 0, 0)).rotate((float) Math.toRadians(trans.rotation.y), new Vector3f(0, 1, 0)).rotate((float) Math.toRadians(trans.rotation.z), new Vector3f(0, 0, 1)).scale(trans.scale)));
-            event.setTransformation(TRSRTransformation.blockCenterToCorner(TRSRTransformation.blockCornerToCenter(event.getTransformation()).compose(compTrans)));
+    public void attachCapsBlockPartFace(ClientAttachCapabilitiesEvent.BlockPartFace event){
+        event.addCapability(new ResourceLocation("test:uvlightmap"), new ICapabilitySerializable<NBTBase>() {
+
+            UVLightmap instance = uvlightmap.getDefaultInstance();
+
+            @Override
+            public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+            {
+                return capability == uvlightmap;
+            }
+
+            @Override
+            public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+            {
+                return capability == uvlightmap ? uvlightmap.<T>cast(instance) : null;
+            }
+
+            @Override
+            public NBTBase serializeNBT()
+            {
+                return uvlightmap.writeNBT(instance, null);
+            }
+
+            @Override
+            public void deserializeNBT(NBTBase nbt)
+            {
+                uvlightmap.readNBT(instance, null, nbt);
+            }
+
+        });
+    }
+
+    @SubscribeEvent
+    public void uvlightmap(BakeBlockPartFaceEvent event){
+        if(event.getFace().hasCapability(uvlightmap, null)){
+            final UVLightmap uvlightmap = event.getFace().getCapability(JsonModelCapabilityTest.uvlightmap, null);
+            if(uvlightmap.block != -1 || uvlightmap.sky != -1){
+                BakedQuad quad = event.getQuad();
+                VertexFormat format = new VertexFormat(quad.getFormat());
+                if(!format.getElements().contains( DefaultVertexFormats.TEX_2S )){
+                    format.addElement(DefaultVertexFormats.TEX_2S);
+                }
+                UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder( format );
+                VertexLighterFlat trans = new VertexLighterFlat( Minecraft.getMinecraft().getBlockColors() ){
+
+                    @Override
+                    protected void updateLightmap( float[] normal, float[] lightmap, float x, float y, float z )
+                    {
+                        lightmap[0] = uvlightmap.block;
+                        lightmap[1] = uvlightmap.sky;
+                    }
+
+                };
+                trans.setParent( builder );
+                quad.pipe( trans );
+                builder.setQuadOrientation( quad.getFace() );
+                event.setQuad(builder.build());
+            }
         }
+    }
+
+    @SubscribeEvent
+    public void include(VanillaModelWrapperEvent.Bake.Model.Post event){
+        if(event.getModel().hasCapability(include, null)){
+            Include trans = event.getModel().getCapability(include, null);
+            for(Pair<String, ComplexTransforms> include : trans.include){
+                try {
+                    TRSRTransformation compTrans = new TRSRTransformation(TRSRTransformation.toVecmath(include.getRight().getMat()));
+                    IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(include.getLeft()));
+                    IBakedModel baked = model.bake(TRSRTransformation.blockCenterToCorner(TRSRTransformation.blockCornerToCenter(event.getBaseState()).compose(compTrans)), event.getFormat(), event.getBakedTextureGetter());
+                    for(BakedQuad quad : baked.getQuads(null, null, 0)){
+                        event.getBuilder().addGeneralQuad(quad);
+                    }
+                    for(EnumFacing face : EnumFacing.values()){
+                        for(BakedQuad quad : baked.getQuads(null, face, 0)){
+                            event.getBuilder().addFaceQuad(face, quad);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static class UVLightmap {
+
+        float block = -1;
+        float sky = -1;
+
+        static class Storage implements IStorage<UVLightmap> {
+
+            @Override
+            public NBTBase writeNBT(Capability<UVLightmap> capability, UVLightmap instance, EnumFacing side)
+            {
+                NBTTagCompound nbt = new NBTTagCompound();
+                nbt.setFloat("block", instance.block);
+                nbt.setFloat("sky", instance.sky);
+                return nbt;
+            }
+
+            @Override
+            public void readNBT(Capability<UVLightmap> capability, UVLightmap instance, EnumFacing side, NBTBase b)
+            {
+                NBTTagCompound nbt = (NBTTagCompound) b;
+                instance.block = nbt.getFloat("block");
+                instance.sky = nbt.getFloat("sky");
+            }
+
+        }
+
+    }
+
+    public static class Include {
+
+        List<Pair<String, ComplexTransforms>> include = new ArrayList<Pair<String,ComplexTransforms>>();
+
+        static class Storage implements IStorage<Include> {
+
+            @Override
+            public NBTBase writeNBT(Capability<Include> capability, Include instance, EnumFacing side)
+            {
+                NBTTagList list = new NBTTagList();
+                for(Pair<String, ComplexTransforms> pair : instance.include){
+                    NBTTagCompound tag = new NBTTagCompound();
+                    tag.setString("model", pair.getLeft());
+                    tag.setTag("transform", pair.getRight().writeToNBT());
+                    list.appendTag(tag);
+                }
+                return list;
+            }
+
+            @Override
+            public void readNBT(Capability<Include> capability, Include instance, EnumFacing side, NBTBase nbt)
+            {
+                NBTTagList list = (NBTTagList) nbt;
+                for(int i = 0; i < list.tagCount(); i++){
+                    instance.include.add(new ImmutablePair<String, JsonModelCapabilityTest.ComplexTransforms>(list.getCompoundTagAt(i).getString("model"), new ComplexTransforms().readFromNBT(list.getCompoundTagAt(i).getTagList("transform", 10))));
+                }
+            }
+
+        }
+
     }
 
     public static class ComplexTransforms
     {
 
-        private Vector3f translation = new Vector3f(0, 0, 0);
-        private Vector3f rotation = new Vector3f(0, 0, 0);
-        private Vector3f scale = new Vector3f(1, 1, 1);
+        List<Transform> transforms = new ArrayList<Transform>();
 
-        public ComplexTransforms()
-        {
-
+        public Matrix4f getMat(){
+            Matrix4f mat = new Matrix4f();
+            for(Transform transform : transforms) mat = Matrix4f.mul(mat, transform.getMat(), null);
+            return mat;
         }
 
-        static class Storage implements IStorage<ComplexTransforms> {
+        public NBTTagList writeToNBT()
+        {
+            NBTTagList list = new NBTTagList();
+            for(Transform transform : transforms){
+                list.appendTag(transform.writeToNBT());
+            }
+            return list;
+        }
 
-            @Override
-            public NBTTagCompound writeNBT(Capability<ComplexTransforms> capability, ComplexTransforms instance, EnumFacing side)
+        public ComplexTransforms readFromNBT(NBTTagList list)
+        {
+            for(int i = 0; i < list.tagCount(); i++){
+                transforms.add(new Transform().readFromNBT(list.getCompoundTagAt(i)));
+            }
+            return this;
+        }
+
+        static class Transform {
+
+            private Vector3f translation = null;
+            private Vector3f rotation = null;
+            private Vector3f scale = null;
+
+            public Matrix4f getMat(){
+                Matrix4f mat = new Matrix4f();
+                if(translation != null) mat.translate(translation);
+                if(rotation != null) mat.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0)).rotate((float) Math.toRadians(rotation.y), new Vector3f(0, 1, 0)).rotate((float) Math.toRadians(rotation.z), new Vector3f(0, 0, 1));
+                if(scale != null) mat.scale(scale);
+                return mat;
+            }
+
+            public NBTTagCompound writeToNBT()
             {
                 NBTTagCompound nbt = new NBTTagCompound();
-                nbt.setTag("translation", toNBT(instance.translation));
-                nbt.setTag("rotation", toNBT(instance.rotation));
-                nbt.setTag("scale", toNBT(instance.scale));
+                nbt.setTag("translation", toNBT(translation));
+                nbt.setTag("rotation", toNBT(rotation));
+                nbt.setTag("scale", toNBT(scale));
                 return nbt;
             }
 
-            @Override
-            public void readNBT(Capability<ComplexTransforms> capability, ComplexTransforms instance, EnumFacing side, NBTBase base)
+            public Transform readFromNBT(NBTTagCompound nbt)
             {
-                NBTTagCompound nbt = (NBTTagCompound) base;
-                if(nbt.hasKey("translation")) instance.translation = fromNBT(nbt.getCompoundTag("translation"));
-                if(nbt.hasKey("rotation")) instance.rotation = fromNBT(nbt.getCompoundTag("rotation"));
-                if(nbt.hasKey("scale")) instance.scale = fromNBT(nbt.getCompoundTag("scale"));
+                if(nbt.hasKey("translation")) translation = fromNBT(nbt.getCompoundTag("translation"));
+                if(nbt.hasKey("rotation")) rotation = fromNBT(nbt.getCompoundTag("rotation"));
+                if(nbt.hasKey("scale")) scale = fromNBT(nbt.getCompoundTag("scale"));
+                return this;
             }
 
             public Vector3f fromNBT(NBTTagCompound nbt){
