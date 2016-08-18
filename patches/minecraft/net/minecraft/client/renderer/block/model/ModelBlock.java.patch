@@ -17,42 +17,31 @@
  
      public static ModelBlock func_178307_a(Reader p_178307_0_)
      {
-@@ -56,15 +57,17 @@
-         return func_178307_a(new StringReader(p_178294_0_));
-     }
- 
--    public ModelBlock(@Nullable ResourceLocation p_i46573_1_, List<BlockPart> p_i46573_2_, Map<String, String> p_i46573_3_, boolean p_i46573_4_, boolean p_i46573_5_, ItemCameraTransforms p_i46573_6_, List<ItemOverride> p_i46573_7_)
-+    public ModelBlock(@Nullable ResourceLocation parentLocationIn, List<BlockPart> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemCameraTransforms cameraTransformsIn, List<ItemOverride> overridesIn, net.minecraft.nbt.NBTTagCompound capabilities)
-     {
--        this.field_178314_g = p_i46573_2_;
--        this.field_178322_i = p_i46573_4_;
--        this.field_178321_h = p_i46573_5_;
--        this.field_178318_c = p_i46573_3_;
--        this.field_178316_e = p_i46573_1_;
--        this.field_178320_j = p_i46573_6_;
--        this.field_187968_k = p_i46573_7_;
-+        this.field_178314_g = elementsIn;
-+        this.field_178322_i = ambientOcclusionIn;
-+        this.field_178321_h = gui3dIn;
-+        this.field_178318_c = texturesIn;
-+        this.field_178316_e = parentLocationIn;
-+        this.field_178320_j = cameraTransformsIn;
-+        this.field_187968_k = overridesIn;
+@@ -65,8 +66,15 @@
+         this.field_178316_e = p_i46573_1_;
+         this.field_178320_j = p_i46573_6_;
+         this.field_187968_k = p_i46573_7_;
 +        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilitiesNotNull(new net.minecraftforge.client.event.ClientAttachCapabilitiesEvent.ModelBlock(this));
-+        if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
      }
  
++    public ModelBlock(@Nullable ResourceLocation parentLocationIn, List<BlockPart> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemCameraTransforms cameraTransformsIn, List<ItemOverride> overridesIn, net.minecraft.nbt.NBTTagCompound capabilities)
++    {
++        this(parentLocationIn, elementsIn, texturesIn, ambientOcclusionIn, gui3dIn, cameraTransformsIn, overridesIn);
++        if(capabilities != null) this.capabilities.deserializeNBT(capabilities);
++    }
++
      public List<BlockPart> func_178298_a()
-@@ -226,7 +229,26 @@
-             }
+     {
+         return this.field_178314_g.isEmpty() && this.func_178295_k() ? this.field_178315_d.func_178298_a() : this.field_178314_g;
+@@ -227,6 +235,25 @@
          }
      }
-+    
+ 
 +    public net.minecraftforge.common.capabilities.CapabilityDispatcher getCapabilities()
 +    {
 +        return capabilities;
 +    }
- 
++
 +    @Override
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
 +    {
@@ -70,7 +59,7 @@
      @SideOnly(Side.CLIENT)
      static final class Bookkeep
          {
-@@ -259,7 +281,7 @@
+@@ -259,7 +286,7 @@
  
                  List<ItemOverride> list1 = this.func_187964_a(p_deserialize_3_, jsonobject);
                  ResourceLocation resourcelocation = s.isEmpty() ? null : new ResourceLocation(s);

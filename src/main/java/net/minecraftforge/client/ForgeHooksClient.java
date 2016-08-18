@@ -271,7 +271,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
         return event.getTextures().build();
     }
-    
+
     private static int skyX, skyZ;
 
     private static boolean skyInit;
@@ -433,7 +433,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
         return event.getQuad();
     }
-    
+
     @SuppressWarnings("deprecation")
     public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
     {
@@ -779,7 +779,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
-    
+
     public static NBTTagCompound capabilitiesJsonToNbt(String json)
     {
         try
@@ -788,7 +788,7 @@ public class ForgeHooksClient
         }
         catch (NBTException e)
         {
-            
+
         }
         return null;
     }

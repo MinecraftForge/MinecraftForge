@@ -141,7 +141,7 @@ public final class ModelDynBucket implements IModel, IModelCustomData, IRetextur
         if (baseLocation != null)
         {
             // build base (insidest)
-            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation), new NBTTagCompound())).bake(state, format, bakedTextureGetter);
+            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(state, format, bakedTextureGetter);
             builder.addAll(model.getQuads(null, null, 0));
         }
         if (liquidLocation != null && fluidSprite != null)

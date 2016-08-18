@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
-@@ -44,17 +44,17 @@
+@@ -44,7 +44,7 @@
          else
          {
              map.put("particle", p_178392_2_.func_178300_b("particle") ? p_178392_2_.func_178308_c("particle") : (String)map.get("layer0"));
@@ -8,44 +8,4 @@
 +            return new ModelBlock((ResourceLocation)null, list, map, false, false, p_178392_2_.func_181682_g(), p_178392_2_.func_187966_f(), p_178392_2_.getCapabilities().serializeNBT());
          }
      }
- 
-     private List<BlockPart> func_178394_a(int p_178394_1_, String p_178394_2_, TextureAtlasSprite p_178394_3_)
-     {
-         Map<EnumFacing, BlockPartFace> map = Maps.<EnumFacing, BlockPartFace>newHashMap();
--        map.put(EnumFacing.SOUTH, new BlockPartFace((EnumFacing)null, p_178394_1_, p_178394_2_, new BlockFaceUV(new float[] {0.0F, 0.0F, 16.0F, 16.0F}, 0)));
--        map.put(EnumFacing.NORTH, new BlockPartFace((EnumFacing)null, p_178394_1_, p_178394_2_, new BlockFaceUV(new float[] {16.0F, 0.0F, 0.0F, 16.0F}, 0)));
-+        map.put(EnumFacing.SOUTH, new BlockPartFace((EnumFacing)null, p_178394_1_, p_178394_2_, new BlockFaceUV(new float[] {0.0F, 0.0F, 16.0F, 16.0F}, 0), new net.minecraft.nbt.NBTTagCompound()));
-+        map.put(EnumFacing.NORTH, new BlockPartFace((EnumFacing)null, p_178394_1_, p_178394_2_, new BlockFaceUV(new float[] {16.0F, 0.0F, 0.0F, 16.0F}, 0), new net.minecraft.nbt.NBTTagCompound()));
-         List<BlockPart> list = Lists.<BlockPart>newArrayList();
--        list.add(new BlockPart(new Vector3f(0.0F, 0.0F, 7.5F), new Vector3f(16.0F, 16.0F, 8.5F), map, (BlockPartRotation)null, true));
-+        list.add(new BlockPart(new Vector3f(0.0F, 0.0F, 7.5F), new Vector3f(16.0F, 16.0F, 8.5F), map, (BlockPartRotation)null, true, new net.minecraft.nbt.NBTTagCompound()));
-         list.addAll(this.func_178397_a(p_178394_3_, p_178394_2_, p_178394_1_));
-         return list;
-     }
-@@ -142,21 +142,21 @@
-             f8 = f8 * f11;
-             f9 = f9 * f11;
-             Map<EnumFacing, BlockPartFace> map = Maps.<EnumFacing, BlockPartFace>newHashMap();
--            map.put(itemmodelgenerator$spanfacing.func_178367_a(), new BlockPartFace((EnumFacing)null, p_178397_3_, p_178397_2_, new BlockFaceUV(new float[] {f6, f8, f7, f9}, 0)));
-+            map.put(itemmodelgenerator$spanfacing.func_178367_a(), new BlockPartFace((EnumFacing)null, p_178397_3_, p_178397_2_, new BlockFaceUV(new float[] {f6, f8, f7, f9}, 0), new net.minecraft.nbt.NBTTagCompound()));
- 
-             switch (itemmodelgenerator$spanfacing)
-             {
-                 case UP:
--                    list.add(new BlockPart(new Vector3f(f2, f3, 7.5F), new Vector3f(f4, f3, 8.5F), map, (BlockPartRotation)null, true));
-+                    list.add(new BlockPart(new Vector3f(f2, f3, 7.5F), new Vector3f(f4, f3, 8.5F), map, (BlockPartRotation)null, true, new net.minecraft.nbt.NBTTagCompound()));
-                     break;
-                 case DOWN:
--                    list.add(new BlockPart(new Vector3f(f2, f5, 7.5F), new Vector3f(f4, f5, 8.5F), map, (BlockPartRotation)null, true));
-+                    list.add(new BlockPart(new Vector3f(f2, f5, 7.5F), new Vector3f(f4, f5, 8.5F), map, (BlockPartRotation)null, true, new net.minecraft.nbt.NBTTagCompound()));
-                     break;
-                 case LEFT:
--                    list.add(new BlockPart(new Vector3f(f2, f3, 7.5F), new Vector3f(f2, f5, 8.5F), map, (BlockPartRotation)null, true));
-+                    list.add(new BlockPart(new Vector3f(f2, f3, 7.5F), new Vector3f(f2, f5, 8.5F), map, (BlockPartRotation)null, true, new net.minecraft.nbt.NBTTagCompound()));
-                     break;
-                 case RIGHT:
--                    list.add(new BlockPart(new Vector3f(f4, f3, 7.5F), new Vector3f(f4, f5, 8.5F), map, (BlockPartRotation)null, true));
-+                    list.add(new BlockPart(new Vector3f(f4, f3, 7.5F), new Vector3f(f4, f5, 8.5F), map, (BlockPartRotation)null, true, new net.minecraft.nbt.NBTTagCompound()));
-             }
-         }
  
