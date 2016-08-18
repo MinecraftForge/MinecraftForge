@@ -48,6 +48,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -108,16 +109,12 @@ public class GameRegistry
         {
             computeSortedGeneratorList();
         }
-        long worldSeed = world.getSeed();
-        Random fmlRandom = new Random(worldSeed);
-        long xSeed = fmlRandom.nextLong() >> 2 + 1L;
-        long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
 
+        long seed = ForgeHooks.getChunkSeed(world, chunkX, chunkZ);
+        
         for (IWorldGenerator generator : sortedGeneratorList)
         {
-            fmlRandom.setSeed(chunkSeed);
-            generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+            generator.generate(new Random(seed), chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
     }
 
