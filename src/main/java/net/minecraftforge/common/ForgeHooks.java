@@ -169,7 +169,7 @@ public class ForgeHooks
             return player.canHarvestBlock(state);
         }
 
-        int toolLevel = stack.getItem().getHarvestLevel(stack, tool);
+        int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
         if (toolLevel < 0)
         {
             return player.canHarvestBlock(state);
@@ -184,7 +184,7 @@ public class ForgeHooks
         state = state.getBlock().getActualState(state, world, pos);
         String tool = state.getBlock().getHarvestTool(state);
         if (stack == null || tool == null) return false;
-        return stack.getItem().getHarvestLevel(stack, tool) >= state.getBlock().getHarvestLevel(state);
+        return stack.getItem().getHarvestLevel(stack, tool, null, null) >= state.getBlock().getHarvestLevel(state);
     }
 
     public static float blockStrength(IBlockState state, EntityPlayer player, World world, BlockPos pos)
