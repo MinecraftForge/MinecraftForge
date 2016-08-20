@@ -50,9 +50,9 @@
 +    /*===================================== FORGE START =================================*/
 +    private String toolClass;
 +    @Override
-+    public int getHarvestLevel(ItemStack stack, String toolClass, @javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, @javax.annotation.Nullable IBlockState blockState)
++    public int getHarvestLevel(ItemStack stack, String toolClass)
 +    {
-+        int level = super.getHarvestLevel(stack, toolClass, player, blockState);
++        int level = super.getHarvestLevel(stack, toolClass);
 +        if (level == -1 && toolClass != null && toolClass.equals(this.toolClass))
 +        {
 +            return this.field_77862_b.func_77996_d();
