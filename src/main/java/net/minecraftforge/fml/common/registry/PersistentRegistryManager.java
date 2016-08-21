@@ -166,7 +166,7 @@ public class PersistentRegistryManager
             IForgeRegistry.CreateCallback<T> createCallback)
     {
         return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                addCallback, getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
+                getLegacyAdd(addCallback), getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
     }
     @Deprecated //Use RegistryBuilder TODO: Remove in 1.11 {Make package private so only builder can use it}
     public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
@@ -774,6 +774,36 @@ public class PersistentRegistryManager
                 {
                     try {
                         mtd.invoke(cb, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            Throwables.propagate(e);
+        }
+        return null; //Will never get here unless things go wonkey...
+    }
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.AddCallback<T> getLegacyAdd(final IForgeRegistry.AddCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onAdd", Object.class, int.class, Map.class);
+            return new IForgeRegistry.AddCallback<T>()
+            {
+                @Override
+                public void onAdd(T obj, int id, Map<ResourceLocation, ?> slaveset)
+                {
+                    try {
+                        mtd.invoke(cb, obj, id, slaveset);
                     } catch (Exception e) {
                         e.printStackTrace( );
                         Throwables.propagate(e);
