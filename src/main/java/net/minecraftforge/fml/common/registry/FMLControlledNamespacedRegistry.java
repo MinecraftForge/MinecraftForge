@@ -180,6 +180,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         this.persistentSubstitutions.clear();
         this.persistentSubstitutions.putAll(otherRegistry.getPersistentSubstitutions());
         this.activeSubstitutions.clear();
+        this.substitutionOriginals.clear();
         this.dummiedLocations.clear();
         this.dummiedLocations.addAll(otherRegistry.dummiedLocations);
 
@@ -188,7 +189,11 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
 
         for (I thing : otherRegistry.typeSafeIterable())
         {
-            addObjectRaw(otherRegistry.getId(thing), otherRegistry.getNameForObject(thing), thing);
+            ResourceLocation name = otherRegistry.getNameForObject(thing);
+            if (otherRegistry.activeSubstitutions.containsKey(name)) // If this is subed, use the orig, the loop below will reinstate the sub.
+                addObjectRaw(otherRegistry.getId(thing), name, otherRegistry.substitutionOriginals.get(name));
+            else
+                addObjectRaw(otherRegistry.getId(thing), name, thing);
         }
         for (ResourceLocation resloc : otherRegistry.activeSubstitutions.keySet())
         {
@@ -762,6 +767,8 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
                 FMLLog.fine("Fixed %s id mismatch %s: %d (init) -> %d (map).", registryName, itemName, currId, newId);
                 remappedIds.put(itemName, new Integer[] {currId, newId});
             }
+            if ("minecraft:stone".equals(itemName.toString()))
+                    System.currentTimeMillis();
             I obj = currentRegistry.getRaw(itemName);
             I sub = obj;
             // If we have an object in the originals set, we use that for initial adding - substitute activation will readd the substitute if neceessary later
