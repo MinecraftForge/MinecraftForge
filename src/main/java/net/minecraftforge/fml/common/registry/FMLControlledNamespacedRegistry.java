@@ -767,8 +767,6 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
                 FMLLog.fine("Fixed %s id mismatch %s: %d (init) -> %d (map).", registryName, itemName, currId, newId);
                 remappedIds.put(itemName, new Integer[] {currId, newId});
             }
-            if ("minecraft:stone".equals(itemName.toString()))
-                    System.currentTimeMillis();
             I obj = currentRegistry.getRaw(itemName);
             I sub = obj;
             // If we have an object in the originals set, we use that for initial adding - substitute activation will readd the substitute if neceessary later
