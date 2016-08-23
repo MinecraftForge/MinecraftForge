@@ -819,7 +819,7 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.getCraftStats(itemstack.getItem()));
+                player.addStat(StatList.getObjectUseStats(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
