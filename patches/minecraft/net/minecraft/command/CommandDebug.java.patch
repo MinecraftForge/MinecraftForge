@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandDebug.java
++++ ../src-work/minecraft/net/minecraft/command/CommandDebug.java
+@@ -99,7 +99,7 @@
+         {
+             IOUtils.closeQuietly((Writer)filewriter);
+             field_147208_a.error("Could not save profiler results to {}", new Object[] {file1, throwable});
+-        }
++        } finally { IOUtils.closeQuietly(filewriter); }
+     }
+ 
+     private String func_184893_b(long p_184893_1_, int p_184893_3_, MinecraftServer p_184893_4_)
