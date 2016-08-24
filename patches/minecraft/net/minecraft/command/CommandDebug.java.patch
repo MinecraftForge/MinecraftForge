@@ -5,7 +5,7 @@
              IOUtils.closeQuietly((Writer)filewriter);
              field_147208_a.error("Could not save profiler results to {}", new Object[] {file1, throwable});
 -        }
-+        } finally { IOUtils.closeQuietly(filewriter); }
++        } finally { IOUtils.closeQuietly(filewriter); } // FORGE: Fix MC-10339
      }
  
      private String func_184893_b(long p_184893_1_, int p_184893_3_, MinecraftServer p_184893_4_)
