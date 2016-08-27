@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -650,7 +650,7 @@
+@@ -76,9 +76,11 @@
+ 
+             if (!ItemStack.func_77989_b(itemstack1, itemstack))
+             {
++                boolean nonCapDifference = itemstack == null || itemstack1 == null || (!itemstack.hasCapabilities() && !itemstack1.hasCapabilities()) || !ItemStack.areItemStacksEqualIgnoreCaps(itemstack1, itemstack);
+                 itemstack1 = itemstack == null ? null : itemstack.func_77946_l();
+                 this.field_75153_a.set(i, itemstack1);
+ 
++                if (nonCapDifference)
+                 for (int j = 0; j < this.field_75149_d.size(); ++j)
+                 {
+                     ((IContainerListener)this.field_75149_d.get(j)).func_71111_a(this, i, itemstack1);
+@@ -650,7 +652,7 @@
                  Slot slot1 = (Slot)this.field_75151_b.get(i);
                  ItemStack itemstack1 = slot1.func_75211_c();
  
@@ -9,7 +21,7 @@
                  {
                      slot1.func_75215_d(p_75135_1_.func_77946_l());
                      slot1.func_75218_e();
-@@ -728,7 +728,7 @@
+@@ -728,7 +730,7 @@
                  p_94525_2_.field_77994_a = 1;
                  break;
              case 2:

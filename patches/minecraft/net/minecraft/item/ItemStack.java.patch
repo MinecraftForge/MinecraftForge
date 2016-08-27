@@ -235,7 +235,7 @@
          this.field_151002_e = p_150996_1_;
      }
  
-@@ -993,4 +1029,45 @@
+@@ -993,4 +1029,69 @@
              return false;
          }
      }
@@ -279,5 +279,29 @@
 +        {
 +            return this.capabilities.areCompatible(other.capabilities);
 +        }
++    }
++
++    public static boolean areItemStacksEqualIgnoreCaps(@Nullable ItemStack stackA, @Nullable ItemStack stackB)
++    {
++        if (stackA == null && stackB == null) return true;
++        if (stackA == null && stackB != null) return false;
++        if (stackA != null && stackB == null) return false;
++        if (stackA.field_77994_a != stackB.field_77994_a) return false;
++        if (stackA.field_151002_e != stackB.field_151002_e) return false;
++        if (stackA.field_77991_e != stackB.field_77991_e) return false;
++        if (stackA.field_77990_d == null && stackB.field_77990_d != null) return false;
++        if (stackA.field_77990_d != null && stackB.field_77990_d == null) return false;
++        if (stackA.field_77990_d != null && !stackA.field_77990_d.equals(stackB.field_77990_d)) return false;
++        return true;
++    }
++
++    public boolean hasCapabilities()
++    {
++        return this.capabilities != null;
++    }
++
++    public NBTTagCompound getCapNBT()
++    {
++        return this.capabilities == null ? null : this.capabilities.serializeNBT();
 +    }
  }
