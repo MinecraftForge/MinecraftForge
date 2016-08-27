@@ -22,8 +22,8 @@
 +        if (face == EnumFacing.DOWN) return half == EnumHalf.BOTTOM;
 +        if (shape == EnumShape.OUTER_LEFT || shape == EnumShape.OUTER_RIGHT) return false;
 +        if (face == side) return true;
-+        if (shape == EnumShape.INNER_LEFT && face.func_176735_f() == side) return true;
-+        if (shape == EnumShape.INNER_RIGHT && face.func_176746_e() == side) return true;
++        if (shape == EnumShape.INNER_LEFT && face.func_176746_e() == side) return true;
++        if (shape == EnumShape.INNER_RIGHT && face.func_176735_f() == side) return true;
 +        return false;
 +    }
 +
