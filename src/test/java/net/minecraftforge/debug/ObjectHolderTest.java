@@ -28,6 +28,8 @@ public class ObjectHolderTest
         assert ForgeObjectHolder.forgePotion != null;
         //verifies modders can't mess with minecraft:air
         assert VanillaObjectHolder.air == null;
+        //verified unexpected name should not have defaulted to AIR.
+        assert VanillaObjectHolder.nonExistentBlock == null;
     }
 
     protected class PotionForge extends Potion {
@@ -46,6 +48,7 @@ class VanillaObjectHolder
     @GameRegistry.ObjectHolder("ui.button.click")
     public static final SoundEvent uiButtonClick = null;
     public static final Block air = null;
+    public static final Block nonExistentBlock = null;
 }
 
 @GameRegistry.ObjectHolder(ObjectHolderTest.MODID)

@@ -107,12 +107,9 @@ class ObjectHolderRef {
     public void apply()
     {
         Object thing;
-        if (isValid)
+        if (isValid && registry.containsKey(injectedObject))
         {
             thing = registry.getValue(injectedObject);
-            if (registry.getRegistrySuperType() == Block.class && thing == Blocks.AIR) {
-                thing = null;
-            }
         }
         else
         {
