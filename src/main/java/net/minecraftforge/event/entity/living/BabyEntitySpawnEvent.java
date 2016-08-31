@@ -74,6 +74,7 @@ public class BabyEntitySpawnEvent extends Event
         return parentB;
     }
 
+    @Nullable
     public EntityPlayer getCausedByPlayer()
     {
         return causedByPlayer;
