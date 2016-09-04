@@ -57,7 +57,6 @@ public class BabyEntitySpawnEvent extends Event
 
     public BabyEntitySpawnEvent(EntityLiving parentA, EntityLiving parentB, EntityAgeable proposedChild, @Nullable EntityPlayer causedByPlayer)
     {
-
         this.parentA = parentA;
         this.parentB = parentB;
         this.causedByPlayer = causedByPlayer;
