@@ -88,7 +88,12 @@ public class UniversalBucket extends Item implements IFluidContainerItem
     @Override
     public ItemStack getContainerItem(ItemStack itemStack)
     {
-        return getEmpty();
+        if (getEmpty() != null)
+        {
+            // Create a copy such that the game can't mess with it
+            return getEmpty().copy();
+        }
+        return super.getContainerItem(itemStack);
     }
 
     @SideOnly(Side.CLIENT)
