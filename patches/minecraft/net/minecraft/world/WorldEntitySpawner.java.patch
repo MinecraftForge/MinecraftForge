@@ -37,7 +37,7 @@
                                                      }
  
 -                                                    if (j2 >= entityliving.func_70641_bl())
-+                                                    if (i2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
++                                                    if (j2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving))
                                                      {
                                                          continue label411;
                                                      }
