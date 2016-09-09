@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraftforge.ingredients.capability.CapabilityIngredientHandler;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.crash.CrashReport;
@@ -401,6 +402,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         CapabilityItemHandler.register();
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
+        CapabilityIngredientHandler.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);

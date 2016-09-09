@@ -22,6 +22,8 @@ package net.minecraftforge.common.network;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraftforge.ingredients.Ingredient;
+import net.minecraftforge.ingredients.IngredientRegistry;
 import org.apache.logging.log4j.Level;
 
 import net.minecraftforge.fluids.Fluid;
@@ -115,6 +117,54 @@ public abstract class ForgeMessage {
             }
         }
     }
+
+    public static class IngredientIdMapMessage extends ForgeMessage {
+        BiMap<Ingredient, Integer> ingredientIds = HashBiMap.create();
+        Set<String> defaultIngredients = Sets.newHashSet();
+        @SuppressWarnings("deprecation")
+        @Override
+        void toBytes(ByteBuf bytes)
+        {
+            Map<Ingredient, Integer> ids = IngredientRegistry.getRegisteredIngredientIDs();
+            bytes.writeInt(ids.size());
+            for (Map.Entry<Ingredient, Integer> entry : ids.entrySet())
+            {
+                ByteBufUtils.writeUTF8String(bytes,entry.getKey().getName());
+                bytes.writeInt(entry.getValue());
+            }
+            for (Map.Entry<Ingredient, Integer> entry : ids.entrySet())
+            {
+                String defaultName = IngredientRegistry.getDefaultIngredientName(entry.getKey());
+                ByteBufUtils.writeUTF8String(bytes, defaultName);
+            }
+        }
+
+        @Override
+        void fromBytes(ByteBuf bytes)
+        {
+            int listSize = bytes.readInt();
+            for (int i = 0; i < listSize; i++) {
+                String fluidName = ByteBufUtils.readUTF8String(bytes);
+                int fluidId = bytes.readInt();
+                ingredientIds.put(IngredientRegistry.getIngredient(fluidName), fluidId);
+            }
+            // do we have a defaults list?
+
+            if (bytes.isReadable())
+            {
+                for (int i = 0; i < listSize; i++)
+                {
+                    defaultIngredients.add(ByteBufUtils.readUTF8String(bytes));
+                }
+            }
+            else
+            {
+                FMLLog.getLogger().log(Level.INFO, "Legacy server message contains no default ingredient list - there may be problems with ingredients");
+                defaultIngredients.clear();
+            }
+        }
+    }
+
 
     abstract void toBytes(ByteBuf bytes);
     abstract void fromBytes(ByteBuf bytes);

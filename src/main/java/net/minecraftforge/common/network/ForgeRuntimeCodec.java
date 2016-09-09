@@ -28,6 +28,7 @@ public class ForgeRuntimeCodec extends FMLIndexedMessageToMessageCodec<ForgeMess
     {
         addDiscriminator(1, ForgeMessage.DimensionRegisterMessage.class);
         addDiscriminator(2, ForgeMessage.FluidIdMapMessage.class);
+        addDiscriminator(3, ForgeMessage.IngredientIdMapMessage.class);
     }
     @Override
     public void encodeInto(ChannelHandlerContext ctx, ForgeMessage msg, ByteBuf target) throws Exception
