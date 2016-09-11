@@ -6,6 +6,8 @@ import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Collections;
@@ -77,6 +79,7 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
@@ -705,4 +708,12 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
     }
+
+    public static ScreenshotEvent onScreenshot(BufferedImage image, File screenshotFile)
+    {
+        ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
 }
