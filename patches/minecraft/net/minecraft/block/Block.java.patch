@@ -899,9 +899,9 @@
 +        IBlockState plant = plantable.getPlant(world, pos.func_177972_a(direction));
 +        net.minecraftforge.common.EnumPlantType plantType = plantable.getPlantType(world, pos.func_177972_a(direction));
 +
-+        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF && this == net.minecraft.init.Blocks.field_150434_aF)
++        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150434_aF)
 +        {
-+            return true;
++            return this == net.minecraft.init.Blocks.field_150434_aF || this == net.minecraft.init.Blocks.field_150354_m;
 +        }
 +
 +        if (plant.func_177230_c() == net.minecraft.init.Blocks.field_150436_aH && this == net.minecraft.init.Blocks.field_150436_aH)
@@ -916,7 +916,7 @@
 +
 +        switch (plantType)
 +        {
-+            case Desert: return this == net.minecraft.init.Blocks.field_150354_m || this == net.minecraft.init.Blocks.field_150405_ch || this == net.minecraft.init.Blocks.field_150406_ce || this == net.minecraft.init.Blocks.field_150346_d;
++            case Desert: return this == net.minecraft.init.Blocks.field_150354_m || this == net.minecraft.init.Blocks.field_150405_ch || this == net.minecraft.init.Blocks.field_150406_ce;
 +            case Nether: return this == net.minecraft.init.Blocks.field_150425_aM;
 +            case Crop:   return this == net.minecraft.init.Blocks.field_150458_ak;
 +            case Cave:   return state.isSideSolid(world, pos, EnumFacing.UP);
