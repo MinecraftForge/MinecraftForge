@@ -36,4 +36,9 @@ public class ClientChatPrintedEvent extends Event
     {
         return chatLineID;
     }
+
+    public void setChatLineID(int chatLineID)
+    {
+        this.chatLineID = chatLineID;
+    }
 }
