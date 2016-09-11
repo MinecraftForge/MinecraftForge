@@ -1,27 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiNewChat.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiNewChat.java
-@@ -3,9 +3,6 @@
- import com.google.common.base.Joiner;
- import com.google.common.base.Splitter;
- import com.google.common.collect.Lists;
--import java.util.Iterator;
--import java.util.List;
--import javax.annotation.Nullable;
- import net.minecraft.client.Minecraft;
- import net.minecraft.client.renderer.GlStateManager;
- import net.minecraft.entity.player.EntityPlayer;
-@@ -17,6 +14,10 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+import javax.annotation.Nullable;
-+import java.util.Iterator;
-+import java.util.List;
-+
- @SideOnly(Side.CLIENT)
- public class GuiNewChat extends Gui
- {
-@@ -136,6 +137,9 @@
+@@ -136,6 +136,9 @@
  
      public void func_146234_a(ITextComponent p_146234_1_, int p_146234_2_)
      {
