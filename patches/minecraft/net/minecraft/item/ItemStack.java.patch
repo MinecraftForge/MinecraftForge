@@ -64,7 +64,7 @@
 +        if (this.capabilities != null)
 +        {
 +            NBTTagCompound cnbt = this.capabilities.serializeNBT();
-+            if (!cnbt.func_82582_d()) p_77955_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
++            if (!cnbt.func_82582_d()) p_77955_1_.func_74782_a("ForgeCaps", cnbt);
 +        }
 +
          return p_77955_1_;
