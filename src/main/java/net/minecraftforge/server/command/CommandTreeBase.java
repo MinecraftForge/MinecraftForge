@@ -29,10 +29,10 @@ import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for commands that has subcommands.
@@ -42,16 +42,24 @@ import java.util.List;
  */
 public abstract class CommandTreeBase extends CommandBase
 {
-    private final HashMap<String, ICommand> commandMap = new HashMap<String, ICommand>();
+    private final Map<String, ICommand> commandMap = new HashMap<String, ICommand>();
 
     public void addSubcommand(ICommand c)
     {
         commandMap.put(c.getCommandName(), c);
     }
 
-    public Collection<ICommand> getSubCommands()
+    public Map<String, ICommand> getCommandMap()
     {
-        return Collections.unmodifiableCollection(commandMap.values());
+        return Collections.unmodifiableMap(commandMap);
+    }
+
+    public List<ICommand> getSortedCommandList()
+    {
+        List<ICommand> list = new ArrayList<ICommand>(commandMap.size());
+        list.addAll(commandMap.values());
+        Collections.sort(list);
+        return list;
     }
 
     private static String[] shiftArgs(String[] s)
