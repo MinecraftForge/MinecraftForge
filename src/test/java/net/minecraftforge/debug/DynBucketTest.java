@@ -28,6 +28,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
 import net.minecraftforge.debug.ModelFluidDebug.TestGas;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -121,6 +122,8 @@ public class DynBucketTest
 
         //GameRegistry.registerItem(dynBucket, "dynbucket");
         GameRegistry.register(dynBottle);
+        GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND),
+            UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TestFluid.instance));
 
         // register fluid containers
         int i = 0;
