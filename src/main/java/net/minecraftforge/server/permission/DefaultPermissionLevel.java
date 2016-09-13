@@ -19,18 +19,17 @@
 
 package net.minecraftforge.server.permission;
 
-public enum PermissionLevel
+/**
+ * <table><thead><tr><th>Level</th><th>Player</th><th>OP</th></tr>
+ * </thead><tbody>
+ * <tr><td>ALL</td><td>true</td><td>true</td></tr>
+ * <tr><td>OP</td><td>false</td><td>true</td></tr>
+ * <tr><td>NONE</td><td>false</td><td>false</td></tr>
+ * </tbody></table>
+ */
+public enum DefaultPermissionLevel
 {
-    PLAYER,
-    OP;
-
-    public boolean isOP()
-    {
-        return this == OP;
-    }
-
-    public boolean isPlayer()
-    {
-        return this == PLAYER;
-    }
+    ALL,
+    OP,
+    NONE
 }

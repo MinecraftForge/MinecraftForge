@@ -20,7 +20,7 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
@@ -33,13 +33,13 @@ public class PlayerChunkContext extends PlayerContext
 {
     private final ChunkPos chunkPos;
 
-    public PlayerChunkContext(EntityPlayerMP ep, ChunkPos pos)
+    public PlayerChunkContext(EntityPlayer ep, ChunkPos pos)
     {
         super(ep);
         chunkPos = Preconditions.checkNotNull(pos, "ChunkPos can't be null in PlayerChunkContext!");
     }
 
-    public PlayerChunkContext(EntityPlayerMP ep, BlockPos pos)
+    public PlayerChunkContext(EntityPlayer ep, BlockPos pos)
     {
         super(ep);
         Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerChunkContext!");

@@ -21,7 +21,7 @@ package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -31,7 +31,7 @@ public class PlayerBlockContext extends PlayerContext
     private final BlockPos blockPos;
     private IBlockState blockState;
 
-    public PlayerBlockContext(EntityPlayerMP ep, BlockPos pos, @Nullable IBlockState state)
+    public PlayerBlockContext(EntityPlayer ep, BlockPos pos, @Nullable IBlockState state)
     {
         super(ep);
         blockPos = Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerBlockContext!");

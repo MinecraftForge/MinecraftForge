@@ -20,23 +20,37 @@
 package net.minecraftforge.server.permission;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.server.permission.context.IContext;
+
+import javax.annotation.Nullable;
 
 /**
  * Default implementation of PermissionAPI.
- * If the node isn't registred, handler assumes that it's level is OP
- * Returns returns true if it is a singleplayer world or the player is an OP
+ * {@link #hasPermission(GameProfile, String, IContext)} is based on DefaultPermissionLevel
  *
- * @see PermissionAPI
+ * @see PermissionAPI#hasPermission(GameProfile, String, IContext)
+ * @see PermissionAPI#registerPermission(String, DefaultPermissionLevel, String...)
  */
 public enum DefaultPermissionHandler implements IPermissionHandler
 {
     INSTANCE;
 
     @Override
-    public boolean hasPermission(GameProfile profile, String permission, IContext context)
+    public boolean hasPermission(GameProfile profile, String permission, @Nullable IContext context)
     {
-        PermissionLevel nodeLevel = PermissionAPI.getPermissionLevel(permission);
-        return nodeLevel.isPlayer() || PermissionAPI.getPlayerLevel(profile).isOP();
+        switch(PermissionAPI.getDefaultPermissionLevel(permission))
+        {
+            case NONE:
+                return false;
+            case ALL:
+                return true;
+            default:
+            {
+                MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+                return server != null && server.getPlayerList().canSendCommands(profile);
+            }
+        }
     }
 }

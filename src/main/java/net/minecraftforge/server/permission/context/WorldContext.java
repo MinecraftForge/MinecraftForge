@@ -20,7 +20,7 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -42,7 +42,7 @@ public class WorldContext extends Context
 
     @Nullable
     @Override
-    public EntityPlayerMP getPlayer()
+    public EntityPlayer getPlayer()
     {
         return null;
     }

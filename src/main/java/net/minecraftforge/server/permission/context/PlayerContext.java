@@ -20,14 +20,14 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public class PlayerContext extends Context
 {
-    private final EntityPlayerMP player;
+    private final EntityPlayer player;
 
-    public PlayerContext(EntityPlayerMP ep)
+    public PlayerContext(EntityPlayer ep)
     {
         player = Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
     }
@@ -39,7 +39,7 @@ public class PlayerContext extends Context
     }
 
     @Override
-    public EntityPlayerMP getPlayer()
+    public EntityPlayer getPlayer()
     {
         return player;
     }

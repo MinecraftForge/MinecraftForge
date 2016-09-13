@@ -16,8 +16,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.PermissionLevel;
 import net.minecraftforge.server.permission.context.PlayerBlockContext;
 import net.minecraftforge.server.permission.context.PlayerChunkContext;
 
@@ -32,10 +32,10 @@ public class PermissionTest
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
-        PermissionAPI.registerPermission(Permissions.CLAIM_CHUNK, PermissionLevel.PLAYER, "Node for claiming chunks");
-        PermissionAPI.registerPermission(Permissions.UNCLAIM_CHUNK, PermissionLevel.PLAYER, "Node for unclaiming chunks");
-        PermissionAPI.registerPermission(Permissions.SET_BLOCK, PermissionLevel.OP, "Node for setting blocks with a command");
-        PermissionAPI.registerPermission(Permissions.READ_TILE, PermissionLevel.OP, "Node for reading and printing TileEntity data");
+        PermissionAPI.registerPermission(Permissions.CLAIM_CHUNK, DefaultPermissionLevel.ALL, "Node for claiming chunks");
+        PermissionAPI.registerPermission(Permissions.UNCLAIM_CHUNK, DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
+        PermissionAPI.registerPermission(Permissions.SET_BLOCK, DefaultPermissionLevel.OP, "Node for setting blocks with a command");
+        PermissionAPI.registerPermission(Permissions.READ_TILE, DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
     }
 
     @Mod.EventHandler
@@ -69,6 +69,12 @@ public class PermissionTest
         public String getCommandUsage(ICommandSender sender)
         {
             return "commands.permission_test.usage";
+        }
+
+        @Override
+        public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+        {
+            return true;
         }
 
         @Override
