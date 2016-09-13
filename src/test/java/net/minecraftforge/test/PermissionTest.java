@@ -14,9 +14,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.context.ContextKey;
+import net.minecraftforge.server.permission.PermissionLevel;
 import net.minecraftforge.server.permission.context.PlayerBlockContext;
 import net.minecraftforge.server.permission.context.PlayerChunkContext;
 
@@ -25,11 +26,17 @@ public class PermissionTest
 {
     public static final String MOD_ID = "PermissionTest";
 
-    //'Bob' Claim Chunk 0,0
-    //'Sally' Trys place block at 0,0,0 while standing at 100,0,100
-
     @Mod.Instance(PermissionTest.MOD_ID)
     public static PermissionTest inst;
+
+    @Mod.EventHandler
+    public void onPreInit(FMLPreInitializationEvent event)
+    {
+        PermissionAPI.registerPermission(Permissions.CLAIM_CHUNK, PermissionLevel.PLAYER, "Node for claiming chunks");
+        PermissionAPI.registerPermission(Permissions.UNCLAIM_CHUNK, PermissionLevel.PLAYER, "Node for unclaiming chunks");
+        PermissionAPI.registerPermission(Permissions.SET_BLOCK, PermissionLevel.OP, "Node for setting blocks with a command");
+        PermissionAPI.registerPermission(Permissions.READ_TILE, PermissionLevel.OP, "Node for reading and printing TileEntity data");
+    }
 
     @Mod.EventHandler
     public void onServerStarted(FMLServerStartingEvent event)
@@ -39,12 +46,15 @@ public class PermissionTest
 
     public static class Permissions
     {
-        public static final String CLAIM_CHUNK = "chunk.claim";
-        public static final String UNCLAIM_CHUNK = "chunk.unclaim";
-        public static final String SET_BLOCK = "block.set";
-        public static final String READ_TILE = "tileentity.read";
+        public static final String CLAIM_CHUNK = "testmod.chunk.claim";
+        public static final String UNCLAIM_CHUNK = "testmod.chunk.unclaim";
+        public static final String SET_BLOCK = "testmod.block.set";
+        public static final String READ_TILE = "testmod.tileentity.read";
+    }
 
-        public static final ContextKey<TileEntity> TILE_ENTITY = new ContextKey<TileEntity>("tileentity");
+    public static class ContextKeys
+    {
+        public static final String TILE_ENTITY = "tileentity";
     }
 
     public static class CommandPermissionTest extends CommandBase
@@ -78,7 +88,7 @@ public class PermissionTest
             {
                 ChunkPos chunkPos = new ChunkPos(parseInt(args[1]), parseInt(args[2]));
 
-                if(PermissionAPI.hasPermission(player.getGameProfile(), b ? Permissions.CLAIM_CHUNK : Permissions.UNCLAIM_CHUNK, true, new PlayerChunkContext(player, chunkPos)))
+                if(PermissionAPI.hasPermission(player.getGameProfile(), b ? Permissions.CLAIM_CHUNK : Permissions.UNCLAIM_CHUNK, new PlayerChunkContext(player, chunkPos)))
                 {
                     if(b)
                     {
@@ -121,7 +131,7 @@ public class PermissionTest
                 {
                     IBlockState state = block.getStateFromMeta(i);
 
-                    if(!PermissionAPI.hasPermission(player.getGameProfile(), Permissions.SET_BLOCK, false, new PlayerBlockContext(player, blockpos, state)))
+                    if(!PermissionAPI.hasPermission(player.getGameProfile(), Permissions.SET_BLOCK, new PlayerBlockContext(player, blockpos, state)))
                     {
                         throw new CommandException("commands.generic.permission");
                     }
@@ -137,7 +147,7 @@ public class PermissionTest
                 BlockPos blockpos = parseBlockPos(sender, args, 1, false);
                 TileEntity tileEntity = player.worldObj.getTileEntity(blockpos);
 
-                if(PermissionAPI.hasPermission(player.getGameProfile(), Permissions.READ_TILE, false, new PlayerBlockContext(player, blockpos, null).set(Permissions.TILE_ENTITY, tileEntity)))
+                if(PermissionAPI.hasPermission(player.getGameProfile(), Permissions.READ_TILE, new PlayerBlockContext(player, blockpos, null).set(ContextKeys.TILE_ENTITY, tileEntity)))
                 {
                     NBTTagCompound tag = tileEntity == null ? null : tileEntity.serializeNBT();
                     sender.addChatMessage(new TextComponentString(String.valueOf(tag)));
