@@ -23,6 +23,7 @@ import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAIVillagerMate;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -41,7 +42,8 @@ import javax.annotation.Nullable;
  * {@link #child} contains the child that will be spawned.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
- * If this event is canceled, the child Entity is not added to the world.<br>
+ * If this event is canceled, the child Entity is not added to the world, and the parents <br>
+ * will no longer attempt to mate.
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
@@ -55,8 +57,19 @@ public class BabyEntitySpawnEvent extends Event
     private final EntityPlayer causedByPlayer;
     private EntityAgeable child;
 
-    public BabyEntitySpawnEvent(EntityLiving parentA, EntityLiving parentB, EntityAgeable proposedChild, @Nullable EntityPlayer causedByPlayer)
+    public BabyEntitySpawnEvent(EntityLiving parentA, EntityLiving parentB, @Nullable EntityAgeable proposedChild)
     {
+        //causedByPlayer calculated here to simplify the patch.
+        EntityPlayer causedByPlayer = null;
+        if (parentA instanceof EntityAnimal) {
+            causedByPlayer = ((EntityAnimal)parentA).getPlayerInLove();
+        }
+
+        if (causedByPlayer == null && parentB instanceof EntityAnimal)
+        {
+            causedByPlayer = ((EntityAnimal)parentB).getPlayerInLove();
+        }
+
         this.parentA = parentA;
         this.parentB = parentB;
         this.causedByPlayer = causedByPlayer;
@@ -79,6 +92,7 @@ public class BabyEntitySpawnEvent extends Event
         return causedByPlayer;
     }
 
+    @Nullable
     public EntityAgeable getChild()
     {
         return child;

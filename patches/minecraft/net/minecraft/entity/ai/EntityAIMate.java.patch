@@ -1,30 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
-@@ -95,6 +95,16 @@
-                 entityplayer = this.field_75391_e.func_146083_cb();
-             }
+@@ -86,6 +86,18 @@
+     {
+         EntityAgeable entityageable = this.field_75390_d.func_90011_a(this.field_75391_e);
  
++        final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(field_75390_d, field_75391_e, entityageable);
++        final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        entityageable = event.getChild();
++        if (cancelled) {
++            //Reset the "inLove" state for the animals
 +            this.field_75390_d.func_70873_a(6000);
 +            this.field_75391_e.func_70873_a(6000);
 +            this.field_75390_d.func_70875_t();
 +            this.field_75391_e.func_70875_t();
++            return;
++        }
 +
-+            final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(field_75390_d, field_75391_e, entityageable, entityplayer);
-+            final boolean post = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+            if (post || event.getChild() == null) { return; }
-+            entityageable = event.getChild();
-+
-             if (entityplayer != null)
-             {
-                 entityplayer.func_71029_a(StatList.field_151186_x);
-@@ -105,10 +115,6 @@
-                 }
-             }
- 
--            this.field_75390_d.func_70873_a(6000);
--            this.field_75391_e.func_70873_a(6000);
--            this.field_75390_d.func_70875_t();
--            this.field_75391_e.func_70875_t();
-             entityageable.func_70873_a(-24000);
-             entityageable.func_70012_b(this.field_75390_d.field_70165_t, this.field_75390_d.field_70163_u, this.field_75390_d.field_70161_v, 0.0F, 0.0F);
-             this.field_75394_a.func_72838_d(entityageable);
+         if (entityageable != null)
+         {
+             EntityPlayer entityplayer = this.field_75390_d.func_146083_cb();

@@ -11,7 +11,7 @@
          this.field_75451_c.func_175549_o(false);
          this.field_75450_b.func_175549_o(false);
 +
-+        final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(field_75450_b, field_75451_c, entityvillager, null);
++        final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(field_75450_b, field_75451_c, entityvillager);
 +        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event) || event.getChild() == null) { return; }
 +        entityvillager = event.getChild();
          entityvillager.func_70873_a(-24000);
