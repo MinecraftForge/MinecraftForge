@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-@Mod(modid = "enumplanttypetest")
+@Mod(modid = "enumplanttypetest", name = "EnumPlantTypeTest", version = "1.0")
 public class EnumPlantTypeTest 
 {
 	private static Logger LOGGER = LogManager.getLogger();

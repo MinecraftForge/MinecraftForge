@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -42,6 +44,7 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
@@ -154,9 +157,28 @@ public class PersistentRegistryManager
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
     static final ResourceLocation SUBSTITUTION_ORIGINALS = new ResourceLocation("fml:suboriginals");
 
-    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey, int minId, int maxId, boolean hasDelegates, IForgeRegistry.AddCallback<T> addCallback, IForgeRegistry.ClearCallback<T> clearCallback, IForgeRegistry.CreateCallback<T> createCallback, IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+    @Deprecated //Use RegistryBuilder TODO: Remove in 1.11
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
+            ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey,
+            int minId, int maxId, boolean hasDelegates,
+            IForgeRegistry.AddCallback<T> addCallback,
+            IForgeRegistry.ClearCallback<T> clearCallback,
+            IForgeRegistry.CreateCallback<T> createCallback)
     {
-        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId, addCallback, clearCallback, createCallback, substitutionCallback);
+        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
+                getLegacyAdd(addCallback), getLegacyClear(clearCallback), getLegacyCreate(createCallback), null);
+    }
+    @Deprecated //Use RegistryBuilder TODO: Remove in 1.11 {Make package private so only builder can use it}
+    public static <T extends IForgeRegistryEntry<T>> FMLControlledNamespacedRegistry<T> createRegistry(
+            ResourceLocation registryName, Class<T> registryType, ResourceLocation optionalDefaultKey,
+            int minId, int maxId, boolean hasDelegates,
+            IForgeRegistry.AddCallback<T> addCallback,
+            IForgeRegistry.ClearCallback<T> clearCallback,
+            IForgeRegistry.CreateCallback<T> createCallback,
+            IForgeRegistry.SubstitutionCallback<T> substitutionCallback)
+    {
+        return PersistentRegistry.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
+                addCallback, clearCallback, createCallback, substitutionCallback);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -707,4 +729,94 @@ public class PersistentRegistryManager
         }
     }
 
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.ClearCallback<T> getLegacyClear(final IForgeRegistry.ClearCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onClear", Map.class);
+            return new IForgeRegistry.ClearCallback<T>()
+            {
+                @Override
+                public void onClear(IForgeRegistry<T> is, Map<ResourceLocation, ?> slaveset)
+                {
+                    try {
+                        mtd.invoke(cb, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            Throwables.propagate(e);
+        }
+        return null; //Will never get here unless things go wonkey...
+    }
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.CreateCallback<T> getLegacyCreate(final IForgeRegistry.CreateCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onCreate", Map.class);
+            return new IForgeRegistry.CreateCallback<T>()
+            {
+                @Override
+                public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries)
+                {
+                    try {
+                        mtd.invoke(cb, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            Throwables.propagate(e);
+        }
+        return null; //Will never get here unless things go wonkey...
+    }
+
+    //TODO: Remove in 1.11, creates wrappers for API breakage cpw did in registry re-work.
+    private static <T extends IForgeRegistryEntry<T>> IForgeRegistry.AddCallback<T> getLegacyAdd(final IForgeRegistry.AddCallback<T> cb)
+    {
+        if (cb == null)
+            return null;
+        try {
+            final Method mtd = cb.getClass().getMethod("onAdd", Object.class, int.class, Map.class);
+            return new IForgeRegistry.AddCallback<T>()
+            {
+                @Override
+                public void onAdd(T obj, int id, Map<ResourceLocation, ?> slaveset)
+                {
+                    try {
+                        mtd.invoke(cb, obj, id, slaveset);
+                    } catch (Exception e) {
+                        e.printStackTrace( );
+                        Throwables.propagate(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return cb; //Assume they are ussing modern API
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            Throwables.propagate(e);
+        }
+        return null; //Will never get here unless things go wonkey...
+    }
 }

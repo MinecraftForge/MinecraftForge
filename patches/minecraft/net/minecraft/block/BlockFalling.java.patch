@@ -9,7 +9,11 @@
          {
              int i = 32;
  
-@@ -65,7 +65,7 @@
+@@ -62,17 +62,18 @@
+             }
+             else
+             {
++                IBlockState state = p_176503_1_.func_180495_p(p_176503_2_);
                  p_176503_1_.func_175698_g(p_176503_2_);
                  BlockPos blockpos;
  
@@ -18,3 +22,11 @@
                  {
                      ;
                  }
+ 
+                 if (blockpos.func_177956_o() > 0)
+                 {
+-                    p_176503_1_.func_175656_a(blockpos.func_177984_a(), this.func_176223_P());
++                    p_176503_1_.func_175656_a(blockpos.func_177984_a(), state); //Forge: Fix loss of state information during world gen.
+                 }
+             }
+         }

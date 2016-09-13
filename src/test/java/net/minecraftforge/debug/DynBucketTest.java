@@ -28,6 +28,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.debug.ModelFluidDebug.TestFluid;
 import net.minecraftforge.debug.ModelFluidDebug.TestGas;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -45,10 +46,10 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
 
-@Mod(modid = DynBucketTest.MODID, version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
+@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidDebug.MODID)
 public class DynBucketTest
 {
-    public static final String MODID = "DynBucketTest";
+    public static final String MODID = "dynbuckettest";
     public static final Item dynBucket = new DynBucket();
     public static final Item dynBottle = new DynBottle();
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
@@ -121,6 +122,8 @@ public class DynBucketTest
 
         //GameRegistry.registerItem(dynBucket, "dynbucket");
         GameRegistry.register(dynBottle);
+        GameRegistry.addShapelessRecipe(new ItemStack(Items.DIAMOND),
+            UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TestFluid.instance));
 
         // register fluid containers
         int i = 0;

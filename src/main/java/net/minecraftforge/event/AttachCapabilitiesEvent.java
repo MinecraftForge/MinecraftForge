@@ -133,4 +133,21 @@ public class AttachCapabilitiesEvent extends Event
             return this.stack;
         }
     }
+
+    /**
+     * A version of the parent event which is only fired for Worlds.
+     */
+    public static class World extends AttachCapabilitiesEvent
+    {
+        private final net.minecraft.world.World world;
+        public World(net.minecraft.world.World world)
+        {
+            super(world);
+            this.world = world;
+        }
+        public net.minecraft.world.World getWorld()
+        {
+            return this.world;
+        }
+    }
 }

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 
@@ -37,6 +38,6 @@ public interface IVertexConsumer
     void setQuadTint(int tint);
     void setQuadOrientation(EnumFacing orientation);
     void setApplyDiffuseLighting(boolean diffuse);
-
+    void setTexture(TextureAtlasSprite texture);
     void put(int element, float... data);
 }

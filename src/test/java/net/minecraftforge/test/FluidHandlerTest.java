@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid="FluidHandlerTest", name="FluidHandlerTest", version="0.0.0")
+@Mod(modid="fluidhandlertest", name="FluidHandlerTest", version="0.0.0")
 public class FluidHandlerTest
 {
 	public static final boolean ENABLE = false;

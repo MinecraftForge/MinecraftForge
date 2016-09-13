@@ -67,6 +67,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -489,6 +490,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
 
+    public static void onPlayerBrewedPotion(EntityPlayer player, ItemStack stack)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
+    }
+
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
     {
         return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), new BlockPos(player));
@@ -517,6 +523,11 @@ public class ForgeEventFactory
     public static CapabilityDispatcher gatherCapabilities(Item item, ItemStack stack, ICapabilityProvider parent)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent.Item(item, stack), parent);
+    }
+
+    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent.World(world), parent);
     }
 
     private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent event, ICapabilityProvider parent)

@@ -68,7 +68,7 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
-@@ -305,6 +315,198 @@
+@@ -305,6 +315,202 @@
      {
      }
  
@@ -150,6 +150,10 @@
 +        else if (type == Blocks.field_150486_ae || type == Blocks.field_150447_bR)
 +        {
 +            bb = new net.minecraft.util.math.AxisAlignedBB(pos.func_177982_a(-1, 0, -1), pos.func_177982_a(2, 2, 2));
++        }
++        else if (type == Blocks.field_185779_df)
++        {
++            bb = INFINITE_EXTENT_AABB;
 +        }
 +        else if (type != null && type != Blocks.field_150461_bJ)
 +        {

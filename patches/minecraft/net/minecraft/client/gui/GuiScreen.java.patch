@@ -1,21 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
-@@ -147,7 +147,8 @@
+@@ -147,7 +147,10 @@
              }
          }
  
 -        this.func_146283_a(list, p_146285_2_, p_146285_3_);
 +        FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
++        net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_146285_1_);
 +        this.drawHoveringText(list, p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
++        net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
      }
  
      protected void func_146279_a(String p_146279_1_, int p_146279_2_, int p_146279_3_)
-@@ -157,7 +158,13 @@
+@@ -157,7 +160,13 @@
  
      protected void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)
      {
 -        if (!p_146283_1_.isEmpty())
-+        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);   
++        drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);
 +    }
 +
 +    protected void drawHoveringText(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_, FontRenderer font)
@@ -25,7 +27,7 @@
          {
              GlStateManager.func_179101_C();
              RenderHelper.func_74518_a();
-@@ -427,6 +434,7 @@
+@@ -427,6 +436,7 @@
          {
              this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
          }
@@ -33,7 +35,7 @@
  
          this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
      }
-@@ -441,9 +449,15 @@
+@@ -441,9 +451,15 @@
  
                  if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
                  {
@@ -49,7 +51,7 @@
                  }
              }
          }
-@@ -473,8 +487,12 @@
+@@ -473,8 +489,12 @@
          this.field_146289_q = p_146280_1_.field_71466_p;
          this.field_146294_l = p_146280_2_;
          this.field_146295_m = p_146280_3_;
@@ -62,7 +64,7 @@
      }
  
      public void func_183500_a(int p_183500_1_, int p_183500_2_)
-@@ -493,7 +511,9 @@
+@@ -493,7 +513,9 @@
          {
              while (Mouse.next())
              {
@@ -72,7 +74,7 @@
              }
          }
  
-@@ -501,7 +521,9 @@
+@@ -501,7 +523,9 @@
          {
              while (Keyboard.next())
              {
@@ -82,7 +84,7 @@
              }
          }
      }
-@@ -563,6 +585,7 @@
+@@ -563,6 +587,7 @@
      public void func_146276_q_()
      {
          this.func_146270_b(0);

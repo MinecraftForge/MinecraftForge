@@ -79,6 +79,23 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseFluidContainer.getInstance());
     }
 
+    @Override
+    public boolean hasContainerItem(ItemStack stack)
+    {
+        return getEmpty() != null;
+    }
+
+    @Override
+    public ItemStack getContainerItem(ItemStack itemStack)
+    {
+        if (getEmpty() != null)
+        {
+            // Create a copy such that the game can't mess with it
+            return getEmpty().copy();
+        }
+        return super.getContainerItem(itemStack);
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)

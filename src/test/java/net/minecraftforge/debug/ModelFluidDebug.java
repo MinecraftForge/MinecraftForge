@@ -21,10 +21,10 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = ModelFluidDebug.MODID, version = ModelFluidDebug.VERSION)
+@Mod(modid = ModelFluidDebug.MODID, name = "ForgeDebugModelFluid", version = ModelFluidDebug.VERSION)
 public class ModelFluidDebug
 {
-    public static final String MODID = "ForgeDebugModelFluid";
+    public static final String MODID = "forgedebugmodelfluid";
     public static final String VERSION = "1.0";
 
     public static final boolean ENABLE = false;

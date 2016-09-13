@@ -123,7 +123,7 @@
              for (EnumFacing enumfacing : EnumFacing.values())
              {
 -                i = Math.max(this.func_176534_d(p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(enumfacing)).func_177230_c()), i);
-+                i = Math.max(p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(enumfacing)).func_177230_c().getFlammability(p_176538_1_, p_176538_2_.func_177972_a(enumfacing), enumfacing.func_176734_d()), i);
++                i = Math.max(p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(enumfacing)).func_177230_c().getFireSpreadSpeed(p_176538_1_, p_176538_2_.func_177972_a(enumfacing), enumfacing.func_176734_d()), i);
              }
  
              return i;

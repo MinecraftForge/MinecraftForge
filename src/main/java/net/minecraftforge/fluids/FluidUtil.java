@@ -495,10 +495,16 @@ public class FluidUtil
             return null;
         }
 
-        IFluidHandler targetFluidHandler = FluidUtil.getFluidHandler(worldIn, pos, side);
-        if (targetFluidHandler != null)
+        IBlockState state = worldIn.getBlockState(pos);
+        Block block = state.getBlock();
+
+        if (block instanceof IFluidBlock || block instanceof BlockLiquid)
         {
-            return FluidUtil.tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, true);
+            IFluidHandler targetFluidHandler = FluidUtil.getFluidHandler(worldIn, pos, side);
+            if (targetFluidHandler != null)
+            {
+                return FluidUtil.tryFillContainer(emptyContainer, targetFluidHandler, Integer.MAX_VALUE, playerIn, true);
+            }
         }
         return null;
     }

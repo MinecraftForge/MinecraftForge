@@ -147,12 +147,12 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     public void serverToClientHandshake(EntityPlayerMP player)
     {
         this.player = player;
-        insertIntoChannel();
         Boolean fml = this.manager.channel().attr(NetworkRegistry.FML_MARKER).get();
         if (fml != null && fml)
         {
             //FML on client, send server hello
             //TODO: Make this cleaner as it uses netty magic 0.o
+            insertIntoChannel();
         }
         else
         {

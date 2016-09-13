@@ -49,10 +49,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 
-@Mod(modid = ModelBakeEventDebug.MODID, version = ModelBakeEventDebug.VERSION)
+@Mod(modid = ModelBakeEventDebug.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventDebug.VERSION)
 public class ModelBakeEventDebug
 {
-    public static final String MODID = "ForgeDebugModelBakeEvent";
+    public static final String MODID = "forgedebugmodelbakeevent";
     public static final String VERSION = "1.0";
     public static final int cubeSize = 3;
 
