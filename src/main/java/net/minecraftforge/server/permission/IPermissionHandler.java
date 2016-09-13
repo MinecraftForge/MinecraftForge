@@ -22,12 +22,10 @@ package net.minecraftforge.server.permission;
 import com.mojang.authlib.GameProfile;
 import net.minecraftforge.server.permission.context.IContext;
 
-import javax.annotation.Nonnull;
-
 public interface IPermissionHandler
 {
     /**
-     * @see PermissionAPI#hasPermission(GameProfile, String, boolean, IContext)
+     * @see PermissionAPI#hasPermission(GameProfile, String, IContext)
      */
-    boolean hasPermission(@Nonnull GameProfile profile, @Nonnull String permission, boolean defaultForPlayer, @Nonnull IContext context);
+    boolean hasPermission(GameProfile profile, String permission, IContext context);
 }

@@ -19,34 +19,32 @@
 
 package net.minecraftforge.server.permission.context;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Context implements IContext
 {
-    private Map<ContextKey<?>, Object> map;
+    private Map<String, Object> map;
 
     @Override
-    public <T> T get(@Nonnull ContextKey<T> key)
+    public <T> T get(String key)
     {
         return map == null || map.isEmpty() ? null : (T) map.get(key);
     }
 
     @Override
-    public boolean has(@Nonnull ContextKey<?> key)
+    public boolean has(String key)
     {
         return map != null && !map.isEmpty() && map.containsKey(key);
     }
 
-    @Nonnull
     @Override
-    public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    public <T> IContext set(String key, @Nullable T obj)
     {
         if(map == null)
         {
-            map = new HashMap<ContextKey<?>, Object>();
+            map = new HashMap<String, Object>();
         }
 
         map.put(key, obj);

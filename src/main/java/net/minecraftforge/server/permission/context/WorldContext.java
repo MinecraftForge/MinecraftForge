@@ -23,19 +23,17 @@ import com.google.common.base.Preconditions;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class WorldContext extends Context
 {
     private final World world;
 
-    public WorldContext(@Nonnull World w)
+    public WorldContext(World w)
     {
         world = Preconditions.checkNotNull(w, "World can't be null in WorldContext!");
     }
 
-    @Nonnull
     @Override
     public World getWorld()
     {

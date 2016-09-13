@@ -23,26 +23,21 @@ import com.google.common.base.Preconditions;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class PlayerContext extends Context
 {
     private final EntityPlayerMP player;
 
-    public PlayerContext(@Nonnull EntityPlayerMP ep)
+    public PlayerContext(EntityPlayerMP ep)
     {
         player = Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
     }
 
-    @Nonnull
     @Override
     public World getWorld()
     {
         return player.getEntityWorld();
     }
 
-    @Nullable
     @Override
     public EntityPlayerMP getPlayer()
     {

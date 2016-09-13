@@ -24,7 +24,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class PlayerBlockContext extends PlayerContext
@@ -32,7 +31,7 @@ public class PlayerBlockContext extends PlayerContext
     private final BlockPos blockPos;
     private IBlockState blockState;
 
-    public PlayerBlockContext(@Nonnull EntityPlayerMP ep, @Nonnull BlockPos pos, @Nullable IBlockState state)
+    public PlayerBlockContext(EntityPlayerMP ep, BlockPos pos, @Nullable IBlockState state)
     {
         super(ep);
         blockPos = Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerBlockContext!");
@@ -40,13 +39,13 @@ public class PlayerBlockContext extends PlayerContext
     }
 
     @Override
-    public <T> T get(@Nonnull ContextKey<T> key)
+    public <T> T get(String key)
     {
-        if(key.equals(ContextKey.BLOCK_POS))
+        if(key.equals(ContextKeys.BLOCK_POS))
         {
             return (T) blockPos;
         }
-        else if(key.equals(ContextKey.BLOCK_STATE))
+        else if(key.equals(ContextKeys.BLOCK_STATE))
         {
             if(blockState == null)
             {
@@ -59,15 +58,14 @@ public class PlayerBlockContext extends PlayerContext
     }
 
     @Override
-    public boolean has(@Nonnull ContextKey<?> key)
+    public boolean has(String key)
     {
-        return key.equals(ContextKey.BLOCK_POS) || key.equals(ContextKey.BLOCK_STATE) || super.has(key);
+        return key.equals(ContextKeys.BLOCK_POS) || key.equals(ContextKeys.BLOCK_STATE) || super.has(key);
     }
 
-    @Nonnull
     @Override
-    public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    public <T> IContext set(String key, @Nullable T obj)
     {
-        return (key.equals(ContextKey.BLOCK_POS) || key.equals(ContextKey.BLOCK_STATE)) ? this : super.set(key, obj);
+        return (key.equals(ContextKeys.BLOCK_POS) || key.equals(ContextKeys.BLOCK_STATE)) ? this : super.set(key, obj);
     }
 }

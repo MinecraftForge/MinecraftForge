@@ -17,26 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission;
-
-import com.mojang.authlib.GameProfile;
-import net.minecraftforge.server.permission.context.IContext;
+package net.minecraftforge.server.permission.context;
 
 /**
- * Default implementation of PermissionAPI.
- * If the node isn't registred, handler assumes that it's level is OP
- * Returns returns true if it is a singleplayer world or the player is an OP
- *
- * @see PermissionAPI
+ * Some default context keys, for easier compatibility
  */
-public enum DefaultPermissionHandler implements IPermissionHandler
+public class ContextKeys
 {
-    INSTANCE;
-
-    @Override
-    public boolean hasPermission(GameProfile profile, String permission, IContext context)
-    {
-        PermissionLevel nodeLevel = PermissionAPI.getPermissionLevel(permission);
-        return nodeLevel.isPlayer() || PermissionAPI.getPlayerLevel(profile).isOP();
-    }
+    public static final String BLOCK_POS = "blockpos";
+    public static final String BLOCK_STATE = "blockstate";
+    public static final String CHUNK = "chunk";
+    public static final String ENTITY = "entity";
 }

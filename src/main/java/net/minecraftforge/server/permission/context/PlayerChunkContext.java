@@ -24,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -34,13 +33,13 @@ public class PlayerChunkContext extends PlayerContext
 {
     private final ChunkPos chunkPos;
 
-    public PlayerChunkContext(@Nonnull EntityPlayerMP ep, @Nonnull ChunkPos pos)
+    public PlayerChunkContext(EntityPlayerMP ep, ChunkPos pos)
     {
         super(ep);
         chunkPos = Preconditions.checkNotNull(pos, "ChunkPos can't be null in PlayerChunkContext!");
     }
 
-    public PlayerChunkContext(@Nonnull EntityPlayerMP ep, @Nonnull BlockPos pos)
+    public PlayerChunkContext(EntityPlayerMP ep, BlockPos pos)
     {
         super(ep);
         Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerChunkContext!");
@@ -48,21 +47,20 @@ public class PlayerChunkContext extends PlayerContext
     }
 
     @Override
-    public <T> T get(@Nonnull ContextKey<T> key)
+    public <T> T get(String key)
     {
-        return key.equals(ContextKey.CHUNK) ? (T) chunkPos : super.get(key);
+        return (T) (key.equals(ContextKeys.CHUNK) ? chunkPos : super.get(key));
     }
 
     @Override
-    public boolean has(@Nonnull ContextKey<?> key)
+    public boolean has(String key)
     {
-        return key.equals(ContextKey.CHUNK) || super.has(key);
+        return key.equals(ContextKeys.CHUNK) || super.has(key);
     }
 
-    @Nonnull
     @Override
-    public <T> IContext set(@Nonnull ContextKey<T> key, @Nullable T obj)
+    public <T> IContext set(String key, @Nullable T obj)
     {
-        return key.equals(ContextKey.CHUNK) ? this : super.set(key, obj);
+        return key.equals(ContextKeys.CHUNK) ? this : super.set(key, obj);
     }
 }
