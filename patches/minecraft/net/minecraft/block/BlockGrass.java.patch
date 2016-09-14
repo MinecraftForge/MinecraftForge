@@ -18,7 +18,7 @@
                          {
                              p_180650_1_.func_175656_a(blockpos, Blocks.field_150349_c.func_176223_P());
                          }
-@@ -98,7 +98,7 @@
+@@ -98,18 +98,11 @@
              {
                  if (j >= i / 16)
                  {
@@ -26,4 +26,16 @@
 +                    if (p_176474_1_.func_175623_d(blockpos1))
                      {
                          if (p_176474_2_.nextInt(8) == 0)
+                         {
+-                            BlockFlower.EnumFlowerType blockflower$enumflowertype = p_176474_1_.func_180494_b(blockpos1).func_180623_a(p_176474_2_, blockpos1);
+-                            BlockFlower blockflower = blockflower$enumflowertype.func_176964_a().func_180346_a();
+-                            IBlockState iblockstate = blockflower.func_176223_P().func_177226_a(blockflower.func_176494_l(), blockflower$enumflowertype);
+-
+-                            if (blockflower.func_180671_f(p_176474_1_, blockpos1, iblockstate))
+-                            {
+-                                p_176474_1_.func_180501_a(blockpos1, iblockstate, 3);
+-                            }
++                            p_176474_1_.func_180494_b(blockpos1).plantFlower(p_176474_1_, p_176474_2_, blockpos1);
+                         }
+                         else
                          {
