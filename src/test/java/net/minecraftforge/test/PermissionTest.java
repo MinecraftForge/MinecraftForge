@@ -32,10 +32,7 @@ public class PermissionTest
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
-        PermissionAPI.registerPermission(Permissions.CLAIM_CHUNK, DefaultPermissionLevel.ALL, "Node for claiming chunks");
-        PermissionAPI.registerPermission(Permissions.UNCLAIM_CHUNK, DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
-        PermissionAPI.registerPermission(Permissions.SET_BLOCK, DefaultPermissionLevel.OP, "Node for setting blocks with a command");
-        PermissionAPI.registerPermission(Permissions.READ_TILE, DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
+        Permissions.init();
     }
 
     @Mod.EventHandler
@@ -46,10 +43,14 @@ public class PermissionTest
 
     public static class Permissions
     {
-        public static final String CLAIM_CHUNK = "testmod.chunk.claim";
-        public static final String UNCLAIM_CHUNK = "testmod.chunk.unclaim";
-        public static final String SET_BLOCK = "testmod.block.set";
-        public static final String READ_TILE = "testmod.tileentity.read";
+        public static final String CLAIM_CHUNK = PermissionAPI.registerPermission("testmod.chunk.claim", DefaultPermissionLevel.ALL, "Node for claiming chunks");
+        public static final String UNCLAIM_CHUNK = PermissionAPI.registerPermission("testmod.chunk.unclaim", DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
+        public static final String SET_BLOCK = PermissionAPI.registerPermission("testmod.block.set", DefaultPermissionLevel.OP, "Node for setting blocks with a command");
+        public static final String READ_TILE = PermissionAPI.registerPermission("testmod.tileentity.read", DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
+
+        public static void init()
+        {
+        }
     }
 
     public static class ContextKeys

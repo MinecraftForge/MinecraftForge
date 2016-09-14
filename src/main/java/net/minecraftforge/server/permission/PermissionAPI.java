@@ -55,7 +55,7 @@ public class PermissionAPI
      * @param level       Default permission level for this node. If not isn't registred, it's level is going to be 'NONE'
      * @param description Optional description
      */
-    public static void registerPermission(String permission, DefaultPermissionLevel level, String... description)
+    public static String registerPermission(String permission, DefaultPermissionLevel level, String... description)
     {
         Preconditions.checkNotNull(permission, "Permission node can't be null!");
         Preconditions.checkNotNull(level, "Permission level can't be null!");
@@ -66,6 +66,8 @@ public class PermissionAPI
         {
             DESCRIPTION_MAP.put(permission, description);
         }
+
+        return permission;
     }
 
     /**
