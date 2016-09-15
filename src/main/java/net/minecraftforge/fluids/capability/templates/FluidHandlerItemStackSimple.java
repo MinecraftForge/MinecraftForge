@@ -170,14 +170,15 @@ public class FluidHandlerItemStackSimple implements IFluidHandler, ICapabilityPr
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    @Nullable
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY ? (T) this : null;
     }

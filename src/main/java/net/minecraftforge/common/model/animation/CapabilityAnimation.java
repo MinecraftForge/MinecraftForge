@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.model.animation;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 
 import net.minecraft.nbt.NBTBase;
@@ -61,12 +62,15 @@ public class CapabilityAnimation
             this.asm = asm;
         }
 
-        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+        @Override
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
         {
             return capability == ANIMATION_CAPABILITY;
         }
 
-        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+        @Override
+        @Nullable
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
         {
             if(capability == ANIMATION_CAPABILITY)
             {

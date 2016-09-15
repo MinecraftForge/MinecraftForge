@@ -1,5 +1,7 @@
 package net.minecraftforge.test;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,12 +85,13 @@ public class NoBedSleepingTest
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
                 @Override
-                public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+                public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP;
                 }
 
                 @Override
-                public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+                @Nullable
+                public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
                     return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }
 

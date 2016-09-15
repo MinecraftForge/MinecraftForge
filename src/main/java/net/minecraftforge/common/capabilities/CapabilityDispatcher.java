@@ -99,6 +99,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @Override
+    @Nullable
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         for (ICapabilityProvider cap : caps)

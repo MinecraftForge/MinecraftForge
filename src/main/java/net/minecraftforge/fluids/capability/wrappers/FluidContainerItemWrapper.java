@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -92,13 +94,14 @@ public class FluidContainerItemWrapper implements IFluidHandler, ICapabilityProv
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    @Nullable
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
         {

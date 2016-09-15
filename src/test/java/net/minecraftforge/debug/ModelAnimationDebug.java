@@ -1,5 +1,8 @@
 package net.minecraftforge.debug;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
@@ -330,7 +333,7 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -340,7 +343,8 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        @Nullable
+        public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -387,7 +391,7 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public boolean hasCapability(Capability<?> capability, EnumFacing side)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -397,7 +401,8 @@ public class ModelAnimationDebug
         }
 
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side)
+        @Nullable
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
         {
             if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {

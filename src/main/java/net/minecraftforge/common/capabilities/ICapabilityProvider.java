@@ -50,7 +50,8 @@ public interface ICapabilityProvider
      * @param capability The capability to check
      * @param facing The Side to check from:
      *   CAN BE NULL. Null is defined to represent 'internal' or 'self'
-     * @return True if this object supports the capability.
+     * @return The requested capability. Returns null when {@link #hasCapability(Capability, EnumFacing)} would return false.
      */
+    @Nullable
     <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing);
 }

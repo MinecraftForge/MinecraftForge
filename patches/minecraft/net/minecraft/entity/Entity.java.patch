@@ -126,7 +126,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2726,6 +2746,164 @@
+@@ -2726,6 +2746,165 @@
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
  
@@ -263,14 +263,15 @@
 +        return this instanceof EntityLivingBase;
 +    }
 +
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        if (getCapability(capability, facing) != null)
 +            return true;
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }
