@@ -336,6 +336,7 @@ public class OreDictionary
             new ItemStack(Blocks.DARK_OAK_STAIRS),
             new ItemStack(Blocks.WOODEN_SLAB),
             new ItemStack(Blocks.GLASS_PANE),
+            new ItemStack(Blocks.field_189880_di), // Bone Block, to prevent conversion of dyes into bone meal.
             null //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
