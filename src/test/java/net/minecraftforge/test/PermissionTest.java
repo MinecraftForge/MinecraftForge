@@ -18,8 +18,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.context.PlayerBlockContext;
-import net.minecraftforge.server.permission.context.PlayerChunkContext;
+import net.minecraftforge.server.permission.context.BlockPosContext;
+import net.minecraftforge.server.permission.context.ContextKey;
 
 @Mod(modid = PermissionTest.MOD_ID, name = "PermissionTest", version = "1.0.0")
 public class PermissionTest
@@ -55,7 +55,7 @@ public class PermissionTest
 
     public static class ContextKeys
     {
-        public static final String TILE_ENTITY = "tileentity";
+        public static final ContextKey<TileEntity> TILE_ENTITY = ContextKey.create("tile_entity", TileEntity.class);
     }
 
     public static class CommandPermissionTest extends CommandBase
@@ -89,13 +89,13 @@ public class PermissionTest
                 return;
             }
 
-            //Example using PlayerChunkContext and permission available to players by default
+            //Example using BlockPosContext with ChunkPos and permission available to players by default
             boolean b = args[0].equals("claim");
             if(b || args[0].equals("unclaim"))
             {
                 ChunkPos chunkPos = new ChunkPos(parseInt(args[1]), parseInt(args[2]));
 
-                if(PermissionAPI.hasPermission(player.getGameProfile(), b ? Permissions.CLAIM_CHUNK : Permissions.UNCLAIM_CHUNK, new PlayerChunkContext(player, chunkPos)))
+                if(PermissionAPI.hasPermission(player.getGameProfile(), b ? Permissions.CLAIM_CHUNK : Permissions.UNCLAIM_CHUNK, new BlockPosContext(player, chunkPos)))
                 {
                     if(b)
                     {
@@ -113,7 +113,7 @@ public class PermissionTest
                     throw new CommandException("commands.generic.permission");
                 }
             }
-            //Example using PlayerBlockContext and permission available to only OPs by default
+            //Example using BlockPosContext and permission available to only OPs by default
             else if(args[0].equals("setblock"))
             {
                 if(args.length < 5)
@@ -138,7 +138,7 @@ public class PermissionTest
                 {
                     IBlockState state = block.getStateFromMeta(i);
 
-                    if(!PermissionAPI.hasPermission(player.getGameProfile(), Permissions.SET_BLOCK, new PlayerBlockContext(player, blockpos, state)))
+                    if(!PermissionAPI.hasPermission(player.getGameProfile(), Permissions.SET_BLOCK, new BlockPosContext(player, blockpos, state, null)))
                     {
                         throw new CommandException("commands.generic.permission");
                     }
@@ -154,7 +154,7 @@ public class PermissionTest
                 BlockPos blockpos = parseBlockPos(sender, args, 1, false);
                 TileEntity tileEntity = player.worldObj.getTileEntity(blockpos);
 
-                if(PermissionAPI.hasPermission(player.getGameProfile(), Permissions.READ_TILE, new PlayerBlockContext(player, blockpos, null).set(ContextKeys.TILE_ENTITY, tileEntity)))
+                if(PermissionAPI.hasPermission(player.getGameProfile(), Permissions.READ_TILE, new BlockPosContext(player, blockpos, null, null).set(ContextKeys.TILE_ENTITY, tileEntity)))
                 {
                     NBTTagCompound tag = tileEntity == null ? null : tileEntity.serializeNBT();
                     sender.addChatMessage(new TextComponentString(String.valueOf(tag)));

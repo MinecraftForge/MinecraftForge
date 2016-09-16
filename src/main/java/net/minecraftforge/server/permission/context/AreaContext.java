@@ -21,46 +21,30 @@ package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import javax.annotation.Nullable;
 
-/**
- * Created by LatvianModder on 15.08.2016.
- */
-public class PlayerChunkContext extends PlayerContext
+public class AreaContext extends PlayerContext
 {
-    private final ChunkPos chunkPos;
+    private final AxisAlignedBB area;
 
-    public PlayerChunkContext(EntityPlayer ep, ChunkPos pos)
+    public AreaContext(EntityPlayer ep, AxisAlignedBB aabb)
     {
         super(ep);
-        chunkPos = Preconditions.checkNotNull(pos, "ChunkPos can't be null in PlayerChunkContext!");
-    }
-
-    public PlayerChunkContext(EntityPlayer ep, BlockPos pos)
-    {
-        super(ep);
-        Preconditions.checkNotNull(pos, "BlockPos can't be null in PlayerChunkContext!");
-        chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
+        area = Preconditions.checkNotNull(aabb, "AxisAlignedBB can't be null in AreaContext!");
     }
 
     @Override
-    public <T> T get(String key)
+    @Nullable
+    public <T> T get(ContextKey<T> key)
     {
-        return (T) (key.equals(ContextKeys.CHUNK) ? chunkPos : super.get(key));
+        return key.equals(ContextKeys.AREA) ? (T) area : super.get(key);
     }
 
     @Override
-    public boolean has(String key)
+    protected boolean covers(ContextKey<?> key)
     {
-        return key.equals(ContextKeys.CHUNK) || super.has(key);
-    }
-
-    @Override
-    public <T> IContext set(String key, @Nullable T obj)
-    {
-        return key.equals(ContextKeys.CHUNK) ? this : super.set(key, obj);
+        return key.equals(ContextKeys.AREA);
     }
 }

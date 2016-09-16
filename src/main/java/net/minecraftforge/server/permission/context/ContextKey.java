@@ -20,30 +20,48 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
-public class WorldContext extends Context
+public final class ContextKey<T>
 {
-    private final World world;
+    private final String ID;
+    private final Class<T> typeClass;
 
-    public WorldContext(World w)
+    public static <E> ContextKey<E> create(String id, Class<E> c)
     {
-        world = Preconditions.checkNotNull(w, "World can't be null in WorldContext!");
+        Preconditions.checkNotNull(id, "ContextKey's ID can't be null!");
+        Preconditions.checkNotNull(c, "ContextKey's Type can't be null!");
+
+        if(id.isEmpty())
+        {
+            throw new IllegalArgumentException("ContextKey's ID can't be blank!");
+        }
+
+        return new ContextKey<E>(id, c);
     }
 
-    @Override
-    public World getWorld()
+    private ContextKey(String id, Class<T> c)
     {
-        return world;
+        ID = id;
+        typeClass = c;
     }
 
-    @Override
-    @Nullable
-    public EntityPlayer getPlayer()
+    public String toString()
     {
-        return null;
+        return ID;
+    }
+
+    public int hashCode()
+    {
+        return ID.hashCode();
+    }
+
+    public boolean equals(Object o)
+    {
+        return o == this || (o != null && o.toString().equals(ID));
+    }
+
+    public Class<T> getTypeClass()
+    {
+        return typeClass;
     }
 }

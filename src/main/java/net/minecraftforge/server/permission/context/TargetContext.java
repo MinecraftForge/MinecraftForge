@@ -19,38 +19,31 @@
 
 package net.minecraftforge.server.permission.context;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-/**
- * Use {@link BlockPosContext} or {@link PlayerContext} when possible
- */
-public interface IContext
+public class TargetContext extends PlayerContext
 {
-    /**
-     * World from where permission is requested. Can be null
-     */
-    @Nullable
-    World getWorld();
+    private final Entity target;
 
-    /**
-     * @return Player requesting permission. Can be null
-     */
-    @Nullable
-    EntityPlayer getPlayer();
+    public TargetContext(EntityPlayer ep, @Nullable Entity entity)
+    {
+        super(ep);
+        target = entity;
+    }
 
-    /**
-     * @param key Context key
-     * @return Context object
-     */
+    @Override
     @Nullable
-    <T> T get(ContextKey<T> key);
+    public <T> T get(ContextKey<T> key)
+    {
+        return key.equals(ContextKeys.TARGET) ? (T) target : super.get(key);
+    }
 
-    /**
-     * @param key Context key
-     * @return true if context contains this key
-     */
-    boolean has(ContextKey<?> key);
+    @Override
+    protected boolean covers(ContextKey<?> key)
+    {
+        return target != null && key.equals(ContextKeys.TARGET);
+    }
 }
