@@ -26,7 +26,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
@@ -35,20 +35,28 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public class AttachCapabilitiesEvent extends Event
+public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 {
-    private final Object obj;
+    private final T obj;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
-    public AttachCapabilitiesEvent(Object obj)
+
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public AttachCapabilitiesEvent(T obj)
     {
+        this((Class<T>)Object.class, obj);
+    }
+    public AttachCapabilitiesEvent(Class<T> type, T obj)
+    {
+        super(type);
         this.obj = obj;
     }
 
     /**
      * Retrieves the object that is being created, Not much state is set.
      */
-    public Object getObject()
+    public T getObject()
     {
         return this.obj;
     }
@@ -80,12 +88,13 @@ public class AttachCapabilitiesEvent extends Event
     /**
      * A version of the parent event which is only fired for Tile Entities.
      */
-    public static class TileEntity extends AttachCapabilitiesEvent
+    @Deprecated
+    public static class TileEntity extends AttachCapabilitiesEvent<net.minecraft.tileentity.TileEntity>
     {
         private final net.minecraft.tileentity.TileEntity te;
         public TileEntity(net.minecraft.tileentity.TileEntity te)
         {
-            super(te);
+            super(net.minecraft.tileentity.TileEntity.class, te);
             this.te = te;
         }
         public net.minecraft.tileentity.TileEntity getTileEntity()
@@ -97,12 +106,13 @@ public class AttachCapabilitiesEvent extends Event
     /**
      * A version of the parent event which is only fired for Entities.
      */
-    public static class Entity extends AttachCapabilitiesEvent
+    @Deprecated
+    public static class Entity extends AttachCapabilitiesEvent<net.minecraft.entity.Entity>
     {
         private final net.minecraft.entity.Entity entity;
         public Entity(net.minecraft.entity.Entity entity)
         {
-            super(entity);
+            super(net.minecraft.entity.Entity.class, entity);
             this.entity = entity;
         }
         public net.minecraft.entity.Entity getEntity()
@@ -114,16 +124,18 @@ public class AttachCapabilitiesEvent extends Event
     /**
      * A version of the parent event which is only fired for ItemStacks.
      */
-    public static class Item extends AttachCapabilitiesEvent
+    public static class Item extends AttachCapabilitiesEvent<net.minecraft.item.Item>
     {
+        @Deprecated
         private final net.minecraft.item.ItemStack stack;
         private final net.minecraft.item.Item item;
         public Item(net.minecraft.item.Item item, net.minecraft.item.ItemStack stack)
         {
-            super(item);
+            super(net.minecraft.item.Item.class, item);
             this.item = item;
             this.stack = stack;
         }
+        @Deprecated
         public net.minecraft.item.Item getItem()
         {
             return this.item;
@@ -137,12 +149,13 @@ public class AttachCapabilitiesEvent extends Event
     /**
      * A version of the parent event which is only fired for Worlds.
      */
-    public static class World extends AttachCapabilitiesEvent
+    @Deprecated
+    public static class World extends AttachCapabilitiesEvent<net.minecraft.world.World>
     {
         private final net.minecraft.world.World world;
         public World(net.minecraft.world.World world)
         {
-            super(world);
+            super(net.minecraft.world.World.class, world);
             this.world = world;
         }
         public net.minecraft.world.World getWorld()

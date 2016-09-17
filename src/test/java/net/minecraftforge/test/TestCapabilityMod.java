@@ -112,6 +112,20 @@ public class TestCapabilityMod
         event.addCapability(new ResourceLocation("TestCapabilityMod:DummyCap"), new Provider(event.getTileEntity()));
     }
 
+    @SuppressWarnings("rawtypes")
+    @SubscribeEvent
+    public void attachEvent(AttachCapabilitiesEvent event) //Test Raw type gets everything still.
+    {
+        System.currentTimeMillis();
+    }
+
+    @SubscribeEvent
+    public void attachTileEntity(AttachCapabilitiesEvent<TileEntity> event)
+    {
+        if (!(event.getObject() instanceof TileEntity))
+            throw new IllegalArgumentException("Generic event handler failed! Exprected Tile Entity got " + event.getObject());
+    }
+
     // Capabilities SHOULD be interfaces, NOT concrete classes, this allows for
     // the most flexibility for the implementors.
     public static interface IExampleCapability
