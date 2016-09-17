@@ -28,7 +28,7 @@
                  BlockPos blockpos = p_185379_1_.func_175645_m(p_185379_3_.func_177982_a(k, 0, l));
  
 -                if (p_185379_2_.nextInt(20) == 0)
-+                if (p_185379_2_.nextInt(20) == 0 && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, blockpos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SHROOM))
++                if (p_185379_2_.nextInt(20) == 0 && net.minecraftforge.event.terraingen.TerrainGen.decorate(p_185379_1_, p_185379_2_, blockpos, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.BIG_SHROOM))
                  {
                      WorldGenBigMushroom worldgenbigmushroom = new WorldGenBigMushroom();
                      worldgenbigmushroom.func_180709_b(p_185379_1_, p_185379_2_, blockpos);
