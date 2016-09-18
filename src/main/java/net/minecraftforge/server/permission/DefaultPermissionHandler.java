@@ -19,28 +19,60 @@
 
 package net.minecraftforge.server.permission;
 
+import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.server.permission.context.IContext;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Default implementation of PermissionAPI.
  * {@link #hasPermission(GameProfile, String, IContext)} is based on DefaultPermissionLevel
  *
- * @see PermissionAPI#hasPermission(GameProfile, String, IContext)
- * @see PermissionAPI#registerPermission(String, DefaultPermissionLevel, String...)
+ * @see IPermissionHandler
  */
 public enum DefaultPermissionHandler implements IPermissionHandler
 {
     INSTANCE;
+    private static final HashMap<String, DefaultPermissionLevel> PERMISSION_LEVEL_MAP = new HashMap<String, DefaultPermissionLevel>();
+    private static final HashMap<String, String> DESCRIPTION_MAP = new HashMap<String, String>();
 
     @Override
-    public boolean hasPermission(GameProfile profile, String permission, @Nullable IContext context)
+    public String registerNode(String node, DefaultPermissionLevel level, String desc)
     {
-        switch(PermissionAPI.getDefaultPermissionLevel(permission))
+        Preconditions.checkNotNull(node, "Permission node can't be null!");
+        Preconditions.checkNotNull(level, "Permission level can't be null!");
+        Preconditions.checkNotNull(desc, "Permission description can't be null!");
+
+        PERMISSION_LEVEL_MAP.put(node, level);
+
+        if(!desc.isEmpty())
+        {
+            DESCRIPTION_MAP.put(node, desc);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Collection<String> getRegisteredNodes()
+    {
+        return Collections.unmodifiableSet(PERMISSION_LEVEL_MAP.keySet());
+    }
+
+    @Override
+    public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
+    {
+        Preconditions.checkNotNull(profile, "GameProfile can't be null!");
+        Preconditions.checkNotNull(node, "Permission node can't be null!");
+        Preconditions.checkArgument(node.isEmpty(), "Permission node can't be empty!");
+
+        switch(PERMISSION_LEVEL_MAP.get(node))
         {
             case NONE:
                 return false;
@@ -52,5 +84,21 @@ public enum DefaultPermissionHandler implements IPermissionHandler
                 return server != null && server.getPlayerList().canSendCommands(profile);
             }
         }
+    }
+
+    @Override
+    public String getNodeDescription(String node)
+    {
+        String desc = DESCRIPTION_MAP.get(node);
+        return desc == null ? "" : desc;
+    }
+
+    /**
+     * @return The default permission level of a node. If the permission isn't registred, it will return NONE
+     */
+    public DefaultPermissionLevel getDefaultPermissionLevel(String node)
+    {
+        DefaultPermissionLevel level = PERMISSION_LEVEL_MAP.get(node);
+        return level == null ? DefaultPermissionLevel.NONE : level;
     }
 }

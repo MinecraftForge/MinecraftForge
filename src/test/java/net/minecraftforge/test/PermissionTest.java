@@ -43,10 +43,10 @@ public class PermissionTest
 
     public static class Permissions
     {
-        public static final String CLAIM_CHUNK = PermissionAPI.registerPermission("testmod.chunk.claim", DefaultPermissionLevel.ALL, "Node for claiming chunks");
-        public static final String UNCLAIM_CHUNK = PermissionAPI.registerPermission("testmod.chunk.unclaim", DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
-        public static final String SET_BLOCK = PermissionAPI.registerPermission("testmod.block.set", DefaultPermissionLevel.OP, "Node for setting blocks with a command");
-        public static final String READ_TILE = PermissionAPI.registerPermission("testmod.tileentity.read", DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
+        public static final String CLAIM_CHUNK = PermissionAPI.registerNode("testmod.chunk.claim", DefaultPermissionLevel.ALL, "Node for claiming chunks");
+        public static final String UNCLAIM_CHUNK = PermissionAPI.registerNode("testmod.chunk.unclaim", DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
+        public static final String SET_BLOCK = PermissionAPI.registerNode("testmod.block.set", DefaultPermissionLevel.OP, "Node for setting blocks with a command");
+        public static final String READ_TILE = PermissionAPI.registerNode("testmod.tileentity.read", DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
 
         public static void init()
         {
