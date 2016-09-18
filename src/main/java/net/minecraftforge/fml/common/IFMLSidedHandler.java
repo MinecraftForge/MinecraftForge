@@ -75,4 +75,6 @@ public interface IFMLSidedHandler
     String stripSpecialChars(String message);
 
     void reloadRenderers();
+
+    void fireSidedRegistryEvents();
 }

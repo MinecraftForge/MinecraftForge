@@ -20,8 +20,9 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -33,6 +34,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -64,6 +67,35 @@ import com.google.common.collect.Sets.SetView;
 @SuppressWarnings("WeakerAccess")
 public class PersistentRegistryManager
 {
+    public static void fireRegistryEvents()
+    {
+        MinecraftForge.EVENT_BUS.post(new RegistryEvent.NewRegistry());
+
+        List<ResourceLocation> registryKeys = Lists.newArrayList(PersistentRegistry.ACTIVE.registries.keySet());
+        Collections.sort(registryKeys, new Comparator<ResourceLocation>()
+        {
+            @Override
+            public int compare(ResourceLocation o1, ResourceLocation o2)
+            {
+                return o1.toString().compareToIgnoreCase(o2.toString());
+            }
+        });
+        fireRegistryEvent(PersistentRegistry.ACTIVE.registries, BLOCKS);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any blocks
+        fireRegistryEvent(PersistentRegistry.ACTIVE.registries, ITEMS);
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any items
+        for (ResourceLocation rl : registryKeys) {
+            if (rl == BLOCKS || rl == ITEMS) continue;
+            fireRegistryEvent(PersistentRegistry.ACTIVE.registries, rl);
+        }
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
+    }
+    private static void fireRegistryEvent(BiMap<ResourceLocation, FMLControlledNamespacedRegistry<?>> registries, ResourceLocation name)
+    {
+        final RegistryEvent.Register<?> event = registries.get(name).buildRegistryRegisterEvent(name);
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+
     enum PersistentRegistry
     {
         ACTIVE, VANILLA, FROZEN, STAGING;

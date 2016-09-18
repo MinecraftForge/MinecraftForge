@@ -36,6 +36,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraftforge.event.RegistryEvent;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
@@ -830,6 +831,13 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         add(-1, key, value);
     }
 
+    public void registerAll(I... values)
+    {
+        for (I value: values)
+        {
+            register(value);
+        }
+    }
     @Override
     public boolean containsValue(I value)
     {
@@ -908,4 +916,10 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     {
         return (T)slaves.get(slaveMapName);
     }
+
+    RegistryEvent.Register<I> buildRegistryRegisterEvent(ResourceLocation location)
+    {
+        return new RegistryEvent.Register<I>(location, this);
+    }
+
 }

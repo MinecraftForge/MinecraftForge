@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * This defines a Mod to FML.
@@ -304,5 +305,14 @@ public @interface Mod
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface InstanceFactory {
+    }
+
+    /**
+     * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface EventBusSubscriber {
+        Side[] value() default { Side.CLIENT, Side.SERVER };
     }
 }

@@ -573,6 +573,8 @@ public class FMLModContainer implements ModContainer
                 eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide(), getLanguageAdapter());
+            AutomaticEventSubscriber.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
+
             processFieldAnnotations(event.getASMHarvestedData());
         }
         catch (Throwable e)

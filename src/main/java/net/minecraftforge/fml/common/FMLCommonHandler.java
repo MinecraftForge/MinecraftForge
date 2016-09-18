@@ -746,4 +746,9 @@ public class FMLCommonHandler
     public void reloadRenderers() {
         sidedDelegate.reloadRenderers();
     }
+
+    public void fireSidedRegistryEvents()
+    {
+        sidedDelegate.fireSidedRegistryEvents();
+    }
 }

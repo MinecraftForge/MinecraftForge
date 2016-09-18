@@ -332,6 +332,11 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public void reloadRenderers() {
         // NOOP
+    }
 
+    @Override
+    public void fireSidedRegistryEvents()
+    {
+        // NOOP
     }
 }

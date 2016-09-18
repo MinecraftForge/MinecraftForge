@@ -68,11 +68,9 @@ public class ASMEventHandler implements IEventListener
         if (isGeneric)
         {
             java.lang.reflect.Type type = method.getGenericParameterTypes()[0];
-            System.currentTimeMillis();
             if (type instanceof ParameterizedType)
             {
                 filter = ((ParameterizedType)type).getActualTypeArguments()[0];
-                System.currentTimeMillis();
             }
         }
     }

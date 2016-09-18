@@ -604,6 +604,8 @@ public class Loader
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
+        PersistentRegistryManager.fireRegistryEvents();
+        FMLCommonHandler.instance().fireSidedRegistryEvents();
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();

@@ -89,7 +89,6 @@ public interface IForgeRegistryEntry<V>
         //Helper functions
         public final T setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
         public final T setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-
         public final ResourceLocation getRegistryName()
         {
             if (delegate.name() != null) return delegate.name();
