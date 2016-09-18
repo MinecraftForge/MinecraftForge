@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
@@ -20,17 +20,20 @@ public class ObjectHolderTest
     public static IForgeRegistry registry;
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    public void init(FMLInitializationEvent event) {
         //verifies @ObjectHolder with custom id
         assert VanillaObjectHolder.uiButtonClick != null;
         //verifies modded items work
         assert ForgeObjectHolder.forgePotion != null;
-        //verifies modders can't mess with minecraft:air
-        assert VanillaObjectHolder.air == null;
-        //verified unexpected name should not have defaulted to AIR.
+        //verifies minecraft:air is now resolvable
+        assert VanillaObjectHolder.air != null;
+        //verifies unexpected name should not have defaulted to AIR.
         assert VanillaObjectHolder.nonExistentBlock == null;
+        //verifies custom registries
+        assert CustomRegistryObjectHolder.customEntry != null;
         //verifies interfaces are supported
         assert CustomRegistryObjectHolder.customEntryByInterface != null;
+
     }
 
     protected static class PotionForge extends Potion {
@@ -48,6 +51,7 @@ public class ObjectHolderTest
             new RegistryBuilder()
                     .setType(ICustomRegistryEntry.class)
                     .setName(new ResourceLocation("ObjectHolderTestCustomRegistry"))
+                    .setIDRange(0, 255)
                     .create();
         }
 
@@ -61,7 +65,11 @@ public class ObjectHolderTest
         @SubscribeEvent
         public static void registerInterfaceRegistryForge(RegistryEvent.Register<ICustomRegistryEntry> event) {
             event.getRegistry().register(
-                    new CustomRegistryEntry(new ResourceLocation(ObjectHolderTest.MODID, "customEntryByInterface"))
+                    new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "customEntryByInterface"))
+            );
+
+            event.getRegistry().register(
+                    new CustomRegistryEntry().setRegistryName(new ResourceLocation(MODID, "customEntry"))
             );
         }
     }
@@ -70,10 +78,6 @@ public class ObjectHolderTest
 class CustomRegistryEntry implements ICustomRegistryEntry
 {
     private ResourceLocation name;
-
-    protected CustomRegistryEntry(ResourceLocation location) {
-        setRegistryName(location);
-    }
 
     @Override
     public ICustomRegistryEntry setRegistryName(ResourceLocation name)
@@ -119,6 +123,9 @@ class ForgeObjectHolder
 @GameRegistry.ObjectHolder(ObjectHolderTest.MODID)
 class CustomRegistryObjectHolder
 {
+    //Tests whether custom registries can be used
+    public static final ICustomRegistryEntry customEntry = null;
+
     //Tests whether interfaces can be used
-    public static final CustomRegistryEntry customEntryByInterface = null;
+    public static final ICustomRegistryEntry customEntryByInterface = null;
 }
