@@ -21,15 +21,14 @@ package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -100,11 +99,11 @@ class ObjectHolderRef {
 
     private IForgeRegistry getRegistryForType(Field field)
     {
-        Stack<Class<?>> typesToExamine = new Stack<Class<?>>();
+        Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
         typesToExamine.add(field.getType());
         IForgeRegistry registry = null;
-        while (!typesToExamine.empty() && registry == null) {
-            Class<?> type = typesToExamine.pop();
+        while (!typesToExamine.isEmpty() && registry == null) {
+            Class<?> type = typesToExamine.remove();
             Collections.addAll(typesToExamine, type.getInterfaces());
             if (IForgeRegistryEntry.class.isAssignableFrom(type))
             {
