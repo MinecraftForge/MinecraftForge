@@ -40,9 +40,34 @@ public class ObjectHolderTest
             setRegistryName(location);
         }
     }
+
+    @Mod.EventBusSubscriber
+    public static class Registration {
+        @SubscribeEvent
+        public static void newRegistry(RegistryEvent.NewRegistry event) {
+            new RegistryBuilder()
+                    .setType(ICustomRegistryEntry.class)
+                    .setName(new ResourceLocation("ObjectHolderTestCustomRegistry"))
+                    .create();
+        }
+
+        @SubscribeEvent
+        public static void registerPotions(RegistryEvent.Register<Potion> event) {
+            event.getRegistry().register(
+                    new ObjectHolderTest.PotionForge(new ResourceLocation(ObjectHolderTest.MODID, "forgePotion"), false, 0xff00ff) // test automatic id distribution
+            );
+        }
+
+        @SubscribeEvent
+        public static void registerInterfaceRegistryForge(RegistryEvent.Register<ICustomRegistryEntry> event) {
+            event.getRegistry().register(
+                    new CustomRegistryEntry(new ResourceLocation(ObjectHolderTest.MODID, "customEntryByInterface"))
+            );
+        }
+    }
 }
 
-class CustomRegistryEntry implements IForgeRegistryEntry<CustomRegistryEntry>
+class CustomRegistryEntry implements ICustomRegistryEntry
 {
     private ResourceLocation name;
 
@@ -51,7 +76,7 @@ class CustomRegistryEntry implements IForgeRegistryEntry<CustomRegistryEntry>
     }
 
     @Override
-    public CustomRegistryEntry setRegistryName(ResourceLocation name)
+    public ICustomRegistryEntry setRegistryName(ResourceLocation name)
     {
         this.name = name;
         return this;
@@ -64,35 +89,14 @@ class CustomRegistryEntry implements IForgeRegistryEntry<CustomRegistryEntry>
     }
 
     @Override
-    public Class<? super CustomRegistryEntry> getRegistryType()
+    public Class<? super ICustomRegistryEntry> getRegistryType()
     {
-        return CustomRegistryEntry.class;
+        return ICustomRegistryEntry.class;
     }
 }
 
-@Mod.EventBusSubscriber
-class Registration {
-    @SubscribeEvent
-    public static void newRegistry(RegistryEvent.NewRegistry event) {
-        new RegistryBuilder()
-                .setType(CustomRegistryEntry.class)
-                .setName(new ResourceLocation("PotionTest"))
-                .create();
-    }
+interface ICustomRegistryEntry extends IForgeRegistryEntry<ICustomRegistryEntry> {
 
-    @SubscribeEvent
-    public static void registerPotions(RegistryEvent.Register<Potion> event) {
-        event.getRegistry().register(
-                new ObjectHolderTest.PotionForge(new ResourceLocation(ObjectHolderTest.MODID, "forgePotion"), false, 0xff00ff) // test automatic id distribution
-        );
-    }
-
-    @SubscribeEvent
-    public static void registerInterfaceRegistryForge(RegistryEvent.Register<CustomRegistryEntry> event) {
-        event.getRegistry().register(
-                new CustomRegistryEntry(new ResourceLocation(ObjectHolderTest.MODID, "customEntryByInterface"))
-        );
-    }
 }
 
 @GameRegistry.ObjectHolder("minecraft")

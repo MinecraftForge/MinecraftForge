@@ -20,6 +20,8 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Stack;
 
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
@@ -47,11 +49,7 @@ class ObjectHolderRef {
 
     ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
-        Class<?> type = field.getType();
-        while (IForgeRegistryEntry.class.isAssignableFrom(type) && registry == null) {
-            registry = PersistentRegistryManager.findRegistryByType((Class<IForgeRegistryEntry>)type);
-            type = type.getSuperclass();
-        }
+        registry = getRegistryForType(field);
 
         this.field = field;
         this.isValid = registry != null;
@@ -98,6 +96,27 @@ class ObjectHolderRef {
         {
             throw Throwables.propagate(e);
         }
+    }
+
+    private IForgeRegistry getRegistryForType(Field field)
+    {
+        Stack<Class<?>> typesToExamine = new Stack<Class<?>>();
+        typesToExamine.add(field.getType());
+        IForgeRegistry registry = null;
+        while (!typesToExamine.empty() && registry == null) {
+            Class<?> type = typesToExamine.pop();
+            Collections.addAll(typesToExamine, type.getInterfaces());
+            if (IForgeRegistryEntry.class.isAssignableFrom(type))
+            {
+                registry = PersistentRegistryManager.findRegistryByType((Class<IForgeRegistryEntry>) type);
+                final Class<?> parentType = type.getSuperclass();
+                if (parentType != null)
+                {
+                    typesToExamine.add(parentType);
+                }
+            }
+        }
+        return registry;
     }
 
     public boolean isValid()
