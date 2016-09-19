@@ -28,11 +28,9 @@ import java.util.Collection;
 public interface IPermissionHandler
 {
     /**
-     * @param node  Permission node, best if it's lowercase and contains '.' (e.g. <code>"modid.subgroup.permission_id"</code>)
-     * @param level Default permission level for this node. If not isn't registered, it's level is going to be 'NONE'
-     * @param desc  Optional description of the node
+     * Use {@link PermissionAPI#registerNode(String, DefaultPermissionLevel, String)}
      */
-    String registerNode(String node, DefaultPermissionLevel level, String desc);
+    void registerNode(String node, DefaultPermissionLevel level, String desc);
 
     /**
      * @return Immutable collection of all registered nodes
@@ -40,11 +38,7 @@ public interface IPermissionHandler
     Collection<String> getRegisteredNodes();
 
     /**
-     * @param profile GameProfile of the player who is requesting permission. The player doesn't have to be online
-     * @param node    Permission node. See {@link #registerNode(String, DefaultPermissionLevel, String)}
-     * @param context Context for this permission. Highly recommended to not be null. See {@link IContext}
-     * @return true, if player has permission, false if he does not.
-     * @see DefaultPermissionHandler
+     * Use {@link PermissionAPI#hasPermission(GameProfile, String, IContext)}
      */
     boolean hasPermission(GameProfile profile, String node, @Nullable IContext context);
 

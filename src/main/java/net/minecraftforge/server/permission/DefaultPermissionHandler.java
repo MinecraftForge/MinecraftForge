@@ -19,7 +19,6 @@
 
 package net.minecraftforge.server.permission;
 
-import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -43,20 +42,14 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     private static final HashMap<String, String> DESCRIPTION_MAP = new HashMap<String, String>();
 
     @Override
-    public String registerNode(String node, DefaultPermissionLevel level, String desc)
+    public void registerNode(String node, DefaultPermissionLevel level, String desc)
     {
-        Preconditions.checkNotNull(node, "Permission node can't be null!");
-        Preconditions.checkNotNull(level, "Permission level can't be null!");
-        Preconditions.checkNotNull(desc, "Permission description can't be null!");
-
         PERMISSION_LEVEL_MAP.put(node, level);
 
         if(!desc.isEmpty())
         {
             DESCRIPTION_MAP.put(node, desc);
         }
-
-        return null;
     }
 
     @Override
@@ -68,10 +61,6 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     @Override
     public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
     {
-        Preconditions.checkNotNull(profile, "GameProfile can't be null!");
-        Preconditions.checkNotNull(node, "Permission node can't be null!");
-        Preconditions.checkArgument(node.isEmpty(), "Permission node can't be empty!");
-
         switch(PERMISSION_LEVEL_MAP.get(node))
         {
             case NONE:

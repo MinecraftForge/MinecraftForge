@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.PermissionAPI;
@@ -30,7 +30,7 @@ public class PermissionTest
     public static PermissionTest inst;
 
     @Mod.EventHandler
-    public void onPreInit(FMLPreInitializationEvent event)
+    public void onInit(FMLInitializationEvent event)
     {
         Permissions.init();
     }
@@ -43,13 +43,17 @@ public class PermissionTest
 
     public static class Permissions
     {
-        public static final String CLAIM_CHUNK = PermissionAPI.registerNode("testmod.chunk.claim", DefaultPermissionLevel.ALL, "Node for claiming chunks");
-        public static final String UNCLAIM_CHUNK = PermissionAPI.registerNode("testmod.chunk.unclaim", DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
-        public static final String SET_BLOCK = PermissionAPI.registerNode("testmod.block.set", DefaultPermissionLevel.OP, "Node for setting blocks with a command");
-        public static final String READ_TILE = PermissionAPI.registerNode("testmod.tileentity.read", DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
+        public static final String CLAIM_CHUNK = "testmod.chunk.claim";
+        public static final String UNCLAIM_CHUNK = "testmod.chunk.unclaim";
+        public static final String SET_BLOCK = "testmod.block.set";
+        public static final String READ_TILE = "testmod.tileentity.read";
 
         public static void init()
         {
+            PermissionAPI.registerNode(CLAIM_CHUNK, DefaultPermissionLevel.ALL, "Node for claiming chunks");
+            PermissionAPI.registerNode(UNCLAIM_CHUNK, DefaultPermissionLevel.ALL, "Node for unclaiming chunks");
+            PermissionAPI.registerNode(SET_BLOCK, DefaultPermissionLevel.OP, "Node for setting blocks with a command");
+            PermissionAPI.registerNode(READ_TILE, DefaultPermissionLevel.NONE, "Node for reading and printing TileEntity data");
         }
     }
 
