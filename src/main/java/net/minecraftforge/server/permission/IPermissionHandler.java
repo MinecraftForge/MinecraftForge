@@ -44,7 +44,7 @@ public interface IPermissionHandler
 
     /**
      * @param node Permission node
-     * @return Description of the node
+     * @return Description of the node. "" in case this node doesn't have a decription
      * @see #registerNode(String, DefaultPermissionLevel, String)
      */
     String getNodeDescription(String node);
