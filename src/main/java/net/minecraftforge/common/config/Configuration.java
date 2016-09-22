@@ -113,7 +113,7 @@ public class Configuration
     /**
      * Create a configuration file for the file given in parameter with the provided config version number.
      */
-    public Configuration(File file, String configVersion)
+    private void runConfiguration(File file, String configVersion)
     {
         this.file = file;
         this.definedConfigVersion = configVersion;
@@ -145,10 +145,15 @@ public class Configuration
         }
     }
 
+    public Configuration(File file, String configVersion)
+    {
+        runConfiguration(file, configVersion);
+    }
+
     public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
     {
-        this(file, configVersion);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+        runConfiguration(file, configVersion);
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories)
