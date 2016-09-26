@@ -61,18 +61,19 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     @Override
     public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
     {
-        switch(getDefaultPermissionLevel(node))
+        DefaultPermissionLevel level = getDefaultPermissionLevel(node);
+
+        if(level == DefaultPermissionLevel.NONE)
         {
-            case NONE:
-                return false;
-            case ALL:
-                return true;
-            default:
-            {
-                MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-                return server != null && server.getPlayerList().canSendCommands(profile);
-            }
+            return false;
         }
+        else if(level == DefaultPermissionLevel.ALL)
+        {
+            return true;
+        }
+
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        return server != null && server.getPlayerList().canSendCommands(profile);
     }
 
     @Override
