@@ -61,7 +61,7 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     @Override
     public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
     {
-        switch(PERMISSION_LEVEL_MAP.get(node))
+        switch(getDefaultPermissionLevel(node))
         {
             case NONE:
                 return false;
