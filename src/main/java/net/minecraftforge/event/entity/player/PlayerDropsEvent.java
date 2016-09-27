@@ -21,6 +21,8 @@ package net.minecraftforge.event.entity.player;
 
 import java.util.List;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -48,12 +50,19 @@ public class PlayerDropsEvent extends LivingDropsEvent
      */
     public PlayerDropsEvent(EntityPlayer entity, DamageSource source, List<EntityItem> drops, boolean recentlyHit)
     {
-        super(entity, source, drops,
-            (source.getEntity() instanceof EntityPlayer) ?
-                EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity())) : 0,
-            recentlyHit);
+        super(entity, source, drops, getLootingLevel(entity, source), recentlyHit);
 
         this.entityPlayer = entity;
+    }
+
+    private static int getLootingLevel(EntityPlayer entity, DamageSource source)
+    {
+        int looting = 0;
+        if(source.getEntity() instanceof EntityPlayer)
+        {
+            looting = EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity()));
+        }
+        return ForgeHooks.getLootingLevel(entity, source, looting);
     }
 
     public EntityPlayer getEntityPlayer()

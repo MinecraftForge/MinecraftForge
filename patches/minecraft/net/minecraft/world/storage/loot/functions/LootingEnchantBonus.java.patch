@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/loot/functions/LootingEnchantBonus.java
++++ ../src-work/minecraft/net/minecraft/world/storage/loot/functions/LootingEnchantBonus.java
+@@ -33,6 +33,7 @@
+         if (entity instanceof EntityLivingBase)
+         {
+             int i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
++            if (p_186553_3_.func_186493_a() instanceof EntityLivingBase) i = net.minecraftforge.common.ForgeHooks.getLootingLevel((EntityLivingBase) p_186553_3_.func_186493_a(), p_186553_3_.getDamageSource(), i);
+ 
+             if (i == 0)
+             {

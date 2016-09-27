@@ -1,12 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/loot/LootContext.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/loot/LootContext.java
-@@ -89,6 +89,11 @@
+@@ -89,6 +89,17 @@
          }
      }
  
 +    public WorldServer getWorld()
 +    {
 +        return field_186499_b;
++    }
++
++    @Nullable
++    public DamageSource getDamageSource()
++    {
++        return field_186503_f;
 +    }
 +
      public static class Builder

@@ -518,7 +518,8 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level) {
+    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level)
+    {
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getLootingLevel();

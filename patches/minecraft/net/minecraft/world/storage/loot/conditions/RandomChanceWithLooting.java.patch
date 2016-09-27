@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/loot/conditions/RandomChanceWithLooting.java
++++ ../src-work/minecraft/net/minecraft/world/storage/loot/conditions/RandomChanceWithLooting.java
+@@ -29,6 +29,7 @@
+         {
+             i = EnchantmentHelper.func_185283_h((EntityLivingBase)p_186618_2_.func_186492_c());
+         }
++        if (p_186618_2_.func_186493_a() instanceof EntityLivingBase) i = net.minecraftforge.common.ForgeHooks.getLootingLevel((EntityLivingBase) p_186618_2_.func_186493_a(), p_186618_2_.getDamageSource(), i);
+ 
+         return p_186618_1_.nextFloat() < this.field_186627_a + (float)i * this.field_186628_b;
+     }
