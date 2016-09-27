@@ -209,28 +209,6 @@ public abstract class FluidRegistry
         return fluids.get(fluidName);
     }
 
-    @Deprecated // Modders should never actually use int ID, use String
-    public static Fluid getFluid(int fluidID)
-    {
-        return fluidIDs.inverse().get(fluidID);
-    }
-
-    @Deprecated // Modders should never actually use int ID, use String
-    public static int getFluidID(Fluid fluid)
-    {
-        Integer ret = fluidIDs.get(fluid);
-        if (ret == null) throw new RuntimeException("Attempted to access ID for unregistered fluid, Stop using this method modder!");
-        return ret;
-    }
-
-    @Deprecated // Modders should never actually use int ID, use String
-    public static int getFluidID(String fluidName)
-    {
-        Integer ret = fluidIDs.get(getFluid(fluidName));
-        if (ret == null) throw new RuntimeException("Attempted to access ID for unregistered fluid, Stop using this method modder!");
-        return ret;
-    }
-
     public static String getFluidName(Fluid fluid)
     {
         return fluids.inverse().get(fluid);

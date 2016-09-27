@@ -34,7 +34,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
  * FluidHandlerItemStack is a template capability provider for ItemStacks.
- * Data is stored directly in the vanilla NBT, in the same way as the old deprecated {@link ItemFluidContainer}.
+ * Data is stored directly in the vanilla NBT, in the same way as the old ItemFluidContainer.
  *
  * This class allows an itemStack to contain any partial level of fluid up to its capacity, unlike {@link FluidHandlerItemStackSimple}
  *
