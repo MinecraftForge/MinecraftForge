@@ -19,9 +19,9 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraft.block.Block;
+import java.util.List;
+
 import net.minecraft.block.BlockDispenser;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -29,13 +29,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -44,12 +47,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.List;
-
 /**
  * A universal bucket that can hold any liquid
  */
-public class UniversalBucket extends Item implements IFluidContainerItem
+public class UniversalBucket extends Item
 {
 
     private final int capacity; // how much the bucket holds
@@ -107,7 +108,8 @@ public class UniversalBucket extends Item implements IFluidContainerItem
                 // add all fluids that the bucket can be filled  with
                 FluidStack fs = new FluidStack(fluid, getCapacity());
                 ItemStack stack = new ItemStack(this);
-                if (fill(stack, fs, true) == fs.amount)
+                IFluidHandler fluidHandler = new FluidBucketWrapper(stack);
+                if (fluidHandler.fill(fs, true) == fs.amount)
                 {
                     subItems.add(stack);
                 }
@@ -195,26 +197,6 @@ public class UniversalBucket extends Item implements IFluidContainerItem
         return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
     }
 
-    // compatibility
-    @Deprecated
-    public boolean tryPlaceFluid(Block block, World worldIn, BlockPos pos)
-    {
-        if (block instanceof IFluidBlock)
-        {
-            IFluidBlock fluidBlock = (IFluidBlock) block;
-            return FluidUtil.tryPlaceFluid(null, worldIn, new FluidStack(fluidBlock.getFluid(), Fluid.BUCKET_VOLUME), pos);
-        }
-        else if (block.getDefaultState().getMaterial() == Material.WATER)
-        {
-            FluidUtil.tryPlaceFluid(null, worldIn, new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), pos);
-        }
-        else if (block.getDefaultState().getMaterial() == Material.LAVA)
-        {
-            FluidUtil.tryPlaceFluid(null, worldIn, new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME), pos);
-        }
-        return false;
-    }
-
     @SubscribeEvent(priority = EventPriority.LOW) // low priority so other mods can handle their stuff first
     public void onFillBucket(FillBucketEvent event)
     {
@@ -262,110 +244,31 @@ public class UniversalBucket extends Item implements IFluidContainerItem
 
     public static ItemStack getFilledBucket(UniversalBucket item, Fluid fluid)
     {
-        ItemStack stack = new ItemStack(item);
-        item.fill(stack, new FluidStack(fluid, item.getCapacity()), true);
-        return stack;
+        ItemStack bucket = new ItemStack(item);
+
+        if (FluidRegistry.getBucketFluids().contains(fluid))
+        {
+            // fill the container
+            NBTTagCompound tag = new NBTTagCompound();
+            FluidStack fluidStack = new FluidStack(fluid, item.getCapacity());
+            fluidStack.writeToNBT(tag);
+            bucket.setTagCompound(tag);
+        }
+        else if (fluid == FluidRegistry.WATER)
+        {
+            bucket.deserializeNBT(new ItemStack(Items.WATER_BUCKET).serializeNBT());
+        }
+        else if (fluid == FluidRegistry.LAVA)
+        {
+            bucket.deserializeNBT(new ItemStack(Items.LAVA_BUCKET).serializeNBT());
+        }
+
+        return bucket;
     }
 
-  /* FluidContainer Management */
-
-    @Override
     public FluidStack getFluid(ItemStack container)
     {
         return FluidStack.loadFluidStackFromNBT(container.getTagCompound());
-    }
-
-    @Override
-    public int getCapacity(ItemStack container)
-    {
-        return getCapacity();
-    }
-
-    @Override
-    public int fill(ItemStack container, FluidStack resource, boolean doFill)
-    {
-        // has to be exactly 1, must be handled from the caller
-        if (container.stackSize != 1)
-        {
-            return 0;
-        }
-
-        // can only fill exact capacity
-        if (resource == null || resource.amount < getCapacity())
-        {
-            return 0;
-        }
-
-        // already contains fluid?
-        if (getFluid(container) != null)
-        {
-            return 0;
-        }
-
-        // registered in the registry?
-        if (FluidRegistry.getBucketFluids().contains(resource.getFluid()))
-        {
-            // fill the container
-            if (doFill)
-            {
-                NBTTagCompound tag = container.getTagCompound();
-                if (tag == null)
-                {
-                    tag = new NBTTagCompound();
-                }
-                resource.writeToNBT(tag);
-                container.setTagCompound(tag);
-            }
-            return getCapacity();
-        }
-        else if (resource.getFluid() == FluidRegistry.WATER)
-        {
-            if (doFill)
-            {
-                container.deserializeNBT(new ItemStack(Items.WATER_BUCKET).serializeNBT());
-            }
-            return getCapacity();
-        }
-        else if (resource.getFluid() == FluidRegistry.LAVA)
-        {
-            if (doFill)
-            {
-                container.deserializeNBT(new ItemStack(Items.LAVA_BUCKET).serializeNBT());
-            }
-            return getCapacity();
-        }
-
-        return 0;
-    }
-
-    @Override
-    public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain)
-    {
-        // has to be exactly 1, must be handled from the caller
-        if (container.stackSize != 1)
-        {
-            return null;
-        }
-
-        // can only drain everything at once
-        if (maxDrain < getCapacity(container))
-        {
-            return null;
-        }
-
-        FluidStack fluidStack = getFluid(container);
-        if (doDrain && fluidStack != null)
-        {
-            if(getEmpty() != null)
-            {
-                container.deserializeNBT(getEmpty().serializeNBT());
-            }
-            else {
-                container.stackSize = 0;
-            }
-        }
-
-        return fluidStack;
     }
 
     public int getCapacity()
