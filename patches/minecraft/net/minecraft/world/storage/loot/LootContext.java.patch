@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/loot/LootContext.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/loot/LootContext.java
-@@ -89,6 +89,17 @@
+@@ -89,6 +89,16 @@
          }
      }
  
@@ -9,10 +9,9 @@
 +        return field_186499_b;
 +    }
 +
-+    @Nullable
-+    public DamageSource getDamageSource()
++    public int getLootingModifier()
 +    {
-+        return field_186503_f;
++        return net.minecraftforge.common.ForgeHooks.getLootingLevel(func_186493_a(), func_186492_c(), field_186503_f);
 +    }
 +
      public static class Builder
