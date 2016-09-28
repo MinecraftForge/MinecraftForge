@@ -528,7 +528,7 @@ public class ForgeHooks
         }
         if (target instanceof EntityLivingBase)
         {
-            looting = net.minecraftforge.common.ForgeHooks.getLootingLevel((EntityLivingBase)target, cause, looting);
+            looting = getLootingLevel((EntityLivingBase)target, cause, looting);
         }
         return looting;
     }
