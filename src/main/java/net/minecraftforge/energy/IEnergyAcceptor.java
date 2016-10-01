@@ -2,7 +2,8 @@ package net.minecraftforge.energy;
 
 import net.minecraft.util.EnumFacing;
 
-public interface IEnergyAcceptor extends IEnergyBase {
+public interface IEnergyAcceptor extends IEnergyBase 
+{
 
     /**
     * Checks to see if this is full. Checks to see if energy can be received from that side
