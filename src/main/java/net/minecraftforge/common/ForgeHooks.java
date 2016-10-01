@@ -56,6 +56,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemArmor;
@@ -106,6 +107,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -562,6 +564,11 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
 
+    public static void onLivingEquipmentChange(EntityLivingBase entity,EntityEquipmentSlot slot, ItemStack from, ItemStack to)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingEquipmentChangeEvent(entity, slot, from, to));
+    }
+    
     public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item, boolean includeName)
     {
         player.captureDrops = true;
