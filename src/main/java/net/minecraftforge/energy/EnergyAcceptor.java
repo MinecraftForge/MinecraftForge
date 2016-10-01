@@ -3,21 +3,19 @@ package energy;
 import net.minecraft.util.EnumFacing;
 
 /**
-* Example implementation of an energy storage block
+* Example implementation of an energy acceptor such as a machine
  */
-public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
+public class EnergyAcceptor implements IEnergyAcceptor {
 
     protected int maxEnergy;
     protected int energy;
     protected int maxReceive;
-    protected int maxExtract;
     protected EnumFacing facing;
 
-    public EnergyStorage(int maxEnergy, int energy, int maxReceive, int maxExtract, EnumFacing facing){
+    public EnergyAcceptor(int maxEnergy, int energy, int maxReceive, EnumFacing facing){
         this.maxEnergy = maxEnergy;
         this.energy = energy;
         this.maxReceive = maxReceive;
-        this.maxExtract = maxExtract;
         this.facing = facing;
     }
 
@@ -45,7 +43,7 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     public boolean canReceive(EnumFacing side) {
 
         if(this.energy != this.maxEnergy)
-            return(! side.equals(this.facing));
+            return(side.equals(this.facing));
 
         return false;
 
@@ -74,40 +72,5 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     @Override
     public int getMaxReceive() {
         return this.maxReceive;
-    }
-
-    @Override
-    public boolean canExtract(EnumFacing side) {
-
-        if(this.energy > 0)
-            return side.equals(this.facing);
-
-        return false;
-
-    }
-
-    @Override
-    public int extractEnergy(int maxExtract, EnumFacing side, boolean simulate) {
-
-        if (!canExtract(side))
-            return 0;
-
-        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
-
-        if (!simulate)
-            energy -= energyExtracted;
-
-        return energyExtracted;
-
-    }
-
-    @Override
-    public void setMaxExtract(int value) {
-        this.maxExtract = value;
-    }
-
-    @Override
-    public int getMaxExtract() {
-        return this.maxExtract;
     }
 }
