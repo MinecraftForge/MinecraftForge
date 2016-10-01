@@ -1,4 +1,4 @@
-package energy;
+package net.minecraftforge.energy;
 
 import net.minecraft.util.EnumFacing;
 
