@@ -5,7 +5,8 @@ import net.minecraft.util.EnumFacing;
 /**
 * Example implementation of an energy storage block
  */
-public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
+public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider 
+{
 
     protected int maxEnergy;
     protected int energy;
@@ -13,7 +14,8 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     protected int maxExtract;
     protected EnumFacing facing;
 
-    public EnergyStorage(int maxEnergy, int energy, int maxReceive, int maxExtract, EnumFacing facing){
+    public EnergyStorage(int maxEnergy, int energy, int maxReceive, int maxExtract, EnumFacing facing)
+    {
         this.maxEnergy = maxEnergy;
         this.energy = energy;
         this.maxReceive = maxReceive;
@@ -22,27 +24,32 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     }
 
     @Override
-    public void setMaxEnergy(int value) {
+    public void setMaxEnergy(int value) 
+    {
         this.maxEnergy = value;
     }
 
     @Override
-    public void setEnergy(int value) {
+    public void setEnergy(int value) 
+    {
         this.energy = value;
     }
 
     @Override
-    public int getMaxEnergy() {
+    public int getMaxEnergy() 
+    {
         return this.maxEnergy;
     }
 
     @Override
-    public int getEnergy() {
+    public int getEnergy() 
+    {
         return this.energy;
     }
 
     @Override
-    public boolean canReceive(EnumFacing side) {
+    public boolean canReceive(EnumFacing side) 
+    {
 
         if(this.energy != this.maxEnergy)
             return(! side.equals(this.facing));
@@ -52,7 +59,8 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, EnumFacing side, boolean simulate) {
+    public int receiveEnergy(int maxReceive, EnumFacing side, boolean simulate) 
+    {
 
         if(!canReceive(side))
             return 0;
@@ -67,17 +75,20 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     }
 
     @Override
-    public void setMaxReceive(int value) {
+    public void setMaxReceive(int value) 
+    {
         this.maxReceive = value;
     }
 
     @Override
-    public int getMaxReceive() {
+    public int getMaxReceive() 
+    {
         return this.maxReceive;
     }
 
     @Override
-    public boolean canExtract(EnumFacing side) {
+    public boolean canExtract(EnumFacing side) 
+    {
 
         if(this.energy > 0)
             return side.equals(this.facing);
@@ -87,7 +98,8 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     }
 
     @Override
-    public int extractEnergy(int maxExtract, EnumFacing side, boolean simulate) {
+    public int extractEnergy(int maxExtract, EnumFacing side, boolean simulate) 
+    {
 
         if (!canExtract(side))
             return 0;
@@ -102,12 +114,14 @@ public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
     }
 
     @Override
-    public void setMaxExtract(int value) {
+    public void setMaxExtract(int value) 
+    {
         this.maxExtract = value;
     }
 
     @Override
-    public int getMaxExtract() {
+    public int getMaxExtract() 
+    {
         return this.maxExtract;
     }
 }
