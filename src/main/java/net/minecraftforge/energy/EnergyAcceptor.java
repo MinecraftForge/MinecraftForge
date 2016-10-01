@@ -5,14 +5,16 @@ import net.minecraft.util.EnumFacing;
 /**
 * Example implementation of an energy acceptor such as a machine
  */
-public class EnergyAcceptor implements IEnergyAcceptor {
+public class EnergyAcceptor implements IEnergyAcceptor 
+{
 
     protected int maxEnergy;
     protected int energy;
     protected int maxReceive;
     protected EnumFacing facing;
 
-    public EnergyAcceptor(int maxEnergy, int energy, int maxReceive, EnumFacing facing){
+    public EnergyAcceptor(int maxEnergy, int energy, int maxReceive, EnumFacing facing)
+    {
         this.maxEnergy = maxEnergy;
         this.energy = energy;
         this.maxReceive = maxReceive;
@@ -20,27 +22,32 @@ public class EnergyAcceptor implements IEnergyAcceptor {
     }
 
     @Override
-    public void setMaxEnergy(int value) {
+    public void setMaxEnergy(int value) 
+    {
         this.maxEnergy = value;
     }
 
     @Override
-    public void setEnergy(int value) {
+    public void setEnergy(int value) 
+    {
         this.energy = value;
     }
 
     @Override
-    public int getMaxEnergy() {
+    public int getMaxEnergy() 
+    {
         return this.maxEnergy;
     }
 
     @Override
-    public int getEnergy() {
+    public int getEnergy() 
+    {
         return this.energy;
     }
 
     @Override
-    public boolean canReceive(EnumFacing side) {
+    public boolean canReceive(EnumFacing side) 
+    {
 
         if(this.energy != this.maxEnergy)
             return(side.equals(this.facing));
@@ -50,7 +57,8 @@ public class EnergyAcceptor implements IEnergyAcceptor {
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, EnumFacing side, boolean simulate) {
+    public int receiveEnergy(int maxReceive, EnumFacing side, boolean simulate) 
+    {
 
         if(!canReceive(side))
             return 0;
@@ -65,12 +73,14 @@ public class EnergyAcceptor implements IEnergyAcceptor {
     }
 
     @Override
-    public void setMaxReceive(int value) {
+    public void setMaxReceive(int value) 
+    {
         this.maxReceive = value;
     }
 
     @Override
-    public int getMaxReceive() {
+    public int getMaxReceive() 
+    {
         return this.maxReceive;
     }
 }
