@@ -2,7 +2,8 @@ package net.minecraftforge.energy;
 
 import net.minecraft.util.EnumFacing;
 
-public interface IEnergyProvider extends IEnergyBase {
+public interface IEnergyProvider extends IEnergyBase 
+{
 
     /**
     * Checks to see if this has any energy. Checks to see if energy can be extracted from that side
