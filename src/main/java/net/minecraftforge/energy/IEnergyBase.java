@@ -1,4 +1,4 @@
-package energy;
+package net.minecraftforge.energy;
 
 public interface IEnergyBase {
 
