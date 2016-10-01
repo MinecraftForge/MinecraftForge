@@ -1,113 +1,80 @@
 package net.minecraftforge.energy;
 
-import net.minecraft.util.EnumFacing;
-
 /**
-* Example implementation of an energy storage block
+ * Reference implementation of {@link IEnergyStorage}. Use/extend this or implement your own.
+ *
+ * Derived from the Redstone Flux power system designed by King Lemming and originally utilized in Thermal Expansion and related mods.
+ * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with Forge.
  */
-public class EnergyStorage implements IEnergyAcceptor, IEnergyProvider {
-
-    protected int maxEnergy;
+public class EnergyStorage implements IEnergyStorage
+{
     protected int energy;
+    protected int capacity;
     protected int maxReceive;
     protected int maxExtract;
-    protected EnumFacing facing;
 
-    public EnergyStorage(int maxEnergy, int energy, int maxReceive, int maxExtract, EnumFacing facing){
-        this.maxEnergy = maxEnergy;
-        this.energy = energy;
+    public EnergyStorage(int capacity)
+    {
+        this(capacity, capacity, capacity);
+    }
+
+    public EnergyStorage(int capacity, int maxTransfer)
+    {
+        this(capacity, maxTransfer, maxTransfer);
+    }
+
+    public EnergyStorage(int capacity, int maxReceive, int maxExtract)
+    {
+        this.capacity = capacity;
         this.maxReceive = maxReceive;
         this.maxExtract = maxExtract;
-        this.facing = facing;
     }
 
     @Override
-    public void setMaxEnergy(int value) {
-        this.maxEnergy = value;
-    }
-
-    @Override
-    public void setEnergy(int value) {
-        this.energy = value;
-    }
-
-    @Override
-    public int getMaxEnergy() {
-        return this.maxEnergy;
-    }
-
-    @Override
-    public int getEnergy() {
-        return this.energy;
-    }
-
-    @Override
-    public boolean canReceive(EnumFacing side) {
-
-        if(this.energy != this.maxEnergy)
-            return(! side.equals(this.facing));
-
-        return false;
-
-    }
-
-    @Override
-    public int receiveEnergy(int maxReceive, EnumFacing side, boolean simulate) {
-
-        if(!canReceive(side))
+    public int receiveEnergy(int maxReceive, boolean simulate)
+    {
+        if (!canReceive())
             return 0;
 
-        int energyReceived = Math.min(this.maxEnergy - this.energy, Math.min(this.maxReceive, maxReceive));
-
+        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
         if (!simulate)
             energy += energyReceived;
-
         return energyReceived;
-
     }
 
     @Override
-    public void setMaxReceive(int value) {
-        this.maxReceive = value;
-    }
-
-    @Override
-    public int getMaxReceive() {
-        return this.maxReceive;
-    }
-
-    @Override
-    public boolean canExtract(EnumFacing side) {
-
-        if(this.energy > 0)
-            return side.equals(this.facing);
-
-        return false;
-
-    }
-
-    @Override
-    public int extractEnergy(int maxExtract, EnumFacing side, boolean simulate) {
-
-        if (!canExtract(side))
+    public int extractEnergy(int maxExtract, boolean simulate)
+    {
+        if (!canExtract())
             return 0;
 
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
-
         if (!simulate)
             energy -= energyExtracted;
-
         return energyExtracted;
-
     }
 
     @Override
-    public void setMaxExtract(int value) {
-        this.maxExtract = value;
+    public int getEnergyStored()
+    {
+        return energy;
     }
 
     @Override
-    public int getMaxExtract() {
-        return this.maxExtract;
+    public int getMaxEnergyStored()
+    {
+        return capacity;
+    }
+
+    @Override
+    public boolean canExtract()
+    {
+        return this.maxExtract > 0;
+    }
+
+    @Override
+    public boolean canReceive()
+    {
+        return this.maxReceive > 0;
     }
 }
