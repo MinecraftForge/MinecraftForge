@@ -101,7 +101,7 @@
 +     */
 +    public boolean isActiveAndMatches(int keyCode)
 +    {
-+        return keyCode == this.func_151463_i() && getKeyConflictContext().isActive() && getKeyModifier().isActive();
++        return keyCode != 0 && keyCode == this.func_151463_i() && getKeyConflictContext().isActive() && getKeyModifier().isActive();
 +    }
 +
 +    public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext)
