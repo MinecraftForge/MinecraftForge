@@ -169,7 +169,7 @@
      public void func_71217_p()
      {
          long i = System.nanoTime();
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreServerTick();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreServerTick(this);
          ++this.field_71315_w;
  
          if (this.field_71295_T)
@@ -185,7 +185,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostServerTick();
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostServerTick(this);
      }
  
      public void func_71190_q()

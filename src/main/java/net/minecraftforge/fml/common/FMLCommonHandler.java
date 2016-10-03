@@ -248,9 +248,18 @@ public class FMLCommonHandler
         return sidedDelegate;
     }
 
+    /**
+     * @deprecated use {@link #onPostServerTick(MinecraftServer)}
+     */
+    @Deprecated
     public void onPostServerTick()
     {
-        bus().post(new TickEvent.ServerTickEvent(Phase.END));
+        this.onPostServerTick(this.getMinecraftServerInstance());
+    }
+
+    public void onPostServerTick(MinecraftServer server)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(server, Phase.END));
     }
 
     /**
@@ -261,9 +270,18 @@ public class FMLCommonHandler
         bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.END, world));
     }
 
+    /**
+     * @deprecated use {@link #onPreServerTick(MinecraftServer)}
+     */
+    @Deprecated
     public void onPreServerTick()
     {
-        bus().post(new TickEvent.ServerTickEvent(Phase.START));
+        this.onPreServerTick(this.getMinecraftServerInstance());
+    }
+
+    public void onPreServerTick(MinecraftServer server)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(server, Phase.START));
     }
 
     /**
