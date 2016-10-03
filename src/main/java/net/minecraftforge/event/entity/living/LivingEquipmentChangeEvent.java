@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * {@link #slot} contains the affected {@link EntityEquipmentSlot}. <br>
  * {@link #from} contains the {@link ItemStack} that was equipped previously. <br>
- * {@link #to} contains the {@link ItemStack} that will be equipped. <br>
+ * {@link #to} contains the {@link ItemStack} that is equipped now. <br>
  * <br>
  * This event is not {@link Cancelable}. <br>
  * <br>
