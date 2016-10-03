@@ -35,6 +35,7 @@ import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
+import net.minecraftforge.event.entity.EntityDismountEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -365,7 +366,9 @@ public class ForgeEventFactory
     
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
-        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj, isMounting));
+        boolean isCanceled = isMounting ?
+            MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj)) :
+            MinecraftForge.EVENT_BUS.post(new EntityDismountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj));
         
         if(isCanceled)
         {
