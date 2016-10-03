@@ -22,8 +22,7 @@ net/minecraft/world/biome/Biome.<init>(IZ)V=|p_i1971_1_,register
 net/minecraft/world/chunk/storage/AnvilChunkLoader.loadChunk__Async(Lnet/minecraft/world/World;II)[Ljava/lang/Object;=|p_75815_1_,p_75815_2_,p_75815_3_
 net/minecraft/world/chunk/storage/AnvilChunkLoader.checkedReadChunkFromNBT__Async(Lnet/minecraft/world/World;IILnet/minecraft/nbt/NBTTagCompound;)[Ljava/lang/Object;=|p_75822_1_,p_75822_2_,p_75822_3_,p_75822_4_
 net/minecraft/world/chunk/storage/AnvilChunkLoader.loadEntities(Lnet/minecraft/world/World;Lnet/minecraft/nbt/NBTTagCompound;Lnet/minecraft/world/chunk/Chunk;)V=|p_75823_1_,p_75823_2_,chunk
-net/minecraft/world/gen/ChunkProviderServer.loadChunk(II;Ljava/lang/Runnable;)Lnet/minecraft/world/chunk/Chunk;=|p_186025_1_,p_186025_2_,runnable
-net/minecraft/world/gen/ChunkProviderServer.originalLoadChunk(II)Lnet/minecraft/world/chunk/Chunk;=|p_186025_1_,p_186025_2_
+net/minecraft/world/gen/ChunkProviderServer.loadChunk(IILjava/lang/Runnable;)Lnet/minecraft/world/chunk/Chunk;=|p_186028_1_,p_186028_2_,runnable
 
 net/minecraft/block/BlockFire.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/EnumFacing;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
 net/minecraft/block/BlockSkull.getDrops(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)Ljava/util/List;=|p_180663_1_,p_180663_2_,p_180663_3_,fortune
