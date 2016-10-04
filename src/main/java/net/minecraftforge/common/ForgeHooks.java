@@ -82,10 +82,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -906,4 +903,11 @@ public class ForgeHooks
         if (stack != null && stack.getItem().onLeftClickEntity(stack, player, target)) return false;
         return true;
     }
+
+    public static void onPlayerArmorChange(EntityPlayer player, ItemStack[] armorInventory, int slot, ItemStack newItemStack) {
+        ItemStack oldArmorStack = armorInventory[slot];
+        armorInventory[slot] = newItemStack;
+        MinecraftForge.EVENT_BUS.post(new PlayerArmorChangeEvent(player, slot, oldArmorStack, armorInventory[slot]));
+    }
+
 }

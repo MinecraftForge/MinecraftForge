@@ -15,3 +15,12 @@
      }
  
      public boolean func_146026_a(Item p_146026_1_)
+@@ -483,6 +491,8 @@
+         {
+             p_70299_1_ -= aitemstack.length;
+             aitemstack = this.field_70460_b;
++            net.minecraftforge.common.ForgeHooks.onPlayerArmorChange(this.field_70458_d, aitemstack, p_70299_1_, p_70299_2_);
++            return;
+         }
+ 
+         aitemstack[p_70299_1_] = p_70299_2_;
