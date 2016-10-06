@@ -10,15 +10,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = BreedingTest.MODID, name = "BreedingTest", version = "1.0")
 public class BreedingTest
 {
-    public static final String MODID = "breedingtest";
+  public static final String MODID = "breedingtest";
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+  @Mod.EventHandler
+  public void preInit(FMLPreInitializationEvent event) {
+    MinecraftForge.EVENT_BUS.register(this);
+  }
 
-    @SubscribeEvent
-    public void onBabyBorn(BabyEntitySpawnEvent event) {
-        event.setChild(new EntityCow(event.getChild().worldObj));
-    }
-} 
+  @SubscribeEvent
+  public void onBabyBorn(BabyEntitySpawnEvent event) {
+    event.setChild(new EntityCow(event.getChild().worldObj));
+  }
+}
