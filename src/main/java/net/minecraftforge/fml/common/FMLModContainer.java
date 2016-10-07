@@ -399,6 +399,14 @@ public class FMLModContainer implements ModContainer
                 return mc.getMetadata();
             }
         });
+        parseSimpleFieldAnnotation(annotations, NetworkWrapper.class.getName(), new Function<ModContainer, Object>()
+        {
+            @Override
+            public Object apply(ModContainer input)
+            {
+                return NetworkRegistry.INSTANCE.newSimpleChannel(input.getModId());
+            }
+        });
     }
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retriever) throws IllegalAccessException
