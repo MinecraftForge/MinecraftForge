@@ -22,7 +22,15 @@
      public int func_77639_j()
      {
          return this.field_77777_bU;
-@@ -316,6 +317,7 @@
+@@ -217,6 +218,7 @@
+         return this;
+     }
+ 
++    @Deprecated
+     public int func_77612_l()
+     {
+         return this.field_77699_b;
+@@ -316,6 +318,7 @@
          return this.field_77700_c;
      }
  
@@ -30,7 +38,7 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -371,7 +373,7 @@
+@@ -371,7 +374,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -39,7 +47,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -389,7 +391,11 @@
+@@ -389,7 +392,11 @@
          float f6 = f3 * f4;
          float f7 = f2 * f4;
          double d3 = 5.0D;
@@ -52,7 +60,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -426,11 +432,569 @@
+@@ -426,11 +433,580 @@
          return false;
      }
  
@@ -633,7 +641,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150348_b, (new ItemMultiTexture(Blocks.field_150348_b, Blocks.field_150348_b, new Function<ItemStack, String>()
-@@ -962,6 +1537,10 @@
+@@ -962,6 +1538,10 @@
          private final float field_78011_i;
          private final int field_78008_j;
  
@@ -644,7 +652,7 @@
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
              this.field_78001_f = p_i1874_3_;
-@@ -996,9 +1575,36 @@
+@@ -996,9 +1576,36 @@
              return this.field_78008_j;
          }
  
