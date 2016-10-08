@@ -22,6 +22,7 @@ package net.minecraftforge.event;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
+import net.minecraftforge.fml.common.eventhandler.IContextSetter;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
@@ -30,7 +31,7 @@ import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 /**
  * RegistryEvent supertype.
  */
-public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T>
+public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> implements IContextSetter
 {
     RegistryEvent(Class<T> clazz) {
         super(clazz);

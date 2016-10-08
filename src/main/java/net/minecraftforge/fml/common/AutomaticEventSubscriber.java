@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common;
 import com.google.common.base.Strings;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
@@ -50,6 +51,24 @@ public class AutomaticEventSubscriber
         {
             try
             {
+                //Filter out handlers for things that arnt this mod.
+                //Perhaps find a way to make this more generic for multiple mods
+                //from the same source....
+                boolean register = true;
+                for (ASMData a : data.getAll(Mod.class.getName()))
+                {
+                    if (a.getClassName().equals(targ.getClassName()))
+                    {
+                        if (!mod.getModId().equals(a.getAnnotationInfo().get("modid")))
+                        {
+                            register = false;
+                            break;
+                        }
+                    }
+                }
+                if (!register)
+                    continue;
+
                 //noinspection unchecked
                 List<ModAnnotation.EnumHolder> sidesEnum = (List<ModAnnotation.EnumHolder>)targ.getAnnotationInfo().get("value");
                 EnumSet<Side> sides = DEFAULT;

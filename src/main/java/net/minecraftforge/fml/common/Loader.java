@@ -1144,4 +1144,9 @@ public class Loader
     {
         return modController != null ? modController.getState() : LoaderState.NOINIT;
     }
+
+    public void setActiveModContainer(ModContainer container)
+    {
+        this.modController.forceActiveContainer(container);
+    }
 }

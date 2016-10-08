@@ -122,15 +122,32 @@ public class EventBus implements IEventExceptionHandler
         }
     }
 
-    private void register(Class<?> eventType, Object target, Method method, ModContainer owner)
+    private void register(Class<?> eventType, Object target, Method method, final ModContainer owner)
     {
         try
         {
             Constructor<?> ctr = eventType.getConstructor();
             ctr.setAccessible(true);
             Event event = (Event)ctr.newInstance();
-            ASMEventHandler listener = new ASMEventHandler(target, method, owner, IGenericEvent.class.isAssignableFrom(eventType));
-            event.getListenerList().register(busID, listener.getPriority(), listener);
+            final ASMEventHandler asm = new ASMEventHandler(target, method, owner, IGenericEvent.class.isAssignableFrom(eventType));
+
+            IEventListener listener = asm;
+            if (IContextSetter.class.isAssignableFrom(eventType))
+            {
+                listener = new IEventListener()
+                {
+                    @Override
+                    public void invoke(Event event)
+                    {
+                        ModContainer old = Loader.instance().activeModContainer();
+                        Loader.instance().setActiveModContainer(owner);
+                        asm.invoke(event);
+                        Loader.instance().setActiveModContainer(old);
+                    }
+                };
+            }
+
+            event.getListenerList().register(busID, asm.getPriority(), listener);
 
             ArrayList<IEventListener> others = listeners.get(target);
             if (others == null)
