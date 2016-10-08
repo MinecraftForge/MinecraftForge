@@ -47,6 +47,27 @@ public class ProxyInjector
         {
             try
             {
+                //Pull this from the ASM data so we do not prematurely initialize mods with the below Class.forName
+                String modid = (String)targ.getAnnotationInfo().get("modId");
+                if (modid == null)
+                {
+                    for (ASMData a : data.getAll(Mod.class.getName()))
+                    {
+                        if (a.getClassName().equals(targ.getClassName()))
+                        {
+                            modid = (String)a.getAnnotationInfo().get("modid");
+                            break;
+                        }
+                    }
+                }
+
+                if (modid == null || !modid.equals(mod.getModId()))
+                {
+                    //TODO? Throw exception if modid == null? As that shouldn't happen {annotation with no name in a class without a @Mod)
+                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                    continue;
+                }
+
                 Class<?> proxyTarget = Class.forName(targ.getClassName(), true, mcl);
                 Field target = proxyTarget.getDeclaredField(targ.getObjectName());
                 if (target == null)
@@ -58,11 +79,6 @@ public class ProxyInjector
                 target.setAccessible(true);
 
                 SidedProxy annotation = target.getAnnotation(SidedProxy.class);
-                if (!Strings.isNullOrEmpty(annotation.modId()) && !annotation.modId().equals(mod.getModId()))
-                {
-                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
-                    continue;
-                }
                 String targetType = side.isClient() ? annotation.clientSide() : annotation.serverSide();
                 if(targetType.equals(""))
                 {
