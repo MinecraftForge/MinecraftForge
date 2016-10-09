@@ -47,30 +47,6 @@ public class ProxyInjector
         {
             try
             {
-                //Pull this from the ASM data so we do not prematurely initialize mods with the below Class.forName
-                String modid = (String)targ.getAnnotationInfo().get("modId");
-                if (modid == null)
-                {
-                    for (ASMData a : data.getAll(Mod.class.getName()))
-                    {
-                        if (isProxyFromMod(a.getClassName(), targ.getClassName()))
-                        {
-                            modid = (String)a.getAnnotationInfo().get("modid");
-                            break;
-                        }
-                    }
-                }
-
-                if (modid == null)
-                {
-                    FMLLog.warning("Unable to determine the associated mod for proxy injection for %s.%s, assuming it's from %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
-                }
-                else if (!modid.equals(mod.getModId()))
-                {
-                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s, it should belong to %s", targ.getClassName(), targ.getObjectName(), mod.getModId(), modid);
-                    continue;
-                }
-
                 Class<?> proxyTarget = Class.forName(targ.getClassName(), true, mcl);
                 Field target = proxyTarget.getDeclaredField(targ.getObjectName());
                 if (target == null)
@@ -82,6 +58,11 @@ public class ProxyInjector
                 target.setAccessible(true);
 
                 SidedProxy annotation = target.getAnnotation(SidedProxy.class);
+                if (!Strings.isNullOrEmpty(annotation.modId()) && !annotation.modId().equals(mod.getModId()))
+                {
+                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                    continue;
+                }
                 String targetType = side.isClient() ? annotation.clientSide() : annotation.serverSide();
                 if(targetType.equals(""))
                 {
@@ -110,37 +91,5 @@ public class ProxyInjector
 
         // Allow language specific proxy injection.
         languageAdapter.setInternalProxies(mod, side, mcl);
-    }
-
-    /**
-     * Checks if a proxy is part of a mod.
-     *
-     * Checks that the proxy is somewhere in the same package that holds the mod.
-     * For example, the @Mod is 'com.modname.Mod', the Proxy is 'com.modname.proxies.ProxyClient'
-     * The package of the mod is 'com.modname', and Proxy is in that package, so it is from the mod.
-     *
-     * Compares each path section in a for loop instead of simply using {@link String#startsWith(String)}
-     * because a mod like 'com.modname.Mod' with package 'com.modname'
-     * does not own a proxy from 'com.modnametools.proxies.ProxyClient' even though they start the same.
-     */
-    private static boolean isProxyFromMod(String modClassName, String proxyClassName)
-    {
-        if (modClassName.equals(proxyClassName))
-            return true;
-
-        String[] modPath = modClassName.split("\\.");
-        String[] proxyPath = proxyClassName.split("\\.");
-        if (proxyPath.length < modPath.length)
-            return false;
-
-        for (int i = 0; i < modPath.length - 1; i++)
-        {
-            if (!modPath[i].equals(proxyPath[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
