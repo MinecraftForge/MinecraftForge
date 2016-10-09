@@ -20,17 +20,15 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Throwables;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -44,15 +42,16 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 class ObjectHolderRef {
     private Field field;
     private ResourceLocation injectedObject;
-    private boolean isBlock;
-    private boolean isItem;
+    private boolean isValid;
+    private IForgeRegistry registry;
 
 
     ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
+        registry = getRegistryForType(field);
+
         this.field = field;
-        this.isBlock = Block.class.isAssignableFrom(field.getType());
-        this.isItem = Item.class.isAssignableFrom(field.getType());
+        this.isValid = registry != null;
         if (extractFromExistingValues)
         {
             try
@@ -63,14 +62,15 @@ class ObjectHolderRef {
                 {
                     this.injectedObject = null;
                     this.field = null;
-                    this.isBlock = false;
-                    this.isItem = false;
+                    this.isValid = false;
                     return;
                 }
                 else
                 {
-                    ResourceLocation tmp = isBlock ? ForgeRegistries.BLOCKS.getKey((Block)existing) :
-                        isItem ? ForgeRegistries.ITEMS.getKey((Item)existing) : null;
+                    ResourceLocation tmp = null;
+                    if (registry != null) {
+                        tmp = registry.getKey((IForgeRegistryEntry) existing);
+                    }
                     this.injectedObject = tmp;
                 }
             } catch (Exception e)
@@ -85,7 +85,7 @@ class ObjectHolderRef {
 
         if (this.injectedObject == null || !isValid())
         {
-            throw new IllegalStateException(String.format("The ObjectHolder annotation cannot apply to a field that is not an Item or Block (found : %s at %s.%s)", field.getType().getName(), field.getClass().getName(), field.getName()));
+            throw new IllegalStateException(String.format("The ObjectHolder annotation cannot apply to a field that does not map to a registry. Ensure the registry was created during the RegistryEvent.NewRegistry event. (found : %s at %s.%s)", field.getType().getName(), field.getClass().getName(), field.getName()));
         }
         try
         {
@@ -97,24 +97,37 @@ class ObjectHolderRef {
         }
     }
 
+    private IForgeRegistry getRegistryForType(Field field)
+    {
+        Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
+        typesToExamine.add(field.getType());
+        IForgeRegistry registry = null;
+        while (!typesToExamine.isEmpty() && registry == null) {
+            Class<?> type = typesToExamine.remove();
+            Collections.addAll(typesToExamine, type.getInterfaces());
+            if (IForgeRegistryEntry.class.isAssignableFrom(type))
+            {
+                registry = PersistentRegistryManager.findRegistryByType((Class<IForgeRegistryEntry>) type);
+                final Class<?> parentType = type.getSuperclass();
+                if (parentType != null)
+                {
+                    typesToExamine.add(parentType);
+                }
+            }
+        }
+        return registry;
+    }
+
     public boolean isValid()
     {
-        return isBlock || isItem;
+        return isValid;
     }
     public void apply()
     {
         Object thing;
-        if (isBlock)
+        if (isValid && registry.containsKey(injectedObject))
         {
-            thing = ForgeRegistries.BLOCKS.getValue(injectedObject);
-            if (thing == Blocks.AIR)
-            {
-                thing = null;
-            }
-        }
-        else if (isItem)
-        {
-            thing = ForgeRegistries.ITEMS.getValue(injectedObject);
+            thing = registry.getValue(injectedObject);
         }
         else
         {

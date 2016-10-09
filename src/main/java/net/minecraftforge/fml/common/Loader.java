@@ -601,6 +601,7 @@ public class Loader
             FMLLog.warning("There were errors previously. Not beginning mod initialization phase");
             return;
         }
+        PersistentRegistryManager.fireCreateRegistryEvents();
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
         CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
