@@ -412,6 +412,7 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
     }
 
     public void serializeDummied(Set<ResourceLocation> set) { set.addAll(this.dummiedLocations); }
+    public boolean isDummied(ResourceLocation key){ return this.dummiedLocations.contains(key); }
 
 
     /**

@@ -31,6 +31,7 @@ import com.google.common.base.Throwables;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager.PersistentRegistry;
 
 
 /**
@@ -39,14 +40,15 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * @author cpw
  *
  */
+@SuppressWarnings("rawtypes")
 class ObjectHolderRef {
     private Field field;
     private ResourceLocation injectedObject;
     private boolean isValid;
-    private IForgeRegistry registry;
+	private FMLControlledNamespacedRegistry registry;
 
-
-    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
+    @SuppressWarnings("unchecked")
+	ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
         registry = getRegistryForType(field);
 
@@ -58,7 +60,7 @@ class ObjectHolderRef {
             {
                 Object existing = field.get(null);
                 // nothing is ever allowed to replace AIR
-                if (existing == null || existing == GameData.getBlockRegistry().getDefaultValue())
+                if (existing == null || existing == registry.getDefaultValue())
                 {
                     this.injectedObject = null;
                     this.field = null;
@@ -97,17 +99,19 @@ class ObjectHolderRef {
         }
     }
 
-    private IForgeRegistry getRegistryForType(Field field)
+	@SuppressWarnings("unchecked")
+	private FMLControlledNamespacedRegistry<?> getRegistryForType(Field field)
     {
         Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
         typesToExamine.add(field.getType());
-        IForgeRegistry registry = null;
-        while (!typesToExamine.isEmpty() && registry == null) {
+        FMLControlledNamespacedRegistry<?> registry = null;
+        while (!typesToExamine.isEmpty() && registry == null)
+        {
             Class<?> type = typesToExamine.remove();
             Collections.addAll(typesToExamine, type.getInterfaces());
             if (IForgeRegistryEntry.class.isAssignableFrom(type))
             {
-                registry = PersistentRegistryManager.findRegistryByType((Class<IForgeRegistryEntry>) type);
+                registry = PersistentRegistry.ACTIVE.getRegistry((Class<IForgeRegistryEntry>) type);
                 final Class<?> parentType = type.getSuperclass();
                 if (parentType != null)
                 {
@@ -125,7 +129,7 @@ class ObjectHolderRef {
     public void apply()
     {
         Object thing;
-        if (isValid && registry.containsKey(injectedObject))
+        if (isValid && registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
         {
             thing = registry.getValue(injectedObject);
         }
