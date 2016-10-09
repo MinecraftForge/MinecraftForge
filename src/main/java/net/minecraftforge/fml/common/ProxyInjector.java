@@ -53,7 +53,7 @@ public class ProxyInjector
                 {
                     for (ASMData a : data.getAll(Mod.class.getName()))
                     {
-                        if (a.getClassName().equals(targ.getClassName()))
+                        if (isProxyFromMod(a.getClassName(), targ.getClassName()))
                         {
                             modid = (String)a.getAnnotationInfo().get("modid");
                             break;
@@ -61,10 +61,13 @@ public class ProxyInjector
                     }
                 }
 
-                if (modid == null || !modid.equals(mod.getModId()))
+                if (modid == null)
                 {
-                    //TODO? Throw exception if modid == null? As that shouldn't happen {annotation with no name in a class without a @Mod)
-                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                    FMLLog.warning("Unable to determine the associated mod for proxy injection for %s.%s, assuming it's from %s", targ.getClassName(), targ.getObjectName(), mod.getModId());
+                }
+                else if (!modid.equals(mod.getModId()))
+                {
+                    FMLLog.fine("Skipping proxy injection for %s.%s since it is not for mod %s, it should belong to %s", targ.getClassName(), targ.getObjectName(), mod.getModId(), modid);
                     continue;
                 }
 
@@ -107,5 +110,37 @@ public class ProxyInjector
 
         // Allow language specific proxy injection.
         languageAdapter.setInternalProxies(mod, side, mcl);
+    }
+
+    /**
+     * Checks if a proxy is part of a mod.
+     *
+     * Checks that the proxy is somewhere in the same package that holds the mod.
+     * For example, the @Mod is 'com.modname.Mod', the Proxy is 'com.modname.proxies.ProxyClient'
+     * The package of the mod is 'com.modname', and Proxy is in that package, so it is from the mod.
+     *
+     * Compares each path section in a for loop instead of simply using {@link String#startsWith(String)}
+     * because a mod like 'com.modname.Mod' with package 'com.modname'
+     * does not own a proxy from 'com.modnametools.proxies.ProxyClient' even though they start the same.
+     */
+    private static boolean isProxyFromMod(String modClassName, String proxyClassName)
+    {
+        if (modClassName.equals(proxyClassName))
+            return true;
+
+        String[] modPath = modClassName.split("\\.");
+        String[] proxyPath = proxyClassName.split("\\.");
+        if (proxyPath.length < modPath.length)
+            return false;
+
+        for (int i = 0; i < modPath.length - 1; i++)
+        {
+            if (!modPath[i].equals(proxyPath[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
