@@ -47,6 +47,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -68,7 +69,7 @@ public class DynBucketTest
     private static final ResourceLocation simpleTankName = new ResourceLocation(MODID, "simpletank");
     private static final ResourceLocation testItemName = new ResourceLocation(MODID, "testitem");
 
-    private static final boolean ENABLE = false;
+    private static final boolean ENABLE = true;
 
     static
     {
@@ -152,13 +153,14 @@ public class DynBucketTest
             FluidStack fs = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
 
             ItemStack bucket = event.getEmptyBucket();
-            IFluidHandler fluidHandler = FluidUtil.getFluidHandler(bucket);
+            IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(bucket);
             if (fluidHandler != null)
             {
                 int fillAmount = fluidHandler.fill(fs, true);
                 if (fillAmount > 0)
                 {
-                    event.setFilledBucket(bucket);
+                    ItemStack filledBucket = fluidHandler.getContainer();
+                    event.setFilledBucket(filledBucket);
                     event.setResult(Result.ALLOW);
                 }
             }
@@ -269,7 +271,7 @@ public class DynBucketTest
             }
 
             // do the thing with the tank and the buckets
-            if (FluidUtil.interactWithFluidHandler(heldItem, tank, playerIn))
+            if (FluidUtil.interactWithFluidHandler(heldItem, tank, playerIn).isSuccess())
             {
                 return true;
             }
