@@ -39,6 +39,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -108,10 +109,11 @@ public class UniversalBucket extends Item
                 // add all fluids that the bucket can be filled  with
                 FluidStack fs = new FluidStack(fluid, getCapacity());
                 ItemStack stack = new ItemStack(this);
-                IFluidHandler fluidHandler = new FluidBucketWrapper(stack);
+                IFluidHandlerItem fluidHandler = new FluidBucketWrapper(stack);
                 if (fluidHandler.fill(fs, true) == fs.amount)
                 {
-                    subItems.add(stack);
+                    ItemStack filled = fluidHandler.getContainer();
+                    subItems.add(filled);
                 }
             }
         }
@@ -228,11 +230,11 @@ public class UniversalBucket extends Item
         ItemStack singleBucket = emptyBucket.copy();
         singleBucket.stackSize = 1;
 
-        ItemStack filledBucket = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
-        if (filledBucket != null)
+        FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
+        if (filledResult.isSuccess())
         {
             event.setResult(Event.Result.ALLOW);
-            event.setFilledBucket(filledBucket);
+            event.setFilledBucket(filledResult.getResult());
         }
         else
         {
@@ -256,11 +258,11 @@ public class UniversalBucket extends Item
         }
         else if (fluid == FluidRegistry.WATER)
         {
-            bucket.deserializeNBT(new ItemStack(Items.WATER_BUCKET).serializeNBT());
+            return new ItemStack(Items.WATER_BUCKET);
         }
         else if (fluid == FluidRegistry.LAVA)
         {
-            bucket.deserializeNBT(new ItemStack(Items.LAVA_BUCKET).serializeNBT());
+            return new ItemStack(Items.LAVA_BUCKET);
         }
 
         return bucket;
