@@ -98,9 +98,10 @@ public class ItemHandlerHelper
      * This is equivalent to the behaviour of a player picking up an item.
      * Note: This function stacks items without subtypes with different metadata together.
      */
-    public static ItemStack insertItemStacked(IItemHandler inventory, ItemStack stack, boolean simulate)
+    @Nonnull
+    public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate)
     {
-        if (inventory == null || stack == null)
+        if (inventory == null || stack.func_190926_b())
             return stack;
 
         // not stackable -> just insert into a new slot
@@ -119,7 +120,7 @@ public class ItemHandlerHelper
             {
                 stack = inventory.insertItem(i, stack, simulate);
 
-                if (stack == null)
+                if (stack.func_190926_b())
                 {
                     break;
                 }
@@ -127,15 +128,15 @@ public class ItemHandlerHelper
         }
 
         // insert remainder into empty slots
-        if (stack != null)
+        if (!stack.func_190926_b())
         {
             // find empty slot
             for (int i = 0; i < sizeInventory; i++)
             {
-                if (inventory.getStackInSlot(i) == null)
+                if (inventory.getStackInSlot(i).func_190926_b())
                 {
                     stack = inventory.insertItem(i, stack, simulate);
-                    if (stack == null)
+                    if (stack.func_190926_b())
                     {
                         break;
                     }

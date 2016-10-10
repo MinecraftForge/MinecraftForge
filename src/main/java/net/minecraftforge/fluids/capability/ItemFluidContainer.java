@@ -25,6 +25,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * A simple fluid container, to replace the functionality of the old FluidContainerRegistry and IFluidContainerItem.
  * This fluid container may be set so that is can only completely filled or empty. (binary)
@@ -43,7 +46,7 @@ public class ItemFluidContainer extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt)
     {
         return new FluidHandlerItemStack(stack, capacity);
     }

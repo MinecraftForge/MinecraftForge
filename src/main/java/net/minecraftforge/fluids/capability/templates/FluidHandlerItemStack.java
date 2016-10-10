@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability.templates;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
@@ -29,7 +30,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
@@ -41,21 +42,29 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
  */
-public class FluidHandlerItemStack implements IFluidHandler, ICapabilityProvider
+public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
 
-    protected final ItemStack container;
-    protected final int capacity;
+    @Nonnull
+    protected ItemStack container;
+    protected int capacity;
 
     /**
      * @param container  The container itemStack, data is stored on it directly as NBT.
      * @param capacity   The maximum capacity of this fluid tank.
      */
-    public FluidHandlerItemStack(ItemStack container, int capacity)
+    public FluidHandlerItemStack(@Nonnull ItemStack container, int capacity)
     {
         this.container = container;
         this.capacity = capacity;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getContainer()
+    {
+        return container;
     }
 
     @Nullable
@@ -184,8 +193,7 @@ public class FluidHandlerItemStack implements IFluidHandler, ICapabilityProvider
 
     /**
      * Override this method for special handling.
-     * Can be used to swap out the container's item for a different one with "container.setItem".
-     * Can be used to destroy the container with "container.stackSize--"
+     * Can be used to swap out or destroy the container.
      */
     protected void setContainerToEmpty()
     {
@@ -195,14 +203,14 @@ public class FluidHandlerItemStack implements IFluidHandler, ICapabilityProvider
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY ? (T) this : null;
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ? (T) this : null;
     }
 
     /**
@@ -240,7 +248,7 @@ public class FluidHandlerItemStack implements IFluidHandler, ICapabilityProvider
         protected void setContainerToEmpty()
         {
             super.setContainerToEmpty();
-            container.deserializeNBT(emptyContainer.serializeNBT());
+            container = emptyContainer;
         }
     }
 }

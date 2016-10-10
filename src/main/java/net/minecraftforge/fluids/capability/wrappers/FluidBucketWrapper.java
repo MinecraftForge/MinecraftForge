@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.init.Items;
@@ -33,6 +34,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -42,13 +44,21 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
+public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
 {
-    protected final ItemStack container;
+    @Nonnull
+    protected ItemStack container;
 
-    public FluidBucketWrapper(ItemStack container)
+    public FluidBucketWrapper(@Nonnull ItemStack container)
     {
         this.container = container;
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getContainer()
+    {
+        return container;
     }
 
     public boolean canFillFluidType(FluidStack fluid)
@@ -89,24 +99,23 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     protected void setFluid(Fluid fluid) {
         if (fluid == null)
         {
-            container.deserializeNBT(new ItemStack(Items.BUCKET).serializeNBT());
+            container = new ItemStack(Items.BUCKET);
         }
         else if (fluid == FluidRegistry.WATER)
         {
-            container.deserializeNBT(new ItemStack(Items.WATER_BUCKET).serializeNBT());
+            container = new ItemStack(Items.WATER_BUCKET);
         }
         else if (fluid == FluidRegistry.LAVA)
         {
-            container.deserializeNBT(new ItemStack(Items.LAVA_BUCKET).serializeNBT());
+            container = new ItemStack(Items.LAVA_BUCKET);
         }
         else if (fluid.getName().equals("milk"))
         {
-            container.deserializeNBT(new ItemStack(Items.MILK_BUCKET).serializeNBT());
+            container = new ItemStack(Items.MILK_BUCKET);
         }
         else if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
         {
-            ItemStack filledBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
-            container.deserializeNBT(filledBucket.serializeNBT());
+            container = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
         }
     }
 
@@ -179,15 +188,15 @@ public class FluidBucketWrapper implements IFluidHandler, ICapabilityProvider
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing)
     {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
         {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this);
+            return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.cast(this);
         }
         return null;
     }

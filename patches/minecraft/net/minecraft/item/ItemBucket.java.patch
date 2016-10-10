@@ -9,23 +9,16 @@
  
          if (raytraceresult == null)
          {
-@@ -181,4 +183,23 @@
+@@ -181,4 +183,16 @@
              }
          }
      }
 +
 +    @Override
-+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, net.minecraft.nbt.NBTTagCompound nbt) {
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
 +        if (this.getClass() == ItemBucket.class)
 +        {
-+            if (net.minecraftforge.fluids.FluidRegistry.isUniversalBucketEnabled())
-+            {
-+                return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
-+            }
-+            else
-+            {
-+                return new net.minecraftforge.fluids.capability.wrappers.FluidContainerRegistryWrapper(stack); // when fluid container registry is gone, just use FluidBucketWrapper
-+            }
++            return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
 +        }
 +        else
 +        {
