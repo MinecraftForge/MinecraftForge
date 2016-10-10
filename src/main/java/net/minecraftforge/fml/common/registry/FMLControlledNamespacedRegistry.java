@@ -195,6 +195,8 @@ public class FMLControlledNamespacedRegistry<I extends IForgeRegistryEntry<I>> e
         {
             activateSubstitution(resloc);
         }
+        this.substitutionOriginals.clear();
+        this.substitutionOriginals.putAll(otherRegistry.substitutionOriginals);
     }
 
     // public api
