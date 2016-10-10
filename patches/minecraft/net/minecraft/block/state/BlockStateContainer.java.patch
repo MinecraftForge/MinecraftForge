@@ -49,7 +49,7 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -445,5 +462,86 @@
+@@ -445,5 +462,91 @@
              {
                  this.field_177239_a.func_189540_a(this, p_189546_1_, p_189546_2_, p_189546_3_);
              }
@@ -70,6 +70,11 @@
 +            public int getLightValue(IBlockAccess world, BlockPos pos)
 +            {
 +                return this.field_177239_a.getLightValue(this, world, pos);
++            }
++
++            public boolean isNormalCube(IBlockAccess world, BlockPos pos)
++            {
++                return this.field_177239_a.isNormalCube(this, world, pos);
 +            }
 +
 +            public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side)

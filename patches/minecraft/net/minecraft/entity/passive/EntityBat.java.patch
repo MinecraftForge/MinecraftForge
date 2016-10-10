@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityBat.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityBat.java
+@@ -128,7 +128,7 @@
+ 
+         if (this.func_82235_h())
+         {
+-            if (this.field_70170_p.func_180495_p(blockpos1).func_185915_l())
++            if (this.field_70170_p.func_180495_p(blockpos1).isNormalCube(field_70170_p, blockpos1))
+             {
+                 if (this.field_70146_Z.nextInt(200) == 0)
+                 {
+@@ -170,7 +170,7 @@
+             this.field_70701_bs = 0.5F;
+             this.field_70177_z += f1;
+ 
+-            if (this.field_70146_Z.nextInt(100) == 0 && this.field_70170_p.func_180495_p(blockpos1).func_185915_l())
++            if (this.field_70146_Z.nextInt(100) == 0 && this.field_70170_p.func_180495_p(blockpos1).isNormalCube(field_70170_p, blockpos1))
+             {
+                 this.func_82236_f(true);
+             }

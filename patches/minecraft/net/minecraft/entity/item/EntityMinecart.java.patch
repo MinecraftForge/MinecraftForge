@@ -205,6 +205,33 @@
              double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
  
              if (d15 > 0.01D)
+@@ -621,22 +647,22 @@
+             }
+             else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.EAST_WEST)
+             {
+-                if (this.field_70170_p.func_180495_p(p_180460_1_.func_177976_e()).func_185915_l())
++                if (this.field_70170_p.func_180495_p(p_180460_1_.func_177976_e()).isNormalCube(field_70170_p, p_180460_1_.func_177976_e()))
+                 {
+                     this.field_70159_w = 0.02D;
+                 }
+-                else if (this.field_70170_p.func_180495_p(p_180460_1_.func_177974_f()).func_185915_l())
++                else if (this.field_70170_p.func_180495_p(p_180460_1_.func_177974_f()).isNormalCube(field_70170_p, p_180460_1_.func_177974_f()))
+                 {
+                     this.field_70159_w = -0.02D;
+                 }
+             }
+             else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.NORTH_SOUTH)
+             {
+-                if (this.field_70170_p.func_180495_p(p_180460_1_.func_177978_c()).func_185915_l())
++                if (this.field_70170_p.func_180495_p(p_180460_1_.func_177978_c()).isNormalCube(field_70170_p, p_180460_1_.func_177978_c()))
+                 {
+                     this.field_70179_y = 0.02D;
+                 }
+-                else if (this.field_70170_p.func_180495_p(p_180460_1_.func_177968_d()).func_185915_l())
++                else if (this.field_70170_p.func_180495_p(p_180460_1_.func_177968_d()).isNormalCube(field_70170_p, p_180460_1_.func_177968_d()))
+                 {
+                     this.field_70179_y = -0.02D;
+                 }
 @@ -832,6 +858,12 @@
  
      public void func_70108_f(Entity p_70108_1_)

@@ -14,7 +14,7 @@
  
      @SideOnly(Side.CLIENT)
      boolean func_185895_e();
-@@ -92,5 +96,10 @@
+@@ -92,5 +96,11 @@
  
      RayTraceResult func_185910_a(World p_185910_1_, BlockPos p_185910_2_, Vec3d p_185910_3_, Vec3d p_185910_4_);
  
@@ -22,6 +22,7 @@
      boolean func_185896_q();
 +
 +    //Forge added functions
++    boolean isNormalCube(IBlockAccess world, BlockPos pos);
 +    boolean doesSideBlockRendering(IBlockAccess world, BlockPos pos, EnumFacing side);
 +    boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side);
  }

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/village/Village.java
++++ ../src-work/minecraft/net/minecraft/village/Village.java
+@@ -117,7 +117,7 @@
+                 {
+                     for (int i1 = j; i1 < j + p_179861_1_.func_177952_p(); ++i1)
+                     {
+-                        if (this.field_75586_a.func_180495_p(new BlockPos(k, l, i1)).func_185915_l())
++                        if (this.field_75586_a.func_180495_p(new BlockPos(k, l, i1)).isNormalCube(field_75586_a, new BlockPos(k, l, i1)))
+                         {
+                             return false;
+                         }

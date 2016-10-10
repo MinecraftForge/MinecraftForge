@@ -39,3 +39,12 @@
                          }
                          else
                          {
+@@ -127,7 +120,7 @@
+ 
+                 blockpos1 = blockpos1.func_177982_a(p_176474_2_.nextInt(3) - 1, (p_176474_2_.nextInt(3) - 1) * p_176474_2_.nextInt(3) / 2, p_176474_2_.nextInt(3) - 1);
+ 
+-                if (p_176474_1_.func_180495_p(blockpos1.func_177977_b()).func_177230_c() != Blocks.field_150349_c || p_176474_1_.func_180495_p(blockpos1).func_185915_l())
++                if (p_176474_1_.func_180495_p(blockpos1.func_177977_b()).func_177230_c() != Blocks.field_150349_c || p_176474_1_.func_180495_p(blockpos1).isNormalCube(p_176474_1_, blockpos1))
+                 {
+                     break;
+                 }

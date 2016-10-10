@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPortal.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPortal.java
+@@ -71,7 +71,7 @@
+                 ;
+             }
+ 
+-            if (i > 0 && !p_180650_1_.func_180495_p(blockpos.func_177984_a()).func_185915_l())
++            if (i > 0 && !p_180650_1_.func_180495_p(blockpos.func_177984_a()).isNormalCube(p_180650_1_, blockpos.func_177984_a()))
+             {
+                 Entity entity = ItemMonsterPlacer.func_77840_a(p_180650_1_, EntityList.func_188430_a(EntityPigZombie.class), (double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 1.1D, (double)blockpos.func_177952_p() + 0.5D);
+ 

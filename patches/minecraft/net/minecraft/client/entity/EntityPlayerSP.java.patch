@@ -61,7 +61,7 @@
      private boolean func_175162_d(BlockPos p_175162_1_)
      {
 -        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l() && !this.field_70170_p.func_180495_p(p_175162_1_.func_177984_a()).func_185915_l();
-+        return !this.field_70170_p.func_180495_p(p_175162_1_).func_185915_l();
++        return !this.field_70170_p.func_180495_p(p_175162_1_).isNormalCube(field_70170_p, p_175162_1_);
      }
  
      public void func_70031_b(boolean p_70031_1_)
