@@ -45,6 +45,9 @@ public class SlotItemHandler extends Slot
     {
         if (stack.func_190926_b())
             return false;
+        IItemHandler itemHandler = getItemHandler();
+        if (itemHandler instanceof IItemHandlerContainer)
+            return ((IItemHandlerContainer) itemHandler).isItemValidForSlot(slotNumber, stack);
 
         IItemHandler handler = this.getItemHandler();
         ItemStack remainder;
@@ -96,6 +99,10 @@ public class SlotItemHandler extends Slot
     @Override
     public int getItemStackLimit(@Nonnull ItemStack stack)
     {
+        IItemHandler itemHandler = getItemHandler();
+        if (itemHandler instanceof IItemHandlerContainer)
+            return ((IItemHandlerContainer) itemHandler).getInventoryStackLimit(slotNumber, stack);
+
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
         maxAdd.func_190920_e(maxInput);
