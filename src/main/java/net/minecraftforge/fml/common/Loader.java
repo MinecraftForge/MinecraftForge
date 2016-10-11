@@ -35,6 +35,7 @@ import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -541,6 +542,9 @@ public class Loader
                 }
             }
         }
+
+        ConfigManager.loadData(discoverer.getASMTable());
+
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
 
