@@ -43,7 +43,10 @@ public class SlotItemHandler extends Slot
     {
         if (stack == null)
             return false;
-        ItemStack remainder = this.getItemHandler().insertItem(index, stack, true);
+        IItemHandler itemHandler = getItemHandler();
+        if (itemHandler instanceof IItemHandlerContainer)
+            return ((IItemHandlerContainer) itemHandler).isItemValidForSlot(slotNumber, stack);
+        ItemStack remainder = itemHandler.insertItem(index, stack, true);
         return remainder == null || remainder.stackSize < stack.stackSize;
     }
 
@@ -68,8 +71,20 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
+    public int getSlotStackLimit()
+    {
+        IItemHandler itemHandler = getItemHandler();
+        if (itemHandler instanceof IItemHandlerContainer)
+            return ((IItemHandlerContainer) itemHandler).getInventoryStackLimit(slotNumber, null);
+        return 64;
+    }
+
+    @Override
     public int getItemStackLimit(ItemStack stack)
     {
+        IItemHandler itemHandler = getItemHandler();
+        if (itemHandler instanceof IItemHandlerContainer)
+            return ((IItemHandlerContainer) itemHandler).getInventoryStackLimit(slotNumber, stack);
         ItemStack maxAdd = stack.copy();
         maxAdd.stackSize = maxAdd.getMaxStackSize();
         ItemStack currentStack = this.getItemHandler().getStackInSlot(index);
