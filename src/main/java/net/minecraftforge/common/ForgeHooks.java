@@ -27,6 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemArmor;
@@ -226,16 +227,19 @@ public class ForgeHooks
     public static int getTotalArmorValue(EntityPlayer player)
     {
         int ret = 0;
-        for (int x = 0; x < player.inventory.armorInventory.length; x++)
+        for(EntityEquipmentSlot slot : EntityEquipmentSlot.values())
         {
-            ItemStack stack = player.inventory.armorInventory[x];
-            if (stack != null && stack.getItem() instanceof ISpecialArmor)
+            if(slot.getSlotType() == EntityEquipmentSlot.Type.ARMOR)
             {
-                ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
-            }
-            else if (stack != null && stack.getItem() instanceof ItemArmor)
-            {
-                ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
+                ItemStack stack = player.getItemStackFromSlot(slot);
+                if (stack != null && stack.getItem() instanceof ISpecialArmor)
+                {
+                    ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, slot);
+                }
+                else if (stack != null && stack.getItem() instanceof ItemArmor)
+                {
+                    ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
+                }  
             }
         }
         return ret;
