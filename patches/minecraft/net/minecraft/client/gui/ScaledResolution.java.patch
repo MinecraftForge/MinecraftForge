@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/ScaledResolution.java
++++ ../src-work/minecraft/net/minecraft/client/gui/ScaledResolution.java
+@@ -20,23 +20,13 @@
+         this.field_78331_b = p_i46445_1_.field_71440_d;
+         this.field_78330_e = 1;
+         boolean flag = p_i46445_1_.func_152349_b();
+-        int i = p_i46445_1_.field_71474_y.field_74335_Z;
+-
+-        if (i == 0)
+-        {
+-            i = 1000;
+-        }
+-
+-        while (this.field_78330_e < i && this.field_78333_a / (this.field_78330_e + 1) >= 320 && this.field_78331_b / (this.field_78330_e + 1) >= 240)
+-        {
+-            ++this.field_78330_e;
+-        }
+-
+-        if (flag && this.field_78330_e % 2 != 0 && this.field_78330_e != 1)
+-        {
+-            --this.field_78330_e;
+-        }
+-
++        double i = 3.0 + (double)p_i46445_1_.field_71474_y.field_74335_Z;
++        double scaleFactor = 1.0;
++        scaleFactor = (double)p_i46445_1_.field_71443_c / 160.0 / i;
++        scaleFactor = Math.min(scaleFactor, (double)p_i46445_1_.field_71440_d / 240.0);
++        scaleFactor = Math.min(scaleFactor, (double)p_i46445_1_.field_71443_c / 320.0);
++        scaleFactor = Math.max(scaleFactor, 1.0);
++        this.field_78330_e = (int)Math.round(scaleFactor);
+         this.field_78332_c = (double)this.field_78333_a / (double)this.field_78330_e;
+         this.field_78329_d = (double)this.field_78331_b / (double)this.field_78330_e;
+         this.field_78333_a = MathHelper.func_76143_f(this.field_78332_c);

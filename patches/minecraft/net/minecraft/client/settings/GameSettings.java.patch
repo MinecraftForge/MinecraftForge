@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
 +++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
+@@ -62,7 +62,7 @@
+         }
+     };
+     public static final Splitter field_189990_a = Splitter.on(':');
+-    private static final String[] field_74367_ae = new String[] {"options.guiScale.auto", "options.guiScale.small", "options.guiScale.normal", "options.guiScale.large"};
++    private static final String[] field_74367_ae = new String[] {"options.guiScale.enlarge", "options.guiScale.large", "options.guiScale.medium", "options.guiScale.normal", "options.guiScale.small", "options.guiScale.smaller", "options.guiScale.verysmall", "options.guiScale.little"};
+     private static final String[] field_74364_ag = new String[] {"options.particles.all", "options.particles.decreased", "options.particles.minimal"};
+     private static final String[] field_98303_au = new String[] {"options.ao.off", "options.ao.min", "options.ao.max"};
+     private static final String[] field_181149_aW = new String[] {"options.off", "options.graphics.fast", "options.graphics.fancy"};
 @@ -156,6 +156,7 @@
  
      public GameSettings(Minecraft p_i46326_1_, File p_i46326_2_)
@@ -16,6 +25,15 @@
          this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[] {this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X}, this.field_151456_ac);
          this.field_74318_M = EnumDifficulty.NORMAL;
          this.field_74332_R = "";
+@@ -295,7 +297,7 @@
+ 
+         if (p_74306_1_ == GameSettings.Options.GUI_SCALE)
+         {
+-            this.field_74335_Z = this.field_74335_Z + p_74306_2_ & 3;
++            this.field_74335_Z = (this.field_74335_Z + p_74306_2_) % 8;
+         }
+ 
+         if (p_74306_1_ == GameSettings.Options.PARTICLES)
 @@ -887,7 +889,12 @@
                      {
                          if (s1.equals("key_" + keybinding.func_151464_g()))

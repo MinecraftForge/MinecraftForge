@@ -183,3 +183,10 @@ fml.button.visitjavadownloads=Oracle Java SE Downloads
 fml.button.continue=Continue
 fml.button.open.mods.folder=Open Mods Folder
 fml.button.open.file=Open %s
+
+options.guiScale.verysmall=Compact
+options.guiScale.smaller=Smaller
+options.guiScale.medium=Medium
+options.guiScale.larger=Larger
+options.guiScale.enlarge=Enlarge
+options.guiScale.little=Little
