@@ -1147,4 +1147,12 @@ public class ForgeHooks
     {
         return MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
     }
+
+    public static long getChunkSeed(World world, int chunkX, int chunkZ)
+    {
+        long worldSeed = world.getSeed();
+        Random rand = new Random(worldSeed);
+        long chunkSeed = ((rand.nextLong() >> 2 + 1L) * chunkX + (rand.nextLong() >> 2 + 1L) * chunkZ) ^ worldSeed;
+        return chunkSeed;
+    }
 }
