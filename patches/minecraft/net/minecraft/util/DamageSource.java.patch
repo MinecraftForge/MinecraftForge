@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/util/DamageSource.java
++++ ../src-work/minecraft/net/minecraft/util/DamageSource.java
+@@ -26,6 +26,7 @@
+     public static DamageSource field_76380_i = (new DamageSource("outOfWorld")).func_76348_h().func_76359_i();
+     public static DamageSource field_76377_j = (new DamageSource("generic")).func_76348_h();
+     public static DamageSource field_76376_m = (new DamageSource("magic")).func_76348_h().func_82726_p();
++    public static DamageSource poison = (new DamageSource("magic")).func_76348_h().func_82726_p().setPoisonDamage();
+     public static DamageSource field_82727_n = (new DamageSource("wither")).func_76348_h();
+     public static DamageSource field_82728_o = new DamageSource("anvil");
+     public static DamageSource field_82729_p = new DamageSource("fallingBlock");
+@@ -38,6 +39,7 @@
+     private boolean field_76382_s;
+     private boolean field_76381_t;
+     private boolean field_82730_x;
++    private boolean poisonDamage;
+     private boolean field_76378_k;
+     public String field_76373_n;
+ 
+@@ -214,6 +216,17 @@
+         return this;
+     }
+ 
++    public boolean isPoisonDamage()
++    {
++        return this.poisonDamage;
++    }
++
++    public DamageSource setPoisonDamage()
++    {
++        this.poisonDamage = true;
++        return this;
++    }
++    
+     public boolean func_180136_u()
+     {
+         Entity entity = this.func_76346_g();
