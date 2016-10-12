@@ -4,14 +4,13 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraftforge.client.event.FOVUpdateEvent;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -50,11 +49,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderWorldEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
@@ -251,6 +245,11 @@ public class ForgeHooksClient
         }
     }
 
+    public static void setupCameraTransform(float partialTicks,int pass)
+    {
+        MinecraftForge.EVENT_BUS.post(new SetupCameraTransformEvent(partialTicks,pass));
+    }
+
     public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, MovingObjectPosition target, int subID, ItemStack currentItem, float partialTicks)
     {
         return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, currentItem, partialTicks));
@@ -372,6 +371,13 @@ public class ForgeHooksClient
         FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.newfov;
+    }
+
+    public static float getMouseSensitivity(float originalSensitivity)
+    {
+        MouseSensitivityUpdateEvent mouseSensitivityUpdateEvent = new MouseSensitivityUpdateEvent(originalSensitivity);
+        MinecraftForge.EVENT_BUS.post(mouseSensitivityUpdateEvent);
+        return mouseSensitivityUpdateEvent.newSensitivity;
     }
 
     private static int skyX, skyZ;
