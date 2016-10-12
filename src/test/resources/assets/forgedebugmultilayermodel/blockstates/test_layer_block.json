@@ -4,15 +4,20 @@
         "model": "forge:multi-layer",
         "custom": {
             // base is used for model properties - camera transforms, isGui3d, e.t.c.
-            "base": "minecraft:stone_slab#half=bottom",
+            "base": "forgedebugmultilayermodel:test_layer_block#aux",
             // per-layer models
-            "Solid": "minecraft:stone_slab#half=bottom",
+            "Solid": "forgedebugmultilayermodel:test_layer_block#aux",
             "Translucent": "minecraft:pink_stained_glass_pane#east=true,north=false,south=false,west=true"
         },
         "transform": "forge:default-block"
      },
     "variants": {
         "normal": [{}],
-        "inventory": [{}]
+        "inventory": [{}],
+        "aux": [{
+            "model": "cube_all",
+            "textures": { "all": "blocks/slime" },
+            "transform": { "scale": .5 }
+        }]
     }
 }

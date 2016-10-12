@@ -69,7 +69,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     protected final void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) throws Exception
     {
         testMessageValidity(msg);
-        ByteBuf payload = msg.payload();
+        ByteBuf payload = msg.payload().copy();
         byte discriminator = payload.readByte();
         Class<? extends A> clazz = discriminators.get(discriminator);
         if(clazz == null)

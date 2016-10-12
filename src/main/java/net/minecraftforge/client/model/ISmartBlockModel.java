@@ -53,9 +53,9 @@ public interface ISmartBlockModel extends IBakedModel
             return parent.isBuiltInRenderer();
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
-            return parent.getTexture();
+            return parent.getParticleTexture();
         }
 
         public ItemCameraTransforms getItemCameraTransforms()

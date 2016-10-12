@@ -50,3 +50,11 @@
              }
          }
      }
+@@ -621,4 +627,7 @@
+         this.field_71321_q.func_71556_a(RConConsoleSource.func_175570_h(), p_71252_1_);
+         return RConConsoleSource.func_175570_h().func_70008_c();
+     }
++
++    //Forge: Enable formated text for colors in console.
++    @Override public void func_145747_a(net.minecraft.util.IChatComponent message) { field_155771_h.info(message.func_150254_d()); }
+ }

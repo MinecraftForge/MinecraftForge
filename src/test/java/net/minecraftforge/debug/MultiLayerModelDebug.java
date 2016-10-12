@@ -21,7 +21,7 @@ public class MultiLayerModelDebug
 
     public static String blockName = "test_layer_block";
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.MultiLayerModelDebug$CommonProxy", clientSide = "net.minecraftforge.debug.MultiLayerModelDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     public static class CommonProxy
@@ -49,6 +49,8 @@ public class MultiLayerModelDebug
             }, blockName);
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {

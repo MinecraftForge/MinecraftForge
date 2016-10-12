@@ -16,14 +16,13 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 
 public abstract class FMLHandshakeMessage {
     public static FMLProxyPacket makeCustomChannelRegistration(Set<String> channels)
@@ -166,12 +165,14 @@ public abstract class FMLHandshakeMessage {
             this.name = name;
             this.ids = entry.ids;
             this.substitutions = entry.substitutions;
+            this.dummied = entry.dummied;
         }
 
         private boolean hasMore;
         private ResourceLocation name;
         private Map<ResourceLocation, Integer> ids;
         private Set<ResourceLocation> substitutions;
+        private Set<ResourceLocation> dummied;
 
         @Override
         public void fromBytes(ByteBuf buffer)
@@ -194,6 +195,15 @@ public abstract class FMLHandshakeMessage {
             {
                 substitutions.add(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)));
             }
+            dummied = Sets.newHashSet();
+            // if the dummied list isn't present - probably an older server
+            if (!buffer.isReadable()) return;
+            length = ByteBufUtils.readVarInt(buffer, 3);
+
+            for (int i = 0; i < length; i++)
+            {
+                dummied.add(new ResourceLocation(ByteBufUtils.readUTF8String(buffer)));
+            }
             //if (!buffer.isReadable()) return; // In case we expand
         }
 
@@ -215,6 +225,11 @@ public abstract class FMLHandshakeMessage {
             {
                 ByteBufUtils.writeUTF8String(buffer, entry.toString());
             }
+            ByteBufUtils.writeVarInt(buffer, dummied.size(), 3);
+            for (ResourceLocation entry: dummied)
+            {
+                ByteBufUtils.writeUTF8String(buffer, entry.toString());
+            }
         }
 
         public Map<ResourceLocation,Integer> getIdMap()
@@ -225,6 +240,7 @@ public abstract class FMLHandshakeMessage {
         {
             return substitutions;
         }
+        public Set<ResourceLocation> getDummied() { return dummied; }
         public ResourceLocation getName()
         {
             return this.name;

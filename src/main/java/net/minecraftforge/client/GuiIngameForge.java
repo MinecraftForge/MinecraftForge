@@ -153,7 +153,7 @@ public class GuiIngameForge extends GuiIngame
 
         Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
         ScoreObjective objective = null;
-        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.thePlayer.getCommandSenderName());
+        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.thePlayer.getName());
         if (scoreplayerteam != null)
         {
             int slot = scoreplayerteam.getChatFormat().getColorIndex();
@@ -205,6 +205,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderBossHealth()
     {
         if (pre(BOSSHEALTH)) return;
+        bind(Gui.icons);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         mc.mcProfiler.startSection("bossHealth");
         GlStateManager.enableBlend();
@@ -276,7 +277,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (f1 > 0.0F)
         {
-            func_180474_b(f1, res);
+            renderPortal(f1, res);
         }
 
         post(PORTAL);

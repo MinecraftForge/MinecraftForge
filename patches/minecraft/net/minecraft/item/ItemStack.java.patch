@@ -1,14 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -49,6 +49,7 @@
+@@ -35,7 +35,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public final class ItemStack
++public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     public static final DecimalFormat field_111284_a = new DecimalFormat("#.###");
+     public int field_77994_a;
+@@ -49,6 +49,10 @@
      private Block field_179550_j;
      private boolean field_179551_k;
  
 +    private net.minecraftforge.fml.common.registry.RegistryDelegate<Item> delegate;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private NBTTagCompound capNBT;
++
      public ItemStack(Block p_i1876_1_)
      {
          this((Block)p_i1876_1_, 1);
-@@ -80,7 +81,7 @@
+@@ -74,13 +78,15 @@
+         this((Item)p_i1880_1_, p_i1880_2_, 0);
+     }
+ 
+-    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
++    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_) { this (p_i1881_1_, p_i1881_2_, p_i1881_3_, null); }
++    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_, NBTTagCompound capNBT)
+     {
++        this.capNBT = capNBT;
+         this.field_179552_h = null;
          this.field_179553_i = false;
          this.field_179550_j = null;
          this.field_179551_k = false;
@@ -17,7 +38,7 @@
          this.field_77994_a = p_i1881_2_;
          this.field_77991_e = p_i1881_3_;
  
-@@ -120,11 +121,12 @@
+@@ -120,11 +126,12 @@
  
      public Item func_77973_b()
      {
@@ -31,8 +52,18 @@
          boolean flag = this.func_77973_b().func_180614_a(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_);
  
          if (flag)
-@@ -169,11 +171,11 @@
+@@ -162,19 +169,23 @@
+             p_77955_1_.func_74782_a("tag", this.field_77990_d);
+         }
+ 
++        if (this.capabilities != null) p_77955_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
++
+         return p_77955_1_;
+     }
+ 
+     public void func_77963_c(NBTTagCompound p_77963_1_)
      {
++        this.capNBT = p_77963_1_.func_74764_b("ForgeCaps") ? p_77963_1_.func_74775_l("ForgeCaps") : null;
          if (p_77963_1_.func_150297_b("id", 8))
          {
 -            this.field_151002_e = Item.func_111206_d(p_77963_1_.func_74779_i("id"));
@@ -43,9 +74,11 @@
 -            this.field_151002_e = Item.func_150899_d(p_77963_1_.func_74765_d("id"));
 +            this.func_150996_a(Item.func_150899_d(p_77963_1_.func_74765_d("id")));
          }
++        this.capNBT = null;
  
          this.field_77994_a = p_77963_1_.func_74771_c("Count");
-@@ -197,7 +199,7 @@
+         this.field_77991_e = p_77963_1_.func_74765_d("Damage");
+@@ -197,7 +208,7 @@
  
      public int func_77976_d()
      {
@@ -54,7 +87,7 @@
      }
  
      public boolean func_77985_e()
-@@ -207,7 +209,7 @@
+@@ -207,7 +218,7 @@
  
      public boolean func_77984_f()
      {
@@ -63,7 +96,7 @@
      }
  
      public boolean func_77981_g()
-@@ -217,32 +219,27 @@
+@@ -217,32 +228,27 @@
  
      public boolean func_77951_h()
      {
@@ -101,7 +134,7 @@
      }
  
      public boolean func_96631_a(int p_96631_1_, Random p_96631_2_)
-@@ -274,8 +271,8 @@
+@@ -274,8 +280,8 @@
                  }
              }
  
@@ -112,7 +145,7 @@
          }
      }
  
-@@ -334,7 +331,7 @@
+@@ -334,7 +340,7 @@
  
      public boolean func_150998_b(Block p_150998_1_)
      {
@@ -121,7 +154,16 @@
      }
  
      public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_)
-@@ -742,6 +739,7 @@
+@@ -344,7 +350,7 @@
+ 
+     public ItemStack func_77946_l()
+     {
+-        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e);
++        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e, this.capabilities != null ? this.capabilities.serializeNBT() : null);
+ 
+         if (this.field_77990_d != null)
+         {
+@@ -742,6 +748,7 @@
              }
          }
  
@@ -129,7 +171,7 @@
          return list;
      }
  
-@@ -852,7 +850,7 @@
+@@ -852,7 +859,7 @@
          }
          else
          {
@@ -138,11 +180,48 @@
          }
  
          return multimap;
-@@ -860,6 +858,7 @@
+@@ -860,6 +867,17 @@
  
      public void func_150996_a(Item p_150996_1_)
      {
++        if (p_150996_1_ == this.field_151002_e && field_151002_e != null && this.capabilities != null) //Item Didn't change but refreshed
++        {
++            net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_151002_e.initCapabilities(this, this.capabilities.serializeNBT());
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(field_151002_e, this, parent);
++        }
++        else if (p_150996_1_ != this.field_151002_e && p_150996_1_ != null) // Item Changed
++        {
++            net.minecraftforge.common.capabilities.ICapabilityProvider parent = p_150996_1_.initCapabilities(this, this.capNBT);
++            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(field_151002_e, this, parent);
++        }
 +        this.delegate = p_150996_1_ != null ? p_150996_1_.delegate : null;
          this.field_151002_e = p_150996_1_;
      }
  
+@@ -946,4 +964,26 @@
+             return false;
+         }
+     }
++
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.func_77963_c(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        this.func_77955_b(ret);
++        return ret;
++    }
+ }

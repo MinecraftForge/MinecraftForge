@@ -18,9 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.EnumConnectionState;
@@ -48,8 +45,10 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.PersistentRegistryManager;
 import net.minecraftforge.fml.relauncher.Side;
+
+import org.apache.logging.log4j.Level;
 
 @SuppressWarnings("rawtypes")
 public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> implements ChannelOutboundHandler {
@@ -239,7 +238,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             manager.closeChannel(new ChatComponentText("Handshake Complete review log file for details."));
         scm.initializeConnectionToPlayer(manager, player, serverHandler);
     }
-    
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
     {
@@ -431,6 +430,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
 
     public void sendProxy(FMLProxyPacket msg)
     {
+        if (!manager.isChannelOpen())
+            msg = msg.copy();
         manager.sendPacket(msg);
     }
 

@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1065 @@
+@@ -1010,6 +1030,1114 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -1214,7 +1214,7 @@
 +     */
 +    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        return func_176221_a(state, world, pos);
++        return state;
 +    }
 +
 +    /**
@@ -1248,6 +1248,55 @@
 +            captureDrops.set(false);
 +            return capturedDrops.get();
 +        }
++    }
++
++    private ResourceLocation registryName = null;
++    /**
++     * Sets a unique name for this Block. This should be used for uniquely identify the instance of the Block.
++     * This is the valid replacement for the atrocious 'getUnlocalizedName().substring(6)' stuff that everyone does.
++     * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
++     *
++     * The supplied name will be prefixed with the currently active mod's modId.
++     * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
++     *
++     * If a name already exists, or this Block is already registered in a registry, then an IllegalStateException is thrown.
++     *
++     * Returns 'this' to allow for chaining.
++     *
++     * @param name Unique registry name
++     * @return This instance
++     */
++    public final Block setRegistryName(String name)
++    {
++        if (getRegistryName() != null)
++            throw new IllegalStateException("Attempted to set registry name on block with exisiting registry name! New: " + name + " Old: " + getRegistryName());
++        int index = name.lastIndexOf(':');
++        String oldPrefix = index == -1 ? "" : name.substring(0, index);
++        name = index == -1 ? name : name.substring(index + 1);
++        net.minecraftforge.fml.common.ModContainer mc = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
++        String prefix = mc == null ? "minecraft" : mc.getModId();
++        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
++        {
++            net.minecraftforge.fml.common.FMLLog.bigWarning("Dangerous alternative prefix %s for name %s, invalid registry invocation/invalid name?", name.substring(0, index), name);
++            prefix = oldPrefix;
++        }
++        this.registryName = new ResourceLocation(prefix, name);
++        return this;
++    }
++    public final Block setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
++    public final Block setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
++
++    /**
++     * A unique identifier for this block, if this block is registered in the game registry it will return that name.
++     * Otherwise it will return the name set in setRegistryName().
++     * If neither are valid null is returned.
++     *
++     * @return Unique identifier or null.
++     */
++    public final String getRegistryName()
++    {
++        if (delegate.getResourceName() != null) return delegate.getResourceName().toString();
++        return registryName != null ? registryName.toString() : null;
 +    }
 +    /* ========================================= FORGE END ======================================*/
 +

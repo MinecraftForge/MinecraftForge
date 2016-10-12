@@ -5,7 +5,7 @@
                              Block block = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(k1, i1, l1)).func_177230_c();
  
 -                            if (block.func_149688_o() != Material.field_151579_a && block.func_149688_o() != Material.field_151584_j)
-+                            if (block.isAir(p_180709_1_, blockpos$mutableblockpos) && !block.isLeaves(p_180709_1_, blockpos$mutableblockpos))
++                            if (!block.isAir(p_180709_1_, blockpos$mutableblockpos) && !block.isLeaves(p_180709_1_, blockpos$mutableblockpos))
                              {
                                  flag = false;
                              }

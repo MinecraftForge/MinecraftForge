@@ -3,8 +3,12 @@ package net.minecraftforge.client.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.input.Mouse;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
@@ -117,6 +121,42 @@ public class GuiScreenEvent extends Event
             {
                 super(gui, mouseX, mouseY, renderPartialTicks);
             }
+        }
+    }
+
+    /**
+     * This event fires at the end of {@code GuiScreen.drawDefaultBackground()} and before the rest of the Gui draws.
+     * This allows drawing next to Guis, above the background but below any tooltips.
+     */
+    public static class BackgroundDrawnEvent extends GuiScreenEvent
+    {
+        private final int mouseX;
+        private final int mouseY;
+
+        public BackgroundDrawnEvent(GuiScreen gui)
+        {
+            super(gui);
+            final ScaledResolution scaledresolution = new ScaledResolution(gui.mc);
+            final int scaledWidth = scaledresolution.getScaledWidth();
+            final int scaledHeight = scaledresolution.getScaledHeight();
+            this.mouseX = Mouse.getX() * scaledWidth / gui.mc.displayWidth;
+            this.mouseY = scaledHeight - Mouse.getY() * scaledHeight / gui.mc.displayHeight - 1;
+        }
+
+        /**
+         * The x coordinate of the mouse pointer on the screen.
+         */
+        public int getMouseX()
+        {
+            return mouseX;
+        }
+
+        /**
+         * The y coordinate of the mouse pointer on the screen.
+         */
+        public int getMouseY()
+        {
+            return mouseY;
         }
     }
     

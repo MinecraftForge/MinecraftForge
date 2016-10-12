@@ -21,10 +21,7 @@ public class FMLDeobfTweaker implements ITweaker {
     public void injectIntoClassLoader(LaunchClassLoader classLoader)
     {
         // Deobfuscation transformer, always last, and the access transformer tweaker as well
-        if (!(Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment"))
-        {
-            classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.DeobfuscationTransformer");
-        }
+        classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.DeobfuscationTransformer");
         // Add all the access transformers now as well
         for (String transformer : CoreModManager.getAccessTransformers())
         {

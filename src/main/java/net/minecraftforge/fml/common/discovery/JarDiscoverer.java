@@ -42,11 +42,6 @@ public class JarDiscoverer implements ITypeDiscoverer
         {
             jar = new JarFile(candidate.getModContainer());
 
-            if (jar.getManifest()!=null && (jar.getManifest().getMainAttributes().get("FMLCorePlugin") != null || jar.getManifest().getMainAttributes().get("TweakClass") != null))
-            {
-                FMLLog.finer("Ignoring coremod or tweak system %s", candidate.getModContainer());
-                return foundMods;
-            }
             ZipEntry modInfo = jar.getEntry("mcmod.info");
             MetadataCollection mc = null;
             if (modInfo != null)

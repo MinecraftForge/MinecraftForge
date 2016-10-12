@@ -26,7 +26,7 @@ public class ModelFluidDebug
     public static final String MODID = "ForgeDebugModelFluid";
     public static final String VERSION = "1.0";
 
-    @SidedProxy(serverSide = "net.minecraftforge.debug.ModelFluidDebug$CommonProxy", clientSide = "net.minecraftforge.debug.ModelFluidDebug$ClientProxy")
+    @SidedProxy
     public static CommonProxy proxy;
 
     public static final Fluid milkFluid = new Fluid("milk", new ResourceLocation("forge", "blocks/milk_still"), new ResourceLocation("forge", "blocks/milk_flow"));
@@ -46,6 +46,8 @@ public class ModelFluidDebug
             GameRegistry.registerBlock(MilkFluidBlock.instance, MilkFluidBlock.name);
         }
     }
+
+    public static class ServerProxy extends CommonProxy {}
 
     public static class ClientProxy extends CommonProxy
     {

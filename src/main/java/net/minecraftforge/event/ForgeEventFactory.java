@@ -16,7 +16,9 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.EnumStatus;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -33,6 +35,8 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -61,6 +65,7 @@ import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
@@ -91,7 +96,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
-    
+
     public static NeighborNotifyEvent onNeighborNotify(World world, BlockPos pos, IBlockState state, EnumSet<EnumFacing> notifiedSides)
     {
         NeighborNotifyEvent event = new NeighborNotifyEvent(world, pos, state, notifiedSides);
@@ -142,7 +147,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
-    
+
     public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)
     {
        LivingExperienceDropEvent event = new LivingExperienceDropEvent(entity, attackingPlayer, originalExperience);
@@ -323,7 +328,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.name;
     }
-    
+
     public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, String name, float volume, float pitch)
     {
         PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, volume, pitch);
@@ -362,18 +367,18 @@ public class ForgeEventFactory
     {
         return !MinecraftForge.EVENT_BUS.post(new EntityInteractEvent(player, entity));
     }
-    
+
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
         boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.worldObj, isMounting));
-        
+
         if(isCanceled)
         {
             entityMounting.setPositionAndRotation(entityMounting.posX, entityMounting.posY, entityMounting.posZ, entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
             return false;
         }
-        else         
-            return true;       
+        else
+            return true;
     }
 
     public static EnumStatus onPlayerSleepInBed(EntityPlayer player, BlockPos pos)
@@ -392,7 +397,7 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, multiplier));
     }
-    
+
     public static boolean onPlayerSpawnSet(EntityPlayer player, BlockPos pos, boolean forced) {
         return MinecraftForge.EVENT_BUS.post(new PlayerSetSpawnEvent(player, pos, forced));
     }
@@ -460,20 +465,53 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PotionBrewEvent.Post(brewingItemStacks));
     }
-    
+
     public static boolean renderFireOverlay(EntityPlayer player, float renderPartialTicks)
     {
         return renderBlockOverlay(player, renderPartialTicks, OverlayType.FIRE, Blocks.fire.getDefaultState(), new BlockPos(player));
     }
-    
+
     public static boolean renderWaterOverlay(EntityPlayer player, float renderPartialTicks)
     {
         return renderBlockOverlay(player, renderPartialTicks, OverlayType.WATER, Blocks.water.getDefaultState(), new BlockPos(player));
     }
-    
+
     public static boolean renderBlockOverlay(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos pos)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
+    }
+
+    public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent.TileEntity(tileEntity), null);
+    }
+
+    public static CapabilityDispatcher gatherCapabilities(Entity entity)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent.Entity(entity), null);
+    }
+
+    public static CapabilityDispatcher gatherCapabilities(Item item, ItemStack stack, ICapabilityProvider parent)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent.Item(item, stack), parent);
+    }
+
+    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent event, ICapabilityProvider parent)
+    {
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), parent) : null;
+    }
+
+    public static boolean fireSleepingLocationCheck(EntityPlayer player, BlockPos sleepingLocation)
+    {
+        SleepingLocationCheckEvent evt = new SleepingLocationCheckEvent(player, sleepingLocation);
+        MinecraftForge.EVENT_BUS.post(evt);
+
+        Result canContinueSleep = evt.getResult();
+        if (canContinueSleep == Result.DEFAULT)
+            return player.worldObj.getBlockState(player.playerLocation).getBlock().isBed(player.worldObj, player.playerLocation, player);
+        else
+            return canContinueSleep == Result.ALLOW;
     }
 
 }

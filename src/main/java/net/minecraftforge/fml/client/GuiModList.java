@@ -526,11 +526,11 @@ public class GuiModList extends GuiScreen
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
                 WorldRenderer wr = tess.getWorldRenderer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
-                wr.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-                wr.func_181662_b(offset,                  top + logoDims.height, zLevel).func_181673_a(0, 1).func_181675_d();
-                wr.func_181662_b(offset + logoDims.width, top + logoDims.height, zLevel).func_181673_a(1, 1).func_181675_d();
-                wr.func_181662_b(offset + logoDims.width, top,                   zLevel).func_181673_a(1, 0).func_181675_d();
-                wr.func_181662_b(offset,                  top,                   zLevel).func_181673_a(0, 0).func_181675_d();
+                wr.begin(7, DefaultVertexFormats.POSITION_TEX);
+                wr.pos(offset,                  top + logoDims.height, zLevel).tex(0, 1).endVertex();
+                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
+                wr.pos(offset + logoDims.width, top,                   zLevel).tex(1, 0).endVertex();
+                wr.pos(offset,                  top,                   zLevel).tex(0, 0).endVertex();
                 tess.draw();
                 GlStateManager.disableBlend();
                 top += logoDims.height + 10;

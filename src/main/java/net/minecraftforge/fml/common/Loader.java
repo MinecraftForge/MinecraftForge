@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -112,7 +113,7 @@ import com.google.gson.JsonParser;
 @SuppressWarnings("unused")
 public class Loader
 {
-    public static final String MC_VERSION = "1.8.8";
+    public static final String MC_VERSION = "1.8.9";
     private static final Splitter DEPENDENCYPARTSPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCYSPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     /**
@@ -219,7 +220,9 @@ public class Loader
                 if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
                 {
                     FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
-                    throw new WrongMinecraftVersionException(mod);
+                    RuntimeException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
+                    FMLLog.severe(ret.getMessage());
+                    throw ret;
                 }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new ArtifactVersionNameFunction());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
@@ -232,7 +235,9 @@ public class Loader
                     {
                         versionMissingMods.add(names.get(modid));
                     }
-                    throw new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    FMLLog.severe(ret.getMessage());
+                    throw ret;
                 }
                 reqList.putAll(mod.getModId(), names.keySet());
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
@@ -249,7 +254,9 @@ public class Loader
                 if (!versionMissingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), versionMissingMods);
-                    throw new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    RuntimeException ret = new MissingModsException(versionMissingMods, mod.getModId(), mod.getName());
+                    FMLLog.severe(ret.toString());
+                    throw ret;
                 }
             }
 
@@ -545,6 +552,7 @@ public class Loader
         }
         ObjectHolderRegistry.INSTANCE.findObjectHolders(discoverer.getASMTable());
         ItemStackHolderInjector.INSTANCE.findHolders(discoverer.getASMTable());
+        CapabilityManager.INSTANCE.injectCapabilities(discoverer.getASMTable());
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, discoverer.getASMTable(), canonicalConfigDir);
         ObjectHolderRegistry.INSTANCE.applyObjectHolders();
         ItemStackHolderInjector.INSTANCE.inject();

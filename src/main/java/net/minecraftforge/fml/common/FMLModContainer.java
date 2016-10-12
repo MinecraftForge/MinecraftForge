@@ -216,6 +216,7 @@ public class FMLModContainer implements ModContainer
         }
 
         String mcVersionString = (String)descriptor.get("acceptedMinecraftVersions");
+        if ("[1.8.8]".equals(mcVersionString)) mcVersionString = "[1.8.8,1.8.9]"; // MC 1.8.8 and 1.8.9 is forward SRG compatible so accept these versions by default.
         if (!Strings.isNullOrEmpty(mcVersionString))
         {
             minecraftAccepted = VersionParser.parseRange(mcVersionString);

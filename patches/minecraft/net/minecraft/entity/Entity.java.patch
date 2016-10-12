@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -129,6 +129,14 @@
+@@ -49,7 +49,7 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public abstract class Entity implements ICommandSender
++public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+     private static int field_70152_a;
+@@ -129,6 +129,15 @@
      protected UUID field_96093_i;
      private final CommandResultStats field_174837_as;
  
@@ -8,23 +17,25 @@
 +    private NBTTagCompound customEntityData;
 +    public boolean captureDrops = false;
 +    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
-+    private UUID persistentID;
 +
++    @Deprecated //ToDo: Move to Capabilities?
 +    protected java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties> extendedProperties = new java.util.HashMap<String, net.minecraftforge.common.IExtendedEntityProperties>();
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +
      public int func_145782_y()
      {
          return this.field_145783_c;
-@@ -172,6 +180,8 @@
+@@ -172,6 +181,9 @@
          this.field_70180_af.func_75682_a(2, "");
          this.field_70180_af.func_75682_a(4, Byte.valueOf((byte)0));
          this.func_70088_a();
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +        for (net.minecraftforge.common.IExtendedEntityProperties props : extendedProperties.values()) props.init(this, p_i1582_1_);
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
      }
  
      protected abstract void func_70088_a();
-@@ -998,10 +1008,7 @@
+@@ -998,10 +1010,7 @@
  
          if (block.func_149688_o() == p_70055_1_)
          {
@@ -36,7 +47,7 @@
          }
          else
          {
-@@ -1356,6 +1363,21 @@
+@@ -1356,6 +1365,23 @@
                  p_70109_1_.func_74757_a("Silent", this.func_174814_R());
              }
  
@@ -55,10 +66,12 @@
 +                }
 +            }
 +
++            if (this.capabilities != null) p_70109_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
++
              this.func_70014_b(p_70109_1_);
  
              if (this.field_70154_o != null)
-@@ -1438,6 +1460,28 @@
+@@ -1438,6 +1464,30 @@
              this.func_174805_g(p_70020_1_.func_74767_n("CustomNameVisible"));
              this.field_174837_as.func_179668_a(p_70020_1_);
              this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
@@ -78,16 +91,18 @@
 +                }
 +            }
 +
-+            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
++            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly TODO: Remove in 1.9
 +            if (p_70020_1_.func_74764_b("PersistentIDMSB") && p_70020_1_.func_74764_b("PersistentIDLSB"))
 +            {
 +                this.field_96093_i = new UUID(p_70020_1_.func_74763_f("PersistentIDMSB"), p_70020_1_.func_74763_f("PersistentIDLSB"));
 +            }
 +
++            if (this.capabilities != null && p_70020_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_70020_1_.func_74775_l("ForgeCaps"));
++
              this.func_70037_a(p_70020_1_);
  
              if (this.func_142008_O())
-@@ -1512,7 +1556,10 @@
+@@ -1512,7 +1562,10 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -99,7 +114,7 @@
              return entityitem;
          }
          else
-@@ -1655,6 +1702,7 @@
+@@ -1655,6 +1708,7 @@
  
      public void func_70078_a(Entity p_70078_1_)
      {
@@ -107,7 +122,7 @@
          this.field_70149_e = 0.0D;
          this.field_70147_f = 0.0D;
  
-@@ -1789,7 +1837,7 @@
+@@ -1789,7 +1843,7 @@
  
      public boolean func_70115_ae()
      {
@@ -116,7 +131,7 @@
      }
  
      public boolean func_70093_af()
-@@ -2092,7 +2140,7 @@
+@@ -2092,7 +2146,7 @@
  
      public float func_180428_a(Explosion p_180428_1_, World p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_)
      {
@@ -125,7 +140,7 @@
      }
  
      public boolean func_174816_a(Explosion p_174816_1_, World p_174816_2_, BlockPos p_174816_3_, IBlockState p_174816_4_, float p_174816_5_)
-@@ -2353,4 +2401,184 @@
+@@ -2353,4 +2407,209 @@
  
          EnchantmentHelper.func_151385_b(p_174815_1_, p_174815_2_);
      }
@@ -307,6 +322,31 @@
 +    public boolean shouldDismountInWater(Entity rider)
 +    {
 +        return this instanceof EntityLivingBase;
++    }
++
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
++    {
++        if (getCapability(capability, facing) != null)
++            return true;
++        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
++    }
++
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.func_70020_e(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        ret.func_74778_a("id", this.func_70022_Q());
++        this.func_70109_d(ret);
++        return ret;
 +    }
 +    /* ================================== Forge End =====================================*/
  }

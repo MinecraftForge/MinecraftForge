@@ -9,7 +9,27 @@
              float f2 = p_177077_9_.func_177552_f().func_181688_b(ItemCameraTransforms.TransformType.GROUND).field_178363_d.y;
              GlStateManager.func_179109_b((float)p_177077_2_, (float)p_177077_4_ + f1 + 0.25F * f2, (float)p_177077_6_);
  
-@@ -157,4 +157,25 @@
+@@ -123,16 +123,17 @@
+                 }
+ 
+                 GlStateManager.func_179152_a(0.5F, 0.5F, 0.5F);
+-                ibakedmodel.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
+                 this.field_177080_a.func_180454_a(itemstack, ibakedmodel);
+                 GlStateManager.func_179121_F();
+             }
+             else
+             {
+                 GlStateManager.func_179094_E();
+-                ibakedmodel.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GROUND);
++                ibakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND);
+                 this.field_177080_a.func_180454_a(itemstack, ibakedmodel);
+                 GlStateManager.func_179121_F();
++                // FIXME?
+                 float f3 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.x;
+                 float f4 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.y;
+                 float f5 = ibakedmodel.func_177552_f().field_181699_o.field_178363_d.z;
+@@ -157,4 +158,25 @@
      {
          return TextureMap.field_110575_b;
      }

@@ -936,7 +936,7 @@ public class B3DLoader implements ICustomModelLoader
             return false;
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             // FIXME somehow specify particle texture in the model
             return textures.values().asList().get(0);

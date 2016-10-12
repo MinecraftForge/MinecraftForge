@@ -100,9 +100,9 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
-            return internalBase.getTexture();
+            return internalBase.getParticleTexture();
         }
 
         @Override
