@@ -3,15 +3,18 @@
     "variants": {
         "fluid": {
             "model": "forge:fluid",
-            "custom": { "fluid": "testfluid" }
+            "custom": { "fluid": "testfluid" },
+            "transform": "forge:default-item"
         },
         "gas": {
             "model": "forge:fluid",
-            "custom": { "fluid": "testgas" }
+            "custom": { "fluid": "testgas" },
+            "transform": "forge:default-item"
         },
         "milk": {
             "model": "forge:fluid",
-            "custom": { "fluid": "milk" }
+            "custom": { "fluid": "milk" },
+            "transform": "forge:default-item"
         }
     }
 }

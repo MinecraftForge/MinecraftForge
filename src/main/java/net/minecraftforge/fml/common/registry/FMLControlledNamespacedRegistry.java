@@ -54,6 +54,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      */
     private final Set<Integer> blockedIds = Sets.newHashSet();
 
+    private final Set<ResourceLocation> dummiedLocations = Sets.newHashSet();
+
     private final BitSet availabilityMap;
 
     private final AddCallback<I> addCallback;
@@ -149,7 +151,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
 
     }
 
-    @SuppressWarnings("unchecked")
     void set(FMLControlledNamespacedRegistry<I> otherRegistry)
     {
         if (this.superType != otherRegistry.superType)
@@ -165,6 +166,8 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         this.persistentSubstitutions.clear();
         this.persistentSubstitutions.putAll(otherRegistry.getPersistentSubstitutions());
         this.activeSubstitutions.clear();
+        this.dummiedLocations.clear();
+        this.dummiedLocations.addAll(otherRegistry.dummiedLocations);
 
         underlyingIntegerMap = new ObjectIntIdentityMap<I>();
         registryObjects.clear();
@@ -385,6 +388,9 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         set.addAll(activeSubstitutions.keySet());
     }
 
+    public void serializeDummied(Set<ResourceLocation> set) { set.addAll(this.dummiedLocations); }
+
+
     /**
      * Add the specified object to the registry.
      *
@@ -457,11 +463,19 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         {
             getExistingDelegate(thing).setResourceName(name);
         }
+        this.dummiedLocations.remove(name);
+
         if (DEBUG)
         {
             FMLLog.finer("Registry add: %s %d %s (req. id %d)", name, idToUse, thing, id);
         }
         return idToUse;
+    }
+
+    void markDummy(ResourceLocation rl, Integer id, I thing)
+    {
+        this.dummiedLocations.add(rl);
+        this.addObjectRaw(id, rl, thing);
     }
 
     void addAlias(ResourceLocation from, ResourceLocation to)
@@ -623,7 +637,6 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
      * This iterator is used by some regular MC methods to visit all blocks, we need to include substitutions
      * Compare #typeSafeIterable()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Iterator<I> iterator()
     {
@@ -688,6 +701,11 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
             blockedIds.add(id);
             availabilityMap.set(id);
         }
+    }
+
+    public void loadDummied(Set<ResourceLocation> dummied)
+    {
+        this.dummiedLocations.addAll(dummied);
     }
 
     public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, Integer> missingIds, Map<ResourceLocation, Integer[]> remappedIds, FMLControlledNamespacedRegistry<I> currentRegistry, ResourceLocation registryName)

@@ -293,7 +293,7 @@ public class ModelBakeEventDebug
         public boolean isBuiltInRenderer() { return false; }
 
         @Override
-        public TextureAtlasSprite getTexture() { return this.base; }
+        public TextureAtlasSprite getParticleTexture() { return this.base; }
 
         @Override
         public ItemCameraTransforms getItemCameraTransforms()

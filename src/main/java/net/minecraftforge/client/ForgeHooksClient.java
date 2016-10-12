@@ -387,7 +387,7 @@ public class ForgeHooksClient
         }
         else
         {
-            model.getItemCameraTransforms().func_181689_a(cameraTransformType);
+            model.getItemCameraTransforms().applyTransform(cameraTransformType);
         }
         return model;
     }
@@ -412,28 +412,30 @@ public class ForgeHooksClient
     public static void preDraw(EnumUsage attrType, VertexFormat format, int element, int stride, ByteBuffer buffer)
     {
         VertexFormatElement attr = format.getElement(element);
+        int count = attr.getElementCount();
+        int constant = attr.getType().getGlConstant();
         buffer.position(format.func_181720_d(element));
         switch(attrType)
         {
             case POSITION:
-                glVertexPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glVertexPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_VERTEX_ARRAY);
                 break;
             case NORMAL:
-                if(attr.getElementCount() != 3)
+                if(count != 3)
                 {
                     throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
                 }
-                glNormalPointer(attr.getType().getGlConstant(), stride, buffer);
+                glNormalPointer(constant, stride, buffer);
                 glEnableClientState(GL_NORMAL_ARRAY);
                 break;
             case COLOR:
-                glColorPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glColorPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_COLOR_ARRAY);
                 break;
             case UV:
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-                glTexCoordPointer(attr.getElementCount(), attr.getType().getGlConstant(), stride, buffer);
+                glTexCoordPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 break;
@@ -441,7 +443,7 @@ public class ForgeHooksClient
                 break;
             case GENERIC:
                 glEnableVertexAttribArray(attr.getIndex());
-                glVertexAttribPointer(attr.getIndex(), attr.getElementCount(), attr.getType().getGlConstant(), false, stride, buffer);
+                glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
                 FMLLog.severe("Unimplemented vanilla attribute upload: %s", attrType.getDisplayName());
         }

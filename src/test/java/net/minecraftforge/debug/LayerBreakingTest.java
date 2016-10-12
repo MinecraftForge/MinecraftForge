@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.primitives.Ints;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -24,10 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModelPart;
-import net.minecraftforge.client.model.IModelState;
 import net.minecraftforge.client.model.ISmartBlockModel;
-import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -35,6 +30,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+
+import com.google.common.primitives.Ints;
 
 @SuppressWarnings( "deprecation" )
 @Mod( modid = "LayerBreakingTest", name = "LayerBreakingTest", version = "0.0.0" )
@@ -85,7 +82,7 @@ public class LayerBreakingTest
         }
 
         @Override
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             return texture;
         }
@@ -178,7 +175,7 @@ public class LayerBreakingTest
         }
 
         @Override
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             return null;
         }
@@ -195,8 +192,8 @@ public class LayerBreakingTest
             if (solid == null)
             {
                 BlockModelShapes models =  Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes();
-                translucent = new TestBakedModel(models.getModelForState(Blocks.stained_glass.getStateFromMeta(3)).getTexture(), true);
-                solid = new TestBakedModel(models.getModelForState(Blocks.cobblestone.getDefaultState()).getTexture(), false);
+                translucent = new TestBakedModel(models.getModelForState(Blocks.stained_glass.getStateFromMeta(3)).getParticleTexture(), true);
+                solid = new TestBakedModel(models.getModelForState(Blocks.cobblestone.getDefaultState()).getParticleTexture(), false);
             }
 
             if (net.minecraftforge.client.MinecraftForgeClient.getRenderLayer() == EnumWorldBlockLayer.SOLID)

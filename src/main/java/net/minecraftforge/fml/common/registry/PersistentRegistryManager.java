@@ -161,6 +161,30 @@ public class PersistentRegistryManager
             loadPersistentDataToStagingRegistry(injectFrozenData, remaps, missing, snapshotEntry, PersistentRegistry.ACTIVE.registrySuperTypes.inverse().get(snapshotEntry.getKey()));
         }
 
+        // Handle dummied blocks
+        for (ResourceLocation dummy : snapshot.entries.get(BLOCKS).dummied)
+        {
+            // Currently missing locally, we just inject and carry on
+            if (missing.get(BLOCKS).containsKey(dummy))
+            {
+                Integer id = missing.get(BLOCKS).remove(dummy);
+                // Mark this entry as a dummy
+                PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).markDummy(dummy, id, new BlockDummyAir());
+            }
+            else if (isLocalWorld)
+            {
+                // Carry on, we resuscitated the block
+            }
+            else
+            {
+                Integer id = PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).getId(dummy);
+                // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
+                // in mod setup - Mark this entry as a dummy
+                FMLLog.log(Level.WARN, "The ID %d is currently locally mapped - it will be replaced with air for this session", id);
+                PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).markDummy(dummy, id, new BlockDummyAir());
+            }
+        }
+
         // If we have missed data, fire the missing mapping event
         List<String> missedMappings = Loader.instance().fireMissingMappingEvent(missing.get(BLOCKS), missing.get(ITEMS), isLocalWorld, remaps.get(BLOCKS), remaps.get(ITEMS));
         // If there's still missed mappings, we return, because that's an error
@@ -178,7 +202,8 @@ public class PersistentRegistryManager
                 ResourceLocation rl = missingBlock.getKey();
                 Integer id = missingBlock.getValue();
                 FMLLog.log(Level.DEBUG, "Replacing id %s named as %s with air block. If the mod becomes available again later, it can reload here", id, rl);
-                PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).add(id, rl, new BlockDummyAir());
+                // Mark this entry as a dummy
+                PersistentRegistry.STAGING.getRegistry(BLOCKS, Block.class).markDummy(rl, id, new BlockDummyAir());
             }
         }
         // If we're loading up the world from disk, we want to add in the new data that might have been provisioned by mods
@@ -301,6 +326,8 @@ public class PersistentRegistryManager
         missing.put(registryName, Maps.<ResourceLocation, Integer>newLinkedHashMap());
         remaps.put(registryName, Maps.<ResourceLocation, Integer[]>newHashMap());
         newRegistry.loadIds(snapshotEntry.ids, missing.get(registryName), remaps.get(registryName), currentRegistry, registryName);
+        // Load current dummies AFTER the snapshot is loaded
+        newRegistry.loadDummied(snapshotEntry.dummied);
     }
 
     public static boolean isFrozen(FMLControlledNamespacedRegistry<?> registry)
@@ -510,18 +537,20 @@ public class PersistentRegistryManager
             public final Set<ResourceLocation> substitutions;
             public final Map<ResourceLocation, ResourceLocation> aliases;
             public final Set<Integer> blocked;
+            public final Set<ResourceLocation> dummied;
 
             public Entry()
             {
-                this(new HashMap<ResourceLocation, Integer>(), new HashSet<ResourceLocation>(), new HashMap<ResourceLocation, ResourceLocation>(), new HashSet<Integer>());
+                this(new HashMap<ResourceLocation, Integer>(), new HashSet<ResourceLocation>(), new HashMap<ResourceLocation, ResourceLocation>(), new HashSet<Integer>(), new HashSet<ResourceLocation>());
             }
 
-            public Entry(Map<ResourceLocation, Integer> ids, Set<ResourceLocation> substitutions, Map<ResourceLocation, ResourceLocation> aliases, Set<Integer> blocked)
+            public Entry(Map<ResourceLocation, Integer> ids, Set<ResourceLocation> substitutions, Map<ResourceLocation, ResourceLocation> aliases, Set<Integer> blocked, Set<ResourceLocation> dummies)
             {
                 this.ids = ids;
                 this.substitutions = substitutions;
                 this.aliases = aliases;
                 this.blocked = blocked;
+                this.dummied = dummies;
             }
 
             public Entry(FMLControlledNamespacedRegistry<?> registry)
@@ -530,11 +559,13 @@ public class PersistentRegistryManager
                 this.substitutions = Sets.newHashSet();
                 this.aliases = Maps.newHashMap();
                 this.blocked = Sets.newHashSet();
+                this.dummied = Sets.newHashSet();
 
                 registry.serializeIds(this.ids);
                 registry.serializeSubstitutions(this.substitutions);
                 registry.serializeAliases(this.aliases);
                 registry.serializeBlockList(this.blocked);
+                registry.serializeDummied(this.dummied);
             }
         }
 

@@ -3,9 +3,6 @@ package net.minecraftforge.debug;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.material.Material;
@@ -14,7 +11,6 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -29,6 +25,9 @@ import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 @Mod(modid = ForgeBlockStatesLoaderDebug.MODID)
 public class ForgeBlockStatesLoaderDebug {
@@ -47,7 +46,6 @@ public class ForgeBlockStatesLoaderDebug {
         }
     });
 
-    @SuppressWarnings("unchecked")
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {

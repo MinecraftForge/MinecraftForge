@@ -113,7 +113,7 @@ public class ItemLayerModel implements IRetexturableModel
         public boolean isAmbientOcclusion() { return true; }
         public boolean isGui3d() { return false; }
         public boolean isBuiltInRenderer() { return false; }
-        public TextureAtlasSprite getTexture() { return particle; }
+        public TextureAtlasSprite getParticleTexture() { return particle; }
         public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
         public List<BakedQuad> getFaceQuads(EnumFacing side) { return ImmutableList.of(); }
         public List<BakedQuad> getGeneralQuads() { return quads; }

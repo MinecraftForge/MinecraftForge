@@ -1,18 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -197,6 +197,11 @@
+@@ -223,7 +223,8 @@
+     {
          this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer", new Object[0])));
          this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer", new Object[0])));
-         this.field_146292_n.add(this.field_175372_K = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
-+        GuiButton fmlModButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("fml.menu.mods"));
-+        fmlModButton.field_146128_h = this.field_146294_l / 2 + 2;
-+        field_175372_K.field_146120_f = 98;
-+        fmlModButton.field_146120_f = 98;
-+        this.field_146292_n.add(fmlModButton);
+-        this.field_146292_n.add(this.field_175372_K = new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online", new Object[0])));
++        this.field_146292_n.add(this.field_175372_K = new GuiButton(14, this.field_146294_l / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online", new Object[0]).replace("Minecraft", "").trim()));
++        this.field_146292_n.add(new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("fml.menu.mods")));
      }
  
      private void func_73972_b(int p_73972_1_, int p_73972_2_)
-@@ -244,6 +249,11 @@
+@@ -271,6 +272,11 @@
              this.field_146297_k.func_71400_g();
          }
  
@@ -24,7 +22,7 @@
          if (p_146284_1_.field_146127_k == 11)
          {
              this.field_146297_k.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
-@@ -489,7 +499,16 @@
+@@ -516,7 +522,16 @@
              s = s + " Demo";
          }
  

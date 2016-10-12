@@ -11,52 +11,64 @@
  */
 package net.minecraftforge.fml.client.registry;
 
-import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-/**
- * @author cpw
- *
- */
 public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private List<EntityRendererInfo> entityRenderers = Lists.newArrayList();
+    private Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = Maps.newHashMap();
+    private Map<Class<? extends Entity>, Render<? extends Entity>> entityRenderersOld = Maps.newHashMap();
 
     /**
      * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
-     * render map for entities
+     * render map for entities.
+     * Call this during Initialization phase.
      *
-     * @param entityClass
-     * @param renderer
+     * @deprecated use the factory version during Preinitialization.
+     * Will be removed in 1.9.
      */
+    @Deprecated
     public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> renderer)
     {
-        INSTANCE.entityRenderers.add(new EntityRendererInfo(entityClass, renderer));
-    }
-
-    private static class EntityRendererInfo
-    {
-        public EntityRendererInfo(Class<? extends Entity> target, Render<? extends Entity> renderer)
-        {
-            this.target = target;
-            this.renderer = renderer;
-        }
-        private Class<? extends Entity> target;
-        private Render<? extends Entity> renderer;
+        INSTANCE.entityRenderersOld.put(entityClass, renderer);
     }
 
     public static void loadEntityRenderers(Map<Class<? extends Entity>, Render<? extends Entity>> entityRenderMap)
     {
-        for (EntityRendererInfo info : INSTANCE.entityRenderers)
+        entityRenderMap.putAll(INSTANCE.entityRenderersOld);
+    }
+
+    /**
+     * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
+     * render map for entities.
+     * Call this during Preinitialization phase.
+     *
+     * @param entityClass
+     * @param renderer
+     */
+    public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory)
+    {
+        INSTANCE.entityRenderers.put(entityClass, renderFactory);
+    }
+
+    public static void loadEntityRenderers(RenderManager manager, Map<Class<? extends Entity> , Render<? extends Entity>> renderMap)
+    {
+        for (Map.Entry<Class<? extends Entity>, IRenderFactory<? extends Entity>> entry : INSTANCE.entityRenderers.entrySet())
         {
-            entityRenderMap.put(info.target, info.renderer);
+            register(manager, renderMap, entry.getKey(), entry.getValue());
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Entity> void register(RenderManager manager, Map<Class<? extends Entity> , Render<? extends Entity>> renderMap, Class<T> entityClass, IRenderFactory<?> renderFactory)
+    {
+        renderMap.put(entityClass, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
     }
 }

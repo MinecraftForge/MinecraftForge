@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
@@ -88,13 +89,21 @@ public class B3DModel
             }
         }
 
+        private String dump = "";
+        private void dump(String str)
+        {
+            dump += str + "\n";
+        }
+
         private B3DModel res;
 
         public B3DModel parse() throws IOException
         {
             if(res != null) return res;
+            dump = "\n";
             readHeader();
             res = bb3d();
+            logger.info(dump);
             return res;
         }
 
@@ -192,6 +201,7 @@ public class B3DModel
             List<Texture> textures = Collections.emptyList();
             List<Brush> brushes = Collections.emptyList();
             Node<?> root = null;
+            dump("BB3D(version = " + version + ") {");
             while(buf.hasRemaining())
             {
                 readHeader();
@@ -200,6 +210,7 @@ public class B3DModel
                 else if(isChunk("NODE")) root = node();
                 else skip();
             }
+            dump("}");
             popLimit();
             return new B3DModel(textures, brushes, root, meshes.build());
         }
@@ -218,6 +229,7 @@ public class B3DModel
                 float rot = buf.getFloat();
                 ret.add(new Texture(path, flags, blend, pos, scale, rot));
             }
+            dump("TEXS([" + Joiner.on(", ").join(ret) + "])");
             popLimit();
             this.textures.addAll(ret);
             return ret;
@@ -239,6 +251,7 @@ public class B3DModel
                 for(int i = 0; i < n_texs; i++) textures.add(getTexture(buf.getInt()));
                 ret.add(new Brush(name, color, shininess, blend, fx, textures));
             }
+            dump("BRUS([" + Joiner.on(", ").join(ret) + "])");
             popLimit();
             this.brushes.addAll(ret);
             return ret;
@@ -287,6 +300,7 @@ public class B3DModel
                 }
                 ret.add(new Vertex(v, n, color, tex_coords));
             }
+            dump("VRTS([" + Joiner.on(", ").join(ret) + "])");
             popLimit();
             this.vertices.clear();
             this.vertices.addAll(ret);
@@ -302,6 +316,7 @@ public class B3DModel
             {
                 ret.add(new Face(getVertex(buf.getInt()), getVertex(buf.getInt()), getVertex(buf.getInt()), getBrush(brush_id)));
             }
+            dump("TRIS([" + Joiner.on(", ").join(ret) + "])");
             popLimit();
             return ret;
         }
@@ -311,6 +326,7 @@ public class B3DModel
             chunk("MESH");
             int brush_id = buf.getInt();
             readHeader();
+            dump("MESH(brush = " + brush_id + ") {");
             vrts();
             List<Face> ret = new ArrayList<Face>();
             while(buf.hasRemaining())
@@ -318,6 +334,7 @@ public class B3DModel
                 readHeader();
                 ret.addAll(tris());
             }
+            dump("}");
             popLimit();
             return Pair.of(getBrush(brush_id), ret);
         }
@@ -330,6 +347,7 @@ public class B3DModel
             {
                 ret.add(Pair.of(getVertex(buf.getInt()), buf.getFloat()));
             }
+            dump("BONE(...)");
             popLimit();
             return ret;
         }
@@ -381,6 +399,7 @@ public class B3DModel
                 animations.peek().put(frame, Optional.<Node<?>>absent(), key);
                 ret.put(frame, key);
             }
+            dump("KEYS([(" + Joiner.on("), (").withKeyValueSeparator(" -> ").join(ret) + ")])");
             popLimit();
             return ret;
         }
@@ -391,6 +410,7 @@ public class B3DModel
             int flags = buf.getInt();
             int frames = buf.getInt();
             float fps = buf.getFloat();
+            dump("ANIM(" + flags + ", " + frames + ", " + fps + ")");
             popLimit();
             return Triple.of(flags, frames, fps);
         }
@@ -408,6 +428,7 @@ public class B3DModel
             Vector3f pos = new Vector3f(buf.getFloat(), buf.getFloat(), buf.getFloat());
             Vector3f scale = new Vector3f(buf.getFloat(), buf.getFloat(), buf.getFloat());
             Quat4f rot = readQuat();
+            dump("NODE(" + name + ", " + pos + ", " + scale + ", " + rot + ") {");
             while(buf.hasRemaining())
             {
                 readHeader();
@@ -418,6 +439,7 @@ public class B3DModel
                 else if(isChunk("ANIM")) animData = anim();
                 else skip();
             }
+            dump("}");
             popLimit();
             Table<Integer, Optional<Node<?>>, Key> keyData = animations.pop();
             Node<?> node;
@@ -965,6 +987,7 @@ public class B3DModel
         private Node<Mesh> parent;
         private final Brush brush;
         private final ImmutableList<Face> faces;
+        //private final ImmutableList<Bone> bones;
 
         private Set<Node<Bone>> bones = new HashSet<Node<Bone>>();
 

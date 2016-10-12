@@ -53,10 +53,15 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @SuppressWarnings("deprecation")
 public class OBJModel implements IRetexturableModel, IModelCustomData
@@ -1142,7 +1147,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
 
     public static class OBJState implements IModelState
     {
-        protected Map<String, Boolean> visibilityMap = new HashMap<String, Boolean>();
+        protected Map<String, Boolean> visibilityMap = Maps.newHashMap();
         public IModelState parent;
         protected Operation operation = Operation.SET_TRUE;
 
@@ -1234,6 +1239,27 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
                 builder.append(String.format("        name: %s visible: %b%n", e.getKey(), e.getValue()));
             }
             return builder.toString();
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hashCode(visibilityMap, parent, operation);
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            OBJState other = (OBJState) obj;
+            return Objects.equal(visibilityMap, other.visibilityMap) &&
+                Objects.equal(parent, other.parent) &&
+                operation == other.operation;
         }
 
         public enum Operation
@@ -1469,7 +1495,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
         }
 
         @Override
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             return this.sprite;
         }
@@ -1546,15 +1572,17 @@ public class OBJModel implements IRetexturableModel, IModelCustomData
             }
         }
 
-        private final Map<IModelState, OBJBakedModel> cache = new HashMap<IModelState, OBJBakedModel>();
+        private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
+        {
+            public OBJBakedModel load(IModelState state) throws Exception
+            {
+                return new OBJBakedModel(model, state, format, textures);
+            }
+        });
 
         public OBJBakedModel getCachedModel(IModelState state)
         {
-            if (!cache.containsKey(state))
-            {
-                cache.put(state, new OBJBakedModel(this.model, state, this.format, this.textures));
-            }
-            return cache.get(state);
+            return cache.getUnchecked(state);
         }
 
         public OBJModel getModel()

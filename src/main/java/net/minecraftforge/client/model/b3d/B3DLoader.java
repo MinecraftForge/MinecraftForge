@@ -38,7 +38,11 @@ import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelStateComposition;
 import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.animation.IClip;
+import net.minecraftforge.client.model.animation.IAnimatedModel;
+import net.minecraftforge.client.model.animation.IJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Animation;
 import net.minecraftforge.client.model.b3d.B3DModel.Face;
 import net.minecraftforge.client.model.b3d.B3DModel.IKind;
@@ -366,7 +370,7 @@ public class B3DLoader implements ICustomModelLoader
         }
     }
 
-    public static class NodeJoint implements IModelPart
+    public static class NodeJoint implements IJoint
     {
         private final Node<?> node;
 
@@ -553,11 +557,6 @@ public class B3DLoader implements ICustomModelLoader
             return new BakedWrapper(getNode(), state, format, meshes, builder.build());
         }
 
-        public B3DState getDefaultState()
-        {
-            return new B3DState(getNode().getAnimation(), 1);
-        }
-
         public ResourceLocation getLocation()
         {
             return location;
@@ -619,8 +618,15 @@ public class B3DLoader implements ICustomModelLoader
         {
             return this;
         }
+
+        @Override
+        public IModelState getDefaultState()
+        {
+            return new B3DState(getNode().getAnimation(), 1);
+        }
     }
-    public static class ModelWrapper implements IRetexturableModel, IModelCustomData
+
+    public static class ModelWrapper implements IRetexturableModel, IModelCustomData, IAnimatedModel
     {
         private final ResourceLocation modelLocation;
         private final B3DModel model;
@@ -702,12 +708,6 @@ public class B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public IModelState getDefaultState()
-        {
-            return new B3DState(model.getRoot().getAnimation(), defaultKey, defaultKey, 0);
-        }
-
-        @Override
         public IModel retexture(ImmutableMap<String, String> textures)
         {
             ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
@@ -777,6 +777,20 @@ public class B3DLoader implements ICustomModelLoader
             }
             return this;
         }
+
+        public Optional<IClip> getClip(String name)
+        {
+            if(name.equals("main"))
+            {
+                return Optional.<IClip>of(B3DClip.instance);
+            }
+            return Optional.absent();
+        }
+
+        public IModelState getDefaultState()
+        {
+            return new B3DState(model.getRoot().getAnimation(), defaultKey, defaultKey, 0);
+        }
     }
 
     private static class BakedWrapper implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
@@ -840,9 +854,19 @@ public class B3DLoader implements ICustomModelLoader
                     Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
                     {
                         private final TRSRTransformation global = state.apply(Optional.<IModelPart>absent()).or(TRSRTransformation.identity());
+                        private final LoadingCache<Node<?>, TRSRTransformation> localCache = CacheBuilder.newBuilder()
+                            .maximumSize(32)
+                            .build(new CacheLoader<Node<?>, TRSRTransformation>()
+                            {
+                                public TRSRTransformation load(Node<?> node) throws Exception
+                                {
+                                    return state.apply(Optional.of(new NodeJoint(node))).or(TRSRTransformation.identity());
+                                }
+                            });
+
                         public Matrix4f apply(Node<?> node)
                         {
-                            return global.compose(state.apply(Optional.of(new NodeJoint(node))).or(TRSRTransformation.identity())).getMatrix();
+                            return global.compose(localCache.getUnchecked(node)).getMatrix();
                         }
                     });
                     for(Face f : faces)
@@ -936,7 +960,7 @@ public class B3DLoader implements ICustomModelLoader
             return false;
         }
 
-        public TextureAtlasSprite getTexture()
+        public TextureAtlasSprite getParticleTexture()
         {
             // FIXME somehow specify particle texture in the model
             return textures.values().asList().get(0);
@@ -976,6 +1000,21 @@ public class B3DLoader implements ICustomModelLoader
                         }
                         B3DState newState = new B3DState(newAnimation, s.getFrame(), s.getNextFrame(), s.getProgress(), parent);
                         return new BakedWrapper(node, newState, format, meshes, textures);
+                    }
+                }
+                else if(exState.getUnlistedNames().contains(net.minecraftforge.client.model.animation.Animation.AnimationProperty))
+                {
+                    // FIXME: should animation state handle the parent state, or should it remain here?
+                    IModelState parent = this.state;
+                    if(parent instanceof B3DState)
+                    {
+                        B3DState ps = (B3DState)parent;
+                        parent = ps.getParent();
+                    }
+                    IModelState newState = exState.getValue(net.minecraftforge.client.model.animation.Animation.AnimationProperty);
+                    if(newState != null)
+                    {
+                        return new BakedWrapper(node, new ModelStateComposition(parent, newState), format, meshes, textures);
                     }
                 }
             }

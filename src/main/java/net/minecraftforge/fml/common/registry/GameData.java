@@ -14,10 +14,6 @@ package net.minecraftforge.fml.common.registry;
 
 import java.util.Map;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -28,6 +24,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class GameData
 {
@@ -214,7 +213,7 @@ public class GameData
     private static BiMap<Block, Item> BLOCK_TO_ITEM = HashBiMap.create();
 
     //Internal: DO NOT USE, will change without warning.
-    public static Map getBlockItemMap()
+    public static Map<Block, Item> getBlockItemMap()
     {
         return BLOCK_TO_ITEM;
     }
