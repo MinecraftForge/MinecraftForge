@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -49,6 +50,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -304,12 +306,16 @@ public class GameRegistry
 
     public static int getFuelValue(ItemStack itemStack)
     {
-        int fuelValue = 0;
-        for (IFuelHandler handler : fuelHandlers)
+        ListIterator<IFuelHandler> li = fuelHandlers.listIterator(fuelHandlers.size());
+        while (li.hasPrevious())
         {
-            fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
+            int fuelValue = li.previous().getBurnTime(itemStack);
+            if (fuelValue > 0)
+                return fuelValue;
+            if (fuelValue < 0)
+                return 0;
         }
-        return fuelValue;
+        return TileEntityFurnace.getItemBurnTimeOld(itemStack);
     }
 
     /**
